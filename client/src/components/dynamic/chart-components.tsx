@@ -94,7 +94,7 @@ export function OptimizedTooltip(props: React.ComponentProps<typeof Tooltip>) {
 
 export function OptimizedLegend(props: React.ComponentProps<typeof Legend>) {
   return useMemo(() => <Legend {...props} />, 
-    [props.content, props.formatter, props.payload]
+    [props.content, props.formatter]
   );
 }
 
