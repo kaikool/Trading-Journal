@@ -25,11 +25,21 @@
    git push -u origin main
    ```
 
-## Bước 3: Cập nhật workflow file trên GitHub
+## Bước 3: Xóa và cập nhật workflow file trên GitHub
 
 1. Trên GitHub, đi đến repository của bạn.
 
-2. Điều hướng đến tệp `.github/workflows/build-deploy.yml` và nhấn vào biểu tượng bút (Edit) để chỉnh sửa.
+2. **QUAN TRỌNG: Xóa hoàn toàn tất cả các file workflow cũ**:
+   - Đi đến `.github/workflows/`
+   - Nhấn vào file `build-deploy.yml` 
+   - Nhấn vào biểu tượng ba chấm (⋮) ở góc phải
+   - Chọn "Delete file" và xác nhận xóa
+   - Nếu có các file khác trong thư mục này (như `build-deploy-updated.yml`), cũng xóa chúng
+
+3. Tạo file workflow mới:
+   - Đi đến `.github/workflows/`
+   - Nhấn vào "Add file" > "Create new file"
+   - Đặt tên file là `build-deploy.yml`
 
 3. Xóa toàn bộ nội dung trong tệp và thay thế bằng nội dung sau:
 
@@ -199,8 +209,24 @@ jobs:
 
 3. Nếu workflow không tự động chạy, nhấn vào "Run workflow" và chọn branch "main" để kích hoạt thủ công.
 
-## Lưu ý
+## Lưu ý quan trọng
 
+- **PHẢI XÓA TẤT CẢ CÁC FILE WORKFLOW CŨ** trước khi thêm file mới, nếu không sẽ tiếp tục gặp lỗi "Cannot find module".
 - Đảm bảo bạn đã tạo Firebase project và cấu hình đúng Firebase Hosting.
 - Tệp firebase.json phải đúng và có cấu hình hosting chỉ đến `dist/public`.
-- Nếu gặp lỗi "Cannot find module", kiểm tra xem có đang sử dụng workflow cũ không và đảm bảo đã cập nhật sang workflow mới.
+- **KHÔNG SỬ DỤNG** script `scripts/prepare-github-deploy.js` trong workflow mới. Workflow mới đã được cấu hình để tạo file config.js trực tiếp bằng bash.
+- Khi gặp lỗi, luôn kiểm tra logs trong tab Actions trên GitHub để phát hiện vấn đề.
+
+## Xác minh triển khai thành công
+
+Sau khi workflow chạy xong, để xác nhận triển khai đã thành công:
+
+1. Kiểm tra URL triển khai Firebase (thường có dạng https://your-project-id.web.app)
+2. Đảm bảo trang web được tải mà không hiển thị lỗi "Firebase: Error (auth/api-key-not-valid)"
+3. Kiểm tra kỹ chức năng đăng nhập và tải dữ liệu
+
+## Xử lý sự cố
+
+- **Lỗi "Cannot find module"**: Xóa tất cả các workflow cũ và tạo workflow mới theo hướng dẫn.
+- **Lỗi "API key not valid"**: Kiểm tra lại các secrets trên GitHub và đảm bảo config.js đã được tạo đúng.
+- **Lỗi CORS**: Đảm bảo bạn đã cấu hình đúng Firebase Storage Rules.
