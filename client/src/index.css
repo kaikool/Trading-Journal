@@ -13,10 +13,7 @@
     padding-top: max(0.5rem, env(safe-area-inset-top, 0.5rem));
   }
   
-  /* Padding bottom tối ưu để tránh khoảng trống thừa */
-  .pb-safe {
-    padding-bottom: max(56px, calc(56px + env(safe-area-inset-bottom, 0px) * 0.4));
-  }
+  /* Removed redundant .pb-safe definition, using the one in globals.css */
 }
 
 /* Compact table for analytics */

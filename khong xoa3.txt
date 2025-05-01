@@ -1,3 +1,0 @@
-SECRET=9rbzDsR-tj87ao_NfDeX3lBoWPE
-API=784331526282828
-Cloudname=dxi9ensjq
