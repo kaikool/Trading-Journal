@@ -1,0 +1,140 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run type check
+      run: npm run check
+    
+    - name: Create Firebase Config
+      run: |
+        CONFIG_TEMPLATE_PATH="public/config-template.js"
+        CONFIG_OUTPUT_PATH="public/config.js"
+        
+        echo "Reading config template..."
+        TEMPLATE_CONTENT=$(cat $CONFIG_TEMPLATE_PATH)
+        
+        # Replace values
+        PROJECT_ID="${{ secrets.VITE_FIREBASE_PROJECT_ID }}"
+        API_KEY="${{ secrets.VITE_FIREBASE_API_KEY }}"
+        APP_ID="${{ secrets.VITE_FIREBASE_APP_ID }}"
+        MEASUREMENT_ID="${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}"
+        SENDER_ID="${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}"
+        
+        echo "Replacing environment variables..."
+        CONFIG_CONTENT="${TEMPLATE_CONTENT/YOUR_PROJECT_ID/$PROJECT_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_API_KEY/$API_KEY}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_APP_ID/$APP_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_MEASUREMENT_ID/$MEASUREMENT_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_SENDER_ID/$SENDER_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_REGION/asia-southeast1}"
+        
+        echo "Writing config.js..."
+        echo "$CONFIG_CONTENT" > $CONFIG_OUTPUT_PATH
+        
+        echo "Config file created successfully!"
+      
+    - name: Build application
+      run: npm run build
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}.firebaseapp.com
+        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}.firebasestorage.app
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+        VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+        retention-days: 1
+
+  deploy-firebase:
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-files
+        path: dist/
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+    
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+    
+    - name: Create Firebase Config in dist
+      run: |
+        CONFIG_TEMPLATE_PATH="public/config-template.js"
+        CONFIG_OUTPUT_PATH="dist/config.js"
+        
+        echo "Reading config template..."
+        TEMPLATE_CONTENT=$(cat $CONFIG_TEMPLATE_PATH)
+        
+        # Replace values
+        PROJECT_ID="${{ secrets.VITE_FIREBASE_PROJECT_ID }}"
+        API_KEY="${{ secrets.VITE_FIREBASE_API_KEY }}"
+        APP_ID="${{ secrets.VITE_FIREBASE_APP_ID }}"
+        MEASUREMENT_ID="${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}"
+        SENDER_ID="${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}"
+        
+        echo "Replacing environment variables..."
+        CONFIG_CONTENT="${TEMPLATE_CONTENT/YOUR_PROJECT_ID/$PROJECT_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_API_KEY/$API_KEY}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_APP_ID/$APP_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_MEASUREMENT_ID/$MEASUREMENT_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_SENDER_ID/$SENDER_ID}"
+        CONFIG_CONTENT="${CONFIG_CONTENT/YOUR_REGION/asia-southeast1}"
+        
+        echo "Writing config.js to dist..."
+        echo "$CONFIG_CONTENT" > $CONFIG_OUTPUT_PATH
+        
+        echo "Config file created successfully in dist folder!"
+        
+    - name: Prepare dist structure for Firebase
+      run: |
+        mkdir -p dist/public
+        cp -r dist/* dist/public/ 2>/dev/null || :
+        rm -rf dist/public/public || :
+        
+    - name: Deploy to Firebase
+      run: firebase deploy --only hosting --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+# Functions deployment removed as we now use Firebase Storage Web SDK directly

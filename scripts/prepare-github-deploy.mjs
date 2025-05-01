@@ -1,82 +1,70 @@
-// @ts-check
-// @ts-ignore
-// @filename: prepare-github-deploy.mjs
-
 /**
- * Script chuẩn bị cho triển khai GitHub Actions
- * 
- * Script này giúp:
- * 1. Tạo file config.js từ config-template.js
- * 2. Thay thế các biến môi trường với giá trị từ GitHub Secrets
- * 3. Đảm bảo tất cả các file cần thiết đều có trong build
- * 
- * Sử dụng: Chạy script này trong quy trình CI/CD trước khi build.
+ * Script để chuẩn bị config.js từ config-template.js cho GitHub Deployment
+ * Đã cập nhật để hoạt động với ES Modules
  */
-
-import fs from 'fs';
-import path from 'path';
+import { readFileSync, writeFileSync } from 'fs';
 import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-// Lấy đường dẫn hiện tại trong ES modules
+// Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-// Đường dẫn tới các file
-const CONFIG_TEMPLATE_PATH = path.join(__dirname, '../public/config-template.js');
-const CONFIG_OUTPUT_PATH = path.join(__dirname, '../public/config.js');
-const CONFIG_DIST_PATH = path.join(__dirname, '../dist/config.js');
-
-// Đọc template
-try {
-  console.log('📄 Đọc file config template...');
-  const templateContent = fs.readFileSync(CONFIG_TEMPLATE_PATH, 'utf8');
-
-  // Thay thế các giá trị từ biến môi trường
-  console.log('🔄 Thay thế các biến môi trường...');
-  const projectId = process.env.VITE_FIREBASE_PROJECT_ID || 'YOUR_PROJECT_ID';
-  
-  let configContent = templateContent
-    .replace(/YOUR_PROJECT_ID/g, projectId)
-    .replace(/YOUR_API_KEY/g, process.env.VITE_FIREBASE_API_KEY || 'YOUR_API_KEY')
-    .replace(/YOUR_APP_ID/g, process.env.VITE_FIREBASE_APP_ID || 'YOUR_APP_ID')
-    .replace(/YOUR_MEASUREMENT_ID/g, process.env.VITE_FIREBASE_MEASUREMENT_ID || 'YOUR_MEASUREMENT_ID')
-    .replace(/YOUR_SENDER_ID/g, process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || 'YOUR_SENDER_ID')
-    .replace(/YOUR_REGION/g, 'asia-southeast1'); // Thay bằng vùng thực tế của bạn
-
-  // Ghi file config.js
-  console.log('💾 Ghi file config.js...');
-  fs.writeFileSync(CONFIG_OUTPUT_PATH, configContent);
-  
-  // Đảm bảo thư mục dist tồn tại và sao chép cấu hình vào đó
+function setupConfig() {
   try {
-    if (fs.existsSync(path.join(__dirname, '../dist'))) {
-      fs.writeFileSync(CONFIG_DIST_PATH, configContent);
-      console.log('✅ Đã sao chép config.js vào thư mục dist/');
+    console.log('Preparing config file for GitHub deployment...');
+    
+    // Define file paths
+    const templatePath = join(__dirname, '..', 'public', 'config-template.js');
+    const outputPath = join(__dirname, '..', 'public', 'config.js');
+    const distOutputPath = join(__dirname, '..', 'dist', 'config.js');
+    
+    console.log(`Template path: ${templatePath}`);
+    console.log(`Output path: ${outputPath}`);
+    
+    // Read the template file
+    const templateContent = readFileSync(templatePath, 'utf8');
+    
+    // Get environment variables
+    const {
+      VITE_FIREBASE_API_KEY,
+      VITE_FIREBASE_APP_ID,
+      VITE_FIREBASE_PROJECT_ID,
+      VITE_FIREBASE_MESSAGING_SENDER_ID,
+      VITE_FIREBASE_MEASUREMENT_ID
+    } = process.env;
+    
+    // Verify required variables
+    if (!VITE_FIREBASE_API_KEY || !VITE_FIREBASE_APP_ID || !VITE_FIREBASE_PROJECT_ID) {
+      throw new Error('Missing required environment variables for Firebase configuration');
     }
-  } catch (err) {
-    console.warn('⚠️ Không thể sao chép config.js vào thư mục dist: ', err.message);
-  }
-  
-  console.log('✅ Đã tạo file config.js thành công!');
-  
-  // Kiểm tra các file quan trọng khác
-  console.log('🔍 Kiểm tra các file quan trọng khác...');
-  const criticalFiles = [
-    path.join(__dirname, '../firebase.json'),
-    path.join(__dirname, '../storage.rules')
-  ];
-  
-  for (const file of criticalFiles) {
-    if (fs.existsSync(file)) {
-      console.log(`  ✓ File ${path.basename(file)} tồn tại.`);
-    } else {
-      console.error(`  ✗ CẢNH BÁO: File ${path.basename(file)} không tồn tại!`);
+    
+    // Replace placeholder values in the template
+    let configContent = templateContent
+      .replace(/YOUR_API_KEY/g, VITE_FIREBASE_API_KEY)
+      .replace(/YOUR_APP_ID/g, VITE_FIREBASE_APP_ID)
+      .replace(/YOUR_PROJECT_ID/g, VITE_FIREBASE_PROJECT_ID)
+      .replace(/YOUR_SENDER_ID/g, VITE_FIREBASE_MESSAGING_SENDER_ID || '')
+      .replace(/YOUR_MEASUREMENT_ID/g, VITE_FIREBASE_MEASUREMENT_ID || '')
+      .replace(/YOUR_REGION/g, 'asia-southeast1'); // Default region
+    
+    // Write the updated content to the output file
+    writeFileSync(outputPath, configContent, 'utf8');
+    console.log('Config file successfully created at:', outputPath);
+    
+    // Try to write to dist directory if it exists
+    try {
+      writeFileSync(distOutputPath, configContent, 'utf8');
+      console.log('Config file also created in dist directory at:', distOutputPath);
+    } catch (distError) {
+      console.log('Note: Could not write to dist directory (this is normal during build phase)');
     }
+    
+  } catch (error) {
+    console.error('Error preparing config file:', error.message);
+    process.exit(1);
   }
-  
-  console.log('\n🚀 Đã chuẩn bị xong cho triển khai!');
-  
-} catch (error) {
-  console.error('❌ Lỗi khi chuẩn bị cho triển khai:', error);
-  process.exit(1);
 }
+
+// Execute the function
+setupConfig();
