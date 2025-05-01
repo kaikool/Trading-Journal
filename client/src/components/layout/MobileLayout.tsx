@@ -24,7 +24,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
     <div className="flex flex-col min-h-screen min-h-[100dvh] bg-background">
       {/* Main content - với padding tối ưu cho PWA */}
       <main className={cn(
-        "flex-1 px-2 pt-2 pb-0", // Giảm padding ở trên và dưới
+        "flex-1 px-4 pt-1 pb-0", // Giảm padding còn nhỏ hơn nữa
         "has-bottom-nav", // Class chuẩn cho bottom nav spacing
         "pwa-top-inset" // Padding top cho safe area (notch/dynamic island)
       )}>

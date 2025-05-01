@@ -10,7 +10,16 @@
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
-    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Cải thiện padding cho PWA - điều chỉnh safe area */
+  .pwa-top-inset {
+    padding-top: max(0.5rem, env(safe-area-inset-top, 0.5rem));
+  }
+  
+  /* Điều chỉnh khoảng cách cho bottom nav */
+  .has-bottom-nav {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
