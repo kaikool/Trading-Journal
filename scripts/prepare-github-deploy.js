@@ -37,6 +37,17 @@ try {
   // Ghi file config.js
   console.log('💾 Ghi file config.js...');
   fs.writeFileSync(CONFIG_OUTPUT_PATH, configContent);
+  
+  // Đảm bảo thư mục dist tồn tại và sao chép cấu hình vào đó
+  try {
+    if (fs.existsSync(path.join(__dirname, '../dist'))) {
+      fs.writeFileSync(CONFIG_DIST_PATH, configContent);
+      console.log('✅ Đã sao chép config.js vào thư mục dist/');
+    }
+  } catch (err) {
+    console.warn('⚠️ Không thể sao chép config.js vào thư mục dist: ', err.message);
+  }
+  
   console.log('✅ Đã tạo file config.js thành công!');
   
   // Kiểm tra các file quan trọng khác

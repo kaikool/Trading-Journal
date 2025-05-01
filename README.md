@@ -29,6 +29,9 @@
 - Tối ưu hóa bộ nhớ đệm hình ảnh cho trải nghiệm người dùng tốt hơn
 - Hoàn thiện cấu hình GitHub Actions để triển khai tự động
 - Nâng cấp DataCacheContext với quản lý phiên bản và trạng thái tải tinh chỉnh hơn
+- Sửa lỗi "To run this command, you need to specify a project" khi triển khai Firebase Hosting
+- Cập nhật cấu trúc thư mục dist phù hợp với firebase.json
+- Sửa lỗi TypeScript trong các component biểu đồ Recharts
 
 ## Triển khai GitHub
 
