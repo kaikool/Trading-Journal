@@ -331,13 +331,13 @@ export default function TradeFormNew(props: TradeFormProps) {
     }
   }, [isEditMode, userId, hasDraft]);
   
-  // Thiết lập theo dõi hoạt động người dùng 
+  // Set up user activity monitoring
   useEffect(() => {
-    // Bắt đầu đếm thời gian khi có bản nháp
+    // Start counting time when there's a draft
     if (hasDraft) {
       resetInactivityTimer();
       
-      // Thiết lập các event listener để theo dõi hoạt động
+      // Set up event listeners to monitor activity
       const activityEvents = ['mousedown', 'keypress', 'scroll', 'touchstart'];
       
       const handleUserActivity = () => {
