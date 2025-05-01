@@ -51,19 +51,19 @@ export function OptimizedResponsiveContainer(props: React.ComponentProps<typeof 
 // Data components tối ưu
 export function OptimizedLine(props: React.ComponentProps<typeof Line>) {
   return useMemo(() => <Line {...props} />, 
-    [props.data, props.dataKey, props.name, props.stroke]
+    [props.dataKey, props.name, props.stroke, props.type, props.dot]
   );
 }
 
 export function OptimizedArea(props: React.ComponentProps<typeof Area>) {
   return useMemo(() => <Area {...props} />, 
-    [props.data, props.dataKey, props.name, props.fill, props.stroke]
+    [props.dataKey, props.name, props.fill, props.stroke, props.type]
   );
 }
 
 export function OptimizedBar(props: React.ComponentProps<typeof Bar>) {
   return useMemo(() => <Bar {...props} />, 
-    [props.data, props.dataKey, props.name, props.fill]
+    [props.dataKey, props.name, props.fill, props.radius]
   );
 }
 
