@@ -314,20 +314,20 @@ export default function TradeFormNew(props: TradeFormProps) {
   // Set up automatic draft deletion after 5 minutes of inactivity
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Hàm reset thời gian không hoạt động
+  // Function to reset inactivity timer
   const resetInactivityTimer = useCallback(() => {
-    // Xóa timer cũ
+    // Clear old timer
     if (inactivityTimeoutRef.current) {
       clearTimeout(inactivityTimeoutRef.current);
     }
     
-    // Chỉ thiết lập timer nếu có bản nháp
+    // Only set timer if there's a draft
     if (!isEditMode && userId && hasDraft) {
       inactivityTimeoutRef.current = setTimeout(() => {
         debug('Automatically clearing draft due to inactivity (5 minutes)');
         clearDraftFromLocalStorage(userId);
         setHasDraft(false);
-      }, 5 * 60 * 1000); // 5 phút = 300,000ms
+      }, 5 * 60 * 1000); // 5 minutes = 300,000ms
     }
   }, [isEditMode, userId, hasDraft]);
   
