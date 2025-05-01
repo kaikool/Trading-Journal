@@ -1,97 +1,83 @@
 # Forex Trading Journal
 
-Ứng dụng nhật ký giao dịch Forex chuyên nghiệp với phân tích tâm lý và hiệu suất toàn diện, hỗ trợ quản lý và tạo chiến lược giao dịch.
-
-## Công nghệ
-
-- **Frontend**: React.js + TypeScript
-- **Backend**: Node.js + Express
-- **Xác thực & Lưu trữ**: Firebase Authentication + Firebase Storage
-- **Database**: PostgreSQL với Drizzle ORM
-- **UI/UX**: Tailwind CSS + Shadcn UI
-- **Trực quan hóa dữ liệu**: Recharts
-- **PWA**: Service Worker cho khả năng sử dụng offline
+Ứng dụng nhật ký giao dịch Forex chuyên nghiệp với phân tích tâm lý và hiệu suất toàn diện cho các nhà giao dịch.
 
 ## Tính năng chính
 
-- **Quản lý giao dịch**: Ghi lại chi tiết các giao dịch, bao gồm phân tích trực quan
-- **Phân tích hiệu suất**: Thống kê và biểu đồ hiệu suất giao dịch theo thời gian, cặp tiền tệ, chiến lược
-- **Phân tích tâm lý**: Theo dõi trạng thái cảm xúc và mối tương quan với kết quả giao dịch
-- **Quản lý hình ảnh**: Tải lên và lưu trữ ảnh chụp màn hình biểu đồ trước và sau giao dịch
-- **Ứng dụng PWA**: Hỗ trợ cài đặt trên thiết bị và sử dụng offline
-- **Hệ thống thành tích**: Gamification để tạo động lực giao dịch nhất quán
+- 📊 Phân tích hiệu suất chuyên sâu
+- 📈 Biểu đồ trực quan
+- 💼 Quản lý danh mục đầu tư
+- 🧠 Theo dõi tâm lý giao dịch
+- 🏆 Hệ thống thành tựu và cấp độ
+- 📱 Hỗ trợ PWA (Progressive Web App)
 
-## Cập nhật mới (01/05/2025)
+## Hướng dẫn triển khai
 
-- Loại bỏ phụ thuộc vào Firebase Functions
-- Chuyển sang sử dụng Firebase Storage Web SDK trực tiếp
-- Cải thiện hiệu suất và giảm độ trễ khi tải ảnh
-- Tối ưu hóa bộ nhớ đệm hình ảnh cho trải nghiệm người dùng tốt hơn
-- Hoàn thiện cấu hình GitHub Actions để triển khai tự động
-- Nâng cấp DataCacheContext với quản lý phiên bản và trạng thái tải tinh chỉnh hơn
-- Sửa lỗi "To run this command, you need to specify a project" khi triển khai Firebase Hosting
-- Cập nhật cấu trúc thư mục dist phù hợp với firebase.json
-- Sửa lỗi TypeScript trong các component biểu đồ Recharts
+### 1. Triển khai qua GitHub Actions (Khuyến nghị)
 
-## Triển khai GitHub
+Dự án này đã được cấu hình để triển khai tự động qua GitHub Actions. Để sử dụng phương pháp này:
 
-### 1. Đẩy code lên GitHub
+1. **Tạo repository trên GitHub** và đẩy code lên.
 
-```bash
-# Đã cấu hình Git repository
-git remote add origin https://github.com/USERNAME/trading-journal.git
+2. **Cấu hình GitHub Secrets**:
+   - Đi tới repository > Settings > Secrets and variables > Actions
+   - Thêm các secrets sau:
+     ```
+     FIREBASE_TOKEN
+     VITE_FIREBASE_API_KEY
+     VITE_FIREBASE_APP_ID
+     VITE_FIREBASE_PROJECT_ID
+     VITE_FIREBASE_MESSAGING_SENDER_ID
+     VITE_FIREBASE_MEASUREMENT_ID
+     ```
 
-# Đẩy code lên GitHub sử dụng Personal Access Token
-git push -u origin master
+3. **Chạy workflow**:
+   - Khi bạn push code lên nhánh `main`, workflow sẽ tự động chạy.
+   - Hoặc bạn có thể kích hoạt thủ công: Actions > "Build and Deploy (Direct Config)" > Run workflow
+
+### 2. Triển khai thủ công
+
+1. **Cấu hình Firebase**:
+   - Tạo một tệp `public/config.js` từ mẫu `public/config-template.js`
+   - Điền các thông tin từ Firebase Console vào tệp này
+
+2. **Build ứng dụng**:
+   ```bash
+   npm run build
+   ```
+
+3. **Triển khai lên Firebase**:
+   ```bash
+   firebase deploy
+   ```
+
+## Lưu ý quan trọng
+
+- Phiên bản này sử dụng Firebase Storage Web SDK trực tiếp thay vì Firebase Functions.
+- Tệp `config.js` là bắt buộc trong thư mục public khi triển khai.
+- Đã chuyển đổi tất cả việc xử lý ảnh/tệp sang client-side để giảm chi phí.
+
+## Cấu trúc dự án
+
+```
+├── client/              # Mã nguồn frontend
+│   ├── src/             # Mã nguồn React
+│   │   ├── components/  # Components UI
+│   │   ├── contexts/    # Context API
+│   │   ├── hooks/       # Custom hooks
+│   │   ├── lib/         # Thư viện tiện ích
+│   │   ├── pages/       # Các trang chính
+│   │   └── types/       # TypeScript types
+├── public/              # Tài nguyên công khai
+├── scripts/             # Scripts tiện ích
+├── server/              # API server
+└── shared/              # Mã dùng chung
 ```
 
-### 2. Cấu hình GitHub Actions
+## Công nghệ sử dụng
 
-Để triển khai tự động với GitHub Actions, bạn cần cấu hình các Secret sau trong repository:
-
-- `FIREBASE_TOKEN`: Token của Firebase CI (Tạo bằng lệnh `firebase login:ci`)
-- `VITE_FIREBASE_API_KEY`: API Key từ Firebase Console
-- `VITE_FIREBASE_APP_ID`: Firebase App ID
-- `VITE_FIREBASE_PROJECT_ID`: Firebase Project ID (trading-journal-b83e9)
-- `VITE_FIREBASE_MESSAGING_SENDER_ID`: Firebase Messaging Sender ID
-- `VITE_FIREBASE_MEASUREMENT_ID`: Firebase Measurement ID
-
-Quy trình CI/CD được cấu hình trong file `.github/workflows/build-deploy.yml` và sẽ tự động triển khai khi có commit vào nhánh `main`.
-
-### 3. Kích hoạt Workflow
-
-Sau khi cấu hình các Secrets:
-1. Vào tab Actions trong GitHub repository
-2. Chọn workflow "Build and Deploy"
-3. Nhấn "Run workflow" và chọn nhánh tương ứng
-
-## Phát triển
-
-```bash
-# Cài đặt dependencies
-npm install
-
-# Chạy server phát triển
-npm run dev
-
-# Build cho production
-npm run build
-```
-
-## Cấu hình quan trọng
-
-Để cấu hình ứng dụng, cần đảm bảo cập nhật các tệp sau:
-
-- `.env.local`: Biến môi trường cho phát triển local
-- `public/config.js`: Cấu hình Firebase cho môi trường production (được tạo tự động từ template)
-- `firebase.json`: Cấu hình Firebase Hosting và Storage
-
-## Hướng dẫn triển khai với Personal Access Token
-
-Nếu gặp vấn đề xác thực khi push lên GitHub, hãy sử dụng Personal Access Token:
-
-```bash
-git remote add origin https://USERNAME:PERSONAL_ACCESS_TOKEN@github.com/USERNAME/REPO_NAME.git
-```
-
-GitHub sẽ sử dụng token này thay vì yêu cầu mật khẩu. Đảm bảo token có đủ quyền với scope "repo".
+- React với TypeScript cho frontend
+- Firebase cho xác thực và lưu trữ
+- Recharts cho biểu đồ phân tích
+- Shadcn UI + Tailwind CSS cho thiết kế
+- PWA cho khả năng làm việc offline
