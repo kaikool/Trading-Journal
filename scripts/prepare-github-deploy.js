@@ -15,6 +15,7 @@ const path = require('path');
 // Đường dẫn tới các file
 const CONFIG_TEMPLATE_PATH = path.join(__dirname, '../public/config-template.js');
 const CONFIG_OUTPUT_PATH = path.join(__dirname, '../public/config.js');
+const CONFIG_DIST_PATH = path.join(__dirname, '../dist/config.js');
 
 // Đọc template
 try {
