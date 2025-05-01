@@ -1,3 +1,7 @@
+// @ts-check
+// @ts-ignore
+// @filename: prepare-github-deploy.mjs
+
 /**
  * Script chuẩn bị cho triển khai GitHub Actions
  * 
@@ -9,8 +13,13 @@
  * Sử dụng: Chạy script này trong quy trình CI/CD trước khi build.
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Lấy đường dẫn hiện tại trong ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Đường dẫn tới các file
 const CONFIG_TEMPLATE_PATH = path.join(__dirname, '../public/config-template.js');
