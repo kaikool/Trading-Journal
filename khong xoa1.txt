@@ -1,0 +1,7 @@
+apiKey=AIzaSyAaCrPin2y3yfQGGzEZeQ2Ij2aMFzElHMc
+projectId=trading-journal-b83e9
+appId=1:721483185057:web:0744342c3a2a506c9e29e0
+authDomain=trading-journal-b83e9.firebaseapp.com
+storageBucket=trading-journal-b83e9.appspot.com
+messagingSenderId=721483185057
+firebase_token=1//0eg5H2TMWpxKWCgYIARAAGA4SNwF-L9Irmx32QATT4SsFs0SO06oe9Sg5PgIMzKE55chPtm97HB9GMInMJ6eoUZyxl407ycgZUCQ

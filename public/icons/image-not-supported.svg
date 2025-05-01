@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <title>Image Not Supported</title>
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <rect fill="#F5F5F5" x="0" y="0" width="200" height="200"></rect>
+    <g transform="translate(40, 40)" fill="#999999">
+      <path d="M120,0 C120,0 120,120 120,120 C120,120 0,120 0,120 C0,120 0,0 0,0 C0,0 120,0 120,0 Z M110,10 L10,10 L10,110 L110,110 L110,10 Z" fill-rule="nonzero"></path>
+      <path d="M35,40 C38.866,40 42,36.866 42,33 C42,29.134 38.866,26 35,26 C31.134,26 28,29.134 28,33 C28,36.866 31.134,40 35,40 Z" fill-rule="nonzero"></path>
+      <path d="M10,80 L40,50 L60,70 L90,40 L110,60 L110,110 L10,110 L10,80 Z" fill-rule="nonzero"></path>
+      <path d="M30,97 L90,37 C90,37 100,47 100,47 L40,107 C40,107 30,97 30,97 Z" fill="#FF4040" fill-rule="nonzero"></path>
+      <path d="M37,30 L97,90 C97,90 107,80 107,80 L47,20 C47,20 37,30 37,30 Z" fill="#FF4040" fill-rule="nonzero"></path>
+    </g>
+    <text font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#666666" text-anchor="middle" x="100" y="160">
+      Image not supported
+    </text>
+  </g>
+</svg>

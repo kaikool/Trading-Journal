@@ -1,0 +1,88 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist
+build
+dist-ssr
+dist-client
+dist-server
+server/public
+*.local
+
+# Environment and config
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+functions/.env*
+.firebase/*.cache
+
+# IDE and editor files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Firebase
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.runtimeconfig.json
+.firebase/
+
+# Testing
+coverage
+.nyc_output
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+*.bak
+tmp/
+temp/
+*.tar.gz
+
+# Development
+vite.config.ts.*
+.cache/
+.parcel-cache
+
+# Other
+.vercel
+.netlify
+
+# Generated files
+generated-icon.png

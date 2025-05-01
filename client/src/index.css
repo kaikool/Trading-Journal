@@ -1,0 +1,55 @@
+@import "./globals.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Thêm CSS cho safe area và notch */
+@supports(padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Compact table for analytics */
+.compact-table th, 
+.compact-table td {
+  padding: 8px !important;
+}
+
+.compact-table .truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* PWA Offline styles */
+body[data-offline-mode="true"] .suspense-boundary {
+  position: relative;
+}
+
+body[data-offline-mode="true"] .suspense-boundary::after {
+  content: "Limited functionality in offline mode";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  z-index: 10;
+}
+
+/* Animation for Suspense loading state */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

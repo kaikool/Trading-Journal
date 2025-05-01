@@ -1,0 +1,75 @@
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
+import { auth } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
+import TradeFormNew from "@/components/trades/TradeFormNew";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2, LineChart } from "lucide-react";
+
+export default function NewTrade() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [_, setLocation] = useLocation();
+  const { toast } = useToast();
+  
+  // Get userId from Firebase auth
+  const [userId, setUserId] = useState<string | undefined>(auth.currentUser?.uid);
+  
+  useEffect(() => {
+    if (auth.currentUser?.uid) {
+      setUserId(auth.currentUser.uid);
+    }
+  }, []);
+
+  if (!userId) {
+    setLocation("/auth/login");
+    return null;
+  }
+
+  return (
+    <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          New Trade
+        </h1>
+        <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
+          Record your trade details to track performance and gain insights
+        </p>
+      </div>
+
+      {isSubmitting ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center">
+            <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-5" />
+            <h3 className="text-lg font-semibold">Saving your trade...</h3>
+            <p className="text-muted-foreground mt-2 max-w-md">
+              Please wait while we record your trade details and process any uploaded images.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-card rounded-lg border border-border/40 p-3 sm:p-6 overflow-x-hidden">
+          <TradeFormNew 
+            mode="new"
+            userId={userId}
+            onSubmitting={setIsSubmitting}
+            onSuccess={() => {
+              toast({
+                title: "Trade saved successfully",
+                description: "Your trade has been recorded and added to your journal.",
+              });
+              setLocation("/history");
+            }}
+            onError={(error) => {
+              toast({
+                variant: "destructive",
+                title: "Failed to save trade",
+                description: error instanceof Error ? error.message : "An error occurred",
+              });
+              setIsSubmitting(false);
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,48 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Mặc định, từ chối tất cả các yêu cầu truy cập
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Cho phép người dùng đã xác thực đọc/ghi vào thư mục images (cấu trúc mới)
+    match /images/{userId}/{tradeId}/{imageFile} {
+      // Cho phép đọc nếu là chủ sở hữu
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Cho phép ghi nếu là chủ sở hữu và tuân thủ quy tắc về kích thước
+      allow write: if request.auth != null && 
+                     request.auth.uid == userId &&
+                     request.resource.size <= 10 * 1024 * 1024 && // Max 10MB
+                     request.resource.contentType.matches('image/.*');
+      // Cho phép xóa nếu là chủ sở hữu
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Cho phép người dùng đã xác thực đọc/ghi vào thư mục cá nhân của họ (cấu trúc cũ)
+    match /trades/{userId}/{tradeId}/{imageFile} {
+      // Chỉ cho phép đọc nếu là chủ sở hữu
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Chỉ cho phép ghi nếu là chủ sở hữu và tuân thủ quy tắc về kích thước
+      allow write: if request.auth != null && 
+                     request.auth.uid == userId &&
+                     request.resource.size <= 10 * 1024 * 1024 && // Max 10MB
+                     request.resource.contentType.matches('image/.*');
+      // Chỉ cho phép xóa nếu là chủ sở hữu
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Cho phép người dùng đã xác thực truy cập vào thư mục biểu đồ cá nhân (cấu trúc cũ)
+    match /charts/{userId}/{imageFile} {
+      // Chỉ cho phép đọc nếu là chủ sở hữu
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Chỉ cho phép ghi nếu là chủ sở hữu và tuân thủ quy tắc về kích thước
+      allow write: if request.auth != null && 
+                     request.auth.uid == userId && 
+                     request.resource.size <= 10 * 1024 * 1024 && // Max 10MB
+                     request.resource.contentType.matches('image/.*');
+      // Chỉ cho phép xóa nếu là chủ sở hữu
+      allow delete: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
