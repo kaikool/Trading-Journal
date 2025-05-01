@@ -103,15 +103,15 @@
 
   /* Mobile content - ensure proper spacing with navigation and home indicator */
   .has-bottom-nav {
-    /* Total: nav height + buffer (reduced padding further) */
+    /* Total: nav height + reduced padding */
     /* Buffer helps prevent content from being partially hidden by home indicator */
-    padding-bottom: calc(56px + 0px); /* Reduced from 60px+2px to 56px+0px */
+    padding-bottom: calc(52px + 0px); /* Reduced nav height from 56px to 52px */
     
     /* For devices with large safe areas (newer iPhones), optimize the padding */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(56px + 0px), /* Minimum padding - reduced */
-        calc(56px + env(safe-area-inset-bottom, 0px)) /* Dynamic padding with safe area */
+        calc(52px + 0px), /* Minimum padding - reduced */
+        calc(52px + env(safe-area-inset-bottom, 0px)) /* Dynamic padding with safe area */
       );
     }
   }
