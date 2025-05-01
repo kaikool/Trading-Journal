@@ -130,13 +130,16 @@ export function ChartImageDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className="sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] max-h-[85vh] p-0 overflow-hidden flex flex-col"
+        className="sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] p-0 overflow-hidden flex flex-col"
         aria-describedby="chart-image-viewer-description"
         style={{
-          // Fix không gian hiển thị trong PWA, tránh vượt ra ngoài màn hình
-          height: isMobile ? 'calc(100vh - 5rem)' : 'auto',
-          marginTop: 'auto',
-          marginBottom: 'auto'
+          width: '95vw',
+          maxHeight: isMobile ? 'calc(100vh - 100px)' : '85vh',
+          margin: 'auto',
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
         }}
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
