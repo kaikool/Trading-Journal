@@ -14,7 +14,12 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // Desktop (md+): Top-right, Mobile: Bottom (full width) respecting safe areas
+      "fixed z-[100] flex max-h-screen flex-col-reverse gap-2 p-4",
+      // Mobile: Bottom position, full width
+      "bottom-0 left-0 right-0 w-full pwa-bottom-inset",
+      // Tablet+: Top-right position, limited width
+      "md:top-4 md:bottom-auto md:right-4 md:left-auto md:w-auto md:max-w-[420px] md:flex-col-reverse",
       className
     )}
     {...props}
@@ -23,14 +28,15 @@ const ToastViewport = React.forwardRef<
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative overflow-hidden transition-all w-full flex flex-row items-start gap-3 data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[swipe=cancel]:translate-x-0 data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full md:data-[state=closed]:slide-out-to-right-full md:data-[state=open]:slide-in-from-right-full backdrop-blur-sm bg-opacity-95 dark:bg-opacity-90 p-4 rounded-2xl shadow-lg border data-[state=open]:duration-300 data-[state=closed]:duration-200 active:scale-[0.99] transition-transform",
   {
     variants: {
       variant: {
-        default: "border bg-background text-foreground",
-        destructive:
-          "destructive group border-destructive bg-destructive text-destructive-foreground",
-        info: "border bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800",
+        default: "bg-background/95 text-foreground border-border/40 dark:bg-background/80 dark:border-border/30 shadow-lg shadow-black/5 dark:shadow-black/20",
+        destructive: "destructive group border-destructive/30 bg-destructive/95 text-destructive-foreground dark:bg-destructive/80 dark:border-destructive/40 shadow-lg shadow-destructive/10",
+        info: "border-blue-200/70 bg-blue-50/95 text-blue-800 dark:bg-blue-900/80 dark:text-blue-200 dark:border-blue-900/50 shadow-lg shadow-blue-900/5",
+        success: "border-green-200/70 bg-green-50/95 text-green-800 dark:bg-green-900/80 dark:text-green-200 dark:border-green-900/50 shadow-lg shadow-green-900/5",
+        warning: "border-amber-200/70 bg-amber-50/95 text-amber-800 dark:bg-amber-900/80 dark:text-amber-200 dark:border-amber-900/50 shadow-lg shadow-amber-900/5",
       },
     },
     defaultVariants: {
@@ -115,7 +121,7 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
 
 type ToastActionElement = React.ReactElement<typeof ToastAction>
 
-export type ToastVariant = "default" | "destructive" | "info";
+export type ToastVariant = "default" | "destructive" | "info" | "success" | "warning";
 
 export {
   type ToastProps,
