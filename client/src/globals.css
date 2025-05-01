@@ -64,7 +64,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 60px; /* Reduced base height for the navigation bar */
+    height: 56px; /* Reduced base height for the navigation bar from 60px to 56px */
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border) / 0.4);
     z-index: 50;
@@ -97,21 +97,21 @@
   
   /* Navigation items should be positioned correctly regardless of safe area */
   .mobile-nav .grid {
-    height: 60px !important; /* Match reduced nav height */
+    height: 56px !important; /* Match reduced nav height */
     padding-bottom: 0 !important; /* Let the parent handle the safe area */
   }
 
   /* Mobile content - ensure proper spacing with navigation and home indicator */
   .has-bottom-nav {
-    /* Total: nav height + buffer (reduced padding) */
+    /* Total: nav height + buffer (reduced padding further) */
     /* Buffer helps prevent content from being partially hidden by home indicator */
-    padding-bottom: calc(60px + 8px);
+    padding-bottom: calc(56px + 0px); /* Reduced from 60px+2px to 56px+0px */
     
     /* For devices with large safe areas (newer iPhones), optimize the padding */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(60px + 8px), /* Minimum padding */
-        calc(60px + env(safe-area-inset-bottom, 0px)) /* Dynamic padding with safe area */
+        calc(56px + 0px), /* Minimum padding - reduced */
+        calc(56px + env(safe-area-inset-bottom, 0px)) /* Dynamic padding with safe area */
       );
     }
   }

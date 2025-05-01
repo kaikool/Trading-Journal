@@ -170,7 +170,8 @@ export default function BottomNav() {
     <nav 
       className={cn(
         "mobile-nav lg:hidden",
-        hasHomeIndicator && "with-home-indicator" // Add class for devices with home indicator
+        hasHomeIndicator && "with-home-indicator", // Add class for devices with home indicator
+        "h-[56px]" // Reduce height from 60px to 56px
       )}
       role="navigation"
       aria-label="Main Navigation"
