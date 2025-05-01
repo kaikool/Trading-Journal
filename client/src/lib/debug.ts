@@ -2,16 +2,16 @@
  * Logger utility for development environments
  * Controlled via environment variables - logs are automatically suppressed in production
  * 
- * Cải thiện hiệu suất:
- * - Tắt debug logs trong môi trường production
- * - Sử dụng các flag để kiểm soát chi tiết hơn
+ * Performance improvements:
+ * - Disable debug logs in production environment
+ * - Use flags for more detailed control
  */
 
 const isProduction = import.meta.env.PROD === true;
 const isDevelopment = !isProduction;
 
-// Thêm các flags để kiểm soát chi tiết hơn việc logging
-// Có thể thay đổi trực tiếp từ console trong development
+// Add flags to control logging in more detail
+// Can be changed directly from console in development
 interface DebugConfig {
   enabled: boolean;
   level: 'verbose' | 'normal' | 'minimal';
@@ -20,7 +20,7 @@ interface DebugConfig {
   };
 }
 
-// Cấu hình mặc định
+// Default configuration
 const DEBUG_CONFIG: DebugConfig = {
   enabled: isDevelopment,
   level: isDevelopment ? 'normal' : 'minimal',
@@ -46,25 +46,25 @@ if (isDevelopment && typeof window !== 'undefined') {
  * @param args - Optional additional data (rest parameters)
  */
 const debug = (msg: unknown, ...args: unknown[]) => {
-  // Fast-path cho production - tránh xử lý không cần thiết
+  // Fast-path for production - avoid unnecessary processing
   if (isProduction) return;
   
-  // Kiểm tra xem debug có được bật không
+  // Check if debug is enabled
   if (!DEBUG_CONFIG.enabled) return;
   
-  // Kiểm tra category nếu msg là string và có định dạng "[Category]"
+  // Check category if msg is a string with format "[Category]"
   if (typeof msg === 'string' && msg.startsWith('[') && msg.includes(']')) {
     const categoryMatch = msg.match(/\[(.*?)\]/);
     if (categoryMatch && categoryMatch[1]) {
       const category = categoryMatch[1].toLowerCase();
-      // Nếu category bị tắt, không log
+      // If category is disabled, don't log
       if (DEBUG_CONFIG.categories[category] === false) {
         return;
       }
     }
   }
   
-  // Log với format thích hợp
+  // Log with appropriate format
   if (args.length > 0) {
     console.log('[DEBUG]', msg, ...args);
   } else {

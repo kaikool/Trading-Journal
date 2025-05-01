@@ -2,7 +2,7 @@ import { Trade } from "@/types";
 import { TradeStatus } from "./trade-status-config";
 
 /**
- * Xác định trạng thái giao dịch dựa trên dữ liệu của giao dịch
+ * Determine trade status based on trade data
  */
 export function determineTradeStatus(trade: Trade): TradeStatus {
   if (trade.isOpen) {
@@ -13,7 +13,7 @@ export function determineTradeStatus(trade: Trade): TradeStatus {
 }
 
 /**
- * Format hiển thị kết quả của giao dịch (pip và lợi nhuận)
+ * Format the display of trade results (pips and profit)
  */
 export function getTradeResultDisplay(trade: Trade): {
   profitClass: string;
