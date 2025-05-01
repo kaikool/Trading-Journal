@@ -54,7 +54,13 @@ export function LazyChart({
       case 'pie':
         return (
           <PieChart {...rest}>
-            <Pie data={data} />
+            <Pie 
+              data={data} 
+              dataKey="value"
+              nameKey="name" 
+              cx="50%" 
+              cy="50%" 
+            />
             {children}
           </PieChart>
         );
