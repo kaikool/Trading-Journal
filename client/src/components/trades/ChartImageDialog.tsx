@@ -130,8 +130,14 @@ export function ChartImageDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className="sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] max-h-[95vh] p-0 overflow-hidden flex flex-col"
+        className="sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] max-h-[85vh] p-0 overflow-hidden flex flex-col"
         aria-describedby="chart-image-viewer-description"
+        style={{
+          // Fix không gian hiển thị trong PWA, tránh vượt ra ngoài màn hình
+          height: isMobile ? 'calc(100vh - 5rem)' : 'auto',
+          marginTop: 'auto',
+          marginBottom: 'auto'
+        }}
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
         
@@ -181,7 +187,7 @@ export function ChartImageDialog({
               <img 
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-                className="max-w-full max-h-[70vh] sm:max-h-[75vh] md:max-h-[80vh] object-contain"
+                className="max-w-full max-h-full object-contain"
                 onClick={(e) => e.stopPropagation()} /* Prevent closing dialog when clicking image */
                 decoding="async"
                 loading="eager" /* Optimize for dialog view */

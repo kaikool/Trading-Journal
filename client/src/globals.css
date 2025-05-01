@@ -103,14 +103,14 @@
 
   /* Mobile content - ensure proper spacing with navigation and home indicator */
   .has-bottom-nav {
-    /* Total: nav height + reduced padding */
-    /* Buffer helps prevent content from being partially hidden by home indicator */
-    padding-bottom: calc(52px + 0px); /* Reduced nav height from 56px to 52px */
+    /* Total: nav height (52px minimum) + minimal gap (4px) to avoid content touching nav */
+    padding-bottom: calc(52px + 4px);
     
-    /* For devices with large safe areas (newer iPhones), optimize the padding */
+    /* For devices with large safe areas (newer iPhones), optimize the padding
+       Tối ưu hóa giá trị để giảm khoảng trống thừa */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(52px + 0px), /* Minimum padding - reduced */
+        calc(52px + 4px), /* Base padding for all devices */
         calc(52px + env(safe-area-inset-bottom, 0px)) /* Dynamic padding with safe area */
       );
     }
