@@ -25,10 +25,12 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
       {/* Main content - với padding tối ưu cho PWA */}
       <main className={cn(
         "flex-1 px-4 pt-1", // Chỉ giữ padding bên và padding top tối thiểu
-        "pwa-top-inset", // Padding top cho safe area (notch/dynamic island)
-        "pb-safe" // Sử dụng safe area inset bottom thay vì padding cố định
+        "pwa-top-inset" // Padding top cho safe area (notch/dynamic island)
       )}>
         {children}
+        
+        {/* Spacer element để đảm bảo nội dung không bị BottomNav che phủ */}
+        <div className="w-full h-[60px] sm:h-[70px] md:h-0 lg:h-0" aria-hidden="true" />
       </main>
       
       {/* Bottom Navigation - sử dụng class thống nhất */}

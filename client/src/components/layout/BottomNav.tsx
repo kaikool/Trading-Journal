@@ -170,9 +170,12 @@ export default function BottomNav() {
     <nav 
       className={cn(
         "mobile-nav lg:hidden",
-        hasHomeIndicator && "with-home-indicator", // Add class for devices with home indicator
-        "h-[56px]" // Reduce height from 60px to 56px
+        // Sử dụng hệ thống className động thay vì fixed height
+        "h-14"
       )}
+      style={{
+        paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px'
+      }}
       role="navigation"
       aria-label="Main Navigation"
     >

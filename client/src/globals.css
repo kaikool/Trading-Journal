@@ -64,7 +64,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 56px; /* Base height for the navigation bar */
+    /* Sử dụng Tailwind's h-14 (56px) thay vì hardcoded height */
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border) / 0.4);
     z-index: 50;
@@ -81,8 +81,7 @@
     @supports (padding: max(0px)) {
       padding-left: max(env(safe-area-inset-left, 0px), 0px);
       padding-right: max(env(safe-area-inset-right, 0px), 0px);
-      /* Chỉ sử dụng 4px padding với safe-area-inset để tránh khoảng trống thừa */
-      padding-bottom: max(4px, env(safe-area-inset-bottom, 4px));
+      /* Safe area inset được xử lý bằng inline style trong BottomNav.tsx */
     }
   }
 
@@ -96,7 +95,7 @@
   
   /* Navigation items should be positioned correctly regardless of safe area */
   .mobile-nav .grid {
-    height: 56px !important; /* Match reduced nav height */
+    height: 100% !important; /* Sử dụng 100% height thay vì fixed height */
     padding-bottom: 0 !important; /* Let the parent handle the safe area */
   }
 
