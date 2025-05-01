@@ -186,29 +186,29 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       let exitImageM15Url = "";
       
       setIsUploading(true);
-      console.log("Bắt đầu quá trình tải lên ảnh...");
+      console.log("Starting image upload process...");
       
       try {
-        // Tạo mảng các promises để tải ảnh song song
+        // Create array of promises to upload images in parallel
         const uploadPromises = [];
         const uploadResults = {
           exitImage: null as string | null,
           exitImageM15: null as string | null
         };
         
-        // Thêm promise tải ảnh H4 (nếu có)
+        // Add promise to upload H4 image (if exists)
         if (exitImage) {
-          console.log("Chuẩn bị tải lên ảnh H4 exit");
+          console.log("Preparing to upload H4 exit image");
           const exitImagePromise = uploadTradeImage(
             trade.userId,
             trade.id,
             exitImage,
             "exit",
             (progress) => {
-              console.log(`Tải lên ảnh H4 exit: ${progress}%`);
+              console.log(`Uploading H4 exit image: ${progress}%`);
             }
           ).then(result => {
-            console.log("Tải lên ảnh H4 exit hoàn tất");
+            console.log("H4 exit image upload completed");
             uploadResults.exitImage = result.imageUrl;
             return result;
           }).catch(error => {
@@ -224,19 +224,19 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
           uploadPromises.push(exitImagePromise);
         }
         
-        // Thêm promise tải ảnh M15 (nếu có)
+        // Add promise to upload M15 image (if exists)
         if (exitImageM15) {
-          console.log("Chuẩn bị tải lên ảnh M15 exit");
+          console.log("Preparing to upload M15 exit image");
           const exitImageM15Promise = uploadTradeImage(
             trade.userId,
             trade.id,
             exitImageM15,
             "exitM15",
             (progress) => {
-              console.log(`Tải lên ảnh M15 exit: ${progress}%`);
+              console.log(`Uploading M15 exit image: ${progress}%`);
             }
           ).then(result => {
-            console.log("Tải lên ảnh M15 exit hoàn tất");
+            console.log("M15 exit image upload completed");
             uploadResults.exitImageM15 = result.imageUrl;
             return result;
           }).catch(error => {
@@ -252,13 +252,13 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
           uploadPromises.push(exitImageM15Promise);
         }
         
-        // Đợi tất cả các uploads hoàn thành (nếu có)
+        // Wait for all uploads to complete (if any)
         if (uploadPromises.length > 0) {
-          console.log(`Đang xử lý ${uploadPromises.length} tệp ảnh đồng thời...`);
+          console.log(`Processing ${uploadPromises.length} image files simultaneously...`);
           await Promise.allSettled(uploadPromises);
-          console.log("Tất cả quá trình tải ảnh đã hoàn tất");
+          console.log("All image uploads completed");
           
-          // Lấy các URL đã tải lên
+          // Get the uploaded URLs
           exitImageUrl = uploadResults.exitImage || "";
           exitImageM15Url = uploadResults.exitImageM15 || "";
         }
