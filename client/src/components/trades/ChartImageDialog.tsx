@@ -175,9 +175,17 @@ export function ChartImageDialog({
               alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
               className="max-w-full max-h-[70vh] sm:max-h-[75vh] md:max-h-[80vh] object-contain"
               onClick={(e) => e.stopPropagation()} /* Prevent closing dialog when clicking image */
+              decoding="async"
               onError={(e) => {
                 console.error(`Error loading image in ChartImageDialog: ${currentImage.originalSrc}`);
                 const imgElement = e.currentTarget as HTMLImageElement;
+                
+                // Thử tải lại một lần nữa với URL gốc nếu có
+                if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
+                  console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
+                  imgElement.src = currentImage.originalSrc;
+                  return;
+                }
                 
                 // Đặt lại ảnh thay thế cho lỗi
                 imgElement.src = '/icons/image-not-supported.svg';

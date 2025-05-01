@@ -230,10 +230,19 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                         alt={`${pair} ${direction} trade chart`}
                         className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                         loading="lazy"
+                        decoding="async"
                         onLoad={() => setImageLoaded(true)}
                         onError={(e) => {
                           console.error(`Error displaying image for trade ${id}: ${displayUrl}`);
                           const imgElement = e.currentTarget as HTMLImageElement;
+                          
+                          // Thử tải lại một lần nữa với URL gốc nếu có
+                          if (displayUrl && imgElement.src !== displayUrl) {
+                            console.log(`Retrying with original URL: ${displayUrl}`);
+                            imgElement.src = displayUrl;
+                            return;
+                          }
+                          
                           // Hiển thị hình ảnh thay thế cho lỗi
                           imgElement.src = '/icons/image-not-supported.svg';
                           imgElement.classList.add('opacity-60');
