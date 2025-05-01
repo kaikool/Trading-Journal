@@ -134,10 +134,10 @@ export function ChartImageDialog({
         aria-describedby="chart-image-viewer-description"
         style={{
           width: '95vw',
-          maxHeight: isMobile ? 'calc(100vh - 100px)' : '85vh',
+          maxHeight: isMobile ? 'calc(100dvh - 80px)' : '85vh', // Sử dụng dvh và giảm phần trừ đi
           margin: 'auto',
           position: 'fixed',
-          top: '50%',
+          top: '45%', // Đặt vị trí cao hơn một chút để tránh các vùng có nút vật lý
           left: '50%',
           transform: 'translate(-50%, -50%)'
         }}

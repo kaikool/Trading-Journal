@@ -13,7 +13,10 @@
     padding-top: max(0.5rem, env(safe-area-inset-top, 0.5rem));
   }
   
-  /* REMOVED: Điều chỉnh khoảng cách cho bottom nav - sử dụng định nghĩa trong globals.css */
+  /* Padding bottom tối ưu để tránh khoảng trống thừa */
+  .pb-safe {
+    padding-bottom: max(56px, calc(56px + env(safe-area-inset-bottom, 0px) * 0.4));
+  }
 }
 
 /* Compact table for analytics */
