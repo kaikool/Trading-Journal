@@ -153,46 +153,65 @@ export function ChartImageDialog({
           {...swipeHandlers}
           className="relative overflow-auto flex-1 flex items-center justify-center bg-black/5 dark:bg-white/5 rounded-md"
         >
-          {isLoading ? (
-            <div className="flex flex-col items-center justify-center p-8">
-              <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-              <span className="mt-2 text-sm text-muted-foreground">Loading image...</span>
-            </div>
-          ) : error ? (
-            <div className="flex flex-col items-center justify-center p-8 text-center">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Loading overlay - always visible when loading */}
+            {isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 z-10">
+                <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+                <span className="mt-2 text-sm text-muted-foreground">Loading image...</span>
+              </div>
+            )}
+            
+            {/* Error overlay - only shown when error is present and not loading */}
+            {error && !isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 z-10">
+                <img 
+                  src="/icons/image-not-supported.svg" 
+                  alt="Error loading image"
+                  className="h-16 w-16 opacity-60 mb-4"
+                />
+                <span className="text-sm text-muted-foreground">
+                  Error loading image. Please try again later.
+                </span>
+              </div>
+            )}
+            
+            {/* Image container - always present to avoid layout shifts */}
+            <div className={`w-full h-full flex items-center justify-center transition-opacity duration-300 ${isLoading || error ? 'opacity-0' : 'opacity-100'}`}>
               <img 
-                src="/icons/image-not-supported.svg" 
-                alt="Error loading image"
-                className="h-16 w-16 opacity-60 mb-4"
+                src={imageUrl || '/icons/blank-chart.svg'} 
+                alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
+                className="max-w-full max-h-[70vh] sm:max-h-[75vh] md:max-h-[80vh] object-contain"
+                onClick={(e) => e.stopPropagation()} /* Prevent closing dialog when clicking image */
+                decoding="async"
+                loading="eager" /* Optimize for dialog view */
+                style={{ visibility: isLoading || error ? 'hidden' : 'visible' }}
+                onLoad={(e) => {
+                  // Kiểm tra xem hình ảnh đã được tải thành công hay không
+                  const img = e.currentTarget;
+                  if (img.naturalWidth > 1 && img.naturalHeight > 1) {
+                    // Ảnh hợp lệ, hiển thị
+                    img.style.visibility = 'visible';
+                  }
+                }}
+                onError={(e) => {
+                  console.error(`Error loading image in ChartImageDialog: ${currentImage.originalSrc}`);
+                  const imgElement = e.currentTarget as HTMLImageElement;
+                  
+                  // Ghi nhận lỗi nhưng không hiển thị thông báo lỗi
+                  // Thử tải lại một lần nữa với URL gốc nếu có
+                  if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
+                    console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
+                    imgElement.src = currentImage.originalSrc;
+                    return;
+                  }
+                  
+                  // Ẩn hình ảnh lỗi
+                  imgElement.style.display = 'none';
+                }}
               />
-              <span className="text-sm text-muted-foreground">
-                Error loading image. Please try again later.
-              </span>
             </div>
-          ) : (
-            <img 
-              src={imageUrl || '/icons/image-not-supported.svg'} 
-              alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-              className="max-w-full max-h-[70vh] sm:max-h-[75vh] md:max-h-[80vh] object-contain"
-              onClick={(e) => e.stopPropagation()} /* Prevent closing dialog when clicking image */
-              decoding="async"
-              onError={(e) => {
-                console.error(`Error loading image in ChartImageDialog: ${currentImage.originalSrc}`);
-                const imgElement = e.currentTarget as HTMLImageElement;
-                
-                // Thử tải lại một lần nữa với URL gốc nếu có
-                if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
-                  console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
-                  imgElement.src = currentImage.originalSrc;
-                  return;
-                }
-                
-                // Đặt lại ảnh thay thế cho lỗi
-                imgElement.src = '/icons/image-not-supported.svg';
-                imgElement.classList.add('opacity-60');
-              }}
-            />
-          )}
+          </div>
           
           {/* Overlay displaying timeframe and image type information */}
           <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-sm">

@@ -382,7 +382,7 @@ class ImageCacheService {
     }
     
     try {
-      // Kiểm tra cache
+      // Kiểm tra cache trước
       const cachedImage = await this.getFromCache(url);
       
       if (cachedImage) {
@@ -390,23 +390,65 @@ class ImageCacheService {
         return URL.createObjectURL(cachedImage);
       }
       
-      // Nếu không có trong cache, tải ảnh
-      const response = await fetch(url, { cache: 'no-store' });
+      // Cache miss: tạo một đối tượng AbortController để có thể hủy request nếu cần
+      const controller = new AbortController();
+      const signal = controller.signal;
       
-      if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+      // Thiết lập timeout để tránh request treo quá lâu
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 giây
+      
+      try {
+        // Nếu không có trong cache, tải ảnh với signal để có thể abort
+        const response = await fetch(url, { 
+          cache: 'no-store', 
+          signal,
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        // Xóa timeout sau khi request hoàn thành
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+        }
+        
+        const imageBlob = await response.blob();
+        
+        // Kiểm tra kích thước và loại ảnh để đảm bảo tính hợp lệ
+        if (imageBlob.size === 0) {
+          throw new Error('Empty image blob received');
+        }
+        
+        // Lưu vào cache
+        await this.addToCache(url, imageBlob, options);
+        
+        // Trả về blob URL để sử dụng ngay
+        return URL.createObjectURL(imageBlob);
+      } catch (fetchError) {
+        // Xóa timeout nếu có lỗi
+        clearTimeout(timeoutId);
+        
+        // Log lỗi và chuyển tiếp để xử lý ở phần catch bên ngoài
+        console.warn('Fetch error:', fetchError);
+        throw fetchError;
       }
-      
-      const imageBlob = await response.blob();
-      
-      // Lưu vào cache
-      await this.addToCache(url, imageBlob, options);
-      
-      // Trả về URL gốc trong trường hợp này
-      return url;
     } catch (error) {
       console.error('Lỗi khi tải ảnh:', error);
-      // Trả về URL gốc nếu có lỗi
+      
+      try {
+        // Thử lại kiểm tra cache - lần này trả về bất kỳ kết quả nào có sẵn
+        const cachedImageRetry = await this.getFromCache(url);
+        if (cachedImageRetry) {
+          return URL.createObjectURL(cachedImageRetry);
+        }
+      } catch (retryError) {
+        // Bỏ qua lỗi của thử lại
+      }
+      
+      // Trả về URL gốc nếu không còn cách nào khác
       return url;
     }
   }

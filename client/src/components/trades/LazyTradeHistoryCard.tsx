@@ -213,29 +213,35 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
               >
                 {displayUrl ? (
                   <>
-                    {isImageLoading ? (
-                      <div className="w-full h-full flex flex-col items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
-                        <span className="text-xs text-muted-foreground mt-2">Loading image...</span>
-                      </div>
-                    ) : imageError ? (
-                      <div className="w-full h-full flex flex-col items-center justify-center">
-                        <img src="/icons/image-not-supported.svg" alt="Error loading image" className="h-12 w-12 opacity-60 mb-2" />
-                        <span className="text-xs text-muted-foreground">Failed to load image</span>
-                      </div>
-                    ) : (
+                    {/* Placeholder image (always shown initially) */}
+                    <div className={`absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 transition-opacity duration-300 ${imageLoaded && !isImageLoading ? 'opacity-0' : 'opacity-100'}`}>
+                      {isImageLoading && (
+                        <div className="flex flex-col items-center justify-center">
+                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Actual image (hidden until loaded) */}
+                    <div className={`absolute inset-0 transition-opacity duration-300 ${imageLoaded && !isImageLoading ? 'opacity-100' : 'opacity-0'}`}>
                       <img 
                         ref={imageRef}
                         src={cachedImageUrl || '/icons/blank-chart.svg'}
                         alt={`${pair} ${direction} trade chart`}
-                        className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        className="w-full h-full object-cover"
                         loading="lazy"
                         decoding="async"
-                        onLoad={() => setImageLoaded(true)}
+                        onLoad={() => {
+                          // Only set as loaded if it's not an error image
+                          if (cachedImageUrl && !cachedImageUrl.includes('image-not-supported')) {
+                            setImageLoaded(true);
+                          }
+                        }}
                         onError={(e) => {
                           console.error(`Error displaying image for trade ${id}: ${displayUrl}`);
                           const imgElement = e.currentTarget as HTMLImageElement;
                           
+                          // Không hiển thị lỗi tạm thời - giữ nguyên trạng thái loading
                           // Thử tải lại một lần nữa với URL gốc nếu có
                           if (displayUrl && imgElement.src !== displayUrl) {
                             console.log(`Retrying with original URL: ${displayUrl}`);
@@ -243,14 +249,15 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                             return;
                           }
                           
-                          // Hiển thị hình ảnh thay thế cho lỗi
-                          imgElement.src = '/icons/image-not-supported.svg';
-                          imgElement.classList.add('opacity-60');
+                          // Hiển thị hình ảnh thay thế nhưng giữ nguyên trạng thái loading
+                          // để tránh hiển thị lỗi hình ảnh
+                          imgElement.style.display = 'none';
                         }}
                       />
-                    )}
+                    </div>
                     
-                    {!isImageLoading && !imageError && cachedImageUrl && (
+                    {/* Zoom icon and timeframe badge - Only show when image is successfully loaded */}
+                    {imageLoaded && !isImageLoading && !imageError && (
                       <>
                         {/* Zoom overlay icon that appears on hover */}
                         <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -261,8 +268,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                         <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                           {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
                         </div>
-                        
-
                       </>
                     )}
                   </>

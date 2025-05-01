@@ -33,11 +33,12 @@ export function useCachedImage(
   originalUrl: string | null | undefined,
   options: UseCachedImageOptions
 ): UseCachedImageResult {
-  const [imageUrl, setImageUrl] = useState<string | null>(options.placeholder || null);
-  const [isLoading, setIsLoading] = useState(!!originalUrl);
+  const [imageUrl, setImageUrl] = useState<string | null>(null); // Không hiển thị placeholder ngay lập tức
+  const [isLoading, setIsLoading] = useState(true); // Bắt đầu với trạng thái loading
   const [error, setError] = useState<Error | null>(null);
   const [reloadCounter, setReloadCounter] = useState(0);
   const [hasAttempted, setHasAttempted] = useState(false);
+  const [hasPreloadedImage, setHasPreloadedImage] = useState(false);
 
   useEffect(() => {
     // Kiểm tra XSS trong URL - bảo mật
@@ -45,19 +46,20 @@ export function useCachedImage(
       return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:');
     };
     
-    // Quyết định xem có cần đặt loading state hay không
-    let shouldSetLoading = true;
-    
     // Reset state khi URL thay đổi
     setError(null);
     setHasAttempted(false);
+    setHasPreloadedImage(false);
 
-    // Nếu không có URL, không làm gì cả
+    // Nếu không có URL, sử dụng placeholder và dừng loading ngay lập tức
     if (!originalUrl) {
       setImageUrl(options.placeholder || null);
       setIsLoading(false);
       return;
     }
+    
+    // Không set loading state ngay lập tức, chờ kiểm tra cache trước
+    setIsLoading(true);
     
     // Kiểm tra nếu chúng ta đã có URL này trong bộ nhớ cache trình duyệt
     const checkInBrowserCache = async (url: string) => {
@@ -75,28 +77,19 @@ export function useCachedImage(
       return false;
     };
     
-    // Tối ưu loading
-    const attemptLoadFromCache = async () => {
-      if (typeof originalUrl === 'string') {
-        // Đánh dấu đã thử tải ảnh
-        setHasAttempted(true);
-        
-        // Kiểm tra xem URL có trong cache của browser không
-        const isInBrowserCache = await checkInBrowserCache(originalUrl);
-        
-        if (isInBrowserCache && !options.forceRefresh) {
-          // Không cần set loading nếu có trong cache browser
-          shouldSetLoading = false;
-        }
-      }
-      
-      if (shouldSetLoading) {
-        setIsLoading(true);
-      }
+    // Hàm preload ảnh trước khi hiển thị
+    const preloadImage = (url: string): Promise<boolean> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          setHasPreloadedImage(true);
+          resolve(true);
+        };
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
     };
     
-    attemptLoadFromCache();
-
     async function loadImage() {
       try {
         setError(null);
@@ -110,28 +103,23 @@ export function useCachedImage(
           throw new Error('Unsafe URL scheme detected');
         }
 
-        // Cố gắng tải hình ảnh trực tiếp để kiểm tra trước
-        try {
-          // Tạo promise với timeout
-          const imageLoadPromise = new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => reject(new Error('Failed to load image directly'));
-            img.src = originalUrl;
-          });
-          
-          // Set timeout 5 giây để tránh chờ quá lâu
-          const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Image load timeout')), 5000);
-          });
-          
-          // Thử tải hình ảnh với timeout
-          await Promise.race([imageLoadPromise, timeoutPromise]);
-        } catch (directLoadErr) {
-          // Lỗi tải trực tiếp được ghi nhận nhưng chúng ta vẫn tiếp tục với cache
-          console.warn('Cannot load image directly, trying cache:', directLoadErr);
+        // Kiểm tra cache trước tiên - đây là phần quan trọng nhất
+        const isInBrowserCache = await checkInBrowserCache(originalUrl);
+        
+        // Nếu đã có trong cache, sử dụng ngay lập tức
+        if (isInBrowserCache && !options.forceRefresh) {
+          setImageUrl(originalUrl);
+          // Chờ preload ảnh trước khi tắt loading
+          const preloaded = await preloadImage(originalUrl);
+          if (preloaded) {
+            setIsLoading(false);
+            return;
+          }
         }
-
+        
+        // Bắt đầu tải ảnh từ cache hoặc từ nguồn
+        // Không thực hiện kiểm tra trực tiếp như trước đây để tránh hiển thị lỗi tạm thời
+        
         // Sử dụng service để lấy ảnh từ cache hoặc tải từ nguồn
         const cachedUrl = await imageCacheService.getOrFetchImage(originalUrl, {
           tradeId: options.tradeId,
@@ -141,15 +129,21 @@ export function useCachedImage(
         });
 
         if (cachedUrl) {
+          // Preload ảnh trước khi hiển thị
+          await preloadImage(cachedUrl);
           setImageUrl(cachedUrl);
           setIsLoading(false);
+        } else if (options.placeholder) {
+          // Nếu không thể tải từ cache và có placeholder, sử dụng placeholder
+          setImageUrl(options.placeholder);
+          setIsLoading(false);
         } else {
-          // Nếu không lấy được từ cache, trở về URL gốc
+          // Trường hợp không có cả hai, thử URL gốc
           setImageUrl(originalUrl);
           setIsLoading(false);
         }
       } catch (err) {
-        // Sử dụng biến boolean để kiểm soát log trong production
+        // Log lỗi trong development
         if (process.env.NODE_ENV !== 'production') {
           console.error('Lỗi khi tải ảnh:', err);
         }
@@ -157,20 +151,13 @@ export function useCachedImage(
         setError(err instanceof Error ? err : new Error(String(err)));
         setIsLoading(false);
         
-        // Giữ placeholder hoặc trả về URL gốc trong trường hợp lỗi
-        if (options.placeholder) {
-          setImageUrl(options.placeholder);
-        } else if (originalUrl && typeof originalUrl === 'string' && isSafeUrl(originalUrl)) {
-          // Trong trường hợp lỗi, vẫn thử dùng URL gốc
-          setImageUrl(originalUrl);
-        } else {
-          setImageUrl(null);
-        }
+        // Luôn sử dụng placeholder trong trường hợp lỗi để tránh hiển thị lỗi tạm thời
+        setImageUrl(options.placeholder || null);
       }
     }
 
-    // Đặt timeout ngắn để đảm bảo UI không bị block
-    const timeoutId = setTimeout(loadImage, 10);
+    // Sử dụng setTimeout để tránh blocking UI, nhưng đặt độ ưu tiên cao hơn
+    const timeoutId = setTimeout(loadImage, 5);
 
     // Cleanup function để revoke objectURL khi component unmount hoặc URL thay đổi
     return () => {
