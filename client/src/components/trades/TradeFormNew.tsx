@@ -411,8 +411,8 @@ export default function TradeFormNew(props: TradeFormProps) {
     } catch (error) {
       logError('Error loading draft:', error);
       toast({
-        title: "Lỗi khi tải bản nháp",
-        description: "Không thể tải bản nháp. Vui lòng thử lại.",
+        title: "Error Loading Draft",
+        description: "Could not load draft. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -429,8 +429,8 @@ export default function TradeFormNew(props: TradeFormProps) {
       setShowDraftNotice(false);
       
       toast({
-        title: "Đã xóa bản nháp",
-        description: "Bản nháp đã được xóa thành công.",
+        title: "Draft Deleted",
+        description: "Your draft has been successfully deleted.",
         variant: "default"
       });
     }
@@ -1676,9 +1676,9 @@ export default function TradeFormNew(props: TradeFormProps) {
       {showDraftNotice && !isEditMode && (
         <Alert variant="default" className="mb-4 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
           <Info className="h-4 w-4 text-blue-500" />
-          <AlertTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">Bản nháp có sẵn</AlertTitle>
+          <AlertTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">Draft Available</AlertTitle>
           <AlertDescription className="text-sm text-blue-600 dark:text-blue-300">
-            Bạn có bản nháp chưa lưu cho giao dịch này. Bạn muốn khôi phục hay xóa nó?
+            You have an unsaved draft for this trade. Would you like to restore or delete it?
           </AlertDescription>
           <div className="mt-2 flex flex-row gap-2">
             <Button 
@@ -1692,12 +1692,12 @@ export default function TradeFormNew(props: TradeFormProps) {
               {isDraftLoading ? (
                 <>
                   <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                  Đang tải...
+                  Loading...
                 </>
               ) : (
                 <>
                   <Download className="mr-1.5 h-3.5 w-3.5" />
-                  Tải bản nháp
+                  Load Draft
                 </>
               )}
             </Button>
