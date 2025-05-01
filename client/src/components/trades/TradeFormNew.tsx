@@ -299,19 +299,19 @@ export default function TradeFormNew(props: TradeFormProps) {
   const [accountBalance, setAccountBalance] = useState<number>(DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE);
   const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
   
-  // Tự động tải bản nháp khi component được mount - không hiện thông báo
+  // Automatically load draft when component mounts - no notification
   useEffect(() => {
     if (!isEditMode && userId) {
       const draft = loadDraftFromLocalStorage(userId);
       if (draft) {
         setHasDraft(true);
-        // Tự động áp dụng bản nháp
+        // Automatically apply draft
         loadDraft();
       }
     }
   }, [isEditMode, userId]);
   
-  // Thiết lập tự động xóa bản nháp sau 5 phút không hoạt động
+  // Set up automatic draft deletion after 5 minutes of inactivity
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Hàm reset thời gian không hoạt động
@@ -1672,7 +1672,7 @@ export default function TradeFormNew(props: TradeFormProps) {
   // Render the modern, redesigned form
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="form-container space-y-6 sm:space-y-8 w-full max-w-[100%] mx-auto overflow-hidden pb-4">
-      {/* Thông báo bản nháp nếu có */}
+      {/* Show draft notification if available */}
       {showDraftNotice && !isEditMode && (
         <Alert variant="default" className="mb-4 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
           <Info className="h-4 w-4 text-blue-500" />
@@ -1710,7 +1710,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               disabled={isDraftLoading}
             >
               <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-              Xóa bản nháp
+              Delete Draft
             </Button>
           </div>
         </Alert>
