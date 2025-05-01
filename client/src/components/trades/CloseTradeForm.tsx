@@ -212,11 +212,11 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
             uploadResults.exitImage = result.imageUrl;
             return result;
           }).catch(error => {
-            console.error("Lỗi tải ảnh H4 exit:", error);
+            console.error("Error uploading H4 exit image:", error);
             toast({
               variant: "destructive",
-              title: "Lỗi tải ảnh",
-              description: "Không thể tải lên biểu đồ H4. Bạn có thể tiếp tục đóng giao dịch."
+              title: "Image Upload Error",
+              description: "Could not upload H4 chart. You can continue closing the trade."
             });
             return null;
           });
@@ -240,11 +240,11 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
             uploadResults.exitImageM15 = result.imageUrl;
             return result;
           }).catch(error => {
-            console.error("Lỗi tải ảnh M15 exit:", error);
+            console.error("Error uploading M15 exit image:", error);
             toast({
               variant: "destructive",
-              title: "Lỗi tải ảnh",
-              description: "Không thể tải lên biểu đồ M15. Bạn có thể tiếp tục đóng giao dịch."
+              title: "Image Upload Error",
+              description: "Could not upload M15 chart. You can continue closing the trade."
             });
             return null;
           });
@@ -263,12 +263,12 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
           exitImageM15Url = uploadResults.exitImageM15 || "";
         }
       } catch (uploadError) {
-        console.error("Lỗi trong quá trình tải lên ảnh:", uploadError);
-        // Tiếp tục đóng giao dịch ngay cả khi có lỗi tải ảnh
+        console.error("Error during image upload process:", uploadError);
+        // Continue closing the trade even with image upload errors
         toast({
           variant: "destructive",
-          title: "Cảnh báo",
-          description: "Có lỗi khi tải ảnh lên. Giao dịch sẽ được đóng nhưng không có ảnh."
+          title: "Warning",
+          description: "Error uploading images. The trade will be closed without images."
         });
       } finally {
         setIsUploading(false);
