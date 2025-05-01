@@ -130,7 +130,7 @@ export function ChartImageDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] max-h-[95vh] p-1 sm:p-4 overflow-hidden flex flex-col"
+        className="sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] max-h-[95vh] p-0 overflow-hidden flex flex-col"
         aria-describedby="chart-image-viewer-description"
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
@@ -173,7 +173,7 @@ export function ChartImageDialog({
             <img 
               src={imageUrl || '/icons/image-not-supported.svg'} 
               alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-              className="max-w-full object-contain"
+              className="max-w-full max-h-[70vh] sm:max-h-[75vh] md:max-h-[80vh] object-contain"
               onClick={(e) => e.stopPropagation()} /* Prevent closing dialog when clicking image */
               onError={(e) => {
                 console.error(`Error loading image in ChartImageDialog: ${currentImage.originalSrc}`);
