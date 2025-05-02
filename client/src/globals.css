@@ -341,12 +341,14 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
-  /* Main content area in PWA mode */
+  /* Main content area in PWA mode - single balanced rule */
   html.pwa-mode .pwa-main-content,
   .pwa-main-content {
-    /* Optimize main content padding/margin in PWA */
-    padding-top: max(env(safe-area-inset-top, 0px), 8px); /* At least 8px padding top */
+    /* Single balanced rule for safe areas with minimal extra whitespace */
+    padding-top: max(env(safe-area-inset-top, 0px), 4px); /* Reduced to prevent excessive top margin */
     padding-bottom: 0; /* Bottom padding removed, handled by spacer */
+    padding-left: max(env(safe-area-inset-left, 0px), 16px); /* Consistent side padding */
+    padding-right: max(env(safe-area-inset-right, 0px), 16px); /* Consistent side padding */
     max-height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px)); /* Account for bottom nav */
     overflow-y: auto; /* Allow scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */

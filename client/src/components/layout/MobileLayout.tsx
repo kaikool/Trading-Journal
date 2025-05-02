@@ -35,34 +35,19 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
     )}>
       {/* Main content - với padding tối ưu cho PWA */}
       <main className={cn(
-        "flex-1 px-4", // Padding bên cạnh cố định
-        // Tối ưu hóa padding top cho từng trường hợp
-        isPWAMode 
-          ? "pt-safe" // Sử dụng safe area inset top cho PWA
-          : "pt-1", // Padding tối thiểu ở chế độ không phải PWA
-        // Thêm class cho PWA mode
+        "flex-1", // Remove fixed padding, now handled by pwa-main-content
+        // PWA class đã bao gồm tất cả padding cần thiết
         isPWAMode && "pwa-main-content"
-      )}
-      style={{
-        // Fine-tuning padding top trong PWA mode để giảm không gian lãng phí
-        ...(isPWAMode && {
-          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 4px)',
-        })
-      }}>
+      )}>
         {children}
         
         {/* Spacer element để đảm bảo nội dung không bị BottomNav che phủ */}
+        {/* Spacer thống nhất - sử dụng CSS class */}
         <div 
           className={cn(
-            "w-full sm:h-[70px] md:h-0 lg:h-0",
-            isPWAMode && "pwa-bottom-spacer" // Special class for PWA mode
+            "w-full",
+            isPWAMode ? "pwa-bottom-spacer" : "h-[60px] sm:h-[70px] md:h-0 lg:h-0"
           )}
-          style={{
-            // Dynamic height calculation using safe area
-            height: isPWAMode 
-              ? 'calc(56px + env(safe-area-inset-bottom, 0px) + 4px)' // Thêm 4px để tránh bị sát đáy
-              : '60px' // Chiều cao cố định khi không ở PWA mode
-          }}
           aria-hidden="true" 
         />
       </main>
