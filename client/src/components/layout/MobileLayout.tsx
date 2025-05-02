@@ -49,7 +49,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
         isPWA ? "pwa-standalone-container" : ""
       )}
     >
-      {/* Main content with Facebook-style layout */}
+      {/* Main content with GitHub-style layout */}
       <main 
         className={cn(
           "flex-1", // Always full height
@@ -81,7 +81,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
         </div>
       </main>
       
-      {/* Bottom Navigation - Facebook style */}
+      {/* Bottom Navigation - GitHub style */}
       <BottomNav />
     </div>
   );
