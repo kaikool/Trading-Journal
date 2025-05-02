@@ -323,16 +323,31 @@
   }
   
   /* PWA-specific adjustments for MobileLayout */
-  html.pwa-mode .mobile-layout {
+  html.pwa-mode .mobile-layout,
+  .pwa-mobile-layout {
     /* Match the same padding/margin as on real mobile devices */
     padding-top: env(safe-area-inset-top, 0px);
   }
   
   /* Fix for mobile navigation in PWA mode */
-  html.pwa-mode .mobile-nav {
+  html.pwa-mode .mobile-nav,
+  .pwa-mobile-nav {
     /* Ensure navigation respects safe areas */
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  
+  /* Special classes for PWA mode bottom navigation */
+  .pwa-mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background-color: hsl(var(--background));
+    border-top: 1px solid hsl(var(--border) / 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   
   /* Fix horizontal scrolling issues */

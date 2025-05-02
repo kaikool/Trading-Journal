@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
+import { isPWA } from "@/lib/pwa-helper";
 
 interface BottomNavItemProps {
   icon: React.ReactNode;
@@ -68,7 +69,11 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
   );
 }
 
-export default function BottomNav() {
+interface BottomNavProps {
+  isPWAMode?: boolean;
+}
+
+export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
@@ -86,7 +91,16 @@ export default function BottomNav() {
     // This is a best-effort detection - modern iOS devices have safe-area-inset-bottom > 0
     const detectHomeIndicator = () => {
       try {
-        // Try to get computed safe area inset bottom
+        // Check for PWA mode first as it always needs safe area insets
+        const pwaMode = isPWA() || isPWAMode;
+        
+        if (pwaMode) {
+          // PWA mode always needs safe area handling
+          setHasHomeIndicator(true);
+          return;
+        }
+        
+        // Otherwise, try to get computed safe area inset bottom
         const safeAreaInsetBottom = parseInt(
           getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom') ||
           getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom') ||
@@ -101,7 +115,8 @@ export default function BottomNav() {
         setHasHomeIndicator(safeAreaInsetBottom > 0 || (isIOS && isModernDevice));
       } catch (e) {
         console.error('Error detecting home indicator:', e);
-        setHasHomeIndicator(false);
+        // Default to true for safety in case of errors
+        setHasHomeIndicator(true);
       }
     };
     
@@ -117,18 +132,17 @@ export default function BottomNav() {
     detectHomeIndicator();
     
     // Update on resize for orientation changes
-    window.addEventListener('resize', () => {
+    const handleResize = () => {
       setSafeAreaVars();
       detectHomeIndicator();
-    });
+    };
+    
+    window.addEventListener('resize', handleResize);
     
     return () => {
-      window.removeEventListener('resize', () => {
-        setSafeAreaVars();
-        detectHomeIndicator();
-      });
+      window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [isPWAMode]);
 
   // Only show when mounted to avoid hydration mismatch
   if (!mounted) return null;
@@ -171,10 +185,14 @@ export default function BottomNav() {
       className={cn(
         "mobile-nav lg:hidden",
         // Sử dụng hệ thống className động thay vì fixed height
-        "h-14"
+        // Thêm class đặc biệt khi ở chế độ PWA
+        isPWAMode ? "pwa-mobile-nav" : "h-14"
       )}
       style={{
-        paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px'
+        // Luôn áp dụng padding bottom cho home indicator trong PWA mode
+        paddingBottom: (hasHomeIndicator || isPWAMode) ? 'env(safe-area-inset-bottom, 0px)' : '0px',
+        // Đặt height động để tự điều chỉnh dựa trên safe area
+        height: isPWAMode ? 'calc(56px + env(safe-area-inset-bottom, 0px))' : undefined
       }}
       role="navigation"
       aria-label="Main Navigation"
@@ -182,7 +200,9 @@ export default function BottomNav() {
       <div 
         className={cn(
           "grid w-full h-full", 
-          devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5'
+          devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5',
+          // Thêm lớp pb-safe cho vùng điều hướng trong PWA mode
+          isPWAMode && "pb-safe"
         )}
       >
         {devicePerformance === 'low' ? (

@@ -8,29 +8,15 @@ interface MobileLayoutProps {
   children: React.ReactNode;
 }
 
-export default function MobileLayout({ children }: MobileLayoutProps) {
-  const isMobile = useIsMobile();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Không render nếu không phải mobile hoặc chưa mounted (tránh hydration mismatch)
-  if (!isMobile || !mounted) {
-    return <>{children}</>;
-  }
-
-  // Detect PWA mode for additional CSS
+const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
+  // Detect PWA mode on client side
   const [isPWAMode, setIsPWAMode] = useState(false);
   
-  // Check for PWA status after mounting
   useEffect(() => {
-    if (mounted) {
-      setIsPWAMode(isPWA());
-    }
-  }, [mounted]);
-
+    // Check if we're in PWA mode
+    setIsPWAMode(isPWA());
+  }, []);
+  
   return (
     <div className={cn(
       "flex flex-col min-h-screen min-h-[100dvh] bg-background",
@@ -60,4 +46,21 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
       <BottomNav isPWAMode={isPWAMode} />
     </div>
   );
+};
+
+export default function MobileLayout({ children }: MobileLayoutProps) {
+  const isMobile = useIsMobile();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Không render nếu không phải mobile hoặc chưa mounted (tránh hydration mismatch)
+  if (!isMobile || !mounted) {
+    return <>{children}</>;
+  }
+
+  // Render nested component to avoid hook rules issues
+  return <MobileLayoutContent>{children}</MobileLayoutContent>;
 }
