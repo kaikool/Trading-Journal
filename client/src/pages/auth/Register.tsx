@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { registerUser, loginWithGoogle, loginWithGitHub } from "@/lib/firebase";
+import { registerUser, loginWithGoogle } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Loader2, Mail, User, KeyRound, ShieldCheck } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
-import { VscGithub } from "react-icons/vsc";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -181,71 +180,37 @@ export default function Register() {
           </div>
         </div>
         
-        <div className="flex flex-col space-y-3">
-          <Button 
-            type="button" 
-            variant="outline" 
-            className="w-full flex items-center justify-center gap-2"
-            onClick={async () => {
-              try {
-                setIsLoading(true);
-                await loginWithGoogle();
-                toast({
-                  title: "Account created",
-                  description: "Welcome to FX Trade Journal!",
-                });
-                setLocation("/");
-              } catch (error) {
-                console.error("Google signup error:", error);
-                toast({
-                  variant: "destructive",
-                  title: "Google signup failed",
-                  description: error instanceof Error 
-                    ? error.message 
-                    : "Could not sign up with Google. Please try again.",
-                });
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-            disabled={isLoading}
-          >
-            <FcGoogle className="h-5 w-5" />
-            <span>Sign up with Google</span>
-          </Button>
-          
-          <Button 
-            type="button" 
-            variant="outline" 
-            className="w-full flex items-center justify-center gap-2"
-            onClick={async () => {
-              try {
-                setIsLoading(true);
-                await loginWithGitHub();
-                toast({
-                  title: "Account created",
-                  description: "Welcome to FX Trade Journal!",
-                });
-                setLocation("/");
-              } catch (error) {
-                console.error("GitHub signup error:", error);
-                toast({
-                  variant: "destructive",
-                  title: "GitHub signup failed",
-                  description: error instanceof Error 
-                    ? error.message 
-                    : "Could not sign up with GitHub. Please try again.",
-                });
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-            disabled={isLoading}
-          >
-            <VscGithub className="h-5 w-5" />
-            <span>Sign up with GitHub</span>
-          </Button>
-        </div>
+        <Button 
+          type="button" 
+          variant="outline" 
+          className="w-full flex items-center justify-center gap-2"
+          onClick={async () => {
+            try {
+              setIsLoading(true);
+              await loginWithGoogle();
+              toast({
+                title: "Account created",
+                description: "Welcome to FX Trade Journal!",
+              });
+              setLocation("/");
+            } catch (error) {
+              console.error("Google signup error:", error);
+              toast({
+                variant: "destructive",
+                title: "Google signup failed",
+                description: error instanceof Error 
+                  ? error.message 
+                  : "Could not sign up with Google. Please try again.",
+              });
+            } finally {
+              setIsLoading(false);
+            }
+          }}
+          disabled={isLoading}
+        >
+          <FcGoogle className="h-5 w-5" />
+          <span>Sign up with Google</span>
+        </Button>
         
         <p className="text-center text-xs text-muted-foreground mt-6">
           By creating an account, you agree to our{" "}
