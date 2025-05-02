@@ -130,10 +130,10 @@ export function ChartImageDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className="p-0 overflow-hidden flex flex-col w-full max-w-[92vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[75vw]"
+        className="p-0 overflow-hidden flex flex-col w-full max-w-[95vw] sm:max-w-[92vw] md:max-w-[88vw] lg:max-w-[80vw]"
         aria-describedby="chart-image-viewer-description"
         style={{
-          height: isMobile ? 'calc(100dvh - 60px)' : 'calc(90vh)', // Sử dụng dvh và căn chỉnh để phù hợp với mọi thiết bị
+          height: isMobile ? 'calc(100dvh - 32px)' : 'calc(95vh)', // Tăng không gian hiển thị
           position: 'fixed',
           top: '50%',
           left: '50%',
@@ -147,12 +147,12 @@ export function ChartImageDialog({
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
         
-        {/* Dialog title đã được tối ưu */}
-        <DialogTitle className="flex items-center p-3 px-4 sm:p-4 border-b">
+        {/* Dialog title tối giản hơn để tăng diện tích hiển thị ảnh */}
+        <DialogTitle className="flex items-center py-2 px-4 border-b">
           <div className="flex flex-col">
-            <span className="font-medium">{tradePair} - {currentImage.label}</span>
+            <span className="font-medium text-sm">{tradePair} - {currentImage.label}</span>
             {availableImages.length > 1 && (
-              <span className="text-xs text-muted-foreground mt-0.5">
+              <span className="text-xs text-muted-foreground">
                 {`${currentImageIndex + 1}/${availableImages.length}`}
               </span>
             )}
@@ -227,35 +227,36 @@ export function ChartImageDialog({
             </div>
           </div>
           
-          {/* Indicator cho iOS safe area và thông tin hình ảnh hiện tại */}
+          {/* Indicators cho thông tin hình ảnh và dot navigation */}
+          <div className="absolute pointer-events-none select-none top-0 left-0 right-0 flex justify-between p-2 opacity-80">
+            <div className="bg-black/60 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+              {currentImage.type} - {currentImage.timeframe}
+            </div>
+          </div>
+          
+          {/* Dot indicators đặt ở phía dưới hình ảnh */}
           {availableImages.length > 1 && (
-            <div className="absolute pointer-events-none select-none top-0 left-0 right-0 flex justify-between p-2 opacity-80">
-              <div className="bg-black/60 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                {currentImage.type} - {currentImage.timeframe}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center">
+              <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
+                {availableImages.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      index === currentImageIndex 
+                        ? 'bg-white scale-110' 
+                        : 'bg-white/30 scale-90 hover:bg-white/50'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
               </div>
             </div>
           )}
         </div>
-
-        {availableImages.length > 1 && (
-          <div className="py-3 px-4 border-t w-full">
-            {/* Dot indicators đã được thiết kế lại và đặt ở chính giữa */}
-            <div className="flex justify-center items-center gap-2">
-              {availableImages.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
-                    index === currentImageIndex 
-                      ? 'bg-primary scale-110' 
-                      : 'bg-muted-foreground/30 scale-90 hover:bg-muted-foreground/50'
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                  aria-label={`View image ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );
