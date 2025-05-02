@@ -166,8 +166,7 @@ export function ChartImageDialog({
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
         
-        {/* Dialog header with title and close button */}
-        <div className="flex items-center justify-between py-2 px-4 border-b">
+        <DialogTitle className="flex items-center justify-between py-2 px-4 border-b">
           <div className="flex flex-col">
             <span className="font-medium text-sm">{tradePair} - {currentImage.label}</span>
             {availableImages.length > 1 && (
@@ -176,37 +175,22 @@ export function ChartImageDialog({
               </span>
             )}
           </div>
-          
-          {/* Add close button for better UX especially on PWA */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onClose()}
-            className="h-7 w-7 rounded-full hover:bg-muted"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </Button>
-        </div>
+        </DialogTitle>
         
-        {/* Main image container with swipe support */}
         <div 
           {...swipeHandlers}
           className={cn(
             "relative overflow-hidden flex-1 flex items-center justify-center",
             "bg-background/90 dark:bg-background/95",
-            isPWAMode && "pwa-chart-content" // Special class for PWA mode content
+            isPWAMode && "pwa-chart-content"
           )}
           style={{
-            // PWA optimized padding to ensure image is centered vertically
             ...(isPWAMode && {
               paddingBottom: 'calc(env(safe-area-inset-bottom) + 4px)',
             })
           }}
         >
-          {/* Image with loading/error states */}
           <div className="relative w-full h-full flex items-center justify-center">
-            {/* Loading overlay */}
             {isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -214,7 +198,6 @@ export function ChartImageDialog({
               </div>
             )}
             
-            {/* Error overlay */}
             {error && !isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
                 <div className="flex flex-col items-center p-4 rounded-lg bg-card border">
@@ -230,18 +213,17 @@ export function ChartImageDialog({
               </div>
             )}
             
-            {/* Image container - centered with max dimensions */}
             <div className={cn(
               "w-full h-full flex items-center justify-center transition-all duration-300",
               isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
-              isPWAMode && "pwa-chart-image-container" // Special class for PWA mode
+              isPWAMode && "pwa-chart-image-container"
             )}>
               <img 
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
                   "max-w-full max-h-full object-contain select-none",
-                  isPWAMode && "pwa-chart-image" // Special class for PWA mode
+                  isPWAMode && "pwa-chart-image"
                 )}
                 onClick={(e) => e.stopPropagation()} 
                 decoding="async"
@@ -250,7 +232,6 @@ export function ChartImageDialog({
                 style={{ 
                   visibility: isLoading || error ? 'hidden' : 'visible',
                   touchAction: 'pan-y',
-                  // Ensure image is properly centered in PWA mode
                   ...(isPWAMode && {
                     maxHeight: 'calc(100% - env(safe-area-inset-bottom) - 8px)',
                   })
@@ -277,68 +258,34 @@ export function ChartImageDialog({
             </div>
           </div>
           
-          {/* Navigation controls */}
+          
           {availableImages.length > 1 && (
-            <>
-              {/* Image type/timeframe label */}
-              <div className="absolute pointer-events-none select-none top-3 left-3 z-20">
-                <div className="bg-black/60 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
-                  {currentImage.type} - {currentImage.timeframe}
-                </div>
+            <div className={cn(
+              "absolute left-0 right-0 flex justify-center items-center z-20",
+              isPWAMode ? "bottom-safe" : "bottom-4"
+            )}
+            style={{
+              bottom: isPWAMode ? 'calc(env(safe-area-inset-bottom) + 8px)' : '1rem',
+            }}>
+              <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
+                {availableImages.map((_, index) => (
+                  <button
+                    key={index}
+                    className={cn(
+                      "w-2 h-2 rounded-full transition-all duration-200",
+                      index === currentImageIndex 
+                        ? "bg-white scale-110" 
+                        : "bg-white/30 scale-90 hover:bg-white/50"
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
               </div>
-              
-              {/* Dot indicators - positioned to respect safe area */}
-              <div className={cn(
-                "absolute left-0 right-0 flex justify-center items-center z-20",
-                isPWAMode ? "bottom-safe" : "bottom-4" // Use safe area or fixed padding
-              )}
-              style={{
-                bottom: isPWAMode ? 'calc(env(safe-area-inset-bottom) + 8px)' : '1rem',
-              }}>
-                <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
-                  {availableImages.map((_, index) => (
-                    <button
-                      key={index}
-                      className={cn(
-                        "w-2 h-2 rounded-full transition-all duration-200",
-                        index === currentImageIndex 
-                          ? "bg-white scale-110" 
-                          : "bg-white/30 scale-90 hover:bg-white/50"
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentImageIndex(index);
-                      }}
-                      aria-label={`View image ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
-              
-              {/* Arrow buttons for navigation on larger screens or when not in PWA mode */}
-              {(!isPWAMode || !isMobile) && (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handlePrevious}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white"
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                    <span className="sr-only">Previous image</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleNext}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white"
-                  >
-                    <ArrowRight className="h-5 w-5" />
-                    <span className="sr-only">Next image</span>
-                  </Button>
-                </>
-              )}
-            </>
+            </div>
           )}
         </div>
       </DialogContent>
