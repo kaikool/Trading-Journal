@@ -30,7 +30,7 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
     <Link
       to={href}
       className={cn(
-        "flex flex-col items-center justify-center px-1 py-2 w-full relative overflow-hidden",
+        "flex flex-col items-center justify-center px-1 py-2 w-full relative overflow-visible select-none",
         "focus:outline-none touch-manipulation", // Optimization for touch devices
         isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
@@ -52,15 +52,28 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
       )}
       
       {/* Icon and label */}
-      <div className="flex flex-col items-center overflow-hidden">
-        <div className="flex items-center justify-center h-6 mb-1.5 overflow-hidden">
-          {isActive ? activeIcon || icon : icon}
+      <div className="flex flex-col items-center">
+        {/* Cải thiện container cho icon */}
+        <div className="flex items-center justify-center h-6 mb-1 relative">
+          <div className="relative w-5 h-5 flex items-center justify-center">
+            {isActive ? activeIcon || icon : icon}
+          </div>
         </div>
         
-        <span className={cn(
-          "text-[10px] font-medium transition-colors overflow-hidden whitespace-nowrap",
-          isActive ? "text-primary font-semibold" : "text-muted-foreground"
-        )}>
+        {/* Cải thiện hiển thị cho label */}
+        <span 
+          className={cn(
+            "text-[10px] font-medium text-center leading-tight px-0.5",
+            isActive ? "text-primary font-semibold" : "text-muted-foreground"
+          )}
+          style={{ 
+            maxWidth: '100%',
+            display: 'block',
+            textRendering: 'optimizeLegibility',
+            WebkitFontSmoothing: 'antialiased',
+            MozOsxFontSmoothing: 'grayscale'
+          }}
+        >
           {label}
         </span>
       </div>
@@ -73,9 +86,19 @@ export default function BottomNav() {
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   const [hasHomeIndicator, setHasHomeIndicator] = useState(false);
+  const [isPWA, setIsPWA] = useState(false);
   
   useEffect(() => {
     setMounted(true);
+    
+    // Check if running as PWA
+    const isRunningAsPWA = () => {
+      return window.matchMedia('(display-mode: standalone)').matches || 
+             window.matchMedia('(display-mode: fullscreen)').matches ||
+             (window.navigator as any).standalone === true;
+    };
+    
+    setIsPWA(isRunningAsPWA());
     
     // Check device performance to optimize animations
     evaluateDevicePerformance().then(performance => {
@@ -116,17 +139,36 @@ export default function BottomNav() {
     setSafeAreaVars();
     detectHomeIndicator();
     
-    // Update on resize for orientation changes
-    window.addEventListener('resize', () => {
+    // Add specific class for PWA standalone mode
+    if (isRunningAsPWA()) {
+      document.documentElement.classList.add('pwa-standalone');
+    }
+    
+    // Handle display mode changes (important for PWA)
+    const mediaQueryList = window.matchMedia('(display-mode: standalone)');
+    const handleDisplayModeChange = (e: MediaQueryListEvent) => {
+      setIsPWA(e.matches || window.matchMedia('(display-mode: fullscreen)').matches);
+      
+      if (e.matches) {
+        document.documentElement.classList.add('pwa-standalone');
+      } else {
+        document.documentElement.classList.remove('pwa-standalone');
+      }
+    };
+    
+    // Update on resize for orientation changes and media query changes
+    mediaQueryList.addEventListener('change', handleDisplayModeChange);
+    
+    const handleResize = () => {
       setSafeAreaVars();
       detectHomeIndicator();
-    });
+    };
+    
+    window.addEventListener('resize', handleResize);
     
     return () => {
-      window.removeEventListener('resize', () => {
-        setSafeAreaVars();
-        detectHomeIndicator();
-      });
+      mediaQueryList.removeEventListener('change', handleDisplayModeChange);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -171,13 +213,16 @@ export default function BottomNav() {
       className={cn(
         "mobile-nav lg:hidden",
         // Sử dụng hệ thống className động thay vì fixed height
-        "h-14"
+        "h-14",
+        // Thêm class đặc biệt khi chạy trong PWA
+        isPWA && "pwa-mobile-nav"
       )}
       style={{
         paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px'
       }}
       role="navigation"
       aria-label="Main Navigation"
+      data-pwa-mode={isPWA ? "standalone" : "browser"}
     >
       <div 
         className={cn(

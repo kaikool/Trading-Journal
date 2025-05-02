@@ -1,5 +1,51 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* CSS Variables for PWA specific styling */
+:root {
+  --pwa-bottom-nav-height: 56px; /* h-14 equivalent */
+  --pwa-bottom-nav-icon-size: 24px;
+}
+
+/* Specific enhancements for PWA standalone mode */
+.pwa-standalone .mobile-nav,
+.pwa-mobile-nav {
+  /* Ensure fixed positioning works in PWA context */
+  position: fixed !important;
+  /* Force hardware acceleration for smoother animations */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+  /* Tăng mức độ ưu tiên của z-index */
+  z-index: 100 !important;
+}
+
+/* Custom styling for PWA mode */
+.pwa-mobile-nav {
+  /* Nền đậm hơn một chút để nổi bật trong PWA */
+  background-color: hsl(var(--background) / 0.95);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Đảm bảo icon và label hiển thị đúng trong PWA */
+.pwa-mobile-nav a svg,
+.pwa-standalone .mobile-nav a svg {
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Đảm bảo label hiển thị đúng trong PWA */
+.pwa-mobile-nav a span,
+.pwa-standalone .mobile-nav a span {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
@@ -64,15 +110,15 @@
     bottom: 0;
     left: 0;
     right: 0;
-    /* Sử dụng Tailwind's h-14 (56px) thay vì hardcoded height */
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border) / 0.4);
     z-index: 50;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     
-    /* Prevent content overflow inside navigation */
-    overflow: hidden;
+    /* Ensure visibility in standalone PWA mode */
+    display: flex;
+    flex-direction: column;
     
     /* Box shadow for better visual separation */
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
@@ -85,18 +131,32 @@
     }
   }
 
-  /* Ensure child elements inherit overflow hidden to prevent scrolling issues */
+  /* Ensure mobile nav items display correctly */
   .mobile-nav > div, 
-  .mobile-nav .grid,
-  .mobile-nav a,
-  .mobile-nav button {
-    overflow: hidden !important;
+  .mobile-nav .grid {
+    width: 100%;
+    display: grid;
+  }
+  
+  /* Fix icon visibility in PWA mode */
+  .mobile-nav svg {
+    width: 20px;
+    height: 20px;
+    display: block; /* Ensure SVG elements are visible */
+    pointer-events: none; /* Prevent touch events on icons */
   }
   
   /* Navigation items should be positioned correctly regardless of safe area */
   .mobile-nav .grid {
-    height: 100% !important; /* Sử dụng 100% height thay vì fixed height */
+    height: 100%;
     padding-bottom: 0 !important; /* Let the parent handle the safe area */
+  }
+  
+  /* Ensure labels are visible */
+  .mobile-nav a span {
+    display: block !important;
+    max-width: 100%;
+    font-weight: 500;
   }
 
   /* Mobile content - ensure proper spacing with navigation and home indicator */
