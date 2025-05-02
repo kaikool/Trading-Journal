@@ -141,6 +141,12 @@ async function loginWithGoogle() {
   return signInWithPopup(auth, provider);
 }
 
+async function loginWithGitHub() {
+  const { GithubAuthProvider, signInWithPopup } = await import("firebase/auth");
+  const provider = new GithubAuthProvider();
+  return signInWithPopup(auth, provider);
+}
+
 async function registerUser(email: string, password: string, displayName: string) {
   // Create user account
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
