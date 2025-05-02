@@ -48,49 +48,63 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
         "flex flex-col min-h-screen min-h-[100dvh] bg-background", 
         isPWA ? "pwa-standalone-container" : ""
       )}
+      style={{
+        // CRITICAL FIX: These styles ensure content is visible in PWA mode
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        minHeight: 'var(--vh, 100vh)',
+        width: '100%',
+        maxWidth: '100vw',
+        position: 'relative',
+        overflow: 'visible'
+      }}
     >
-      {/* Main content with Facebook-style layout */}
+      {/* Main content with Facebook-style layout - SIMPLIFIED FOR DEBUGGING */}
       <main 
         className={cn(
           "flex-1", // Always full height
-          // Điều chỉnh padding dựa trên Facebook style khi trong PWA
-          isPWA 
-            ? "fb-main-content pwa-container" // Facebook-style padding trong PWA + container fix
-            : "px-4 pt-1 pwa-top-inset" // Padding thông thường khi không phải PWA
+          isPWA ? "px-4 pt-1" : "px-4 pt-1 pwa-top-inset" // Simple padding for debugging
         )}
         style={{
-          // CRITICAL FIX: Ensure modals and popovers are visible in PWA mode
+          // CRITICAL FIX: Basic styles for content visibility
+          flex: '1 0 auto',
+          display: 'block',
+          width: '100%',
+          height: 'auto',
+          minHeight: '200px', // Force some height
           overflow: 'visible',
-          position: 'relative',
-          zIndex: 1
+          position: 'relative'
         }}
       >
-        {/* Facebook-style content container with fixes for component visibility */}
+        {/* Direct children rendering - simplified wrapper structure */}
         <div 
-          className={cn(
-            // Chỉ áp dụng lớp fb-content trong PWA và đảm bảo modals sẽ hiển thị
-            isPWA ? "fb-content pwa-content" : "",
-            "pwa-container" // Apply this class to ensure proper z-index and overflow
-          )}
+          className="content-wrapper"
           style={{
-            // CRITICAL FIX: Ensure modals and popovers can render outside this container
-            overflow: 'visible',
-            position: 'relative',
-            zIndex: 'auto'
+            // CRITICAL FIX: Basic visible content styling
+            display: 'block',
+            width: '100%',
+            minHeight: '200px',
+            paddingBottom: '70px', // Space for navigation
+            position: 'relative'
           }}
         >
+          {/* DEBUG MARKER - will remove this after visibility is fixed */}
+          <div style={{
+            padding: '10px',
+            margin: '10px 0',
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '4px'
+          }}>
+            <h3 style={{fontSize: '16px', fontWeight: 'bold', marginBottom: '4px'}}>Debug Panel</h3>
+            <p style={{fontSize: '14px'}}>PWA Mode: {isPWA ? 'Yes' : 'No'}</p>
+          </div>
+          
           {children}
           
-          {/* Spacer element - Facebook style bottom spacing */}
-          <div 
-            className={cn(
-              "w-full", 
-              isPWA 
-                ? "fb-bottom-spacer" // Facebook-style bottom spacing
-                : "h-[60px] sm:h-[70px] md:h-0 lg:h-0" // Normal spacing
-            )} 
-            aria-hidden="true" 
-          />
+          {/* Simple spacer at bottom */}
+          <div className="h-[70px]" aria-hidden="true" />
         </div>
       </main>
       
