@@ -26,7 +26,7 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
   useEffect(() => {
     setReducedMotion(detectReducedMotion());
     
-    // Check if running as PWA (Facebook style detection)
+    // Check if running as PWA (GitHub style detection)
     const checkIfPWA = () => {
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -124,7 +124,7 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
         <span 
           className={cn(
             "text-center leading-tight px-0.5",
-            // GitHub uses slightly larger font than Facebook
+            // GitHub uses a specific 10px font size for optimal legibility
             isPWA ? "text-[10px]" : "text-[10px]",
             // Font weight changes - GitHub uses semibold for active
             isPWA && isActive 
