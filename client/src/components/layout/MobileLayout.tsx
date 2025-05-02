@@ -10,9 +10,31 @@ interface MobileLayoutProps {
 export default function MobileLayout({ children }: MobileLayoutProps) {
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
+  const [isPWA, setIsPWA] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Kiểm tra xem có đang chạy trong chế độ PWA không
+    const checkIfPWA = () => {
+      return window.matchMedia('(display-mode: standalone)').matches || 
+             window.matchMedia('(display-mode: fullscreen)').matches ||
+             (window.navigator as any).standalone === true;
+    };
+    
+    setIsPWA(checkIfPWA());
+    
+    // Theo dõi thay đổi chế độ hiển thị (display mode)
+    const mediaQueryList = window.matchMedia('(display-mode: standalone)');
+    const handleDisplayModeChange = (e: MediaQueryListEvent) => {
+      setIsPWA(e.matches || window.matchMedia('(display-mode: fullscreen)').matches);
+    };
+    
+    mediaQueryList.addEventListener('change', handleDisplayModeChange);
+    
+    return () => {
+      mediaQueryList.removeEventListener('change', handleDisplayModeChange);
+    };
   }, []);
 
   // Không render nếu không phải mobile hoặc chưa mounted (tránh hydration mismatch)
@@ -21,19 +43,45 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen min-h-[100dvh] bg-background">
-      {/* Main content - với padding tối ưu cho PWA */}
-      <main className={cn(
-        "flex-1 px-4 pt-1", // Chỉ giữ padding bên và padding top tối thiểu
-        "pwa-top-inset" // Padding top cho safe area (notch/dynamic island)
-      )}>
-        {children}
-        
-        {/* Spacer element để đảm bảo nội dung không bị BottomNav che phủ */}
-        <div className="w-full h-[60px] sm:h-[70px] md:h-0 lg:h-0" aria-hidden="true" />
+    <div 
+      className={cn(
+        "flex flex-col min-h-screen min-h-[100dvh] bg-background", 
+        isPWA ? "pwa-standalone-container" : ""
+      )}
+    >
+      {/* Main content with Facebook-style layout */}
+      <main 
+        className={cn(
+          "flex-1", // Always full height
+          // Điều chỉnh padding dựa trên Facebook style khi trong PWA
+          isPWA 
+            ? "fb-main-content" // Facebook-style padding trong PWA
+            : "px-4 pt-1 pwa-top-inset" // Padding thông thường khi không phải PWA
+        )}
+      >
+        {/* Facebook-style content container */}
+        <div 
+          className={cn(
+            // Chỉ áp dụng lớp fb-content trong PWA
+            isPWA ? "fb-content" : ""
+          )}
+        >
+          {children}
+          
+          {/* Spacer element - Facebook style bottom spacing */}
+          <div 
+            className={cn(
+              "w-full", 
+              isPWA 
+                ? "fb-bottom-spacer" // Facebook-style bottom spacing
+                : "h-[60px] sm:h-[70px] md:h-0 lg:h-0" // Normal spacing
+            )} 
+            aria-hidden="true" 
+          />
+        </div>
       </main>
       
-      {/* Bottom Navigation - sử dụng class thống nhất */}
+      {/* Bottom Navigation - Facebook style */}
       <BottomNav />
     </div>
   );
