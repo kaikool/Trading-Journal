@@ -21,24 +21,75 @@ interface BottomNavItemProps {
 
 export function BottomNavItem({ icon, activeIcon, label, href, isActive }: BottomNavItemProps) {
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isPWA, setIsPWA] = useState(false);
   
   useEffect(() => {
     setReducedMotion(detectReducedMotion());
+    
+    // Check if running as PWA (Facebook style detection)
+    const checkIfPWA = () => {
+      return window.matchMedia('(display-mode: standalone)').matches || 
+             window.matchMedia('(display-mode: fullscreen)').matches ||
+             (window.navigator as any).standalone === true;
+    };
+    
+    setIsPWA(checkIfPWA());
+    
+    // Monitor display mode changes
+    const mediaQueryList = window.matchMedia('(display-mode: standalone)');
+    const handleDisplayModeChange = (e: MediaQueryListEvent) => {
+      setIsPWA(e.matches || window.matchMedia('(display-mode: fullscreen)').matches);
+    };
+    
+    mediaQueryList.addEventListener('change', handleDisplayModeChange);
+    return () => {
+      mediaQueryList.removeEventListener('change', handleDisplayModeChange);
+    };
   }, []);
   
   return (
     <Link
       to={href}
       className={cn(
-        "flex flex-col items-center justify-center px-1 py-2 w-full relative overflow-visible select-none",
-        "focus:outline-none touch-manipulation", // Optimization for touch devices
+        // Base styling
+        "flex flex-col items-center justify-center w-full relative overflow-visible select-none",
+        // Touch optimization
+        "focus:outline-none touch-manipulation", 
+        // Padding - Facebook style when in PWA
+        isPWA 
+          ? "px-1 py-1.5" // Facebook compact style
+          : "px-1 py-2",  // Normal style
+        // Active indicator
         isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
     >
-      {/* Indicator line for active tab */}
-      {isActive && !reducedMotion && (
+      {/* Facebook-style indicator for active tab - dot at bottom instead of line on top */}
+      {isActive && isPWA && (
+        <div 
+          className={cn(
+            "absolute bottom-0 left-0 right-0 mx-auto", 
+            reducedMotion
+              ? "w-1.5 h-1.5 bg-primary rounded-full" // Static dot
+              : "" // Will be handled by motion.div
+          )} 
+        />
+      )}
+      
+      {/* Animated dot indicator for Facebook style in PWA - at bottom */}
+      {isActive && isPWA && !reducedMotion && (
         <motion.div
           layoutId="bottomNavIndicator"
+          className="absolute bottom-0 left-0 right-0 mx-auto w-1.5 h-1.5 bg-primary rounded-full"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", duration: 0.2, bounce: 0.2 }}
+        />
+      )}
+      
+      {/* Traditional tab indicator (line on top) for non-PWA */}
+      {isActive && !isPWA && !reducedMotion && (
+        <motion.div
+          layoutId="topNavIndicator"
           className="absolute top-0 left-0 right-0 mx-auto w-12 h-[3px] bg-primary rounded-full"
           initial={{ opacity: 0, width: 0 }}
           animate={{ opacity: 1, width: "12px" }}
@@ -46,25 +97,43 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
         />
       )}
       
-      {/* Static indicator for reduced motion preference */}
-      {isActive && reducedMotion && (
+      {/* Static indicator for non-PWA with reduced motion */}
+      {isActive && !isPWA && reducedMotion && (
         <div className="absolute top-0 left-0 right-0 mx-auto w-12 h-[3px] bg-primary rounded-full" />
       )}
       
-      {/* Icon and label */}
-      <div className="flex flex-col items-center">
-        {/* Cải thiện container cho icon */}
-        <div className="flex items-center justify-center h-6 mb-1 relative">
-          <div className="relative w-5 h-5 flex items-center justify-center">
+      {/* Facebook-style compact icon and label layout */}
+      <div className={cn(
+        "flex flex-col items-center",
+        isPWA && "fb-nav-item" // Facebook specific class
+      )}>
+        {/* Icon container - Facebook style */}
+        <div className={cn(
+          "flex items-center justify-center relative",
+          isPWA ? "h-5 mb-0.5" : "h-6 mb-1" // Smaller in Facebook style
+        )}>
+          <div className={cn(
+            "relative flex items-center justify-center",
+            isPWA ? "w-[22px] h-[22px]" : "w-5 h-5" // Facebook uses slightly bigger icons
+          )}>
             {isActive ? activeIcon || icon : icon}
           </div>
         </div>
         
-        {/* Cải thiện hiển thị cho label */}
+        {/* Label with Facebook styling */}
         <span 
           className={cn(
-            "text-[10px] font-medium text-center leading-tight px-0.5",
-            isActive ? "text-primary font-semibold" : "text-muted-foreground"
+            "text-center leading-tight px-0.5",
+            // Facebook uses even smaller font
+            isPWA ? "text-[9px]" : "text-[10px]",
+            // Font weight changes
+            isPWA && isActive 
+              ? "font-medium"  // Facebook uses medium for active state
+              : isPWA 
+                ? "font-normal" // Facebook uses normal for inactive
+                : "font-medium", // Regular app uses medium
+            // Color changes
+            isActive ? "text-primary" : "text-muted-foreground"
           )}
           style={{ 
             maxWidth: '100%',
@@ -212,13 +281,17 @@ export default function BottomNav() {
     <nav 
       className={cn(
         "mobile-nav lg:hidden",
-        // Sử dụng hệ thống className động thay vì fixed height
-        "h-14",
-        // Thêm class đặc biệt khi chạy trong PWA
+        // Sử dụng hệ thống className động với chiều cao Facebook
+        isPWA ? "h-[--pwa-bottom-nav-height]" : "h-14",
+        // Thêm class đặc biệt cho PWA - Facebook style
         isPWA && "pwa-mobile-nav"
       )}
       style={{
-        paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px'
+        paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px',
+        // Facebook-style bottom border
+        borderTopWidth: isPWA ? '0.5px' : '1px',
+        // Apply Facebook shadow style in PWA mode
+        boxShadow: isPWA ? '0 -0.5px 0 hsla(0,0%,0%,0.1)' : undefined
       }}
       role="navigation"
       aria-label="Main Navigation"
@@ -227,7 +300,9 @@ export default function BottomNav() {
       <div 
         className={cn(
           "grid w-full h-full", 
-          devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5'
+          devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5',
+          // Add Facebook-style extra classes
+          isPWA && "fb-nav-grid" 
         )}
       >
         {devicePerformance === 'low' ? (

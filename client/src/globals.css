@@ -103,6 +103,36 @@ html.pwa-standalone {
   margin-top: 1px;
 }
 
+/* Facebook-style navigation grid */
+.fb-nav-grid {
+  /* Facebook uses tighter grid */
+  height: 100% !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+  /* Ensure pixel perfect alignment */
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+/* Facebook-style navigation item */
+.fb-nav-item {
+  /* Facebook's tighter spacing */
+  padding: 0 !important;
+  gap: 1px !important;
+}
+
+/* Facebook style active indicator */
+.fb-nav-active-dot {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: hsl(var(--primary));
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
