@@ -315,6 +315,26 @@
     }
   }
   
+  /* Force PWA to use the Mobile layout styling */
+  html.pwa-mode body {
+    /* Ensure the PWA gets same treatment as mobile devices */
+    @apply bg-background text-foreground;
+    max-width: 100vw;
+  }
+  
+  /* PWA-specific adjustments for MobileLayout */
+  html.pwa-mode .mobile-layout {
+    /* Match the same padding/margin as on real mobile devices */
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  
+  /* Fix for mobile navigation in PWA mode */
+  html.pwa-mode .mobile-nav {
+    /* Ensure navigation respects safe areas */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+  
   /* Fix horizontal scrolling issues */
   .container,
   form,
