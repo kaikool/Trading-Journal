@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
@@ -129,152 +130,130 @@ export function ChartImageDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className="sm:max-w-[95vw] md:max-w-[90vw] lg:max-w-[85vw] p-0 overflow-hidden flex flex-col"
+        className="p-0 overflow-hidden flex flex-col w-full max-w-[92vw] sm:max-w-[90vw] md:max-w-[85vw] lg:max-w-[75vw]"
         aria-describedby="chart-image-viewer-description"
         style={{
-          width: '95vw',
-          maxHeight: isMobile ? 'calc(100dvh - 80px)' : '85vh', // Sử dụng dvh và giảm phần trừ đi
-          margin: 'auto',
+          height: isMobile ? 'calc(100dvh - 60px)' : 'calc(90vh)', // Sử dụng dvh và căn chỉnh để phù hợp với mọi thiết bị
           position: 'fixed',
-          top: '45%', // Đặt vị trí cao hơn một chút để tránh các vùng có nút vật lý
+          top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -50%)'
+          transform: 'translate(-50%, -50%)',
+          margin: 0,
+          borderRadius: '0.75rem',
+          // Đảm bảo tôn trọng safe area cho iOS
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)'
         }}
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
         
-        {/* Only use DialogTitle - close button from default DialogContent */}
-        <DialogTitle className="flex items-center p-2 sm:p-4">
+        {/* Dialog title đã được tối ưu */}
+        <DialogTitle className="flex items-center p-3 px-4 sm:p-4 border-b">
           <div className="flex flex-col">
-            <span>{tradePair} - {currentImage.label}</span>
-            <span className="text-sm text-muted-foreground">
-              {availableImages.length > 1 ? 
-                `Image ${currentImageIndex + 1} of ${availableImages.length}` : 
-                'Chart Image'
-              }
-            </span>
+            <span className="font-medium">{tradePair} - {currentImage.label}</span>
+            {availableImages.length > 1 && (
+              <span className="text-xs text-muted-foreground mt-0.5">
+                {`${currentImageIndex + 1}/${availableImages.length}`}
+              </span>
+            )}
           </div>
         </DialogTitle>
         
-        {/* Container that allows scrolling for tall images with swipe support */}
+        {/* Container tối ưu cho hình ảnh với swipe support */}
         <div 
           {...swipeHandlers}
-          className="relative overflow-auto flex-1 flex items-center justify-center bg-black/5 dark:bg-white/5 rounded-md"
+          className="relative overflow-hidden flex-1 flex items-center justify-center bg-background/80 dark:bg-background/90"
         >
           <div className="relative w-full h-full flex items-center justify-center">
-            {/* Loading overlay - always visible when loading */}
+            {/* Loading overlay */}
             {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 z-10">
-                <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
-                <span className="mt-2 text-sm text-muted-foreground">Loading image...</span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="mt-2 text-xs font-medium">Đang tải...</span>
               </div>
             )}
             
-            {/* Error overlay - only shown when error is present and not loading */}
+            {/* Error overlay */}
             {error && !isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 z-10">
-                <img 
-                  src="/icons/image-not-supported.svg" 
-                  alt="Error loading image"
-                  className="h-16 w-16 opacity-60 mb-4"
-                />
-                <span className="text-sm text-muted-foreground">
-                  Error loading image. Please try again later.
-                </span>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
+                <div className="flex flex-col items-center p-4 rounded-lg bg-card border">
+                  <img 
+                    src="/icons/image-not-supported.svg" 
+                    alt="Error loading image"
+                    className="h-12 w-12 opacity-70 mb-3"
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Không thể tải hình ảnh
+                  </span>
+                </div>
               </div>
             )}
             
-            {/* Image container - always present to avoid layout shifts */}
-            <div className={`w-full h-full flex items-center justify-center transition-opacity duration-300 ${isLoading || error ? 'opacity-0' : 'opacity-100'}`}>
+            {/* Image container */}
+            <div className={`w-full h-full flex items-center justify-center transition-all duration-300 ${
+              isLoading || error ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+            }`}>
               <img 
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-                className="max-w-full max-h-full object-contain"
-                onClick={(e) => e.stopPropagation()} /* Prevent closing dialog when clicking image */
+                className="max-w-full max-h-full object-contain select-none"
+                onClick={(e) => e.stopPropagation()} 
                 decoding="async"
-                loading="eager" /* Optimize for dialog view */
-                style={{ visibility: isLoading || error ? 'hidden' : 'visible' }}
+                loading="eager"
+                draggable="false"
+                style={{ 
+                  visibility: isLoading || error ? 'hidden' : 'visible',
+                  touchAction: 'pan-y',
+                }}
                 onLoad={(e) => {
-                  // Kiểm tra xem hình ảnh đã được tải thành công hay không
                   const img = e.currentTarget;
                   if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-                    // Ảnh hợp lệ, hiển thị
                     img.style.visibility = 'visible';
                   }
                 }}
                 onError={(e) => {
-                  console.error(`Error loading image in ChartImageDialog: ${currentImage.originalSrc}`);
+                  console.error(`Error loading image: ${currentImage.originalSrc}`);
                   const imgElement = e.currentTarget as HTMLImageElement;
                   
-                  // Ghi nhận lỗi nhưng không hiển thị thông báo lỗi
-                  // Thử tải lại một lần nữa với URL gốc nếu có
                   if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
                     console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
                     imgElement.src = currentImage.originalSrc;
                     return;
                   }
                   
-                  // Ẩn hình ảnh lỗi
                   imgElement.style.display = 'none';
                 }}
               />
             </div>
           </div>
           
-          {/* Overlay displaying timeframe and image type information */}
-          <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded-sm">
-            {currentImage.label}
-          </div>
-          
-
-          
-          {/* Swipe direction hints (only visible on mobile) */}
-          {isMobile && availableImages.length > 1 && (
-            <div className="absolute bottom-4 text-center text-white text-xs w-full opacity-70">
-              <span>Swipe left/right to navigate</span>
+          {/* Indicator cho iOS safe area và thông tin hình ảnh hiện tại */}
+          {availableImages.length > 1 && (
+            <div className="absolute pointer-events-none select-none top-0 left-0 right-0 flex justify-between p-2 opacity-80">
+              <div className="bg-black/60 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+                {currentImage.type} - {currentImage.timeframe}
+              </div>
             </div>
           )}
         </div>
 
         {availableImages.length > 1 && (
-          <div className="flex justify-between items-center gap-2 p-2 sm:p-4 w-full">
-            {/* Previous button optimized for mobile */}
-            <Button 
-              variant="outline" 
-              size={isMobile ? "icon" : "sm"}
-              onClick={handlePrevious}
-              className="flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {!isMobile && <span className="ml-1">Prev</span>}
-            </Button>
-            
-            {/* Dot indicators placed between navigation buttons */}
-            <div className="flex justify-center gap-1 overflow-x-auto">
+          <div className="py-3 px-4 border-t w-full">
+            {/* Dot indicators đã được thiết kế lại và đặt ở chính giữa */}
+            <div className="flex justify-center items-center gap-2">
               {availableImages.map((_, index) => (
                 <button
                   key={index}
-                  className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
                     index === currentImageIndex 
-                      ? 'bg-primary' 
-                      : 'bg-muted-foreground'
+                      ? 'bg-primary scale-110' 
+                      : 'bg-muted-foreground/30 scale-90 hover:bg-muted-foreground/50'
                   }`}
                   onClick={() => setCurrentImageIndex(index)}
                   aria-label={`View image ${index + 1}`}
                 />
               ))}
             </div>
-            
-            {/* Next button optimized for mobile */}
-            <Button 
-              variant="outline" 
-              size={isMobile ? "icon" : "sm"}
-              onClick={handleNext}
-              className="flex-shrink-0"
-            >
-              {!isMobile && <span className="mr-1">Next</span>}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
           </div>
         )}
       </DialogContent>
