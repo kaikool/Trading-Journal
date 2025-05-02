@@ -15,7 +15,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
   useEffect(() => {
     setMounted(true);
     
-    // Kiểm tra xem có đang chạy trong chế độ PWA không
+    // PWA detection
     const checkIfPWA = () => {
       return window.matchMedia('(display-mode: standalone)').matches || 
              window.matchMedia('(display-mode: fullscreen)').matches ||
@@ -24,7 +24,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
     
     setIsPWA(checkIfPWA());
     
-    // Theo dõi thay đổi chế độ hiển thị (display mode)
+    // Watch for display mode changes
     const mediaQueryList = window.matchMedia('(display-mode: standalone)');
     const handleDisplayModeChange = (e: MediaQueryListEvent) => {
       setIsPWA(e.matches || window.matchMedia('(display-mode: fullscreen)').matches);
@@ -32,83 +32,94 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
     
     mediaQueryList.addEventListener('change', handleDisplayModeChange);
     
+    // Set viewport height CSS variable
+    const setViewportHeight = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    
+    // Initial call and add resize listener
+    setViewportHeight();
+    window.addEventListener('resize', setViewportHeight);
+    
     return () => {
       mediaQueryList.removeEventListener('change', handleDisplayModeChange);
+      window.removeEventListener('resize', setViewportHeight);
     };
   }, []);
 
-  // Không render nếu không phải mobile hoặc chưa mounted (tránh hydration mismatch)
+  // Don't render if not mobile or not mounted (avoid hydration mismatch)
   if (!isMobile || !mounted) {
     return <>{children}</>;
   }
 
-  return (
-    <div 
-      className={cn(
-        "flex flex-col min-h-screen min-h-[100dvh] bg-background", 
-        isPWA ? "pwa-standalone-container" : ""
-      )}
-      style={{
-        // CRITICAL FIX: These styles ensure content is visible in PWA mode
+  // CRITICAL FIX: EXTREMELY SIMPLIFIED LAYOUT FOR PWA MODE
+  if (isPWA) {
+    return (
+      <div id="pwa-root" style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        height: '100%',
-        minHeight: 'var(--vh, 100vh)',
-        width: '100%',
-        maxWidth: '100vw',
-        position: 'relative',
-        overflow: 'visible'
-      }}
-    >
-      {/* Main content with Facebook-style layout - SIMPLIFIED FOR DEBUGGING */}
-      <main 
-        className={cn(
-          "flex-1", // Always full height
-          isPWA ? "px-4 pt-1" : "px-4 pt-1 pwa-top-inset" // Simple padding for debugging
-        )}
-        style={{
-          // CRITICAL FIX: Basic styles for content visibility
-          flex: '1 0 auto',
-          display: 'block',
+        backgroundColor: 'white',
+        overflow: 'auto'
+      }}>
+        {/* MAIN CONTENT AREA - VERY SIMPLE STRUCTURE */}
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
           width: '100%',
-          height: 'auto',
-          minHeight: '200px', // Force some height
-          overflow: 'visible',
-          position: 'relative'
-        }}
-      >
-        {/* Direct children rendering - simplified wrapper structure */}
-        <div 
-          className="content-wrapper"
-          style={{
-            // CRITICAL FIX: Basic visible content styling
-            display: 'block',
-            width: '100%',
-            minHeight: '200px',
-            paddingBottom: '70px', // Space for navigation
-            position: 'relative'
-          }}
-        >
-          {/* DEBUG MARKER - will remove this after visibility is fixed */}
+          padding: '16px',
+          paddingBottom: '80px' // Space for navigation
+        }}>
+          {/* DEBUG INFO */}
           <div style={{
             padding: '10px',
-            margin: '10px 0',
-            background: 'rgba(59, 130, 246, 0.1)',
-            border: '1px solid rgba(59, 130, 246, 0.3)',
-            borderRadius: '4px'
+            margin: '10px 0 20px 0',
+            backgroundColor: '#e6f7ff',
+            border: '1px solid #91d5ff',
+            borderRadius: '4px',
+            fontSize: '14px'
           }}>
-            <h3 style={{fontSize: '16px', fontWeight: 'bold', marginBottom: '4px'}}>Debug Panel</h3>
-            <p style={{fontSize: '14px'}}>PWA Mode: {isPWA ? 'Yes' : 'No'}</p>
+            <h3 style={{fontWeight: 'bold', marginBottom: '5px'}}>PWA Debug Panel</h3>
+            <p>PWA Mode: <strong>Active</strong></p>
+            <p>Screen Width: {typeof window !== 'undefined' ? window.innerWidth : 'N/A'}px</p>
+            <p>Content should be visible below:</p>
           </div>
           
+          {/* ACTUAL CONTENT */}
           {children}
-          
-          {/* Simple spacer at bottom */}
-          <div className="h-[70px]" aria-hidden="true" />
         </div>
+        
+        {/* BOTTOM NAV */}
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0, 
+          right: 0,
+          zIndex: 100,
+          backgroundColor: 'white',
+          borderTop: '1px solid #eaeaea'
+        }}>
+          <BottomNav />
+        </div>
+      </div>
+    );
+  }
+
+  // NORMAL MOBILE LAYOUT (NON-PWA)
+  return (
+    <div className="flex flex-col min-h-screen bg-background">
+      <main className="flex-1 px-4 pt-2">
+        {children}
+        <div className="h-[70px]" aria-hidden="true" />
       </main>
-      
-      {/* Bottom Navigation - Facebook style */}
       <BottomNav />
     </div>
   );
