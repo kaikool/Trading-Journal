@@ -346,6 +346,44 @@ html.pwa-standalone {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
+  /* CRITICAL FIX: Ensure dialog components are displayed correctly in PWA mode */
+  .pwa-standalone [role="dialog"],
+  html.pwa-standalone [role="dialog"],
+  .pwa-standalone-container [role="dialog"] {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-width: 90vw !important;
+    max-height: 85vh !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* CRITICAL FIX: For dialog overlays to be visible and properly positioned */
+  .pwa-standalone [data-state="open"]::before,
+  .pwa-standalone [data-state="open"] > div:first-child,
+  .pwa-standalone [data-radix-dialog-overlay],
+  .pwa-standalone .backdrop,
+  .pwa-standalone .fixed.inset-0,
+  .pwa-standalone-container [data-state="open"]::before,
+  .pwa-standalone-container [data-state="open"] > div:first-child,
+  .pwa-standalone-container [data-radix-dialog-overlay],
+  .pwa-standalone-container .backdrop,
+  .pwa-standalone-container .fixed.inset-0 {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 9998 !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
   /* Facebook-style bottom spacer to prevent content being hidden under navbar */
   .fb-bottom-spacer {
     height: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
@@ -511,7 +549,13 @@ html.pwa-standalone {
     min-height: 100dvh;
     width: 100%;
     position: relative;
-    overflow-x: hidden;
+    /* CRITICAL FIX: Changed from overflow-x:hidden to visible for component rendering in PWA */
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    
+    /* CRITICAL FIX: Ensure proper stacking context */
+    z-index: 1;
+    isolation: isolate;
     
     /* Đặc biệt quan trọng cho iPhone có notch hoặc Dynamic Island */
     @supports (padding-bottom: env(safe-area-inset-bottom)) {
@@ -520,6 +564,60 @@ html.pwa-standalone {
       padding-right: env(safe-area-inset-right, 0px);
       padding-bottom: 0; /* Giảm padding ở root */
     }
+  }
+  
+  /* CRITICAL FIX: Force RadixUI components to be visible in PWA mode */
+  .pwa-standalone [data-radix-popper-content-wrapper],
+  html.pwa-standalone [data-radix-popper-content-wrapper],
+  .pwa-standalone-container [data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+    position: fixed !important;
+    transform-origin: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    width: auto !important;
+    max-width: 95vw !important;
+    filter: none !important;
+    transform: none !important; 
+    margin: 0 !important;
+    pointer-events: auto !important;
+  }
+  
+  /* CRITICAL FIX: Special handling for popovers in PWA mode */
+  .pwa-standalone [data-radix-popper-content-wrapper] [role="tooltip"],
+  .pwa-standalone [data-radix-popper-content-wrapper] [role="menu"],
+  .pwa-standalone [data-radix-popper-content-wrapper] [role="dialog"],
+  .pwa-standalone [data-radix-popper-content-wrapper] [role="combobox"],
+  .pwa-standalone [data-radix-popper-content-wrapper] [role="listbox"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: block !important;
+  }
+  
+  /* CRITICAL FIX: Ensure UI components in PWA are visible and interactive */
+  .pwa-standalone [role="dialog"],
+  .pwa-standalone [role="menu"],
+  .pwa-standalone [role="tooltip"],
+  .pwa-standalone [role="alertdialog"],
+  .pwa-standalone [role="combobox"],
+  .pwa-standalone [role="listbox"],
+  .pwa-standalone .popover-content,
+  .pwa-standalone .dialog-content,
+  .pwa-standalone-container [role="dialog"],
+  .pwa-standalone-container [role="menu"],
+  .pwa-standalone-container [role="tooltip"],
+  .pwa-standalone-container [role="alertdialog"],
+  .pwa-standalone-container [role="combobox"],
+  .pwa-standalone-container [role="listbox"],
+  .pwa-standalone-container .popover-content,
+  .pwa-standalone-container .dialog-content {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    z-index: 9999 !important;
   }
   
   /* Fix horizontal scrolling issues but ensure PWA components are visible */
