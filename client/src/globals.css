@@ -24,7 +24,8 @@
 
 /* 
  * GitHub Mobile App Style PWA Enhancements
- * Follows GitHub's tight, content-focused layout system with precise spacing
+ * Follows GitHub's tight, content-focused layout system with precise 4px/8px spacing grid
+ * Optimized for efficient use of space with consistent spacing rules
  */
 
 /* Global PWA tweaks for GitHub styling */
@@ -52,7 +53,7 @@ html.pwa-standalone {
   overflow-x: hidden;
 }
 
-/* Facebook-style PWA bottom navigation */
+/* GitHub-style PWA bottom navigation */
 .pwa-standalone .mobile-nav,
 .pwa-mobile-nav {
   /* Fixed positioning with hardware acceleration */
@@ -66,76 +67,77 @@ html.pwa-standalone {
   will-change: transform;
   z-index: 100 !important;
   
-  /* Facebook-style navbar theming */
+  /* GitHub-style navbar theming - clean and subtle */
   background-color: hsl(var(--background));
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border-top: 1px solid hsl(var(--border) / 0.5);
-  box-shadow: 0 -0.5px 0 hsl(var(--border) / 0.75);
+  border-top: 1px solid hsl(var(--border));
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Facebook's compact navbar style */
+/* GitHub's compact navbar style */
 .pwa-mobile-nav {
   height: var(--pwa-bottom-nav-height) !important;
 }
 
-/* Facebook-style bottom nav items */
+/* GitHub-style bottom nav items - center-aligned with consistent spacing */
 .pwa-mobile-nav a,
 .pwa-standalone .mobile-nav a {
-  padding-top: 7px !important;
-  padding-bottom: 7px !important;
+  padding-top: 6px !important; /* GitHub uses slightly tighter top padding */
+  padding-bottom: 6px !important;
   height: 100% !important;
   justify-content: center !important;
 }
 
-/* Facebook app style icons */
+/* GitHub app style icons - consistent and crisp */
 .pwa-mobile-nav a svg,
 .pwa-standalone .mobile-nav a svg {
   display: inline-block !important;
   opacity: 1 !important;
   visibility: visible !important;
-  margin-bottom: 2px !important;
+  margin-bottom: 2px !important; /* GitHub uses consistent spacing */
 }
 
-/* Facebook-style labels - small and tight */
+/* GitHub-style labels - slightly larger than Facebook with semibold actives */
 .pwa-mobile-nav a span,
 .pwa-standalone .mobile-nav a span {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-  font-size: 10px !important;
-  line-height: 1 !important;
-  font-weight: 500;
+  font-size: 10px !important; /* GitHub uses slightly larger labels */
+  line-height: 1.2 !important; /* GitHub uses slightly more height */
+  font-weight: 500; /* Medium for inactive */
   margin-top: 1px;
 }
 
-/* Facebook-style navigation grid */
-.fb-nav-grid {
-  /* Facebook uses tighter grid */
+/* GitHub-style navigation grid */
+.gh-nav-grid {
+  /* GitHub's precise grid */
   height: 100% !important;
   align-items: stretch !important;
   padding: 0 !important;
   /* Ensure pixel perfect alignment */
   max-width: 100% !important;
   overflow: visible !important;
+  grid-gap: 0 !important;
 }
 
-/* Facebook-style navigation item */
-.fb-nav-item {
-  /* Facebook's tighter spacing */
+/* GitHub-style navigation item */
+.gh-nav-item {
+  /* GitHub's spacing - precise 8px grid */
   padding: 0 !important;
-  gap: 1px !important;
+  gap: var(--gh-space-1) !important;
 }
 
-/* Facebook style active indicator */
-.fb-nav-active-dot {
+/* GitHub style active indicator - pill at bottom */
+.gh-nav-active-pill {
   position: absolute;
-  bottom: 1px;
+  bottom: var(--gh-space-1);
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
+  width: 24px;
+  height: 2px;
+  border-radius: 1px;
   background-color: hsl(var(--primary));
 }
 

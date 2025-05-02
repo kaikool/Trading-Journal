@@ -55,34 +55,34 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
         "flex flex-col items-center justify-center w-full relative overflow-visible select-none",
         // Touch optimization
         "focus:outline-none touch-manipulation", 
-        // Padding - Facebook style when in PWA
+        // Padding - GitHub style when in PWA
         isPWA 
-          ? "px-1 py-1.5" // Facebook compact style
-          : "px-1 py-2",  // Normal style
+          ? "px-1 py-1" // GitHub uses tighter spacing
+          : "px-1 py-2", // Normal style
         // Active indicator
         isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
     >
-      {/* Facebook-style indicator for active tab - dot at bottom instead of line on top */}
+      {/* GitHub-style indicator for active tab - small pill at bottom */}
       {isActive && isPWA && (
         <div 
           className={cn(
             "absolute bottom-0 left-0 right-0 mx-auto", 
             reducedMotion
-              ? "w-1.5 h-1.5 bg-primary rounded-full" // Static dot
+              ? "w-6 h-1 bg-primary rounded-full" // Static pill shape (GitHub style)
               : "" // Will be handled by motion.div
           )} 
         />
       )}
       
-      {/* Animated dot indicator for Facebook style in PWA - at bottom */}
+      {/* Animated pill indicator for GitHub style in PWA - at bottom */}
       {isActive && isPWA && !reducedMotion && (
         <motion.div
           layoutId="bottomNavIndicator"
-          className="absolute bottom-0 left-0 right-0 mx-auto w-1.5 h-1.5 bg-primary rounded-full"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", duration: 0.2, bounce: 0.2 }}
+          className="absolute bottom-0 left-0 right-0 mx-auto w-6 h-1 bg-primary rounded-full"
+          initial={{ opacity: 0, scaleX: 0.5 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ type: "spring", duration: 0.2, bounce: 0.1 }}
         />
       )}
       
@@ -102,35 +102,35 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
         <div className="absolute top-0 left-0 right-0 mx-auto w-12 h-[3px] bg-primary rounded-full" />
       )}
       
-      {/* Facebook-style compact icon and label layout */}
+      {/* GitHub-style compact icon and label layout */}
       <div className={cn(
         "flex flex-col items-center",
-        isPWA && "fb-nav-item" // Facebook specific class
+        isPWA && "gh-nav-item" // GitHub specific class
       )}>
-        {/* Icon container - Facebook style */}
+        {/* Icon container - GitHub style */}
         <div className={cn(
           "flex items-center justify-center relative",
-          isPWA ? "h-5 mb-0.5" : "h-6 mb-1" // Smaller in Facebook style
+          isPWA ? "h-5 mb-[2px]" : "h-6 mb-1" // GitHub uses precise 2px spacing
         )}>
           <div className={cn(
             "relative flex items-center justify-center",
-            isPWA ? "w-[22px] h-[22px]" : "w-5 h-5" // Facebook uses slightly bigger icons
+            isPWA ? "w-5 h-5" : "w-5 h-5" // GitHub uses consistent 20px icons
           )}>
             {isActive ? activeIcon || icon : icon}
           </div>
         </div>
         
-        {/* Label with Facebook styling */}
+        {/* Label with GitHub styling */}
         <span 
           className={cn(
             "text-center leading-tight px-0.5",
-            // Facebook uses even smaller font
-            isPWA ? "text-[9px]" : "text-[10px]",
-            // Font weight changes
+            // GitHub uses slightly larger font than Facebook
+            isPWA ? "text-[10px]" : "text-[10px]",
+            // Font weight changes - GitHub uses semibold for active
             isPWA && isActive 
-              ? "font-medium"  // Facebook uses medium for active state
+              ? "font-semibold"  // GitHub uses semibold for active state
               : isPWA 
-                ? "font-normal" // Facebook uses normal for inactive
+                ? "font-medium" // GitHub uses medium for inactive
                 : "font-medium", // Regular app uses medium
             // Color changes
             isActive ? "text-primary" : "text-muted-foreground"
@@ -281,17 +281,17 @@ export default function BottomNav() {
     <nav 
       className={cn(
         "mobile-nav lg:hidden",
-        // Sử dụng hệ thống className động với chiều cao Facebook
+        // Use GitHub's height for bottom nav in PWA mode
         isPWA ? "h-[--pwa-bottom-nav-height]" : "h-14",
-        // Thêm class đặc biệt cho PWA - Facebook style
+        // Add GitHub-specific PWA class 
         isPWA && "pwa-mobile-nav"
       )}
       style={{
         paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px',
-        // Facebook-style bottom border
-        borderTopWidth: isPWA ? '0.5px' : '1px',
-        // Apply Facebook shadow style in PWA mode
-        boxShadow: isPWA ? '0 -0.5px 0 hsla(0,0%,0%,0.1)' : undefined
+        // GitHub-style cleaner border
+        borderTopWidth: isPWA ? '1px' : '1px',
+        // GitHub-style subtle shadow
+        boxShadow: isPWA ? '0 -1px 2px rgba(0,0,0,0.05)' : undefined
       }}
       role="navigation"
       aria-label="Main Navigation"
@@ -301,8 +301,8 @@ export default function BottomNav() {
         className={cn(
           "grid w-full h-full", 
           devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5',
-          // Add Facebook-style extra classes
-          isPWA && "fb-nav-grid" 
+          // Add GitHub-style nav grid
+          isPWA && "gh-nav-grid" 
         )}
       >
         {devicePerformance === 'low' ? (
