@@ -227,7 +227,12 @@ export function ChartImageDialog({
             </div>
           </div>
           
-          {/* Đã loại bỏ tag indicator vì thông tin đã có trong tiêu đề */}
+          {/* Indicators cho thông tin hình ảnh và dot navigation */}
+          <div className="absolute pointer-events-none select-none top-0 left-0 right-0 flex justify-between p-2 opacity-80">
+            <div className="bg-black/60 text-white text-xs px-2 py-1 rounded-md backdrop-blur-sm">
+              {currentImage.type} - {currentImage.timeframe}
+            </div>
+          </div>
           
           {/* Dot indicators đặt ở phía dưới hình ảnh */}
           {availableImages.length > 1 && (

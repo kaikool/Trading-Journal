@@ -1,146 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* CSS Variables for PWA specific styling - Based on GitHub Mobile App Layout */
-:root {
-  /* Bottom navbar measurements */
-  --pwa-bottom-nav-height: 44px; /* GitHub mobile uses compact nav */
-  --pwa-bottom-nav-icon-size: 24px;
-  
-  /* Safe area insets with GitHub Mobile style */
-  --gh-content-padding-x: 12px; /* GitHub's horizontal content padding - tighter than Facebook */
-  --gh-content-padding-top: 4px; /* GitHub's minimal top content padding */
-  --gh-content-padding-bottom: 8px; /* GitHub's bottom content padding before navbar */
-  
-  /* Header area sizes */
-  --gh-header-height: 48px; /* Standard GitHub mobile header height */
-  --gh-status-bar-height: env(safe-area-inset-top, 0px); /* iOS status bar */
-  
-  /* GitHub specific spacing - matches their 4px/8px grid system */
-  --gh-space-1: 4px;
-  --gh-space-2: 8px;
-  --gh-space-3: 12px;
-  --gh-space-4: 16px;
-}
-
-/* 
- * GitHub Mobile App Style PWA Enhancements
- * Follows GitHub's tight, content-focused layout system with precise 4px/8px spacing grid
- * Optimized for efficient use of space with consistent spacing rules
- */
-
-/* Global PWA tweaks for GitHub styling */
-html.pwa-standalone {
-  /* GitHub uses clean edges with no overflow */
-  overflow-x: hidden;
-  background-color: hsl(var(--background));
-}
-
-/* Apply GitHub-style handling to the page container */
-.pwa-standalone #root,
-.pwa-standalone-container {
-  /* GitHub's tight spacing system with precise 4px/8px grid */
-  padding-top: 0; /* GitHub manages this at component level */
-  padding-bottom: 0; /* GitHub uses spacers for bottom padding */
-  display: flex;
-  flex-direction: column;
-  background-color: hsl(var(--background));
-  
-  /* GitHub's mobile layout */
-  min-height: 100vh;
-  min-height: 100dvh;
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-/* GitHub-style PWA bottom navigation */
-.pwa-standalone .mobile-nav,
-.pwa-mobile-nav {
-  /* Fixed positioning with hardware acceleration */
-  position: fixed !important;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: var(--pwa-bottom-nav-height) !important;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
-  z-index: 100 !important;
-  
-  /* GitHub-style navbar theming - clean and subtle */
-  background-color: hsl(var(--background));
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-top: 1px solid hsl(var(--border));
-  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
-}
-
-/* GitHub's compact navbar style */
-.pwa-mobile-nav {
-  height: var(--pwa-bottom-nav-height) !important;
-}
-
-/* GitHub-style bottom nav items - center-aligned with consistent spacing */
-.pwa-mobile-nav a,
-.pwa-standalone .mobile-nav a {
-  padding-top: 6px !important; /* GitHub uses slightly tighter top padding */
-  padding-bottom: 6px !important;
-  height: 100% !important;
-  justify-content: center !important;
-}
-
-/* GitHub app style icons - consistent and crisp */
-.pwa-mobile-nav a svg,
-.pwa-standalone .mobile-nav a svg {
-  display: inline-block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  margin-bottom: 2px !important; /* GitHub uses consistent spacing */
-}
-
-/* GitHub-style labels - slightly larger than Facebook with semibold actives */
-.pwa-mobile-nav a span,
-.pwa-standalone .mobile-nav a span {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  font-size: 10px !important; /* GitHub uses slightly larger labels */
-  line-height: 1.2 !important; /* GitHub uses slightly more height */
-  font-weight: 500; /* Medium for inactive */
-  margin-top: 1px;
-}
-
-/* GitHub-style navigation grid */
-.gh-nav-grid {
-  /* GitHub's precise grid */
-  height: 100% !important;
-  align-items: stretch !important;
-  padding: 0 !important;
-  /* Ensure pixel perfect alignment */
-  max-width: 100% !important;
-  overflow: visible !important;
-  grid-gap: 0 !important;
-}
-
-/* GitHub-style navigation item */
-.gh-nav-item {
-  /* GitHub's spacing - precise 8px grid */
-  padding: 0 !important;
-  gap: var(--gh-space-1) !important;
-}
-
-/* GitHub style active indicator - pill at bottom */
-.gh-nav-active-pill {
-  position: absolute;
-  bottom: var(--gh-space-1);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 2px;
-  border-radius: 1px;
-  background-color: hsl(var(--primary));
-}
-
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
@@ -205,15 +64,15 @@ html.pwa-standalone {
     bottom: 0;
     left: 0;
     right: 0;
+    /* Sử dụng Tailwind's h-14 (56px) thay vì hardcoded height */
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border) / 0.4);
     z-index: 50;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     
-    /* Ensure visibility in standalone PWA mode */
-    display: flex;
-    flex-direction: column;
+    /* Prevent content overflow inside navigation */
+    overflow: hidden;
     
     /* Box shadow for better visual separation */
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
@@ -226,32 +85,18 @@ html.pwa-standalone {
     }
   }
 
-  /* Ensure mobile nav items display correctly */
+  /* Ensure child elements inherit overflow hidden to prevent scrolling issues */
   .mobile-nav > div, 
-  .mobile-nav .grid {
-    width: 100%;
-    display: grid;
-  }
-  
-  /* Fix icon visibility in PWA mode */
-  .mobile-nav svg {
-    width: 20px;
-    height: 20px;
-    display: block; /* Ensure SVG elements are visible */
-    pointer-events: none; /* Prevent touch events on icons */
+  .mobile-nav .grid,
+  .mobile-nav a,
+  .mobile-nav button {
+    overflow: hidden !important;
   }
   
   /* Navigation items should be positioned correctly regardless of safe area */
   .mobile-nav .grid {
-    height: 100%;
+    height: 100% !important; /* Sử dụng 100% height thay vì fixed height */
     padding-bottom: 0 !important; /* Let the parent handle the safe area */
-  }
-  
-  /* Ensure labels are visible */
-  .mobile-nav a span {
-    display: block !important;
-    max-width: 100%;
-    font-weight: 500;
   }
 
   /* Mobile content - ensure proper spacing with navigation and home indicator */
@@ -269,81 +114,35 @@ html.pwa-standalone {
     }
   }
   
-  /* Layout utilities for PWA that respect device notches and home indicators - GitHub style */
+  /* Layout utilities for PWA that respect device notches and home indicators */
   .pwa-container {
-    /* GitHub-style container */
+    /* Basic styling */
     width: 100%;
     margin: 0 auto;
-    /* GitHub's precise padding system */
-    padding-left: max(var(--gh-content-padding-x), env(safe-area-inset-left, 12px));
-    padding-right: max(var(--gh-content-padding-x), env(safe-area-inset-right, 12px));
-    /* GitHub keeps content close to edges */
-    padding-top: 0; /* Managed at component level */
-    padding-bottom: 0; /* Managed by spacers */
-  }
-
-  /* GitHub-style content layout classes */
-  .gh-content {
-    /* GitHub content area uses its 8px grid system */
-    padding-left: var(--gh-space-3);
-    padding-right: var(--gh-space-3);
-    padding-top: var(--gh-content-padding-top);
-    /* GitHub uses precise bottom padding with 8px grid alignment */
-    padding-bottom: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--gh-space-2));
-  }
-  
-  /* Status bar area - GitHub style */
-  .gh-status-area {
-    padding-top: var(--gh-status-bar-height);
-    min-height: calc(var(--gh-header-height) + var(--gh-status-bar-height));
-    display: flex;
-    align-items: center;
-    z-index: 10;
-  }
-  
-  /* GitHub-style main content area */
-  .gh-main-content {
-    flex: 1; 
-    overflow-x: hidden;
-    /* GitHub uses minimal padding for maximum content space */
-    padding-bottom: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--gh-space-1));
-  }
-  
-  /* GitHub-style content section */
-  .gh-section {
-    margin-bottom: var(--gh-space-2);
-    background-color: hsl(var(--background));
-  }
-  
-  /* Use for content areas that need top inset padding (header areas) - GitHub Style */
-  .pwa-top-inset {
-    /* GitHub uses minimal top padding with safe area awareness */
-    padding-top: max(var(--gh-content-padding-top), env(safe-area-inset-top, 0px));
-  }
-  
-  /* Use for page titles or notifications at the very top of the screen - GitHub Style*/
-  .pwa-status-bar-area {
+    /* Safe area handling */
+    padding-left: env(safe-area-inset-left, 16px);
+    padding-right: env(safe-area-inset-right, 16px);
     padding-top: env(safe-area-inset-top, 0px);
-    height: calc(var(--gh-header-height) + env(safe-area-inset-top, 0px));
-    display: flex;
-    align-items: center; /* Center vertical alignment */
-  }
-  
-  /* For bottom fixed elements other than navigation - GitHub Style */
-  .pwa-bottom-inset {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
-  /* GitHub-style bottom spacer to prevent content being hidden under navbar */
-  .gh-bottom-spacer {
-    height: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--gh-space-1));
-    width: 100%;
+  /* Use for content areas that need top inset padding (header areas) */
+  .pwa-top-inset {
+    /* Optimized padding - reduced for better space utilization */
+    padding-top: max(8px, env(safe-area-inset-top, 8px));
   }
   
-  /* GitHub-style tight container - minimal side padding */
-  .gh-container-tight {
-    padding-left: var(--gh-space-2);
-    padding-right: var(--gh-space-2);
+  /* Use for page titles or notifications at the very top of the screen */
+  .pwa-status-bar-area {
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(50px + env(safe-area-inset-top, 0px));
+    display: flex;
+    align-items: flex-end; /* Align content at the bottom of the status bar area */
+  }
+  
+  /* For bottom fixed elements other than navigation */
+  .pwa-bottom-inset {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
   /* Full-bleed content that respects safe areas */
