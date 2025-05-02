@@ -1727,6 +1727,7 @@ export {
   initFirebase,
   loginUser,
   loginWithGoogle,
+  loginWithGitHub,
   registerUser,
   logoutUser,
   getUserData,
