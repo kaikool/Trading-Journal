@@ -15,28 +15,53 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   useEffect(() => {
     // Check if we're in PWA mode
     setIsPWAMode(isPWA());
+    
+    // Thêm class vào body để có thể style toàn bộ app ở chế độ PWA
+    if (isPWA()) {
+      document.documentElement.classList.add('pwa-mode');
+    }
+    
+    return () => {
+      // Cleanup khi component unmount
+      document.documentElement.classList.remove('pwa-mode');
+    };
   }, []);
   
   return (
     <div className={cn(
       "flex flex-col min-h-screen min-h-[100dvh] bg-background",
-      "mobile-layout", // Add a specific class for PWA styling
+      "mobile-layout", // Add a specific class for mobile styling
       isPWAMode && "pwa-mobile-layout" // Additional class for PWA mode
     )}>
       {/* Main content - với padding tối ưu cho PWA */}
       <main className={cn(
-        "flex-1 px-4 pt-1", // Chỉ giữ padding bên và padding top tối thiểu
-        "pwa-top-inset", // Padding top cho safe area (notch/dynamic island)
-        isPWAMode && "pt-safe" // Add safe area padding directly when in PWA mode
-      )}>
+        "flex-1 px-4", // Padding bên cạnh cố định
+        // Tối ưu hóa padding top cho từng trường hợp
+        isPWAMode 
+          ? "pt-safe" // Sử dụng safe area inset top cho PWA
+          : "pt-1", // Padding tối thiểu ở chế độ không phải PWA
+        // Thêm class cho PWA mode
+        isPWAMode && "pwa-main-content"
+      )}
+      style={{
+        // Fine-tuning padding top trong PWA mode để giảm không gian lãng phí
+        ...(isPWAMode && {
+          paddingTop: 'calc(env(safe-area-inset-top, 0px) + 4px)',
+        })
+      }}>
         {children}
         
         {/* Spacer element để đảm bảo nội dung không bị BottomNav che phủ */}
         <div 
-          className="w-full sm:h-[70px] md:h-0 lg:h-0" 
+          className={cn(
+            "w-full sm:h-[70px] md:h-0 lg:h-0",
+            isPWAMode && "pwa-bottom-spacer" // Special class for PWA mode
+          )}
           style={{
-            // Dynamic height calculation using safe area on PWA mode
-            height: isPWAMode ? 'calc(60px + env(safe-area-inset-bottom, 0px))' : '60px'
+            // Dynamic height calculation using safe area
+            height: isPWAMode 
+              ? 'calc(56px + env(safe-area-inset-bottom, 0px) + 4px)' // Thêm 4px để tránh bị sát đáy
+              : '60px' // Chiều cao cố định khi không ở PWA mode
           }}
           aria-hidden="true" 
         />

@@ -183,16 +183,21 @@ export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
   return (
     <nav 
       className={cn(
-        "mobile-nav lg:hidden",
-        // Sử dụng hệ thống className động thay vì fixed height
+        "mobile-nav lg:hidden border-t border-border/60",
+        "fixed bottom-0 left-0 right-0 z-50",
+        "bg-background/95 backdrop-blur-md",
         // Thêm class đặc biệt khi ở chế độ PWA
         isPWAMode ? "pwa-mobile-nav" : "h-14"
       )}
       style={{
-        // Luôn áp dụng padding bottom cho home indicator trong PWA mode
-        paddingBottom: (hasHomeIndicator || isPWAMode) ? 'env(safe-area-inset-bottom, 0px)' : '0px',
-        // Đặt height động để tự điều chỉnh dựa trên safe area
-        height: isPWAMode ? 'calc(56px + env(safe-area-inset-bottom, 0px))' : undefined
+        // Cải tiến việc xử lý home indicator và safe area
+        paddingBottom: (hasHomeIndicator || isPWAMode) 
+          ? 'env(safe-area-inset-bottom, 0px)' 
+          : '0px',
+        // Đặt chiều cao động để thích nghi với safe area
+        height: (hasHomeIndicator || isPWAMode)
+          ? 'calc(56px + env(safe-area-inset-bottom, 0px))' 
+          : '56px'
       }}
       role="navigation"
       aria-label="Main Navigation"
@@ -201,9 +206,17 @@ export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
         className={cn(
           "grid w-full h-full", 
           devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5',
+          // Tối ưu hóa chiều cao cho nội dung khi có home indicator
+          hasHomeIndicator || isPWAMode ? "h-14" : "h-full",
           // Thêm lớp pb-safe cho vùng điều hướng trong PWA mode
           isPWAMode && "pb-safe"
         )}
+        style={{
+          // Đảm bảo nút không bị chèn vào home indicator
+          paddingBottom: (hasHomeIndicator || isPWAMode)
+            ? 'max(env(safe-area-inset-bottom, 0px), 4px)'
+            : '0'
+        }}
       >
         {devicePerformance === 'low' ? (
           // Simplified interface for low-performance devices

@@ -320,6 +320,14 @@
     /* Ensure the PWA gets same treatment as mobile devices */
     @apply bg-background text-foreground;
     max-width: 100vw;
+    height: 100vh; /* Fallback */
+    height: 100dvh; /* Using dynamic viewport height */
+    overflow: hidden; /* Prevent scrolling of the body */
+    position: fixed; /* Fixed position to force mobile-like behavior */
+    width: 100%; /* Ensure full width */
+    top: 0;
+    left: 0;
+    overscroll-behavior: none; /* Prevent pull-to-refresh */
   }
   
   /* PWA-specific adjustments for MobileLayout */
@@ -327,6 +335,29 @@
   .pwa-mobile-layout {
     /* Match the same padding/margin as on real mobile devices */
     padding-top: env(safe-area-inset-top, 0px);
+    max-height: 100dvh; /* Dynamic viewport height for modern browsers */
+    overflow-y: auto; /* Allow content scrolling */
+    overscroll-behavior-y: none; /* Prevent pull-to-refresh */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+  
+  /* Main content area in PWA mode */
+  html.pwa-mode .pwa-main-content,
+  .pwa-main-content {
+    /* Optimize main content padding/margin in PWA */
+    padding-top: max(env(safe-area-inset-top, 0px), 8px); /* At least 8px padding top */
+    padding-bottom: 0; /* Bottom padding removed, handled by spacer */
+    max-height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px)); /* Account for bottom nav */
+    overflow-y: auto; /* Allow scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+  
+  /* Bottom spacer for PWA mode */
+  html.pwa-mode .pwa-bottom-spacer,
+  .pwa-bottom-spacer {
+    /* Ensure proper spacing at the bottom for the navbar */
+    height: calc(56px + env(safe-area-inset-bottom, 0px) + 4px) !important;
+    margin-top: auto;
   }
   
   /* Fix for mobile navigation in PWA mode */
@@ -335,6 +366,8 @@
     /* Ensure navigation respects safe areas */
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
     height: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+    border-top: 1px solid hsl(var(--border) / 0.6) !important;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05) !important;
   }
   
   /* Special classes for PWA mode bottom navigation */
@@ -348,6 +381,39 @@
     border-top: 1px solid hsl(var(--border) / 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+  }
+  
+  /* PWA-optimized chart image dialog */
+  .pwa-chart-dialog {
+    /* Optimized for PWA with sheet-style presentation */
+    border-radius: 1rem 1rem 0 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  /* PWA-optimized chart content area */
+  .pwa-chart-content {
+    /* Better spacing in PWA mode */
+    padding-top: 0.75rem !important;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem) !important;
+  }
+  
+  /* PWA-optimized chart image container */
+  .pwa-chart-image-container {
+    /* Centered content with proper safe area handling */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+  }
+  
+  /* PWA-optimized chart image */
+  .pwa-chart-image {
+    /* Better image display in PWA */
+    max-height: calc(100% - env(safe-area-inset-bottom, 0px) - 1.5rem) !important;
+    margin: 0 auto;
+    object-fit: contain;
+    display: block;
   }
   
   /* Fix horizontal scrolling issues */
