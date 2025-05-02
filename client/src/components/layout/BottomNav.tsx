@@ -277,45 +277,7 @@ export default function BottomNav() {
     }
   ];
   
-  // SIMPLIFIED PWA NAVIGATION
-  if (isPWA && document.getElementById('pwa-root')) {
-    return (
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: devicePerformance === 'low' ? '1fr 1fr 1fr' : '1fr 1fr 1fr 1fr 1fr',
-        width: '100%',
-        height: '56px',
-        paddingBottom: hasHomeIndicator ? 'env(safe-area-inset-bottom, 0px)' : '0px',
-      }}>
-        {/* SIMPLIFIED NAV ITEMS FOR PWA */}
-        {(devicePerformance === 'low' ? [
-          { icon: <LayoutDashboard />, label: "Home", href: "/" },
-          { icon: <TrendingUp />, label: "Trades", href: "/trade/new" },
-          { icon: <BarChart2 />, label: "Analytics", href: "/analytics" }
-        ] : navItems).map(item => (
-          <a 
-            key={item.href}
-            href={item.href}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textDecoration: 'none',
-              color: location === item.href ? '#3b82f6' : '#64748b',
-              fontSize: '12px',
-              gap: '4px'
-            }}
-          >
-            <div>{item.icon}</div>
-            <span>{item.label}</span>
-          </a>
-        ))}
-      </div>
-    );
-  }
-
-  // NORMAL NAVIGATION (NON-PWA)
+  // NAVIGATION
   return (
     <nav 
       className={cn(
