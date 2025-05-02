@@ -185,19 +185,14 @@ export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
       className={cn(
         "mobile-nav lg:hidden border-t border-border/60",
         "fixed bottom-0 left-0 right-0 z-50",
-        "bg-background/95 backdrop-blur-md",
-        // Thêm class đặc biệt khi ở chế độ PWA
-        isPWAMode ? "pwa-mobile-nav" : "h-14"
+        "bg-background/95 backdrop-blur-md"
       )}
       style={{
-        // Cải tiến việc xử lý home indicator và safe area
-        paddingBottom: (hasHomeIndicator || isPWAMode) 
-          ? 'env(safe-area-inset-bottom, 0px)' 
-          : '0px',
-        // Đặt chiều cao động để thích nghi với safe area
-        height: (hasHomeIndicator || isPWAMode)
-          ? 'calc(56px + env(safe-area-inset-bottom, 0px))' 
-          : '56px'
+        position: 'fixed',
+        bottom: 0,
+        height: '56px',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        marginBottom: 0
       }}
       role="navigation"
       aria-label="Main Navigation"
