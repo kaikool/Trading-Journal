@@ -276,15 +276,14 @@ export default function BottomNav() {
       href: "/settings" 
     }
   ];
-  
-  // NAVIGATION
+
   return (
     <nav 
       className={cn(
         "mobile-nav lg:hidden",
-        // Use dynamic className with Facebook height
+        // Sử dụng hệ thống className động với chiều cao Facebook
         isPWA ? "h-[--pwa-bottom-nav-height]" : "h-14",
-        // Add special class for PWA - Facebook style
+        // Thêm class đặc biệt cho PWA - Facebook style
         isPWA && "pwa-mobile-nav"
       )}
       style={{
