@@ -53,28 +53,28 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
       <main 
         className={cn(
           "flex-1", // Always full height
-          // Điều chỉnh padding dựa trên Facebook style khi trong PWA
+          // GitHub's compact layout in PWA mode
           isPWA 
-            ? "fb-main-content" // Facebook-style padding trong PWA
-            : "px-4 pt-1 pwa-top-inset" // Padding thông thường khi không phải PWA
+            ? "gh-main-content" // GitHub-style minimal padding in PWA
+            : "px-4 pt-1 pwa-top-inset" // Regular padding in browser mode
         )}
       >
-        {/* Facebook-style content container */}
+        {/* GitHub-style content container with 8px grid system */}
         <div 
           className={cn(
-            // Chỉ áp dụng lớp fb-content trong PWA
-            isPWA ? "fb-content" : ""
+            // Only apply the GitHub content class in PWA mode
+            isPWA ? "gh-content" : ""
           )}
         >
           {children}
           
-          {/* Spacer element - Facebook style bottom spacing */}
+          {/* Spacer element - GitHub style uses precise 8px grid spacing */}
           <div 
             className={cn(
               "w-full", 
               isPWA 
-                ? "fb-bottom-spacer" // Facebook-style bottom spacing
-                : "h-[60px] sm:h-[70px] md:h-0 lg:h-0" // Normal spacing
+                ? "gh-bottom-spacer" // GitHub-style precise bottom spacing
+                : "h-[60px] sm:h-[70px] md:h-0 lg:h-0" // Regular spacing outside PWA
             )} 
             aria-hidden="true" 
           />

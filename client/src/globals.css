@@ -1,44 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* CSS Variables for PWA specific styling - Based on Facebook App Layout */
+/* CSS Variables for PWA specific styling - Based on GitHub Mobile App Layout */
 :root {
   /* Bottom navbar measurements */
-  --pwa-bottom-nav-height: 49px; /* Facebook app style */
+  --pwa-bottom-nav-height: 44px; /* GitHub mobile uses compact nav */
   --pwa-bottom-nav-icon-size: 24px;
   
-  /* Safe area insets with Facebook App style */
-  --fb-content-padding-x: 16px; /* Facebook's horizontal content padding */
-  --fb-content-padding-top: 8px; /* Facebook's top content padding */
-  --fb-content-padding-bottom: 12px; /* Facebook's bottom content padding before navbar */
+  /* Safe area insets with GitHub Mobile style */
+  --gh-content-padding-x: 12px; /* GitHub's horizontal content padding - tighter than Facebook */
+  --gh-content-padding-top: 4px; /* GitHub's minimal top content padding */
+  --gh-content-padding-bottom: 8px; /* GitHub's bottom content padding before navbar */
   
   /* Header area sizes */
-  --fb-header-height: 44px; /* Standard Facebook header height */
-  --fb-status-bar-height: env(safe-area-inset-top, 0px); /* iOS status bar */
+  --gh-header-height: 48px; /* Standard GitHub mobile header height */
+  --gh-status-bar-height: env(safe-area-inset-top, 0px); /* iOS status bar */
+  
+  /* GitHub specific spacing - matches their 4px/8px grid system */
+  --gh-space-1: 4px;
+  --gh-space-2: 8px;
+  --gh-space-3: 12px;
+  --gh-space-4: 16px;
 }
 
 /* 
- * Facebook App Style PWA Enhancements
- * Closely mimics Facebook's mobile app layout and spacing system
+ * GitHub Mobile App Style PWA Enhancements
+ * Follows GitHub's tight, content-focused layout system with precise spacing
  */
 
-/* Global PWA tweaks for Facebook styling */
+/* Global PWA tweaks for GitHub styling */
 html.pwa-standalone {
-  /* Make sure content is flush with edges like Facebook */
+  /* GitHub uses clean edges with no overflow */
   overflow-x: hidden;
   background-color: hsl(var(--background));
 }
 
-/* Apply Facebook-style handling to the page container */
+/* Apply GitHub-style handling to the page container */
 .pwa-standalone #root,
 .pwa-standalone-container {
-  /* Facebook-like spacing system - tight and efficient */
-  padding-top: 0; /* Managed by component-level padding */
-  padding-bottom: 0; /* Managed by spacers */
+  /* GitHub's tight spacing system with precise 4px/8px grid */
+  padding-top: 0; /* GitHub manages this at component level */
+  padding-bottom: 0; /* GitHub uses spacers for bottom padding */
   display: flex;
   flex-direction: column;
   background-color: hsl(var(--background));
   
-  /* Tight Facebook-style layout */
+  /* GitHub's mobile layout */
   min-height: 100vh;
   min-height: 100dvh;
   width: 100%;
@@ -261,73 +267,81 @@ html.pwa-standalone {
     }
   }
   
-  /* Layout utilities for PWA that respect device notches and home indicators - Facebook style */
+  /* Layout utilities for PWA that respect device notches and home indicators - GitHub style */
   .pwa-container {
-    /* Facebook-style container */
+    /* GitHub-style container */
     width: 100%;
     margin: 0 auto;
-    /* Facebook minimal padding system */
-    padding-left: max(var(--fb-content-padding-x), env(safe-area-inset-left, 16px));
-    padding-right: max(var(--fb-content-padding-x), env(safe-area-inset-right, 16px));
-    /* Facebook keeps content close to top */
-    padding-top: 0; /* Managed by components individually */
-    padding-bottom: 0; /* Also managed by components */
+    /* GitHub's precise padding system */
+    padding-left: max(var(--gh-content-padding-x), env(safe-area-inset-left, 12px));
+    padding-right: max(var(--gh-content-padding-x), env(safe-area-inset-right, 12px));
+    /* GitHub keeps content close to edges */
+    padding-top: 0; /* Managed at component level */
+    padding-bottom: 0; /* Managed by spacers */
   }
 
-  /* Facebook-style content layout classes */
-  .fb-content {
-    /* Facebook content area - uses minimal padding */
-    padding-left: var(--fb-content-padding-x);
-    padding-right: var(--fb-content-padding-x);
-    padding-top: var(--fb-content-padding-top);
-    padding-bottom: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--fb-content-padding-bottom));
+  /* GitHub-style content layout classes */
+  .gh-content {
+    /* GitHub content area uses its 8px grid system */
+    padding-left: var(--gh-space-3);
+    padding-right: var(--gh-space-3);
+    padding-top: var(--gh-content-padding-top);
+    /* GitHub uses precise bottom padding with 8px grid alignment */
+    padding-bottom: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--gh-space-2));
   }
   
-  /* Status bar area - Facebook style */
-  .fb-status-area {
-    padding-top: var(--fb-status-bar-height);
-    min-height: calc(var(--fb-header-height) + var(--fb-status-bar-height));
+  /* Status bar area - GitHub style */
+  .gh-status-area {
+    padding-top: var(--gh-status-bar-height);
+    min-height: calc(var(--gh-header-height) + var(--gh-status-bar-height));
     display: flex;
     align-items: center;
     z-index: 10;
   }
   
-  /* Facebook-style main content area */
-  .fb-main-content {
-    flex: 1;
+  /* GitHub-style main content area */
+  .gh-main-content {
+    flex: 1; 
     overflow-x: hidden;
-    padding-bottom: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+    /* GitHub uses minimal padding for maximum content space */
+    padding-bottom: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--gh-space-1));
   }
   
-  /* Facebook-style content section */
-  .fb-section {
-    margin-bottom: 8px;
+  /* GitHub-style content section */
+  .gh-section {
+    margin-bottom: var(--gh-space-2);
     background-color: hsl(var(--background));
   }
   
-  /* Use for content areas that need top inset padding (header areas) - Facebook Style */
+  /* Use for content areas that need top inset padding (header areas) - GitHub Style */
   .pwa-top-inset {
-    /* Facebook uses minimal top padding, aligns with status bar */
-    padding-top: max(var(--fb-content-padding-top), env(safe-area-inset-top, 0px));
+    /* GitHub uses minimal top padding with safe area awareness */
+    padding-top: max(var(--gh-content-padding-top), env(safe-area-inset-top, 0px));
   }
   
-  /* Use for page titles or notifications at the very top of the screen - Facebook Style*/
+  /* Use for page titles or notifications at the very top of the screen - GitHub Style*/
   .pwa-status-bar-area {
     padding-top: env(safe-area-inset-top, 0px);
-    height: calc(var(--fb-header-height) + env(safe-area-inset-top, 0px));
+    height: calc(var(--gh-header-height) + env(safe-area-inset-top, 0px));
     display: flex;
-    align-items: center; /* Facebook aligns content in center of header */
+    align-items: center; /* Center vertical alignment */
   }
   
-  /* For bottom fixed elements other than navigation - Facebook Style */
+  /* For bottom fixed elements other than navigation - GitHub Style */
   .pwa-bottom-inset {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
-  /* Facebook-style bottom spacer to prevent content being hidden under navbar */
-  .fb-bottom-spacer {
-    height: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+  /* GitHub-style bottom spacer to prevent content being hidden under navbar */
+  .gh-bottom-spacer {
+    height: calc(var(--pwa-bottom-nav-height) + env(safe-area-inset-bottom, 0px) + var(--gh-space-1));
     width: 100%;
+  }
+  
+  /* GitHub-style tight container - minimal side padding */
+  .gh-container-tight {
+    padding-left: var(--gh-space-2);
+    padding-right: var(--gh-space-2);
   }
   
   /* Full-bleed content that respects safe areas */
