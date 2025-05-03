@@ -411,56 +411,48 @@ export const AchievementsTab: React.FC<{
           </div>
           
           {/* Achievement list */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedCategory}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {filteredAchievements
-                  .sort((a, b) => {
-                    // Sort by level rank first (bronze to master)
-                    const levelRankA = achievementLevelRank[a.level] || 0;
-                    const levelRankB = achievementLevelRank[b.level] || 0;
-                    
-                    if (levelRankA !== levelRankB) {
-                      return levelRankA - levelRankB;
-                    }
-                    
-                    // If same level, sort by category
-                    if (a.category !== b.category) {
-                      return a.category.localeCompare(b.category);
-                    }
-                    
-                    // Finally sort by points if needed
-                    return a.points - b.points;
-                  })
-                  .map(achievement => (
-                    <AchievementCard
-                      key={achievement.id}
-                      achievement={achievement}
-                      userProgress={userAchievements.achievements[achievement.id] || {
-                        isComplete: false,
-                        progress: 0
-                      }}
-                    />
-                  ))}
+          <div className="transition-all duration-200 ease-in-out fade-in">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filteredAchievements
+                .sort((a, b) => {
+                  // Sort by level rank first (bronze to master)
+                  const levelRankA = achievementLevelRank[a.level] || 0;
+                  const levelRankB = achievementLevelRank[b.level] || 0;
+                  
+                  if (levelRankA !== levelRankB) {
+                    return levelRankA - levelRankB;
+                  }
+                  
+                  // If same level, sort by category
+                  if (a.category !== b.category) {
+                    return a.category.localeCompare(b.category);
+                  }
+                  
+                  // Finally sort by points if needed
+                  return a.points - b.points;
+                })
+                .map(achievement => (
+                  <AchievementCard
+                    key={achievement.id}
+                    achievement={achievement}
+                    userProgress={userAchievements.achievements[achievement.id] || {
+                      isComplete: false,
+                      progress: 0
+                    }}
+                  />
+                ))}
+            </div>
+            
+            {filteredAchievements.length === 0 && (
+              <div className="text-center py-8">
+                <FilterX className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                <h4 className="text-lg font-medium mb-1">No achievements found</h4>
+                <p className="text-muted-foreground">
+                  Try selecting a different category or removing filters to see all achievements.
+                </p>
               </div>
-              
-              {filteredAchievements.length === 0 && (
-                <div className="text-center py-8">
-                  <FilterX className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-                  <h4 className="text-lg font-medium mb-1">No achievements found</h4>
-                  <p className="text-muted-foreground">
-                    Try selecting a different category or removing filters to see all achievements.
-                  </p>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+            )}
+          </div>
         </Tabs>
       </div>
       

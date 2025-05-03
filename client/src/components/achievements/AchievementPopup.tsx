@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Check, Star, Award, Sparkles, Crown } from 'lucide-react';
+import { Trophy, Check, Star, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Achievement } from '@/types';
 import { achievementLevelColors, achievementLevelLabel, getIconByName } from '@/lib/achievements-data';
@@ -35,13 +34,6 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
     }
   }, [achievement, isLevelUp]);
   
-  // Handle closing animation completion
-  const handleAnimationComplete = () => {
-    if (!isVisible) {
-      onClose();
-    }
-  };
-  
   // Show toast notification alongside popup
   useEffect(() => {
     if (achievement) {
@@ -59,35 +51,36 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
     }
   }, [achievement, isLevelUp, newLevel, toast]);
   
+  // If component is not visible, trigger onClose after animation completes
+  useEffect(() => {
+    if (!isVisible) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 300); // match the CSS transition duration
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, onClose]);
+  
   if (!achievement && !isLevelUp) return null;
   
   return (
-    <AnimatePresence onExitComplete={handleAnimationComplete}>
+    <>
       {isVisible && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none p-4 transition-opacity duration-300 ease-in-out"
+          style={{animation: isVisible ? 'fade-in 0.3s ease-in-out' : 'fade-out 0.3s ease-in-out'}}
         >
           <div className="w-full max-w-md mx-auto">
             {achievement && (
-              <motion.div
+              <div
                 className={cn(
-                  "rounded-lg shadow-lg overflow-hidden border pointer-events-auto",
+                  "rounded-lg shadow-lg overflow-hidden border pointer-events-auto transform transition-all duration-300",
                   achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].border,
                   achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].bg,
-                  "bg-background/95 backdrop-blur-sm"
+                  "bg-background/95 backdrop-blur-sm",
+                  "animate-slide-up"
                 )}
-                initial={{ y: 50, scale: 0.8, opacity: 0 }}
-                animate={{ y: 0, scale: 1, opacity: 1 }}
-                exit={{ y: -20, scale: 0.9, opacity: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20,
-                }}
               >
                 <div className="p-4 sm:p-6">
                   <div className="flex items-center">
@@ -101,24 +94,12 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                           className: cn("w-8 h-8", achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].icon)
                         })}
                       </div>
-                      <motion.div
-                        className="absolute inset-0 rounded-full"
-                        initial={{ scale: 0.5, opacity: 0.8 }}
-                        animate={{ 
-                          scale: [1, 1.2, 1],
-                          opacity: [0.5, 0.8, 0]
-                        }}
-                        transition={{ 
-                          duration: 2,
-                          repeat: Infinity,
-                          repeatType: "loop"
-                        }}
-                      >
+                      <div className="absolute inset-0 rounded-full animate-pulse">
                         <div className={cn(
                           "w-full h-full rounded-full",
                           achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].bg,
                         )}></div>
-                      </motion.div>
+                      </div>
                     </div>
                     
                     <div className="ml-4 flex-1">
@@ -157,33 +138,21 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                       <span className="font-medium text-sm">{achievement.points} points</span>
                     </div>
                     
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: [0, 1.2, 1] }}
-                      transition={{ delay: 0.3, duration: 0.5 }}
-                    >
+                    <div className="animate-scale-in">
                       <div className="bg-green-500/10 text-green-500 rounded-full px-2 py-0.5 flex items-center space-x-1">
                         <Check className="w-3 h-3" />
                         <span className="text-xs font-medium">Completed</span>
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
                 <div className="h-1 w-full bg-gradient-to-r from-amber-300 via-amber-500 to-yellow-500"></div>
-              </motion.div>
+              </div>
             )}
             
             {isLevelUp && !achievement && (
-              <motion.div
-                className="rounded-lg shadow-lg overflow-hidden border pointer-events-auto bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20 bg-background/95 backdrop-blur-sm"
-                initial={{ y: 50, scale: 0.8, opacity: 0 }}
-                animate={{ y: 0, scale: 1, opacity: 1 }}
-                exit={{ y: -20, scale: 0.9, opacity: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20,
-                }}
+              <div
+                className="rounded-lg shadow-lg overflow-hidden border pointer-events-auto bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20 bg-background/95 backdrop-blur-sm animate-slide-up"
               >
                 <div className="p-4 sm:p-6">
                   <div className="flex items-center">
@@ -191,21 +160,9 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                       <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30">
                         <Crown className="w-8 h-8 text-indigo-500" />
                       </div>
-                      <motion.div
-                        className="absolute inset-0 rounded-full"
-                        initial={{ scale: 0.5, opacity: 0.8 }}
-                        animate={{ 
-                          scale: [1, 1.2, 1],
-                          opacity: [0.5, 0.8, 0]
-                        }}
-                        transition={{ 
-                          duration: 2,
-                          repeat: Infinity,
-                          repeatType: "loop"
-                        }}
-                      >
+                      <div className="absolute inset-0 rounded-full animate-pulse">
                         <div className="w-full h-full rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10"></div>
-                      </motion.div>
+                      </div>
                     </div>
                     
                     <div className="ml-4 flex-1">
@@ -236,32 +193,26 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                   </div>
                   
                   <div className="mt-4">
-                    <motion.div
-                      className="flex space-x-2 justify-center"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3, duration: 0.5 }}
-                    >
+                    <div className="flex space-x-2 justify-center animate-scale-in">
                       {[...Array(Math.min(5, newLevel))].map((_, i) => (
-                        <motion.div
+                        <div
                           key={i}
-                          initial={{ scale: 0, rotate: 0 }}
-                          animate={{ scale: 1, rotate: 360 }}
-                          transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+                          className="animate-spin-in"
+                          style={{ animationDelay: `${i * 0.1}s` }}
                         >
                           <Star className="w-5 h-5 text-yellow-500" fill="#eab308" />
-                        </motion.div>
+                        </div>
                       ))}
-                    </motion.div>
+                    </div>
                   </div>
                 </div>
                 <div className="h-1 w-full bg-gradient-to-r from-indigo-400 via-purple-500 to-indigo-600"></div>
-              </motion.div>
+              </div>
             )}
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 };
 
