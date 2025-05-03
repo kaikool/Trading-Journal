@@ -1,5 +1,4 @@
 import React from "react";
-import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
@@ -23,37 +22,34 @@ export default function StatCard({
   progressValue,
   isLoading = false,
 }: StatCardProps) {
-  // Enhanced color palette with Apple-inspired gradients
-  const colors = {
+  // Color configuration for different card styles
+  const colorConfig = {
     default: {
-      icon: "text-primary bg-primary/10",
-      progressBg: "bg-gradient-to-r from-primary/80 to-primary",
-      gradientFrom: "from-primary/5",
-      gradientTo: "to-primary/0",
+      iconClass: "text-primary bg-primary/10",
+      progressClass: "bg-gradient-to-r from-primary/80 to-primary",
+      gradientClass: "bg-gradient-to-br from-primary/5 to-primary/0",
     },
     gold: {
-      icon: "text-amber-500 bg-amber-500/10",
-      progressBg: "bg-gradient-to-r from-amber-400 to-amber-500",
-      gradientFrom: "from-amber-500/5",
-      gradientTo: "to-amber-500/0",
+      iconClass: "text-amber-500 bg-amber-500/10",
+      progressClass: "bg-gradient-to-r from-amber-400 to-amber-500",
+      gradientClass: "bg-gradient-to-br from-amber-500/5 to-amber-500/0",
     },
     teal: {
-      icon: "text-teal-600 bg-teal-500/10",
-      progressBg: "bg-gradient-to-r from-teal-500/80 to-teal-600",
-      gradientFrom: "from-teal-500/5",
-      gradientTo: "to-teal-500/0",
+      iconClass: "text-teal-600 bg-teal-500/10",
+      progressClass: "bg-gradient-to-r from-teal-500/80 to-teal-600",
+      gradientClass: "bg-gradient-to-br from-teal-500/5 to-teal-500/0",
     },
     primary: {
-      icon: "text-primary bg-primary/10",
-      progressBg: "bg-gradient-to-r from-primary/80 to-primary",
-      gradientFrom: "from-primary/5",
-      gradientTo: "to-primary/0",
+      iconClass: "text-primary bg-primary/10",
+      progressClass: "bg-gradient-to-r from-primary/80 to-primary",
+      gradientClass: "bg-gradient-to-br from-primary/5 to-primary/0",
     },
   };
 
+  // Loading/skeleton state
   if (isLoading) {
     return (
-      <Card className="p-6 shadow-sm h-[138px] animate-pulse border border-border/30">
+      <div className="stat-card-skeleton">
         <div className="flex justify-between mb-2 relative z-10">
           <div className="h-5 w-24 bg-muted/60 rounded-md" />
           <div className="h-7 w-7 bg-muted/60 rounded-full" />
@@ -67,50 +63,51 @@ export default function StatCard({
         {supportingText && (
           <div className="h-5 w-36 bg-muted/60 rounded-md mt-2" />
         )}
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="p-6 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden relative border border-border/30 group">
-      {/* Apple-inspired subtle gradient background and effects */}
+    <div className="stat-card group">
+      {/* Gradient background effect */}
       <div className={cn(
-        "absolute inset-0 bg-gradient-to-br opacity-50 group-hover:opacity-70 transition-opacity",
-        colors[color].gradientFrom,
-        colors[color].gradientTo
+        "stat-card-bg",
+        colorConfig[color].gradientClass
       )} />
       
-      <div className="flex justify-between mb-3 relative z-10">
-        <span className="text-sm font-medium text-muted-foreground">{title}</span>
-        <div className={cn("flex items-center justify-center p-1.5 rounded-full", colors[color].icon)}>
+      {/* Card header with title and icon */}
+      <div className="stat-card-header">
+        <span className="stat-card-title">{title}</span>
+        <div className={cn("stat-card-icon-container", colorConfig[color].iconClass)}>
           {icon}
         </div>
       </div>
       
-      <div className="text-3xl font-semibold mb-2 relative z-10 tracking-tight">
+      {/* Main value display */}
+      <div className="stat-card-value">
         {value}
-        {suffix && <span className="text-lg ml-1 text-foreground/80">{suffix}</span>}
+        {suffix && <span className="stat-card-suffix">{suffix}</span>}
       </div>
       
+      {/* Progress bar (if needed) */}
       {progressValue !== undefined && (
-        <div className="relative z-10 mt-2 pt-1">
-          <div className="w-full bg-muted/40 rounded-full h-1.5">
-            <div 
-              className={cn("h-1.5 rounded-full progress-animate", colors[color].progressBg)} 
-              style={{ 
-                width: `${progressValue}%`,
-                '--progress-width': `${progressValue}%`
-              } as React.CSSProperties}
-            />
-          </div>
+        <div className="stat-card-progress-container">
+          <div 
+            className={cn("stat-card-progress", colorConfig[color].progressClass)} 
+            style={{ 
+              width: `${progressValue}%`,
+              '--progress-width': `${progressValue}%`
+            } as React.CSSProperties}
+          />
         </div>
       )}
       
+      {/* Supporting text/content (optional) */}
       {supportingText && (
-        <div className="flex items-center relative z-10 mt-2">
+        <div className="stat-card-supporting-text">
           {supportingText}
         </div>
       )}
-    </Card>
+    </div>
   );
 }

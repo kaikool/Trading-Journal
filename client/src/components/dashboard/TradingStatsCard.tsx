@@ -196,21 +196,25 @@ export function TradingStatsCard({
           {stats.map((stat, index) => (
             <div 
               key={index} 
-              className="bg-card border rounded-lg p-4 hover:shadow-md transition-all duration-200"
+              className="stat-card"
               title={stat.tooltip}
+              style={{
+                "--stat-card-padding": "1rem",
+                "--stat-value-font-size": "1.5rem"
+              } as React.CSSProperties}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className={cn("text-xs font-medium", stat.color)}>
+              <div className="stat-card-header">
+                <div className={cn("stat-card-title", stat.color)}>
                   {stat.label}
                 </div>
                 <div className={cn(
-                  "rounded-full p-1.5",
+                  "stat-card-icon-container",
                   stat.bgColor
                 )}>
                   <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
                 </div>
               </div>
-              <div className={cn("text-2xl font-bold", stat.color)}>
+              <div className={cn("stat-card-value", stat.color)}>
                 {stat.value}
               </div>
             </div>
