@@ -2320,14 +2320,14 @@ export default function TradeFormNew(props: TradeFormProps) {
                       <h3 className="text-base font-semibold">Strategy Compliance Check</h3>
                     </div>
                     
-                    <Card className="bg-card/50 shadow-sm p-3">
+                    <div className="bg-card/50 shadow-sm rounded-md p-3">
                       <StrategyChecklist 
                         strategy={selectedStrategy}
                         value={strategyChecks}
                         onChange={setStrategyChecks}
                         showCompliance={true}
                       />
-                    </Card>
+                    </div>
                   </div>
                   
 
