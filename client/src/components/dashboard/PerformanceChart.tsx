@@ -73,7 +73,7 @@ export function PerformanceChart({
   // Loading state - use effectiveIsLoading that includes empty array case
   if (effectiveIsLoading) {
     return (
-      <Card className="border shadow-sm">
+      <Card className="balance-chart">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
             <Skeleton className="h-7 w-40" />
@@ -81,7 +81,7 @@ export function PerformanceChart({
           </div>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-[220px] w-full" />
+          <Skeleton className="h-[var(--balance-chart-height)] w-full" />
         </CardContent>
       </Card>
     );
@@ -158,7 +158,7 @@ export function PerformanceChart({
   const formattedPercentChange = `${isPositiveTrend ? "+" : ""}${percentChange.toFixed(1)}%`;
   
   return (
-    <Card className="border shadow-sm">
+    <Card className="balance-chart">
       <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-xl font-semibold flex items-center">
@@ -168,7 +168,7 @@ export function PerformanceChart({
           
           <div className="flex items-center gap-3">
             <div className={cn(
-              "flex items-center px-3 py-1 rounded-full text-xs font-medium",
+              "balance-chart-badge",
               chartColors.bg, chartColors.text
             )}>
               {isPositiveTrend ? 
@@ -177,7 +177,7 @@ export function PerformanceChart({
               {formattedPercentChange}
             </div>
             
-            <div className="font-semibold">
+            <div className="balance-chart-value">
               {UI_CONFIG.CURRENCY_SYMBOL}{new Intl.NumberFormat('en-US', { 
                 minimumFractionDigits: 2, 
                 maximumFractionDigits: 2 
@@ -188,7 +188,7 @@ export function PerformanceChart({
       </CardHeader>
       
       <CardContent>
-        <div className="h-[220px] w-full">
+        <div className="balance-chart-container">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={data}
@@ -201,8 +201,18 @@ export function PerformanceChart({
             >
               <defs>
                 <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={chartColors.stroke} stopOpacity={0.2} />
-                  <stop offset="95%" stopColor={chartColors.stroke} stopOpacity={0} />
+                  <stop 
+                    offset="5%" 
+                    stopColor={chartColors.stroke} 
+                    stopOpacity={parseFloat(getComputedStyle(document.documentElement)
+                      .getPropertyValue('--balance-chart-gradient-opacity-top')) || 0.2}
+                  />
+                  <stop 
+                    offset="95%" 
+                    stopColor={chartColors.stroke} 
+                    stopOpacity={parseFloat(getComputedStyle(document.documentElement)
+                      .getPropertyValue('--balance-chart-gradient-opacity-bottom')) || 0}
+                  />
                 </linearGradient>
               </defs>
               <XAxis 
@@ -237,16 +247,19 @@ export function PerformanceChart({
                 type="monotone"
                 dataKey="balance"
                 stroke={chartColors.stroke}
-                strokeWidth={2}
+                strokeWidth={parseInt(getComputedStyle(document.documentElement)
+                  .getPropertyValue('--balance-chart-line-width')) || 2}
                 fillOpacity={1}
                 fill="url(#balanceGradient)"
                 activeDot={{ 
-                  r: 6, 
+                  r: parseInt(getComputedStyle(document.documentElement)
+                    .getPropertyValue('--balance-chart-point-size')) || 6, 
                   fill: chartColors.stroke, 
                   stroke: "hsl(var(--background))", 
                   strokeWidth: 2 
                 }}
-                animationDuration={1000}
+                animationDuration={parseInt(getComputedStyle(document.documentElement)
+                  .getPropertyValue('--balance-chart-anim-speed')) || 1000}
               />
             </AreaChart>
           </ResponsiveContainer>
