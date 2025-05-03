@@ -160,10 +160,7 @@ export function ChartImageDialog({
         
         <div 
           {...swipeHandlers}
-          className={cn(
-            "chart-content relative overflow-hidden flex-1 flex items-center justify-center",
-            isPWAMode && "chart-content-pwa"
-          )}
+          className="chart-content"
         >
           <div className="relative w-full h-full flex items-center justify-center">
             {isLoading && (
@@ -189,16 +186,14 @@ export function ChartImageDialog({
             )}
             
             <div className={cn(
-              "chart-image-container transition-all duration-300",
-              isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
-              isPWAMode && "chart-image-container-pwa"
+              "chart-image-container",
+              isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100"
             )}>
               <img 
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
                   "chart-image",
-                  isPWAMode && "pwa-mode",
                   (isLoading || error) && "invisible"
                 )}
                 onClick={(e) => e.stopPropagation()} 
@@ -229,10 +224,7 @@ export function ChartImageDialog({
           
           
           {availableImages.length > 1 && (
-            <div className={cn(
-              "chart-pagination",
-              isPWAMode && "chart-pagination-pwa"
-            )}>
+            <div className="chart-pagination">
               <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
                 {availableImages.map((_, index) => (
                   <button
