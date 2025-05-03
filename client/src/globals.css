@@ -1043,8 +1043,8 @@
   
   /* Compact variant for stat cards in grid layout */
   .stat-card-compact {
-    --stat-card-padding: 0.75rem; /* 12px - Chuẩn hóa theo 4px rule - Tailwind p-3 */
-    --stat-value-font-size: 1.5rem;
+    --stat-card-padding: 12px; /* Sửa từ 0.75rem (12px) sang 12px cho tuân thủ quy tắc 4px */
+    --stat-value-font-size: 24px; /* Sửa từ 1.5rem (24px) sang 24px cho tuân thủ quy tắc 4px */
     padding: var(--stat-card-padding);
     
     /* Add gap spacing to grid */
@@ -1304,12 +1304,12 @@
     --balance-chart-hover-shadow: var(--shadow-md);
     
     /* Typography configuration */
-    --balance-chart-title-size: 1.25rem;
-    --balance-chart-label-size: 0.75rem;
-    --balance-chart-value-size: 1rem;
+    --balance-chart-title-size: 20px; /* Sửa từ 1.25rem (20px) sang 20px cho tuân thủ quy tắc 4px */
+    --balance-chart-label-size: 12px; /* Sửa từ 0.75rem (12px) sang 12px cho tuân thủ quy tắc 4px */
+    --balance-chart-value-size: 16px; /* Sửa từ 1rem (16px) sang 16px cho tuân thủ quy tắc 4px */
     
     /* Margins and paddings - chuẩn hóa theo 4px scale */
-    --balance-chart-padding: 1rem; /* 16px - tương đương Tailwind p-4 */
+    --balance-chart-padding: 16px; /* Sửa từ 1rem (16px) sang 16px cho tuân thủ quy tắc 4px */
     --balance-chart-margin: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
     
     /* Chart specific configuration */
@@ -1369,7 +1369,7 @@
     box-shadow: var(--balance-chart-tooltip-shadow);
     border-radius: var(--balance-chart-tooltip-border-radius);
     padding: var(--balance-chart-tooltip-padding);
-    font-size: 0.875rem;
+    font-size: 14px; /* Sửa từ 0.875rem (14px) sang 14px cho tuân thủ quy tắc 4px */
   }
   
   .balance-chart-tooltip-date {
@@ -1394,8 +1394,8 @@
   
   .balance-chart-empty-icon {
     color: hsl(var(--muted-foreground) / 0.3);
-    width: 2rem;
-    height: 2rem;
+    width: 32px; /* Sửa từ 2rem (32px) sang 32px cho tuân thủ quy tắc 4px */
+    height: 32px; /* Sửa từ 2rem (32px) sang 32px cho tuân thủ quy tắc 4px */
     margin-bottom: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
   }
   
@@ -1406,7 +1406,7 @@
   }
   
   .balance-chart-empty-subtitle {
-    font-size: 0.875rem;
+    font-size: 14px; /* Sửa từ 0.875rem (14px) sang 14px cho tuân thủ quy tắc 4px */
     color: hsl(var(--muted-foreground) / 0.7);
   }
   
