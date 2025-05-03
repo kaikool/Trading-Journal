@@ -546,6 +546,33 @@
     padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
   }
   
+  .chart-pagination {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    bottom: 1rem;
+  }
+  
+  .chart-pagination-pwa {
+    bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+  
+  .chart-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    select-none: none;
+    touch-action: pan-y;
+  }
+  
+  .chart-image-pwa {
+    max-height: calc(100% - env(safe-area-inset-bottom) - 8px);
+  }
+  
   /* Form container styles */
   .form-container {
     max-width: 100%;

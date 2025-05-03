@@ -139,30 +139,12 @@ export function ChartImageDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className={cn(
-          "p-0 overflow-hidden flex flex-col w-full", 
-          "max-w-[95vw] sm:max-w-[92vw] md:max-w-[88vw] lg:max-w-[80vw]",
-          isPWAMode && "pwa-chart-dialog" // Special class for PWA mode
+          "p-0 overflow-hidden flex flex-col w-full chart-dialog", 
+          "sm:max-w-[92vw] md:max-w-[88vw] lg:max-w-[80vw]",
+          !isPWAMode && isMobile && "chart-dialog-mobile",
+          isPWAMode && "chart-dialog-pwa pwa-chart-dialog"
         )}
         aria-describedby="chart-image-viewer-description"
-        style={{
-          // Adjust height based on device and mode
-          height: isPWAMode 
-            ? 'calc(100dvh - env(safe-area-inset-top) - 12px)' // Optimized for PWA
-            : isMobile 
-              ? 'calc(100dvh - 20px)' // Slightly more space in mobile browser
-              : 'calc(95vh)', // Desktop browser
-          position: 'fixed',
-          top: isPWAMode ? 'calc(env(safe-area-inset-top) + 6px)' : '50%',
-          left: '50%',
-          transform: isPWAMode ? 'translateX(-50%)' : 'translate(-50%, -50%)',
-          margin: 0,
-          borderRadius: isPWAMode ? '1rem 1rem 0 0' : '0.75rem',
-          // PWA specific adjustments
-          ...(isPWAMode && {
-            bottom: 0,
-            maxHeight: 'calc(100dvh - env(safe-area-inset-top) - 12px)',
-          })
-        }}
       >
         <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
         
@@ -182,13 +164,8 @@ export function ChartImageDialog({
           className={cn(
             "relative overflow-hidden flex-1 flex items-center justify-center",
             "bg-background/90 dark:bg-background/95",
-            isPWAMode && "pwa-chart-content"
+            isPWAMode && "pwa-chart-content chart-content-pwa"
           )}
-          style={{
-            ...(isPWAMode && {
-              paddingBottom: 'calc(env(safe-area-inset-bottom) + 4px)',
-            })
-          }}
         >
           <div className="relative w-full h-full flex items-center justify-center">
             {isLoading && (
@@ -222,20 +199,14 @@ export function ChartImageDialog({
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
-                  "max-w-full max-h-full object-contain select-none",
-                  isPWAMode && "pwa-chart-image"
+                  "max-w-full max-h-full object-contain select-none chart-image",
+                  isPWAMode && "pwa-chart-image chart-image-pwa",
+                  (isLoading || error) && "invisible"
                 )}
                 onClick={(e) => e.stopPropagation()} 
                 decoding="async"
                 loading="eager"
                 draggable="false"
-                style={{ 
-                  visibility: isLoading || error ? 'hidden' : 'visible',
-                  touchAction: 'pan-y',
-                  ...(isPWAMode && {
-                    maxHeight: 'calc(100% - env(safe-area-inset-bottom) - 8px)',
-                  })
-                }}
                 onLoad={(e) => {
                   const img = e.currentTarget;
                   if (img.naturalWidth > 1 && img.naturalHeight > 1) {
@@ -261,12 +232,9 @@ export function ChartImageDialog({
           
           {availableImages.length > 1 && (
             <div className={cn(
-              "absolute left-0 right-0 flex justify-center items-center z-20",
-              isPWAMode ? "bottom-safe" : "bottom-4"
-            )}
-            style={{
-              bottom: isPWAMode ? 'calc(env(safe-area-inset-bottom) + 8px)' : '1rem',
-            }}>
+              "chart-pagination",
+              isPWAMode && "chart-pagination-pwa"
+            )}>
               <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
                 {availableImages.map((_, index) => (
                   <button
