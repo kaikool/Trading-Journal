@@ -118,7 +118,7 @@ export function useCachedImage(
         }
         
         // Bắt đầu tải ảnh từ cache hoặc từ nguồn
-        // Không thực hiện kiểm tra trực tiếp như trước đây để tránh hiển thị lỗi tạm thời
+        // Không thực hiện kiểm tra trực tiếp để tránh hiển thị lỗi tạm thời
         
         // Sử dụng service để lấy ảnh từ cache hoặc tải từ nguồn
         const cachedUrl = await imageCacheService.getOrFetchImage(originalUrl, {
