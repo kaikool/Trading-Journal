@@ -534,21 +534,7 @@
     border-top: 1px solid hsl(var(--border) / 0.6);
   }
   
-  /* Mobile navigation items styling */
-  .mobile-nav-item {
-    text-decoration: none;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .mobile-nav-icon {
-    color: inherit;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .mobile-nav-label {
-    max-width: 100%;
-    text-align: center;
-  }
+  /* Mobile navigation styling */
   
   /* Mobile header bar - used in MobileNav */
   .mobile-header {
