@@ -73,7 +73,7 @@ interface BottomNavProps {
   isPWAMode?: boolean;
 }
 
-export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
+export default function MobileNavigator({ isPWAMode = false }: BottomNavProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');

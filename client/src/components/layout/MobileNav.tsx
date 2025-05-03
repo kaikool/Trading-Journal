@@ -29,7 +29,7 @@ import {
 import { SidebarItem } from "./Sidebar"; // Sử dụng lại component SidebarItem từ Sidebar
 import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/contexts/LayoutContext"; // Lấy hằng số từ LayoutContext
 
-export default function MobileNav() {
+export default function MenuBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { toast } = useToast();
