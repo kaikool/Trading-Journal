@@ -4,17 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Thêm CSS cho safe area và notch */
-@supports(padding: max(0px)) {
-  /* Chỉ áp dụng safe area insets vào các phần tử cụ thể, không áp dụng ở cấp body */
-  
-  /* Cải thiện padding cho PWA - điều chỉnh safe area */
-  .pwa-top-inset {
-    padding-top: max(0.5rem, env(safe-area-inset-top, 0.5rem));
-  }
-  
-  /* Removed redundant .pb-safe definition, using the one in globals.css */
-}
+/* 
+ * Chỉ sử dụng một phương pháp tiếp cận nhất quán cho toàn bộ safe area handling.
+ * Đã di chuyển toàn bộ safe area utilities vào globals.css trong phần utilities.
+ * Không định nghĩa trùng lặp (như .pwa-top-inset) ở đây.
+ */
 
 /* Compact table for analytics - sử dụng giá trị spacing theo bội số của 4px */
 .compact-table th, 
