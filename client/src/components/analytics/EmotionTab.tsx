@@ -488,7 +488,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                       tickLine={false}
                       axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                      tickMargin={5}
+                      tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                     />
                     <YAxis 
                       dataKey="name"
@@ -519,11 +519,11 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                         
                         if (showOnRight) {
                           // Nếu thanh quá ngắn, hiển thị mọi thứ bên phải
-                          textX = x + width + 5;
+                          textX = x + width + 4; // Chuẩn hóa theo quy tắc 4px
                           textAnchor = "start";
                         } else if (showTextInside) {
                           // Nếu thanh đủ rộng, hiển thị nhãn bên trong
-                          textX = x + 8;
+                          textX = x + 8; // 8px là bội số của 4px nên đã phù hợp với quy tắc
                           textAnchor = "start";
                         } else {
                           // Trường hợp trung gian, hiển thị nhãn bên trái
@@ -663,7 +663,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                    tickMargin={5}
+                    tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                   />
                   <YAxis 
                     hide 

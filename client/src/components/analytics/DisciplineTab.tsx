@@ -369,7 +369,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   tickLine={false}
                   axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                  tickMargin={5}
+                  tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                 />
                 <YAxis 
                   tickFormatter={(value) => `${value}%`}
@@ -377,7 +377,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   tickLine={false}
                   axisLine={false}
-                  tickMargin={5}
+                  tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                 />
                 <Tooltip content={<DisciplineWinRateTooltip />} />
                 <Legend 
