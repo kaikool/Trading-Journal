@@ -171,7 +171,7 @@ export default function MobileNav() {
           className={cn(
             "fixed inset-y-0 left-0 h-full max-w-xs bg-background border-r border-border shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out transform",
             isOpen ? "translate-x-0" : "-translate-x-full",
-            "w-[280px]" // Hard-coded value from SIDEBAR_WIDTH constant
+            "w-64" // Using Tailwind's w-64 (16rem) which matches SIDEBAR_WIDTH
           )}
           tabIndex={-1}
           role="dialog"
