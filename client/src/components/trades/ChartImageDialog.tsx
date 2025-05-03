@@ -139,10 +139,9 @@ export function ChartImageDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className={cn(
-          "p-0 overflow-hidden flex flex-col w-full chart-dialog", 
+          "p-0 chart-dialog", 
           "sm:max-w-[92vw] md:max-w-[88vw] lg:max-w-[80vw]",
-          !isPWAMode && isMobile && "chart-dialog-mobile",
-          isPWAMode && "chart-dialog-pwa"
+          isMobile && "sm:max-w-[95vw]"
         )}
         aria-describedby="chart-image-viewer-description"
       >

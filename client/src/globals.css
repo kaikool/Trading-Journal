@@ -529,58 +529,74 @@
     box-shadow: var(--shadow-sm);
   }
   
-  /* Unified chart dialog styling */
+  /* Consolidated chart dialog styling */
   .chart-dialog {
     max-width: 95vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   
-  .chart-dialog-mobile {
-    height: calc(100dvh - 20px);
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0;
-    border-radius: 0.75rem;
-  }
-  
-  .chart-dialog-pwa {
-    height: calc(100dvh - env(safe-area-inset-top) - 12px);
-    position: fixed;
-    top: calc(env(safe-area-inset-top) + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    border-radius: 1rem 1rem 0 0;
-    bottom: 0;
-    max-height: calc(100dvh - env(safe-area-inset-top) - 12px);
+  /* Mobile responsive behavior */
+  @media (max-width: 640px) {
+    .chart-dialog {
+      height: calc(100dvh - 20px);
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      border-radius: 0.75rem;
+    }
+    
+    /* PWA mode adjustments */
+    html.pwa-mode .chart-dialog {
+      height: calc(100dvh - env(safe-area-inset-top) - 12px);
+      top: calc(env(safe-area-inset-top) + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      margin: 0;
+      border-radius: 1rem 1rem 0 0;
+      bottom: 0;
+      max-height: calc(100dvh - env(safe-area-inset-top) - 12px);
+    }
   }
   
   /* Chart component styling system */
   .chart-content {
     background-color: hsl(var(--background) / 0.9);
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .dark .chart-content {
     background-color: hsl(var(--background) / 0.95);
   }
   
-  .chart-content-pwa {
+  html.pwa-mode .chart-content {
     padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
   }
   
+  /* Chart image container */
   .chart-image-container {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
+    transition: all 300ms;
   }
   
-  .chart-image-container-pwa {
+  html.pwa-mode .chart-image-container {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
+  /* Chart image */
   .chart-image {
     max-width: 100%;
     max-height: 100%;
@@ -589,7 +605,7 @@
     user-select: none;
   }
   
-  .chart-image.pwa-mode {
+  html.pwa-mode .chart-image {
     max-height: calc(100% - env(safe-area-inset-bottom, 0px) - 1.5rem);
     margin: 0 auto;
   }
@@ -707,8 +723,8 @@
     bottom: 1rem;
   }
   
-  /* PWA-specific chart pagination variants */
-  .chart-pagination-pwa {
+  /* PWA-specific pagination adjustments */
+  html.pwa-mode .chart-pagination {
     bottom: calc(env(safe-area-inset-bottom) + 8px);
   }
   
