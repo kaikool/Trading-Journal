@@ -654,40 +654,8 @@
     row-gap: 4px;
   }
   
-  /* Trade card micro-components */
-  .trade-card-badge-container {
-    display: flex;
-    align-items: center;
-    width: auto;
-  }
-  
-  .trade-card-badge-icon {
-    height: 10px;
-    width: 10px;
-    margin-right: 3px;
-    flex-shrink: 0;
-    position: relative;
-    top: 0;
-  }
-  
-  .trade-card-badge-text {
-    font-size: 11px;
-    line-height: 1;
-    position: relative;
-    top: 0;
-  }
-  
-  .trade-direction-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-  }
-  
-  .trade-result-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-  }
+  /* Trade badge positions - used for consistent placement */
+  /* Badge positioning logic moved to component level */
   
   /* Trade badge system moved to TradeStatusBadge component */
   
