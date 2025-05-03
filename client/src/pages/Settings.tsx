@@ -388,7 +388,7 @@ export default function Settings() {
   
   // Main content
   return (
-    <div className="container max-w-7xl mx-auto py-5 md:py-8 px-0 sm:px-5 animate-in fade-in duration-700">
+    <div className="container max-w-7xl mx-auto py-5 md:py-8 px-4 sm:px-5 animate-in fade-in duration-700">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div className="mb-4 md:mb-0">
