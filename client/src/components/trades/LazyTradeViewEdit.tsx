@@ -19,6 +19,8 @@ import { getTradeStatusConfig, TradeStatus } from "@/lib/trade-status-config";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartImageDialog } from "./ChartImageDialog";
+import DirectionBadge, { Direction } from "./DirectionBadge";
+import TradeStatusBadge from "./TradeStatusBadge";
 
 // Lazy load the components
 const LazyTradeEditForm = lazy(() => import("./LazyTradeEditForm"));
@@ -74,40 +76,22 @@ export function LazyTradeViewEdit({
         
         {/* Direction badge */}
         <div className="trade-direction-badge">
-          <div className={`
-            trade-badge
-            ${trade.direction === 'BUY' ? 'trade-badge-buy' : 'trade-badge-sell'}
-          `}>
-            <div className="trade-card-badge-container">
-              {trade.direction === 'BUY' ? (
-                <ArrowUp className="trade-card-badge-icon" />
-              ) : (
-                <ArrowDown className="trade-card-badge-icon" />
-              )}
-              <span className="trade-card-badge-text">{trade.direction}</span>
-            </div>
-          </div>
+          <DirectionBadge
+            direction={trade.direction as Direction}
+            showTooltip={false}
+            size="sm"
+            variant="arrow"
+          />
         </div>
         
         {/* Result badge */}
         {trade.result && (
           <div className="trade-result-badge">
-            <div className={`
-              trade-badge
-              ${trade.result === 'TP' ? 'trade-badge-tp' : 
-                trade.result === 'SL' ? 'trade-badge-sl' : 
-                trade.result === 'BE' ? 'trade-badge-be' : 
-                'trade-badge-default'}
-            `}>
-              <div className="trade-card-badge-container">
-                {(() => {
-                  const config = getTradeStatusConfig(trade.result as TradeStatus);
-                  const Icon = config.icon;
-                  return <Icon className="trade-card-badge-icon" />;
-                })()}
-                <span className="trade-card-badge-text">{getTradeStatusConfig(trade.result as TradeStatus).label}</span>
-              </div>
-            </div>
+            <TradeStatusBadge
+              status={trade.result as TradeStatus}
+              showTooltip={false}
+              size="sm"
+            />
           </div>
         )}
       </div>
