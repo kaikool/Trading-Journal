@@ -128,7 +128,7 @@ function FormField({
   );
 }
 
-function SettingsPage() {
+export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const userId = auth.currentUser?.uid;

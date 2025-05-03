@@ -33,7 +33,8 @@ const Register = lazy(() => import(/* webpackChunkName: "auth" */ "@/pages/auth/
 const NewTrade = lazy(() => import(/* webpackChunkName: "trade-operations" */ "@/pages/NewTrade"));
 const ViewTrade = lazy(() => import(/* webpackChunkName: "trade-view" */ "@/pages/ViewTradeOptimized"));
 const Analytics = lazy(() => import(/* webpackChunkName: "analytics" */ "@/pages/Analytics"));
-const Settings = lazy(() => import(/* webpackChunkName: "settings" */ "@/pages/Settings"));
+// Import Settings directly to avoid lazy loading issues
+import Settings from "@/pages/Settings";
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 
@@ -249,6 +250,7 @@ function MainContent() {
             <Route path="/trade/history" component={TradeHistory} />
             <Route path="/history" component={TradeHistory} />
             <Route path="/analytics" component={Analytics} />
+            {/* Settings page render */}
             <Route path="/settings" component={Settings} />
             
             {/* Fallback to 404 */}
