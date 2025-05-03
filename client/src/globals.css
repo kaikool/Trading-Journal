@@ -568,20 +568,16 @@
     margin: 0 auto;
   }
   
-  /* GLOBAL FOCUS OVERRIDE - TEMPORARILY DISABLED (#input-focus-style) */
+  /* Consistent focus styles for all elements */
   *:focus {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: inherit !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
   }
   
-  /* Form focus styles - TEMPORARILY DISABLED (#input-focus-style) */
+  /* Form element focus with scroll margin */
   input:focus,
   select:focus {
     scroll-margin: 5rem;
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: inherit !important;
   }
   
   /* Standardize muted text with consistent opacity */
@@ -609,29 +605,26 @@
     background: hsl(var(--muted-foreground) / 0.7);
   }
   
-  /* Focus styles - TEMPORARILY DISABLED (#input-focus-style) */
+  /* Improved accessibility focus-visible styles */
   *:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
-    border-color: inherit !important;
-    outline-offset: 0 !important;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+    outline-offset: 2px;
+    z-index: 1;
   }
   
-  /* Enhanced accessibility focus indicators for different elements - TEMPORARILY DISABLED (#input-focus-style) */
+  /* Interactive elements get a slightly more prominent focus indicator */
   button:focus-visible,
   a:focus-visible,
   [role="button"]:focus-visible {
-    box-shadow: none !important;
-    outline: none !important;
-    z-index: auto !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
   }
   
+  /* Form elements get unique focus styles */
   input:focus-visible, 
   select:focus-visible {
-    box-shadow: none !important;
-    outline: none !important;
-    border-color: inherit !important;
-    z-index: auto !important;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
   }
   
   /* Glass morphism */
@@ -670,10 +663,11 @@
     transition: all 0.2s ease-in-out;
   }
   
-  /* TEMPORARILY DISABLED (#input-focus-style) */
+  /* Consistent focus style for custom inputs */
   .custom-input:focus {
-    box-shadow: none !important;
-    outline: none !important;
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);
+    outline: none;
   }
   
   .custom-select {

@@ -200,7 +200,7 @@ export function ChartImageDialog({
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
                   "max-w-full max-h-full object-contain select-none chart-image",
-                  isPWAMode && "pwa-chart-image chart-image-pwa",
+                  isPWAMode && "pwa-mode",
                   (isLoading || error) && "invisible"
                 )}
                 onClick={(e) => e.stopPropagation()} 
