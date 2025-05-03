@@ -29,6 +29,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AchievementsTab } from "@/components/settings/AchievementsTab";
+import { StrategiesManagement } from "@/components/settings/StrategiesManagement";
 import {
   User,
   CreditCard,
@@ -53,6 +54,7 @@ import {
   CalendarDays,
   Trophy,
   AlertTriangle,
+  BookOpen,
 } from "lucide-react";
 
 interface SettingsSectionProps {
@@ -441,6 +443,13 @@ export default function Settings() {
               >
                 <BarChart3 className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="strategies" 
+                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <BookOpen className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Strategies</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="achievements" 
@@ -881,6 +890,16 @@ export default function Settings() {
           </SettingsSection>
         </TabsContent>
 
+        {/* Strategies tab */}
+        <TabsContent value="strategies" className="mt-6 space-y-6">
+          <SettingsSection
+            title="Trading Strategies"
+            description="Manage your trading strategies and rules"
+          >
+            <StrategiesManagement />
+          </SettingsSection>
+        </TabsContent>
+        
         {/* Achievements tab */}
         <TabsContent value="achievements" className="mt-6 space-y-6">
           <SettingsSection
