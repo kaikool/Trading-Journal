@@ -82,9 +82,11 @@ export function AccountSummaryCard({
           </div>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-12 w-40 mb-2" />
-          <Skeleton className="h-6 w-28 mb-4" />
-          <Skeleton className="h-2 w-full rounded-full" />
+          <div className="balance-skeleton-container">
+            <Skeleton className="balance-skeleton-amount" />
+            <Skeleton className="balance-skeleton-subtitle" />
+            <Skeleton className="balance-skeleton-bar mt-4" />
+          </div>
         </CardContent>
       </Card>
     );

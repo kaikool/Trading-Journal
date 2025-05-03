@@ -132,6 +132,56 @@
   border-radius: 0.375rem;
 }
 
+/* Stat card skeleton styling */
+.stat-skeleton-tile {
+  background-color: hsl(var(--muted) / 0.05);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.stat-skeleton-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.stat-skeleton-label {
+  height: 1rem;
+  width: 6rem;
+  background-color: hsl(var(--muted) / 0.6);
+  border-radius: 0.375rem;
+}
+
+/* Balance card skeleton styling */
+.balance-skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-skeleton-amount {
+  height: 3rem;
+  width: 10rem;
+  margin-bottom: 0.5rem;
+  background-color: hsl(var(--muted) / 0.6);
+  border-radius: 0.375rem;
+}
+
+.balance-skeleton-subtitle {
+  height: 1.5rem;
+  width: 7rem;
+  background-color: hsl(var(--muted) / 0.6);
+  border-radius: 0.375rem;
+}
+
+.balance-skeleton-bar {
+  height: 0.5rem;
+  width: 100%;
+  border-radius: 9999px;
+  background-color: hsl(var(--muted) / 0.6);
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
