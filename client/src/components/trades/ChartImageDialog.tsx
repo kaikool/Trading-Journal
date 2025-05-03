@@ -138,18 +138,18 @@ export function ChartImageDialog({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className={cn(
-          "p-0 chart-dialog", 
-          "sm:max-w-[92vw] md:max-w-[88vw] lg:max-w-[80vw]",
-          isMobile && "sm:max-w-[95vw]"
-        )}
+        className="p-0 chart-dialog"
         aria-describedby="chart-image-viewer-description"
       >
-        <div id="chart-image-viewer-description" className="sr-only">Chart image viewer for trading analysis</div>
+        <div id="chart-image-viewer-description" className="sr-only">
+          Chart image viewer for trading analysis
+        </div>
         
         <DialogTitle className="flex items-center justify-between py-2 px-4 border-b">
           <div className="flex flex-col">
-            <span className="font-medium text-sm">{tradePair} - {currentImage.label}</span>
+            <span className="font-medium text-sm">
+              {tradePair} - {currentImage.label}
+            </span>
             {availableImages.length > 1 && (
               <span className="text-xs text-muted-foreground">
                 {`${currentImageIndex + 1}/${availableImages.length}`}
@@ -158,11 +158,9 @@ export function ChartImageDialog({
           </div>
         </DialogTitle>
         
-        <div 
-          {...swipeHandlers}
-          className="chart-content"
-        >
+        <div {...swipeHandlers} className="chart-content">
           <div className="relative w-full h-full flex items-center justify-center">
+            {/* Loading indicator */}
             {isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -170,6 +168,7 @@ export function ChartImageDialog({
               </div>
             )}
             
+            {/* Error state */}
             {error && !isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
                 <div className="flex flex-col items-center p-4 rounded-lg bg-card border">
@@ -185,10 +184,13 @@ export function ChartImageDialog({
               </div>
             )}
             
-            <div className={cn(
-              "chart-image-container",
-              isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100"
-            )}>
+            {/* Chart image with container */}
+            <div
+              className={cn(
+                "chart-image-container",
+                isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100"
+              )}
+            >
               <img 
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
@@ -222,7 +224,7 @@ export function ChartImageDialog({
             </div>
           </div>
           
-          
+          {/* Image Pagination */}
           {availableImages.length > 1 && (
             <div className="chart-pagination">
               <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
