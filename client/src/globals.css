@@ -417,38 +417,38 @@
     }
   }
   
-  /* Layout utilities for PWA that respect device notches and home indicators - Chuẩn hóa các giá trị */
+  /* Layout utilities for PWA that respect device notches and home indicators - Đã chuẩn hóa */
   .pwa-container {
     /* Basic styling */
     width: 100%;
     margin: 0 auto;
-    /* Safe area handling - tiêu chuẩn hóa padding theo quy tắc 4px */
-    padding-left: max(env(safe-area-inset-left, 0px), 16px); /* 16px = 4px * 4 */
-    padding-right: max(env(safe-area-inset-right, 0px), 16px); /* 16px = 4px * 4 */
-    padding-top: env(safe-area-inset-top, 0px); /* Giữ 0px vì đây là giá trị tối thiểu */
-    padding-bottom: env(safe-area-inset-bottom, 0px); /* Giữ 0px vì đây là giá trị tối thiểu */
+    /* Safe area handling - Sử dụng các biến thống nhất */
+    padding-left: max(var(--safe-left), var(--min-side-padding));
+    padding-right: max(var(--safe-right), var(--min-side-padding));
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
   }
   
-  /* Use for content areas that need top inset padding (header areas) - Chuẩn hóa giá trị */
+  /* Use for content areas that need top inset padding (header areas) - Đã chuẩn hóa */
   .pwa-top-inset {
-    /* Chuẩn hóa padding theo quy tắc 4px */
-    padding-top: max(8px, env(safe-area-inset-top, 8px)); /* 8px = 4px * 2 */
+    /* Sử dụng biến thống nhất */
+    padding-top: max(var(--safe-top), 8px); /* Dùng 8px (4px * 2) cho padding tối thiểu */
   }
   
-  /* Use for page titles or notifications at the very top of the screen - Chuẩn hóa giá trị */
+  /* Use for page titles or notifications at the very top of the screen - Đã chuẩn hóa */
   .pwa-status-bar-area {
-    padding-top: env(safe-area-inset-top, 0px); /* Giữ 0px vì đây là giá trị tối thiểu */
-    height: calc(48px + env(safe-area-inset-top, 0px)); /* 48px = 4px * 12, thay thế 50px */
+    padding-top: var(--safe-top);
+    height: calc(var(--status-bar-height) + var(--safe-top));
     display: flex;
     align-items: flex-end; /* Align content at the bottom of the status bar area */
   }
   
-  /* For bottom fixed elements other than navigation - Chuẩn hóa */
+  /* For bottom fixed elements other than navigation - Đã chuẩn hóa */
   .pwa-bottom-inset {
-    padding-bottom: env(safe-area-inset-bottom, 0px); /* Giữ 0px vì đây là giá trị tối thiểu */
+    padding-bottom: var(--safe-bottom);
   }
   
-  /* Full-bleed content that respects safe areas */
+  /* Full-bleed content that respects safe areas - Đã chuẩn hóa */
   .pwa-full-bleed {
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -456,8 +456,8 @@
     
     @supports (width: 100vw) {
       width: 100vw;
-      margin-left: calc(50% - 50vw + env(safe-area-inset-left, 0px));
-      margin-right: calc(50% - 50vw + env(safe-area-inset-right, 0px));
+      margin-left: calc(50% - 50vw + var(--safe-left));
+      margin-right: calc(50% - 50vw + var(--safe-right));
     }
   }
 
@@ -466,6 +466,22 @@
 /* ======================================= */
 @layer base {
   :root {
+    /* Safe area variables - ĐỊNH NGHĨA TẬP TRUNG CHO TOÀN BỘ ỨNG DỤNG
+     * Tất cả các insets được đọc từ các biến này, đảm bảo độ nhất quán
+     */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    
+    /* Min padding values - đảm bảo padding tối thiểu trên mỗi cạnh */
+    --min-top-padding: 4px;
+    --min-side-padding: 16px; /* 16px = 4px * 4 */
+    
+    /* Standard values cho mobile layout components */
+    --mobile-nav-height: 56px; /* 56px = 4px * 14 */
+    --status-bar-height: 48px; /* 48px = 4px * 12, thay thế 50px */
+    
     /* Base colors */
     --background: 210 40% 98%;
     --foreground: 222 47% 11%;
@@ -640,7 +656,7 @@
   /* PWA mode enhancements to mobile layout - Chuẩn hóa các giá trị */
   html.pwa-mode .mobile-layout {
     /* Xử lý safe area top một cách nhất quán trong toàn bộ ứng dụng */
-    padding-top: env(safe-area-inset-top, 0px); /* Giữ giá trị 0px để tránh padding không cần thiết */
+    padding-top: var(--safe-top); /* Sử dụng biến thống nhất */
     max-height: 100dvh; /* Dynamic viewport height cho trình duyệt hiện đại */
     overflow-y: auto; /* Cho phép cuộn nội dung */
     overscroll-behavior-y: none; /* Ngăn chặn hành vi pull-to-refresh */
@@ -650,10 +666,10 @@
   /* Main content area in PWA mode - Tiêu chuẩn hóa spacing và cách xử lý safe area */
   .pwa-main-content {
     /* Chuẩn hóa padding theo quy tắc 4px và sử dụng một cách tiếp cận duy nhất */
-    padding-top: max(env(safe-area-inset-top, 0px), 4px); /* Sử dụng 4px làm giá trị tối thiểu */
+    padding-top: max(var(--safe-top), var(--min-top-padding)); /* Sử dụng biến thống nhất */
     padding-bottom: 0; /* Bottom padding removed, handled by spacer */
-    padding-left: max(env(safe-area-inset-left, 0px), 16px); /* 16px = 4px * 4 */
-    padding-right: max(env(safe-area-inset-right, 0px), 16px); /* 16px = 4px * 4 */
+    padding-left: max(var(--safe-left), var(--min-side-padding)); /* Sử dụng biến thống nhất */
+    padding-right: max(var(--safe-right), var(--min-side-padding)); /* Sử dụng biến thống nhất */
     display: flex; /* Ensure flexbox layout is applied */
     flex-direction: column; /* Stack children vertically */
     flex: 1; /* Take up available space */
@@ -667,7 +683,7 @@
   html.pwa-mode .pwa-bottom-spacer,
   .pwa-bottom-spacer {
     /* Đảm bảo khoảng cách phù hợp dưới cùng cho thanh điều hướng ở chế độ PWA */
-    height: calc(56px + env(safe-area-inset-bottom, 0px) + 4px); /* 56px = 4px * 14, cộng thêm 4px */
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom) + 4px);
     margin-top: auto;
   }
   
@@ -699,7 +715,7 @@
   /* Base navigation container */
   .mobile-nav {
     /* Central configuration through CSS variables */
-    --mobile-nav-height: 56px;
+    --mobile-nav-height: var(--mobile-nav-height, 56px);
     --mobile-nav-z-index: 50;
     --mobile-nav-blur: 12px;
     --mobile-nav-anim-speed: 300ms;
@@ -709,9 +725,6 @@
     --mobile-nav-text-size: 10px;
     --mobile-nav-indicator-height: 3px;
     --mobile-nav-indicator-width: 12px;
-    
-    /* Safe insets with fallbacks */
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
     
     /* Base positioning and dimensions */
     position: fixed;
@@ -847,11 +860,7 @@
     --chart-spacing-md: 1rem;    /* 16px */
     --chart-spacing-lg: 1.5rem;  /* 24px */
     
-    /* Safe insets with fallbacks */
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-left: env(safe-area-inset-left, 0px);
-    --safe-right: env(safe-area-inset-right, 0px);
+    /* Use global safe inset variables */
     
     /* Base dialog styling */
     width: 100%;
