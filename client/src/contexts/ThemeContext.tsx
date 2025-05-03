@@ -24,10 +24,12 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 // Hook để sử dụng ThemeContext
-export const useTheme = () => useContext(ThemeContext);
+export function useTheme() {
+  return useContext(ThemeContext);
+}
 
 // Component Provider
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   // Theme đang được chọn trong settings (chỉ thay đổi khi lưu)
   const [theme, setTheme] = useState<ThemeType>('system');
   
