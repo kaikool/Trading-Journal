@@ -1046,6 +1046,9 @@
     --stat-card-padding: 0.75rem; /* 12px - Chuẩn hóa theo 4px rule - Tailwind p-3 */
     --stat-value-font-size: 1.5rem;
     padding: var(--stat-card-padding);
+    
+    /* Add gap spacing to grid */
+    gap: 4px; /* Ensure gap follows 4px rule */
   }
   
   /* Hover effects */
@@ -1069,7 +1072,7 @@
   .stat-card-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.75rem;
+    margin-bottom: 8px; /* Sửa từ 0.75rem (12px) xuống 8px cho tuân thủ quy tắc 4px */
     position: relative;
     z-index: var(--stat-card-z-index);
   }
@@ -1094,7 +1097,7 @@
   .stat-card-value {
     font-size: var(--stat-value-font-size);
     font-weight: var(--stat-value-font-weight);
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
     position: relative;
     z-index: var(--stat-card-z-index);
     letter-spacing: -0.025em;
