@@ -125,7 +125,7 @@ export function AccountSummaryCard({
       <CardContent>
         <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
           <div>
-            <div className="text-3xl font-bold mb-1">
+            <div className="text-3xl font-bold mb-4">
               {formatCurrency(currentBalance)}
             </div>
             {/* Chỉ hiển thị phần này khi có giao dịch */}
