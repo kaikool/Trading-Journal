@@ -224,7 +224,7 @@ export function PerformanceChart({
                   fill: isDarkMode ? "#FFFFFF" : "#000000", 
                   fontWeight: 600 
                 }}
-                tickMargin={10}
+                tickMargin={8} // Chuẩn hóa theo quy tắc 4px
               />
               <YAxis 
                 hide={true}
