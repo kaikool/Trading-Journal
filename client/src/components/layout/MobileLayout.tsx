@@ -41,7 +41,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
       )}>
         {children}
         
-        {/* Spacer element để đảm bảo nội dung không bị BottomNav che phủ */}
+        {/* Spacer element để đảm bảo nội dung không bị thanh điều hướng dưới cùng che phủ */}
         {/* Spacer thống nhất - sử dụng CSS class */}
         <div 
           className={cn(
@@ -52,7 +52,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         />
       </main>
       
-      {/* Bottom Navigation - sử dụng class thống nhất */}
+      {/* Thanh điều hướng dưới cùng - sử dụng class thống nhất */}
       <MobileNavigator isPWAMode={isPWAMode} />
     </div>
   );

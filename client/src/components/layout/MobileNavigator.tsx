@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
 import { isPWA } from "@/lib/pwa-helper";
 
-interface BottomNavItemProps {
+interface MobileNavigatorItemProps {
   icon: React.ReactNode;
   activeIcon?: React.ReactNode;
   label: string;
@@ -20,7 +20,7 @@ interface BottomNavItemProps {
   isActive: boolean;
 }
 
-export function BottomNavItem({ icon, activeIcon, label, href, isActive }: BottomNavItemProps) {
+export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }: MobileNavigatorItemProps) {
   const [reducedMotion, setReducedMotion] = useState(false);
   
   useEffect(() => {
@@ -69,11 +69,11 @@ export function BottomNavItem({ icon, activeIcon, label, href, isActive }: Botto
   );
 }
 
-interface BottomNavProps {
+interface MobileNavigatorProps {
   isPWAMode?: boolean;
 }
 
-export default function MobileNavigator({ isPWAMode = false }: BottomNavProps = {}) {
+export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
@@ -198,19 +198,19 @@ export default function MobileNavigator({ isPWAMode = false }: BottomNavProps = 
         {devicePerformance === 'low' ? (
           // Simplified interface for low-performance devices
           <>
-            <BottomNavItem
+            <MobileNavigatorItem
               icon={<LayoutDashboard className="h-5 w-5" />}
               label="Dashboard"
               href="/"
               isActive={location === "/" || location === "/dashboard"}
             />
-            <BottomNavItem
+            <MobileNavigatorItem
               icon={<TrendingUp className="h-5 w-5" />}
               label="Trades"
               href="/trade/new"
               isActive={location.includes("/trade")}
             />
-            <BottomNavItem
+            <MobileNavigatorItem
               icon={<BarChart2 className="h-5 w-5" />}
               label="Analytics"
               href="/analytics"
@@ -220,7 +220,7 @@ export default function MobileNavigator({ isPWAMode = false }: BottomNavProps = 
         ) : (
           // Full menu for medium and high performance devices
           navItems.map(item => (
-            <BottomNavItem
+            <MobileNavigatorItem
               key={item.href}
               icon={item.icon}
               activeIcon={item.activeIcon}
