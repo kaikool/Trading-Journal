@@ -904,51 +904,287 @@ export default function Settings() {
               <Separator className="my-2" />
               
               <div className="rounded-lg border border-border bg-card/50 p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <Trophy className="h-6 w-6 text-amber-500" />
-                  <h3 className="text-lg font-medium">Your Achievements</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <Trophy className="h-6 w-6 text-amber-500" />
+                    <h3 className="text-lg font-medium">Your Achievements</h3>
+                  </div>
+                  <div>
+                    <Badge className="bg-primary/20 hover:bg-primary/30 text-primary border-0">Level 2</Badge>
+                  </div>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
-                    <div className="shrink-0 p-2 rounded-full bg-amber-100 dark:bg-amber-950/30">
-                      <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="p-3 rounded-md bg-background/80 border border-border/50 flex flex-col">
+                    <span className="text-sm font-medium mb-1">Total Achievements</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl font-bold">4/24</span>
+                      <span className="text-xs text-muted-foreground">unlocked</span>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-sm">First Trade Completed</h4>
-                      <p className="text-xs text-muted-foreground mt-1">You've completed your first trade!</p>
-                    </div>
-                    <Badge className="ml-auto shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-0">
-                      Unlocked
-                    </Badge>
                   </div>
                   
-                  <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
-                    <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
-                      <Trophy className="h-5 w-5 text-slate-400" />
+                  <div className="p-3 rounded-md bg-background/80 border border-border/50 flex flex-col">
+                    <span className="text-sm font-medium mb-1">Achievement Points</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl font-bold">520</span>
+                      <span className="text-xs text-muted-foreground">points earned</span>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-sm">10 Winning Trades</h4>
-                      <p className="text-xs text-muted-foreground mt-1">Complete 10 winning trades</p>
-                    </div>
-                    <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
-                      2/10
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
-                    <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
-                      <Trophy className="h-5 w-5 text-slate-400" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium text-sm">Consistent Trader</h4>
-                      <p className="text-xs text-muted-foreground mt-1">Trade every day for 7 consecutive days</p>
-                    </div>
-                    <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
-                      1/7
-                    </Badge>
                   </div>
                 </div>
+                
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium">Level Progress</h4>
+                    <span className="text-xs text-muted-foreground">520/1000 XP</span>
+                  </div>
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full" style={{ width: '52%' }}></div>
+                  </div>
+                </div>
+                
+                <Tabs defaultValue="all" className="mt-4">
+                  <TabsList className="w-full flex bg-muted/70 p-1 rounded-md mb-4">
+                    <TabsTrigger value="all" className="flex-1 text-xs">
+                      All
+                    </TabsTrigger>
+                    <TabsTrigger value="unlocked" className="flex-1 text-xs">
+                      Unlocked
+                    </TabsTrigger>
+                    <TabsTrigger value="progress" className="flex-1 text-xs">
+                      In Progress
+                    </TabsTrigger>
+                    <TabsTrigger value="locked" className="flex-1 text-xs">
+                      Locked
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="all" className="mt-0">
+                    <div className="space-y-4">
+                      {/* Unlocked achievements */}
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-amber-100 dark:bg-amber-950/30">
+                          <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">First Trade Completed</h4>
+                          <p className="text-xs text-muted-foreground mt-1">You've completed your first trade!</p>
+                          <p className="text-xs text-primary/90 mt-1">+100 XP</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-0">
+                          Unlocked
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-amber-100 dark:bg-amber-950/30">
+                          <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Trade Journal Entry</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Add detailed notes to a trade</p>
+                          <p className="text-xs text-primary/90 mt-1">+50 XP</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-0">
+                          Unlocked
+                        </Badge>
+                      </div>
+                      
+                      {/* In progress achievements */}
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <Trophy className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">10 Winning Trades</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Complete 10 winning trades</p>
+                          <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: '20%' }}></div>
+                          </div>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border-0">
+                          2/10
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <Trophy className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Profitable Week</h4>
+                          <p className="text-xs text-muted-foreground mt-1">End the week with profit 5 days in a row</p>
+                          <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: '60%' }}></div>
+                          </div>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border-0">
+                          3/5
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <Trophy className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Consistent Trader</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Trade every day for 7 consecutive days</p>
+                          <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: '14%' }}></div>
+                          </div>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border-0">
+                          1/7
+                        </Badge>
+                      </div>
+                      
+                      {/* Locked achievements */}
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
+                          <Lock className="h-5 w-5 text-slate-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Master Trader</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Maintain 70%+ win rate with at least 50 trades</p>
+                          <p className="text-xs text-muted-foreground mt-1">+250 XP when unlocked</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
+                          Locked
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
+                          <Lock className="h-5 w-5 text-slate-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Risk Management Pro</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Complete 20 trades with proper risk/reward ratio</p>
+                          <p className="text-xs text-muted-foreground mt-1">+150 XP when unlocked</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
+                          Locked
+                        </Badge>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="unlocked" className="mt-0">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-amber-100 dark:bg-amber-950/30">
+                          <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">First Trade Completed</h4>
+                          <p className="text-xs text-muted-foreground mt-1">You've completed your first trade!</p>
+                          <p className="text-xs text-primary/90 mt-1">+100 XP</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-0">
+                          Unlocked
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-amber-100 dark:bg-amber-950/30">
+                          <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Trade Journal Entry</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Add detailed notes to a trade</p>
+                          <p className="text-xs text-primary/90 mt-1">+50 XP</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-0">
+                          Unlocked
+                        </Badge>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="progress" className="mt-0">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <Trophy className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">10 Winning Trades</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Complete 10 winning trades</p>
+                          <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: '20%' }}></div>
+                          </div>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border-0">
+                          2/10
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <Trophy className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Profitable Week</h4>
+                          <p className="text-xs text-muted-foreground mt-1">End the week with profit 5 days in a row</p>
+                          <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: '60%' }}></div>
+                          </div>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border-0">
+                          3/5
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                          <Trophy className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Consistent Trader</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Trade every day for 7 consecutive days</p>
+                          <div className="mt-2 w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: '14%' }}></div>
+                          </div>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border-0">
+                          1/7
+                        </Badge>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="locked" className="mt-0">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
+                          <Lock className="h-5 w-5 text-slate-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Master Trader</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Maintain 70%+ win rate with at least 50 trades</p>
+                          <p className="text-xs text-muted-foreground mt-1">+250 XP when unlocked</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
+                          Locked
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                        <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
+                          <Lock className="h-5 w-5 text-slate-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">Risk Management Pro</h4>
+                          <p className="text-xs text-muted-foreground mt-1">Complete 20 trades with proper risk/reward ratio</p>
+                          <p className="text-xs text-muted-foreground mt-1">+150 XP when unlocked</p>
+                        </div>
+                        <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
+                          Locked
+                        </Badge>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             </div>
           </SettingsSection>
