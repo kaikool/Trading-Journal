@@ -2909,59 +2909,41 @@ export default function TradeFormNew(props: TradeFormProps) {
                 >
                   Cancel
                 </Button>
-                <AnimatePresence mode="wait">
-                  {isSuccess ? (
-                    <motion.div
-                      key="success"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="relative"
+                {isSuccess ? (
+                  <div className="relative fade-in">
+                    <Button 
+                      type="button" 
+                      className="min-w-[120px] bg-green-500 hover:bg-green-600 text-white transition-all"
+                      disabled
                     >
-                      <Button 
-                        type="button" 
-                        className="min-w-[120px] bg-green-500 hover:bg-green-600 text-white transition-all"
-                        disabled
-                      >
-                        <CheckCircle2 className="mr-2 h-4 w-4" />
-                        {isEditMode ? "Updated!" : "Saved!"}
-                      </Button>
-                      <motion.div 
-                        className="absolute inset-0 bg-green-400 rounded-md opacity-30"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 2, opacity: 0 }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="submit"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      {isEditMode ? "Updated!" : "Saved!"}
+                    </Button>
+                    <div className="absolute inset-0 bg-green-400 rounded-md animate-pulse opacity-30"></div>
+                  </div>
+                ) : (
+                  <div className="fade-in">
+                    <Button 
+                      type="submit" 
+                      disabled={isFormSubmitting || isUploading}
+                      className="min-w-[150px] bg-primary hover:bg-primary/90"
                     >
-                      <Button 
-                        type="submit" 
-                        disabled={isFormSubmitting || isUploading}
-                        className="min-w-[150px] bg-primary hover:bg-primary/90"
-                      >
-                        {isFormSubmitting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving...
-                          </>
-                        ) : isUploading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Uploading...
-                          </>
-                        ) : (
-                          <>{isEditMode ? "Update Trade" : "Add Trade"}</>
-                        )}
-                      </Button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      {isFormSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : isUploading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>{isEditMode ? "Update Trade" : "Add Trade"}</>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
     </form>
