@@ -33,7 +33,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
       </main>
       
       {/* Thanh điều hướng dưới cùng - sử dụng class thống nhất */}
-      <MobileNavigator />
+      <MobileNavigator isPWAMode={isPWAMode} />
     </div>
   );
 };

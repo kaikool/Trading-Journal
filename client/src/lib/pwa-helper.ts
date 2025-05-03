@@ -158,19 +158,9 @@ export function isAppInstalled(): boolean {
 /**
  * Alias for isAppInstalled to ensure consistent naming across the app
  * This matches the function in use-mobile.tsx
- * 
- * Important: This function also applies the 'pwa-mode' class to the HTML element
- * which is used by many CSS selectors to apply safe area insets and other PWA-specific styling
  */
 export function isPWA(): boolean {
-  const isStandalone = isAppInstalled();
-  
-  // Always ensure we apply the pwa-mode class to the HTML element when in PWA mode
-  if (isStandalone && typeof document !== 'undefined') {
-    document.documentElement.classList.add('pwa-mode');
-  }
-  
-  return isStandalone;
+  return isAppInstalled();
 }
 
 /**
