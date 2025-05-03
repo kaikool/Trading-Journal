@@ -8,6 +8,7 @@ const COMMON_ROUTES = [
   '/dashboard',
   '/trade/history',
   '/analytics',
+  '/settings',
 ];
 
 // Map của route đến component cần preload với webpackChunkName
@@ -17,6 +18,7 @@ const ROUTE_TO_MODULE_MAP: Record<string, () => Promise<unknown>> = {
   '/trade/history': () => import(/* webpackChunkName: "page-trade-history" */ '../pages/TradeHistory'),
   '/trade/new': () => import(/* webpackChunkName: "page-new-trade" */ '../pages/NewTrade'),
   '/analytics': () => import(/* webpackChunkName: "page-analytics" */ '../pages/Analytics'),
+  '/settings': () => import(/* webpackChunkName: "page-settings" */ '../pages/Settings'),
 };
 
 // Map của routes đến modules phụ thuộc cần preload, mỗi dependency cũng có webpackChunkName 
