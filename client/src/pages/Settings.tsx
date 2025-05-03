@@ -388,11 +388,11 @@ export default function Settings() {
   
   // Main content
   return (
-    <div className="container max-w-7xl mx-auto py-5 md:py-8 px-4 sm:px-5">
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div className="mb-4 md:mb-0">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
             Settings
           </h1>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
@@ -421,28 +421,33 @@ export default function Settings() {
       </div>
       
       {/* Tabs navigation */}
-      <Tabs defaultValue="general" className="mb-2">
-        <div className="flex justify-center sm:justify-start w-full">
-          <TabsList className="w-full max-w-4xl mx-auto flex-wrap sm:flex-nowrap h-auto justify-center p-1 space-x-1 space-y-1 sm:space-y-0 rounded-xl bg-muted/70">
-            <TabsTrigger 
-              value="general" 
-              className="flex-1 sm:flex-none flex items-center justify-center h-9 px-3 sm:px-6 data-[state=active]:bg-primary/10 rounded-md hover:bg-muted transition-colors"
-            >
-              <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">General</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="trading" 
-              className="flex-1 sm:flex-none flex items-center justify-center h-9 px-3 sm:px-6 data-[state=active]:bg-primary/10 rounded-md hover:bg-muted transition-colors"
-            >
-              <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="security" 
-              className="flex-1 sm:flex-none flex items-center justify-center h-9 px-3 sm:px-6 data-[state=active]:bg-primary/10 rounded-md hover:bg-muted transition-colors"
-            >
-              <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Security</span>
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="general" className="mb-4 w-full">
+        <div className="overflow-x-auto pb-1 mb-4 sm:mb-6 touch-pan-x">
+          <div className="min-w-max mx-auto px-1">
+            <TabsList className="w-fit sm:w-auto flex flex-nowrap h-auto justify-start p-1 space-x-1 rounded-xl bg-muted/80">
+              <TabsTrigger 
+                value="general" 
+                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <User className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">General</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="trading" 
+                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <BarChart3 className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="security" 
+                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <ShieldCheck className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Security</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
         </div>
         
         {/* General settings tab */}
