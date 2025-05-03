@@ -544,7 +544,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={cumulativePnLData.timeData}
-                margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
               >
                 <defs>
                   <linearGradient id="colorPnL" x1="0" y1="0" x2="0" y2="1">
@@ -562,14 +562,14 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   tickLine={false}
                   axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                  tickMargin={5}
+                  tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                 />
                 <YAxis 
                   tickFormatter={(value) => formatCurrency(value, true)}
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   tickLine={false}
                   axisLine={false}
-                  tickMargin={5}
+                  tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                 />
                 <Tooltip content={<CumulativePnLTooltip />} />
                 <Area 
@@ -603,7 +603,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={dayOfWeekData}
-                  margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                 >
                   <CartesianGrid 
                     strokeDasharray="3 3" 
@@ -615,7 +615,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                    tickMargin={5}
+                    tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                   />
                   <YAxis 
                     tickFormatter={(value) => `${value}%`}
@@ -623,7 +623,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={5}
+                    tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                   />
                   <Tooltip content={<DayOfWeekTooltip />} />
                   <Bar 
@@ -659,7 +659,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
-                  margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                 >
                   <CartesianGrid 
                     strokeDasharray="3 3" 
@@ -672,7 +672,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                    tickMargin={5}
+                    tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                     label={{ 
                       value: 'Risk:Reward Ratio', 
                       position: 'insideBottom', 
@@ -689,7 +689,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={5}
+                    tickMargin={4} // Chuẩn hóa theo quy tắc 4px
                     label={{
                       value: 'Profit/Loss',
                       angle: -90,
