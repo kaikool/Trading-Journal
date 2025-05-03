@@ -679,25 +679,27 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
-  /* Unified bottom spacer system - only one place defining height */
-  .pwa-bottom-spacer, 
+  /* UNIFIED BOTTOM SPACING
+   * This is THE ONLY block that defines spacers
+   * All content pages should use this spacer to prevent content from being hidden
+   * beneath the fixed mobile navigation
+   */
   .bottom-nav-spacer {
+    /* Always use margin-top: auto to push the spacer to the bottom of the layout */
     margin-top: auto;
-  }
-  
-  /* PWA mode spacer */
-  .pwa-bottom-spacer {
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
-  }
-  
-  /* Standard (non-PWA) spacer */
-  .bottom-nav-spacer {
+    /* Base height matches mobile nav height exactly */
     height: var(--mobile-nav-height);
     
-    /* Responsive adjustments */
+    /* Hide spacer on desktop layouts */
     @media (min-width: 768px) {
       height: 0;
     }
+  }
+  
+  /* The PWA-specific spacer must account for safe area insets */
+  html.pwa-mode .bottom-nav-spacer,
+  .pwa-bottom-spacer {
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
   }
   
   /* 
@@ -710,9 +712,10 @@
    * Organized with CSS variables for better maintainability
    */
   
-  /* MOBILE NAVIGATION - CENTRAL POSITIONING
-   * This is THE ONLY PLACE that defines positioning for MobileNavigator
-   * All positioning rules are defined here to prevent conflicts
+  /* MOBILE NAVIGATION - THE SINGLE SOURCE OF TRUTH FOR POSITIONING
+   * ‼️ THIS IS THE ONLY PLACE THAT DEFINES POSITION RULES FOR MOBILE NAVIGATOR ‼️
+   * Any changes to Mobile Navigator positioning MUST be made here,
+   * NOT in component props, inline styles, or other CSS files.
    */
   .mobile-nav {
     /* Central configuration through CSS variables */
@@ -726,33 +729,36 @@
     --mobile-nav-indicator-height: 3px;
     --mobile-nav-indicator-width: 12px;
     
-    /* Base positioning - CORE POSITIONING RULES */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: var(--mobile-nav-height);
-    z-index: var(--mobile-nav-z-index);
+    /* ‼️ CORE POSITIONING RULES - NEVER OVERRIDE THESE ‼️ */
+    position: fixed !important; /* Use !important to prevent any override */
+    bottom: 0 !important;       /* Bottom 0 is critical and must never be changed */
+    left: 0 !important;         /* Full width requires left 0 */
+    right: 0 !important;        /* Full width requires right 0 */
+    height: var(--mobile-nav-height) !important; /* Use variable for responsive height */
+    z-index: var(--mobile-nav-z-index) !important; /* Ensure navigation stays on top */
+    width: 100% !important;     /* Explicit 100% width to avoid any layout issues */
     
-    /* Visual appearance */
+    /* Visual appearance - can be themed but position must stay the same */
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border) / 0.4);
     backdrop-filter: blur(var(--mobile-nav-blur));
     -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
     box-shadow: var(--mobile-nav-shadow);
     
-    /* Transitions for smooth animations - control animation only, not structure */
+    /* Transitions affect ONLY appearance, never position or structure */
     transition: 
-      height var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing), 
-      padding-bottom var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
+      background-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
+      border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
   
-  /* PWA mode safe area handling - EXACT BOTTOM POSITIONING RULE */
+  /* PWA safe-area handling - ONLY adjusts for notched devices */
   html.pwa-mode .mobile-nav,
   .mobile-nav.pwa-mode {
-    padding-bottom: var(--safe-bottom);
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    /* ‼️ SAFE AREA INSET HANDLING - CRITICAL FOR iOS DEVICES ‼️ */
+    padding-bottom: var(--safe-bottom) !important;
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom)) !important;
     border-top: 1px solid hsl(var(--border) / 0.6);
+    transform: translateZ(0); /* Force GPU acceleration for smoother rendering */
   }
   
   /* Navigation item container */

@@ -19,20 +19,20 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   
   return (
     <div className="mobile-layout">
-      {/* Main content area - đã bỏ tất cả styling trùng lặp, sử dụng classes có sẵn */}
+      {/* Main content area - use unified content class */}
       <main className={isPWAMode ? "pwa-main-content" : "flex-1 px-4"}>
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
         
-        {/* Spacer đơn giản hóa, chỉ sử dụng một class duy nhất */}
+        {/* UNIFIED BOTTOM SPACER - consistent height with the mobile nav */}
         <div 
-          className={isPWAMode ? "pwa-bottom-spacer" : "bottom-nav-spacer"}
+          className="bottom-nav-spacer"
           aria-hidden="true" 
         />
       </main>
       
-      {/* Thanh điều hướng dưới cùng - sử dụng class thống nhất */}
+      {/* Mobile Navigation - Single source of truth for positioning in globals.css */}
       <MobileNavigator isPWAMode={isPWAMode} />
     </div>
   );
