@@ -893,18 +893,12 @@ export default function Settings() {
         
         {/* Achievements tab */}
         <TabsContent value="achievements" className="mt-6 space-y-6">
-          <SettingsSection
-            title="Achievement Settings"
-            description="Manage your achievements and tracking preferences"
-          >
-            {/* Import the AchievementsTab component */}
-            <div className="grid gap-6">
-              <AchievementsTab 
-                showNotifications={Boolean(settings.showAchievements)}
-                onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
-              />
-            </div>
-          </SettingsSection>
+          <div className="grid gap-6">
+            <AchievementsTab 
+              showNotifications={Boolean(settings.showAchievements)}
+              onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
+            />
+          </div>
         </TabsContent>
         
         {/* Security settings tab */}
