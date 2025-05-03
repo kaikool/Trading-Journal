@@ -348,21 +348,22 @@
   background-color: hsl(var(--muted) / 0.6);
 }
 
-/* Safe area utility classes for mobile devices with notches */
+/* 
+ * =======================================================
+ * SAFE AREA UTILITY CLASSES
+ * =======================================================
+ *
+ * Optimized CSS utilities for handling device notches, home indicators
+ * and other safe area requirements on modern mobile devices.
+ */
 @layer utilities {
-  /* Safe area insets - optimized for iOS devices with notches and home indicators */
-  .pt-safe {
-    padding-top: env(safe-area-inset-top, 0px);
-  }
-  .pr-safe {
-    padding-right: env(safe-area-inset-right, 0px);
-  }
-  .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .pl-safe {
-    padding-left: env(safe-area-inset-left, 0px);
-  }
+  /* Safe area padding utilities - simple, single-purpose classes */
+  .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+  .pr-safe { padding-right: env(safe-area-inset-right, 0px); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .pl-safe { padding-left: env(safe-area-inset-left, 0px); }
+  
+  /* Combined padding utilities */
   .px-safe {
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
@@ -379,21 +380,13 @@
       env(safe-area-inset-left, 0px);
   }
   
-  /* Margin utilities with safe area consideration */
-  .mt-safe {
-    margin-top: env(safe-area-inset-top, 0px);
-  }
-  .mr-safe {
-    margin-right: env(safe-area-inset-right, 0px);
-  }
-  .mb-safe {
-    margin-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .ml-safe {
-    margin-left: env(safe-area-inset-left, 0px);
-  }
+  /* Safe area margin utilities */
+  .mt-safe { margin-top: env(safe-area-inset-top, 0px); }
+  .mr-safe { margin-right: env(safe-area-inset-right, 0px); }
+  .mb-safe { margin-bottom: env(safe-area-inset-bottom, 0px); }
+  .ml-safe { margin-left: env(safe-area-inset-left, 0px); }
   
-  /* Improved height utilities to properly handle safe areas */
+  /* Height utilities adjusted for safe areas */
   .h-screen-safe {
     height: 100vh; /* Fallback */
     height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
@@ -405,6 +398,7 @@
     min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   }
+}
 
   /* iOS Home indicator friendly mobile navigation rule moved to consolidated definition below (line ~366) */
 
@@ -466,8 +460,10 @@
       margin-right: calc(50% - 50vw + env(safe-area-inset-right, 0px));
     }
   }
-}
 
+/* ======================================= */
+/* Base layer definitions */
+/* ======================================= */
 @layer base {
   :root {
     /* Base colors */
@@ -601,11 +597,9 @@
   body {
     @apply bg-background text-foreground font-sans overflow-x-hidden;
     max-width: 100vw;
-    /* Safe area insets for PWA không áp dụng trên body toàn cục */
-    /* Thay vào đó, sử dụng các lớp pt-safe, pb-safe... trên các thành phần cụ thể */
   }
   
-  /* PWA Safe area support - for notch phones and iOS */
+  /* Root element - basic container */
   #root {
     @apply bg-background;
     min-height: 100vh;
@@ -614,14 +608,6 @@
     width: 100%;
     position: relative;
     overflow-x: hidden;
-    
-    /* Đặc biệt quan trọng cho iPhone có notch hoặc Dynamic Island */
-    @supports (padding-bottom: env(safe-area-inset-bottom)) {
-      padding-top: 0; /* Giảm padding ở root */
-      padding-left: env(safe-area-inset-left, 0px);
-      padding-right: env(safe-area-inset-right, 0px);
-      padding-bottom: 0; /* Giảm padding ở root */
-    }
   }
   
   /* Force PWA to use the Mobile layout styling */

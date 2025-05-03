@@ -122,7 +122,7 @@ export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorPr
 
   return (
     <nav 
-      className="mobile-nav"
+      className={cn("mobile-nav", isPWAMode && "pwa-mode")}
       role="navigation"
       aria-label="Main Navigation"
     >

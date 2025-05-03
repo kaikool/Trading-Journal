@@ -101,36 +101,23 @@ export function PWAContainer() {
   // Apply PWA-specific attributes to the document body for consistent styling
   useEffect(() => {
     if (isPWA()) {
-      // Add PWA mode class to the root HTML element
+      // Add PWA mode class to the root HTML element - all styling in globals.css
       document.documentElement.classList.add('pwa-mode');
       
-      // Also add a data attribute to body for more specific CSS targeting
-      document.body.setAttribute('data-pwa-mode', 'true');
-      
-      // Add safe area inset meta tags if they don't exist
-      if (!document.querySelector('meta[name="viewport"][content*="viewport-fit=cover"]')) {
-        const viewportMeta = document.querySelector('meta[name="viewport"]');
-        if (viewportMeta) {
-          // Update existing viewport meta to include viewport-fit=cover
-          const currentContent = viewportMeta.getAttribute('content') || '';
-          if (!currentContent.includes('viewport-fit=cover')) {
-            viewportMeta.setAttribute('content', `${currentContent}, viewport-fit=cover`);
-          }
-        } else {
-          // Create one if it doesn't exist
-          const meta = document.createElement('meta');
-          meta.name = 'viewport';
-          meta.content = 'width=device-width, initial-scale=1, viewport-fit=cover';
-          document.head.appendChild(meta);
+      // Update viewport meta tag to support safe areas
+      const viewportMeta = document.querySelector('meta[name="viewport"]');
+      if (viewportMeta) {
+        const currentContent = viewportMeta.getAttribute('content') || '';
+        if (!currentContent.includes('viewport-fit=cover')) {
+          viewportMeta.setAttribute('content', `${currentContent}, viewport-fit=cover`);
         }
       }
     }
     
     return () => {
-      // Cleanup on unmount (though PWA container should never unmount in practice)
+      // Cleanup on unmount
       if (isPWA()) {
         document.documentElement.classList.remove('pwa-mode');
-        document.body.removeAttribute('data-pwa-mode');
       }
     };
   }, []);
