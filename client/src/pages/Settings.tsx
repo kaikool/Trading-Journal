@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
 import { evaluateDevicePerformance } from "@/lib/performance";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { StrategiesManagement } from "@/components/settings/StrategiesManagement";
 import { AchievementsTab } from "@/components/settings/AchievementsTab";
 
@@ -76,11 +76,7 @@ interface SettingsSectionProps {
 
 function SettingsSection({ title, description, icon: Icon, children, rightElement }: SettingsSectionProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-    >
+    <div className="opacity-100 animate-in fade-in slide-in-from-bottom-3 duration-300">
       <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
         <CardHeader className="pb-3 px-4 sm:px-6">
           <div className="flex items-center justify-between">
@@ -98,7 +94,7 @@ function SettingsSection({ title, description, icon: Icon, children, rightElemen
           {children}
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }
 
