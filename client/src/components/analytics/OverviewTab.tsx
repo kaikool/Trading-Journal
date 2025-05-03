@@ -552,8 +552,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           <CardContent>
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart
-                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} /* Chuẩn hóa theo quy tắc 4px */
+                <PieChart margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
                   <Pie
                     data={topPerformingPairs}
                     cx="50%"
@@ -607,13 +606,13 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                     align="center"
                     iconSize={6}
                     wrapperStyle={{
-                      paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
+                      paddingTop: "4px",
                       fontSize: "10px",
                       width: "100%",
                       display: "flex",
                       flexWrap: "wrap",
                       justifyContent: "center",
-                      rowGap: "4px", // Chuẩn hóa theo quy tắc 4px
+                      rowGap: "4px"
                     }}
                     iconType="circle"
                   />
@@ -650,7 +649,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={tradingActivityData}
-                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
+                margin={{ top: 4, right: 8, left: 0, bottom: 4 }}
                 barCategoryGap={12}
                 barGap={6}
               >
@@ -683,7 +682,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                   iconSize={6}
                   wrapperStyle={{
                     fontSize: "10px",
-                    paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
+                    paddingTop: "4px"
                   }}
                   iconType="circle"
                 />
