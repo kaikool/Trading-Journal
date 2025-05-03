@@ -6,14 +6,11 @@ import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
 import { evaluateDevicePerformance } from "@/lib/performance";
-// import { motion } from "framer-motion";
 import { StrategiesManagement } from "@/components/settings/StrategiesManagement";
 import { AchievementsTab } from "@/components/settings/AchievementsTab";
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { DASHBOARD_CONFIG } from "@/lib/config";
-
-// Import only needed Lucide icons
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -63,7 +60,6 @@ import {
   Lightbulb,
   Trophy,
   Award,
-
 } from "lucide-react";
 
 interface SettingsSectionProps {
@@ -76,12 +72,11 @@ interface SettingsSectionProps {
 
 function SettingsSection({ title, description, icon: Icon, children, rightElement }: SettingsSectionProps) {
   return (
-    <div className="opacity-100 animate-in fade-in slide-in-from-bottom-3 duration-300">
+    <div className="animate-in fade-in slide-in-from-bottom-3 duration-300">
       <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
         <CardHeader className="pb-3 px-4 sm:px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              
               <div>
                 <CardTitle className="text-lg">{title}</CardTitle>
               </div>
@@ -531,31 +526,31 @@ export default function Settings() {
                     <SelectContent>
                       <SelectItem value="en">
                         <div className="flex items-center">
-                          <span className="inline-block w-4 h-4 mr-2 rounded-full overflow-hidden bg-primary/5">🇺🇸</span>
+                          <Languages className="h-4 w-4 mr-2" />
                           English
                         </div>
                       </SelectItem>
                       <SelectItem value="fr">
                         <div className="flex items-center">
-                          <span className="inline-block w-4 h-4 mr-2 rounded-full overflow-hidden bg-primary/5">🇫🇷</span>
+                          <Languages className="h-4 w-4 mr-2" />
                           Français
                         </div>
                       </SelectItem>
                       <SelectItem value="de">
                         <div className="flex items-center">
-                          <span className="inline-block w-4 h-4 mr-2 rounded-full overflow-hidden bg-primary/5">🇩🇪</span>
+                          <Languages className="h-4 w-4 mr-2" />
                           Deutsch
                         </div>
                       </SelectItem>
                       <SelectItem value="es">
                         <div className="flex items-center">
-                          <span className="inline-block w-4 h-4 mr-2 rounded-full overflow-hidden bg-primary/5">🇪🇸</span>
+                          <Languages className="h-4 w-4 mr-2" />
                           Español
                         </div>
                       </SelectItem>
                       <SelectItem value="ja">
                         <div className="flex items-center">
-                          <span className="inline-block w-4 h-4 mr-2 rounded-full overflow-hidden bg-primary/5">🇯🇵</span>
+                          <Languages className="h-4 w-4 mr-2" />
                           日本語
                         </div>
                       </SelectItem>
@@ -659,6 +654,9 @@ export default function Settings() {
                       Verified
                     </Badge>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Email address associated with your account
+                  </p>
                 </FormField>
                 
                 <FormField label="Display Name" htmlFor="displayName">
@@ -668,27 +666,27 @@ export default function Settings() {
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder="Your display name"
-                      className="flex-grow"
+                      className="flex-1"
                     />
                     <Button 
                       onClick={handleUpdateDisplayName} 
-                      size="sm" 
-                      disabled={isUpdatingDisplayName || displayName === auth.currentUser?.displayName}
+                      disabled={isUpdatingDisplayName}
+                      variant="outline"
+                      size="icon"
+                      className="px-3"
                     >
                       {isUpdatingDisplayName ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
-                        "Update"
+                        <Check className="h-4 w-4" />
                       )}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    This name will be displayed in your profile and trading history.
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Name displayed to other users in the app
                   </p>
                 </FormField>
               </div>
-              
-              <Separator className="my-2" />
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <FormField label="Account Currency" htmlFor="currency">
@@ -702,38 +700,38 @@ export default function Settings() {
                       <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Currencies</SelectLabel>
-                        <SelectItem value="USD">
-                          <div className="flex items-center">
-                            <DollarSign className="h-4 w-4 mr-2" />
-                            USD ($)
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="EUR">
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2 text-base">€</span>
-                            EUR (€)
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="GBP">
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2 text-base">£</span>
-                            GBP (£)
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="JPY">
-                          <div className="flex items-center">
-                            <span className="font-medium mr-2 text-base">¥</span>
-                            JPY (¥)
-                          </div>
-                        </SelectItem>
-                      </SelectGroup>
+                      <SelectItem value="USD">
+                        <div className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-2" />
+                          USD - US Dollar
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="EUR">
+                        <div className="flex items-center">
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          EUR - Euro
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="GBP">
+                        <div className="flex items-center">
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          GBP - British Pound
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="JPY">
+                        <div className="flex items-center">
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          JPY - Japanese Yen
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Primary currency used for profit/loss calculations
+                  </p>
                 </FormField>
                 
-                <FormField label="Initial Account Balance" htmlFor="initialBalance">
+                <FormField label="Initial Balance" htmlFor="initialBalance">
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                       {settings.currency === 'USD' ? '$' : 
@@ -776,14 +774,14 @@ export default function Settings() {
               <div className="space-y-4 sm:space-y-5">
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <Label htmlFor="defaultRisk" className="text-sm font-medium">Default Risk Per Trade</Label>
-                    <Badge variant="outline" className="font-mono bg-muted">{settings.defaultRiskPerTrade}%</Badge>
+                    <Label htmlFor="defaultRiskPerTrade" className="text-sm font-medium">Default Risk Per Trade (%)</Label>
+                    <Badge variant="outline" className="font-mono bg-muted/60">{settings.defaultRiskPerTrade}%</Badge>
                   </div>
                   <Slider
-                    id="defaultRisk"
-                    min={0.5}
+                    id="defaultRiskPerTrade"
+                    min={0.1}
                     max={5}
-                    step={0.5}
+                    step={0.1}
                     value={[settings.defaultRiskPerTrade]}
                     onValueChange={(value) =>
                       setSettings({ ...settings, defaultRiskPerTrade: value[0] })
@@ -791,28 +789,24 @@ export default function Settings() {
                     className="py-2"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>Lower Risk (0.5%)</span>
-                    <span>Higher Risk (5%)</span>
+                    <span>Conservative (0.1%)</span>
+                    <span>Aggressive (5%)</span>
                   </div>
-                  <div className="flex mt-2 p-3 rounded-md bg-muted/40 text-sm text-muted-foreground/90 gap-2">
-                    <HelpCircle className="h-4 w-4 mt-0.5 shrink-0 text-primary/70" />
-                    <p>
-                      Percentage of your account balance to risk on each trade.
-                      Most professionals recommend 1-2% per trade.
-                    </p>
-                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    The percentage of your account balance to risk on each trade.
+                  </p>
                 </div>
                 
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <Label htmlFor="defaultRatio" className="text-sm font-medium">Default Risk-Reward Ratio</Label>
-                    <Badge variant="outline" className="font-mono bg-muted">1:{settings.defaultRiskRewardRatio}</Badge>
+                    <Label htmlFor="defaultRiskRewardRatio" className="text-sm font-medium">Default Risk:Reward Ratio</Label>
+                    <Badge variant="outline" className="font-mono bg-muted/60">1:{settings.defaultRiskRewardRatio}</Badge>
                   </div>
                   <Slider
-                    id="defaultRatio"
+                    id="defaultRiskRewardRatio"
                     min={1}
                     max={5}
-                    step={0.5}
+                    step={0.1}
                     value={[settings.defaultRiskRewardRatio]}
                     onValueChange={(value) =>
                       setSettings({ ...settings, defaultRiskRewardRatio: value[0] })
@@ -823,11 +817,14 @@ export default function Settings() {
                     <span>1:1</span>
                     <span>1:5</span>
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    The default risk-to-reward ratio for your trades (how much you aim to gain relative to risk).
+                  </p>
                 </div>
                 
                 <OptionItem
                   title="Auto-Calculate Lot Size"
-                  description="Automatically determine position size based on risk percentage and stop loss"
+                  description="Automatically calculate the lot size based on your risk parameters"
                   control={
                     <Switch
                       id="autoCalculateLotSize"
@@ -904,63 +901,44 @@ export default function Settings() {
             title="Trading Strategies" 
             description="Manage your trading strategies"
             icon={Lightbulb}
-            rightElement={
-              <Button size="sm" variant="outline" onClick={() => {
-                // Create default strategies for user if they don't exist
-                if (auth.currentUser) {
-                  toast({
-                    title: "Checking strategies",
-                    description: "Looking for your trading strategies...",
-                  });
-                  
-                  createDefaultStrategiesIfNeeded(auth.currentUser.uid)
-                    .then((created) => {
-                      if (created) {
-                        toast({
-                          title: "Default strategies created",
-                          description: "We've added some default trading strategies to get you started",
-                        });
-                      }
-                    })
-                    .catch((error) => {
-                      console.error("Error creating default strategies:", error);
-                    });
-                }
-              }}>
-                <Sparkles className="h-4 w-4 mr-2" />
-                Create Defaults
-              </Button>
-            }
           >
-            <div className="mt-2">
-              {/* Import the StrategiesManagement component */}
-              <StrategiesManagement />
+            <StrategiesManagement />
+          </SettingsSection>
+        </TabsContent>
+        
+        {/* Achievements settings tab */}
+        <TabsContent value="achievements" className="mt-6 space-y-6">
+          <SettingsSection 
+            title="Achievements Configuration" 
+            description="Configure your achievements and progress tracking preferences"
+            icon={Trophy}
+          >
+            <div className="space-y-4">
+              <OptionItem
+                title="Show Achievements"
+                description="Display achievements and trading milestones in your profile"
+                control={
+                  <Switch
+                    id="showAchievements"
+                    checked={settings.showAchievements}
+                    onCheckedChange={(checked) =>
+                      setSettings({ ...settings, showAchievements: checked })
+                    }
+                  />
+                }
+              />
+              
+              <div className="pt-2">
+                <AchievementsTab />
+              </div>
             </div>
           </SettingsSection>
         </TabsContent>
         
-        {/* Achievements tab */}
-        <TabsContent value="achievements" className="mt-6 space-y-6">
-          <SettingsSection
-            title="User Achievements"
-            description="Manage and view your achievements"
-            icon={Award}
-          >
-            <AchievementsTab 
-              showNotifications={settings.showAchievements || false}
-              onToggleNotifications={(show) => 
-                setSettings({ ...settings, showAchievements: show })
-              }
-            />
-          </SettingsSection>
-        </TabsContent>
-        
-
-        
         {/* Security settings tab */}
         <TabsContent value="security" className="mt-6 space-y-6">
           <SettingsSection 
-            title="Password Management" 
+            title="Password & Authentication" 
             description="Update your account password and security preferences"
             icon={Lock}
             
@@ -983,19 +961,18 @@ export default function Settings() {
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     className="pr-10"
                   />
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute right-0 top-0 h-full w-10 px-0"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  <button
                     type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showCurrentPassword ? "Hide password" : "Show password"}
                   >
                     {showCurrentPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4" />
                     )}
-                  </Button>
+                  </button>
                 </div>
               </FormField>
               
@@ -1008,22 +985,21 @@ export default function Settings() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="pr-10"
                   />
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute right-0 top-0 h-full w-10 px-0"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  <button
                     type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showNewPassword ? "Hide password" : "Show password"}
                   >
                     {showNewPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4" />
                     )}
-                  </Button>
+                  </button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1.5">
-                  Password must be at least 6 characters long.
+                  Password must be at least 6 characters long
                 </p>
               </FormField>
               
@@ -1036,27 +1012,26 @@ export default function Settings() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="pr-10"
                   />
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="absolute right-0 top-0 h-full w-10 px-0"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  <button
                     type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4" />
                     )}
-                  </Button>
+                  </button>
                 </div>
               </FormField>
               
-              <div className="flex justify-end mt-2">
+              <div className="pt-2">
                 <Button 
                   onClick={changePassword} 
                   disabled={isChangingPassword}
-                  className="min-w-[160px]"
+                  className="w-full sm:w-auto"
                 >
                   {isChangingPassword ? (
                     <>
@@ -1095,13 +1070,12 @@ export default function Settings() {
                   variant="outline" 
                   size="sm"
                   onClick={handleLogout}
+                  className="text-xs space-x-1"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
+                  <LogOut className="h-3.5 w-3.5 mr-1" />
+                  <span>Sign Out</span>
                 </Button>
               </div>
-              
-
             </div>
           </SettingsSection>
         </TabsContent>
