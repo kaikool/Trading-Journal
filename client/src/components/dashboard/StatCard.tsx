@@ -95,10 +95,9 @@ export default function StatCard({
         <div className="relative z-10 mt-2 pt-1">
           <div className="w-full bg-muted/40 rounded-full h-1.5">
             <div 
-              className={cn("h-1.5 rounded-full", colors[color].progressBg)} 
+              className={cn("h-1.5 rounded-full progress-animate", colors[color].progressBg)} 
               style={{ 
-                width: `${progressValue}%`,
-                transition: "width 1s cubic-bezier(0.34, 1.56, 0.64, 1)"
+                width: `${progressValue}%`
               }}
             />
           </div>
