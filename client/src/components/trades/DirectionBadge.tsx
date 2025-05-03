@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type Direction = "BUY" | "SELL";
@@ -12,6 +12,7 @@ interface DirectionBadgeProps {
   size?: 'sm' | 'md' | 'lg';
   showTooltip?: boolean;
   iconOnly?: boolean;
+  variant?: 'default' | 'modern' | 'arrow';
 }
 
 /**
@@ -24,10 +25,23 @@ const DirectionBadge = React.forwardRef<HTMLDivElement, DirectionBadgeProps>(({
   size = 'md',
   showTooltip = true,
   iconOnly = false,
+  variant = 'modern',
 }, ref) => {
+  // Biểu tượng khác nhau cho từng kiểu hiển thị
+  const getIcon = () => {
+    if (variant === 'modern') {
+      return direction === "BUY" ? TrendingUp : TrendingDown;
+    } else if (variant === 'arrow') {
+      return direction === "BUY" ? ArrowUpRight : ArrowDownRight; 
+    } else {
+      // Kiểu mặc định
+      return direction === "BUY" ? TrendingUp : TrendingDown;
+    }
+  };
+  
   // Configuration based on direction
   const config = {
-    icon: direction === "BUY" ? ArrowUp : ArrowDown,
+    icon: getIcon(),
     label: direction,
     description: direction === "BUY" ? "Buy/Long Position" : "Sell/Short Position",
     bgColor: direction === "BUY" ? "bg-success" : "bg-destructive",

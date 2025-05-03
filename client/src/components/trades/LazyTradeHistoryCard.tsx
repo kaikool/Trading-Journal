@@ -283,6 +283,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     direction={direction as "BUY" | "SELL"}
                     iconOnly={false}
                     size="md"
+                    variant="modern"
                   />
                 </div>
                 
