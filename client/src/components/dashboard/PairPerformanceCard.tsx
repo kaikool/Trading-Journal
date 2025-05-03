@@ -138,15 +138,7 @@ export function PairPerformanceCard({
                 verticalAlign="bottom"
                 align="center"
                 iconSize={8}
-                wrapperStyle={{
-                  paddingTop: "10px",
-                  fontSize: "11px",
-                  width: "100%",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                  rowGap: "4px",
-                }}
+                className="chart-legend"
               />
             </PieChart>
           </ResponsiveContainer>

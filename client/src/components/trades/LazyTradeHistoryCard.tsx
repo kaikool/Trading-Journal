@@ -297,13 +297,13 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
                     whiteSpace: 'nowrap'
                   }}>
-                    <div style={{display: 'flex', alignItems: 'center', width: 'auto'}}>
+                    <div className="trade-card-badge-container">
                       {direction === 'BUY' ? (
-                        <ArrowUp style={{height: '10px', width: '10px', marginRight: '3px', flexShrink: 0, position: 'relative', top: '0px'}} />
+                        <ArrowUp className="trade-card-badge-icon" />
                       ) : (
-                        <ArrowDown style={{height: '10px', width: '10px', marginRight: '3px', flexShrink: 0, position: 'relative', top: '0px'}} />
+                        <ArrowDown className="trade-card-badge-icon" />
                       )}
-                      <span style={{fontSize: '11px', lineHeight: 1, position: 'relative', top: '0px'}}>{direction}</span>
+                      <span className="trade-card-badge-text">{direction}</span>
                     </div>
                   </div>
                 </div>
