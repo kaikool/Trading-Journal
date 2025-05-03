@@ -688,6 +688,13 @@
     background: linear-gradient(145deg, hsl(0 84% 60% / 0.1), hsl(0 84% 60% / 0.05));
   }
   
+  /* Chart tooltip dynamic colors */
+  .chart-tooltip-text-color-1 { color: hsl(var(--chart-1)); }
+  .chart-tooltip-text-color-2 { color: hsl(var(--chart-2)); }
+  .chart-tooltip-text-color-3 { color: hsl(var(--chart-3)); }
+  .chart-tooltip-text-color-4 { color: hsl(var(--chart-4)); }
+  .chart-tooltip-text-color-5 { color: hsl(var(--chart-5)); }
+  
   /* Custom animations */
   .progress-animate {
     animation: progress 1s ease-in-out;

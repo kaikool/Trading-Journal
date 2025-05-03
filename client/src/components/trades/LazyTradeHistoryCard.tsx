@@ -249,9 +249,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                             return;
                           }
                           
-                          // Hiển thị hình ảnh thay thế nhưng giữ nguyên trạng thái loading
-                          // để tránh hiển thị lỗi hình ảnh
-                          imgElement.style.display = 'none';
+                          // Thay vì sử dụng inline style, thêm class hidden
+                          imgElement.classList.add('hidden');
                         }}
                       />
                     </div>

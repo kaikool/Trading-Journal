@@ -34,7 +34,10 @@ export function PairPerformanceCard({
       const fill = payload[0].fill;
       return (
         <div className="bg-background/90 backdrop-blur-sm shadow-md border border-primary/20 rounded-md p-2 text-sm">
-          <p className="font-medium text-center" style={{ color: fill }}>{data.pair}</p>
+          <p className={cn(
+            "font-medium text-center",
+            `chart-tooltip-text-color-${(payload[0].name % 5) + 1}`
+          )}>{data.pair}</p>
           <div className="mt-1 flex justify-between gap-4">
             <span className="text-xs text-muted-foreground">Win Rate:</span>
             <span className="font-medium">{data.winRate.toFixed(0)}%</span>

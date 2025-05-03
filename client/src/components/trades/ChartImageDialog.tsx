@@ -210,7 +210,7 @@ export function ChartImageDialog({
                 onLoad={(e) => {
                   const img = e.currentTarget;
                   if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-                    img.style.visibility = 'visible';
+                    img.classList.remove('invisible');
                   }
                 }}
                 onError={(e) => {
