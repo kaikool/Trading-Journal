@@ -24,8 +24,12 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 // Hook để sử dụng ThemeContext
-export function useTheme() {
-  return useContext(ThemeContext);
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
 }
 
 // Component Provider
@@ -71,6 +75,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       }
     };
     
+    // Kiểm tra ngay lập tức chế độ hệ thống
+    if (currentTheme === 'system') {
+      setIsDarkMode(mediaQuery.matches);
+      applyDarkMode(mediaQuery.matches);
+    }
+    
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
@@ -105,12 +115,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isLoading) return;
     
-    if (currentTheme === 'system') {
+    // Dùng closure tại thời điểm này thay vì biến state để tránh stale value
+    const theme = currentTheme;
+    
+    if (theme === 'system') {
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(isDarkMode);
       applyDarkMode(isDarkMode);
     } else {
-      const isDark = currentTheme === 'dark';
+      const isDark = theme === 'dark';
       setIsDarkMode(isDark);
       applyDarkMode(isDark);
     }
