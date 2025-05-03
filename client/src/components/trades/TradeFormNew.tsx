@@ -2352,7 +2352,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     
                     {entryImage1Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
-                        <div className="w-full h-[180px] sm:h-[200px] bg-muted/30 animate-pulse flex items-center justify-center">
+                        <div className="image-placeholder">
                           <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
                         </div>
                         <img 
@@ -2484,7 +2484,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     
                     {entryImage2Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
-                        <div className="w-full h-[180px] sm:h-[200px] bg-muted/30 animate-pulse flex items-center justify-center">
+                        <div className="image-placeholder">
                           <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
                         </div>
                         <img 
@@ -2691,13 +2691,13 @@ export default function TradeFormNew(props: TradeFormProps) {
                           
                           {exitImage1Preview ? (
                             <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
-                              <div className="w-full h-[180px] sm:h-[200px] bg-muted/30 animate-pulse flex items-center justify-center">
+                              <div className="image-placeholder">
                                 <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
                               </div>
                               <img 
                                 src={exitImage1Preview} 
                                 alt="Exit chart H4" 
-                                className="w-full h-[180px] sm:h-[200px] object-cover absolute inset-0"
+                                className="w-full h-[180px] sm:h-[200px] object-cover absolute inset-0 trade-form-image"
                                 loading="lazy"
                                 onLoad={(e) => {
                                   // Remove placeholder when image loads
@@ -2779,7 +2779,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               <img 
                                 src={exitImage2Preview} 
                                 alt="Exit chart M15" 
-                                className="w-full h-[180px] sm:h-[200px] object-cover absolute inset-0"
+                                className="w-full h-[180px] sm:h-[200px] object-cover absolute inset-0 trade-form-image"
                                 loading="lazy"
                                 onLoad={(e) => {
                                   // Remove placeholder when image loads

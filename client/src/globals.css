@@ -78,6 +78,32 @@
   opacity: 1;
 }
 
+/* Image placeholder styling */
+.image-placeholder {
+  width: 100%;
+  height: 180px;
+  background-color: hsl(var(--muted) / 0.3);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .image-placeholder {
+    height: 200px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
