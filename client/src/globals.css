@@ -352,51 +352,51 @@
  * =======================================================
  * SAFE AREA UTILITY CLASSES
  * =======================================================
- *
- * Optimized CSS utilities for handling device notches, home indicators
- * and other safe area requirements on modern mobile devices.
+ * 
+ * Hệ thống thống nhất xử lý safe area cho toàn bộ ứng dụng
+ * Tất cả các thành phần đều sử dụng các biến CSS được định nghĩa trong :root
  */
 @layer utilities {
-  /* Safe area padding utilities - simple, single-purpose classes */
-  .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
-  .pr-safe { padding-right: env(safe-area-inset-right, 0px); }
-  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
-  .pl-safe { padding-left: env(safe-area-inset-left, 0px); }
+  /* Safe area padding utilities - sử dụng CSS variables */
+  .pt-safe { padding-top: var(--safe-top); }
+  .pr-safe { padding-right: var(--safe-right); }
+  .pb-safe { padding-bottom: var(--safe-bottom); }
+  .pl-safe { padding-left: var(--safe-left); }
   
   /* Combined padding utilities */
   .px-safe {
-    padding-left: env(safe-area-inset-left, 0px);
-    padding-right: env(safe-area-inset-right, 0px);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
   }
   .py-safe {
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
   }
   .p-safe {
     padding: 
-      env(safe-area-inset-top, 0px)
-      env(safe-area-inset-right, 0px)
-      env(safe-area-inset-bottom, 0px)
-      env(safe-area-inset-left, 0px);
+      var(--safe-top)
+      var(--safe-right)
+      var(--safe-bottom)
+      var(--safe-left);
   }
   
   /* Safe area margin utilities */
-  .mt-safe { margin-top: env(safe-area-inset-top, 0px); }
-  .mr-safe { margin-right: env(safe-area-inset-right, 0px); }
-  .mb-safe { margin-bottom: env(safe-area-inset-bottom, 0px); }
-  .ml-safe { margin-left: env(safe-area-inset-left, 0px); }
+  .mt-safe { margin-top: var(--safe-top); }
+  .mr-safe { margin-right: var(--safe-right); }
+  .mb-safe { margin-bottom: var(--safe-bottom); }
+  .ml-safe { margin-left: var(--safe-left); }
   
   /* Height utilities adjusted for safe areas */
   .h-screen-safe {
     height: 100vh; /* Fallback */
-    height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+    height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
   }
   
   .min-h-screen-safe {
     min-height: 100vh; /* Fallback */
-    min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+    min-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
   }
 }
 
