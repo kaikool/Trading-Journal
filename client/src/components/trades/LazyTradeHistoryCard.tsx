@@ -345,89 +345,74 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 px-0 rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                      className="action-button action-button-view"
                       onClick={() => handleViewTrade()}
                       title="View Details"
                     >
-                      <EyeIcon className="h-3.5 w-3.5" />
+                      <EyeIcon className="action-button-icon" />
                     </Button>
                     
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 px-0 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/20 text-amber-600 dark:text-amber-400"
+                      className="action-button action-button-edit"
                       onClick={() => onEdit()}
                       title="Edit Trade"
                     >
-                      <PencilIcon className="h-3.5 w-3.5" />
+                      <PencilIcon className="action-button-icon" />
                     </Button>
                     
                     {isTradeOpen && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 w-7 px-0 rounded-full hover:bg-green-100 dark:hover:bg-green-900/20 text-green-600 dark:text-green-400"
+                        className="action-button action-button-close"
                         onClick={() => setShowCloseForm(true)}
                         title="Close Trade"
                       >
-                        <Lock className="h-3.5 w-3.5" />
+                        <Lock className="action-button-icon" />
                       </Button>
                     )}
                     
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 px-0 rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400"
+                      className="action-button action-button-delete"
                       onClick={() => onDelete(id)}
                       title="Delete Trade"
                     >
-                      <Trash2Icon className="h-3.5 w-3.5" />
+                      <Trash2Icon className="action-button-icon" />
                     </Button>
                   </div>
                   
                   <div className="flex items-center gap-2 mt-1 sm:mt-0">
                     {!isTradeOpen && ( 
-                      <div className={`flex items-center space-x-1 ${
-                        (() => {
-                          if (result === 'BE') return 'text-amber-600 dark:text-amber-400';
-                          if (result === 'MANUAL') return profitLoss > 0 
-                            ? 'text-emerald-600 dark:text-emerald-400'
-                            : profitLoss < 0
-                              ? 'text-red-600 dark:text-red-400'
-                              : 'text-amber-600 dark:text-amber-400';
-                          return profitLoss > 0 
-                            ? 'text-emerald-600 dark:text-emerald-400' 
-                            : 'text-red-600 dark:text-red-400';
-                        })()
+                      <div className={`pnl-indicator ${
+                        result === 'BE' ? 'pnl-neutral' :
+                        result === 'MANUAL' ? 
+                          (profitLoss > 0 ? 'pnl-profit' : 
+                           profitLoss < 0 ? 'pnl-loss' : 'pnl-neutral') :
+                          (profitLoss > 0 ? 'pnl-profit' : 'pnl-loss')
                       }`}>
-                        {(() => {
-                          if (result === 'BE') return <CircleDot className="h-3.5 w-3.5" />;
-                          if (result === 'MANUAL') {
-                            if (profitLoss > 0) return <TrendingUpIcon className="h-3.5 w-3.5" />;
-                            if (profitLoss < 0) return <TrendingDownIcon className="h-3.5 w-3.5" />;
-                            return <CircleDot className="h-3.5 w-3.5" />;
-                          }
-                          return profitLoss > 0 
-                            ? <TrendingUpIcon className="h-3.5 w-3.5" />
-                            : <TrendingDownIcon className="h-3.5 w-3.5" />;
-                        })()}
+                        {result === 'BE' ? <CircleDot className="h-3.5 w-3.5" /> :
+                         result === 'MANUAL' ? 
+                          (profitLoss > 0 ? <TrendingUpIcon className="h-3.5 w-3.5" /> :
+                           profitLoss < 0 ? <TrendingDownIcon className="h-3.5 w-3.5" /> :
+                           <CircleDot className="h-3.5 w-3.5" />) :
+                          (profitLoss > 0 ? <TrendingUpIcon className="h-3.5 w-3.5" /> :
+                           <TrendingDownIcon className="h-3.5 w-3.5" />)
+                        }
                         <span className="font-medium">{formatCurrency(profitLoss)}</span>
                       </div>
                     )}
                     
                     {!isTradeOpen && (
-                      <div className={`text-xs px-2.5 py-0.5 rounded-full ${
-                        (() => {
-                          if (result === 'BE') return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300';
-                          if (result === 'MANUAL') {
-                            if (pips > 0) return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
-                            if (pips < 0) return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-                            return 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300';
-                          }
-                          return pips > 0 
-                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300' 
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
-                        })()
+                      <div className={`pip-badge ${
+                        result === 'BE' ? 'pip-badge-neutral' :
+                        result === 'MANUAL' ? 
+                          (pips > 0 ? 'pip-badge-profit' : 
+                           pips < 0 ? 'pip-badge-loss' : 'pip-badge-neutral') :
+                          (pips > 0 ? 'pip-badge-profit' : 'pip-badge-loss')
                       }`}>
                         {pips > 0 ? '+' : ''}{pips} pips
                       </div>

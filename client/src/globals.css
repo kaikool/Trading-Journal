@@ -179,6 +179,71 @@
   color: hsl(35 92% 75%);
 }
 
+/* Action button styling */
+.action-button {
+  height: 1.75rem;
+  width: 1.75rem;
+  padding: 0;
+  border-radius: 9999px;
+}
+
+.action-button-icon {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.action-button-view {
+  color: hsl(213 92% 45%);
+}
+.action-button-view:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+.dark .action-button-view {
+  color: hsl(213 92% 65%);
+}
+.dark .action-button-view:hover {
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+.action-button-edit {
+  color: hsl(35 92% 50%);
+}
+.action-button-edit:hover {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+.dark .action-button-edit {
+  color: hsl(35 92% 65%);
+}
+.dark .action-button-edit:hover {
+  background-color: rgba(245, 158, 11, 0.15);
+}
+
+.action-button-close {
+  color: hsl(142 72% 45%);
+}
+.action-button-close:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+.dark .action-button-close {
+  color: hsl(142 72% 60%);
+}
+.dark .action-button-close:hover {
+  background-color: rgba(16, 185, 129, 0.15);
+}
+
+.action-button-delete {
+  color: hsl(0 84% 60%);
+}
+.action-button-delete:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+.dark .action-button-delete {
+  color: hsl(0 84% 75%);
+}
+.dark .action-button-delete:hover {
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
 /* Image placeholder styling */
 .image-placeholder {
   width: 100%;
