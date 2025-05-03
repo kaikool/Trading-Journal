@@ -69,7 +69,7 @@ function SettingsSection({ title, description, icon: Icon, children, rightElemen
   return (
     <div>
       <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
-        <div className="px-4 sm:px-6 pt-5">
+        <div className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-medium">{title}</h3>
@@ -77,10 +77,10 @@ function SettingsSection({ title, description, icon: Icon, children, rightElemen
             </div>
             {rightElement}
           </div>
+          <div>
+            {children}
+          </div>
         </div>
-        <CardContent className="pt-1 px-4 sm:px-6">
-          {children}
-        </CardContent>
       </Card>
     </div>
   );
