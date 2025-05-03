@@ -13,7 +13,8 @@ import {
   Settings, 
   LogOut,
   Bell,
-  Search
+  Search,
+  BarChart2
 } from "lucide-react";
 import { AppLogo } from "@/components/AppLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -65,6 +66,7 @@ export const navItems = [
   { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", href: "/" },
   { icon: <TrendingUp className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
   { icon: <History className="h-5 w-5" />, label: "History", href: "/trade/history" },
+  { icon: <BarChart2 className="h-5 w-5" />, label: "Analytics", href: "/analytics" },
   { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
 
