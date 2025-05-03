@@ -50,6 +50,8 @@ import {
   Check,
   Palette,
   CalendarDays,
+  Trophy,
+  AlertTriangle,
 } from "lucide-react";
 
 interface SettingsSectionProps {
@@ -438,6 +440,13 @@ export default function Settings() {
               >
                 <BarChart3 className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="achievements" 
+                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <Trophy className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Achievements</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="security" 
