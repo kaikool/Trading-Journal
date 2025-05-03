@@ -639,9 +639,20 @@
     overscroll-behavior: none; /* Prevent pull-to-refresh */
   }
   
-  /* PWA-specific adjustments for MobileLayout */
-  html.pwa-mode .mobile-layout,
-  .pwa-mobile-layout {
+  /* Base mobile layout container */
+  .mobile-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: hsl(var(--background));
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  /* PWA mode enhancements to mobile layout */
+  html.pwa-mode .mobile-layout {
     /* Match the same padding/margin as on real mobile devices */
     padding-top: env(safe-area-inset-top, 0px);
     max-height: 100dvh; /* Dynamic viewport height for modern browsers */
@@ -650,8 +661,7 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
-  /* Main content area in PWA mode - single balanced rule */
-  html.pwa-mode .pwa-main-content,
+  /* Main content area in PWA mode */
   .pwa-main-content {
     /* Single balanced rule for safe areas with minimal extra whitespace */
     padding-top: max(env(safe-area-inset-top, 0px), 4px); /* Reduced to prevent excessive top margin */
@@ -666,9 +676,24 @@
   /* Bottom spacer for PWA mode */
   html.pwa-mode .pwa-bottom-spacer,
   .pwa-bottom-spacer {
-    /* Ensure proper spacing at the bottom for the navbar */
-    height: calc(56px + env(safe-area-inset-bottom, 0px) + 4px) !important;
+    /* Ensure proper spacing at the bottom for the navbar in PWA mode */
+    height: calc(56px + env(safe-area-inset-bottom, 0px) + 4px);
     margin-top: auto;
+  }
+  
+  /* Standard bottom nav spacer for non-PWA mode */
+  .bottom-nav-spacer {
+    height: 60px;
+    margin-top: auto;
+    
+    /* Responsive adjustments */
+    @media (min-width: 640px) {
+      height: 70px;
+    }
+    
+    @media (min-width: 768px) {
+      height: 0;
+    }
   }
   
   /* 

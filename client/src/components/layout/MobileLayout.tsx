@@ -13,41 +13,19 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   const [isPWAMode, setIsPWAMode] = useState(false);
   
   useEffect(() => {
-    // Check if we're in PWA mode
+    // Check if we're in PWA mode - không thêm class ở đây vì đã được xử lý trong PWAContainer
     setIsPWAMode(isPWA());
-    
-    // Thêm class vào body để có thể style toàn bộ app ở chế độ PWA
-    if (isPWA()) {
-      document.documentElement.classList.add('pwa-mode');
-    }
-    
-    return () => {
-      // Cleanup khi component unmount
-      document.documentElement.classList.remove('pwa-mode');
-    };
   }, []);
   
   return (
-    <div className={cn(
-      "flex flex-col min-h-screen min-h-[100dvh] bg-background",
-      "mobile-layout", // Add a specific class for mobile styling
-      isPWAMode && "pwa-mobile-layout" // Additional class for PWA mode
-    )}>
-      {/* Main content - với padding tối ưu cho PWA */}
-      <main className={cn(
-        "flex-1", // Remove fixed padding, now handled by pwa-main-content
-        // PWA class đã bao gồm tất cả padding cần thiết
-        isPWAMode && "pwa-main-content"
-      )}>
+    <div className="mobile-layout">
+      {/* Main content area - đã bỏ tất cả styling trùng lặp và inline classes */}
+      <main className={isPWAMode ? "pwa-main-content" : "flex-1 px-4"}>
         {children}
         
-        {/* Spacer element để đảm bảo nội dung không bị thanh điều hướng dưới cùng che phủ */}
-        {/* Spacer thống nhất - sử dụng CSS class */}
+        {/* Spacer đơn giản hóa, chỉ sử dụng một class duy nhất */}
         <div 
-          className={cn(
-            "w-full",
-            isPWAMode ? "pwa-bottom-spacer" : "h-[60px] sm:h-[70px] md:h-0 lg:h-0"
-          )}
+          className={isPWAMode ? "pwa-bottom-spacer" : "bottom-nav-spacer"}
           aria-hidden="true" 
         />
       </main>

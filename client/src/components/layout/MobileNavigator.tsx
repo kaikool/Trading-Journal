@@ -74,7 +74,6 @@ export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorPr
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
-  const [hasHomeIndicator, setHasHomeIndicator] = useState(false);
   
   useEffect(() => {
     setMounted(true);
@@ -83,63 +82,7 @@ export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorPr
     evaluateDevicePerformance().then(performance => {
       setDevicePerformance(performance);
     });
-    
-    // Detect if device likely has a home indicator
-    // This is a best-effort detection - modern iOS devices have safe-area-inset-bottom > 0
-    const detectHomeIndicator = () => {
-      try {
-        // Check for PWA mode first as it always needs safe area insets
-        const pwaMode = isPWA() || isPWAMode;
-        
-        if (pwaMode) {
-          // PWA mode always needs safe area handling
-          setHasHomeIndicator(true);
-          return;
-        }
-        
-        // Otherwise, try to get computed safe area inset bottom
-        const safeAreaInsetBottom = parseInt(
-          getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom') ||
-          getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom') ||
-          '0'
-        );
-        
-        // Alternatively check for iOS device and modern iOS version
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-        const isModernDevice = window.innerWidth >= 375 && window.devicePixelRatio >= 2;
-        
-        // If either condition is true, we likely have a home indicator
-        setHasHomeIndicator(safeAreaInsetBottom > 0 || (isIOS && isModernDevice));
-      } catch (e) {
-        console.error('Error detecting home indicator:', e);
-        // Default to true for safety in case of errors
-        setHasHomeIndicator(true);
-      }
-    };
-    
-    // Set CSS variables for safe areas to make them accessible in JS
-    const setSafeAreaVars = () => {
-      document.documentElement.style.setProperty(
-        '--safe-bottom', 
-        getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom, 0px)')
-      );
-    };
-    
-    setSafeAreaVars();
-    detectHomeIndicator();
-    
-    // Update on resize for orientation changes
-    const handleResize = () => {
-      setSafeAreaVars();
-      detectHomeIndicator();
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [isPWAMode]);
+  }, []);
 
   // Only show when mounted to avoid hydration mismatch
   if (!mounted) return null;
