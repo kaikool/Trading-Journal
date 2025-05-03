@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
-import Sidebar from "@/components/layout/Sidebar";
+
 
 import MobileLayout from "@/components/layout/MobileLayout";
 import { auth } from "@/lib/firebase";
@@ -265,10 +265,7 @@ function MainContent() {
   
   return (
     <>
-      {hasUser && (
-        // Hiển thị Sidebar chỉ trên desktop
-        <Sidebar />
-      )}
+      {/* Đã loại bỏ thanh sidebar */}
       
       {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
       
@@ -278,15 +275,9 @@ function MainContent() {
           {renderPageContent()}
         </MobileLayout>
       ) : (
-        // Nếu là desktop, sử dụng layout với sidebar
-        <div 
-          className="transition-[padding] duration-300 lg:pl-64"
-          style={{
-            paddingLeft: sidebarCollapsed 
-              ? `calc(${SIDEBAR_COLLAPSED_WIDTH} + 0.5rem)` 
-              : `calc(${SIDEBAR_WIDTH} + 0.5rem)`
-          }}
-        >
+        // Nếu là desktop, sử dụng layout đơn giản (đã loại bỏ sidebar)
+        <div className="w-full">
+        
           {renderPageContent()}
         </div>
       )}
