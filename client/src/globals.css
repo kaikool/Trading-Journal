@@ -1143,8 +1143,8 @@
   
   /* Chart legend styling */
   .chart-legend {
-    padding-top: 10px;
-    font-size: 11px;
+    padding-top: 8px; /* Chuẩn hóa theo quy tắc 4px */
+    font-size: 12px; /* Chuẩn hóa theo quy tắc 4px */
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -1209,7 +1209,7 @@
   /* Form element focus with scroll margin */
   input:focus,
   select:focus {
-    scroll-margin: 5rem;
+    scroll-margin: 5rem; /* Đây là giá trị lớn, giữ nguyên để đảm bảo UX */
   }
   
   /* Standardize muted text with consistent opacity */
