@@ -655,7 +655,17 @@
   }
   
   /* Trade badge positions - used for consistent placement */
-  /* Badge positioning logic moved to component level */
+  .trade-direction-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+  }
+  
+  .trade-result-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
   
   /* Trade badge system moved to TradeStatusBadge component */
   

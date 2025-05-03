@@ -278,7 +278,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 )}
                 
                 {/* Trade direction badge */}
-                <div className="absolute top-8 left-8">
+                <div className="trade-direction-badge">
                   <DirectionBadge 
                     direction={direction as "BUY" | "SELL"}
                     iconOnly={false}
@@ -288,7 +288,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 
                 {/* Result badge if trade is closed */}
                 {result && (
-                  <div className="absolute top-8 right-8">
+                  <div className="trade-result-badge">
                     <TradeStatusBadge 
                       status={result as TradeStatus}
                       iconOnly={false}
