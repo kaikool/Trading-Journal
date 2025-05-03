@@ -73,71 +73,39 @@ export function LazyTradeViewEdit({
         )}
         
         {/* Direction badge */}
-        <div style={{
-          position: 'absolute',
-          top: '8px',
-          left: '8px'
-        }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center', 
-            justifyContent: 'center',
-            height: '20px',
-            padding: '0 8px',
-            borderRadius: '9999px',
-            fontSize: '12px',
-            fontWeight: '500',
-            backgroundColor: trade.direction === 'BUY' ? '#10b981' : '#ef4444',
-            color: 'white',
-            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-            whiteSpace: 'nowrap'
-          }}>
-            <div style={{display: 'flex', alignItems: 'center', width: 'auto'}}>
+        <div className="trade-direction-badge">
+          <div className={`
+            trade-badge
+            ${trade.direction === 'BUY' ? 'trade-badge-buy' : 'trade-badge-sell'}
+          `}>
+            <div className="trade-card-badge-container">
               {trade.direction === 'BUY' ? (
-                <ArrowUp style={{height: '10px', width: '10px', marginRight: '3px', flexShrink: 0, position: 'relative', top: '0px'}} />
+                <ArrowUp className="trade-card-badge-icon" />
               ) : (
-                <ArrowDown style={{height: '10px', width: '10px', marginRight: '3px', flexShrink: 0, position: 'relative', top: '0px'}} />
+                <ArrowDown className="trade-card-badge-icon" />
               )}
-              <span style={{fontSize: '11px', lineHeight: 1, position: 'relative', top: '0px'}}>{trade.direction}</span>
+              <span className="trade-card-badge-text">{trade.direction}</span>
             </div>
           </div>
         </div>
         
         {/* Result badge */}
         {trade.result && (
-          <div style={{
-            position: 'absolute',
-            top: '8px',
-            right: '8px'
-          }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '20px',
-              padding: '0 8px',
-              borderRadius: '9999px',
-              fontSize: '12px',
-              fontWeight: '500',
-              backgroundColor: (() => {
-                switch(trade.result) {
-                  case 'TP': return '#10b981'; // success
-                  case 'SL': return '#ef4444'; // destructive
-                  case 'BE': return '#f59e0b'; // warning
-                  default: return '#6b7280'; // gray
-                }
-              })(),
-              color: 'white',
-              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-              whiteSpace: 'nowrap'
-            }}>
-              <div style={{display: 'flex', alignItems: 'center', width: 'auto'}}>
+          <div className="trade-result-badge">
+            <div className={`
+              trade-badge
+              ${trade.result === 'TP' ? 'trade-badge-tp' : 
+                trade.result === 'SL' ? 'trade-badge-sl' : 
+                trade.result === 'BE' ? 'trade-badge-be' : 
+                'trade-badge-default'}
+            `}>
+              <div className="trade-card-badge-container">
                 {(() => {
                   const config = getTradeStatusConfig(trade.result as TradeStatus);
                   const Icon = config.icon;
-                  return <Icon style={{height: '10px', width: '10px', marginRight: '3px', flexShrink: 0, position: 'relative', top: '0px'}} />;
+                  return <Icon className="trade-card-badge-icon" />;
                 })()}
-                <span style={{fontSize: '11px', lineHeight: 1, position: 'relative', top: '0px'}}>{getTradeStatusConfig(trade.result as TradeStatus).label}</span>
+                <span className="trade-card-badge-text">{getTradeStatusConfig(trade.result as TradeStatus).label}</span>
               </div>
             </div>
           </div>
