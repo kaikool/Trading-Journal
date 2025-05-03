@@ -26,8 +26,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarItem } from "./Sidebar"; // Sử dụng lại component SidebarItem từ Sidebar
-import { SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/contexts/LayoutContext"; // Lấy hằng số từ LayoutContext
+// Đã di chuyển SidebarItem từ Sidebar.tsx vào đây
+interface SidebarItemProps {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+  isActive: boolean;
+  collapsed?: boolean;
+  onClick?: () => void; // Callback khi click item
+}
+
+export const SidebarItem = ({ icon, label, href, isActive, collapsed = false, onClick }: SidebarItemProps) => (
+  <li>
+    <Link
+      to={href}
+      onClick={onClick}
+      className={cn(
+        "flex items-center px-4 py-3 text-sm rounded-md transition-all",
+        collapsed ? "justify-center" : "",
+        isActive
+          ? "text-primary-foreground bg-primary shadow-sm font-medium"
+          : "text-foreground/80 hover:bg-muted hover:text-foreground"
+      )}
+    >
+      <span className="w-5 h-5 flex items-center justify-center">
+        {icon}
+      </span>
+      {!collapsed && <span className="ml-3">{label}</span>}
+      {collapsed && (
+        <span className="sr-only">{label}</span>
+      )}
+    </Link>
+  </li>
+);
+// Không cần sử dụng các hằng số từ LayoutContext
 
 export default function MenuBar() {
   const [isOpen, setIsOpen] = useState(false);
