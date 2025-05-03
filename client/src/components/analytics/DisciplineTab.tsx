@@ -387,7 +387,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   iconSize={6}
                   wrapperStyle={{
                     fontSize: "10px",
-                    paddingTop: "5px",
+                    paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
                   }}
                   iconType="circle"
                 />

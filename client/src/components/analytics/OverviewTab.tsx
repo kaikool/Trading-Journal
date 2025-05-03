@@ -607,7 +607,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                     align="center"
                     iconSize={6}
                     wrapperStyle={{
-                      paddingTop: "5px",
+                      paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
                       fontSize: "10px",
                       width: "100%",
                       display: "flex",
@@ -683,7 +683,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                   iconSize={6}
                   wrapperStyle={{
                     fontSize: "10px",
-                    paddingTop: "5px",
+                    paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
                   }}
                   iconType="circle"
                 />

@@ -608,7 +608,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                     iconSize={6}
                     wrapperStyle={{
                       fontSize: "10px",
-                      paddingTop: "5px",
+                      paddingTop: "4px", // Điều chỉnh theo quy tắc spacing 4px
                     }}
                     iconType="circle"
                   />
