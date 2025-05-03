@@ -20,8 +20,10 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   return (
     <div className="mobile-layout">
       {/* Main content area - đã bỏ tất cả styling trùng lặp và inline classes */}
-      <main className={isPWAMode ? "pwa-main-content" : "flex-1 px-4"}>
-        {children}
+      <main className={isPWAMode ? "pwa-main-content" : "flex-1 px-4"} style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="flex-1 flex flex-col">
+          {children}
+        </div>
         
         {/* Spacer đơn giản hóa, chỉ sử dụng một class duy nhất */}
         <div 
