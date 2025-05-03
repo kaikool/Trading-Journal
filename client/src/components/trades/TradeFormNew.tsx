@@ -2358,16 +2358,15 @@ export default function TradeFormNew(props: TradeFormProps) {
                         <img 
                           src={entryImage1Preview} 
                           alt="Trade chart" 
-                          className="w-full h-[180px] sm:h-[200px] object-cover absolute inset-0"
+                          className="w-full h-[180px] sm:h-[200px] object-cover absolute inset-0 trade-form-image"
                           loading="lazy"
                           onLoad={(e) => {
                             // Remove placeholder when image loads
                             const imgElement = e.target as HTMLImageElement;
-                            imgElement.style.opacity = "1";
+                            imgElement.classList.add("loaded");
                             imgElement.previousElementSibling?.classList.remove("animate-pulse");
                             imgElement.previousElementSibling?.classList.add("opacity-0");
                           }}
-                          style={{ opacity: 0, transition: "opacity 0.3s ease-in-out", maxWidth: "100%" }}
                         />
                         <div className="absolute top-3 right-3 flex gap-2.5">
                           <Button 
