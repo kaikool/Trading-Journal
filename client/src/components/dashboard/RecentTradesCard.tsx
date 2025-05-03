@@ -19,6 +19,7 @@ import { format } from "date-fns";
 import { useLocation } from "wouter";
 import { determineTradeStatus } from "@/lib/trade-status-helpers";
 import { Trade as AppTrade } from "@/types";
+import DirectionBadge from "../trades/DirectionBadge";
 
 // Define the types for the trade data
 interface Trade {
@@ -48,14 +49,7 @@ export function RecentTradesCard({
 }: RecentTradesCardProps) {
   const [_, setLocation] = useLocation();
 
-  // Function to get direction classes - Memoize để tránh tính toán lại
-  const getDirectionClasses = useMemo(() => {
-    return (direction: "BUY" | "SELL") => {
-      return direction === "BUY" 
-        ? "text-success border-success/20 bg-success/10 dark:bg-success/15 dark:border-success/30" 
-        : "text-destructive border-destructive/20 bg-destructive/10 dark:bg-destructive/15 dark:border-destructive/30";
-    };
-  }, []);
+  // Removed getDirectionClasses as we're now using DirectionBadge component
 
   // Function to format timestamp - Memoize để tránh tính toán lại
   const formatTimestamp = useMemo(() => {
@@ -120,15 +114,12 @@ export function RecentTradesCard({
         <div key={trade.id} className="py-3 flex items-center justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Badge 
-                variant="outline" 
-                className={cn(
-                  "font-medium text-xs px-1.5 py-0",
-                  getDirectionClasses(trade.direction)
-                )}
-              >
-                {trade.direction}
-              </Badge>
+              <DirectionBadge
+                direction={trade.direction}
+                size="sm"
+                variant="modern"
+                showTooltip={false}
+              />
               <span className="font-medium">{trade.pair}</span>
             </div>
             <div className="text-xs text-muted-foreground flex items-center">
@@ -185,7 +176,7 @@ export function RecentTradesCard({
         </div>
       );
     });
-  }, [trades, formatTimestamp, getDirectionClasses, handleViewTrade]);
+  }, [trades, formatTimestamp, handleViewTrade]);
   
   if (isLoading) {
     return (

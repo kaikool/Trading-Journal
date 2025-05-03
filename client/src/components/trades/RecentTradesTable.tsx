@@ -20,6 +20,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import TradeStatusBadge from "./TradeStatusBadge";
+import DirectionBadge from "./DirectionBadge";
 import { determineTradeStatus } from "@/lib/trade-status-helpers";
 
 interface RecentTradesTableProps {
@@ -114,15 +115,12 @@ export default function RecentTradesTable({
 
   const renderDirectionBadge = (direction: Direction) => {
     return (
-      <Badge 
-        className={cn(
-          direction === "BUY" 
-            ? "bg-green-600 hover:bg-green-600" 
-            : "bg-red-600 hover:bg-red-600"
-        )}
-      >
-        {direction}
-      </Badge>
+      <DirectionBadge
+        direction={direction}
+        size="sm"
+        variant="modern"
+        showTooltip={false}
+      />
     );
   };
 
