@@ -7,8 +7,7 @@ import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
 import { evaluateDevicePerformance } from "@/lib/performance";
 
-// Tạm thời bỏ import useTheme, dùng mockup
-// import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { DASHBOARD_CONFIG } from "@/lib/config";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -135,27 +134,8 @@ export default function Settings() {
   const userId = auth.currentUser?.uid;
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   
-  // Theme management - tạm dùng mock để tránh lỗi
-  // const { theme, setTheme } = useTheme();
-  const [theme, setThemeState] = useState<'light' | 'dark' | 'system'>('system');
-  // Mocking theme functions
-  const setTheme = (newTheme: 'light' | 'dark' | 'system') => {
-    setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
-    // Áp dụng theme ngay lập tức
-    if (newTheme === 'system') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } else if (newTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
+  // Theme management
+  const { theme, setTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
     theme: theme, 
