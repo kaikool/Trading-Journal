@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { isPWA } from "@/lib/pwa-helper";
-import BottomNav from "./BottomNav";
+import MobileNavigator from "./MobileNavigator";
 import { cn } from "@/lib/utils";
 
 interface MobileLayoutProps {
@@ -53,7 +53,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
       </main>
       
       {/* Bottom Navigation - sử dụng class thống nhất */}
-      <BottomNav isPWAMode={isPWAMode} />
+      <MobileNavigator isPWAMode={isPWAMode} />
     </div>
   );
 };

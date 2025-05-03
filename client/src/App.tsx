@@ -275,7 +275,7 @@ function MainContent() {
       
       {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
       
-      {/* Nếu là mobile, sử dụng MobileLayout với BottomNav */}
+      {/* Nếu là mobile, sử dụng MobileLayout với thanh điều hướng dưới cùng */}
       {isMobile ? (
         <MobileLayout>
           {renderPageContent()}

@@ -85,7 +85,7 @@ export default function Sidebar() {
     }
   };
 
-  // Ẩn sidebar trên mobile vì chúng ta đã có MobileNav
+  // Ẩn sidebar trên mobile vì chúng ta đã có MenuBar
   if (isMobile || !mounted) return null;
 
   return (
