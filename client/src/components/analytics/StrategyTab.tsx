@@ -296,7 +296,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
               <BarChart
                 data={winRateData}
                 layout="vertical"
-                margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                 barCategoryGap={8} 
                 barGap={4}
               >
@@ -433,7 +433,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                 <BarChart
                   data={profitData}
                   layout="vertical"
-                  margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
+                  margin={{ top: 4, right: 0, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                   barCategoryGap={8}
                   barGap={4}
                 >
@@ -566,7 +566,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
                   data={strategyComparisonData} // Show all strategies, không cắt top 5 nữa
-                  margin={{ top: 5, right: 0, left: 16, bottom: 5 }} /* Thêm padding bên trái để căn lề với mô tả */
+                  margin={{ top: 4, right: 0, left: 16, bottom: 4 }} /* Thêm padding bên trái để căn lề với mô tả, chuẩn hóa theo quy tắc 4px */
                   barCategoryGap={8} // Thống nhất với barCategoryGap của biểu đồ Profit
                   barGap={4} // Thống nhất với barGap của biểu đồ Profit
                 >

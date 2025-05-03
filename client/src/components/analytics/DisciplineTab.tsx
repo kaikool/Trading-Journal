@@ -355,7 +355,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={winRateComparisonData}
-                margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                 barCategoryGap={10}
                 barGap={6}
               >

@@ -470,7 +470,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={winRateByEmotionData}
-                    margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                    margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                     layout="vertical"
                     barCategoryGap={8}
                     barGap={4}
@@ -655,7 +655,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={emotionTimelineData}
-                  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  margin={{ top: 8, right: 8, left: 0, bottom: 0 }} // Chuẩn hóa theo quy tắc 4px
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground)/15)" />
                   <XAxis
