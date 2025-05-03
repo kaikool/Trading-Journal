@@ -393,7 +393,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={equityCurveData}
-                  margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                   barCategoryGap={12}
                   barGap={6}
                 >
@@ -553,7 +553,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart
-                  margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px>
                   <Pie
                     data={topPerformingPairs}
                     cx="50%"

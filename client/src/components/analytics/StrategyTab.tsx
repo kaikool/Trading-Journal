@@ -321,7 +321,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                   tick={false}
                   tickLine={false}
                   axisLine={false}
-                  width={10}
+                  width={8} // Chuẩn hóa theo quy tắc 4px
                 />
                 <Tooltip content={<WinRateTooltip />} />
                 <Bar 
@@ -355,7 +355,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                       textAnchor = "start";
                     } else {
                       // Trường hợp trung gian, hiển thị nhãn bên trái
-                      textX = x - 5;
+                      textX = x - 4; // Chuẩn hóa theo quy tắc 4px
                       textAnchor = "end";
                     }
                     
@@ -459,7 +459,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                     tick={false}
                     tickLine={false}
                     axisLine={false}
-                    width={10}
+                    width={8} // Chuẩn hóa theo quy tắc 4px
                   />
                   <Tooltip content={<ProfitTooltip />} />
                   <Bar 
@@ -493,7 +493,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                         textAnchor = "start";
                       } else {
                         // Trường hợp trung gian, hiển thị nhãn bên trái
-                        textX = x - 5;
+                        textX = x - 4; // Chuẩn hóa theo quy tắc 4px
                         textAnchor = "end";
                       }
                       

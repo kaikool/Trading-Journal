@@ -496,7 +496,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       tick={false}
                       tickLine={false}
                       axisLine={false}
-                      width={10}
+                      width={8} // Chuẩn hóa theo quy tắc 4px
                     />
                     <Tooltip content={<EmotionWinRateTooltip />} />
                     <Bar 
@@ -527,7 +527,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                           textAnchor = "start";
                         } else {
                           // Trường hợp trung gian, hiển thị nhãn bên trái
-                          textX = x - 5;
+                          textX = x - 4; // Chuẩn hóa theo quy tắc 4px
                           textAnchor = "end";
                         }
                         
