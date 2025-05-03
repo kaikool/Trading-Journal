@@ -1024,7 +1024,7 @@
     /* Icon configuration */
     --stat-icon-size: 1.25rem;
     --stat-icon-container-size: 2rem;
-    --stat-icon-container-padding: 4px; /* Sửa từ 0.375rem (6px) sang 4px cho tuân thủ quy tắc 4px */
+    --stat-icon-container-padding: 0.375rem; /* 6px - Tailwind p-1.5 */
     --stat-icon-container-radius: 9999px;
     
     /* Progress bar config */
@@ -1043,12 +1043,9 @@
   
   /* Compact variant for stat cards in grid layout */
   .stat-card-compact {
-    --stat-card-padding: 12px; /* Sửa từ 0.75rem (12px) sang 12px cho tuân thủ quy tắc 4px */
-    --stat-value-font-size: 24px; /* Sửa từ 1.5rem (24px) sang 24px cho tuân thủ quy tắc 4px */
+    --stat-card-padding: 0.75rem; /* 12px - Chuẩn hóa theo 4px rule - Tailwind p-3 */
+    --stat-value-font-size: 1.5rem;
     padding: var(--stat-card-padding);
-    
-    /* Add gap spacing to grid */
-    gap: 4px; /* Ensure gap follows 4px rule */
   }
   
   /* Hover effects */
@@ -1072,7 +1069,7 @@
   .stat-card-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 8px; /* Sửa từ 0.75rem (12px) xuống 8px cho tuân thủ quy tắc 4px */
+    margin-bottom: 0.75rem;
     position: relative;
     z-index: var(--stat-card-z-index);
   }
@@ -1097,7 +1094,7 @@
   .stat-card-value {
     font-size: var(--stat-value-font-size);
     font-weight: var(--stat-value-font-weight);
-    margin-bottom: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    margin-bottom: 0.5rem;
     position: relative;
     z-index: var(--stat-card-z-index);
     letter-spacing: -0.025em;
@@ -1106,7 +1103,7 @@
   /* Value suffix */
   .stat-card-suffix {
     font-size: var(--stat-suffix-font-size);
-    margin-left: 4px; /* Sửa từ 0.25rem (4px) sang 4px cho tuân thủ quy tắc 4px */
+    margin-left: 0.25rem;
     opacity: 0.8;
   }
   
@@ -1116,7 +1113,7 @@
     background-color: hsl(var(--muted) / 0.4);
     border-radius: var(--stat-progress-radius);
     height: var(--stat-progress-height);
-    margin-top: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    margin-top: 0.5rem;
     position: relative;
     z-index: var(--stat-card-z-index);
   }
@@ -1133,7 +1130,7 @@
     align-items: center;
     position: relative;
     z-index: var(--stat-card-z-index);
-    margin-top: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    margin-top: 0.5rem;
   }
   
   /* Loading/skeleton state */
@@ -1304,13 +1301,13 @@
     --balance-chart-hover-shadow: var(--shadow-md);
     
     /* Typography configuration */
-    --balance-chart-title-size: 20px; /* Sửa từ 1.25rem (20px) sang 20px cho tuân thủ quy tắc 4px */
-    --balance-chart-label-size: 12px; /* Sửa từ 0.75rem (12px) sang 12px cho tuân thủ quy tắc 4px */
-    --balance-chart-value-size: 16px; /* Sửa từ 1rem (16px) sang 16px cho tuân thủ quy tắc 4px */
+    --balance-chart-title-size: 1.25rem;
+    --balance-chart-label-size: 0.75rem;
+    --balance-chart-value-size: 1rem;
     
     /* Margins and paddings - chuẩn hóa theo 4px scale */
-    --balance-chart-padding: 16px; /* Sửa từ 1rem (16px) sang 16px cho tuân thủ quy tắc 4px */
-    --balance-chart-margin: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    --balance-chart-padding: 1rem; /* 16px - tương đương Tailwind p-4 */
+    --balance-chart-margin: 0.5rem; /* 8px - tương đương Tailwind m-2 */
     
     /* Chart specific configuration */
     --balance-chart-point-size: 4px; /* Điều chỉnh từ 6px xuống 4px cho đúng scale */
@@ -1320,8 +1317,8 @@
     
     /* Tooltip configuration - tuân theo quy tắc 4px */
     --balance-chart-tooltip-shadow: var(--shadow-md);
-    --balance-chart-tooltip-border-radius: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
-    --balance-chart-tooltip-padding: 12px; /* Sửa từ 0.75rem (12px) sang 12px cho tuân thủ quy tắc 4px */
+    --balance-chart-tooltip-border-radius: 0.5rem; /* 8px - đúng quy chuẩn */
+    --balance-chart-tooltip-padding: 0.75rem; /* 12px - tương đương Tailwind p-3 */
     
     /* Animation speeds */
     --balance-chart-anim-speed: 1000ms; /* Match animation-duration for chart */
@@ -1349,8 +1346,8 @@
   .balance-chart-badge {
     display: flex;
     align-items: center;
-    padding: 0 12px; /* Sửa từ 0.75rem (12px) sang 12px cho tuân thủ quy tắc 4px */
-    height: 24px; /* Sửa từ 1.5rem (24px) sang 24px cho tuân thủ quy tắc 4px */
+    padding: 0 0.75rem;
+    height: 1.5rem;
     border-radius: 9999px;
     font-size: var(--balance-chart-label-size);
     font-weight: 500;
@@ -1369,12 +1366,12 @@
     box-shadow: var(--balance-chart-tooltip-shadow);
     border-radius: var(--balance-chart-tooltip-border-radius);
     padding: var(--balance-chart-tooltip-padding);
-    font-size: 14px; /* Sửa từ 0.875rem (14px) sang 14px cho tuân thủ quy tắc 4px */
+    font-size: 0.875rem;
   }
   
   .balance-chart-tooltip-date {
     font-weight: 500;
-    margin-bottom: 4px; /* Sửa từ 0.25rem (4px) sang 4px cho tuân thủ quy tắc 4px */
+    margin-bottom: 0.25rem;
   }
   
   .balance-chart-tooltip-value {
@@ -1394,19 +1391,19 @@
   
   .balance-chart-empty-icon {
     color: hsl(var(--muted-foreground) / 0.3);
-    width: 32px; /* Sửa từ 2rem (32px) sang 32px cho tuân thủ quy tắc 4px */
-    height: 32px; /* Sửa từ 2rem (32px) sang 32px cho tuân thủ quy tắc 4px */
-    margin-bottom: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.5rem;
   }
   
   .balance-chart-empty-title {
     font-weight: 500;
     color: hsl(var(--muted-foreground));
-    margin-bottom: 4px; /* Sửa từ 0.25rem (4px) sang 4px cho tuân thủ quy tắc 4px */
+    margin-bottom: 0.25rem;
   }
   
   .balance-chart-empty-subtitle {
-    font-size: 14px; /* Sửa từ 0.875rem (14px) sang 14px cho tuân thủ quy tắc 4px */
+    font-size: 0.875rem;
     color: hsl(var(--muted-foreground) / 0.7);
   }
   
@@ -1456,9 +1453,9 @@
   .custom-select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 8px center; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    background-position: right 0.5rem center;
     background-repeat: no-repeat;
-    background-size: 24px 24px; /* Sửa từ 1.5em (24px) sang 24px cho tuân thủ quy tắc 4px */
+    background-size: 1.5em 1.5em;
   }
   
   /* Profit/Loss text styling */
@@ -1472,10 +1469,10 @@
   
   /* Trading discipline indicator */
   .discipline-indicator {
-    height: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
-    width: 8px; /* Sửa từ 0.5rem (8px) sang 8px cho tuân thủ quy tắc 4px */
+    height: 0.5rem;
+    width: 0.5rem;
     border-radius: 9999px;
-    margin-right: 4px; /* Sửa từ 0.375rem (6px) sang 4px cho tuân thủ quy tắc 4px */
+    margin-right: 0.375rem;
   }
   
   .discipline-indicator-yes {

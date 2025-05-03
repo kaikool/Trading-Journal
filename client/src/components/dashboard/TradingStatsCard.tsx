@@ -182,10 +182,10 @@ export function TradingStatsCard({
           </CardTitle>
           
           <div className={cn(
-            "flex items-center px-4 py-1 rounded-full text-xs font-medium",
+            "flex items-center px-3 py-1 rounded-full text-xs font-medium",
             performanceConfig.badgeClass
           )}>
-            <performanceConfig.icon className="h-4 w-4 mr-2" />
+            <performanceConfig.icon className="h-3.5 w-3.5 mr-1.5" />
             {performanceConfig.tag}
           </div>
         </div>
@@ -208,7 +208,7 @@ export function TradingStatsCard({
                   "stat-card-icon-container",
                   stat.bgColor
                 )}>
-                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                  <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
                 </div>
               </div>
               <div className={cn("stat-card-value", stat.color)}>

@@ -107,14 +107,14 @@ export function AccountSummaryCard({
           {/* Chỉ hiển thị badge khi có giao dịch */}
           {hasTrades && (
             <div className={cn(
-              "flex items-center px-4 py-1 rounded-full text-xs font-medium",
+              "flex items-center px-3 py-1 rounded-full text-xs font-medium",
               statusColorClasses.bg, statusColorClasses.text
             )}>
               {isPositive === null ? 
-                <Minus className="h-4 w-4 mr-1" /> : 
+                <Minus className="h-3.5 w-3.5 mr-1" /> : 
                 isPositive ? 
-                  <ArrowUp className="h-4 w-4 mr-1" /> : 
-                  <ArrowDown className="h-4 w-4 mr-1" />
+                  <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
+                  <ArrowDown className="h-3.5 w-3.5 mr-1" />
               }
               {isPositive === true ? "+" : ""}{profitLossPercentage.toFixed(1)}%
             </div>
@@ -123,9 +123,9 @@ export function AccountSummaryCard({
       </CardHeader>
       
       <CardContent>
-        <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+        <div className="flex flex-wrap items-end justify-between gap-2 mb-6">
           <div>
-            <div className="text-3xl font-bold mb-4">
+            <div className="text-3xl font-bold mb-1">
               {formatCurrency(currentBalance)}
             </div>
             {/* Chỉ hiển thị phần này khi có giao dịch */}
@@ -140,13 +140,13 @@ export function AccountSummaryCard({
             )}
           </div>
           
-          <div className="flex items-center text-xs text-muted-foreground bg-muted/10 px-4 py-2 rounded-md">
-            <DollarSign className="h-4 w-4 mr-1 text-muted-foreground" />
+          <div className="flex items-center text-xs text-muted-foreground bg-muted/10 px-3 py-1.5 rounded-md">
+            <DollarSign className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
             {formatNumber(initialBalance)} initial
           </div>
         </div>
         
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Initial</span>
             <span>Current</span>
