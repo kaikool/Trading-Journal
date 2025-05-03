@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { auth, db, updateUserData, updateDisplayName, logoutUser, createDefaultStrategiesIfNeeded } from "@/lib/firebase";
+import { auth, db, updateUserData, updateDisplayName, logoutUser } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
 import { evaluateDevicePerformance } from "@/lib/performance";
-import { StrategiesManagement } from "@/components/settings/StrategiesManagement";
-import { AchievementsTab } from "@/components/settings/AchievementsTab";
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { DASHBOARD_CONFIG } from "@/lib/config";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,9 +19,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -51,21 +47,15 @@ import {
   BarChart3,
   AlertCircle,
   LogOut,
-  ChevronRight,
   Check,
   Palette,
   CalendarDays,
-  HelpCircle,
-  Sparkles,
-  Lightbulb,
-  Trophy,
-  Award,
 } from "lucide-react";
 
 interface SettingsSectionProps {
   title: string;
-  description: string; // kept for backwards compatibility
-  icon: LucideIcon;
+  description?: string;
+  icon?: LucideIcon;
   children: React.ReactNode;
   rightElement?: React.ReactNode;
 }
@@ -139,18 +129,16 @@ function FormField({
 }
 
 export default function Settings() {
-  // Removed debug logs to improve performance
-  
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const userId = auth.currentUser?.uid;
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   
-  // Sử dụng ThemeContext để quản lý theme
-  const { theme, setTheme, applyTheme } = useTheme();
+  // Theme management
+  const { theme, setTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
-    theme: theme, // Sử dụng giá trị từ ThemeContext
+    theme: theme, 
     currency: 'USD',
     defaultRiskPerTrade: 2,
     defaultRiskRewardRatio: 2,
@@ -177,7 +165,7 @@ export default function Settings() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
-  // Check device performance for optimal animations
+  // Check device performance
   useEffect(() => {
     evaluateDevicePerformance().then(performance => {
       setDevicePerformance(performance);
@@ -205,24 +193,18 @@ export default function Settings() {
   useEffect(() => {
     if (userData) {
       if (userData.settings) {
-        // Lưu trữ settings gốc từ dữ liệu người dùng
         const userSettings = userData.settings as AppSettings;
         
-        // Đảm bảo theme trong context và settings được đồng bộ
         if (userSettings.theme) {
-          // Cập nhật theme trong context (không áp dụng ngay)
           setTheme(userSettings.theme as 'light' | 'dark' | 'system');
-          
-          // Cập nhật settings với theme từ người dùng
           setSettings(prev => ({
             ...userSettings,
             theme: userSettings.theme as 'light' | 'dark' | 'system'
           }));
         } else {
-          // Nếu không có theme, sử dụng các cài đặt khác nhưng giữ theme hiện tại
           setSettings(prev => ({
             ...userSettings,
-            theme: theme // Giữ theme từ context
+            theme: theme
           }));
         }
       }
@@ -244,8 +226,7 @@ export default function Settings() {
         initialBalance
       });
       
-      // Áp dụng theme mới chỉ sau khi đã lưu thành công
-      applyTheme(settings.theme);
+      setTheme(settings.theme);
       
       toast({
         title: "Settings saved",
@@ -280,7 +261,7 @@ export default function Settings() {
     }
   };
   
-  // Hàm cập nhật Display Name
+  // Update Display Name
   const handleUpdateDisplayName = async () => {
     if (!displayName.trim()) {
       toast({
@@ -408,14 +389,14 @@ export default function Settings() {
   // Main content
   return (
     <div className="container max-w-7xl mx-auto py-5 md:py-8 px-0 sm:px-5 animate-in fade-in duration-700">
-      {/* Header section - tối ưu cho mobile */}
+      {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div className="mb-4 md:mb-0">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
             Settings
           </h1>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Customize your trading journal preferences and account settings
+            Customize your trading journal preferences
           </p>
         </div>
         
@@ -439,7 +420,7 @@ export default function Settings() {
         </Button>
       </div>
       
-      {/* Tabs navigation - fully responsive and centered, no 3D effects */}
+      {/* Tabs navigation */}
       <Tabs defaultValue="general" className="mb-2">
         <div className="flex justify-center sm:justify-start w-full">
           <TabsList className="w-full max-w-4xl mx-auto flex-wrap sm:flex-nowrap h-auto justify-center p-1 space-x-1 space-y-1 sm:space-y-0 rounded-xl bg-muted/70">
@@ -456,13 +437,6 @@ export default function Settings() {
               <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="achievements" 
-              className="flex-1 sm:flex-none flex items-center justify-center h-9 px-3 sm:px-6 data-[state=active]:bg-primary/10 rounded-md hover:bg-muted transition-colors"
-            >
-              <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Achievements</span>
-            </TabsTrigger>
-
-            <TabsTrigger 
               value="security" 
               className="flex-1 sm:flex-none flex items-center justify-center h-9 px-3 sm:px-6 data-[state=active]:bg-primary/10 rounded-md hover:bg-muted transition-colors"
             >
@@ -476,7 +450,6 @@ export default function Settings() {
           <SettingsSection 
             title="Appearance" 
             description="Customize the look and feel of your application"
-            icon={Palette}
           >
             <div className="grid gap-4 sm:gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -563,7 +536,7 @@ export default function Settings() {
               
               <OptionItem
                 title="Notifications"
-                description="Receive alerts and updates about your trades and account activity"
+                description="Receive alerts and updates about your trades and account"
                 control={
                   <Switch
                     id="notifications"
@@ -634,7 +607,6 @@ export default function Settings() {
           <SettingsSection 
             title="Account Information" 
             description="Manage your account details and preferences"
-            icon={User}
           >
             <div className="grid gap-4 sm:gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -745,7 +717,6 @@ export default function Settings() {
                       value={initialBalance === 0 ? '' : initialBalance.toString()}
                       onChange={(e) => {
                         const inputValue = e.target.value;
-                        // Chỉ cho phép số và dấu thập phân
                         if (/^[0-9]*\.?[0-9]*$/.test(inputValue) || inputValue === '') {
                           setInitialBalance(inputValue === '' ? 0 : Number(inputValue));
                         }
@@ -754,7 +725,7 @@ export default function Settings() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Your initial deposit amount, used to calculate overall performance metrics.
+                    Your initial deposit amount, used to calculate performance metrics
                   </p>
                 </FormField>
               </div>
@@ -767,8 +738,6 @@ export default function Settings() {
           <SettingsSection 
             title="Risk Management" 
             description="Configure your default risk parameters and position sizing"
-            icon={Sparkles}
-            
           >
             <div className="space-y-6 sm:space-y-8">
               <div className="space-y-4 sm:space-y-5">
@@ -793,7 +762,7 @@ export default function Settings() {
                     <span>Aggressive (5%)</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    The percentage of your account balance to risk on each trade.
+                    The percentage of your account balance to risk on each trade
                   </p>
                 </div>
                 
@@ -818,7 +787,7 @@ export default function Settings() {
                     <span>1:5</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    The default risk-to-reward ratio for your trades (how much you aim to gain relative to risk).
+                    The default risk-to-reward ratio for your trades
                   </p>
                 </div>
                 
@@ -842,7 +811,6 @@ export default function Settings() {
           <SettingsSection 
             title="Trading Defaults" 
             description="Configure default parameters for new trades"
-            icon={BarChart3}
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -865,7 +833,7 @@ export default function Settings() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    This will be pre-selected when creating new trades.
+                    This will be pre-selected when creating new trades
                   </p>
                 </FormField>
                 
@@ -890,46 +858,9 @@ export default function Settings() {
                     <span>Standard (2.00)</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Default position size, 1 standard lot = 100,000 units of the base currency.
+                    Default position size, 1 standard lot = 100,000 units of the base currency
                   </p>
                 </div>
-              </div>
-            </div>
-          </SettingsSection>
-          
-          <SettingsSection 
-            title="Trading Strategies" 
-            description="Manage your trading strategies"
-            icon={Lightbulb}
-          >
-            <StrategiesManagement />
-          </SettingsSection>
-        </TabsContent>
-        
-        {/* Achievements settings tab */}
-        <TabsContent value="achievements" className="mt-6 space-y-6">
-          <SettingsSection 
-            title="Achievements Configuration" 
-            description="Configure your achievements and progress tracking preferences"
-            icon={Trophy}
-          >
-            <div className="space-y-4">
-              <OptionItem
-                title="Show Achievements"
-                description="Display achievements and trading milestones in your profile"
-                control={
-                  <Switch
-                    id="showAchievements"
-                    checked={settings.showAchievements}
-                    onCheckedChange={(checked) =>
-                      setSettings({ ...settings, showAchievements: checked })
-                    }
-                  />
-                }
-              />
-              
-              <div className="pt-2">
-                <AchievementsTab />
               </div>
             </div>
           </SettingsSection>
@@ -940,8 +871,6 @@ export default function Settings() {
           <SettingsSection 
             title="Password & Authentication" 
             description="Update your account password and security preferences"
-            icon={Lock}
-            
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
@@ -1052,7 +981,6 @@ export default function Settings() {
           <SettingsSection 
             title="Account Security" 
             description="Manage your account security settings and active sessions"
-            icon={ShieldCheck}
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-muted/30 border border-border/40">
