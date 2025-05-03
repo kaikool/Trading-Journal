@@ -31,6 +31,7 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
     <Link
       to={href}
       className={cn(
+        "mobile-nav-item", // Thêm class chung cho item
         "flex flex-col items-center justify-center px-1 py-2 w-full relative overflow-hidden",
         "focus:outline-none touch-manipulation", // Optimization for touch devices
         isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
@@ -54,11 +55,12 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
       
       {/* Icon and label */}
       <div className="flex flex-col items-center overflow-hidden">
-        <div className="flex items-center justify-center h-6 mb-1.5 overflow-hidden">
+        <div className="mobile-nav-icon flex items-center justify-center h-6 mb-1.5 overflow-hidden">
           {isActive ? activeIcon || icon : icon}
         </div>
         
         <span className={cn(
+          "mobile-nav-label", // Thêm class chung cho label
           "text-[10px] font-medium transition-colors overflow-hidden whitespace-nowrap",
           isActive ? "text-primary font-semibold" : "text-muted-foreground"
         )}>
@@ -188,7 +190,7 @@ export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorPr
     >
       <div 
         className={cn(
-          "grid w-full", 
+          "grid w-full h-full", 
           devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5'
         )}
       >
