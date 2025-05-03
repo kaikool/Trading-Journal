@@ -215,7 +215,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 {displayUrl ? (
                   <div className="trade-card-image-container">
                     {/* Placeholder image (always shown initially) */}
-                    <div className={`trade-card-placeholder bg-gray-100 dark:bg-gray-800 ${imageLoaded && !isImageLoading ? 'opacity-0' : 'opacity-100'}`}>
+                    <div className={`trade-card-placeholder bg-gray-100 dark:bg-gray-800 ${imageLoaded && !isImageLoading ? 'trade-card-placeholder-hidden' : 'trade-card-placeholder-visible'}`}>
                       {isImageLoading && (
                         <div className="flex flex-col items-center justify-center">
                           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
@@ -265,7 +265,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                         </div>
                         
                         {/* Badge showing which timeframe is displayed */}
-                        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        <div className="trade-card-timeframe-badge">
                           {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
                         </div>
                       </>

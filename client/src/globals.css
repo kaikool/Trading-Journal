@@ -52,6 +52,14 @@
   transition: opacity 0.3s ease-in-out;
 }
 
+.trade-card-placeholder-hidden {
+  opacity: 0;
+}
+
+.trade-card-placeholder-visible {
+  opacity: 1;
+}
+
 .trade-card-image {
   position: absolute;
   inset: 0;
@@ -76,6 +84,99 @@
 
 .group:hover .trade-card-zoom-overlay {
   opacity: 1;
+}
+
+.trade-card-timeframe-badge {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.trade-direction-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 5;
+}
+
+.trade-result-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 5;
+}
+
+/* Profit/Loss indicators styling */
+.pnl-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pnl-profit {
+  color: hsl(142 72% 45%);
+}
+
+.dark .pnl-profit {
+  color: hsl(142 72% 60%);
+}
+
+.pnl-loss {
+  color: hsl(0 84% 60%);
+}
+
+.dark .pnl-loss {
+  color: hsl(0 84% 75%);
+}
+
+.pnl-neutral {
+  color: hsl(35 92% 50%);
+}
+
+.dark .pnl-neutral {
+  color: hsl(35 92% 65%);
+}
+
+/* Pip badge styling */
+.pip-badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 9999px;
+}
+
+.pip-badge-profit {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: hsl(142 72% 30%);
+}
+
+.dark .pip-badge-profit {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: hsl(142 72% 75%);
+}
+
+.pip-badge-loss {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: hsl(0 84% 40%);
+}
+
+.dark .pip-badge-loss {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: hsl(0 84% 80%);
+}
+
+.pip-badge-neutral {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: hsl(35 92% 40%);
+}
+
+.dark .pip-badge-neutral {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: hsl(35 92% 75%);
 }
 
 /* Image placeholder styling */
