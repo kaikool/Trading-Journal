@@ -162,8 +162,7 @@ export function ChartImageDialog({
         <div 
           {...swipeHandlers}
           className={cn(
-            "relative overflow-hidden flex-1 flex items-center justify-center",
-            "bg-background/90 dark:bg-background/95",
+            "chart-content relative overflow-hidden flex-1 flex items-center justify-center",
             isPWAMode && "chart-content-pwa"
           )}
         >
@@ -191,7 +190,7 @@ export function ChartImageDialog({
             )}
             
             <div className={cn(
-              "w-full h-full flex items-center justify-center transition-all duration-300",
+              "chart-image-container transition-all duration-300",
               isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
               isPWAMode && "chart-image-container-pwa"
             )}>
@@ -199,7 +198,7 @@ export function ChartImageDialog({
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
-                  "max-w-full max-h-full object-contain select-none chart-image",
+                  "chart-image",
                   isPWAMode && "pwa-mode",
                   (isLoading || error) && "invisible"
                 )}
