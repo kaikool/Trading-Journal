@@ -223,7 +223,7 @@ export function ChartImageDialog({
                     return;
                   }
                   
-                  imgElement.style.display = 'none';
+                  imgElement.classList.add('hidden');
                 }}
               />
             </div>
