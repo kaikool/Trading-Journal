@@ -31,8 +31,7 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
     <Link
       to={href}
       className={cn(
-        "flex flex-col items-center justify-center px-1 py-2 w-full relative overflow-hidden",
-        "focus:outline-none touch-manipulation", // Optimization for touch devices
+        "mobile-nav-item",
         isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
     >
@@ -40,31 +39,29 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
       {isActive && !reducedMotion && (
         <motion.div
           layoutId="bottomNavIndicator"
-          className="absolute top-0 left-0 right-0 mx-auto w-12 h-[3px] bg-primary rounded-full"
+          className="mobile-nav-indicator"
           initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: "12px" }}
+          animate={{ opacity: 1, width: "var(--mobile-nav-indicator-width)" }}
           transition={{ type: "spring", duration: 0.3, bounce: 0.2 }}
         />
       )}
       
       {/* Static indicator for reduced motion preference */}
       {isActive && reducedMotion && (
-        <div className="absolute top-0 left-0 right-0 mx-auto w-12 h-[3px] bg-primary rounded-full" />
+        <div className="mobile-nav-indicator" />
       )}
       
       {/* Icon and label */}
-      <div className="flex flex-col items-center overflow-hidden">
-        <div className="flex items-center justify-center h-6 mb-1.5 overflow-hidden">
-          {isActive ? activeIcon || icon : icon}
-        </div>
-        
-        <span className={cn(
-          "text-[10px] font-medium transition-colors overflow-hidden whitespace-nowrap",
-          isActive ? "text-primary font-semibold" : "text-muted-foreground"
-        )}>
-          {label}
-        </span>
+      <div className="mobile-nav-icon">
+        {isActive ? activeIcon || icon : icon}
       </div>
+      
+      <span className={cn(
+        "mobile-nav-label",
+        isActive && "active"
+      )}>
+        {label}
+      </span>
     </Link>
   );
 }

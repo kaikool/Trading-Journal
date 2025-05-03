@@ -506,40 +506,125 @@
   }
   
   /* 
-   * Unified mobile navigation system
-   * Used by both BottomNav and MobileNav components
+   * =======================================================
+   * MOBILE NAVIGATION COMPONENT SYSTEM
+   * =======================================================
+   * 
+   * Unified styling for the MobileNavigator component
+   * All styles defined in one place to ensure consistency and responsive behavior
+   * Organized with CSS variables for better maintainability
    */
   
-  /* Bottom navigation - fixed at bottom */
+  /* Base navigation container */
   .mobile-nav {
+    /* Central configuration through CSS variables */
+    --mobile-nav-height: 56px;
+    --mobile-nav-z-index: 50;
+    --mobile-nav-blur: 12px;
+    --mobile-nav-anim-speed: 300ms;
+    --mobile-nav-anim-easing: ease-in-out;
+    --mobile-nav-shadow: var(--shadow-sm);
+    --mobile-nav-icon-size: 20px;
+    --mobile-nav-text-size: 10px;
+    --mobile-nav-indicator-height: 3px;
+    --mobile-nav-indicator-width: 12px;
+    
+    /* Safe insets with fallbacks */
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    
+    /* Base positioning and dimensions */
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 56px;
-    z-index: 50;
+    height: var(--mobile-nav-height);
+    z-index: var(--mobile-nav-z-index);
+    
+    /* Visual appearance */
     background-color: hsl(var(--background));
     border-top: 1px solid hsl(var(--border) / 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: var(--shadow-sm);
-    transition: height 0.3s ease-in-out, padding-bottom 0.3s ease-in-out;
+    backdrop-filter: blur(var(--mobile-nav-blur));
+    -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
+    box-shadow: var(--mobile-nav-shadow);
+    
+    /* Transitions for smooth animations */
+    transition: 
+      height var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing), 
+      padding-bottom var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
   
-  /* PWA mode enhancements - applies to both mobile nav types */
+  /* PWA mode enhancements */
   html.pwa-mode .mobile-nav,
   .mobile-nav.pwa-mode {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--safe-bottom);
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
     border-top: 1px solid hsl(var(--border) / 0.6);
   }
   
-  /* Mobile navigation styling */
+  /* Navigation item container */
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 2px 1px;
+    position: relative;
+    overflow: hidden;
+    transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
+    
+    /* Touch optimization */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Active state indicator */
+  .mobile-nav-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: var(--mobile-nav-indicator-width);
+    height: var(--mobile-nav-indicator-height);
+    background-color: hsl(var(--primary));
+    border-radius: 9999px;
+  }
+  
+  /* Icon container */
+  .mobile-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    margin-bottom: 6px;
+  }
+  
+  /* Label text */
+  .mobile-nav-label {
+    font-size: var(--mobile-nav-text-size);
+    font-weight: 500;
+    line-height: 1;
+    transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  /* Active label text */
+  .mobile-nav-label.active {
+    font-weight: 600;
+    color: hsl(var(--primary));
+  }
   
   /* Mobile header bar - used in MobileNav */
   .mobile-header {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    --mobile-header-blur: 8px;
+    
+    backdrop-filter: blur(var(--mobile-header-blur));
+    -webkit-backdrop-filter: blur(var(--mobile-header-blur));
     border-bottom: 1px solid hsl(var(--border) / 0.4);
     background-color: hsl(var(--background) / 0.95);
   }
