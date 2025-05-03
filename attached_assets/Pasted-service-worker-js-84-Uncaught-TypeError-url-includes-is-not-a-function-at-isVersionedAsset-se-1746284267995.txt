@@ -1,0 +1,217 @@
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+3service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+3service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+3service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+14service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+8service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+7service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+6service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+2service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+17service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+4service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
+(anonymous) @ service-worker.js:284
+Promise.then
+(anonymous) @ service-worker.js:283
+Promise.then
+(anonymous) @ service-worker.js:281
+Promise.then
+(anonymous) @ service-worker.js:278
+3service-worker.js:84  Uncaught TypeError: url.includes is not a function
+    at isVersionedAsset (service-worker.js:84:14)
+    at isCacheableRequest (service-worker.js:148:68)
+    at service-worker.js:276:7
+isVersionedAsset @ service-worker.js:84
+isCacheableRequest @ service-worker.js:148
+(anonymous) @ service-worker.js:276
+2service-worker.js:284  Uncaught (in promise) TypeError: Failed to execute 'clone' on 'Response': Response body is already used
+    at service-worker.js:284:56
