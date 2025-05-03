@@ -14,6 +14,17 @@
   opacity: 1;
 }
 
+/* Image transitions in forms */
+.trade-image {
+  max-width: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.trade-image.loaded {
+  opacity: 1;
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
