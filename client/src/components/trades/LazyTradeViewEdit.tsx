@@ -135,13 +135,13 @@ export function LazyTradeViewEdit({
           </div>
           <div>
             <span className="text-gray-500">Pips:</span> 
-            <span className={Number(trade.pips) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+            <span className={Number(trade.pips) >= 0 ? 'profit-text' : 'loss-text'}>
               {Number(trade.pips) >= 0 ? ' +' : ' '}{trade.pips}
             </span>
           </div>
           <div>
             <span className="text-gray-500">P/L:</span>
-            <span className={Number(trade.profitLoss) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+            <span className={Number(trade.profitLoss) >= 0 ? 'profit-text' : 'loss-text'}>
               {Number(trade.profitLoss) >= 0 ? ' +' : ' '}{formatCurrency(Number(trade.profitLoss))}
             </span>
           </div>
@@ -153,20 +153,20 @@ export function LazyTradeViewEdit({
             <h4 className="text-sm font-medium mb-2">Trade Discipline</h4>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
               <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                <div className={`h-2 w-2 rounded-full mr-1.5 ${trade.discipline.followedPlan ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <div className={`discipline-indicator ${trade.discipline.followedPlan ? 'discipline-indicator-yes' : 'discipline-indicator-no'}`}></div>
                 <span>{trade.discipline.followedPlan ? 'Followed Plan' : 'Plan Deviation'}</span>
               </div>
               
               {trade.discipline.enteredEarly && (
                 <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                  <div className="h-2 w-2 rounded-full mr-1.5 bg-amber-500"></div>
+                  <div className="discipline-indicator bg-amber-500"></div>
                   <span>Entered Early</span>
                 </div>
               )}
               
               {trade.discipline.revenge && (
                 <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                  <div className="h-2 w-2 rounded-full mr-1.5 bg-red-500"></div>
+                  <div className="discipline-indicator discipline-indicator-no"></div>
                   <span>Revenge Trade</span>
                 </div>
               )}

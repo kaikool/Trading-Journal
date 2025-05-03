@@ -846,6 +846,13 @@
     transition: all var(--stat-card-anim-speed) ease-in-out;
   }
   
+  /* Compact variant for stat cards in grid layout */
+  .stat-card-compact {
+    --stat-card-padding: 1rem;
+    --stat-value-font-size: 1.5rem;
+    padding: var(--stat-card-padding);
+  }
+  
   /* Hover effects */
   .stat-card:hover {
     box-shadow: var(--stat-card-hover-shadow);
@@ -1253,6 +1260,31 @@
     background-position: right 0.5rem center;
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
+  }
+  
+  /* Profit/Loss text styling */
+  .profit-text {
+    color: hsl(var(--success));
+  }
+  
+  .loss-text {
+    color: hsl(var(--destructive));
+  }
+  
+  /* Trading discipline indicator */
+  .discipline-indicator {
+    height: 0.5rem;
+    width: 0.5rem;
+    border-radius: 9999px;
+    margin-right: 0.375rem;
+  }
+  
+  .discipline-indicator-yes {
+    background-color: hsl(var(--success));
+  }
+  
+  .discipline-indicator-no {
+    background-color: hsl(var(--destructive));
   }
   
   /* Interactive elements standardized hover/focus effects */
