@@ -637,14 +637,14 @@
     overflow-x: hidden;
   }
   
-  /* PWA mode enhancements to mobile layout */
+  /* PWA mode enhancements to mobile layout - Chuẩn hóa các giá trị */
   html.pwa-mode .mobile-layout {
-    /* Match the same padding/margin as on real mobile devices */
-    padding-top: env(safe-area-inset-top, 0px);
-    max-height: 100dvh; /* Dynamic viewport height for modern browsers */
-    overflow-y: auto; /* Allow content scrolling */
-    overscroll-behavior-y: none; /* Prevent pull-to-refresh */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Xử lý safe area top một cách nhất quán trong toàn bộ ứng dụng */
+    padding-top: env(safe-area-inset-top, 0px); /* Giữ giá trị 0px để tránh padding không cần thiết */
+    max-height: 100dvh; /* Dynamic viewport height cho trình duyệt hiện đại */
+    overflow-y: auto; /* Cho phép cuộn nội dung */
+    overscroll-behavior-y: none; /* Ngăn chặn hành vi pull-to-refresh */
+    -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
   }
   
   /* Main content area in PWA mode - Tiêu chuẩn hóa spacing và cách xử lý safe area */
@@ -730,12 +730,13 @@
       padding-bottom var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
   
-  /* PWA mode enhancements */
+  /* PWA mode enhancements - Chuẩn hóa bottom inset */
   html.pwa-mode .mobile-nav,
   .mobile-nav.pwa-mode {
-    padding-bottom: var(--safe-bottom);
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
-    border-top: 1px solid hsl(var(--border) / 0.6);
+    /* Xử lý safe area bottom cho thanh điều hướng di động */
+    padding-bottom: var(--safe-bottom); /* Sử dụng biến CSS để duy trì nhất quán */
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom)); /* 56px + safe area */
+    border-top: 1px solid hsl(var(--border) / 0.6); /* Viền trên đậm hơn cho PWA mode */
   }
   
   /* Navigation item container */
@@ -943,9 +944,10 @@
     }
   }
   
-  /* PWA adjustments for content */
+  /* PWA adjustments for content - Chuẩn hóa bottom padding */
   html.pwa-mode .chart-content {
-    padding-bottom: max(var(--chart-spacing-md), var(--safe-bottom));
+    /* Sử dụng max() để đảm bảo có đủ padding cho cả thiết bị có notch và không có notch */
+    padding-bottom: max(var(--chart-spacing-md), var(--safe-bottom)); /* 16px hoặc safe-area, lấy giá trị lớn hơn */
   }
   
   /* Chart image container */
@@ -973,9 +975,10 @@
     }
   }
   
-  /* PWA adjustments for chart image */
+  /* PWA adjustments for chart image - Chuẩn hóa cách xử lý safe area */
   html.pwa-mode .chart-image {
-    max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-lg));
+    /* Đảm bảo hình ảnh không bị che khuất bởi thanh điều hướng và home indicator */
+    max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-lg)); /* 24px = 4px * 6 */
   }
   
   /* 
