@@ -67,18 +67,18 @@ function SettingsSection({ title, description, icon: Icon, children, rightElemen
   return (
     <div>
       <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
-        <CardHeader className="pb-3 px-4 sm:px-6">
-          <div className="flex items-center justify-between">
+        <div className="px-4 sm:px-6 pt-5">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div>
-                <CardTitle className="text-lg">{title}</CardTitle>
+                <h3 className="text-lg font-medium">{title}</h3>
+                {description && <p className="text-sm text-muted-foreground">{description}</p>}
               </div>
             </div>
             {rightElement}
           </div>
-        </CardHeader>
-        <Separator />
-        <CardContent className="pt-5 px-4 sm:px-6 sm:pt-6">
+        </div>
+        <CardContent className="pt-1 px-4 sm:px-6">
           {children}
         </CardContent>
       </Card>
@@ -890,8 +890,8 @@ export default function Settings() {
             {/* Import the AchievementsTab component */}
             <div className="grid gap-6">
               <AchievementsTab 
-                showNotifications={settings.showAchievements}
-                onToggleNotifications={(show) => setSettings({ ...settings, showAchievements: show })}
+                showNotifications={Boolean(settings.showAchievements)}
+                onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
               />
             </div>
           </SettingsSection>
