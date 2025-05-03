@@ -8,7 +8,6 @@ import {
   Settings,
   BarChart2
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
 import { isPWA } from "@/lib/pwa-helper";
 
