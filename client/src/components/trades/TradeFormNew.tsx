@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL, StorageError } from "firebase/storage";
 import { Toast } from "@/components/ui/toast";

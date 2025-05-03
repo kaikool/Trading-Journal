@@ -1,6 +1,5 @@
 import { ReactNode, useState, useEffect } from "react";
 import { AppLogo } from "@/components/AppLogo";
-import { motion } from "framer-motion";
 import { 
   Brain, 
   TrendingUp, 
@@ -108,16 +107,13 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         <div className="relative z-10 flex-1 flex flex-col justify-center">
           <div className="h-[320px] relative">
             {features.map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ 
-                  opacity: currentFeature === index ? 1 : 0,
-                  y: currentFeature === index ? 0 : 20,
-                  scale: currentFeature === index ? 1 : 0.95,
-                }}
-                transition={{ duration: 0.5 }}
-                className={`absolute top-0 left-0 w-full p-6 rounded-xl ${currentFeature === index ? 'pointer-events-auto' : 'pointer-events-none'}`}
+                className={`absolute top-0 left-0 w-full p-6 rounded-xl transition-all duration-500 ${
+                  currentFeature === index 
+                    ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
+                    : 'opacity-0 translate-y-5 scale-95 pointer-events-none'
+                }`}
               >
                 <div className={`inline-flex items-center justify-center p-2 rounded-lg ${feature.color} mb-3`}>
                   {feature.icon}
@@ -141,7 +137,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
                   <span>Learn more</span>
                   <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
           

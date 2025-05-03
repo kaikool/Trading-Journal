@@ -35,18 +35,7 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
       )}
     >
       {/* Indicator line for active tab */}
-      {isActive && !reducedMotion && (
-        <motion.div
-          layoutId="bottomNavIndicator"
-          className="mobile-nav-indicator"
-          initial={{ opacity: 0, width: 0 }}
-          animate={{ opacity: 1, width: "var(--mobile-nav-indicator-width)" }}
-          transition={{ type: "spring", duration: 0.3, bounce: 0.2 }}
-        />
-      )}
-      
-      {/* Static indicator for reduced motion preference */}
-      {isActive && reducedMotion && (
+      {isActive && (
         <div className="mobile-nav-indicator" />
       )}
       
