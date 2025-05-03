@@ -465,6 +465,87 @@
     top: 0;
   }
   
+  .trade-direction-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+  }
+  
+  .trade-result-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .trade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+  }
+  
+  .trade-badge-tp {
+    background-color: #10b981; /* success */
+  }
+  
+  .trade-badge-sl {
+    background-color: #ef4444; /* destructive */
+  }
+  
+  .trade-badge-be {
+    background-color: #f59e0b; /* warning */
+  }
+  
+  .trade-badge-default {
+    background-color: #6b7280; /* gray */
+  }
+  
+  .trade-badge-buy {
+    background-color: #3b82f6; /* blue */
+  }
+  
+  .trade-badge-sell {
+    background-color: #ec4899; /* pink */
+  }
+  
+  /* Chart dialog styling */
+  .chart-dialog {
+    max-width: 95vw;
+  }
+  
+  .chart-dialog-mobile {
+    height: calc(100dvh - 20px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    border-radius: 0.75rem;
+  }
+  
+  .chart-dialog-pwa {
+    height: calc(100dvh - env(safe-area-inset-top) - 12px);
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    border-radius: 1rem 1rem 0 0;
+    bottom: 0;
+    max-height: calc(100dvh - env(safe-area-inset-top) - 12px);
+  }
+  
+  .chart-content-pwa {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
+  }
+  
   /* Form container styles */
   .form-container {
     max-width: 100%;
