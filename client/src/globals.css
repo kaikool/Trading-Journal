@@ -466,9 +466,7 @@
 /* ======================================= */
 @layer base {
   :root {
-    /* Safe area variables - ĐỊNH NGHĨA TẬP TRUNG CHO TOÀN BỘ ỨNG DỤNG
-     * Tất cả các insets được đọc từ các biến này, đảm bảo độ nhất quán
-     */
+    /* Safe area variables - ĐỊNH NGHĨA TẬP TRUNG CHO TOÀN BỘ ỨNG DỤNG */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -480,7 +478,7 @@
     
     /* Standard values cho mobile layout components */
     --mobile-nav-height: 56px; /* 56px = 4px * 14 */
-    --status-bar-height: 48px; /* 48px = 4px * 12, thay thế 50px */
+    --status-bar-height: 48px; /* 48px = 4px * 12 */
     
     /* Base colors */
     --background: 210 40% 98%;
@@ -603,7 +601,9 @@
   }
   
   html, body {
-    @apply h-full antialiased overflow-x-hidden;
+    height: 100%;
+    margin: 0;
+    @apply antialiased overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
     width: 100%;
     position: relative;
@@ -715,7 +715,6 @@
   /* Base navigation container */
   .mobile-nav {
     /* Central configuration through CSS variables */
-    --mobile-nav-height: var(--mobile-nav-height, 56px);
     --mobile-nav-z-index: 50;
     --mobile-nav-blur: 12px;
     --mobile-nav-anim-speed: 300ms;
