@@ -135,11 +135,15 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
     }
     
+    // Store current trades reference for comparison
+    const currentTrades = trades;
+    const currentUserData = userData;
+    
     // Tối ưu hóa fetch user data để sử dụng cached data nếu có
     const fetchUserData = async () => {
       try {
         // Nếu đã có userData và không phải refresh, tránh re-fetch
-        if (userData && lastRefresh === 0) {
+        if (currentUserData && lastRefresh === 0) {
           debug('[DataCache] Using existing userData, avoiding re-fetch');
           return;
         }
@@ -151,7 +155,7 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
           
           // Update cache
           updateCache({ 
-            trades, 
+            trades: currentTrades, 
             userData: data, 
             lastUpdated: Date.now()
           });
@@ -171,17 +175,19 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
         userId,
         (fetchedTrades) => {
           debug(`[DataCache] Received ${fetchedTrades.length} trades from snapshot`);
+          
+          // Sử dụng function form của setState để tránh dependency loop
           setTrades(fetchedTrades);
           setIsTradesLoaded(true);
           setIsLoading(false);
           
-          // Chỉ update cache khi có thay đổi thực sự
-          if (JSON.stringify(fetchedTrades) !== JSON.stringify(trades)) {
+          // Chỉ update cache khi có thay đổi thực sự - sử dụng ref đóng lại từ closure
+          if (JSON.stringify(fetchedTrades) !== JSON.stringify(currentTrades)) {
             debug('[DataCache] Trades changed, updating cache');
             // Update cache with new trades
             updateCache({ 
               trades: fetchedTrades, 
-              userData: userData, 
+              userData: currentUserData, 
               lastUpdated: Date.now()
             });
           } else {
@@ -213,7 +219,7 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       return () => {}; // Return empty cleanup function
     }
-  }, [userId, lastRefresh, trades, userData]);
+  }, [userId, lastRefresh]); // Loại bỏ trades và userData khỏi danh sách dependencies
 
   // Helper function to update the cache
   const updateCache = (data: Omit<CachedData, 'version'>) => {
