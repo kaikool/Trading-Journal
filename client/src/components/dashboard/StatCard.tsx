@@ -1,3 +1,4 @@
+import React from "react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -97,8 +98,9 @@ export default function StatCard({
             <div 
               className={cn("h-1.5 rounded-full progress-animate", colors[color].progressBg)} 
               style={{ 
-                width: `${progressValue}%`
-              }}
+                width: `${progressValue}%`,
+                '--progress-width': `${progressValue}%`
+              } as React.CSSProperties}
             />
           </div>
         </div>

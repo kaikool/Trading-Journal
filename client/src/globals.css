@@ -526,7 +526,6 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
     height: calc(56px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid hsl(var(--border) / 0.6);
-    box-shadow: var(--shadow-sm);
   }
   
   /* Consolidated chart dialog styling */
@@ -826,6 +825,12 @@
   /* Custom animations */
   .progress-animate {
     animation: progress 1s ease-in-out;
+  }
+  
+  /* Progress animation keyframes - needed for StatCard progress bars */
+  @keyframes progress {
+    0% { width: 0; }
+    100% { width: var(--progress-width, 0%); }
   }
   
   /* Custom inputs */

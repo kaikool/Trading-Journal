@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Định nghĩa các loại theme được hỗ trợ
 export type ThemeType = 'light' | 'dark' | 'system';
@@ -24,7 +24,7 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 // Hook để sử dụng ThemeContext
-export const useTheme = () => {
+export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
