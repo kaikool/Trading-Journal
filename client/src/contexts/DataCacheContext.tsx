@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext, ReactNode, useMemo, useCallback } from 'react';
+import { createContext, useState, useEffect, useContext, ReactNode, useMemo } from 'react';
 import { auth, onTradesSnapshot, getUserData } from '@/lib/firebase';
 import { debug, logError } from '@/lib/debug';
 

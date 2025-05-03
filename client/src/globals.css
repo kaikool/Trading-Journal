@@ -505,7 +505,12 @@
     margin-top: auto;
   }
   
-  /* Unified mobile navigation classes - single definition */
+  /* 
+   * Unified mobile navigation system
+   * Used by both BottomNav and MobileNav components
+   */
+  
+  /* Bottom navigation - fixed at bottom */
   .mobile-nav {
     position: fixed;
     bottom: 0;
@@ -518,14 +523,30 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--shadow-sm);
+    transition: height 0.3s ease-in-out, padding-bottom 0.3s ease-in-out;
   }
   
-  /* PWA mode enhancements for mobile navigation - modifiers only */
+  /* PWA mode enhancements - applies to both mobile nav types */
   html.pwa-mode .mobile-nav,
   .mobile-nav.pwa-mode {
     padding-bottom: env(safe-area-inset-bottom, 0px);
     height: calc(56px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid hsl(var(--border) / 0.6);
+  }
+  
+  /* Mobile header bar - used in MobileNav */
+  .mobile-header {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
+    background-color: hsl(var(--background) / 0.95);
+  }
+  
+  /* Mobile sidebar navigation wrapper */
+  .mobile-sidebar {
+    background-color: hsl(var(--background));
+    box-shadow: var(--shadow-lg);
+    transition: transform 0.3s ease-in-out;
   }
   
   /* Consolidated chart dialog styling */

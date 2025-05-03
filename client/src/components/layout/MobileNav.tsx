@@ -90,7 +90,7 @@ export default function MobileNav() {
   return (
     <>
       {/* Mobile Header */}
-      <header className="fixed top-0 left-0 right-0 h-16 z-40 backdrop-blur-sm border-b bg-background/95 border-border/40">
+      <header className="fixed top-0 left-0 right-0 h-16 z-40 mobile-header">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center space-x-3">
             <Button
@@ -169,7 +169,7 @@ export default function MobileNav() {
         {/* Sidebar Drawer */}
         <div 
           className={cn(
-            "fixed inset-y-0 left-0 h-full max-w-xs bg-background border-r border-border shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out transform",
+            "mobile-sidebar fixed inset-y-0 left-0 h-full max-w-xs border-r border-border overflow-y-auto transform",
             isOpen ? "translate-x-0" : "-translate-x-full",
             "w-64" // Using Tailwind's w-64 (16rem) which matches SIDEBAR_WIDTH
           )}
