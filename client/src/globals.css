@@ -679,24 +679,22 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
-  /* Bottom spacer for PWA mode - Chuẩn hóa cách tiếp cận */
-  html.pwa-mode .pwa-bottom-spacer,
-  .pwa-bottom-spacer {
-    /* Đảm bảo khoảng cách phù hợp dưới cùng cho thanh điều hướng ở chế độ PWA */
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom) + 4px);
+  /* Unified bottom spacer system - only one place defining height */
+  .pwa-bottom-spacer, 
+  .bottom-nav-spacer {
     margin-top: auto;
   }
   
-  /* Standard bottom nav spacer for non-PWA mode */
+  /* PWA mode spacer */
+  .pwa-bottom-spacer {
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+  }
+  
+  /* Standard (non-PWA) spacer */
   .bottom-nav-spacer {
-    height: 60px;
-    margin-top: auto;
+    height: var(--mobile-nav-height);
     
     /* Responsive adjustments */
-    @media (min-width: 640px) {
-      height: 70px;
-    }
-    
     @media (min-width: 768px) {
       height: 0;
     }
@@ -712,7 +710,10 @@
    * Organized with CSS variables for better maintainability
    */
   
-  /* Base navigation container */
+  /* MOBILE NAVIGATION - CENTRAL POSITIONING
+   * This is THE ONLY PLACE that defines positioning for MobileNavigator
+   * All positioning rules are defined here to prevent conflicts
+   */
   .mobile-nav {
     /* Central configuration through CSS variables */
     --mobile-nav-z-index: 50;
@@ -725,7 +726,7 @@
     --mobile-nav-indicator-height: 3px;
     --mobile-nav-indicator-width: 12px;
     
-    /* Base positioning and dimensions */
+    /* Base positioning - CORE POSITIONING RULES */
     position: fixed;
     bottom: 0;
     left: 0;
@@ -740,19 +741,18 @@
     -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
     box-shadow: var(--mobile-nav-shadow);
     
-    /* Transitions for smooth animations */
+    /* Transitions for smooth animations - control animation only, not structure */
     transition: 
       height var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing), 
       padding-bottom var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
   
-  /* PWA mode enhancements - Chuẩn hóa bottom inset */
+  /* PWA mode safe area handling - EXACT BOTTOM POSITIONING RULE */
   html.pwa-mode .mobile-nav,
   .mobile-nav.pwa-mode {
-    /* Xử lý safe area bottom cho thanh điều hướng di động */
-    padding-bottom: var(--safe-bottom); /* Sử dụng biến CSS để duy trì nhất quán */
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom)); /* 56px + safe area */
-    border-top: 1px solid hsl(var(--border) / 0.6); /* Viền trên đậm hơn cho PWA mode */
+    padding-bottom: var(--safe-bottom);
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    border-top: 1px solid hsl(var(--border) / 0.6);
   }
   
   /* Navigation item container */
