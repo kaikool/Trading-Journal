@@ -654,8 +654,11 @@
     padding-bottom: 0; /* Bottom padding removed, handled by spacer */
     padding-left: max(env(safe-area-inset-left, 0px), 16px); /* 16px = 4px * 4 */
     padding-right: max(env(safe-area-inset-right, 0px), 16px); /* 16px = 4px * 4 */
-    height: auto; /* Cho phép nội dung mở rộng theo cần thiết */
-    min-height: 100%; /* Đảm bảo ít nhất điền đầy không gian có sẵn */
+    display: flex; /* Ensure flexbox layout is applied */
+    flex-direction: column; /* Stack children vertically */
+    flex: 1; /* Take up available space */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
     overflow-y: auto; /* Allow scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
