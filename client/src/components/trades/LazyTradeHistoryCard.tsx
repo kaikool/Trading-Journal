@@ -201,7 +201,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
 
       {inView ? (
         <Card 
-          className="mb-4 cursor-pointer hover:shadow-md transition-shadow duration-200 overflow-hidden"
+          className="mb-4 overflow-hidden cursor-pointer"
           onClick={() => handleViewTrade()}
         >
           <CardContent className="p-0">
@@ -249,8 +249,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                             return;
                           }
                           
-                          // Thay vì sử dụng inline style, thêm class hidden
-                          imgElement.classList.add('hidden');
+                          // Sử dụng state để quản lý ẩn/hiện thay vì thêm class
+                          setImageLoaded(false);
                         }}
                       />
                     </div>
@@ -277,37 +277,22 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 )}
                 
                 {/* Trade direction badge */}
-                <div className="trade-direction-badge">
-                  <div className={`trade-badge ${direction === 'BUY' ? 'trade-badge-buy' : 'trade-badge-sell'}`}>
-                    <div className="trade-card-badge-container">
-                      {direction === 'BUY' ? (
-                        <ArrowUp className="trade-card-badge-icon" />
-                      ) : (
-                        <ArrowDown className="trade-card-badge-icon" />
-                      )}
-                      <span className="trade-card-badge-text">{direction}</span>
-                    </div>
-                  </div>
+                <div className="absolute top-8 left-8">
+                  <TradeStatusBadge 
+                    status={direction === 'BUY' ? 'TP' : 'SL'} 
+                    iconOnly={false}
+                    size="md"
+                  />
                 </div>
                 
                 {/* Result badge if trade is closed */}
                 {result && (
-                  <div className="trade-result-badge">
-                    <div className={`trade-badge ${
-                      result === 'TP' ? 'trade-badge-tp' : 
-                      result === 'SL' ? 'trade-badge-sl' : 
-                      result === 'BE' ? 'trade-badge-be' : 
-                      'trade-badge-default'
-                    }`}>
-                      <div className="trade-card-badge-container">
-                        {(() => {
-                          const config = getTradeStatusConfig(result as TradeStatus);
-                          const Icon = config.icon;
-                          return <Icon className="trade-card-badge-icon" />;
-                        })()}
-                        <span className="trade-card-badge-text">{getTradeStatusConfig(result as TradeStatus).label}</span>
-                      </div>
-                    </div>
+                  <div className="absolute top-8 right-8">
+                    <TradeStatusBadge 
+                      status={result as TradeStatus}
+                      iconOnly={false}
+                      size="md"
+                    />
                   </div>
                 )}
               </div>

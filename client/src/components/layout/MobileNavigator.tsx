@@ -182,10 +182,7 @@ export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorPr
 
   return (
     <nav 
-      className={cn(
-        "mobile-nav lg:hidden",
-        isPWAMode && "pwa-mode"
-      )}
+      className="mobile-nav"
       role="navigation"
       aria-label="Main Navigation"
     >

@@ -689,46 +689,7 @@
     right: 8px;
   }
   
-  /* Trade badge unified system */
-  .trade-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 20px;
-    padding: 0 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    font-weight: 500;
-    color: white;
-    box-shadow: var(--shadow-sm);
-    white-space: nowrap;
-  }
-  
-  /* Result badges */
-  .trade-badge-tp {
-    background-color: hsl(var(--success));
-  }
-  
-  .trade-badge-sl {
-    background-color: hsl(var(--destructive));
-  }
-  
-  .trade-badge-be {
-    background-color: hsl(var(--warning));
-  }
-  
-  /* Direction badges */
-  .trade-badge-default {
-    background-color: hsl(var(--muted));
-  }
-  
-  .trade-badge-buy {
-    background-color: hsl(var(--success));
-  }
-  
-  .trade-badge-sell {
-    background-color: hsl(var(--destructive));
-  }
+  /* Trade badge system moved to TradeStatusBadge component */
   
 
   /* Chart pagination styling */
