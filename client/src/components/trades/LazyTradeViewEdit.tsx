@@ -80,7 +80,7 @@ export function LazyTradeViewEdit({
             direction={trade.direction as Direction}
             showTooltip={false}
             size="sm"
-            variant="arrow"
+            variant="modern"
           />
         </div>
         

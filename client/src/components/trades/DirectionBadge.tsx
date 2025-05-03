@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type Direction = "BUY" | "SELL";
@@ -12,7 +12,7 @@ interface DirectionBadgeProps {
   size?: 'sm' | 'md' | 'lg';
   showTooltip?: boolean;
   iconOnly?: boolean;
-  variant?: 'default' | 'modern' | 'arrow';
+  variant?: string; // Giữ lại để tương thích với code hiện tại, nhưng không còn sử dụng
 }
 
 /**
@@ -25,31 +25,19 @@ const DirectionBadge = React.forwardRef<HTMLDivElement, DirectionBadgeProps>(({
   size = 'md',
   showTooltip = true,
   iconOnly = false,
-  variant = 'modern',
+  variant, // Tham số này không còn được sử dụng, nhưng giữ để tương thích ngược
 }, ref) => {
-  // Biểu tượng khác nhau cho từng kiểu hiển thị
-  const getIcon = () => {
-    if (variant === 'modern') {
-      return direction === "BUY" ? TrendingUp : TrendingDown;
-    } else if (variant === 'arrow') {
-      return direction === "BUY" ? ArrowUpRight : ArrowDownRight; 
-    } else {
-      // Kiểu mặc định
-      return direction === "BUY" ? TrendingUp : TrendingDown;
-    }
-  };
+  // Chỉ sử dụng một loại icon duy nhất cho toàn bộ ứng dụng
+  const Icon = direction === "BUY" ? TrendingUp : TrendingDown;
   
   // Configuration based on direction
   const config = {
-    icon: getIcon(),
     label: direction,
     description: direction === "BUY" ? "Buy/Long Position" : "Sell/Short Position",
     bgColor: direction === "BUY" ? "bg-success" : "bg-destructive",
     color: direction === "BUY" ? "text-success" : "text-destructive",
     lightBgColor: direction === "BUY" ? "bg-success/10" : "bg-destructive/10",
   };
-  
-  const Icon = config.icon;
   
   const sizeClasses = {
     sm: "text-xs px-1.5 py-0.5",
