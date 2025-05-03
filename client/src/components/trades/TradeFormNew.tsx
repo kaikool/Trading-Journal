@@ -2773,7 +2773,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           
                           {exitImage2Preview ? (
                             <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
-                              <div className="w-full h-[180px] sm:h-[200px] bg-muted/30 animate-pulse flex items-center justify-center">
+                              <div className="image-placeholder">
                                 <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
                               </div>
                               <img 

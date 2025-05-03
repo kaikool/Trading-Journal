@@ -23,26 +23,23 @@ export default function RecentActivity({
               <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
               <CardDescription className="text-xs mt-1">Your latest trading actions</CardDescription>
             </div>
-            <div className="h-6 w-16 bg-muted/60 rounded-full" />
+            <div className="placeholder-text h-6 w-16 rounded-full" />
           </div>
         </CardHeader>
         <CardContent className="pt-4">
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div 
-                key={i} 
-                className="p-3 rounded-lg bg-muted/30 animate-pulse border border-border/20"
-              >
+              <div key={i} className="activity-placeholder">
                 <div className="flex items-center">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-muted/60" />
+                  <div className="placeholder-circle" />
                   <div className="ml-3 flex-1">
                     <div className="flex justify-between">
-                      <div className="h-4 w-16 bg-muted/60 rounded-md" />
-                      <div className="h-4 w-20 bg-muted/60 rounded-md" />
+                      <div className="placeholder-text w-16" />
+                      <div className="placeholder-text w-20" />
                     </div>
                     <div className="flex justify-between mt-1">
-                      <div className="h-3 w-24 bg-muted/60 rounded-md" />
-                      <div className="h-3 w-10 bg-muted/60 rounded-md" />
+                      <div className="placeholder-text-sm w-24" />
+                      <div className="placeholder-text-sm w-10" />
                     </div>
                   </div>
                 </div>

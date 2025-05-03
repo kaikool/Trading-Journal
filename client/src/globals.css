@@ -104,6 +104,34 @@
   }
 }
 
+/* Activity item placeholder styling */
+.activity-placeholder {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: hsl(var(--muted) / 0.3);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border: 1px solid hsl(var(--border) / 0.2);
+}
+
+.placeholder-circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: hsl(var(--muted) / 0.6);
+}
+
+.placeholder-text {
+  height: 1rem;
+  background-color: hsl(var(--muted) / 0.6);
+  border-radius: 0.375rem;
+}
+
+.placeholder-text-sm {
+  height: 0.75rem;
+  background-color: hsl(var(--muted) / 0.6);
+  border-radius: 0.375rem;
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
