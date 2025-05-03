@@ -71,11 +71,9 @@ function SettingsSection({ title, description, icon: Icon, children, rightElemen
       <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
         <div className="px-4 sm:px-6 pt-5">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <div>
-                <h3 className="text-lg font-medium">{title}</h3>
-                {description && <p className="text-sm text-muted-foreground">{description}</p>}
-              </div>
+            <div>
+              <h3 className="text-lg font-medium">{title}</h3>
+              {description && <p className="text-sm text-muted-foreground">{description}</p>}
             </div>
             {rightElement}
           </div>
