@@ -890,12 +890,9 @@ export default function Settings() {
 
         {/* Strategies tab */}
         <TabsContent value="strategies" className="mt-6 space-y-6">
-          <SettingsSection
-            title="Trading Strategies"
-            description="Manage your trading strategies and rules"
-          >
+          <div className="grid gap-6">
             <StrategiesManagement />
-          </SettingsSection>
+          </div>
         </TabsContent>
         
         {/* Achievements tab */}
