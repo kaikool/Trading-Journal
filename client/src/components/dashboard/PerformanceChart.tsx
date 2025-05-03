@@ -25,9 +25,9 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     const dataPoint = payload[0].payload;
     
     return (
-      <div className="bg-card border shadow-md rounded-lg p-3 text-sm">
-        <p className="font-medium">{dataPoint.formattedDate || format(parseISO(dataPoint.date), 'MMM dd')}</p>
-        <div className="mt-1 font-bold">
+      <div className="balance-chart-tooltip">
+        <p className="balance-chart-tooltip-date">{dataPoint.formattedDate || format(parseISO(dataPoint.date), 'MMM dd')}</p>
+        <div className="balance-chart-tooltip-value">
           {UI_CONFIG.CURRENCY_SYMBOL}{new Intl.NumberFormat('en-US', { 
             minimumFractionDigits: 2, 
             maximumFractionDigits: 2 
@@ -90,7 +90,7 @@ export function PerformanceChart({
   // Empty state - now this only happens when data is really empty, not during loading
   if (!data || data.length === 0) {
     return (
-      <Card className="border shadow-sm">
+      <Card className="balance-chart">
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl font-semibold flex items-center">
@@ -99,10 +99,10 @@ export function PerformanceChart({
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="flex flex-col items-center justify-center h-[220px] text-center">
-          <Info className="h-8 w-8 text-muted-foreground/30 mb-2" />
-          <p className="font-medium text-muted-foreground mb-1">No performance data available</p>
-          <p className="text-sm text-muted-foreground/70">Complete trades will appear in this chart</p>
+        <CardContent className="balance-chart-empty">
+          <Info className="balance-chart-empty-icon" />
+          <p className="balance-chart-empty-title">No performance data available</p>
+          <p className="balance-chart-empty-subtitle">Complete trades will appear in this chart</p>
         </CardContent>
       </Card>
     );
