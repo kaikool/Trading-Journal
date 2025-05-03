@@ -183,18 +183,16 @@ export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
   return (
     <nav 
       className={cn(
-        "mobile-nav lg:hidden border-t border-border/60",
-        isPWAMode && "pwa-mobile-nav"
+        "mobile-nav lg:hidden",
+        isPWAMode && "pwa-mode"
       )}
       role="navigation"
       aria-label="Main Navigation"
     >
       <div 
         className={cn(
-          "grid w-full h-full", 
-          devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5',
-          // Tối ưu hóa chiều cao cho nội dung khi có home indicator
-          hasHomeIndicator || isPWAMode ? "h-14" : "h-full"
+          "grid w-full", 
+          devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5'
         )}
       >
         {devicePerformance === 'low' ? (

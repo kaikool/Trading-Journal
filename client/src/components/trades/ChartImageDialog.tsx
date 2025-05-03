@@ -142,7 +142,7 @@ export function ChartImageDialog({
           "p-0 overflow-hidden flex flex-col w-full chart-dialog", 
           "sm:max-w-[92vw] md:max-w-[88vw] lg:max-w-[80vw]",
           !isPWAMode && isMobile && "chart-dialog-mobile",
-          isPWAMode && "chart-dialog-pwa pwa-chart-dialog"
+          isPWAMode && "chart-dialog-pwa"
         )}
         aria-describedby="chart-image-viewer-description"
       >

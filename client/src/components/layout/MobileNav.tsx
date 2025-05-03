@@ -170,9 +170,9 @@ export default function MobileNav() {
         <div 
           className={cn(
             "fixed inset-y-0 left-0 h-full max-w-xs bg-background border-r border-border shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out transform",
-            isOpen ? "translate-x-0" : "-translate-x-full"
+            isOpen ? "translate-x-0" : "-translate-x-full",
+            "w-[280px]" // Hard-coded value from SIDEBAR_WIDTH constant
           )}
-          style={{ width: SIDEBAR_WIDTH }}
           tabIndex={-1}
           role="dialog"
           aria-modal="true"
