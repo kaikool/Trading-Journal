@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 import Sidebar from "@/components/layout/Sidebar";
-import Navbar from "@/components/layout/Navbar";
+
 import MobileLayout from "@/components/layout/MobileLayout";
 import { auth } from "@/lib/firebase";
 import { User } from "firebase/auth";
@@ -266,11 +266,8 @@ function MainContent() {
   return (
     <>
       {hasUser && (
-        // Hiển thị Sidebar và Navbar chỉ trên desktop
-        <>
-          <Sidebar />
-          <Navbar />
-        </>
+        // Hiển thị Sidebar chỉ trên desktop
+        <Sidebar />
       )}
       
       {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
