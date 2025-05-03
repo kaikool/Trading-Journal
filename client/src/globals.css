@@ -335,7 +335,7 @@
     border-top: 1px solid hsl(var(--border) / 0.4);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
   }
   
   /* PWA mode enhancements for mobile navigation - modifiers only */
@@ -344,7 +344,7 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
     height: calc(56px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid hsl(var(--border) / 0.6);
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
   }
   
   /* Unified chart dialog styling */
