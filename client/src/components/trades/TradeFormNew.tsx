@@ -2499,7 +2499,6 @@ export default function TradeFormNew(props: TradeFormProps) {
                             imgElement.previousElementSibling?.classList.remove("animate-pulse");
                             imgElement.previousElementSibling?.classList.add("opacity-0");
                           }}
-                          className="trade-form-image"
                         />
                         <div className="absolute top-3 right-3 flex gap-2.5">
                           <Button 
@@ -2707,7 +2706,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                                   imgElement.previousElementSibling?.classList.remove("animate-pulse");
                                   imgElement.previousElementSibling?.classList.add("opacity-0");
                                 }}
-                                className="trade-form-image"
+
                               />
                               <div className="absolute top-3 right-3 flex gap-2.5">
                                 <Button 
@@ -2789,7 +2788,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                                   imgElement.previousElementSibling?.classList.remove("animate-pulse");
                                   imgElement.previousElementSibling?.classList.add("opacity-0");
                                 }}
-                                className="trade-form-image"
+
                               />
                               <div className="absolute top-3 right-3 flex gap-2.5">
                                 <Button 
