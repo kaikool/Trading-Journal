@@ -93,11 +93,11 @@ export default function StatCard({
       {progressValue !== undefined && (
         <div className="stat-card-progress-container">
           <div 
-            className={cn("stat-card-progress", colorConfig[color].progressClass)} 
-            style={{ 
-              width: `${progressValue}%`,
-              '--progress-width': `${progressValue}%`
-            } as React.CSSProperties}
+            className={cn(
+              "stat-card-progress", 
+              colorConfig[color].progressClass
+            )} 
+            style={{"--progress-width": `${progressValue}%`} as React.CSSProperties}
           />
         </div>
       )}

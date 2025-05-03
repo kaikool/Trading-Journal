@@ -196,12 +196,9 @@ export function TradingStatsCard({
           {stats.map((stat, index) => (
             <div 
               key={index} 
-              className="stat-card"
+              className="stat-card stat-card-compact"
               title={stat.tooltip}
-              style={{
-                "--stat-card-padding": "1rem",
-                "--stat-value-font-size": "1.5rem"
-              } as React.CSSProperties}
+              // Đã di chuyển CSS variables vào globals.css với class .stat-card-compact
             >
               <div className="stat-card-header">
                 <div className={cn("stat-card-title", stat.color)}>
