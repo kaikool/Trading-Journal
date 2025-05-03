@@ -677,7 +677,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                     iconSize={6}
                     wrapperStyle={{
                       fontSize: "10px",
-                      paddingTop: "5px",
+                      paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
                     }}
                     iconType="circle"
                   />

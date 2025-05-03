@@ -613,7 +613,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                       display: "flex",
                       flexWrap: "wrap",
                       justifyContent: "center",
-                      rowGap: "2px",
+                      rowGap: "4px", // Chuẩn hóa theo quy tắc 4px
                     }}
                     iconType="circle"
                   />
@@ -650,7 +650,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={tradingActivityData}
-                margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                 barCategoryGap={12}
                 barGap={6}
               >
