@@ -537,32 +537,7 @@
     background-color: #ec4899; /* pink */
   }
   
-  /* Chart dialog styling */
-  .chart-dialog {
-    max-width: 95vw;
-  }
-  
-  .chart-dialog-mobile {
-    height: calc(100dvh - 20px);
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0;
-    border-radius: 0.75rem;
-  }
-  
-  .chart-dialog-pwa {
-    height: calc(100dvh - env(safe-area-inset-top) - 12px);
-    position: fixed;
-    top: calc(env(safe-area-inset-top) + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    border-radius: 1rem 1rem 0 0;
-    bottom: 0;
-    max-height: calc(100dvh - env(safe-area-inset-top) - 12px);
-  }
+
   
   .chart-content-pwa {
     padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
@@ -583,17 +558,7 @@
     bottom: calc(env(safe-area-inset-bottom) + 8px);
   }
   
-  .chart-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    select-none: none;
-    touch-action: pan-y;
-  }
-  
-  .chart-image-pwa {
-    max-height: calc(100% - env(safe-area-inset-bottom) - 8px);
-  }
+
   
   /* Form container styles */
   .form-container {
