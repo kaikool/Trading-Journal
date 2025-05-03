@@ -16,10 +16,10 @@
   /* Removed redundant .pb-safe definition, using the one in globals.css */
 }
 
-/* Compact table for analytics */
+/* Compact table for analytics - sử dụng giá trị spacing theo bội số của 4px */
 .compact-table th, 
 .compact-table td {
-  padding: 8px !important;
+  padding: 8px !important; /* Giữ nguyên 8px - đúng quy tắc 4px */
 }
 
 .compact-table .truncate {
@@ -36,13 +36,13 @@ body[data-offline-mode="true"] .suspense-boundary {
 body[data-offline-mode="true"] .suspense-boundary::after {
   content: "Limited functionality in offline mode";
   position: absolute;
-  bottom: 8px;
-  right: 8px;
+  bottom: 8px; /* Đúng quy tắc 4px */
+  right: 8px; /* Đúng quy tắc 4px */
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 4px 8px; /* Đúng quy tắc 4px */
+  border-radius: 4px; /* Đúng quy tắc 4px */
+  font-size: 12px; /* Typography value nên giữ nguyên */
   z-index: 10;
 }
 

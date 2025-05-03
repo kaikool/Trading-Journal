@@ -209,7 +209,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
             <div className="flex flex-col md:flex-row">
               {/* Thumbnail container - fixed size for consistency */}
               <div 
-                className="relative w-full md:w-48 h-48 bg-gray-100 dark:bg-gray-800 flex-shrink-0 cursor-pointer group"
+                className="relative w-full md:w-48 h-48 bg-muted/40 dark:bg-muted flex-shrink-0 cursor-pointer group"
                 onClick={handleOpenChartDialog}
               >
                 {displayUrl ? (
@@ -304,7 +304,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold flex items-center">
                     {pair}
-                    <span className="text-sm font-normal ml-2 text-gray-500">
+                    <span className="text-sm font-normal ml-2 text-muted-foreground">
                       {strategy}
                     </span>
 
@@ -315,32 +315,32 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
                   <div>
-                    <span className="text-gray-500">Entry:</span> {entryPrice}
+                    <span className="text-muted-foreground">Entry:</span> {entryPrice}
                   </div>
                   <div>
-                    <span className="text-gray-500">Exit:</span> {exitPrice || 'Open'}
+                    <span className="text-muted-foreground">Exit:</span> {exitPrice || 'Open'}
                   </div>
                   <div>
-                    <span className="text-gray-500">SL:</span> {trade.stopLoss}
+                    <span className="text-muted-foreground">SL:</span> {trade.stopLoss}
                   </div>
                   <div>
-                    <span className="text-gray-500">TP:</span> {trade.takeProfit}
+                    <span className="text-muted-foreground">TP:</span> {trade.takeProfit}
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-2 text-sm mb-2">
-                  <span className="text-gray-500">Date:</span> 
+                  <span className="text-muted-foreground">Date:</span> 
                   <span>{entryDateStr}</span>
                   {closeDate && (
                     <>
-                      <span className="text-gray-400">→</span>
+                      <span className="text-muted-foreground/60">→</span>
                       <span>{closeDateStr}</span>
                     </>
                   )}
                 </div>
                 
                 <div className="flex flex-wrap justify-between items-center mt-4 border-t pt-3">
-                  <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     {/* Nút action icons */}
                     <Button
                       variant="ghost"

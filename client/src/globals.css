@@ -987,8 +987,8 @@
   
   /* Stat Card Base Container */
   .stat-card {
-    /* Central configuration through CSS variables */
-    --stat-card-padding: 1.5rem;
+    /* Central configuration through CSS variables - tuân theo quy tắc spacing 4px */
+    --stat-card-padding: 1rem; /* 16px - theo Tailwind p-4 */
     --stat-card-radius: var(--radius);
     --stat-card-border-opacity: 0.3;
     --stat-card-shadow: var(--shadow-sm);
@@ -1006,11 +1006,11 @@
     /* Icon configuration */
     --stat-icon-size: 1.25rem;
     --stat-icon-container-size: 2rem;
-    --stat-icon-container-padding: 0.375rem;
+    --stat-icon-container-padding: 0.375rem; /* 6px - Tailwind p-1.5 */
     --stat-icon-container-radius: 9999px;
     
     /* Progress bar config */
-    --stat-progress-height: 0.375rem;
+    --stat-progress-height: 0.25rem; /* 4px - Chuẩn hóa theo 4px */
     --stat-progress-radius: 9999px;
     
     /* Base container styling */
@@ -1025,7 +1025,7 @@
   
   /* Compact variant for stat cards in grid layout */
   .stat-card-compact {
-    --stat-card-padding: 1rem;
+    --stat-card-padding: 0.75rem; /* 12px - Chuẩn hóa theo 4px rule - Tailwind p-3 */
     --stat-value-font-size: 1.5rem;
     padding: var(--stat-card-padding);
   }
@@ -1286,20 +1286,20 @@
     --balance-chart-label-size: 0.75rem;
     --balance-chart-value-size: 1rem;
     
-    /* Margins and paddings */
-    --balance-chart-padding: 1rem;
-    --balance-chart-margin: 0.5rem;
+    /* Margins and paddings - chuẩn hóa theo 4px scale */
+    --balance-chart-padding: 1rem; /* 16px - tương đương Tailwind p-4 */
+    --balance-chart-margin: 0.5rem; /* 8px - tương đương Tailwind m-2 */
     
     /* Chart specific configuration */
-    --balance-chart-point-size: 6px;
-    --balance-chart-line-width: 2px;
+    --balance-chart-point-size: 4px; /* Điều chỉnh từ 6px xuống 4px cho đúng scale */
+    --balance-chart-line-width: 2px; /* Giữ nguyên width trong trường hợp này */
     --balance-chart-gradient-opacity-top: 0.2;
     --balance-chart-gradient-opacity-bottom: 0;
     
-    /* Tooltip configuration */
+    /* Tooltip configuration - tuân theo quy tắc 4px */
     --balance-chart-tooltip-shadow: var(--shadow-md);
-    --balance-chart-tooltip-border-radius: 0.5rem;
-    --balance-chart-tooltip-padding: 0.75rem;
+    --balance-chart-tooltip-border-radius: 0.5rem; /* 8px - đúng quy chuẩn */
+    --balance-chart-tooltip-padding: 0.75rem; /* 12px - tương đương Tailwind p-3 */
     
     /* Animation speeds */
     --balance-chart-anim-speed: 1000ms; /* Match animation-duration for chart */
