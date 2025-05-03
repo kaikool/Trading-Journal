@@ -543,7 +543,7 @@
   /* Consistent focus styles for all elements */
   *:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    box-shadow: var(--shadow-focus);
   }
   
   /* Form element focus with scroll margin */
@@ -580,7 +580,7 @@
   /* Improved accessibility focus-visible styles */
   *:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+    box-shadow: var(--shadow-focus);
     outline-offset: 2px;
     z-index: 1;
   }
@@ -589,14 +589,14 @@
   button:focus-visible,
   a:focus-visible,
   [role="button"]:focus-visible {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    box-shadow: var(--shadow-focus);
   }
   
   /* Form elements get unique focus styles */
   input:focus-visible, 
   select:focus-visible {
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35);
+    box-shadow: var(--shadow-focus);
   }
   
   /* Glass morphism */
@@ -638,7 +638,7 @@
   /* Consistent focus style for custom inputs */
   .custom-input:focus {
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);
+    box-shadow: var(--shadow-focus);
     outline: none;
   }
   
@@ -657,7 +657,7 @@
   
   .interactive-hover:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
   }
   
   .interactive-hover:active {
