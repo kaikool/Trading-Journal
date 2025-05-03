@@ -212,9 +212,9 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 onClick={handleOpenChartDialog}
               >
                 {displayUrl ? (
-                  <>
+                  <div className="trade-card-image-container">
                     {/* Placeholder image (always shown initially) */}
-                    <div className={`absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800 transition-opacity duration-300 ${imageLoaded && !isImageLoading ? 'opacity-0' : 'opacity-100'}`}>
+                    <div className={`trade-card-placeholder bg-gray-100 dark:bg-gray-800 ${imageLoaded && !isImageLoading ? 'opacity-0' : 'opacity-100'}`}>
                       {isImageLoading && (
                         <div className="flex flex-col items-center justify-center">
                           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
@@ -223,7 +223,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     </div>
                     
                     {/* Actual image (hidden until loaded) */}
-                    <div className={`absolute inset-0 transition-opacity duration-300 ${imageLoaded && !isImageLoading ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className={`trade-card-image ${imageLoaded && !isImageLoading ? 'loaded' : ''}`}>
                       <img 
                         ref={imageRef}
                         src={cachedImageUrl || '/icons/blank-chart.svg'}
@@ -259,7 +259,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     {imageLoaded && !isImageLoading && !imageError && (
                       <>
                         {/* Zoom overlay icon that appears on hover */}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="trade-card-zoom-overlay">
                           <Maximize2 className="h-8 w-8 text-white" />
                         </div>
                         
@@ -269,7 +269,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                         </div>
                       </>
                     )}
-                  </>
+                  </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
                     <span>No Chart</span>

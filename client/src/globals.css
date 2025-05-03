@@ -36,6 +36,48 @@
   opacity: 1;
 }
 
+/* Trade card image transition system */
+.trade-card-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.trade-card-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.trade-card-image {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.trade-card-image.loaded {
+  opacity: 1;
+}
+
+.trade-card-zoom-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.group:hover .trade-card-zoom-overlay {
+  opacity: 1;
+}
+
 /* Safe area utility classes for mobile devices with notches */
 @layer utilities {
   /* Safe area insets - optimized for iOS devices with notches and home indicators */
