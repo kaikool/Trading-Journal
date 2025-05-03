@@ -184,16 +184,8 @@ export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
     <nav 
       className={cn(
         "mobile-nav lg:hidden border-t border-border/60",
-        "fixed bottom-0 left-0 right-0 z-50",
-        "bg-background/95 backdrop-blur-md"
+        isPWAMode && "pwa-mobile-nav"
       )}
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        height: '56px',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        marginBottom: 0
-      }}
       role="navigation"
       aria-label="Main Navigation"
     >
@@ -202,16 +194,8 @@ export default function BottomNav({ isPWAMode = false }: BottomNavProps = {}) {
           "grid w-full h-full", 
           devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5',
           // Tối ưu hóa chiều cao cho nội dung khi có home indicator
-          hasHomeIndicator || isPWAMode ? "h-14" : "h-full",
-          // Thêm lớp pb-safe cho vùng điều hướng trong PWA mode
-          isPWAMode && "pb-safe"
+          hasHomeIndicator || isPWAMode ? "h-14" : "h-full"
         )}
-        style={{
-          // Đảm bảo nút không bị chèn vào home indicator
-          paddingBottom: (hasHomeIndicator || isPWAMode)
-            ? 'max(env(safe-area-inset-bottom, 0px), 4px)'
-            : '0'
-        }}
       >
         {devicePerformance === 'low' ? (
           // Simplified interface for low-performance devices
