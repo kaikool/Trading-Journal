@@ -58,46 +58,7 @@
     min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   }
 
-  /* iOS Home indicator friendly mobile navigation - fixed bottom */
-  .mobile-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    /* Sử dụng Tailwind's h-14 (56px) thay vì hardcoded height */
-    background-color: hsl(var(--background));
-    border-top: 1px solid hsl(var(--border) / 0.4);
-    z-index: 50;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    
-    /* Prevent content overflow inside navigation */
-    overflow: hidden;
-    
-    /* Box shadow for better visual separation */
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
-    
-    /* Support for variable safe area insets */
-    @supports (padding: max(0px)) {
-      padding-left: max(env(safe-area-inset-left, 0px), 0px);
-      padding-right: max(env(safe-area-inset-right, 0px), 0px);
-      /* Safe area inset được xử lý bằng inline style trong BottomNav.tsx */
-    }
-  }
-
-  /* Ensure child elements inherit overflow hidden to prevent scrolling issues */
-  .mobile-nav > div, 
-  .mobile-nav .grid,
-  .mobile-nav a,
-  .mobile-nav button {
-    overflow: hidden !important;
-  }
-  
-  /* Navigation items should be positioned correctly regardless of safe area */
-  .mobile-nav .grid {
-    height: 100% !important; /* Sử dụng 100% height thay vì fixed height */
-    padding-bottom: 0 !important; /* Let the parent handle the safe area */
-  }
+  /* iOS Home indicator friendly mobile navigation rule moved to consolidated definition below (line ~366) */
 
   /* Mobile content - ensure proper spacing with navigation and home indicator */
   .has-bottom-nav {
@@ -413,17 +374,14 @@
     max-height: calc(100dvh - env(safe-area-inset-top) - 12px);
   }
   
-  .chart-content-pwa {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
-  }
-  
+  /* Chart image and container styling */
   .chart-image-container {
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
-  .chart-image-container.pwa-mode {
+  .chart-image-container-pwa {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
@@ -538,11 +496,7 @@
   }
   
 
-  
-  .chart-content-pwa {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
-  }
-  
+  /* Chart pagination styling */
   .chart-pagination {
     position: absolute;
     left: 0;
@@ -552,6 +506,11 @@
     align-items: center;
     z-index: 20;
     bottom: 1rem;
+  }
+  
+  /* PWA-specific chart component variants */
+  .chart-content-pwa {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
   }
   
   .chart-pagination-pwa {

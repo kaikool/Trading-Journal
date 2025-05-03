@@ -164,7 +164,7 @@ export function ChartImageDialog({
           className={cn(
             "relative overflow-hidden flex-1 flex items-center justify-center",
             "bg-background/90 dark:bg-background/95",
-            isPWAMode && "pwa-chart-content chart-content-pwa"
+            isPWAMode && "chart-content-pwa"
           )}
         >
           <div className="relative w-full h-full flex items-center justify-center">
@@ -193,7 +193,7 @@ export function ChartImageDialog({
             <div className={cn(
               "w-full h-full flex items-center justify-center transition-all duration-300",
               isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
-              isPWAMode && "pwa-chart-image-container"
+              isPWAMode && "chart-image-container-pwa"
             )}>
               <img 
                 src={imageUrl || '/icons/blank-chart.svg'} 
