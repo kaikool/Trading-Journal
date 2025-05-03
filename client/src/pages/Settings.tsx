@@ -879,6 +879,80 @@ export default function Settings() {
             </div>
           </SettingsSection>
         </TabsContent>
+
+        {/* Achievements tab */}
+        <TabsContent value="achievements" className="mt-6 space-y-6">
+          <SettingsSection 
+            title="Achievement Settings" 
+            description="Manage your achievements and tracking preferences"
+          >
+            <div className="grid gap-6">
+              <OptionItem
+                title="Show Achievements"
+                description="Display achievement notifications and badges in the app"
+                control={
+                  <Switch
+                    id="showAchievements"
+                    checked={settings.showAchievements}
+                    onCheckedChange={(checked) =>
+                      setSettings({ ...settings, showAchievements: checked })
+                    }
+                  />
+                }
+              />
+              
+              <Separator className="my-2" />
+              
+              <div className="rounded-lg border border-border bg-card/50 p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <Trophy className="h-6 w-6 text-amber-500" />
+                  <h3 className="text-lg font-medium">Your Achievements</h3>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                    <div className="shrink-0 p-2 rounded-full bg-amber-100 dark:bg-amber-950/30">
+                      <Trophy className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">First Trade Completed</h4>
+                      <p className="text-xs text-muted-foreground mt-1">You've completed your first trade!</p>
+                    </div>
+                    <Badge className="ml-auto shrink-0 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-0">
+                      Unlocked
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                    <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
+                      <Trophy className="h-5 w-5 text-slate-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">10 Winning Trades</h4>
+                      <p className="text-xs text-muted-foreground mt-1">Complete 10 winning trades</p>
+                    </div>
+                    <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
+                      2/10
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 p-3 rounded-md bg-background/80 border border-border/50">
+                    <div className="shrink-0 p-2 rounded-full bg-slate-100 dark:bg-slate-900">
+                      <Trophy className="h-5 w-5 text-slate-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">Consistent Trader</h4>
+                      <p className="text-xs text-muted-foreground mt-1">Trade every day for 7 consecutive days</p>
+                    </div>
+                    <Badge className="ml-auto shrink-0 bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border-0">
+                      1/7
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SettingsSection>
+        </TabsContent>
         
         {/* Security settings tab */}
         <TabsContent value="security" className="mt-6 space-y-6">
