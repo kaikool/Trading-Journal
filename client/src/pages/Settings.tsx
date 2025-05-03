@@ -62,7 +62,7 @@ interface SettingsSectionProps {
 
 function SettingsSection({ title, description, icon: Icon, children, rightElement }: SettingsSectionProps) {
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-3 duration-300">
+    <div>
       <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
         <CardHeader className="pb-3 px-4 sm:px-6">
           <div className="flex items-center justify-between">
@@ -347,7 +347,7 @@ export default function Settings() {
   // Loading state with skeleton UI
   if (isLoading) {
     return (
-      <div className="container max-w-7xl mx-auto py-6 md:py-10 px-4 sm:px-6 animate-in fade-in duration-500">
+      <div className="container max-w-7xl mx-auto py-6 md:py-10 px-4 sm:px-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <Skeleton className="h-9 w-48 mb-2" />
@@ -388,7 +388,7 @@ export default function Settings() {
   
   // Main content
   return (
-    <div className="container max-w-7xl mx-auto py-5 md:py-8 px-4 sm:px-5 animate-in fade-in duration-700">
+    <div className="container max-w-7xl mx-auto py-5 md:py-8 px-4 sm:px-5">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div className="mb-4 md:mb-0">
