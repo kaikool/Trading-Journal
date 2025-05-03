@@ -1,147 +1,150 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Định nghĩa các loại theme được hỗ trợ
 export type ThemeType = 'light' | 'dark' | 'system';
 
 // Interface cho context
 interface ThemeContextType {
-  theme: ThemeType; 
-  currentTheme: ThemeType; 
-  setTheme: (theme: ThemeType) => void; 
-  applyTheme: (theme?: ThemeType) => void; 
-  isDarkMode: boolean; 
-  isLoading: boolean; 
+  theme: ThemeType; // Theme hiện tại được chọn trong settings
+  currentTheme: ThemeType; // Theme đang được áp dụng thực tế
+  setTheme: (theme: ThemeType) => void; // Cập nhật theme trong settings (không áp dụng ngay)
+  applyTheme: (theme?: ThemeType) => void; // Áp dụng theme ngay lập tức
+  isDarkMode: boolean; // Cho biết giao diện hiện tại có đang hiển thị ở chế độ tối hay không
+  isLoading: boolean; // Trạng thái đang tải theme
 }
 
-// Giá trị mặc định
-const defaultContextValue: ThemeContextType = {
+// Tạo context với giá trị mặc định
+const ThemeContext = createContext<ThemeContextType>({
   theme: 'system',
   currentTheme: 'system',
   setTheme: () => {},
   applyTheme: () => {},
   isDarkMode: false,
-  isLoading: true
-};
+  isLoading: true,
+});
 
-// Tạo context
-const ThemeContext = createContext<ThemeContextType>(defaultContextValue);
-
-// Helper function để áp dụng dark mode vào document
-const applyDarkModeToDOM = (isDark: boolean) => {
-  if (isDark) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
+// Hook để sử dụng ThemeContext
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
   }
-};
+  return context;
+}
 
 // Component Provider
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeType>('system');
+  // Theme đang được chọn trong settings (chỉ thay đổi khi lưu)
+  const [theme, setTheme] = useState<ThemeType>('system');
+  
+  // Theme đang thực sự được áp dụng cho UI
   const [currentTheme, setCurrentTheme] = useState<ThemeType>('system');
+  
+  // Trạng thái loading
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Bộ nhớ dark mode
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Cập nhật theme trong localStorage
-  const setTheme = useCallback((newTheme: ThemeType) => {
-    setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
-  }, []);
-
-  // Áp dụng theme ngay lập tức
-  const applyTheme = useCallback((newTheme?: ThemeType) => {
-    const themeToApply = newTheme || theme;
-    setCurrentTheme(themeToApply);
-    localStorage.setItem('currentTheme', themeToApply);
-    
-    if (themeToApply === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(prefersDark);
-      applyDarkModeToDOM(prefersDark);
-    } else {
-      const isDark = themeToApply === 'dark';
-      setIsDarkMode(isDark);
-      applyDarkModeToDOM(isDark);
-    }
-  }, [theme]);
-
-  // Khởi tạo theme từ localStorage
+  // Theo dõi chế độ được chọn của hệ thống
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') as ThemeType | null;
-    const savedCurrentTheme = localStorage.getItem('currentTheme') as ThemeType | null;
+    // Khởi tạo từ localStorage
+    const savedTheme = localStorage.getItem('theme') as ThemeType;
+    const savedCurrentTheme = localStorage.getItem('currentTheme') as ThemeType;
     
     if (savedTheme) {
-      setThemeState(savedTheme);
+      setTheme(savedTheme);
     }
     
     if (savedCurrentTheme) {
       setCurrentTheme(savedCurrentTheme);
     } else if (savedTheme) {
+      // Nếu không có currentTheme nhưng có theme, áp dụng theme đó
       setCurrentTheme(savedTheme);
     }
     
     setIsLoading(false);
-  }, []);
-
-  // Theo dõi thay đổi chế độ hệ thống
-  useEffect(() => {
+    
+    // Theo dõi thay đổi chế độ hệ thống
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
       if (currentTheme === 'system') {
         setIsDarkMode(e.matches);
-        applyDarkModeToDOM(e.matches);
+        applyDarkMode(e.matches);
       }
     };
     
-    // Kiểm tra ngay lập tức
+    // Kiểm tra ngay lập tức chế độ hệ thống
     if (currentTheme === 'system') {
       setIsDarkMode(mediaQuery.matches);
-      applyDarkModeToDOM(mediaQuery.matches);
+      applyDarkMode(mediaQuery.matches);
     }
     
-    // Đăng ký event listener
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [currentTheme]);
+  }, []);
+
+  // Áp dụng theme ngay lập tức
+  const applyTheme = (newTheme?: ThemeType) => {
+    const themeToApply = newTheme || theme;
+    setCurrentTheme(themeToApply);
+    localStorage.setItem('currentTheme', themeToApply);
+    
+    if (themeToApply === 'system') {
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(isDarkMode);
+      applyDarkMode(isDarkMode);
+    } else {
+      const isDark = themeToApply === 'dark';
+      setIsDarkMode(isDark);
+      applyDarkMode(isDark);
+    }
+  };
+
+  // Áp dụng hoặc loại bỏ dark mode trên document
+  const applyDarkMode = (isDark: boolean) => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   // Theo dõi thay đổi của currentTheme
   useEffect(() => {
     if (isLoading) return;
     
-    if (currentTheme === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(prefersDark);
-      applyDarkModeToDOM(prefersDark);
+    // Dùng closure tại thời điểm này thay vì biến state để tránh stale value
+    const theme = currentTheme;
+    
+    if (theme === 'system') {
+      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(isDarkMode);
+      applyDarkMode(isDarkMode);
     } else {
-      const isDark = currentTheme === 'dark';
+      const isDark = theme === 'dark';
       setIsDarkMode(isDark);
-      applyDarkModeToDOM(isDark);
+      applyDarkMode(isDark);
     }
   }, [currentTheme, isLoading]);
 
-  // Memoize context value 
-  const contextValue = {
-    theme,
-    currentTheme,
-    setTheme,
-    applyTheme,
-    isDarkMode,
-    isLoading
+  // Thay đổi theme trong settings (không áp dụng ngay)
+  const handleSetTheme = (newTheme: ThemeType) => {
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
   };
 
   return (
-    <ThemeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={{
+      theme,
+      currentTheme,
+      setTheme: handleSetTheme,
+      applyTheme,
+      isDarkMode,
+      isLoading
+    }}>
       {children}
     </ThemeContext.Provider>
   );
-}
-
-// Hook để sử dụng ThemeContext
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-}
+};
