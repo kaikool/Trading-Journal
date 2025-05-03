@@ -33,6 +33,7 @@ import LazyCloseTradeForm from "./LazyCloseTradeForm";
 import { TradeStatus, getTradeStatusConfig, getTradeStatusColorClasses } from "@/lib/trade-status-config";
 import { determineTradeStatus } from "@/lib/trade-status-helpers";
 import TradeStatusBadge from "./TradeStatusBadge";
+import DirectionBadge from "./DirectionBadge";
 import axios from "axios";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
@@ -278,8 +279,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 
                 {/* Trade direction badge */}
                 <div className="absolute top-8 left-8">
-                  <TradeStatusBadge 
-                    status={direction === 'BUY' ? 'TP' : 'SL'} 
+                  <DirectionBadge 
+                    direction={direction as "BUY" | "SELL"}
                     iconOnly={false}
                     size="md"
                   />
