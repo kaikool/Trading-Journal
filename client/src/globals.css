@@ -741,15 +741,11 @@
     -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
     box-shadow: var(--mobile-nav-shadow);
     
-    /* Transitions for smooth animations - control animation only, not structure */
-    transition: 
-      height var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing), 
-      padding-bottom var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
+    /* NO transitions for positioning to prevent unexpected movement */
   }
   
   /* PWA mode safe area handling - EXACT BOTTOM POSITIONING RULE */
-  html.pwa-mode .mobile-nav,
-  .mobile-nav.pwa-mode {
+  html.pwa-mode .mobile-nav {
     padding-bottom: var(--safe-bottom);
     height: calc(var(--mobile-nav-height) + var(--safe-bottom));
     border-top: 1px solid hsl(var(--border) / 0.6);

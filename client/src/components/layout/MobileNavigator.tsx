@@ -54,11 +54,8 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
   );
 }
 
-interface MobileNavigatorProps {
-  isPWAMode?: boolean;
-}
-
-export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorProps = {}) {
+// No props needed - all styling handled by global CSS
+export default function MobileNavigator() {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
@@ -110,7 +107,7 @@ export default function MobileNavigator({ isPWAMode = false }: MobileNavigatorPr
 
   return (
     <nav 
-      className={cn("mobile-nav", isPWAMode && "pwa-mode")}
+      className="mobile-nav"
       role="navigation"
       aria-label="Main Navigation"
     >
