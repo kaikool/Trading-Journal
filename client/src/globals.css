@@ -651,23 +651,17 @@
     transform: translateY(0);
   }
   
-  /* Button hover effects */
-  button:not(.no-hover), 
-  .button:not(.no-hover),
-  a[role="button"]:not(.no-hover) {
+  /* Interactive element hover class (use instead of direct element selectors) */
+  .interactive-element {
     transition: all 0.2s ease-in-out;
   }
   
-  button:not(.no-hover):hover, 
-  .button:not(.no-hover):hover,
-  a[role="button"]:not(.no-hover):hover {
+  .interactive-element:hover {
     transform: translateY(-1px);
     filter: brightness(1.05);
   }
   
-  button:not(.no-hover):active, 
-  .button:not(.no-hover):active,
-  a[role="button"]:not(.no-hover):active {
+  .interactive-element:active {
     transform: translateY(0);
     filter: brightness(0.95);
   }
