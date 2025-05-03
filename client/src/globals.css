@@ -732,10 +732,10 @@
     --mobile-nav-indicator-width: 12px;
     
     /* Base positioning - CORE POSITIONING RULES */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: fixed !important; /* !important để không bị ghi đè */
+    bottom: 0 !important; /* !important để không bị ghi đè */
+    left: 0 !important;
+    right: 0 !important;
     height: var(--mobile-nav-height);
     z-index: var(--mobile-nav-z-index);
     
