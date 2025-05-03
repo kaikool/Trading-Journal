@@ -10,6 +10,7 @@ import NotFound from "@/pages/not-found";
 
 
 import MobileLayout from "@/components/layout/MobileLayout";
+import MenuBar from "@/components/layout/MenuBar";
 import { auth } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { PWAContainer } from "@/components/pwa/PWAContainer";
 import { preloadRoute } from "@/lib/preload";
 import AchievementNotificationContainer from "@/components/achievements/AchievementNotificationContainer";
-import { LayoutProvider, useLayout, LayoutContext, SIDEBAR_WIDTH, SIDEBAR_COLLAPSED_WIDTH } from "@/contexts/LayoutContext";
+import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DataCacheProvider } from "@/contexts/DataCacheContext";
 
@@ -265,8 +266,6 @@ function MainContent() {
   
   return (
     <>
-      {/* Đã loại bỏ thanh sidebar */}
-      
       {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
       
       {/* Nếu là mobile, sử dụng MobileLayout với thanh điều hướng dưới cùng */}
@@ -275,10 +274,12 @@ function MainContent() {
           {renderPageContent()}
         </MobileLayout>
       ) : (
-        // Nếu là desktop, sử dụng layout đơn giản (đã loại bỏ sidebar)
-        <div className="w-full">
-        
-          {renderPageContent()}
+        // Nếu là desktop, sử dụng MenuBar ở mode desktop và hiển thị nội dung bên dưới
+        <div className="flex flex-col w-full">
+          <MenuBar mode="desktop" />
+          <div className="mt-16"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
+            {renderPageContent()}
+          </div>
         </div>
       )}
     </>
