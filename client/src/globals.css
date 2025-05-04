@@ -6,12 +6,17 @@
 }
 
 .fade-in {
-  opacity: 0;
+  opacity: 1; /* Mặc định hiển thị để tránh các thành phần bị ẩn */
   transition: opacity 0.3s ease-in-out;
 }
 
 .fade-in.loaded {
   opacity: 1;
+}
+
+/* Nếu cần ẩn thì sử dụng lớp này thay vì thay đổi mặc định */
+.fade-in.initially-hidden {
+  opacity: 0;
 }
 
 /* Image transitions in forms */
