@@ -737,6 +737,7 @@ export function StrategiesManagement() {
       // Ensure all strategy conditions are properly formatted before saving
       const formattedStrategy = {
         ...strategy,
+        userId: userId, // Ensure userId is included
         rules: strategy.rules?.map(rule => ensureConditionFormat(rule)) || [],
         entryConditions: strategy.entryConditions?.map(condition => ensureConditionFormat(condition)) || [],
         exitConditions: strategy.exitConditions?.map(condition => ensureConditionFormat(condition)) || [],
@@ -868,6 +869,7 @@ export function StrategiesManagement() {
               // Set this strategy as default
               updateStrategy(userId, strategy.id, {
                 ...strategy,
+                userId: userId,
                 isDefault: true,
                 updatedAt: Timestamp.now()
               }),
@@ -876,6 +878,7 @@ export function StrategiesManagement() {
                 .filter(s => s.id !== strategy.id && s.isDefault)
                 .map(s => updateStrategy(userId, s.id, {
                   ...s,
+                  userId: userId,
                   isDefault: false,
                   updatedAt: Timestamp.now()
                 }))
