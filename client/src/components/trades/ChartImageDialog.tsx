@@ -3,8 +3,7 @@ import {
   Dialog, 
   DialogContent, 
   DialogTitle, 
-  DialogDescription, 
-  useDialogVariant 
+  DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
@@ -93,18 +92,24 @@ export function ChartImageDialog({
   // State to track currently displayed image
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
+  // Reset zoom and pan to default values
+  const resetZoom = () => {
+    setScale(1);
+    setTranslate({ x: 0, y: 0 });
+  };
+  
   // Reset zoom and state when dialog opens or image changes
   useEffect(() => {
     if (isOpen) {
       resetZoom();
       setCurrentImageIndex(0);
     }
-  }, [isOpen]);
+  }, [isOpen, resetZoom]);
   
   // Reset zoom when image changes
   useEffect(() => {
     resetZoom();
-  }, [currentImageIndex]);
+  }, [currentImageIndex, resetZoom]);
   
   // If no images are available, don't display the dialog
   if (availableImages.length === 0) {
@@ -123,12 +128,6 @@ export function ChartImageDialog({
     imageType: currentImage.imageType,
     placeholder: '/icons/blank-chart.svg',
   });
-
-  // Reset zoom and pan to default values
-  const resetZoom = () => {
-    setScale(1);
-    setTranslate({ x: 0, y: 0 });
-  };
 
   // Zoom in function with maximum limit
   const zoomIn = () => {
@@ -211,6 +210,7 @@ export function ChartImageDialog({
     >
       <DialogContent 
         variant="chart"
+        className="h-[85vh] sm:h-[85vh] md:h-[85vh] lg:h-[85vh] max-h-[800px]"
       >
         {/* Title và Description theo chuẩn accessibility */}
         <DialogTitle className="sr-only">
