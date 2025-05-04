@@ -1,32 +1,8 @@
-/* Debug cấu hình CSS - tạm thời xóa globals.css import và sử dụng các utilities */
-/* @import "./globals.css"; */
+@import "./globals.css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Thêm các styles cơ bản tạm thời để xem vấn đề */
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
-
-/* Thêm scrollbar cơ bản trực tiếp */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
 
 /* 
  * Chỉ sử dụng một phương pháp tiếp cận nhất quán cho toàn bộ safe area handling.

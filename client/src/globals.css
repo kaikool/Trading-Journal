@@ -1734,83 +1734,24 @@
     @apply text-foreground/70;
   }
   
-  /* 
-   * =======================================================
-   * SCROLLBAR SYSTEM
-   * =======================================================
-   * Centralized scrollbar styling to ensure consistency
-   * across the application with responsive designs
-   */
-  :root {
-    /* Scrollbar measurements */
-    --scrollbar-size: clamp(6px, 0.5vw, 12px);  /* Responsive size based on viewport */
-    --scrollbar-track-radius: var(--radius-sm, 0.375rem);
-    --scrollbar-thumb-radius: var(--radius-sm, 0.375rem);
-    
-    /* Scrollbar colors */
-    --scrollbar-track-color: hsl(var(--muted) / 0.5);
-    --scrollbar-thumb-color: hsl(var(--muted-foreground) / 0.5);
-    --scrollbar-thumb-hover-color: hsl(var(--muted-foreground) / 0.7);
-  }
-  
-  /* Base scrollbar styling */
+  /* Scrollbar styling */
   ::-webkit-scrollbar {
-    width: var(--scrollbar-size);
-    height: var(--scrollbar-size);
+    width: 8px;
+    height: 8px;
   }
   
-  /* Track styling */
   ::-webkit-scrollbar-track {
-    background: var(--scrollbar-track-color);
-    border-radius: var(--scrollbar-track-radius);
-    margin: 2px 0; /* Add a small margin to prevent track from touching edges */
+    background: hsl(var(--muted));
+    border-radius: 8px;
   }
   
-  /* Thumb styling */
   ::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb-color);
-    border-radius: var(--scrollbar-thumb-radius);
-    border: 2px solid transparent; /* Creates padding effect */
-    background-clip: padding-box;
+    background: hsl(var(--muted-foreground) / 0.5);
+    border-radius: 8px;
   }
   
-  /* Hover state */
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-thumb-hover-color);
-    background-clip: padding-box;
-  }
-  
-  /* Ensure all scrollable containers have proper overflow behavior */
-  .scrollable {
-    overflow-y: auto;
-    scrollbar-width: thin; /* For Firefox */
-    position: relative; /* Establish positioning context */
-  }
-  
-  /* Apply to common scrollable containers to ensure consistency */
-  .dialog-content,
-  .card-content,
-  .sidebar-content,
-  .dropdown-content,
-  .accordion-content,
-  [data-overflow="auto"],
-  [class*="overflow-y-auto"],
-  [class*="overflow-auto"] {
-    /* Inherit scrollbar styles */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); /* For Firefox */
-  }
-  
-  /* Fix for mobile to ensure scrollbar is properly sized */
-  @media (max-width: 768px) {
-    ::-webkit-scrollbar {
-      width: var(--scrollbar-size);
-    }
-    
-    /* Improve tap target on mobile */
-    ::-webkit-scrollbar-thumb {
-      min-height: 40px;
-    }
+    background: hsl(var(--muted-foreground) / 0.7);
   }
   
   /* Improved accessibility focus-visible styles */
