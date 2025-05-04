@@ -93,10 +93,10 @@ export function ChartImageDialog({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
   // Reset zoom and pan to default values
-  const resetZoom = () => {
+  const resetZoom = useCallback(() => {
     setScale(1);
     setTranslate({ x: 0, y: 0 });
-  };
+  }, []);
   
   // Reset zoom and state when dialog opens or image changes
   useEffect(() => {
@@ -108,7 +108,9 @@ export function ChartImageDialog({
   
   // Reset zoom when image changes
   useEffect(() => {
-    resetZoom();
+    if (currentImageIndex !== undefined) {
+      resetZoom();
+    }
   }, [currentImageIndex, resetZoom]);
   
   // If no images are available, don't display the dialog
@@ -130,16 +132,16 @@ export function ChartImageDialog({
   });
 
   // Zoom in function with maximum limit
-  const zoomIn = () => {
+  const zoomIn = useCallback(() => {
     const maxZoom = parseFloat(getComputedStyle(document.documentElement)
       .getPropertyValue('--chart-image-max-scale')) || 3;
     setScale(prev => Math.min(prev + 0.25, maxZoom));
-  };
+  }, []);
 
   // Zoom out function with minimum limit of 1
-  const zoomOut = () => {
+  const zoomOut = useCallback(() => {
     setScale(prev => Math.max(prev - 0.25, 1));
-  };
+  }, []);
 
   // Handler for mouse down events (start dragging)
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
