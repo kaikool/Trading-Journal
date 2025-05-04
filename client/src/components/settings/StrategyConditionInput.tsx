@@ -76,8 +76,8 @@ export function StrategyConditionForm({
   isNew = false
 }: StrategyConditionFormProps) {
   return (
-    <div className="mb-4 p-4 border rounded-md bg-card/50 w-full max-w-full sm:max-w-[800px]">
-      <div className="space-y-4">
+    <div className="mb-4 p-3 border rounded-md bg-card/50 w-full">
+      <div className="space-y-3">
         <div>
           <Label htmlFor={`condition-label-${condition.id}`}>Condition</Label>
           <Input 
@@ -92,7 +92,7 @@ export function StrategyConditionForm({
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           <div>
             <Label htmlFor={`condition-indicator-${condition.id}`}>
               <Activity className="h-3 w-3 inline mr-1" />
@@ -166,14 +166,14 @@ export function StrategyConditionForm({
         <div>
           <Label htmlFor={`condition-description-${condition.id}`}>
             <Info className="h-3 w-3 inline mr-1" />
-            Detailed Description (optional)
+            Description (optional)
           </Label>
           <Textarea
             id={`condition-description-${condition.id}`}
-            placeholder="Detailed description of this condition..."
+            placeholder="Brief description..."
             value={condition.description || ""}
             onChange={(e) => onChange({ ...condition, description: e.target.value })}
-            className="h-20"
+            className="h-16 text-sm"
           />
         </div>
         
