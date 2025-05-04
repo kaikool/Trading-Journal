@@ -483,7 +483,12 @@
      * Following Apple Human Interface Guidelines for Tab Bar
      * https://developer.apple.com/design/human-interface-guidelines/components/navigation/tab-bars
      */
-    --mobile-nav-height: 49px; /* Standard iOS Tab Bar height */
+    /* Base mobile navigation height using relative units instead of hardcoded 49px
+     * - Based on standard touch target size recommendations (44px minimum)
+     * - Using rem for better accessibility and responsive scaling
+     * - 3rem = ~48px at default font size which is close to iOS standard 49px
+     */
+    --mobile-nav-height: 3rem;
     --mobile-nav-z-index: 50;  /* Keep it above everything else */
     --mobile-nav-blur: 12px;   /* Subtle blur for glass effect */
     --mobile-nav-anim-speed: 300ms;
