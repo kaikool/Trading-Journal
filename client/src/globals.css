@@ -1057,8 +1057,7 @@
     padding: var(--mobile-nav-item-padding) 0.5rem;
     
     position: relative;
-    overflow: hidden;
-    overflow-y: hidden; /* Fix for scrolling issue */
+    overflow: hidden; /* Prevents any scrolling */
     color: var(--mobile-nav-inactive-color);
     transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
     
@@ -1119,7 +1118,6 @@
     /* Ensures proper vertical alignment */
     line-height: 1;
     flex-shrink: 0; /* Prevents icon from shrinking */
-    overflow-y: hidden; /* Fix for scrolling issue */
     
     /* UPDATED: Create a subtle container effect for the icon */
     position: relative;
@@ -1137,7 +1135,6 @@
       font-weight var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
     white-space: nowrap;
     overflow: hidden;
-    overflow-y: hidden; /* Fix for scrolling issue */
     text-overflow: ellipsis;
     max-width: 90%; /* UPDATED: Prevent overflow issues */
     letter-spacing: -0.01em; /* Slight tightening for iOS feel */
