@@ -149,22 +149,22 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
           // Reduced to 3 tabs as per Apple HIG recommendations for simpler interfaces
           <>
             <MobileNavigatorItem
-              icon={<LayoutDashboard size="24" strokeWidth={1.75} />}
-              activeIcon={<LayoutDashboard size="24" strokeWidth={2} />}
+              icon={<LayoutDashboard size={24} strokeWidth={1.5} />}
+              activeIcon={<LayoutDashboard size={24} strokeWidth={2} />}
               label="Dashboard"
               href="/"
               isActive={location === "/" || location === "/dashboard"}
             />
             <MobileNavigatorItem
-              icon={<TrendingUp size="24" strokeWidth={1.75} />}
-              activeIcon={<TrendingUp size="24" strokeWidth={2} />}
+              icon={<TrendingUp size={24} strokeWidth={1.5} />}
+              activeIcon={<TrendingUp size={24} strokeWidth={2} />}
               label="Trades"
               href="/trade/new"
               isActive={location.includes("/trade")}
             />
             <MobileNavigatorItem
-              icon={<BarChart2 size="24" strokeWidth={1.75} />}
-              activeIcon={<BarChart2 size="24" strokeWidth={2} />}
+              icon={<BarChart2 size={24} strokeWidth={1.5} />}
+              activeIcon={<BarChart2 size={24} strokeWidth={2} />}
               label="Analytics"
               href="/analytics"
               isActive={location === "/analytics"}

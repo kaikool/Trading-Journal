@@ -937,11 +937,11 @@
     
     /* Add subtle hover effect */
     position: relative;
-    
-    /* Add feedback for active/pressed state */
-    &:active {
-      opacity: 0.8;
-    }
+  }
+  
+  /* Add feedback for active/pressed state */
+  .mobile-nav-item:active {
+    opacity: 0.8;
   }
   
   /* UPDATED: Active state indicator - more prominent positioning and sizing
@@ -1019,8 +1019,8 @@
     font-weight: var(--mobile-nav-active-weight);
     color: var(--mobile-nav-active-color);
     
-    /* UPDATED: Added subtle scale effect for better visual hierarchy */
-    transform: scale(1.02);
+    /* UPDATED: Added subtle emphasis for better visual hierarchy */
+    letter-spacing: -0.02em;
   }
   
   /* Mobile header bar - used in MobileNav */
