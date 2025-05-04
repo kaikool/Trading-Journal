@@ -13,36 +13,37 @@ const dialogBase = "rounded-lg border shadow-lg bg-background";
 const maxHeightClasses = "max-h-[85dvh] sm:max-h-[85vh]"; // Sử dụng cả dvh và vh
 const overflowClasses = "overflow-y-auto";
 
+// Sử dụng CSS variables để tuân thủ quy tắc spacing của ứng dụng
 const dialogVariants = {
   /**
    * Standard Dialog - Kích thước tiêu chuẩn cho dialog thông thường
    * Sử dụng cho hầu hết các dialog trong ứng dụng
    */
-  standard: `${dialogBase} py-safe max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[560px] ${maxHeightClasses} ${overflowClasses} p-3 sm:p-4`,
+  standard: `${dialogBase} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[560px] ${maxHeightClasses} ${overflowClasses} p-3 sm:p-4`,
   
   /**
    * Chart Dialog - Kích thước tối ưu cho dialog hiển thị biểu đồ
    * Rộng hơn để hiển thị tốt hơn cho nội dung đồ họa
    */
-  chart: `${dialogBase} py-safe p-0 chart-dialog`,
+  chart: `${dialogBase} p-0 chart-dialog`,
   
   /**
    * Form Dialog - Cho phép dialog chứa form thu thập dữ liệu từ người dùng
    * Kích thước trung bình và có padding phù hợp
    */
-  form: `${dialogBase} py-safe max-w-[95vw] w-full sm:max-w-[85vw] md:max-w-[520px] ${maxHeightClasses} ${overflowClasses} p-4 sm:p-5`,
+  form: `${dialogBase} max-w-[95vw] w-full sm:max-w-[85vw] md:max-w-[520px] ${maxHeightClasses} ${overflowClasses} p-4 sm:p-5`,
   
   /**
    * Compact Dialog - Cho các thông báo hoặc xác nhận nhỏ gọn
    * Kích thước nhỏ và có padding giảm thiểu
    */
-  compact: `${dialogBase} py-safe max-w-[95vw] w-full sm:max-w-[400px] ${maxHeightClasses} ${overflowClasses} p-3 sm:p-4`,
+  compact: `${dialogBase} max-w-[95vw] w-full sm:max-w-[400px] ${maxHeightClasses} ${overflowClasses} p-3 sm:p-4`,
   
   /**
    * Large Dialog - Cho nội dung phức tạp hoặc dữ liệu lớn
    * Kích thước lớn nhất trong hệ thống
    */
-  large: `${dialogBase} py-safe max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[720px] lg:max-w-[800px] ${maxHeightClasses} ${overflowClasses} p-4 sm:p-5`
+  large: `${dialogBase} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[720px] lg:max-w-[800px] ${maxHeightClasses} ${overflowClasses} p-4 sm:p-5`
 };
 
 /**
