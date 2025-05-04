@@ -233,7 +233,7 @@ export function StrategiesManagement() {
     createNewStrategyCondition(newStrategy.exitConditions ? newStrategy.exitConditions.length : 0)
   );
   
-  // Đã loại bỏ toggle giữa simple và advanced mode, luôn sử dụng advanced mode
+  // Removed toggle between simple and advanced mode, always using advanced mode
   
   /**
    * Converts legacy string-based rules/conditions to StrategyCondition[] format
