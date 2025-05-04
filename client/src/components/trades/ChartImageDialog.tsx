@@ -205,37 +205,26 @@ export function ChartImageDialog({
     >
       <DialogContent 
         className="p-0 chart-dialog"
-        aria-describedby="chart-image-viewer-description"
       >
-        <div id="chart-image-viewer-description" className="sr-only">
-          {dialogDescription}
-        </div>
-        
-        {/* Header bar with title and controls - nhỏ gọn hơn */}
-        <DialogTitle 
-          id="chart-dialog-title" 
-          className="flex items-center justify-between py-2 px-3 border-b text-sm"
-        >
-          <div className="flex flex-col">
-            <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
-              {dialogTitle}
-            </span>
-            {availableImages.length > 1 && (
-              <span style={{
-                fontSize: 'var(--chart-subtitle-font-size)',
-                color: 'var(--chart-subtitle-color)'
-              }}>
-                {`${currentImageIndex + 1}/${availableImages.length}`}
-              </span>
-            )}
-          </div>
-          
-          {/* Close button nhỏ hơn */}
-          <X 
-            className="h-3.5 w-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
-            onClick={onClose}
-          />
+        {/* Header bar với title và description */}
+        <DialogTitle className="sr-only">
+          {dialogTitle}
         </DialogTitle>
+        
+        {/* Thanh tiêu đề nhỏ gọn hơn */}
+        <div className="flex flex-col py-2 px-3 border-b text-sm">
+          <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
+            {dialogTitle}
+          </span>
+          {availableImages.length > 1 && (
+            <span style={{
+              fontSize: 'var(--chart-subtitle-font-size)',
+              color: 'var(--chart-subtitle-color)'
+            }}>
+              {`${currentImageIndex + 1}/${availableImages.length}`}
+            </span>
+          )}
+        </div>
         
         {/* Main content area with swipe handlers */}
         <div className="chart-content">
