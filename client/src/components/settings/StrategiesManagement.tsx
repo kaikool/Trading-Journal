@@ -550,6 +550,10 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
             }
           }}
           onSetAsDefault={() => onSetDefaultStrategy(strategy)}
+          onEditFieldChange={(fieldName, value) => {
+            // Gọi đến hàm cập nhật từ component cha
+            handleStrategyFieldChange(strategy.id, fieldName, value);
+          }}
           newRule={newRule}
           newEntryCondition={newEntryCondition}
           newExitCondition={newExitCondition}
