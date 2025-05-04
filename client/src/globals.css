@@ -632,6 +632,47 @@
     --chart-4: 35 92% 50%;
     --chart-5: 142 72% 45%;
     
+    /* Typography - Standardized text sizes for all components */
+    --text-xs: 0.75rem;    /* 12px */
+    --text-sm: 0.875rem;   /* 14px */
+    --text-base: 1rem;     /* 16px */
+    --text-lg: 1.125rem;   /* 18px */
+    --text-xl: 1.25rem;    /* 20px */
+    --text-2xl: 1.5rem;    /* 24px */
+    --text-3xl: 1.875rem;  /* 30px */
+    --text-4xl: 2.25rem;   /* 36px */
+    
+    /* Font weights - Standardized for all components */
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+    
+    /* Standard icon sizes for all visual components */
+    --icon-xs: 0.75rem;    /* 12px */
+    --icon-sm: 1rem;       /* 16px */
+    --icon-md: 1.25rem;    /* 20px */
+    --icon-lg: 1.5rem;     /* 24px */
+    --icon-xl: 2rem;       /* 32px */
+    
+    /* Visual component spàcing - Based on 4px grid system */
+    --spacing-0: 0;
+    --spacing-1: 0.25rem;  /* 4px */
+    --spacing-2: 0.5rem;   /* 8px */
+    --spacing-3: 0.75rem;  /* 12px */
+    --spacing-4: 1rem;     /* 16px */
+    --spacing-5: 1.25rem;  /* 20px */
+    --spacing-6: 1.5rem;   /* 24px */
+    --spacing-8: 2rem;     /* 32px */
+    
+    /* Card component system defaults */
+    --card-padding: var(--spacing-4);     /* Standard card padding */
+    --card-title-size: var(--text-xl);    /* Standard card title size */
+    --card-icon-size: var(--icon-md);     /* Standard card icon size */
+    --card-title-weight: var(--font-semibold); /* Standard card title weight */
+    --card-value-size: var(--text-3xl);   /* Standard value display size */
+    --card-subtitle-size: var(--text-sm); /* Standard subtitle size */
+    
     /* Sidebar colors */
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
@@ -1302,6 +1343,33 @@
     @media (max-width: 640px) {
       bottom: max(var(--chart-spacing-sm), calc(var(--safe-bottom) + var(--chart-spacing-xs)));
     }
+  }
+  
+  /* Chart navigation buttons - Standardized using CSS variables */
+  .chart-nav-button {
+    background-color: rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    outline: none;
+    
+    /* Show on larger screens */
+    @media (min-width: 640px) {
+      display: flex !important;
+    }
+  }
+  
+  .chart-nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    transform: translateY(-50%) scale(1.05);
+  }
+  
+  .chart-nav-button:focus-visible {
+    outline: none;
+    ring: 2px solid hsl(var(--primary) / 0.4);
   }
   
   /* 

@@ -176,8 +176,15 @@ export function TradingStatsCard({
     <Card className="border shadow-sm">
       <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="text-xl font-semibold flex items-center">
-            <BarChart2 className="h-5 w-5 mr-2 text-primary" />
+          <CardTitle className="flex items-center" style={{
+            fontSize: 'var(--card-title-size)',
+            fontWeight: 'var(--card-title-weight)'
+          }}>
+            <BarChart2 style={{
+              height: 'var(--card-icon-size)',
+              width: 'var(--card-icon-size)',
+              marginRight: 'var(--spacing-2)'
+            }} className="text-primary" />
             Trading Statistics
           </CardTitle>
           

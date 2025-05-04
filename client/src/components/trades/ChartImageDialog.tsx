@@ -141,11 +141,11 @@ export function ChartImageDialog({
         
         <DialogTitle className="flex items-center justify-between py-3 px-4 border-b">
           <div className="flex flex-col">
-            <span className="font-medium text-sm">
+            <span className="font-medium" style={{fontSize: 'var(--text-sm)'}}>
               {tradePair} - {currentImage.label}
             </span>
             {availableImages.length > 1 && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground" style={{fontSize: 'var(--text-xs)'}}>
                 {`${currentImageIndex + 1}/${availableImages.length}`}
               </span>
             )}
@@ -223,9 +223,18 @@ export function ChartImageDialog({
             {availableImages.length > 1 && !isMobile && (
               <>
                 <button
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/90 hidden sm:flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="chart-nav-button chart-nav-button-prev"
                   onClick={handlePrevious}
                   aria-label="Previous image"
+                  style={{
+                    position: 'absolute',
+                    left: 'var(--spacing-4)',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    padding: 'var(--spacing-2)',
+                    borderRadius: '9999px',
+                    display: 'none',
+                  }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
@@ -233,9 +242,18 @@ export function ChartImageDialog({
                 </button>
                 
                 <button
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/90 hidden sm:flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="chart-nav-button chart-nav-button-next"
                   onClick={handleNext}
                   aria-label="Next image"
+                  style={{
+                    position: 'absolute',
+                    right: 'var(--spacing-4)',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    padding: 'var(--spacing-2)',
+                    borderRadius: '9999px',
+                    display: 'none',
+                  }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
