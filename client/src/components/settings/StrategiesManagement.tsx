@@ -180,6 +180,7 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
 };
 
 // A memoized component for strategy items in the accordion
+// A memoized component for strategy items in the accordion
 const StrategyItem = React.memo(function StrategyItem({
   strategy,
   isEditMode,
@@ -187,7 +188,15 @@ const StrategyItem = React.memo(function StrategyItem({
   onUpdate,
   onDelete,
   onSetAsDefault,
-  isSaving
+  isSaving,
+  // New expanded props to avoid closure issues
+  editFieldValues,
+  onEditFieldChange,
+  newRule,
+  newEntryCondition,
+  newExitCondition,
+  newTimeframe,
+  resetFormFields
 }: {
   strategy: TradingStrategy;
   isEditMode: boolean;
@@ -196,10 +205,23 @@ const StrategyItem = React.memo(function StrategyItem({
   onDelete: () => void;
   onSetAsDefault: () => void;
   isSaving: boolean;
+  editFieldValues?: Record<string, any>;
+  onEditFieldChange?: (fieldName: string, value: any) => void;
+  newRule: string;
+  newEntryCondition: string;
+  newExitCondition: string;
+  newTimeframe: string;
+  resetFormFields: () => void;
 }) {
+  // Memoized handler for updating fields in edit mode
+  const handleFieldChange = useCallback((fieldName: string, value: any) => {
+    if (onEditFieldChange) {
+      onEditFieldChange(fieldName, value);
+    }
+  }, [onEditFieldChange]);
+
   return (
     <AccordionItem
-      key={strategy.id}
       value={strategy.id}
       className={cn(
         "border rounded-lg overflow-hidden",
@@ -218,14 +240,210 @@ const StrategyItem = React.memo(function StrategyItem({
       </AccordionTrigger>
       <AccordionContent className="px-3 pb-3 pt-1.5">
         {isEditMode ? (
-          /* Edit mode content would go here */
-          <div>Editing...</div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor={`name-${strategy.id}`}>Strategy Name</Label>
+              <Input
+                id={`name-${strategy.id}`}
+                value={strategy.name}
+                onChange={(e) => handleFieldChange('name', e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor={`description-${strategy.id}`}>Description</Label>
+              <Textarea
+                id={`description-${strategy.id}`}
+                value={strategy.description}
+                onChange={(e) => handleFieldChange('description', e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-between space-x-2 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit()}
+                className="h-8 text-sm px-3"
+              >
+                <X className="h-3.5 w-3.5 mr-1.5" />
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => onUpdate(strategy)} 
+                disabled={isSaving}
+                className="h-8 text-sm px-3"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-1.5 h-3.5 w-3.5" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         ) : (
-          /* View mode content would go here */
-          <div>View mode</div>
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground">Description</h4>
+              <p className="mt-1">{strategy.description}</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {strategy.rules && strategy.rules.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2 flex items-center">
+                    <ListChecks className="h-4 w-4 mr-1" />
+                    Rules
+                  </h4>
+                  <ul className="space-y-1 pl-1">
+                    {strategy.rules.map((rule, index) => (
+                      <li key={index} className="text-sm flex items-start">
+                        <span className="inline-block h-5 mr-2 text-muted-foreground">•</span>
+                        {rule.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {strategy.entryConditions && strategy.entryConditions.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-2 flex items-center">
+                    <DoorOpen className="h-4 w-4 mr-1" />
+                    Entry Conditions
+                  </h4>
+                  <ul className="space-y-1 pl-1">
+                    {strategy.entryConditions.map((condition, index) => (
+                      <li key={index} className="text-sm flex items-start">
+                        <span className="inline-block h-5 mr-2 text-success">✓</span>
+                        {condition.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between pt-1.5">
+              <div className="flex space-x-2">
+                {!strategy.isDefault && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onSetAsDefault}
+                    className="h-7 text-xs px-2"
+                  >
+                    <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                    Set as Default
+                  </Button>
+                )}
+              </div>
+              
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  onClick={onDelete}
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                  Delete
+                </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  onClick={() => {
+                    resetFormFields();
+                    onEdit();
+                  }}
+                >
+                  <Edit className="h-3.5 w-3.5 mr-1.5" />
+                  Edit
+                </Button>
+              </div>
+            </div>
+          </div>
         )}
       </AccordionContent>
     </AccordionItem>
+  );
+});
+
+// Memoized component to render the list of strategies
+const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
+  strategies,
+  editMode,
+  isSaving,
+  onSetEditMode,
+  onUpdateStrategy,
+  onDeleteStrategy,
+  onSetDefaultStrategy,
+  // Form state variables
+  newRule,
+  newEntryCondition,
+  newExitCondition,
+  newTimeframe,
+  setNewRule,
+  setNewEntryCondition,
+  setNewExitCondition,
+  setNewTimeframe
+}: {
+  strategies: TradingStrategy[];
+  editMode: string | null;
+  isSaving: boolean;
+  onSetEditMode: (id: string | null) => void;
+  onUpdateStrategy: (strategy: TradingStrategy) => void;
+  onDeleteStrategy: (id: string, name: string) => void;
+  onSetDefaultStrategy: (strategy: TradingStrategy) => void;
+  // Form state variables
+  newRule: string;
+  newEntryCondition: string;
+  newExitCondition: string;
+  newTimeframe: string;
+  setNewRule: (value: string) => void;
+  setNewEntryCondition: (value: string) => void;
+  setNewExitCondition: (value: string) => void;
+  setNewTimeframe: (value: string) => void;
+}) {
+  const resetFormFields = useCallback(() => {
+    setNewRule("");
+    setNewEntryCondition("");
+    setNewExitCondition("");
+    setNewTimeframe("");
+  }, [setNewRule, setNewEntryCondition, setNewExitCondition, setNewTimeframe]);
+
+  return (
+    <Accordion type="single" collapsible className="space-y-2">
+      {strategies.map((strategy) => (
+        <StrategyItem
+          key={strategy.id}
+          strategy={strategy}
+          isEditMode={editMode === strategy.id}
+          isSaving={isSaving}
+          onEdit={() => onSetEditMode(strategy.id)}
+          onUpdate={onUpdateStrategy}
+          onDelete={() => {
+            if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
+              onDeleteStrategy(strategy.id, strategy.name);
+            }
+          }}
+          onSetAsDefault={() => onSetDefaultStrategy(strategy)}
+          newRule={newRule}
+          newEntryCondition={newEntryCondition}
+          newExitCondition={newExitCondition}
+          newTimeframe={newTimeframe}
+          resetFormFields={resetFormFields}
+        />
+      ))}
+    </Accordion>
   );
 });
 
