@@ -400,19 +400,19 @@
   }
 }
 
-  /* iOS Home indicator friendly mobile navigation rule moved to consolidated definition below (line ~366) */
-
-  /* Mobile content - ensure proper spacing with navigation and home indicator */
-  .has-bottom-nav {
-    /* Total: nav height (52px minimum) + minimal gap (4px) to avoid content touching nav */
-    padding-bottom: calc(52px + 4px);
+  /* MOBILE CONTENT SPACING - ONLY DEFINED ONCE AT THE ROOT LEVEL
+   * Use this class only when needed as a direct replacement for old .has-bottom-nav
+   * Most components should use the bottom-nav-spacer instead
+   */
+  .has-mobile-nav-spacing {
+    /* Uses the unified CSS variables for consistency */
+    padding-bottom: calc(var(--mobile-nav-height) + 4px);
     
-    /* For devices with large safe areas (newer iPhones), optimize the padding
-       Tối ưu hóa giá trị để giảm khoảng trống thừa */
+    /* Safe area handling through CSS variables */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(52px + 4px), /* Base padding for all devices */
-        calc(52px + env(safe-area-inset-bottom, 0px)) /* Dynamic padding with safe area */
+        calc(var(--mobile-nav-height) + 4px), /* Base padding using standard nav height */
+        calc(var(--mobile-nav-height) + var(--safe-bottom)) /* Dynamic padding with safe area */
       );
     }
   }
@@ -696,8 +696,18 @@
     }
   }
   
-  /* The PWA-specific spacer must account for safe area insets */
-  html.pwa-mode .bottom-nav-spacer,
+  /* UNIFIED BOTTOM SPACER FOR ALL MODES
+   * This is the ONLY rule that should control the spacer height
+   * We use the same class for both PWA and regular mode, only adjusting height
+   */
+  html.pwa-mode .bottom-nav-spacer {
+    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+  }
+  
+  /* DEPRECATED - DO NOT USE .pwa-bottom-spacer
+   * Kept for backward compatibility only
+   * Will be removed in future versions
+   */
   .pwa-bottom-spacer {
     height: calc(var(--mobile-nav-height) + var(--safe-bottom));
   }
