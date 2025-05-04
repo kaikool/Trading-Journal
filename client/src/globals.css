@@ -1507,12 +1507,14 @@
   .chart-pagination-dots {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem; /* 8px - standard spacing between dots */
-    padding: 0.5rem 0.75rem; /* 8px 12px - standard padding */
+    padding: 0 0.75rem; /* 0 12px - horizontal padding only */
     background: rgba(0, 0, 0, 0.45);
     border-radius: 9999px;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
+    height: var(--chart-mobile-control-size); /* Same height as zoom buttons */
   }
   
   /* Individual pagination dot */
