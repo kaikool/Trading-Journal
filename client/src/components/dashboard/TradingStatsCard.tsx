@@ -45,7 +45,7 @@ export function TradingStatsCard({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1">
             {Array(4).fill(0).map((_, index) => (
               <div key={index} className="stat-skeleton-tile">
                 <div className="stat-skeleton-header">
@@ -199,7 +199,7 @@ export function TradingStatsCard({
       </CardHeader>
       
       <CardContent>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1">
           {stats.map((stat, index) => (
             <div 
               key={index} 
