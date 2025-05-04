@@ -755,7 +755,7 @@
     --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.08), 0 6px 12px -6px rgba(0, 0, 0, 0.04);
     --shadow-xl: 0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.05);
-    --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.35);
+    --shadow-focus: none;
     
     /* Border radius */
     --radius: 0.75rem;
@@ -1492,7 +1492,6 @@
   
   .chart-nav-button:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4), var(--shadow-sm);
   }
   
   /* Disabled state for buttons */
@@ -1707,7 +1706,6 @@
   /* Consistent focus styles for all elements */
   *:focus {
     outline: none;
-    box-shadow: var(--shadow-focus);
   }
   
   /* Form element focus with scroll margin */
@@ -1744,9 +1742,6 @@
   /* Improved accessibility focus-visible styles */
   *:focus-visible {
     outline: none;
-    box-shadow: var(--shadow-focus);
-    outline-offset: 2px;
-    z-index: 1;
   }
   
   /* Interactive elements get a slightly more prominent focus indicator */
