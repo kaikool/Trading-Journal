@@ -284,6 +284,32 @@ function App() {
     import('./lib/queryClient').then(({ updateQueryClientConfig }) => {
       updateQueryClientConfig().catch(console.error);
     });
+    
+    // Thiết lập thuộc tính data-pwa-mode cho HTML để kích hoạt CSS variables
+    const isPWAMode = window.matchMedia('(display-mode: standalone)').matches || 
+      // @ts-ignore: navigator.standalone là thuộc tính đặc biệt trên Safari
+      (window.navigator.standalone === true);
+    
+    if (isPWAMode) {
+      document.documentElement.setAttribute('data-pwa-mode', 'true');
+    } else {
+      document.documentElement.removeAttribute('data-pwa-mode');
+    }
+    
+    // Theo dõi thay đổi trạng thái PWA
+    const displayModeMediaQuery = window.matchMedia('(display-mode: standalone)');
+    const handleDisplayModeChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        document.documentElement.setAttribute('data-pwa-mode', 'true');
+      } else {
+        document.documentElement.removeAttribute('data-pwa-mode');
+      }
+    };
+    
+    displayModeMediaQuery.addEventListener('change', handleDisplayModeChange);
+    return () => {
+      displayModeMediaQuery.removeEventListener('change', handleDisplayModeChange);
+    };
   }, []);
 
   return (
