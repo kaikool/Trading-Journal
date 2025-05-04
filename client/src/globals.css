@@ -1065,7 +1065,23 @@
     --chart-anim-speed: 300ms;
     --chart-mobile-breakpoint: 640px;
     
-    /* Spacing for different device sizes */
+    /* Typography settings */
+    --chart-title-font-size: 0.875rem; /* 14px */
+    --chart-title-font-weight: 500;
+    --chart-subtitle-font-size: 0.75rem; /* 12px */
+    --chart-subtitle-color: hsl(var(--muted-foreground));
+    
+    /* Control and button sizes - following 4px spacing rule */
+    --chart-control-size: 2rem; /* 32px */
+    --chart-control-icon-size: 1.25rem; /* 20px */
+    --chart-mobile-control-size: 1.5rem; /* 24px */
+    --chart-mobile-control-icon-size: 1rem; /* 16px */
+    
+    /* Pagination indicators */
+    --chart-dot-size: 0.625rem; /* 10px */
+    --chart-dot-spacing: 0.625rem; /* 10px */
+    
+    /* Spacing for different device sizes - following 4px spacing rule */
     --chart-spacing-xs: 0.5rem;  /* 8px */
     --chart-spacing-sm: 0.75rem; /* 12px */
     --chart-spacing-md: 1rem;    /* 16px */
@@ -1221,6 +1237,7 @@
     height: 100%;
     transition: opacity var(--chart-anim-speed) ease, 
                 transform var(--chart-anim-speed) ease;
+    position: relative;
   }
   
   /* Chart image */
@@ -1230,6 +1247,9 @@
     object-fit: contain;
     touch-action: pan-y;
     user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
     
     /* Mobile optimizations */
     @media (max-width: 640px) {
@@ -1242,6 +1262,22 @@
     .chart-image {
       /* Ensure image isn't hidden by navigation bar and home indicator */
       max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-lg));
+    }
+  }
+  
+  /* Chart pagination - dots and buttons navigation */
+  .chart-pagination {
+    position: absolute;
+    bottom: max(var(--chart-spacing-md), var(--safe-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    
+    /* Use CSS variables */
+    @media (max-width: 640px) {
+      bottom: max(var(--chart-spacing-sm), calc(var(--safe-bottom) + var(--chart-spacing-xs)));
     }
   }
   
@@ -1435,30 +1471,7 @@
   /* Trade badge system moved to TradeStatusBadge component */
   
 
-  /* Chart pagination - unified with the component system */
-  .chart-pagination {
-    position: absolute;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 20;
-    bottom: var(--chart-spacing-md);
-    
-    /* Mobile adjustments */
-    @media (max-width: 640px) {
-      bottom: var(--chart-spacing-sm);
-    }
-    
-    /* Safe area adjustments for mobile and PWA */
-    @media (max-width: 640px), (display-mode: standalone) {
-      .chart-pagination {
-        /* Ensure enough space below the pagination bar for devices with home indicator */
-        bottom: max(var(--chart-spacing-sm), var(--safe-bottom));
-      }
-    }
-  }
+  /* Chart pagination - removed duplicate declaration and merged with the above definition */
   
 
   

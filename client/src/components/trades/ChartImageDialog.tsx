@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
 import { cn } from '@/lib/utils';
-import { isPWA } from '@/lib/pwa-helper';
 
 interface ChartImageDialogProps {
   isOpen: boolean;
@@ -35,13 +34,8 @@ export function ChartImageDialog({
   tradePair,
   tradeId = 'unknown'
 }: ChartImageDialogProps) {
+  // Sử dụng hook để kiểm tra thiết bị mobile một cách nhất quán
   const isMobile = useIsMobile();
-  const [isPWAMode, setIsPWAMode] = useState(false);
-  
-  // Detect PWA mode when component mounts
-  useEffect(() => {
-    setIsPWAMode(isPWA());
-  }, []);
   
   // Create list of available images with timeframe and type information (entry/exit)
   const availableImages = [
@@ -145,7 +139,7 @@ export function ChartImageDialog({
           Chart image viewer for trading analysis
         </div>
         
-        <DialogTitle className="flex items-center justify-between py-2 px-4 border-b">
+        <DialogTitle className="flex items-center justify-between py-3 px-4 border-b">
           <div className="flex flex-col">
             <span className="font-medium text-sm">
               {tradePair} - {currentImage.label}
@@ -156,6 +150,15 @@ export function ChartImageDialog({
               </span>
             )}
           </div>
+
+          {/* Nút đóng dialog được thiết kế lại để visible và thân thiện với mobile */}
+          <button 
+            onClick={onClose}
+            className="rounded-full flex items-center justify-center w-8 h-8 bg-muted/30 hover:bg-muted/50 transition-colors"
+            aria-label="Close dialog"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </DialogTitle>
         
         <div {...swipeHandlers} className="chart-content">
@@ -188,7 +191,8 @@ export function ChartImageDialog({
             <div
               className={cn(
                 "chart-image-container",
-                isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100"
+                isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
+                "transition-all duration-300 ease-in-out"
               )}
             >
               <img 
@@ -196,7 +200,8 @@ export function ChartImageDialog({
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
                   "chart-image",
-                  (isLoading || error) && "invisible"
+                  (isLoading || error) && "invisible",
+                  "max-h-full object-contain select-none touch-manipulation"
                 )}
                 onClick={(e) => e.stopPropagation()} 
                 decoding="async"
@@ -222,17 +227,54 @@ export function ChartImageDialog({
                 }}
               />
             </div>
+            
+            {/* Navigation buttons for desktop and tablets */}
+            {availableImages.length > 1 && !isMobile && (
+              <>
+                <button
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/90 hidden sm:flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  onClick={handlePrevious}
+                  aria-label="Previous image"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+                
+                <button
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/90 hidden sm:flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  onClick={handleNext}
+                  aria-label="Next image"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </>
+            )}
           </div>
           
-          {/* Image Pagination */}
+          {/* Image Pagination for mobile and desktop */}
           {availableImages.length > 1 && (
             <div className="chart-pagination">
-              <div className="bg-black/50 backdrop-blur-sm py-1.5 px-2.5 rounded-full flex items-center gap-2">
+              <div className="bg-black/50 backdrop-blur-sm py-2 px-3 rounded-full flex items-center gap-2.5 shadow-md">
+                {isMobile && (
+                  <button
+                    className="w-6 h-6 flex items-center justify-center text-white/90"
+                    onClick={handlePrevious}
+                    aria-label="Previous image"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                )}
+                
                 {availableImages.map((_, index) => (
                   <button
                     key={index}
                     className={cn(
-                      "w-2 h-2 rounded-full transition-all duration-200",
+                      "w-2.5 h-2.5 rounded-full transition-all duration-200",
                       index === currentImageIndex 
                         ? "bg-white scale-110" 
                         : "bg-white/30 scale-90 hover:bg-white/50"
@@ -244,6 +286,18 @@ export function ChartImageDialog({
                     aria-label={`View image ${index + 1}`}
                   />
                 ))}
+                
+                {isMobile && (
+                  <button
+                    className="w-6 h-6 flex items-center justify-center text-white/90"
+                    onClick={handleNext}
+                    aria-label="Next image"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
           )}
