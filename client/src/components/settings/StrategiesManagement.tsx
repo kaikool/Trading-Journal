@@ -272,95 +272,83 @@ const StrategyItem = React.memo(function StrategyItem({
               />
             </div>
             
-            {/* Strategy Conditions */}
-            <Accordion type="single" collapsible defaultValue="rules" className="w-full">
-              <AccordionItem value="rules" className="border rounded-md px-4">
-                <AccordionTrigger className="py-2">
-                  <div className="flex items-center">
-                    <ListChecks className="h-4 w-4 mr-2" />
-                    <span className="font-medium">Trading Rules</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-3">
-                  <StrategyConditionList
-                    title="Market Rules"
-                    emptyMessage="No rules defined yet. Click 'Add' to create one."
-                    conditions={strategy.rules || []}
-                    onAdd={(condition) => handleFieldChange('rules', 
-                      addConditionToArray(strategy.rules || [], condition)
-                    )}
-                    onUpdate={(id, updates) => {
-                      const updatedRules = updateConditionInArray(strategy.rules || [], id, updates);
-                      handleFieldChange('rules', updatedRules);
-                    }}
-                    onDelete={(id) => {
-                      handleFieldChange('rules', 
-                        removeConditionFromArray(strategy.rules || [], id)
-                      );
-                    }}
-                    icon={<LineChart className="h-4 w-4" />}
-                  />
-                </AccordionContent>
-              </AccordionItem>
+            {/* Trading Rules */}
+            <div className="space-y-4">
+              <div className="flex items-center mb-1">
+                <ListChecks className="h-4 w-4 mr-2" />
+                <h4 className="font-medium">Trading Rules</h4>
+              </div>
+              <StrategyConditionList
+                title=""
+                emptyMessage="No rules defined yet. Click 'Add' to create one."
+                conditions={strategy.rules || []}
+                onAdd={(condition) => handleFieldChange('rules', 
+                  addConditionToArray(strategy.rules || [], condition)
+                )}
+                onUpdate={(id, updates) => {
+                  const updatedRules = updateConditionInArray(strategy.rules || [], id, updates);
+                  handleFieldChange('rules', updatedRules);
+                }}
+                onDelete={(id) => {
+                  handleFieldChange('rules', 
+                    removeConditionFromArray(strategy.rules || [], id)
+                  );
+                }}
+                icon={<LineChart className="h-4 w-4" />}
+              />
+            </div>
               
-              <AccordionItem value="entry" className="border rounded-md px-4 mt-3">
-                <AccordionTrigger className="py-2">
-                  <div className="flex items-center">
-                    <DoorOpen className="h-4 w-4 mr-2" />
-                    <span className="font-medium">Entry Conditions</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-3">
-                  <StrategyConditionList
-                    title="Entry Conditions"
-                    emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
-                    conditions={strategy.entryConditions || []}
-                    onAdd={(condition) => handleFieldChange('entryConditions', 
-                      addConditionToArray(strategy.entryConditions || [], condition)
-                    )}
-                    onUpdate={(id, updates) => {
-                      const updatedConditions = updateConditionInArray(strategy.entryConditions || [], id, updates);
-                      handleFieldChange('entryConditions', updatedConditions);
-                    }}
-                    onDelete={(id) => {
-                      handleFieldChange('entryConditions', 
-                        removeConditionFromArray(strategy.entryConditions || [], id)
-                      );
-                    }}
-                    icon={<DoorOpen className="h-4 w-4" />}
-                  />
-                </AccordionContent>
-              </AccordionItem>
+            {/* Entry Conditions */}
+            <div className="space-y-4 mt-5">
+              <div className="flex items-center mb-1">
+                <DoorOpen className="h-4 w-4 mr-2" />
+                <h4 className="font-medium">Entry Conditions</h4>
+              </div>
+              <StrategyConditionList
+                title=""
+                emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
+                conditions={strategy.entryConditions || []}
+                onAdd={(condition) => handleFieldChange('entryConditions', 
+                  addConditionToArray(strategy.entryConditions || [], condition)
+                )}
+                onUpdate={(id, updates) => {
+                  const updatedConditions = updateConditionInArray(strategy.entryConditions || [], id, updates);
+                  handleFieldChange('entryConditions', updatedConditions);
+                }}
+                onDelete={(id) => {
+                  handleFieldChange('entryConditions', 
+                    removeConditionFromArray(strategy.entryConditions || [], id)
+                  );
+                }}
+                icon={<DoorOpen className="h-4 w-4" />}
+              />
+            </div>
               
-              <AccordionItem value="exit" className="border rounded-md px-4 mt-3">
-                <AccordionTrigger className="py-2">
-                  <div className="flex items-center">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    <span className="font-medium">Exit Conditions</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 pb-3">
-                  <StrategyConditionList
-                    title="Exit Conditions"
-                    emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
-                    conditions={strategy.exitConditions || []}
-                    onAdd={(condition) => handleFieldChange('exitConditions', 
-                      addConditionToArray(strategy.exitConditions || [], condition)
-                    )}
-                    onUpdate={(id, updates) => {
-                      const updatedConditions = updateConditionInArray(strategy.exitConditions || [], id, updates);
-                      handleFieldChange('exitConditions', updatedConditions);
-                    }}
-                    onDelete={(id) => {
-                      handleFieldChange('exitConditions', 
-                        removeConditionFromArray(strategy.exitConditions || [], id)
-                      );
-                    }}
-                    icon={<LogOut className="h-4 w-4" />}
-                  />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+            {/* Exit Conditions */}
+            <div className="space-y-4 mt-5">
+              <div className="flex items-center mb-1">
+                <LogOut className="h-4 w-4 mr-2" />
+                <h4 className="font-medium">Exit Conditions</h4>
+              </div>
+              <StrategyConditionList
+                title=""
+                emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
+                conditions={strategy.exitConditions || []}
+                onAdd={(condition) => handleFieldChange('exitConditions', 
+                  addConditionToArray(strategy.exitConditions || [], condition)
+                )}
+                onUpdate={(id, updates) => {
+                  const updatedConditions = updateConditionInArray(strategy.exitConditions || [], id, updates);
+                  handleFieldChange('exitConditions', updatedConditions);
+                }}
+                onDelete={(id) => {
+                  handleFieldChange('exitConditions', 
+                    removeConditionFromArray(strategy.exitConditions || [], id)
+                  );
+                }}
+                icon={<LogOut className="h-4 w-4" />}
+              />
+            </div>
             
             <div className="pt-1">
               <div className="flex items-center space-x-2">
@@ -852,12 +840,26 @@ export function StrategiesManagement() {
         }
       }
       
+      // Create rulesText, entryConditionsText, exitConditionsText arrays from the condition objects
+      const rulesText = (strategy.rules || []).map(rule => rule.label).filter(Boolean);
+      const entryConditionsText = (strategy.entryConditions || []).map(condition => condition.label).filter(Boolean);
+      const exitConditionsText = (strategy.exitConditions || []).map(condition => condition.label).filter(Boolean);
+      
+      console.log("[DEBUG] Updating strategy with conditions:", {
+        rules: strategy.rules || [],
+        entryConditions: strategy.entryConditions || [],
+        exitConditions: strategy.exitConditions || []
+      });
+      
       // Ensure all strategy conditions are properly formatted before saving
       const formattedStrategy = {
         ...strategy,
         rules: strategy.rules?.map(rule => ensureConditionFormat(rule)) || [],
         entryConditions: strategy.entryConditions?.map(condition => ensureConditionFormat(condition)) || [],
         exitConditions: strategy.exitConditions?.map(condition => ensureConditionFormat(condition)) || [],
+        rulesText,
+        entryConditionsText,
+        exitConditionsText,
         updatedAt: Timestamp.now()
       };
       
@@ -1097,107 +1099,95 @@ export function StrategiesManagement() {
                 />
               </div>
               
-              {/* Strategy Conditions */}
-              <Accordion type="single" collapsible defaultValue="rules" className="w-full">
-                <AccordionItem value="rules" className="border rounded-md px-4">
-                  <AccordionTrigger className="py-2">
-                    <div className="flex items-center">
-                      <ListChecks className="h-4 w-4 mr-2" />
-                      <span className="font-medium">Trading Rules</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="pt-2 pb-3">
-                    <StrategyConditionList
-                      title="Market Rules"
-                      emptyMessage="No rules defined yet. Click 'Add' to create one."
-                      conditions={newStrategy.rules || []}
-                      onAdd={(condition) => setNewStrategy({
-                        ...newStrategy,
-                        rules: addConditionToArray(newStrategy.rules || [], condition)
-                      })}
-                      onUpdate={(id, updates) => {
-                        const updatedRules = (newStrategy.rules || []).map(rule => 
-                          rule.id === id ? { ...rule, ...updates } : rule
-                        );
-                        setNewStrategy({ ...newStrategy, rules: updatedRules });
-                      }}
-                      onDelete={(id) => {
-                        setNewStrategy({
-                          ...newStrategy,
-                          rules: (newStrategy.rules || []).filter(rule => rule.id !== id)
-                        });
-                      }}
-                      icon={<LineChart className="h-4 w-4" />}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="entry" className="border rounded-md px-4 mt-3">
-                  <AccordionTrigger className="py-2">
-                    <div className="flex items-center">
-                      <DoorOpen className="h-4 w-4 mr-2" />
-                      <span className="font-medium">Entry Conditions</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="pt-2 pb-3">
-                    <StrategyConditionList
-                      title="Entry Conditions"
-                      emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
-                      conditions={newStrategy.entryConditions || []}
-                      onAdd={(condition) => setNewStrategy({
-                        ...newStrategy,
-                        entryConditions: addConditionToArray(newStrategy.entryConditions || [], condition)
-                      })}
-                      onUpdate={(id, updates) => {
-                        const updatedConditions = (newStrategy.entryConditions || []).map(condition => 
-                          condition.id === id ? { ...condition, ...updates } : condition
-                        );
-                        setNewStrategy({ ...newStrategy, entryConditions: updatedConditions });
-                      }}
-                      onDelete={(id) => {
-                        setNewStrategy({
-                          ...newStrategy,
-                          entryConditions: (newStrategy.entryConditions || []).filter(condition => condition.id !== id)
-                        });
-                      }}
-                      icon={<DoorOpen className="h-4 w-4" />}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-                
-                <AccordionItem value="exit" className="border rounded-md px-4 mt-3">
-                  <AccordionTrigger className="py-2">
-                    <div className="flex items-center">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      <span className="font-medium">Exit Conditions</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="pt-2 pb-3">
-                    <StrategyConditionList
-                      title="Exit Conditions"
-                      emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
-                      conditions={newStrategy.exitConditions || []}
-                      onAdd={(condition) => setNewStrategy({
-                        ...newStrategy,
-                        exitConditions: addConditionToArray(newStrategy.exitConditions || [], condition)
-                      })}
-                      onUpdate={(id, updates) => {
-                        const updatedConditions = (newStrategy.exitConditions || []).map(condition => 
-                          condition.id === id ? { ...condition, ...updates } : condition
-                        );
-                        setNewStrategy({ ...newStrategy, exitConditions: updatedConditions });
-                      }}
-                      onDelete={(id) => {
-                        setNewStrategy({
-                          ...newStrategy,
-                          exitConditions: (newStrategy.exitConditions || []).filter(condition => condition.id !== id)
-                        });
-                      }}
-                      icon={<LogOut className="h-4 w-4" />}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+              {/* Trading Rules */}
+              <div className="space-y-4 mt-6">
+                <div className="flex items-center mb-1">
+                  <ListChecks className="h-4 w-4 mr-2" />
+                  <h4 className="font-medium">Trading Rules</h4>
+                </div>
+                <StrategyConditionList
+                  title=""
+                  emptyMessage="No rules defined yet. Click 'Add' to create one."
+                  conditions={newStrategy.rules || []}
+                  onAdd={(condition) => setNewStrategy({
+                    ...newStrategy,
+                    rules: addConditionToArray(newStrategy.rules || [], condition)
+                  })}
+                  onUpdate={(id, updates) => {
+                    const updatedRules = (newStrategy.rules || []).map(rule => 
+                      rule.id === id ? { ...rule, ...updates } : rule
+                    );
+                    setNewStrategy({ ...newStrategy, rules: updatedRules });
+                  }}
+                  onDelete={(id) => {
+                    setNewStrategy({
+                      ...newStrategy,
+                      rules: (newStrategy.rules || []).filter(rule => rule.id !== id)
+                    });
+                  }}
+                  icon={<LineChart className="h-4 w-4" />}
+                />
+              </div>
+              
+              {/* Entry Conditions */}
+              <div className="space-y-4 mt-8">
+                <div className="flex items-center mb-1">
+                  <DoorOpen className="h-4 w-4 mr-2" />
+                  <h4 className="font-medium">Entry Conditions</h4>
+                </div>
+                <StrategyConditionList
+                  title=""
+                  emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
+                  conditions={newStrategy.entryConditions || []}
+                  onAdd={(condition) => setNewStrategy({
+                    ...newStrategy,
+                    entryConditions: addConditionToArray(newStrategy.entryConditions || [], condition)
+                  })}
+                  onUpdate={(id, updates) => {
+                    const updatedConditions = (newStrategy.entryConditions || []).map(condition => 
+                      condition.id === id ? { ...condition, ...updates } : condition
+                    );
+                    setNewStrategy({ ...newStrategy, entryConditions: updatedConditions });
+                  }}
+                  onDelete={(id) => {
+                    setNewStrategy({
+                      ...newStrategy,
+                      entryConditions: (newStrategy.entryConditions || []).filter(condition => condition.id !== id)
+                    });
+                  }}
+                  icon={<DoorOpen className="h-4 w-4" />}
+                />
+              </div>
+              
+              {/* Exit Conditions */}
+              <div className="space-y-4 mt-8">
+                <div className="flex items-center mb-1">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  <h4 className="font-medium">Exit Conditions</h4>
+                </div>
+                <StrategyConditionList
+                  title=""
+                  emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
+                  conditions={newStrategy.exitConditions || []}
+                  onAdd={(condition) => setNewStrategy({
+                    ...newStrategy,
+                    exitConditions: addConditionToArray(newStrategy.exitConditions || [], condition)
+                  })}
+                  onUpdate={(id, updates) => {
+                    const updatedConditions = (newStrategy.exitConditions || []).map(condition => 
+                      condition.id === id ? { ...condition, ...updates } : condition
+                    );
+                    setNewStrategy({ ...newStrategy, exitConditions: updatedConditions });
+                  }}
+                  onDelete={(id) => {
+                    setNewStrategy({
+                      ...newStrategy,
+                      exitConditions: (newStrategy.exitConditions || []).filter(condition => condition.id !== id)
+                    });
+                  }}
+                  icon={<LogOut className="h-4 w-4" />}
+                />
+              </div>
               
               <div className="pt-1">
                 <div className="flex items-center space-x-2">
