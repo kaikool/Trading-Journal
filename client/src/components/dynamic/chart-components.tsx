@@ -19,7 +19,8 @@ export function LazyChart({
   type = 'line',
   data,
   width = '100%',
-  height = 300,
+  // Sử dụng giá trị thống nhất từ CSS variable thay vì hardcoded px
+  height = 'var(--chart-height, 18.75rem)',
   children,
   ...rest
 }: {
@@ -89,10 +90,11 @@ export function LazyChart({
 }
 
 // Helper function để tạo chart
-export function createChartComponent({
+export const createChartComponent = ({
   data,
   width = '100%',
-  height = 300,
+  // Sử dụng giá trị thống nhất từ CSS variable thay vì hardcoded px
+  height = 'var(--chart-height, 18.75rem)',
   chartType = 'line',
   ...rest
 }: {
@@ -101,7 +103,7 @@ export function createChartComponent({
   height?: number | string;
   chartType?: 'line' | 'area' | 'bar' | 'pie' | 'composed';
   [key: string]: any;
-}) {
+}) => {
   return (
     <LazyChart 
       type={chartType} 
