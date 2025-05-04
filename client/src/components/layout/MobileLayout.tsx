@@ -19,11 +19,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
-        {/* 
-          Sử dụng CSS class has-mobile-nav-spacing thay vì thêm spacer div riêng
-          Điều này giúp tránh tạo thêm DOM nodes không cần thiết và sử dụng
-          CSS variables để đảm bảo khoảng cách phù hợp trên mọi thiết bị
-        */}
+        {/* Main content container now has standardized bottom padding directly in mobile-content-with-navigation class */}
       </main>
       <MobileNavigator />
     </div>

@@ -534,37 +534,24 @@
   /* These CSS variables can be used anywhere in the stylesheet */
 }
 
-  /* MOBILE CONTENT SPACING - UPDATED FOR THE NEW NAVIGATION HEIGHT
-   * Use this class to provide proper spacing for content areas with mobile navigation
-   * This creates padding at the bottom of content to ensure nothing is hidden behind the nav bar
-   */
-  .has-mobile-nav-spacing {
-    /* UPDATED: Reduced padding - uses the mobile-nav-height + minimal 4px spacing */
-    padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
-    
-    /* UPDATED: Enhanced safe area handling for all device types with minimal spacing */
-    @supports (padding: max(0px)) {
-      padding-bottom: max(
-        calc(var(--mobile-nav-height) + 0.25rem), /* Base padding with 4px space */
-        calc(var(--mobile-nav-height) + var(--safe-bottom)) /* Dynamic padding with safe area only */
-      ) !important;
-    }
-  }
-  
-  /* Mobile content with navigation - Cải tiến mới để đảm bảo nội dung không bị che */
+  /* Mobile content with navigation - Standard layout for all pages */
   .mobile-content-with-navigation {
-    /* Đảm bảo main content chứa toàn bộ không gian */
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* Fallback */
-    min-height: 100dvh; /* Sử dụng dynamic viewport height */
+    min-height: 100dvh; /* Dynamic viewport height */
+    
+    /* Standard bottom padding for all pages with mobile navigation */
+    padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
+    
+    /* Safe area handling for different devices */
+    @supports (padding: max(0px)) {
+      padding-bottom: max(
+        calc(var(--mobile-nav-height) + 0.25rem), /* Base padding with 4px */
+        calc(var(--mobile-nav-height) + var(--safe-bottom)) /* With safe area */
+      ) !important;
+    }
   }
-  
-  /* 
-   * DEPRECATED: Không còn sử dụng mobile-nav-spacer nữa
-   * Thay vào đó, sử dụng .has-mobile-nav-spacing để đảm bảo nội dung không bị mobile navigator che khuất
-   * Xem phần định nghĩa .has-mobile-nav-spacing ở trên
-   */
   
   /* Layout utilities for PWA that respect device notches and home indicators - Standardized */
   .pwa-container {
