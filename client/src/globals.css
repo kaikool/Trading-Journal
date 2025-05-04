@@ -1757,8 +1757,6 @@
   ::-webkit-scrollbar {
     width: var(--scrollbar-size);
     height: var(--scrollbar-size);
-    position: absolute; /* Ensure it's positioned absolutely */
-    right: 0;
   }
   
   /* Track styling */
@@ -1803,12 +1801,10 @@
     scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color); /* For Firefox */
   }
   
-  /* Fix for mobile to ensure scrollbar remains right-aligned */
+  /* Fix for mobile to ensure scrollbar is properly sized */
   @media (max-width: 768px) {
     ::-webkit-scrollbar {
       width: var(--scrollbar-size);
-      position: absolute;
-      right: 0;
     }
     
     /* Improve tap target on mobile */

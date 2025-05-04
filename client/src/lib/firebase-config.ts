@@ -58,12 +58,12 @@ const firebaseConfig = {
                 import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Debug config values in development environment only
-if (process.env.NODE_ENV === 'development') {
-  console.log("Firebase config:", {
-    projectId: firebaseConfig.projectId, 
-    storageBucket: firebaseConfig.storageBucket
-  });
-}
+// Log Firebase config for debugging in all environments for now (temporary)
+console.log("Firebase config loaded:", {
+  projectId: firebaseConfig.projectId, 
+  storageBucket: firebaseConfig.storageBucket,
+  apiKeySet: !!firebaseConfig.apiKey,
+  appIdSet: !!firebaseConfig.appId
+});
 
 export default firebaseConfig;
