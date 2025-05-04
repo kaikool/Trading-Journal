@@ -234,8 +234,7 @@ export function ChartImageDialog({
         {/* Main content area with swipe handlers */}
         <div className="chart-content">
           {/* Image viewport with zoom and pan handlers */}
-          <div 
-            className="chart-image-viewport"
+          <div className="chart-image-viewport"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -249,42 +248,25 @@ export function ChartImageDialog({
                 <span className="mt-2 text-xs font-medium">Đang tải...</span>
               </div>
             )}
-            
             {/* Error state */}
             {error && !isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
                 <div className="flex flex-col items-center p-4 rounded-lg bg-card border">
-                  <img 
-                    src="/icons/image-not-supported.svg" 
-                    alt="Error loading image"
-                    className="h-12 w-12 opacity-70 mb-3"
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    Không thể tải hình ảnh
-                  </span>
+                  <img src="/icons/image-not-supported.svg" alt="Error loading image" className="h-12 w-12 opacity-70 mb-3" />
+                  <span className="text-sm text-muted-foreground">Không thể tải hình ảnh</span>
                 </div>
               </div>
             )}
-            
             {/* Chart image with container - with zoom and transform applied */}
-            <div
-              className={cn(
-                "chart-image-container",
-                isLoading || error ? "opacity-0" : "opacity-100",
-              )}
+            <div className={cn("chart-image-container", isLoading || error ? "opacity-0" : "opacity-100")}
               style={{
                 transform: scale > 1 ? imageTransform : 'none',
                 cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
-              }}
-            >
-              <img 
-                ref={imageRef}
+              }}>
+              <img ref={imageRef}
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-                className={cn(
-                  "chart-image",
-                  (isLoading || error) && "invisible"
-                )}
+                className={cn("chart-image", (isLoading || error) && "invisible")}
                 onClick={(e) => e.stopPropagation()} 
                 decoding="async"
                 loading="eager"
@@ -298,13 +280,11 @@ export function ChartImageDialog({
                 onError={(e) => {
                   console.error(`Error loading image: ${currentImage.originalSrc}`);
                   const imgElement = e.currentTarget as HTMLImageElement;
-                  
                   if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
                     console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
                     imgElement.src = currentImage.originalSrc;
                     return;
                   }
-                  
                   imgElement.classList.add('hidden');
                 }}
               />
@@ -313,21 +293,12 @@ export function ChartImageDialog({
             {/* Navigation buttons for desktop and tablets */}
             {availableImages.length > 1 && !isMobile && (
               <>
-                <button
-                  className="chart-nav-button chart-nav-button-prev"
-                  onClick={handlePrevious}
-                  aria-label="Previous image"
-                >
+                <button className="chart-nav-button chart-nav-button-prev" onClick={handlePrevious} aria-label="Previous image">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
                 </button>
-                
-                <button
-                  className="chart-nav-button chart-nav-button-next"
-                  onClick={handleNext}
-                  aria-label="Next image"
-                >
+                <button className="chart-nav-button chart-nav-button-next" onClick={handleNext} aria-label="Next image">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
@@ -338,28 +309,14 @@ export function ChartImageDialog({
           
           {/* Zoom controls */}
           <div className="chart-zoom-controls">
-            <button 
-              className="chart-zoom-button"
-              onClick={zoomIn}
-              aria-label="Zoom in"
-              disabled={scale >= 3}
-            >
+            <button className="chart-zoom-button" onClick={zoomIn} aria-label="Zoom in" disabled={scale >= 3}>
               <ZoomIn size={isMobile ? 16 : 20} />
             </button>
-            <button 
-              className="chart-zoom-button"
-              onClick={zoomOut}
-              aria-label="Zoom out"
-              disabled={scale <= 1}
-            >
+            <button className="chart-zoom-button" onClick={zoomOut} aria-label="Zoom out" disabled={scale <= 1}>
               <ZoomOut size={isMobile ? 16 : 20} />
             </button>
-            <button 
-              className="chart-zoom-button"
-              onClick={resetZoom}
-              aria-label="Reset zoom"
-              disabled={scale === 1 && translate.x === 0 && translate.y === 0}
-            >
+            <button className="chart-zoom-button" onClick={resetZoom} aria-label="Reset zoom" 
+              disabled={scale === 1 && translate.x === 0 && translate.y === 0}>
               <Maximize2 size={isMobile ? 16 : 20} />
             </button>
           </div>
@@ -369,26 +326,17 @@ export function ChartImageDialog({
             <div className="chart-pagination">
               <div className="chart-pagination-dots">
                 {isMobile && (
-                  <button
-                    className="w-6 h-6 flex items-center justify-center text-white/90"
-                    onClick={handlePrevious}
-                    aria-label="Previous image"
-                  >
+                  <button className="w-6 h-6 flex items-center justify-center text-white/90"
+                    onClick={handlePrevious} aria-label="Previous image">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
                 )}
-                
                 {availableImages.map((_, index) => (
-                  <button
-                    key={index}
-                    className={cn(
-                      "chart-pagination-dot",
-                      index === currentImageIndex 
-                        ? "chart-pagination-dot-active" 
-                        : "chart-pagination-dot-inactive"
-                    )}
+                  <button key={index}
+                    className={cn("chart-pagination-dot",
+                      index === currentImageIndex ? "chart-pagination-dot-active" : "chart-pagination-dot-inactive")}
                     onClick={(e) => {
                       e.stopPropagation();
                       setCurrentImageIndex(index);
@@ -396,13 +344,9 @@ export function ChartImageDialog({
                     aria-label={`View image ${index + 1}`}
                   />
                 ))}
-                
                 {isMobile && (
-                  <button
-                    className="w-6 h-6 flex items-center justify-center text-white/90"
-                    onClick={handleNext}
-                    aria-label="Next image"
-                  >
+                  <button className="w-6 h-6 flex items-center justify-center text-white/90"
+                    onClick={handleNext} aria-label="Next image">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
