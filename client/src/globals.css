@@ -466,19 +466,19 @@
 /* ======================================= */
 @layer base {
   :root {
-    /* Safe area variables - ĐỊNH NGHĨA TẬP TRUNG CHO TOÀN BỘ ỨNG DỤNG */
+    /* Safe area variables */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     
-    /* Min padding values - đảm bảo padding tối thiểu trên mỗi cạnh */
+    /* Min padding values */
     --min-top-padding: 4px;
-    --min-side-padding: 16px; /* 16px = 4px * 4 */
+    --min-side-padding: 16px;
     
-    /* Standard values cho mobile layout components */
-    --mobile-nav-height: 56px; /* 56px = 4px * 14 */
-    --status-bar-height: 48px; /* 48px = 4px * 12 */
+    /* Standard values for mobile layout components */
+    --mobile-nav-height: 56px;
+    --status-bar-height: 48px;
     
     /* Base colors */
     --background: 210 40% 98%;
@@ -540,7 +540,7 @@
     --sidebar-border: 217 33% 16%;
     --sidebar-ring: 213 92% 45%;
     
-    /* Shadows - nhất quán và được đặt tên để phù hợp với mục đích */
+    /* Shadows */
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
     --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
     --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
