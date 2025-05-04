@@ -868,36 +868,32 @@ export function StrategiesManagement() {
               </div>
             </div>
             
-            <DialogHeaderFooterLayout
-              footerContent={
-                <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setIsDialogOpen(false)}
-                    className="h-8 text-sm"
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={handleCreateStrategy} 
-                    disabled={isCreating}
-                    className="h-8 text-sm"
-                  >
-                    {isCreating ? (
-                      <>
-                        <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="mr-1.5 h-3.5 w-3.5" />
-                        Create Strategy
-                      </>
-                    )}
-                  </Button>
-                </div>
-              }
-            />
+            <div className="flex justify-end gap-2 sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-1 px-0 sm:px-0">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsDialogOpen(false)}
+                className="h-8 text-sm"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleCreateStrategy} 
+                disabled={isCreating}
+                className="h-8 text-sm"
+              >
+                {isCreating ? (
+                  <>
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-1.5 h-3.5 w-3.5" />
+                    Create Strategy
+                  </>
+                )}
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
