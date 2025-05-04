@@ -4,10 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Ensuring content doesn't create unwanted right margin */
+/* Ensuring proper scrollbar positioning and behavior */
 html, body, #root {
+  /* Force scrollbar to be present on right edge at all times to avoid layout shifts */
+  overflow-y: scroll; 
   overflow-x: hidden;
-  max-width: 100%;
+  /* Ensure content doesn't overflow causing horizontal scrollbar */
+  width: 100%;
+  max-width: 100vw;
+  /* Eliminate any margins that could push scrollbar away from edge */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
 }
 
 /* 

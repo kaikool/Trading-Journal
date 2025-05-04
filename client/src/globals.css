@@ -1500,36 +1500,39 @@
     @apply text-foreground/70;
   }
   
-  /* Scrollbar styling - adjusted to stay flush with right edge */
+  /* Scrollbar styling - complete redesign for extreme right edge positioning */
+  /* Make scrollbar thinner and flush with edge */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsla(var(--muted-foreground), 0.5) transparent;
+  }
+  
+  /* Webkit specific scrollbar styling */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    /* Keep margin at 0 to ensure it's flush with the edge */
-    margin: 0;
+    width: 6px;
+    height: 6px;
   }
   
-  /* Ensure track stays flush with edge */
+  /* Completely transparent track to ensure flush edge */
   ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
-    border-radius: 0;
-    /* Removed rounded borders on right side to ensure flush with edge */
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+    background: transparent;
+    border: none;
   }
   
-  /* Ensure thumb stays flush with edge */
+  /* Thin scrollbar thumb with no border radius on right */
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.5);
+    background-color: hsla(var(--muted-foreground), 0.5);
     border-radius: 0;
-    /* Removed rounded borders on right side to ensure flush with edge */
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
-    /* Ensure no border/padding pushes thumb away from edge */
-    border-right: 0;
+    border: none;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.7);
+    background-color: hsla(var(--muted-foreground), 0.7);
+  }
+  
+  /* Corner should be transparent to avoid artifacts */
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
   
   /* Improved accessibility focus-visible styles */
