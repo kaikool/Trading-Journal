@@ -629,43 +629,6 @@
     
     /* Border radius */
     --radius: 0.75rem;
-    
-    /* Chart dimensions and spacing - standardized */
-    --chart-height: 18.75rem; /* 300px */
-    --chart-spacing-xs: 0.25rem; /* 4px */
-    --chart-spacing-sm: 0.5rem; /* 8px */
-    --chart-spacing-md: 1rem; /* 16px */
-    --chart-spacing-lg: 1.5rem; /* 24px */
-    
-    /* Dialog dimensions */
-    --chart-dialog-radius: 0.75rem;
-    --chart-content-height: 90vh;
-    --chart-content-max-height: 80vh;
-    --chart-pagination-height: 3.75rem; /* 60px */
-    
-    /* Chart dialog responsive sizing */
-    --chart-dialog-width-mobile: 90vw;
-    --chart-dialog-width-tablet: 85vw;
-    --chart-dialog-width-desktop: 75vw;
-    --chart-dialog-width-large: 1200px;
-    --chart-dialog-height: 90vh;
-    --chart-dialog-min-height: 400px;
-    
-    /* Mobile navigation dimensions */
-    --mobile-nav-height: 3.5rem; /* 56px (Material Design standard) */
-    --mobile-nav-icon-size: 1.5rem; /* 24px (standard icon size) */
-    --mobile-nav-icon-spacing: 0.25rem; /* 4px spacing */
-    --mobile-nav-item-padding: 0.5rem; /* 8px (following 4px rule) */
-    --mobile-nav-text-size: 0.75rem; /* 12px (standard text label size) */
-    --mobile-nav-z-index: 40;
-    --mobile-nav-blur: 8px;
-    --mobile-nav-shadow: 0 -1px 2px hsl(0 0% 0% / 0.05);
-    --mobile-nav-anim-speed: 200ms;
-    --mobile-nav-anim-easing: ease-in-out;
-    --mobile-nav-indicator-width: 2rem; /* 32px */
-    --mobile-nav-indicator-height: 0.25rem; /* 4px */
-    --mobile-nav-active-color: hsl(var(--primary));
-    --mobile-nav-inactive-color: hsl(var(--muted-foreground));
   }
   
   .dark {
@@ -705,11 +668,11 @@
     /* Chart colors remain the same for consistency */
     
     /* Shadows for dark mode - matching light mode naming convention for consistency */
-    --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.3);
-    --shadow: 0 2px 8px 0 hsl(0 0% 0% / 0.4), 0 1px 2px 0 hsl(0 0% 0% / 0.2);
-    --shadow-md: 0 4px 12px -2px hsl(0 0% 0% / 0.4);
-    --shadow-lg: 0 12px 24px -4px hsl(0 0% 0% / 0.5), 0 6px 12px -6px hsl(0 0% 0% / 0.4);
-    --shadow-xl: 0 10px 20px -5px hsl(0 0% 0% / 0.5), 0 2px 8px -2px hsl(0 0% 0% / 0.4);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.5), 0 6px 12px -6px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 10px 20px -5px rgba(0, 0, 0, 0.5), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
   }
 
   * {

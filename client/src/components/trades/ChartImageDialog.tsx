@@ -133,22 +133,6 @@ export function ChartImageDialog({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className="p-0 chart-dialog"
-        style={{
-          maxWidth: 'var(--chart-dialog-width-mobile, 90vw)',
-          width: 'var(--chart-dialog-width-mobile, 90vw)',
-          '@media (min-width: 768px)': {
-            maxWidth: 'var(--chart-dialog-width-tablet, 85vw)',
-            width: 'var(--chart-dialog-width-tablet, 85vw)',
-          },
-          '@media (min-width: 1024px)': {
-            maxWidth: 'var(--chart-dialog-width-desktop, 75vw)',
-            width: 'var(--chart-dialog-width-desktop, 75vw)',
-          },
-          '@media (min-width: 1280px)': {
-            maxWidth: 'var(--chart-dialog-width-large, 1200px)',
-            width: 'var(--chart-dialog-width-large, 1200px)',
-          }
-        }}
         aria-describedby="chart-image-viewer-description"
       >
         <div id="chart-image-viewer-description" className="sr-only">
