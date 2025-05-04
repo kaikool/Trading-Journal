@@ -133,8 +133,8 @@ export default function Settings() {
   const userId = auth.currentUser?.uid;
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   
-  // Theme management
-  const { theme, setTheme } = useTheme();
+  // Theme management - using the improved ThemeContext
+  const { theme, setTheme, isDarkMode } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
     theme: theme, // Initial value from context
@@ -153,10 +153,12 @@ export default function Settings() {
 
   // Always keep settings.theme in sync with the theme from context
   useEffect(() => {
+    // This ensures that the UI always shows the correct theme value
     setSettings(prev => ({
       ...prev,
       theme: theme
     }));
+    console.log("Settings theme synced with context:", theme);
   }, [theme]);
   
   const [initialBalance, setInitialBalance] = useState<number>(DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE);
@@ -485,9 +487,11 @@ export default function Settings() {
                     value={settings.theme}
                     onValueChange={(value) => {
                       const themeValue = value as 'light' | 'dark' | 'system';
+                      // Update settings state
                       setSettings({ ...settings, theme: themeValue });
                       // Apply the theme immediately when selected
                       setTheme(themeValue);
+                      console.log(`Theme selected in dropdown: ${themeValue}`);
                     }}
                   >
                     <SelectTrigger id="theme" className="w-full">

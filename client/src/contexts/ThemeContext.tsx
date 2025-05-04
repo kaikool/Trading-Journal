@@ -28,10 +28,20 @@ export function useTheme() {
   return context;
 }
 
+// Get valid theme from localStorage or fallback to system
+const getStoredTheme = (): ThemeType => {
+  const storedTheme = localStorage.getItem('theme');
+  // Validate that the stored theme is one of our valid options
+  if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system') {
+    return storedTheme;
+  }
+  return 'system'; // Default fallback
+};
+
 // Theme Provider Component
 export function ThemeProvider({ children }: { children: ReactNode }) {
   // Single source of truth for theme
-  const [theme, setThemeState] = useState<ThemeType>('system');
+  const [theme, setThemeState] = useState<ThemeType>(getStoredTheme());
   
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
@@ -48,10 +58,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Initialize theme from localStorage
+  // Initialize and apply theme on mount
   useEffect(() => {
-    const loadedTheme = localStorage.getItem('theme') as ThemeType || 'system';
-    setThemeState(loadedTheme);
+    // Set initial isDarkMode based on the theme (either from localStorage or default)
+    if (theme === 'system') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(prefersDark);
+      applyDarkMode(prefersDark);
+    } else {
+      const isDark = theme === 'dark';
+      setIsDarkMode(isDark);
+      applyDarkMode(isDark);
+    }
+    
     setIsLoading(false);
   }, []);
 
@@ -59,17 +78,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (isLoading) return;
     
+    // Apply the theme
     if (theme === 'system') {
-      // Use system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(prefersDark);
       applyDarkMode(prefersDark);
     } else {
-      // Use explicit theme
       const isDark = theme === 'dark';
       setIsDarkMode(isDark);
       applyDarkMode(isDark);
     }
+    
+    // Always save to localStorage when theme changes (except during initial loading)
+    localStorage.setItem('theme', theme);
   }, [theme, isLoading]);
 
   // Listen for system theme changes when using 'system' theme
@@ -83,14 +104,27 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       }
     };
     
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    // Modern event listener approach for better browser compatibility
+    try {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } catch (error) {
+      // Fallback for older browsers
+      // @ts-ignore - older browsers use addListener/removeListener
+      mediaQuery.addListener(handleChange);
+      return () => {
+        // @ts-ignore
+        mediaQuery.removeListener(handleChange);
+      };
+    }
   }, [theme]);
 
-  // Update theme and save it permanently
+  // Update theme - this is exposed to components
   const setTheme = (newTheme: ThemeType) => {
-    setThemeState(newTheme);
-    localStorage.setItem('theme', newTheme);
+    if (newTheme !== theme) {
+      console.log('Theme changed to:', newTheme); // Debug log
+      setThemeState(newTheme);
+    }
   };
 
   return (
