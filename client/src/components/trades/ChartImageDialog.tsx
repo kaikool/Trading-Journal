@@ -37,8 +37,7 @@ export function ChartImageDialog({
   // Device detection hook
   const isMobile = useIsMobile();
   
-  // Refs for the image viewport and image element
-  const viewportRef = useRef<HTMLDivElement>(null);
+  // Ref for the image element
   const imageRef = useRef<HTMLImageElement>(null);
   
   // State for zoom and pan functionality
@@ -196,7 +195,12 @@ export function ChartImageDialog({
   const imageTransform = `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog 
+      open={isOpen} 
+      onOpenChange={(open) => !open && onClose()}
+      aria-labelledby="chart-dialog-title"
+      aria-describedby="chart-image-viewer-description"
+    >
       <DialogContent 
         className="p-0 chart-dialog"
         aria-describedby="chart-image-viewer-description"
@@ -206,7 +210,7 @@ export function ChartImageDialog({
         </div>
         
         {/* Header bar with title and controls */}
-        <DialogTitle className="flex items-center justify-between py-3 px-4 border-b">
+        <DialogTitle id="chart-dialog-title" className="flex items-center justify-between py-3 px-4 border-b">
           <div className="flex flex-col">
             <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
               {tradePair} - {currentImage.label}
@@ -236,7 +240,6 @@ export function ChartImageDialog({
         <div className="chart-content">
           {/* Image viewport with zoom and pan handlers */}
           <div 
-            ref={viewportRef}
             className="chart-image-viewport"
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
