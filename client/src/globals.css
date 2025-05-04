@@ -1502,58 +1502,54 @@
   
   /* 
    * ===============================================
-   * SCROLLBAR STYLING - SINGLE SOURCE OF TRUTH
+   * EXTREME SCROLLBAR STYLING - ZERO MARGIN APPROACH
    * ===============================================
    * 
-   * Unified, simplified scrollbar styling approach to ensure
-   * consistent flush-right positioning across the application.
+   * This approach targets webkit browsers specifically
+   * with absolute minimal styling to ensure flush positioning
    * 
    * IMPORTANT: Do not define scrollbar styles anywhere else!
    */
   
-  /* For Firefox: Set scrollbar width to auto (default) to ensure it's at edge */
+  /* Firefox scrollbar - thin with minimal styling */
   * {
-    scrollbar-width: auto;
+    /* Use thin for Firefox */
+    scrollbar-width: thin;
     scrollbar-color: hsla(var(--muted-foreground), 0.5) transparent;
   }
   
-  /* For Webkit browsers (Chrome, Safari, Edge) */
+  /* Target WebKit scrollbar with absolute minimal styling */
   ::-webkit-scrollbar {
-    /* Standard thin size */
-    width: 6px;
-    height: 6px;
-    /* Critical: ensure no margin pushes it from edge */
+    /* Ultra narrow scrollbar */
+    width: 4px;
+    height: 4px;
+  }
+  
+  /* Completely remove track styling */
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-track-piece {
+    background: transparent;
     margin: 0;
     padding: 0;
   }
   
-  /* Pure transparent track for flush positioning */
-  ::-webkit-scrollbar-track {
-    /* Transparent background without any styling */
-    background: transparent;
-    /* Critical: remove all borders and radius */
-    border: none;
-    border-radius: 0;
-  }
-  
-  /* Simple thumb with no styling that could push from edge */
+  /* Absolute minimal thumb with no borders */
   ::-webkit-scrollbar-thumb {
-    /* Semi-transparent color to blend with any background */
     background-color: hsla(var(--muted-foreground), 0.4);
-    /* Critical: no radius or borders */
-    border-radius: 0;
-    border: none;
+    /* Remove all styling */
+    border: 0;
+    border-radius: 0; 
+    box-shadow: none;
+    min-height: 20px;
   }
   
-  /* Hover state slightly more visible */
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: hsla(var(--muted-foreground), 0.6);
-  }
-  
-  /* Corner and button elements fully transparent */
+  /* Remove all extra elements */
+  ::-webkit-scrollbar-button,
   ::-webkit-scrollbar-corner,
-  ::-webkit-scrollbar-button {
+  ::-webkit-resizer {
     display: none;
+    width: 0;
+    height: 0;
   }
   
   /* Improved accessibility focus-visible styles */

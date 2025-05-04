@@ -6,45 +6,49 @@
 
 /* 
  * ===============================================
- * ROOT ELEMENT STYLING - SCROLLBAR POSITION
+ * EXTREME APPROACH FOR SCROLLBAR POSITIONING
  * ===============================================
- *
- * Critical styles to ensure scrollbar is at the extreme right edge
- * and content is properly contained without overflows.
  * 
- * This works in conjunction with the scrollbar styling in globals.css
+ * This technique forces the scrollbar to be at the absolute edge
+ * by using a special "outside viewport" trick with calc()
  */
-html {
-  /* Force scrollbar to always appear even with minimal content */
-  overflow-y: scroll;
-  overflow-x: hidden;
-  /* Remove all spacing that could affect scrollbar positioning */
+
+/* Critical: Remove all viewport margins in the browser */
+html, body {
   margin: 0;
   padding: 0;
-  /* Ensure full viewport width with no margins */
-  width: 100vw;
-  /* Contain padding/borders in width/height calculations */
-  box-sizing: border-box;
-  /* Set relative positioning for absolute children */
-  position: relative;
-  /* Prevent any overscrolling effects in browsers that support it */
   overscroll-behavior: none;
 }
 
-/* Apply the same sizing model to all direct descendants */
-body, 
-#root {
-  /* Fill available space */
+/* Force scrollbar to be visible by making content larger than viewport */
+html {
+  min-height: 100.1vh; /* Force scrollbar to appear */
+  overflow-y: auto; /* Use auto instead of scroll */
+  overflow-x: hidden;
   width: 100%;
-  /* Remove all spacing */
+}
+
+/* Extreme trick: Use vw + calc to force scrollbar to be at edge */
+body {
+  /* Critical: Add 1px extra width to push scrollbar outside */
+  width: calc(100vw + 1px);
+  /* Contain content so the extra width doesn't create horizontal scroll */
+  overflow-x: hidden;
+  position: relative;
+  box-sizing: border-box;
+  /* Remove any default margins */
   margin: 0;
   padding: 0;
-  /* Enforce same box-sizing model for consistency */
-  box-sizing: border-box;
-  /* Prevent horizontal scroll in all cases */
+}
+
+/* Root element is clipped to ensure no overflow */
+#root {
+  /* Width is 100vw minus a tiny amount to force scrollbar flush */
+  width: calc(100vw - 0.1px);
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
-  /* Ensure body/root also overscroll consistently */
-  overscroll-behavior: none;
+  box-sizing: border-box;
 }
 
 /* 
