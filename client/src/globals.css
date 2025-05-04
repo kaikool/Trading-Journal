@@ -566,19 +566,11 @@
     min-height: 100dvh; /* Sử dụng dynamic viewport height */
   }
   
-  /* Mobile navigation spacer - Khoảng cách dành riêng để không bị thanh điều hướng che */
-  .mobile-nav-spacer {
-    height: calc(var(--mobile-nav-height) + 1rem); /* Chiều cao thanh điều hướng + padding bổ sung */
-    flex-shrink: 0; /* Không cho phép co lại khi không gian hạn chế */
-    
-    /* Xử lý vùng an toàn trên các thiết bị có notch/home indicator */
-    @supports (height: max(0px)) {
-      height: max(
-        calc(var(--mobile-nav-height) + 1rem), /* Chiều cao cơ bản + padding 16px */
-        calc(var(--mobile-nav-height) + var(--safe-bottom) + 0.5rem) /* Chiều cao động với vùng an toàn */
-      );
-    }
-  }
+  /* 
+   * DEPRECATED: Không còn sử dụng mobile-nav-spacer nữa
+   * Thay vào đó, sử dụng .has-mobile-nav-spacing để đảm bảo nội dung không bị mobile navigator che khuất
+   * Xem phần định nghĩa .has-mobile-nav-spacing ở trên
+   */
   
   /* Layout utilities for PWA that respect device notches and home indicators - Standardized */
   .pwa-container {
