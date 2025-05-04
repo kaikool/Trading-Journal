@@ -15,15 +15,15 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         Sử dụng CSS media queries để tự động xử lý việc hiển thị trong PWA
         thay vì dùng JavaScript isPWA()
       */}
-      <main className="mobile-main-content mobile-content-with-navigation">
+      <main className="mobile-main-content mobile-content-with-navigation has-mobile-nav-spacing">
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
         {/* 
-          Thêm spacer div để đảm bảo nội dung không bị mobile navigator che khuất
-          Sử dụng CSS variables để tự động điều chỉnh với các thiết bị khác nhau
+          Sử dụng CSS class has-mobile-nav-spacing thay vì thêm spacer div riêng
+          Điều này giúp tránh tạo thêm DOM nodes không cần thiết và sử dụng
+          CSS variables để đảm bảo khoảng cách phù hợp trên mọi thiết bị
         */}
-        <div className="mobile-nav-spacer" aria-hidden="true"></div>
       </main>
       <MobileNavigator />
     </div>
