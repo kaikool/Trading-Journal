@@ -15,7 +15,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         Sử dụng CSS media queries để tự động xử lý việc hiển thị trong PWA
         thay vì dùng JavaScript isPWA()
       */}
-      <main className="mobile-main-content mobile-content-with-navigation has-mobile-nav-spacing">
+      <main className="mobile-main-content mobile-content-with-navigation">
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
