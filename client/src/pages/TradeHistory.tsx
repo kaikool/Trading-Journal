@@ -351,7 +351,7 @@ export default function TradeHistory() {
   };
 
   return (
-    <div className="px-0 sm:px-6 lg:px-8 py-6">
+    <div className="px-0 sm:px-6 lg:px-8 py-6 has-mobile-nav-spacing">
       {/* Header đã được tối ưu cho mobile - loại bỏ px-4 vì đã có padding từ MobileLayout */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div>
