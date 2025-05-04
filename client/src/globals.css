@@ -626,19 +626,22 @@
     overflow-x: hidden;
   }
   
-  /* Force PWA to use the Mobile layout styling */
-  html.pwa-mode body {
-    /* Ensure the PWA gets same treatment as mobile devices */
-    @apply bg-background text-foreground;
-    max-width: 100vw;
-    height: 100vh; /* Fallback */
-    height: 100dvh; /* Using dynamic viewport height */
-    overflow: hidden; /* Prevent scrolling of the body */
-    position: fixed; /* Fixed position to force mobile-like behavior */
-    width: 100%; /* Ensure full width */
-    top: 0;
-    left: 0;
-    overscroll-behavior: none; /* Prevent pull-to-refresh */
+  /* Mobile-optimized body styling for both PWA and mobile views
+   * This is a single shared styling that works consistently across modes
+   */
+  @media (max-width: 768px), (display-mode: standalone) {
+    body {
+      @apply bg-background text-foreground;
+      max-width: 100vw;
+      height: 100vh; /* Fallback */
+      height: 100dvh; /* Using dynamic viewport height */
+      overflow: hidden; /* Prevent scrolling of the body */
+      position: fixed; /* Fixed position to force contained behavior */
+      width: 100%; /* Ensure full width */
+      top: 0;
+      left: 0;
+      overscroll-behavior: none; /* Prevent pull-to-refresh */
+    }
   }
   
   /* Base mobile layout container */
@@ -933,29 +936,34 @@
     }
   }
   
-  /* PWA mode global adjustments (applied via html class) */
-  html.pwa-mode .chart-dialog {
-    /* PWA needs fullscreen experience for charts */
-    height: calc(100vh - var(--safe-top) - 1px);
-    height: calc(100dvh - var(--safe-top) - 1px); /* Dynamic viewport height */
-    max-height: calc(100vh - var(--safe-top) - 1px);
-    max-height: calc(100dvh - var(--safe-top) - 1px);
-    max-width: 100vw;
-    width: 100vw;
-    
-    /* Different positioning for PWA */
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: var(--safe-top);
-    margin: 0;
-    
-    /* Rounded corners only on top in PWA mode */
-    border-radius: var(--chart-dialog-radius) var(--chart-dialog-radius) 0 0;
-    
-    /* Better appearance on iOS */
-    transform: translateZ(0);
+  /* Full-screen dialog adjustments for mobile and PWA experience
+   * Instead of conditional styling, we use a single rule that works for all modes
+   */
+  @media (max-width: 640px), (display-mode: standalone) {
+    .chart-dialog {
+      /* Full-screen experience for small screens and standalone mode */
+      height: calc(100vh - var(--safe-top) - 1px);
+      height: calc(100dvh - var(--safe-top) - 1px); /* Dynamic viewport height */
+      max-height: calc(100vh - var(--safe-top) - 1px);
+      max-height: calc(100dvh - var(--safe-top) - 1px);
+      max-width: 100vw;
+      width: 100vw;
+      
+      /* Standardized positioning */
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: var(--safe-top);
+      margin: 0;
+      
+      /* Rounded corners only on top */
+      border-radius: var(--chart-dialog-radius) var(--chart-dialog-radius) 0 0;
+      
+      /* Better performance on mobile devices */
+      transform: translateZ(0);
+      will-change: transform;
+    }
   }
   
   /* Chart content - main viewing area */
@@ -981,10 +989,12 @@
     }
   }
   
-  /* PWA adjustments for content */
-  html.pwa-mode .chart-content {
-    /* Use max() to ensure sufficient padding for devices with or without notches */
-    padding-bottom: max(var(--chart-spacing-md), var(--safe-bottom));
+  /* Safe area padding adjustments for charts on mobile and PWA */
+  @media (max-width: 640px), (display-mode: standalone) {
+    .chart-content {
+      /* Use max() to ensure sufficient padding for devices with or without notches */
+      padding-bottom: max(var(--chart-spacing-md), var(--safe-bottom));
+    }
   }
   
   /* Chart image container */
@@ -1012,10 +1022,12 @@
     }
   }
   
-  /* PWA adjustments for chart image */
-  html.pwa-mode .chart-image {
-    /* Ensure image isn't hidden by navigation bar and home indicator */
-    max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-lg));
+  /* Adjustments for chart images on devices with safe areas */
+  @media (max-width: 640px), (display-mode: standalone) {
+    .chart-image {
+      /* Ensure image isn't hidden by navigation bar and home indicator */
+      max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-lg));
+    }
   }
   
   /* 
