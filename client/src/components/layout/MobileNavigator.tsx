@@ -96,36 +96,37 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   // Only show when mounted to avoid hydration mismatch
   if (!mounted) return null;
 
-  // Tab bar items configuration with standardized size icons
-  // Following Apple HIG recommendations for tab bar items
+  // Tab bar items configuration with standardized size and appearance
+  // Follows unified mobile design guidelines (Material + Apple HIG)
   const navItems = [
     { 
-      icon: <LayoutDashboard size="24" strokeWidth={1.75} />,
-      activeIcon: <LayoutDashboard size="24" strokeWidth={2} />,
+      // Standard 24px icon size with adaptive stroke widths for different states
+      icon: <LayoutDashboard size={24} strokeWidth={1.5} />,
+      activeIcon: <LayoutDashboard size={24} strokeWidth={2} />,
       label: "Dashboard", 
       href: "/" 
     },
     { 
-      icon: <TrendingUp size="24" strokeWidth={1.75} />,
-      activeIcon: <TrendingUp size="24" strokeWidth={2} />,
+      icon: <TrendingUp size={24} strokeWidth={1.5} />,
+      activeIcon: <TrendingUp size={24} strokeWidth={2} />,
       label: "New Trade", 
       href: "/trade/new" 
     },
     { 
-      icon: <History size="24" strokeWidth={1.75} />,
-      activeIcon: <History size="24" strokeWidth={2} />,
+      icon: <History size={24} strokeWidth={1.5} />,
+      activeIcon: <History size={24} strokeWidth={2} />,
       label: "History", 
       href: "/trade/history" 
     },
     {
-      icon: <BarChart2 size="24" strokeWidth={1.75} />,
-      activeIcon: <BarChart2 size="24" strokeWidth={2} />,
+      icon: <BarChart2 size={24} strokeWidth={1.5} />,
+      activeIcon: <BarChart2 size={24} strokeWidth={2} />,
       label: "Analytics",
       href: "/analytics"
     },
     { 
-      icon: <Settings size="24" strokeWidth={1.75} />,
-      activeIcon: <Settings size="24" strokeWidth={2} />,
+      icon: <Settings size={24} strokeWidth={1.5} />,
+      activeIcon: <Settings size={24} strokeWidth={2} />,
       label: "Settings", 
       href: "/settings" 
     }

@@ -442,19 +442,19 @@
   /* These CSS variables can be used anywhere in the stylesheet */
 }
 
-  /* MOBILE CONTENT SPACING - ONLY DEFINED ONCE AT THE ROOT LEVEL
-   * Use this class only when needed as a direct replacement for old .has-bottom-nav
-   * Most components should use the bottom-nav-spacer instead
+  /* MOBILE CONTENT SPACING - UPDATED FOR THE NEW NAVIGATION HEIGHT
+   * Use this class to provide proper spacing for content areas with mobile navigation
+   * This creates padding at the bottom of content to ensure nothing is hidden behind the nav bar
    */
   .has-mobile-nav-spacing {
-    /* Uses unified CSS variables for consistency with relative units */
-    padding-bottom: calc(var(--mobile-nav-height) + 0.25rem);
+    /* UPDATED: Uses the new increased mobile-nav-height value plus standard spacing */
+    padding-bottom: calc(var(--mobile-nav-height) + 0.5rem);
     
-    /* Safe area handling through CSS variables */
+    /* UPDATED: Enhanced safe area handling for all device types */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(var(--mobile-nav-height) + 0.25rem), /* Base padding using relative units */
-        calc(var(--mobile-nav-height) + var(--safe-bottom)) /* Dynamic padding with safe area */
+        calc(var(--mobile-nav-height) + 0.5rem), /* Base padding with 8px extra space */
+        calc(var(--mobile-nav-height) + var(--safe-bottom) + 0.25rem) /* Dynamic padding with safe area */
       );
     }
   }
@@ -522,31 +522,35 @@
     --status-bar-height: 3rem; /* Using relative units for better scaling */
     
     /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES 
-     * Following Apple Human Interface Guidelines for Tab Bar
+     * Following Apple Human Interface Guidelines for Tab Bar and Material Design
      * https://developer.apple.com/design/human-interface-guidelines/components/navigation/tab-bars
+     * https://material.io/components/bottom-navigation/specs
      */
-    /* Base mobile navigation height using relative units instead of hardcoded 49px
-     * - Based on standard touch target size recommendations (44px minimum)
-     * - Using rem for better accessibility and responsive scaling
-     * - 3rem = ~48px at default font size which is close to iOS standard 49px
+    
+    /* UPDATED: Base mobile navigation height increased for better tap targets and visual prominence
+     * - Using exactly 3.5rem = 56px at default font size (16px)
+     * - This matches Material Design minimum height recommendation (56px) 
+     * - Provides larger tap targets for better accessibility
+     * - Allows for properly sized icons (24px) with appropriate padding
      */
-    --mobile-nav-height: 3rem;
+    --mobile-nav-height: 3.5rem; /* 56px - standard size, increased from 48px */
     --mobile-nav-z-index: 50;  /* Keep it above everything else */
-    --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect (was 12px) */
+    --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect */
     --mobile-nav-anim-speed: 300ms;
     --mobile-nav-anim-easing: ease-in-out;
     --mobile-nav-shadow: var(--shadow-sm);
     --mobile-nav-active-color: hsl(var(--primary));
     --mobile-nav-inactive-color: hsl(var(--muted-foreground));
     
-    /* Icon and Label specs per Apple HIG */
-    --mobile-nav-icon-size: 1.5rem;   /* 24px - Standard tab bar icon size (adaptive) */
-    --mobile-nav-text-size: 0.625rem; /* 10px - Standard tab bar label size */
-    --mobile-nav-icon-spacing: 0.25rem; /* 4px - Space between icon and label */
+    /* UPDATED: Icon and Label specs per standard guidelines */
+    --mobile-nav-icon-size: 1.5rem;   /* 24px - Standard mobile icon size */
+    --mobile-nav-text-size: 0.75rem;  /* 12px - Increased for better readability (was 10px) */
+    --mobile-nav-icon-spacing: 0.375rem; /* 6px - Increased spacing for better visual hierarchy (was 4px) */
+    --mobile-nav-item-padding: 0.75rem; /* 12px - Standard padding around items for proper spacing */
     
-    /* Active indicator spec */
-    --mobile-nav-indicator-height: 0.125rem; /* Was 2px */
-    --mobile-nav-indicator-width: 1rem; /* Was 16px - Wider for better visibility */
+    /* Active indicator specs - enhanced for better visibility */
+    --mobile-nav-indicator-height: 0.125rem; /* 2px */
+    --mobile-nav-indicator-width: 1.5rem;    /* 24px - Increased for better visibility (was 16px) */
     --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
     --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
     
@@ -900,8 +904,9 @@
     }
   }
   
-  /* Navigation item container - follows Apple HIG for Tab Bar Items
-   * Each item should be easily tappable and clearly indicate its state
+  /* Navigation item container - follows unified design standards
+   * Enhanced for better accessibility, visibility, and touch targets
+   * Combines best practices from Apple HIG and Material Design
    */
   .mobile-nav-item {
     display: flex;
@@ -909,25 +914,38 @@
     align-items: center;
     justify-content: center;
     width: 100%;
+    
+    /* UPDATED: Full-height touch targets to maximize tap area */
     height: 100%;
-    padding: 0;
+    
+    /* UPDATED: Added standard padding for better visual balance */
+    padding: var(--mobile-nav-item-padding) 0.5rem;
+    
     position: relative;
     overflow: hidden;
     color: var(--mobile-nav-inactive-color);
     transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
     
-    /* Touch optimization for iOS standards */
+    /* Touch optimization for mobile standards */
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     
-    /* Standard tap target size - Apple recommends min 44x44pt touch targets 
-     * Using relative units but maintaining Apple's recommendation (44px)
+    /* UPDATED: Increased minimum touch target size to 56px
+     * Following Material Design minimum touch target guidelines
      */
-    min-height: 2.75rem; /* ~44px at default font size */
+    min-height: 3.5rem; /* 56px - Matches Material Design standard */
+    
+    /* Add subtle hover effect */
+    position: relative;
+    
+    /* Add feedback for active/pressed state */
+    &:active {
+      opacity: 0.8;
+    }
   }
   
-  /* Active state indicator - subtle line above the active item 
-   * Apple often uses a small indicator to show selection state
+  /* UPDATED: Active state indicator - more prominent positioning and sizing
+   * Material Design often uses a colored indicator for active state
    */
   .mobile-nav-indicator {
     position: absolute;
@@ -935,31 +953,45 @@
     left: 0;
     right: 0;
     margin: 0 auto;
+    
+    /* UPDATED: Increased width for better visibility */
     width: var(--mobile-nav-indicator-width);
     height: var(--mobile-nav-indicator-height);
     background-color: var(--mobile-nav-active-color);
     border-radius: 9999px;
+    
+    /* UPDATED: Add subtle transition effect */
+    transition: width 0.2s ease-in-out;
   }
   
-  /* Icon container - sized according to Apple Tab Bar standards */
+  /* UPDATED: Icon container - standard 24px mobile icons with proper spacing */
   .mobile-nav-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    /* UPDATED: Standard mobile icon size of 24px (1.5rem) */
     font-size: var(--mobile-nav-icon-size);
     width: var(--mobile-nav-icon-size);
     height: var(--mobile-nav-icon-size);
-    margin-bottom: var(--mobile-nav-icon-spacing); /* Standard spacing between icon and label */
+    
+    /* UPDATED: Increased spacing for better visual hierarchy */
+    margin-bottom: var(--mobile-nav-icon-spacing);
     margin-left: auto;
     margin-right: auto;
     
     /* Ensures proper vertical alignment */
     line-height: 1;
     flex-shrink: 0; /* Prevents icon from shrinking */
+    
+    /* UPDATED: Create a subtle container effect for the icon */
+    position: relative;
+    z-index: 1;
   }
   
-  /* Label text - follows Apple Text Size standards for tab bar labels */
+  /* UPDATED: Label text - increased size and improved visual hierarchy */
   .mobile-nav-label {
+    /* UPDATED: Increased size from 10px to 12px (0.75rem) for better readability */
     font-size: var(--mobile-nav-text-size);
     font-weight: var(--mobile-nav-inactive-weight);
     line-height: 1.2; /* Slightly increased for better readability */
@@ -969,21 +1001,26 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+    max-width: 90%; /* UPDATED: Prevent overflow issues */
     letter-spacing: -0.01em; /* Slight tightening for iOS feel */
-    padding: 0 0.25rem; /* Small horizontal padding (was 4px) */
+    
+    /* UPDATED: Increased horizontal padding for better spacing */
+    padding: 0 0.375rem; /* 6px - standard spacing (increased from 4px) */
   }
   
-  /* Active tab styling - follows iOS active tab appearance */
+  /* UPDATED: Active tab styling - more prominent and better contrast */
   .mobile-nav-item.active,
   .mobile-nav-item:active {
     color: var(--mobile-nav-active-color);
   }
   
-  /* Active label text - slightly bolder for better visibility */
+  /* UPDATED: Active label text - enhanced visibility and emphasis */
   .mobile-nav-label.active {
     font-weight: var(--mobile-nav-active-weight);
     color: var(--mobile-nav-active-color);
+    
+    /* UPDATED: Added subtle scale effect for better visual hierarchy */
+    transform: scale(1.02);
   }
   
   /* Mobile header bar - used in MobileNav */
