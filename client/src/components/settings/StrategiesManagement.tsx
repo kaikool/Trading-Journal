@@ -517,6 +517,7 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
   onUpdateStrategy: (strategy: TradingStrategy) => void;
   onDeleteStrategy: (id: string, name: string) => void;
   onSetDefaultStrategy: (strategy: TradingStrategy) => void;
+  handleStrategyFieldChange: (strategyId: string, fieldName: string, value: any) => void;
   // Form state variables
   newRule: string;
   newEntryCondition: string;
@@ -973,6 +974,7 @@ export function StrategiesManagement() {
         onSetEditMode={setEditMode}
         onUpdateStrategy={handleUpdateStrategy}
         onDeleteStrategy={handleDeleteStrategy}
+        handleStrategyFieldChange={handleStrategyFieldChange}
         onSetDefaultStrategy={(strategy) => {
           try {
             setIsSaving(true);
@@ -1044,7 +1046,8 @@ export function StrategiesManagement() {
     );
   }, [strategies, editMode, isSaving, handleUpdateStrategy, handleDeleteStrategy, 
       newRule, newEntryCondition, newExitCondition, newTimeframe,
-      setNewRule, setNewEntryCondition, setNewExitCondition, setNewTimeframe, toast, setIsSaving]);
+      setNewRule, setNewEntryCondition, setNewExitCondition, setNewTimeframe, 
+      toast, setIsSaving, handleStrategyFieldChange]);
   
   // Render loading state
   if (loading) {
