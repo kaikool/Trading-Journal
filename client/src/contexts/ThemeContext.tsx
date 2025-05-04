@@ -88,8 +88,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Apply theme immediately
   const applyTheme = (newTheme?: ThemeType) => {
     const themeToApply = newTheme || theme;
+    
+    // Update both theme states when applying theme
     setCurrentTheme(themeToApply);
+    setTheme(themeToApply); // Update theme state too so UI components reflect this
+    
+    // Save both theme values to localStorage
     localStorage.setItem('currentTheme', themeToApply);
+    localStorage.setItem('theme', themeToApply);
     
     if (themeToApply === 'system') {
       const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;

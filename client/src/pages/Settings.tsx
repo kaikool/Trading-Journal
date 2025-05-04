@@ -137,7 +137,7 @@ export default function Settings() {
   const { theme, setTheme, applyTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
-    theme: theme, 
+    theme: theme, // Initial value from context
     currency: 'USD',
     defaultRiskPerTrade: 2,
     defaultRiskRewardRatio: 2,
@@ -150,6 +150,14 @@ export default function Settings() {
     defaultTimeframe: 'H4',
     showAchievements: true
   });
+
+  // Sync settings.theme with theme context whenever theme changes
+  useEffect(() => {
+    setSettings(prev => ({
+      ...prev,
+      theme: theme
+    }));
+  }, [theme]);
   
   const [initialBalance, setInitialBalance] = useState<number>(DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE);
   const [displayName, setDisplayName] = useState<string>(auth.currentUser?.displayName || "");
@@ -478,7 +486,7 @@ export default function Settings() {
                     onValueChange={(value) => {
                       const themeValue = value as 'light' | 'dark' | 'system';
                       setSettings({ ...settings, theme: themeValue });
-                      // Preview the theme immediately when selected
+                      // Preview the theme immediately when selected and ensure settings stay in sync
                       applyTheme(themeValue);
                     }}
                   >
