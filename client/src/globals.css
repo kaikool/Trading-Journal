@@ -539,14 +539,14 @@
    * This creates padding at the bottom of content to ensure nothing is hidden behind the nav bar
    */
   .has-mobile-nav-spacing {
-    /* MUCH LARGER PADDING: Using double the height to ensure it's visible */
-    padding-bottom: calc(var(--mobile-nav-height) * 2) !important; /* Use !important to override any other styling */
+    /* STANDARD PADDING: Using the navigation height plus buffer space */
+    padding-bottom: calc(var(--mobile-nav-height) + 1rem) !important; /* 1rem (16px) extra space */
     
-    /* Also applying safe area inset at maximum value */
+    /* Also applying safe area inset when available */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(var(--mobile-nav-height) * 2), /* Double height as base padding */
-        calc(var(--mobile-nav-height) * 2 + var(--safe-bottom)) /* With safe area added */
+        calc(var(--mobile-nav-height) + 1rem), /* Standard padding with buffer */
+        calc(var(--mobile-nav-height) + var(--safe-bottom) + 0.5rem) /* With safe area added */
       ) !important; /* Force this styling to take precedence */
     }
   }
