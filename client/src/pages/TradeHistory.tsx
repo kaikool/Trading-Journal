@@ -1009,43 +1009,6 @@ export default function TradeHistory() {
           </>
         ) : null}
       </div>
-      
-      {/* Test content for mobile nav padding - Always display for testing */}
-      <div className="mt-8 border-t pt-8">
-        <h3 className="text-lg font-medium mb-3">Additional Resources</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Advanced Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Deeper insights into your trading patterns and performance metrics.</p>
-              <Button variant="outline" size="sm" className="mt-4">Explore</Button>
-            </CardContent>
-          </Card>
-          <Card className="shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Trading Journal Tips</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Best practices for maintaining an effective trading journal.</p>
-              <Button variant="outline" size="sm" className="mt-4">Learn More</Button>
-            </CardContent>
-          </Card>
-          <Card className="shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Data Export</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Export your trading data for external analysis or backup.</p>
-              <Button variant="outline" size="sm" className="mt-4">Export</Button>
-            </CardContent>
-          </Card>
-        </div>
-        <p className="text-xs text-muted-foreground text-center pb-6">
-          Last updated: {new Date().toLocaleDateString()} • Forex Trade Journal v2.5
-        </p>
-      </div>
     </div>
   );
 }
