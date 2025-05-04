@@ -541,15 +541,17 @@
     flex-direction: column;
     min-height: 100vh; /* Fallback */
     min-height: 100dvh; /* Dynamic viewport height */
-    overflow-y: auto; /* Đặt overflow scroll CHÍNH vào đây là nơi duy nhất có scroll */
+    overflow-y: scroll; /* ONE TRUE SCROLL - thay auto thành scroll để đảm bảo luôn có thanh cuộn */
+    overflow-x: hidden; /* Không cho phép cuộn ngang */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    position: absolute; /* Đảm bảo container này chiếm toàn bộ kích thước của viewport */
+    position: fixed; /* Thay đổi absolute thành fixed để cố định vị trí */
     top: var(--safe-top); /* Tôn trọng safe area top */
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
     height: calc(100% - var(--safe-top)); /* Điều chỉnh chiều cao để tính đến safe area */
+    z-index: 1; /* Đảm bảo container này nằm trên các thành phần khác */
     
     /* Standard bottom padding for all pages with mobile navigation */
     padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
@@ -895,6 +897,13 @@
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
   }
   
   /* Unified mobile layout styles for both regular and PWA modes
