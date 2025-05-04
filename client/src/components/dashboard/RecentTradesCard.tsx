@@ -20,6 +20,7 @@ import { useLocation } from "wouter";
 import { determineTradeStatus } from "@/lib/trade-status-helpers";
 import { Trade as AppTrade } from "@/types";
 import DirectionBadge from "../trades/DirectionBadge";
+import { memoWithPerf, useMemoWithPerf } from "@/lib/performance";
 
 // Define the types for the trade data
 interface Trade {
@@ -43,6 +44,7 @@ interface RecentTradesCardProps {
   isLoading?: boolean;
 }
 
+// Sử dụng memoWithPerf để tối ưu hiệu năng
 export function RecentTradesCard({
   trades,
   isLoading = false
@@ -51,8 +53,8 @@ export function RecentTradesCard({
 
   // Removed getDirectionClasses as we're now using DirectionBadge component
 
-  // Function to format timestamp - Memoize để tránh tính toán lại
-  const formatTimestamp = useMemo(() => {
+  // Function to format timestamp - Sử dụng useMemoWithPerf để tối ưu theo hiệu năng thiết bị
+  const formatTimestamp = useMemoWithPerf(() => {
     // Lưu cache cho timestamp đã từng xử lý
     const timestampCache = new Map<string, string>();
     
@@ -88,7 +90,7 @@ export function RecentTradesCard({
       timestampCache.set(cacheKey, formattedDate);
       return formattedDate;
     };
-  }, []);
+  }, [], true); // true để luôn memoize ngay cả trên thiết bị hiệu năng cao
 
   // Function to navigate to trade detail - tối ưu với useCallback để tránh tạo lại hàm
   const handleViewTrade = useCallback((tradeId: string) => {
@@ -100,8 +102,8 @@ export function RecentTradesCard({
     setLocation("/trade/history");
   }, [setLocation]);
   
-  // Memoize danh sách giao dịch để tránh re-render không cần thiết
-  const memoizedTradesList = useMemo(() => {
+  // Dùng useMemoWithPerf thay vì useMemo để tối ưu hiệu năng trên các thiết bị khác nhau
+  const memoizedTradesList = useMemoWithPerf(() => {
     if (!trades.length) return null;
     
     return trades.map((trade) => {
@@ -176,7 +178,7 @@ export function RecentTradesCard({
         </div>
       );
     });
-  }, [trades, formatTimestamp, handleViewTrade]);
+  }, [trades, formatTimestamp, handleViewTrade], true); // true để luôn memoize vì đây là component có tính toán phức tạp
   
   if (isLoading) {
     return (
