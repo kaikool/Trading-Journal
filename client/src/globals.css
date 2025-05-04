@@ -1439,7 +1439,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: var(--shadow-sm);
-    outline: none;
+
     position: absolute;
     top: 50%;
     width: var(--chart-control-size);
@@ -1490,10 +1490,7 @@
     transform: translateY(-50%) scale(0.95);
   }
   
-  .chart-nav-button:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4), var(--shadow-sm);
-  }
+
   
   /* Disabled state for buttons */
   .chart-zoom-button:disabled {
@@ -1704,17 +1701,9 @@
     margin: 0 auto;
   }
   
-  /* Consistent focus styles for all elements */
-  *:focus {
-    outline: none;
-    box-shadow: var(--shadow-focus);
-  }
+
   
-  /* Form element focus with scroll margin */
-  input:focus,
-  select:focus {
-    scroll-margin: 5rem; /* Large value to ensure good UX when keyboard appears */
-  }
+
   
   /* Standardize muted text with consistent opacity */
   .text-muted-foreground {
@@ -1741,27 +1730,7 @@
     background: hsl(var(--muted-foreground) / 0.7);
   }
   
-  /* Improved accessibility focus-visible styles */
-  *:focus-visible {
-    outline: none;
-    box-shadow: var(--shadow-focus);
-    outline-offset: 2px;
-    z-index: 1;
-  }
-  
-  /* Interactive elements get a slightly more prominent focus indicator */
-  button:focus-visible,
-  a:focus-visible,
-  [role="button"]:focus-visible {
-    box-shadow: var(--shadow-focus);
-  }
-  
-  /* Form elements get unique focus styles */
-  input:focus-visible, 
-  select:focus-visible {
-    border-color: hsl(var(--primary));
-    box-shadow: var(--shadow-focus);
-  }
+
   
   /* Glass morphism */
   .glass {
@@ -1931,12 +1900,7 @@
     transition: all 0.2s ease-in-out;
   }
   
-  /* Consistent focus style for custom inputs */
-  .custom-input:focus {
-    border-color: hsl(var(--primary));
-    box-shadow: var(--shadow-focus);
-    outline: none;
-  }
+
   
   .custom-select {
     appearance: none;
