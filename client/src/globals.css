@@ -550,7 +550,7 @@
   /* New transparent spacer for mobile navigation */
   .mobile-nav-transparent-spacer {
     /* This element takes up space but is invisible */
-    height: calc(var(--mobile-nav-height) * 1.5);
+    height: calc(var(--mobile-nav-height) * 2.5);
     width: 100%;
     opacity: 0;
     pointer-events: none;
@@ -559,8 +559,8 @@
     /* Also handle safe area when available */
     @supports (max(0px)) {
       height: max(
-        calc(var(--mobile-nav-height) * 1.5),
-        calc(var(--mobile-nav-height) * 1.5 + var(--safe-bottom))
+        calc(var(--mobile-nav-height) * 2.5),
+        calc(var(--mobile-nav-height) * 2.5 + var(--safe-bottom))
       );
     }
   }
