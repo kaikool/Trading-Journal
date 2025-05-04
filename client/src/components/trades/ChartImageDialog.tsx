@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, ZoomIn, ZoomOut, Maximize2, X } from 'lucide-react';
+import { Loader2, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
 import { cn } from '@/lib/utils';
+import { useDialogVariant } from '@/components/ui/dialog-variants';
 
 interface ChartImageDialogProps {
   isOpen: boolean;
@@ -198,23 +199,25 @@ export function ChartImageDialog({
   const dialogTitle = `${tradePair} - ${currentImage?.label || "Chart"}`;
   const dialogDescription = `Trading chart for ${tradePair}`;
   
+  // Lấy variant class cho dialog chart
+  const dialogClass = useDialogVariant('chart');
+  
   return (
     <Dialog 
       open={isOpen} 
       onOpenChange={(open) => !open && onClose()}
     >
       <DialogContent 
-        className="p-0 chart-dialog"
-        aria-describedby="chart-dialog-description"
+        className={dialogClass}
       >
-        {/* Header với title visible và description hidden */}
+        {/* Title và Description theo chuẩn accessibility */}
         <DialogTitle className="sr-only">
           {dialogTitle}
         </DialogTitle>
         
-        <div id="chart-dialog-description" className="sr-only">
+        <DialogDescription className="sr-only">
           Trading chart analysis for {tradePair}
-        </div>
+        </DialogDescription>
         
         {/* Thanh tiêu đề nhỏ gọn hơn */}
         <div className="flex flex-col py-2 px-3 border-b text-sm">
