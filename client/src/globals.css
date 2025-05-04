@@ -1042,8 +1042,8 @@
   
   /* Stat Card Base Container */
   .stat-card {
-    /* Central configuration through CSS variables - tuân theo quy tắc spacing 4px */
-    --stat-card-padding: 1rem; /* 16px - theo Tailwind p-4 */
+    /* Central configuration through CSS variables following 4px spacing rule */
+    --stat-card-padding: 1rem; /* 16px - Tailwind p-4 */
     --stat-card-radius: var(--radius);
     --stat-card-border-opacity: 0.3;
     --stat-card-shadow: var(--shadow-sm);
@@ -1065,7 +1065,7 @@
     --stat-icon-container-radius: 9999px;
     
     /* Progress bar config */
-    --stat-progress-height: 0.25rem; /* 4px - Chuẩn hóa theo 4px */
+    --stat-progress-height: 0.25rem; /* 4px - Following 4px spacing rule */
     --stat-progress-radius: 9999px;
     
     /* Base container styling */
@@ -1080,7 +1080,7 @@
   
   /* Compact variant for stat cards in grid layout */
   .stat-card-compact {
-    --stat-card-padding: 0.75rem; /* 12px - Chuẩn hóa theo 4px rule - Tailwind p-3 */
+    --stat-card-padding: 0.75rem; /* 12px - Following 4px rule - Tailwind p-3 */
     --stat-value-font-size: 1.5rem;
     padding: var(--stat-card-padding);
   }
@@ -1195,8 +1195,8 @@
   
   /* Chart legend styling */
   .chart-legend {
-    padding-top: 8px; /* Chuẩn hóa theo quy tắc 4px */
-    font-size: 12px; /* Chuẩn hóa theo quy tắc 4px */
+    padding-top: 8px; /* Following 4px spacing rule */
+    font-size: 12px; /* Following 4px spacing rule */
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -1236,10 +1236,12 @@
       bottom: var(--chart-spacing-sm);
     }
     
-    /* PWA-specific adjustments */
-    html.pwa-mode & {
-      /* Ensure enough space below the pagination bar for devices with home indicator */
-      bottom: max(var(--chart-spacing-sm), var(--safe-bottom));
+    /* Safe area adjustments for mobile and PWA */
+    @media (max-width: 640px), (display-mode: standalone) {
+      .chart-pagination {
+        /* Ensure enough space below the pagination bar for devices with home indicator */
+        bottom: max(var(--chart-spacing-sm), var(--safe-bottom));
+      }
     }
   }
   
@@ -1262,7 +1264,7 @@
   /* Form element focus with scroll margin */
   input:focus,
   select:focus {
-    scroll-margin: 5rem; /* Đây là giá trị lớn, giữ nguyên để đảm bảo UX */
+    scroll-margin: 5rem; /* Large value to ensure good UX when keyboard appears */
   }
   
   /* Standardize muted text with consistent opacity */
@@ -1342,20 +1344,20 @@
     --balance-chart-label-size: 0.75rem;
     --balance-chart-value-size: 1rem;
     
-    /* Margins and paddings - chuẩn hóa theo 4px scale */
-    --balance-chart-padding: 1rem; /* 16px - tương đương Tailwind p-4 */
-    --balance-chart-margin: 0.5rem; /* 8px - tương đương Tailwind m-2 */
+    /* Margins and paddings - following 4px spacing rule */
+    --balance-chart-padding: 1rem; /* 16px - equivalent to Tailwind p-4 */
+    --balance-chart-margin: 0.5rem; /* 8px - equivalent to Tailwind m-2 */
     
     /* Chart specific configuration */
-    --balance-chart-point-size: 4px; /* Điều chỉnh từ 6px xuống 4px cho đúng scale */
-    --balance-chart-line-width: 2px; /* Giữ nguyên width trong trường hợp này */
+    --balance-chart-point-size: 4px; /* Adjusted from 6px to 4px to follow spacing rule */
+    --balance-chart-line-width: 2px; /* Maintained width for visual clarity */
     --balance-chart-gradient-opacity-top: 0.2;
     --balance-chart-gradient-opacity-bottom: 0;
     
-    /* Tooltip configuration - tuân theo quy tắc 4px */
+    /* Tooltip configuration - following 4px spacing rule */
     --balance-chart-tooltip-shadow: var(--shadow-md);
-    --balance-chart-tooltip-border-radius: 0.5rem; /* 8px - đúng quy chuẩn */
-    --balance-chart-tooltip-padding: 0.75rem; /* 12px - tương đương Tailwind p-3 */
+    --balance-chart-tooltip-border-radius: 0.5rem; /* 8px - following standard spacing */
+    --balance-chart-tooltip-padding: 0.75rem; /* 12px - equivalent to Tailwind p-3 */
     
     /* Animation speeds */
     --balance-chart-anim-speed: 1000ms; /* Match animation-duration for chart */
