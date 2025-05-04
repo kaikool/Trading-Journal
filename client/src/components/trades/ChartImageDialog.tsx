@@ -203,7 +203,6 @@ export function ChartImageDialog({
     >
       <DialogContent 
         className="p-0 chart-dialog"
-        aria-describedby="chart-image-viewer-description"
       >
         <div id="chart-image-viewer-description" className="sr-only">
           Chart image viewer for trading analysis
@@ -371,7 +370,7 @@ export function ChartImageDialog({
               <div className="chart-pagination-dots">
                 {isMobile && (
                   <button
-                    className="chart-zoom-button"
+                    className="w-6 h-6 flex items-center justify-center text-white/90"
                     onClick={handlePrevious}
                     aria-label="Previous image"
                   >
@@ -400,7 +399,7 @@ export function ChartImageDialog({
                 
                 {isMobile && (
                   <button
-                    className="chart-zoom-button"
+                    className="w-6 h-6 flex items-center justify-center text-white/90"
                     onClick={handleNext}
                     aria-label="Next image"
                   >
