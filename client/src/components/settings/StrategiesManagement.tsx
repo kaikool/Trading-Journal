@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useMemoWithPerf } from "@/lib/performance";
 import { TradingStrategy, StrategyCondition } from "@/types";
 import { useToast } from "@/hooks/use-toast";
@@ -179,10 +179,92 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
   };
 };
 
+// A memoized component for strategy items in the accordion
+const StrategyItem = React.memo(function StrategyItem({
+  strategy,
+  isEditMode,
+  onEdit,
+  onUpdate,
+  onDelete,
+  onSetAsDefault,
+  isSaving
+}: {
+  strategy: TradingStrategy;
+  isEditMode: boolean;
+  onEdit: () => void;
+  onUpdate: (strategy: TradingStrategy) => void;
+  onDelete: () => void;
+  onSetAsDefault: () => void;
+  isSaving: boolean;
+}) {
+  return (
+    <AccordionItem
+      key={strategy.id}
+      value={strategy.id}
+      className={cn(
+        "border rounded-lg overflow-hidden",
+        strategy.isDefault ? "border-primary/20 bg-primary/5" : ""
+      )}
+    >
+      <AccordionTrigger className="px-3 py-1.5 hover:bg-muted/50 h-9">
+        <div className="flex items-center text-left space-x-2">
+          <span className="font-medium text-sm">{strategy.name}</span>
+          {strategy.isDefault && (
+            <Badge variant="outline" className="font-normal text-xs h-5 px-1.5">
+              Default
+            </Badge>
+          )}
+        </div>
+      </AccordionTrigger>
+      <AccordionContent className="px-3 pb-3 pt-1.5">
+        {isEditMode ? (
+          /* Edit mode content would go here */
+          <div>Editing...</div>
+        ) : (
+          /* View mode content would go here */
+          <div>View mode</div>
+        )}
+      </AccordionContent>
+    </AccordionItem>
+  );
+});
+
 export function StrategiesManagement() {
-  // Memoized helper functions
+  // Define local interfaces for rule and condition checks
+  interface ConditionCheck {
+    conditionId: string;
+    checked: boolean;
+    passed: boolean;
+    notes?: string;
+  }
+  
+  interface RuleWithCheck {
+    rule: StrategyCondition;
+    check: ConditionCheck;
+  }
+  
+  interface ConditionWithCheck {
+    condition: StrategyCondition;
+    check: ConditionCheck;
+  }
+  
+  // Memoized array processing functions
+  const handleAddRule = useCallback((rules: StrategyCondition[], newRule: StrategyCondition): StrategyCondition[] => {
+    if (!newRule.label.trim()) return rules;
+    return [...rules, newRule];
+  }, []);
+  
+  const handleRemoveRule = useCallback((rules: StrategyCondition[], id: string): StrategyCondition[] => {
+    return rules.filter(rule => rule.id !== id);
+  }, []);
+  
+  const handleUpdateRule = useCallback((rules: StrategyCondition[], id: string, updates: Partial<StrategyCondition>): StrategyCondition[] => {
+    return rules.map(rule => rule.id === id ? { ...rule, ...updates } : rule);
+  }, []);
+  
+  // Memoized filter functions
   const filterRulesCompliance = useMemo(() => {
-    return (rules: StrategyCondition[], checks: StrategyConditionCheck[]) => {
+    return (rules: StrategyCondition[], checks: ConditionCheck[]): RuleWithCheck[] => {
       if (!rules || !checks) return [];
       return rules.map(rule => ({
         rule,
@@ -196,7 +278,7 @@ export function StrategiesManagement() {
   }, []);
   
   const filterEntryCompliance = useMemo(() => {
-    return (conditions: StrategyCondition[], checks: StrategyConditionCheck[]) => {
+    return (conditions: StrategyCondition[], checks: ConditionCheck[]): ConditionWithCheck[] => {
       if (!conditions || !checks) return [];
       return conditions.map(condition => ({
         condition,
