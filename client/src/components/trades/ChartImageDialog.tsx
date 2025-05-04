@@ -225,14 +225,11 @@ export function ChartImageDialog({
         
         {/* Thanh tiêu đề nhỏ gọn hơn */}
         <div className="flex flex-col py-2 px-3 border-b text-sm">
-          <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
+          <span className="font-medium chart-title">
             {dialogTitle}
           </span>
           {availableImages.length > 1 && (
-            <span style={{
-              fontSize: 'var(--chart-subtitle-font-size)',
-              color: 'var(--chart-subtitle-color)'
-            }}>
+            <span className="chart-subtitle">
               {`${currentImageIndex + 1}/${availableImages.length}`}
             </span>
           )}

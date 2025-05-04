@@ -84,13 +84,7 @@
   --mobile-layout-max-width: 640px;
   --mobile-header-height: 3.5rem; /* 56px */
   
-  /* Chart component configuration */
-  --chart-dialog-radius: 1rem; /* 16px */
-  --chart-spacing-xs: 0.5rem; /* 8px */
-  --chart-spacing-sm: 0.75rem; /* 12px */
-  --chart-spacing-md: 1rem; /* 16px */
-  --chart-spacing-lg: 1.25rem; /* 20px */
-  --chart-anim-speed: 300ms;
+  /* Chart component configuration - Reference định nghĩa đầy đủ trong khối :root phía dưới */
 }
 
 /* Animation utility classes */
@@ -1206,13 +1200,19 @@
   
   /* Chart Dialog CSS Variables */
   :root {
-    /* CSS Variables for chart components */
-    --chart-dialog-radius: 0.75rem; /* 12px - Reduced from 16px */
+    /* CSS Variables for chart components - CHÍNH THỨC VÀ THỐNG NHẤT */
+    --chart-dialog-radius: 0.75rem; /* 12px - Giá trị thống nhất (cũ 1rem) */
     --chart-dialog-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
     --chart-dialog-bg: hsl(var(--card));
     --chart-dialog-z-index: 50;
-    --chart-anim-speed: 300ms;
+    --chart-anim-speed: 300ms; /* Áp dụng cho tất cả animations trong các chart components */
     --chart-mobile-breakpoint: 640px;
+    
+    /* Chart spacing system - Sử dụng spacing toàn cục để đảm bảo tính nhất quán */
+    --chart-spacing-xs: var(--spacing-2);  /* 8px - Using global spacing scale */
+    --chart-spacing-sm: var(--spacing-3); /* 12px - Using global spacing scale */
+    --chart-spacing-md: var(--spacing-4); /* 16px - Using global spacing scale */
+    --chart-spacing-lg: var(--spacing-6); /* 24px - Using global spacing scale */
     
     /* Typography settings */
     --chart-title-font-size: var(--text-sm); /* 14px - Using global typography scale */
@@ -1230,15 +1230,20 @@
     --chart-dot-size: 0.625rem; /* 10px */
     --chart-dot-spacing: 0.625rem; /* 10px */
     
-    /* Spacing for different device sizes - following 4px spacing rule */
-    --chart-spacing-xs: var(--spacing-2);  /* 8px - Using global spacing scale */
-    --chart-spacing-sm: var(--spacing-3); /* 12px - Using global spacing scale */
-    --chart-spacing-md: var(--spacing-4); /* 16px - Using global spacing scale */
-    --chart-spacing-lg: var(--spacing-6); /* 24px - Using global spacing scale */
-    
     /* Zoom and interaction settings */
     --chart-image-max-scale: 3; /* Maximum zoom scale for pinch gesture */
     --chart-image-transition: transform 0.2s ease-out;
+  }
+  
+  /* Chart typography classes */
+  .chart-title {
+    font-size: var(--chart-title-font-size);
+    font-weight: var(--chart-title-font-weight);
+  }
+  
+  .chart-subtitle {
+    font-size: var(--chart-subtitle-font-size);
+    color: var(--chart-subtitle-color);
   }
   
   /* Chart content - main viewing area */
