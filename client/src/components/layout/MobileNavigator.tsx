@@ -9,8 +9,16 @@ import {
   BarChart2
 } from "lucide-react";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
-import { isPWA } from "@/lib/pwa-helper";
 
+/**
+ * MobileNavigatorItem - An individual tab in the tab bar
+ * 
+ * Follows Apple Human Interface Guidelines for Tab Bar Items:
+ * - Standard height/sizing
+ * - Clear active indicators
+ * - Proper touch targets
+ * - Semantic styling based on state
+ */
 interface MobileNavigatorItemProps {
   icon: React.ReactNode;
   activeIcon?: React.ReactNode;
@@ -31,19 +39,23 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
       to={href}
       className={cn(
         "mobile-nav-item",
-        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+        isActive && "active" // Apply active state styling
       )}
+      aria-current={isActive ? "page" : undefined}
+      aria-label={`${label} ${isActive ? '(current page)' : ''}`}
     >
-      {/* Indicator line for active tab */}
+      {/* Indicator line for active tab - following Apple HIG indicators */}
       {isActive && (
         <div className="mobile-nav-indicator" />
       )}
       
-      {/* Icon and label */}
+      {/* Icon container - sized according to HIG standards */}
       <div className="mobile-nav-icon">
+        {/* Use appropriate icon based on state */}
         {isActive ? activeIcon || icon : icon}
       </div>
       
+      {/* Label - sized and styled according to HIG standards */}
       <span className={cn(
         "mobile-nav-label",
         isActive && "active"
@@ -58,6 +70,15 @@ interface MobileNavigatorProps {
   // No props needed - all styling and behavior is controlled via CSS
 }
 
+/**
+ * MobileNavigator - Main tab bar component following Apple HIG
+ * 
+ * Apple's Human Interface Guidelines for Tab Bars recommend:
+ * - 5 or fewer tabs (we comply with 5)
+ * - Clear, recognizable icons
+ * - Short, meaningful labels
+ * - Consistent height that respects safe areas
+ */
 export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
@@ -75,34 +96,36 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   // Only show when mounted to avoid hydration mismatch
   if (!mounted) return null;
 
+  // Tab bar items configuration with standardized size icons
+  // Following Apple HIG recommendations for tab bar items
   const navItems = [
     { 
-      icon: <LayoutDashboard className="h-5 w-5" />, 
-      activeIcon: <LayoutDashboard className="h-5 w-5 text-primary" />,
+      icon: <LayoutDashboard size="24" strokeWidth={1.75} />,
+      activeIcon: <LayoutDashboard size="24" strokeWidth={2} />,
       label: "Dashboard", 
       href: "/" 
     },
     { 
-      icon: <TrendingUp className="h-5 w-5" />, 
-      activeIcon: <TrendingUp className="h-5 w-5 text-primary" />,
+      icon: <TrendingUp size="24" strokeWidth={1.75} />,
+      activeIcon: <TrendingUp size="24" strokeWidth={2} />,
       label: "New Trade", 
       href: "/trade/new" 
     },
     { 
-      icon: <History className="h-5 w-5" />, 
-      activeIcon: <History className="h-5 w-5 text-primary" />,
+      icon: <History size="24" strokeWidth={1.75} />,
+      activeIcon: <History size="24" strokeWidth={2} />,
       label: "History", 
       href: "/trade/history" 
     },
     {
-      icon: <BarChart2 className="h-5 w-5" />,
-      activeIcon: <BarChart2 className="h-5 w-5 text-primary" />,
+      icon: <BarChart2 size="24" strokeWidth={1.75} />,
+      activeIcon: <BarChart2 size="24" strokeWidth={2} />,
       label: "Analytics",
       href: "/analytics"
     },
     { 
-      icon: <Settings className="h-5 w-5" />, 
-      activeIcon: <Settings className="h-5 w-5 text-primary" />,
+      icon: <Settings size="24" strokeWidth={1.75} />,
+      activeIcon: <Settings size="24" strokeWidth={2} />,
       label: "Settings", 
       href: "/settings" 
     }
@@ -122,21 +145,25 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
       >
         {devicePerformance === 'low' ? (
           // Simplified interface for low-performance devices
+          // Reduced to 3 tabs as per Apple HIG recommendations for simpler interfaces
           <>
             <MobileNavigatorItem
-              icon={<LayoutDashboard className="h-5 w-5" />}
+              icon={<LayoutDashboard size="24" strokeWidth={1.75} />}
+              activeIcon={<LayoutDashboard size="24" strokeWidth={2} />}
               label="Dashboard"
               href="/"
               isActive={location === "/" || location === "/dashboard"}
             />
             <MobileNavigatorItem
-              icon={<TrendingUp className="h-5 w-5" />}
+              icon={<TrendingUp size="24" strokeWidth={1.75} />}
+              activeIcon={<TrendingUp size="24" strokeWidth={2} />}
               label="Trades"
               href="/trade/new"
               isActive={location.includes("/trade")}
             />
             <MobileNavigatorItem
-              icon={<BarChart2 className="h-5 w-5" />}
+              icon={<BarChart2 size="24" strokeWidth={1.75} />}
+              activeIcon={<BarChart2 size="24" strokeWidth={2} />}
               label="Analytics"
               href="/analytics"
               isActive={location === "/analytics"}
@@ -144,6 +171,7 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
           </>
         ) : (
           // Full menu for medium and high performance devices
+          // 5 tabs maximum as per Apple HIG recommendations
           navItems.map(item => (
             <MobileNavigatorItem
               key={item.href}

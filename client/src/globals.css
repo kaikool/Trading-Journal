@@ -479,17 +479,29 @@
     /* Standard values for mobile layout components */
     --status-bar-height: 48px;
     
-    /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES */
-    --mobile-nav-height: 56px;
-    --mobile-nav-z-index: 50;
-    --mobile-nav-blur: 12px;
+    /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES 
+     * Following Apple Human Interface Guidelines for Tab Bar
+     * https://developer.apple.com/design/human-interface-guidelines/components/navigation/tab-bars
+     */
+    --mobile-nav-height: 49px; /* Standard iOS Tab Bar height */
+    --mobile-nav-z-index: 50;  /* Keep it above everything else */
+    --mobile-nav-blur: 12px;   /* Subtle blur for glass effect */
     --mobile-nav-anim-speed: 300ms;
     --mobile-nav-anim-easing: ease-in-out;
     --mobile-nav-shadow: var(--shadow-sm);
-    --mobile-nav-icon-size: 20px;
-    --mobile-nav-text-size: 10px;
-    --mobile-nav-indicator-height: 3px;
-    --mobile-nav-indicator-width: 12px;
+    --mobile-nav-active-color: hsl(var(--primary));
+    --mobile-nav-inactive-color: hsl(var(--muted-foreground));
+    
+    /* Icon and Label specs per Apple HIG */
+    --mobile-nav-icon-size: 1.5rem;   /* 24px - Standard tab bar icon size (adaptive) */
+    --mobile-nav-text-size: 0.625rem; /* 10px - Standard tab bar label size */
+    --mobile-nav-icon-spacing: 0.25rem; /* 4px - Space between icon and label */
+    
+    /* Active indicator spec */
+    --mobile-nav-indicator-height: 2px;
+    --mobile-nav-indicator-width: 16px; /* Wider for better visibility */
+    --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
+    --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
     
     /* Base colors */
     --background: 210 40% 98%;
@@ -793,7 +805,9 @@
     }
   }
   
-  /* Navigation item container */
+  /* Navigation item container - follows Apple HIG for Tab Bar Items
+   * Each item should be easily tappable and clearly indicate its state
+   */
   .mobile-nav-item {
     display: flex;
     flex-direction: column;
@@ -804,14 +818,20 @@
     padding: 0;
     position: relative;
     overflow: hidden;
+    color: var(--mobile-nav-inactive-color);
     transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
     
-    /* Touch optimization */
+    /* Touch optimization for iOS standards */
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    
+    /* Standard tap target size - Apple recommends min 44x44pt touch targets */
+    min-height: 44px;
   }
   
-  /* Active state indicator */
+  /* Active state indicator - subtle line above the active item 
+   * Apple often uses a small indicator to show selection state
+   */
   .mobile-nav-indicator {
     position: absolute;
     top: 0;
@@ -820,38 +840,53 @@
     margin: 0 auto;
     width: var(--mobile-nav-indicator-width);
     height: var(--mobile-nav-indicator-height);
-    background-color: hsl(var(--primary));
+    background-color: var(--mobile-nav-active-color);
     border-radius: 9999px;
   }
   
-  /* Icon container */
+  /* Icon container - sized according to Apple Tab Bar standards */
   .mobile-nav-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 24px;
-    margin-bottom: 4px;
-    width: 24px;
+    font-size: var(--mobile-nav-icon-size);
+    width: var(--mobile-nav-icon-size);
+    height: var(--mobile-nav-icon-size);
+    margin-bottom: var(--mobile-nav-icon-spacing); /* Standard spacing between icon and label */
     margin-left: auto;
     margin-right: auto;
+    
+    /* Ensures proper vertical alignment */
+    line-height: 1;
+    flex-shrink: 0; /* Prevents icon from shrinking */
   }
   
-  /* Label text */
+  /* Label text - follows Apple Text Size standards for tab bar labels */
   .mobile-nav-label {
     font-size: var(--mobile-nav-text-size);
-    font-weight: 500;
-    line-height: 1;
-    transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
+    font-weight: var(--mobile-nav-inactive-weight);
+    line-height: 1.2; /* Slightly increased for better readability */
+    transition: 
+      color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
+      font-weight var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    letter-spacing: -0.01em; /* Slight tightening for iOS feel */
+    padding: 0 4px; /* Small horizontal padding for better text spacing */
   }
   
-  /* Active label text */
+  /* Active tab styling - follows iOS active tab appearance */
+  .mobile-nav-item.active,
+  .mobile-nav-item:active {
+    color: var(--mobile-nav-active-color);
+  }
+  
+  /* Active label text - slightly bolder for better visibility */
   .mobile-nav-label.active {
-    font-weight: 600;
-    color: hsl(var(--primary));
+    font-weight: var(--mobile-nav-active-weight);
+    color: var(--mobile-nav-active-color);
   }
   
   /* Mobile header bar - used in MobileNav */
