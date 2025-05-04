@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useMemoWithPerf } from "@/lib/performance";
 import { useQuery } from "@tanstack/react-query";
 import { auth } from "@/lib/firebase";
 import { Achievement, UserAchievements } from "@/types";
@@ -53,8 +54,8 @@ interface AchievementCardProps {
   };
 }
 
-// Card displaying an achievement
-const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, userProgress }) => {
+// Card displaying an achievement - memoized for performance
+const AchievementCard = React.memo(function AchievementCard({ achievement, userProgress }: AchievementCardProps) {
   const { id, name, description, icon, category, level, points } = achievement;
   const { isComplete, progress = 0, dateEarned } = userProgress;
   
@@ -144,10 +145,10 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, userProg
       )}
     </Card>
   );
-};
+});
 
-// Component for level and progress
-const LevelProgress: React.FC<{ level: number; totalPoints: number }> = ({ level, totalPoints }) => {
+// Component for level and progress - memoized
+const LevelProgress = React.memo(function LevelProgress({ level, totalPoints }: { level: number; totalPoints: number }) {
   const progress = calculateLevelProgress(totalPoints);
   
   return (
@@ -181,7 +182,7 @@ const LevelProgress: React.FC<{ level: number; totalPoints: number }> = ({ level
       </div>
     </div>
   );
-};
+});
 
 // AchievementsTab Component - Achievements section in Settings
 export const AchievementsTab: React.FC<{
@@ -225,26 +226,43 @@ export const AchievementsTab: React.FC<{
     }
   };
   
-  // Filter achievements by category
-  const filteredAchievements = selectedCategory === "all"
-    ? achievementsList
-    : selectedCategory === "completed"
-      ? achievementsList.filter(a => userAchievements?.achievements[a.id]?.isComplete)
-      : selectedCategory === "in-progress"
-        ? achievementsList.filter(a => !userAchievements?.achievements[a.id]?.isComplete &&
-            (userAchievements?.achievements[a.id]?.progress || 0) > 0)
-        : achievementsList.filter(a => a.category === selectedCategory);
+  // Filter achievements by category - memoized for performance
+  const filteredAchievements = useMemoWithPerf(
+    () => {
+      if (selectedCategory === "all") {
+        return achievementsList;
+      } else if (selectedCategory === "completed") {
+        return achievementsList.filter(a => userAchievements?.achievements[a.id]?.isComplete);
+      } else if (selectedCategory === "in-progress") {
+        return achievementsList.filter(a => !userAchievements?.achievements[a.id]?.isComplete &&
+          (userAchievements?.achievements[a.id]?.progress || 0) > 0);
+      } else {
+        return achievementsList.filter(a => a.category === selectedCategory);
+      }
+    },
+    [selectedCategory, achievementsList, userAchievements?.achievements],
+    true // force memoization even on high-performance devices
+  );
   
-  // Count completed achievements
-  const completedCount = achievementsList.filter(
-    a => userAchievements?.achievements[a.id]?.isComplete
-  ).length;
-  
-  // Count in-progress achievements
-  const inProgressCount = achievementsList.filter(
-    a => !userAchievements?.achievements[a.id]?.isComplete &&
-      (userAchievements?.achievements[a.id]?.progress || 0) > 0
-  ).length;
+  // Count achievements - memoized for performance
+  const { completedCount, inProgressCount } = useMemoWithPerf(
+    () => {
+      // Count completed achievements
+      const completed = achievementsList.filter(
+        a => userAchievements?.achievements[a.id]?.isComplete
+      ).length;
+      
+      // Count in-progress achievements
+      const inProgress = achievementsList.filter(
+        a => !userAchievements?.achievements[a.id]?.isComplete &&
+          (userAchievements?.achievements[a.id]?.progress || 0) > 0
+      ).length;
+      
+      return { completedCount: completed, inProgressCount: inProgress };
+    },
+    [achievementsList, userAchievements?.achievements],
+    true // force memoization even on high-performance devices
+  );
   
   if (isLoading) {
     return (
