@@ -76,115 +76,24 @@ export function StrategyConditionForm({
   isNew = false
 }: StrategyConditionFormProps) {
   return (
-    <div className="mb-4 p-3 border rounded-md bg-card/50 w-full">
-      <div className="space-y-3">
-        <div>
-          <Label htmlFor={`condition-label-${condition.id}`}>Condition</Label>
-          <Input 
-            id={`condition-label-${condition.id}`}
-            placeholder="Example: EMA 50 uptrend"
-            value={condition.label}
-            onChange={(e) => onChange({ ...condition, label: e.target.value })}
-            className="mb-1"
-          />
-          <p className="text-xs text-muted-foreground">
-            Brief description of the condition (displayed in the list)
-          </p>
-        </div>
+    <div className="w-full">
+      <div className="space-y-2">
+        <Input 
+          id={`condition-label-${condition.id}`}
+          placeholder="Enter condition..." 
+          value={condition.label}
+          onChange={(e) => onChange({ ...condition, label: e.target.value })}
+          className="h-9"
+        />
         
-        <div className="grid grid-cols-3 gap-2">
-          <div>
-            <Label htmlFor={`condition-indicator-${condition.id}`}>
-              <Activity className="h-3 w-3 inline mr-1" />
-              Indicator
-            </Label>
-            <Select
-              value={condition.indicator}
-              onValueChange={(value) => onChange({ ...condition, indicator: value })}
-            >
-              <SelectTrigger id={`condition-indicator-${condition.id}`} className="w-full">
-                <SelectValue placeholder="Select indicator" />
-              </SelectTrigger>
-              <SelectContent className="min-w-[200px] max-h-[300px]">
-                {COMMON_INDICATORS.map(indicator => (
-                  <SelectItem key={indicator} value={indicator}>
-                    {indicator}
-                  </SelectItem>
-                ))}
-                <SelectItem value="custom">Custom...</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <Label htmlFor={`condition-timeframe-${condition.id}`}>
-              <Clock className="h-3 w-3 inline mr-1" />
-              Timeframe
-            </Label>
-            <Select
-              value={condition.timeframe}
-              onValueChange={(value) => onChange({ ...condition, timeframe: value })}
-            >
-              <SelectTrigger id={`condition-timeframe-${condition.id}`} className="w-full">
-                <SelectValue placeholder="Select timeframe" />
-              </SelectTrigger>
-              <SelectContent className="min-w-[150px] max-h-[300px]">
-                {COMMON_TIMEFRAMES.map(timeframe => (
-                  <SelectItem key={timeframe} value={timeframe}>
-                    {timeframe}
-                  </SelectItem>
-                ))}
-                <SelectItem value="custom">Custom...</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div>
-            <Label htmlFor={`condition-value-${condition.id}`}>
-              <Target className="h-3 w-3 inline mr-1" />
-              Expected Value
-            </Label>
-            <Select
-              value={condition.expectedValue}
-              onValueChange={(value) => onChange({ ...condition, expectedValue: value })}
-            >
-              <SelectTrigger id={`condition-value-${condition.id}`} className="w-full">
-                <SelectValue placeholder="Select value" />
-              </SelectTrigger>
-              <SelectContent className="min-w-[180px]">
-                {COMMON_EXPECTED_VALUES.map(value => (
-                  <SelectItem key={value} value={value}>
-                    {value}
-                  </SelectItem>
-                ))}
-                <SelectItem value="custom">Custom...</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        
-        <div>
-          <Label htmlFor={`condition-description-${condition.id}`}>
-            <Info className="h-3 w-3 inline mr-1" />
-            Description (optional)
-          </Label>
-          <Textarea
-            id={`condition-description-${condition.id}`}
-            placeholder="Brief description..."
-            value={condition.description || ""}
-            onChange={(e) => onChange({ ...condition, description: e.target.value })}
-            className="h-16 text-sm"
-          />
-        </div>
-        
-        <div className="flex justify-end space-x-2 pt-2">
+        <div className="flex justify-end space-x-2">
           {onCancel && (
             <Button 
               variant="outline" 
               size="sm"
               onClick={onCancel}
+              className="h-8 px-3"
             >
-              <X className="h-4 w-4 mr-1" />
               Cancel
             </Button>
           )}
@@ -195,9 +104,9 @@ export function StrategyConditionForm({
               size="sm" 
               onClick={onAdd}
               disabled={!condition.label.trim()}
+              className="h-8 px-3"
             >
-              <Plus className="h-4 w-4 mr-1" />
-              Add Condition
+              Add
             </Button>
           ) : (
             <Button
@@ -205,9 +114,9 @@ export function StrategyConditionForm({
               size="sm"
               onClick={() => onChange(condition)}
               disabled={!condition.label.trim()}
+              className="h-8 px-3"
             >
-              <Save className="h-4 w-4 mr-1" />
-              Update
+              Save
             </Button>
           )}
         </div>
@@ -231,37 +140,9 @@ export function StrategyConditionItem({
   onDelete
 }: StrategyConditionItemProps) {
   return (
-    <div className="flex items-center justify-between py-2 group">
+    <div className="flex items-center justify-between py-1 group">
       <div className="flex-1">
-        <div className="font-medium">{condition.label}</div>
-        <div className="flex flex-wrap gap-1 mt-1">
-          {condition.indicator && (
-            <Badge variant="outline" className="text-xs">
-              <Activity className="h-3 w-3 mr-1" />
-              {condition.indicator}
-            </Badge>
-          )}
-          
-          {condition.timeframe && (
-            <Badge variant="outline" className="text-xs">
-              <Clock className="h-3 w-3 mr-1" />
-              {condition.timeframe}
-            </Badge>
-          )}
-          
-          {condition.expectedValue && (
-            <Badge variant="outline" className="text-xs">
-              <Target className="h-3 w-3 mr-1" />
-              {condition.expectedValue}
-            </Badge>
-          )}
-        </div>
-        
-        {condition.description && (
-          <p className="text-xs text-muted-foreground mt-1">
-            {condition.description}
-          </p>
-        )}
+        <div className="text-sm">• {condition.label}</div>
       </div>
       
       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -335,18 +216,17 @@ export function StrategyConditionList({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          {icon}
-          <h4 className="text-sm font-medium ml-1">{title}</h4>
+          {icon && title && <h4 className="text-sm font-medium ml-1">{title}</h4>}
         </div>
         
         {!isAdding && (
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => setIsAdding(true)}
-            className="h-7 px-2 text-xs"
+            className="h-8 px-3"
           >
-            <Plus className="h-3.5 w-3.5 mr-1" />
+            <Plus className="h-4 w-4 mr-2" />
             Add
           </Button>
         )}
