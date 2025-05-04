@@ -677,21 +677,16 @@
   html, body {
     height: 100%;
     margin: 0;
-    padding: 0;
     @apply antialiased overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
     width: 100%;
     position: relative;
     max-width: 100vw;
-    /* Ensure scrollbar is flush with the edge */
-    box-sizing: border-box;
   }
   
   body {
     @apply bg-background text-foreground font-sans overflow-x-hidden;
     max-width: 100vw;
-    padding: 0;
-    margin: 0;
   }
   
   /* Root element - basic container */
@@ -703,9 +698,6 @@
     width: 100%;
     position: relative;
     overflow-x: hidden;
-    /* Ensure no extra space around root container */
-    margin: 0;
-    padding: 0;
   }
   
   /* Mobile-optimized body styling for both PWA and mobile views
@@ -715,12 +707,6 @@
     /* Base styles for all modes */
     @apply bg-background text-foreground;
     max-width: 100vw;
-    /* Fix for scrollbar positioning */
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
   }
   
   /* Apply when either in mobile or PWA mode using CSS variables */
@@ -781,17 +767,15 @@
   /* Main content area for all mobile modes */
   .mobile-main-content {
     /* Standardized padding using consistent CSS variables */
-    padding: 0 max(var(--safe-right), var(--min-side-padding))
-             0 max(var(--safe-left), var(--min-side-padding));
+    padding: 0 max(var(--safe-left), var(--min-side-padding))
+             0 max(var(--safe-right), var(--min-side-padding));
     display: flex; /* Ensure flexbox layout is applied */
     flex-direction: column; /* Stack children vertically */
     flex: 1; /* Take up available space */
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow-y: auto; /* Allow scrolling */
-    overflow-x: hidden; /* Prevent horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    box-sizing: border-box; /* Ensure padding is included in width */
   }
   
   /* 
@@ -1406,8 +1390,9 @@
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  /* Fix horizontal scrolling issues and ensure scrollbar is correctly positioned */
+  /* Fix horizontal scrolling issues */
   .container,
+  form,
   .grid,
   .flex,
   .space-y-6,
@@ -1416,7 +1401,6 @@
   [class*="gap-"] {
     max-width: 100%;
     overflow-x: hidden;
-    box-sizing: border-box;
   }
   
   /* Chart legend styling */
@@ -1498,35 +1482,24 @@
     @apply text-foreground/70;
   }
   
-  /* Scrollbar styling - Optimized for proper edge alignment */
+  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    /* Critical for proper edge alignment - must be 0 */
-    right: 0;
-    position: absolute;
   }
   
   ::-webkit-scrollbar-track {
     background: hsl(var(--muted));
-    border-radius: 8px 0 0 8px; /* Only round left side for right-edge scrollbar */
-    border-right: 0; /* Ensure no border pushing scrollbar */
-    margin-right: 0; /* Ensure no margin pushing scrollbar */
+    border-radius: 8px;
   }
   
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.5);
-    border-radius: 8px 0 0 8px; /* Only round left side for right-edge scrollbar */
-    border-right: 0; /* Ensure no border pushing scrollbar */
+    border-radius: 8px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.7);
-  }
-  
-  /* Ensure scrolling containers don't add extra space */
-  * {
-    scrollbar-width: thin; /* For Firefox */
   }
   
   /* Improved accessibility focus-visible styles */
