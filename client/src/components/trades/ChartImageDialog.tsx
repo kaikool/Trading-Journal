@@ -150,15 +150,6 @@ export function ChartImageDialog({
               </span>
             )}
           </div>
-
-          {/* Nút đóng dialog được thiết kế lại để visible và thân thiện với mobile */}
-          <button 
-            onClick={onClose}
-            className="rounded-full flex items-center justify-center w-8 h-8 bg-muted/30 hover:bg-muted/50 transition-colors"
-            aria-label="Close dialog"
-          >
-            <X className="h-4 w-4" />
-          </button>
         </DialogTitle>
         
         <div {...swipeHandlers} className="chart-content">
