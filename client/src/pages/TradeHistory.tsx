@@ -977,7 +977,7 @@ export default function TradeHistory() {
                   key={trade.id} 
                   trade={trade} 
                   onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
-                  onDelete={(tradeId: string) => {
+                  onDelete={(tradeId) => {
                     if (window.confirm('Are you sure you want to delete this trade?')) {
                       if (!userId) return;
                       

@@ -132,11 +132,11 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
   
   // If it's a string, convert to basic condition
   if (typeof value === 'string') {
-    return createNewStrategyCondition(0, value, "");
+    return createNewStrategyCondition(0, value);
   }
   
   // Default to an empty condition
-  return createNewStrategyCondition(0, String(value || ''), "");
+  return createNewStrategyCondition(0, String(value || ''));
 };
 
 // Helper to fix situations where multiple strategies are marked as default
@@ -153,7 +153,7 @@ const fixMultipleDefaultStrategies = async (strategies: TradingStrategy[]): Prom
   let mostRecentDefault = defaultStrategies[0];
   
   for (const strategy of defaultStrategies) {
-    if (strategy.updatedAt && mostRecentDefault.updatedAt && strategy.updatedAt > mostRecentDefault.updatedAt) {
+    if (strategy.updatedAt > mostRecentDefault.updatedAt) {
       mostRecentDefault = strategy;
     }
   }
@@ -632,7 +632,6 @@ export function StrategiesManagement() {
       // Prepare strategy for saving
       const strategyData: TradingStrategy = {
         id: uuidv4(),
-        userId: userId,
         name: newStrategy.name?.trim() || "Untitled Strategy",
         description: newStrategy.description || "",
         rules: newStrategy.rules as StrategyCondition[] || [],
@@ -737,7 +736,6 @@ export function StrategiesManagement() {
       // Ensure all strategy conditions are properly formatted before saving
       const formattedStrategy = {
         ...strategy,
-        userId: userId, // Ensure userId is included
         rules: strategy.rules?.map(rule => ensureConditionFormat(rule)) || [],
         entryConditions: strategy.entryConditions?.map(condition => ensureConditionFormat(condition)) || [],
         exitConditions: strategy.exitConditions?.map(condition => ensureConditionFormat(condition)) || [],
@@ -869,7 +867,6 @@ export function StrategiesManagement() {
               // Set this strategy as default
               updateStrategy(userId, strategy.id, {
                 ...strategy,
-                userId: userId,
                 isDefault: true,
                 updatedAt: Timestamp.now()
               }),
@@ -878,7 +875,6 @@ export function StrategiesManagement() {
                 .filter(s => s.id !== strategy.id && s.isDefault)
                 .map(s => updateStrategy(userId, s.id, {
                   ...s,
-                  userId: userId,
                   isDefault: false,
                   updatedAt: Timestamp.now()
                 }))
