@@ -540,14 +540,14 @@
    */
   .has-mobile-nav-spacing {
     /* UPDATED: Uses the new increased mobile-nav-height value plus standard spacing */
-    padding-bottom: calc(var(--mobile-nav-height) + 0.5rem);
+    padding-bottom: calc(var(--mobile-nav-height) + 0.5rem) !important;
     
     /* UPDATED: Enhanced safe area handling for all device types */
     @supports (padding: max(0px)) {
       padding-bottom: max(
         calc(var(--mobile-nav-height) + 0.5rem), /* Base padding with 8px extra space */
         calc(var(--mobile-nav-height) + var(--safe-bottom) + 0.25rem) /* Dynamic padding with safe area */
-      );
+      ) !important;
     }
   }
   
