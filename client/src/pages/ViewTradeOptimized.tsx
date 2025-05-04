@@ -112,7 +112,7 @@ export default function ViewTradeOptimized() {
   };
 
   return (
-    <div className="container max-w-5xl px-0 sm:px-4 py-6">
+    <div className="container max-w-5xl px-0 sm:px-4 py-6 has-mobile-nav-spacing">
       <Button variant="ghost" onClick={handleBack} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Trade History

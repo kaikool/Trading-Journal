@@ -26,7 +26,7 @@ export default function NewTrade() {
   }
 
   return (
-    <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
+    <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 overflow-x-hidden has-mobile-nav-spacing">
       <div className="mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           New Trade
