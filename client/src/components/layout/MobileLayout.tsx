@@ -19,21 +19,21 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   
   return (
     <div className="mobile-layout">
-      {/* Main content area - use unified content class */}
+      {/* Main content area - use unified content class, PWA styling from html.pwa-mode */}
       <main className={isPWAMode ? "pwa-main-content" : "flex-1 px-4"}>
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
         
-        {/* UNIFIED BOTTOM SPACER - consistent height with the mobile nav */}
+        {/* UNIFIED BOTTOM SPACER - controlled by single CSS rule */}
         <div 
           className="bottom-nav-spacer"
           aria-hidden="true" 
         />
       </main>
       
-      {/* Mobile Navigation - Single source of truth for positioning in globals.css */}
-      <MobileNavigator isPWAMode={isPWAMode} />
+      {/* Mobile Navigation - positioning controlled solely by global CSS */}
+      <MobileNavigator />
     </div>
   );
 };

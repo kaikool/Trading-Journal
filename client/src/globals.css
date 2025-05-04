@@ -761,9 +761,11 @@
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
   
-  /* PWA safe-area handling - ONLY adjusts for notched devices */
-  html.pwa-mode .mobile-nav,
-  .mobile-nav.pwa-mode {
+  /* UNIVERSAL SAFE AREA HANDLING - ADJUSTS AUTOMATICALLY BASED ON HTML CLASS
+   * All devices get the same safe-area behavior through the html.pwa-mode class
+   * No need for component-level class toggling
+   */
+  html.pwa-mode .mobile-nav {
     /* ‼️ SAFE AREA INSET HANDLING - CRITICAL FOR iOS DEVICES ‼️ */
     padding-bottom: var(--safe-bottom) !important;
     height: calc(var(--mobile-nav-height) + var(--safe-bottom)) !important;
