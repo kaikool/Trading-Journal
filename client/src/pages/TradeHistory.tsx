@@ -971,7 +971,7 @@ export default function TradeHistory() {
           </div>
         ) : trades.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {trades.map((trade: Trade) => (
                 <LazyTradeHistoryCard 
                   key={trade.id} 
