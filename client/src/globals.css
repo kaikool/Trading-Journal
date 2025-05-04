@@ -1649,7 +1649,7 @@
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
-  /* Fix horizontal scrolling issues */
+  /* Fix scrolling issues - both horizontal and vertical for desktop */
   .container,
   form,
   .grid,
@@ -1660,6 +1660,21 @@
   [class*="gap-"] {
     max-width: 100%;
     overflow-x: hidden;
+  }
+  
+  /* Remove overflow for desktop layout */
+  .desktop-layout-container {
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Content container for desktop */
+  .desktop-content-container {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
   }
   
   /* Chart legend styling */

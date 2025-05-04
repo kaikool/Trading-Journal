@@ -200,7 +200,9 @@ function MainContent() {
     <div
       key={currentRoute}
       className={cn(
-        "min-h-[calc(100vh-4rem)] transition-opacity",
+        "transition-opacity",
+        // Trong mobile layout áp dụng min-height, trong desktop không cần vì đã xử lý ở container parent
+        isMobile ? "min-h-[calc(100vh-4rem)]" : "",
         // Trong mobile layout không cần các padding này vì đã được xử lý bởi MobileLayout
         isMobile ? "" : "px-4 sm:px-6 lg:px-8 pb-6",
         // Thêm className để hiển thị loading state
@@ -267,9 +269,10 @@ function MainContent() {
         </MobileLayout>
       ) : (
         // Nếu là desktop, sử dụng MenuBar ở mode desktop và hiển thị nội dung bên dưới
-        <div className="flex flex-col w-full">
+        // Áp dụng desktop-layout-container để vô hiệu hóa scroll
+        <div className="flex flex-col w-full desktop-layout-container">
           <MenuBar mode="desktop" />
-          <div className="mt-16"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
+          <div className="mt-16 desktop-content-container"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
             {renderPageContent()}
           </div>
         </div>
