@@ -632,6 +632,7 @@ export function StrategiesManagement() {
       // Prepare strategy for saving
       const strategyData: TradingStrategy = {
         id: uuidv4(),
+        userId: userId,
         name: newStrategy.name?.trim() || "Untitled Strategy",
         description: newStrategy.description || "",
         rules: newStrategy.rules as StrategyCondition[] || [],
