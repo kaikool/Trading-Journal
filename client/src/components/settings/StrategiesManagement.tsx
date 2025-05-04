@@ -983,6 +983,25 @@ export function StrategiesManagement() {
                   className="min-h-[60px] text-sm"
                 />
               </div>
+              
+              <div className="pt-1">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="isDefault"
+                    checked={newStrategy.isDefault || false}
+                    onCheckedChange={(checked) => setNewStrategy({...newStrategy, isDefault: checked === true})}
+                  />
+                  <Label htmlFor="isDefault" className="text-sm font-medium cursor-pointer">
+                    <div className="flex items-center">
+                      <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                      Set as default strategy
+                    </div>
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 ml-6">
+                  Default strategy will be pre-selected when creating a new trade
+                </p>
+              </div>
             </div>
             
             <div className="flex justify-end gap-2 sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-1 px-0 sm:px-0">
