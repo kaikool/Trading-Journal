@@ -668,9 +668,6 @@
       width: 100%; /* Ensure full width */
       top: 0;
       left: 0;
-      right: 0; /* Ensure full width */
-      margin: 0; /* Reset any margins */
-      padding: 0; /* Reset any padding */
       overscroll-behavior: none; /* Prevent pull-to-refresh */
     }
   }
@@ -730,10 +727,6 @@
       var(--mobile-nav-height),
       calc(var(--mobile-nav-height) + var(--safe-bottom))
     );
-    
-    /* Ensure no visible elements in spacer */
-    overflow: hidden;
-    pointer-events: none;
     
     /* Hide spacer on desktop layouts */
     @media (min-width: 768px) {
@@ -818,10 +811,6 @@
     .mobile-nav {
       /* Only apply visual enhancements, positioning is handled by core rules */
       border-top: 1px solid hsl(var(--border) / 0.6);
-      /* Ensure bottom position is explicitly set to 0 in PWA mode to fix positioning */
-      bottom: 0 !important;
-      /* Prevent any unexpected margins */
-      margin-bottom: 0 !important;
     }
   }
   
