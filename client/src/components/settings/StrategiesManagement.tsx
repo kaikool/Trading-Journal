@@ -10,6 +10,7 @@ import {
   StrategyConditionList,
   createNewCondition as createNewStrategyCondition
 } from "./StrategyConditionInput";
+import { useDialogVariant, DialogHeaderFooterLayout } from "@/components/ui/dialog-variants";
 
 import {
   Card,
@@ -616,12 +617,11 @@ export function StrategiesManagement() {
             </Button>
           </DialogTrigger>
           <DialogContent 
-            className="max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[560px] max-h-[85vh] overflow-y-auto p-3 sm:p-4"
-            aria-describedby="strategy-management-description"
+            className={useDialogVariant('form')}
           >
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
-              <DialogDescription id="strategy-management-description" className="text-sm">
+              <DialogDescription className="text-sm">
                 Define a new trading strategy with clear rules and conditions
               </DialogDescription>
             </DialogHeader>
@@ -868,32 +868,36 @@ export function StrategiesManagement() {
               </div>
             </div>
             
-            <DialogFooter className="sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-1 px-0 sm:px-0 flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => setIsDialogOpen(false)}
-                className="h-8 text-sm"
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={handleCreateStrategy} 
-                disabled={isCreating}
-                className="h-8 text-sm"
-              >
-                {isCreating ? (
-                  <>
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="mr-1.5 h-3.5 w-3.5" />
-                    Create Strategy
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
+            <DialogHeaderFooterLayout
+              footerContent={
+                <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsDialogOpen(false)}
+                    className="h-8 text-sm"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleCreateStrategy} 
+                    disabled={isCreating}
+                    className="h-8 text-sm"
+                  >
+                    {isCreating ? (
+                      <>
+                        <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="mr-1.5 h-3.5 w-3.5" />
+                        Create Strategy
+                      </>
+                    )}
+                  </Button>
+                </div>
+              }
+            />
           </DialogContent>
         </Dialog>
       </div>
