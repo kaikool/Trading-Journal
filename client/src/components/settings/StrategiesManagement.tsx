@@ -27,9 +27,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogClose,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Accordion,
@@ -271,12 +271,124 @@ const StrategyItem = React.memo(function StrategyItem({
                 onChange={(e) => handleFieldChange('description', e.target.value)}
               />
             </div>
+            
+            {/* Strategy Conditions */}
+            <Accordion type="single" collapsible defaultValue="rules" className="w-full">
+              <AccordionItem value="rules" className="border rounded-md px-4">
+                <AccordionTrigger className="py-2">
+                  <div className="flex items-center">
+                    <ListChecks className="h-4 w-4 mr-2" />
+                    <span className="font-medium">Trading Rules</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 pb-3">
+                  <StrategyConditionList
+                    title="Market Rules"
+                    emptyMessage="No rules defined yet. Click 'Add' to create one."
+                    conditions={strategy.rules || []}
+                    onAdd={(condition) => handleFieldChange('rules', 
+                      addConditionToArray(strategy.rules || [], condition)
+                    )}
+                    onUpdate={(id, updates) => {
+                      const updatedRules = updateConditionInArray(strategy.rules || [], id, updates);
+                      handleFieldChange('rules', updatedRules);
+                    }}
+                    onDelete={(id) => {
+                      handleFieldChange('rules', 
+                        removeConditionFromArray(strategy.rules || [], id)
+                      );
+                    }}
+                    icon={<LineChart className="h-4 w-4" />}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="entry" className="border rounded-md px-4 mt-3">
+                <AccordionTrigger className="py-2">
+                  <div className="flex items-center">
+                    <DoorOpen className="h-4 w-4 mr-2" />
+                    <span className="font-medium">Entry Conditions</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 pb-3">
+                  <StrategyConditionList
+                    title="Entry Conditions"
+                    emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
+                    conditions={strategy.entryConditions || []}
+                    onAdd={(condition) => handleFieldChange('entryConditions', 
+                      addConditionToArray(strategy.entryConditions || [], condition)
+                    )}
+                    onUpdate={(id, updates) => {
+                      const updatedConditions = updateConditionInArray(strategy.entryConditions || [], id, updates);
+                      handleFieldChange('entryConditions', updatedConditions);
+                    }}
+                    onDelete={(id) => {
+                      handleFieldChange('entryConditions', 
+                        removeConditionFromArray(strategy.entryConditions || [], id)
+                      );
+                    }}
+                    icon={<DoorOpen className="h-4 w-4" />}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="exit" className="border rounded-md px-4 mt-3">
+                <AccordionTrigger className="py-2">
+                  <div className="flex items-center">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span className="font-medium">Exit Conditions</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 pb-3">
+                  <StrategyConditionList
+                    title="Exit Conditions"
+                    emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
+                    conditions={strategy.exitConditions || []}
+                    onAdd={(condition) => handleFieldChange('exitConditions', 
+                      addConditionToArray(strategy.exitConditions || [], condition)
+                    )}
+                    onUpdate={(id, updates) => {
+                      const updatedConditions = updateConditionInArray(strategy.exitConditions || [], id, updates);
+                      handleFieldChange('exitConditions', updatedConditions);
+                    }}
+                    onDelete={(id) => {
+                      handleFieldChange('exitConditions', 
+                        removeConditionFromArray(strategy.exitConditions || [], id)
+                      );
+                    }}
+                    icon={<LogOut className="h-4 w-4" />}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            
+            <div className="pt-1">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id={`isDefault-${strategy.id}`}
+                  checked={strategy.isDefault || false}
+                  onCheckedChange={(checked) => handleFieldChange('isDefault', checked === true)}
+                />
+                <Label htmlFor={`isDefault-${strategy.id}`} className="text-sm font-medium cursor-pointer">
+                  <div className="flex items-center">
+                    <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                    Set as default strategy
+                  </div>
+                </Label>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1 ml-6">
+                Default strategy will be pre-selected when creating a new trade
+              </p>
+            </div>
 
             <div className="flex justify-between space-x-2 pt-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onEdit()}
+                onClick={() => {
+                  resetFormFields();
+                  onEdit();
+                }}
                 className="h-8 text-sm px-3"
               >
                 <X className="h-3.5 w-3.5 mr-1.5" />
