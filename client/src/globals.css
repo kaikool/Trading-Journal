@@ -1,5 +1,98 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* 
+ * =======================================================
+ * CSS VARIABLES SYSTEM
+ * =======================================================
+ *
+ * Centralized configuration for responsive layouts,
+ * typography, spacing, and visual components
+ */
+
+:root {
+  /* CSS Variables for Safe Area Management */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  
+  /* PWA Detection - Can be used to toggle behavior based on display mode */
+  --is-pwa: var(--display-pwa, 0);
+  --is-mobile-or-pwa: clamp(0, 
+    (var(--is-mobile, 0) > 0 || var(--is-pwa, 0) > 0) ? 1 : 0, 
+    1
+  );
+  
+  /* Typography scale - Standard font sizes */
+  --text-xs: 0.75rem;   /* 12px */
+  --text-sm: 0.875rem;  /* 14px */
+  --text-base: 1rem;    /* 16px */
+  --text-lg: 1.125rem;  /* 18px */
+  --text-xl: 1.25rem;   /* 20px */
+  --text-2xl: 1.5rem;   /* 24px */
+  --text-3xl: 1.875rem; /* 30px */
+  --text-4xl: 2.25rem;  /* 36px */
+  
+  /* Spacing scale - Following 4px spacing rule */
+  --spacing-0: 0px;
+  --spacing-px: 1px;
+  --spacing-0-5: 0.125rem; /* 2px */
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-1-5: 0.375rem; /* 6px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-2-5: 0.625rem; /* 10px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-3-5: 0.875rem; /* 14px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-16: 4rem;      /* 64px */
+  
+  /* Card component system */
+  --card-title-size: var(--text-xl);     /* 20px */
+  --card-title-weight: 600;              /* semibold */
+  --card-subtitle-size: var(--text-sm);  /* 14px */
+  --card-subtitle-weight: 500;           /* medium */
+  --card-icon-size: 1.25rem;             /* 20px */
+  --card-padding: var(--spacing-4);      /* 16px */
+  --card-radius: var(--radius);
+  --card-shadow: var(--shadow-sm);
+  
+  /* Mobile navigation system */
+  --mobile-nav-height: 4rem; /* 64px by default */
+  --mobile-nav-inset-spacer: calc(var(--safe-bottom));
+  --mobile-nav-total-height: calc(var(--mobile-nav-height) + var(--mobile-nav-inset-spacer));
+  --mobile-nav-blur: 8px;
+  --mobile-nav-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+  
+  /* Mobile navigation item configuration */
+  --mobile-nav-icon-size: 1.5rem; /* 24px matches Material Design spec */
+  --mobile-nav-icon-spacing: 0.25rem; /* 4px */
+  --mobile-nav-item-padding: 0.5rem; /* 8px */
+  --mobile-nav-text-size: 0.75rem; /* 12px for better readability */
+  --mobile-nav-inactive-weight: 400;
+  --mobile-nav-active-weight: 500;
+  --mobile-nav-indicator-width: 3rem; /* 48px */
+  --mobile-nav-indicator-height: 3px;
+  --mobile-nav-anim-speed: 0.2s;
+  --mobile-nav-anim-easing: ease-in-out;
+  
+  /* Mobile layout configuration */
+  --mobile-layout-max-width: 640px;
+  --mobile-header-height: 3.5rem; /* 56px */
+  
+  /* Chart component configuration */
+  --chart-dialog-radius: 1rem; /* 16px */
+  --chart-spacing-xs: 0.5rem; /* 8px */
+  --chart-spacing-sm: 0.75rem; /* 12px */
+  --chart-spacing-md: 1rem; /* 16px */
+  --chart-spacing-lg: 1.25rem; /* 20px */
+  --chart-anim-speed: 300ms;
+}
+
 /* Animation utility classes */
 .progress-animate {
   transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
