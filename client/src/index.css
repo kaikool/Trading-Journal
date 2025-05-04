@@ -5,53 +5,6 @@
 @tailwind utilities;
 
 /* 
- * ===============================================
- * EXTREME APPROACH FOR SCROLLBAR POSITIONING
- * ===============================================
- * 
- * This technique forces the scrollbar to be at the absolute edge
- * by using a special "outside viewport" trick with calc()
- */
-
-/* Critical: Remove all viewport margins in the browser */
-html, body {
-  margin: 0;
-  padding: 0;
-  overscroll-behavior: none;
-}
-
-/* Force scrollbar to be visible by making content larger than viewport */
-html {
-  min-height: 100.1vh; /* Force scrollbar to appear */
-  overflow-y: auto; /* Use auto instead of scroll */
-  overflow-x: hidden;
-  width: 100%;
-}
-
-/* Extreme trick: Use vw + calc to force scrollbar to be at edge */
-body {
-  /* Critical: Add 1px extra width to push scrollbar outside */
-  width: calc(100vw + 1px);
-  /* Contain content so the extra width doesn't create horizontal scroll */
-  overflow-x: hidden;
-  position: relative;
-  box-sizing: border-box;
-  /* Remove any default margins */
-  margin: 0;
-  padding: 0;
-}
-
-/* Root element is clipped to ensure no overflow */
-#root {
-  /* Width is 100vw minus a tiny amount to force scrollbar flush */
-  width: calc(100vw - 0.1px);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  box-sizing: border-box;
-}
-
-/* 
  * Chỉ sử dụng một phương pháp tiếp cận nhất quán cho toàn bộ safe area handling.
  * Đã di chuyển toàn bộ safe area utilities vào globals.css trong phần utilities.
  * Không định nghĩa trùng lặp (như .pwa-top-inset) ở đây.

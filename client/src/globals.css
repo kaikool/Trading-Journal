@@ -1500,56 +1500,24 @@
     @apply text-foreground/70;
   }
   
-  /* 
-   * ===============================================
-   * EXTREME SCROLLBAR STYLING - ZERO MARGIN APPROACH
-   * ===============================================
-   * 
-   * This approach targets webkit browsers specifically
-   * with absolute minimal styling to ensure flush positioning
-   * 
-   * IMPORTANT: Do not define scrollbar styles anywhere else!
-   */
-  
-  /* Firefox scrollbar - thin with minimal styling */
-  * {
-    /* Use thin for Firefox */
-    scrollbar-width: thin;
-    scrollbar-color: hsla(var(--muted-foreground), 0.5) transparent;
-  }
-  
-  /* Target WebKit scrollbar with absolute minimal styling */
+  /* Scrollbar styling */
   ::-webkit-scrollbar {
-    /* Ultra narrow scrollbar */
-    width: 4px;
-    height: 4px;
+    width: 8px;
+    height: 8px;
   }
   
-  /* Completely remove track styling */
-  ::-webkit-scrollbar-track,
-  ::-webkit-scrollbar-track-piece {
-    background: transparent;
-    margin: 0;
-    padding: 0;
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 8px;
   }
   
-  /* Absolute minimal thumb with no borders */
   ::-webkit-scrollbar-thumb {
-    background-color: hsla(var(--muted-foreground), 0.4);
-    /* Remove all styling */
-    border: 0;
-    border-radius: 0; 
-    box-shadow: none;
-    min-height: 20px;
+    background: hsl(var(--muted-foreground) / 0.5);
+    border-radius: 8px;
   }
   
-  /* Remove all extra elements */
-  ::-webkit-scrollbar-button,
-  ::-webkit-scrollbar-corner,
-  ::-webkit-resizer {
-    display: none;
-    width: 0;
-    height: 0;
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.7);
   }
   
   /* Improved accessibility focus-visible styles */
