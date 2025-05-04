@@ -1507,9 +1507,9 @@
   .chart-pagination-dots {
     display: flex;
     align-items: center;
-    gap: 0.375rem; /* 6px - smaller spacing between dots */
-    padding: 0.375rem 0.5rem; /* 6px 8px - compact padding */
-    background: rgba(0, 0, 0, 0.45);
+    gap: 0.25rem; /* 4px - smaller spacing between dots */
+    padding: 0.25rem 0.375rem; /* 4px 6px - even more compact padding */
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 9999px;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -1517,16 +1517,16 @@
   
   /* Individual pagination dot */
   .chart-pagination-dot {
-    width: 0.375rem; /* 6px - smaller dots */
-    height: 0.375rem; /* 6px */
+    width: 0.25rem; /* 4px - smaller dots */
+    height: 0.25rem; /* 4px */
     border-radius: 9999px;
     transition: all 0.2s ease;
   }
   
   /* Active pagination dot */
   .chart-pagination-dot-active {
-    width: 0.5rem; /* 8px - slightly larger for active state */
-    height: 0.5rem; /* 8px */
+    width: 0.3125rem; /* 5px - slightly larger for active state */
+    height: 0.3125rem; /* 5px */
     background-color: white;
   }
   
