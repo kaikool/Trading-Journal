@@ -88,26 +88,26 @@
 
 .trade-card-timeframe-badge {
   position: absolute;
-  bottom: 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.5rem) */
-  right: 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.5rem) */
+  bottom: 8px; /* Standardized to 4px rule (from 0.5rem) */
+  right: 8px; /* Standardized to 4px rule (from 0.5rem) */
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
   font-size: 0.75rem;
-  padding: 4px 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.25rem 0.5rem) */
-  border-radius: 4px; /* Chuẩn hóa theo quy tắc 4px (từ 0.25rem) */
+  padding: 4px 8px; /* Standardized to 4px rule (from 0.25rem 0.5rem) */
+  border-radius: 4px; /* Standardized to 4px rule (from 0.25rem) */
 }
 
 .trade-direction-badge {
   position: absolute;
-  top: 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.5rem) */
-  left: 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.5rem) */
+  top: 8px; /* Standardized to 4px rule (from 0.5rem) */
+  left: 8px; /* Standardized to 4px rule (from 0.5rem) */
   z-index: 5;
 }
 
 .trade-result-badge {
   position: absolute;
-  top: 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.5rem) */
-  right: 8px; /* Chuẩn hóa theo quy tắc 4px (từ 0.5rem) */
+  top: 8px; /* Standardized to 4px rule (from 0.5rem) */
+  right: 8px; /* Standardized to 4px rule (from 0.5rem) */
   z-index: 5;
 }
 
@@ -353,11 +353,11 @@
  * SAFE AREA UTILITY CLASSES
  * =======================================================
  * 
- * Hệ thống thống nhất xử lý safe area cho toàn bộ ứng dụng
- * Tất cả các thành phần đều sử dụng các biến CSS được định nghĩa trong :root
+ * Unified safe area handling system for the entire application
+ * All components use CSS variables defined in :root
  */
 @layer utilities {
-  /* Safe area padding utilities - sử dụng CSS variables */
+  /* Safe area padding utilities - using CSS variables */
   .pt-safe { padding-top: var(--safe-top); }
   .pr-safe { padding-right: var(--safe-right); }
   .pb-safe { padding-bottom: var(--safe-bottom); }
@@ -417,25 +417,25 @@
     }
   }
   
-  /* Layout utilities for PWA that respect device notches and home indicators - Đã chuẩn hóa */
+  /* Layout utilities for PWA that respect device notches and home indicators - Standardized */
   .pwa-container {
     /* Basic styling */
     width: 100%;
     margin: 0 auto;
-    /* Safe area handling - Sử dụng các biến thống nhất */
+    /* Safe area handling - Using unified variables */
     padding-left: max(var(--safe-left), var(--min-side-padding));
     padding-right: max(var(--safe-right), var(--min-side-padding));
     padding-top: var(--safe-top);
     padding-bottom: var(--safe-bottom);
   }
   
-  /* Use for content areas that need top inset padding (header areas) - Đã chuẩn hóa */
+  /* Use for content areas that need top inset padding (header areas) - Standardized */
   .pwa-top-inset {
-    /* Sử dụng biến thống nhất */
-    padding-top: max(var(--safe-top), 8px); /* Dùng 8px (4px * 2) cho padding tối thiểu */
+    /* Using unified variables */
+    padding-top: max(var(--safe-top), 8px); /* Using 8px (4px * 2) for minimum padding */
   }
   
-  /* Use for page titles or notifications at the very top of the screen - Đã chuẩn hóa */
+  /* Use for page titles or notifications at the very top of the screen - Standardized */
   .pwa-status-bar-area {
     padding-top: var(--safe-top);
     height: calc(var(--status-bar-height) + var(--safe-top));
@@ -443,12 +443,12 @@
     align-items: flex-end; /* Align content at the bottom of the status bar area */
   }
   
-  /* For bottom fixed elements other than navigation - Đã chuẩn hóa */
+  /* For bottom fixed elements other than navigation - Standardized */
   .pwa-bottom-inset {
     padding-bottom: var(--safe-bottom);
   }
   
-  /* Full-bleed content that respects safe areas - Đã chuẩn hóa */
+  /* Full-bleed content that respects safe areas - Standardized */
   .pwa-full-bleed {
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -770,11 +770,23 @@
   }
   
   /* UNIVERSAL SAFE AREA HANDLING - ADJUSTS AUTOMATICALLY BASED ON DEVICE
-   * Using data attributes and automatic detection for safe areas
+   * Using media queries, data attributes and automatic detection for safe areas
    * This applies to ALL devices with insets, including PWA and notched phones
    */
+  @media (display-mode: standalone),
+         (display-mode: fullscreen),
+         (display-mode: minimal-ui) {
+    .mobile-nav {
+      /* Safe area handling for PWA mode */
+      padding-bottom: var(--safe-bottom) !important;
+      height: calc(var(--mobile-nav-height) + var(--safe-bottom)) !important;
+      border-top: 1px solid hsl(var(--border) / 0.6);
+      transform: translateZ(0); /* Force GPU acceleration for smoother rendering */
+    }
+  }
+  
+  /* Alternative detection methods for devices with safe areas */
   html[data-has-safe-area="true"] .mobile-nav,
-  html.pwa-mode .mobile-nav,
   .mobile-nav:has(+ .bottom-nav-spacer[style*="var(--safe-bottom)"]) {
     /* ‼️ SAFE AREA INSET HANDLING - CRITICAL FOR iOS DEVICES ‼️ */
     padding-bottom: var(--safe-bottom) !important;
