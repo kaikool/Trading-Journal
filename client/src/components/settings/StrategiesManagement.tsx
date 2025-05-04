@@ -132,11 +132,11 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
   
   // If it's a string, convert to basic condition
   if (typeof value === 'string') {
-    return createNewStrategyCondition(value);
+    return createNewStrategyCondition(0, value);
   }
   
   // Default to an empty condition
-  return createNewStrategyCondition(String(value || ''));
+  return createNewStrategyCondition(0, String(value || ''));
 };
 
 // Helper to fix situations where multiple strategies are marked as default
@@ -153,7 +153,7 @@ const fixMultipleDefaultStrategies = async (strategies: TradingStrategy[]): Prom
   let mostRecentDefault = defaultStrategies[0];
   
   for (const strategy of defaultStrategies) {
-    if (strategy.updatedAt && mostRecentDefault.updatedAt && strategy.updatedAt > mostRecentDefault.updatedAt) {
+    if (strategy.updatedAt > mostRecentDefault.updatedAt) {
       mostRecentDefault = strategy;
     }
   }
@@ -448,8 +448,6 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
           newExitCondition={newExitCondition}
           newTimeframe={newTimeframe}
           resetFormFields={resetFormFields}
-          editFieldValues={{}}
-          onEditFieldChange={() => {}}
         />
       ))}
     </Accordion>
@@ -634,7 +632,6 @@ export function StrategiesManagement() {
       // Prepare strategy for saving
       const strategyData: TradingStrategy = {
         id: uuidv4(),
-        userId: userId, // Thêm userId vào đây
         name: newStrategy.name?.trim() || "Untitled Strategy",
         description: newStrategy.description || "",
         rules: newStrategy.rules as StrategyCondition[] || [],

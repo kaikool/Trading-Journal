@@ -8,34 +8,18 @@ interface MobileLayoutProps {
 }
 
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
-  // Thêm useEffect để ngăn chặn scroll của body và html khi component được mount
-  useEffect(() => {
-    // Lưu trữ giá trị overflow ban đầu để khôi phục sau này
-    const originalOverflow = document.body.style.overflow;
-    const originalHTMLOverflow = document.documentElement.style.overflow;
-    
-    // Vô hiệu hóa scroll trên body và html
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    
-    // Cleanup: khôi phục giá trị ban đầu khi component unmount
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      document.documentElement.style.overflow = originalHTMLOverflow;
-    };
-  }, []);
-  
   return (
     <div className="mobile-layout">
       {/* 
-        Main content container với ONE TRUE SCROLL
-        Chỉ container này được phép có scroll, tất cả container khác bị khóa scroll
+        Main content container with safe-area spacing
+        Sử dụng CSS media queries để tự động xử lý việc hiển thị trong PWA
+        thay vì dùng JavaScript isPWA()
       */}
-      <main className="mobile-main-content mobile-content-with-navigation" id="one-true-scroll-container">
+      <main className="mobile-main-content mobile-content-with-navigation">
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
-        {/* Mobile-content-with-navigation là container scroll duy nhất */}
+        {/* Main content container now has standardized bottom padding directly in mobile-content-with-navigation class */}
       </main>
       <MobileNavigator />
     </div>

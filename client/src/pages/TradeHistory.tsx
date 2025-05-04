@@ -971,13 +971,13 @@ export default function TradeHistory() {
           </div>
         ) : trades.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
               {trades.map((trade: Trade) => (
                 <LazyTradeHistoryCard 
                   key={trade.id} 
                   trade={trade} 
                   onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
-                  onDelete={(tradeId: string) => {
+                  onDelete={(tradeId) => {
                     if (window.confirm('Are you sure you want to delete this trade?')) {
                       if (!userId) return;
                       

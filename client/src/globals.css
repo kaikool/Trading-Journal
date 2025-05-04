@@ -528,35 +528,18 @@
   /* Helper classes to utilize in CSS selectors */
   html[data-pwa-mode="true"] {
     --is-pwa: 1;
-    --is-mobile-or-pwa: 1; /* Set combined flag for PWA mode */
   }
   
   /* Mobile viewport specific attributes get captured here */
   /* These CSS variables can be used anywhere in the stylesheet */
 }
 
-  /* Mobile content with navigation - Standard layout for all pages - THE ONE TRUE SCROLL */
+  /* Mobile content with navigation - Standard layout for all pages */
   .mobile-content-with-navigation {
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* Fallback */
     min-height: 100dvh; /* Dynamic viewport height */
-    
-    /* SCROLL CONFIGURATION - LOCKED TO THIS CONTAINER ONLY */
-    overflow-y: auto !important; /* Đổi lại thành auto để tránh hiện scroll khi không cần thiết */
-    overflow-x: hidden !important; /* Không cho phép cuộn ngang */
-    -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
-    overscroll-behavior: contain !important; /* Ngăn chặn scroll bounce và chain */
-    
-    /* POSITIONING - CRITICAL FOR SINGLE SCROLL CONTAINER */
-    position: fixed !important; /* Sử dụng fixed để cố định vị trí trong viewport */
-    top: var(--safe-top) !important; /* Tôn trọng safe area top */
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    width: 100% !important;
-    height: calc(100% - var(--safe-top)) !important; /* Điều chỉnh chiều cao để tính đến safe area */
-    z-index: 1 !important; /* Đảm bảo container này nằm trên các thành phần khác */
     
     /* Standard bottom padding for all pages with mobile navigation */
     padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
@@ -645,7 +628,7 @@
      * - Allows for properly sized icons (24px) with appropriate padding
      */
     --mobile-nav-height: 3.5rem; /* 56px - standard size, increased from 48px */
-    --mobile-nav-z-index: 100;  /* Keep it above EVERYTHING else, including scroll container */
+    --mobile-nav-z-index: 50;  /* Keep it above everything else */
     --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect */
     --mobile-nav-anim-speed: 300ms;
     --mobile-nav-anim-easing: ease-in-out;
@@ -829,7 +812,7 @@
   html, body {
     height: 100%;
     margin: 0;
-    @apply antialiased overflow-x-hidden overflow-y-hidden; /* Thêm overflow-y-hidden để ngăn scroll ở cấp cao nhất */
+    @apply antialiased overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
     width: 100%;
     position: relative;
@@ -837,7 +820,7 @@
   }
   
   body {
-    @apply bg-background text-foreground font-sans overflow-x-hidden overflow-y-hidden; /* Thêm overflow-y-hidden để ngăn scroll ở cấp cao nhất */
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
     max-width: 100vw;
   }
   
@@ -902,13 +885,6 @@
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
-    overflow-y: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 0;
   }
   
   /* Unified mobile layout styles for both regular and PWA modes
@@ -933,7 +909,7 @@
     flex: 1; /* Take up available space */
     width: 100%; /* Full width */
     height: 100%; /* Full height */
-    /* Xóa bỏ overflow-y: auto để tránh scroll kép */
+    overflow-y: auto; /* Allow scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
