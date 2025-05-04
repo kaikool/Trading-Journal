@@ -153,7 +153,7 @@ const fixMultipleDefaultStrategies = async (strategies: TradingStrategy[]): Prom
   let mostRecentDefault = defaultStrategies[0];
   
   for (const strategy of defaultStrategies) {
-    if (strategy.updatedAt > mostRecentDefault.updatedAt) {
+    if (strategy.updatedAt && mostRecentDefault.updatedAt && strategy.updatedAt > mostRecentDefault.updatedAt) {
       mostRecentDefault = strategy;
     }
   }
