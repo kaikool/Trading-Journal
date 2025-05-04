@@ -132,11 +132,11 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
   
   // If it's a string, convert to basic condition
   if (typeof value === 'string') {
-    return createNewStrategyCondition(0, value);
+    return createNewStrategyCondition(value);
   }
   
   // Default to an empty condition
-  return createNewStrategyCondition(0, String(value || ''));
+  return createNewStrategyCondition(String(value || ''));
 };
 
 // Helper to fix situations where multiple strategies are marked as default
@@ -634,6 +634,7 @@ export function StrategiesManagement() {
       // Prepare strategy for saving
       const strategyData: TradingStrategy = {
         id: uuidv4(),
+        userId: userId, // Thêm userId vào đây
         name: newStrategy.name?.trim() || "Untitled Strategy",
         description: newStrategy.description || "",
         rules: newStrategy.rules as StrategyCondition[] || [],

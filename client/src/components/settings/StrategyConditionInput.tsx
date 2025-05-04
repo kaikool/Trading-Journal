@@ -47,15 +47,20 @@ const COMMON_EXPECTED_VALUES = [
 ];
 
 // Create a new StrategyCondition with default values
-export const createNewCondition = (order: number): StrategyCondition => ({
-  id: uuidv4(),
-  label: "",
-  order,
-  indicator: undefined,
-  timeframe: undefined,
-  expectedValue: undefined,
-  description: undefined
-});
+export const createNewCondition = (labelOrOrder: string | number): StrategyCondition => {
+  const order = typeof labelOrOrder === 'number' ? labelOrOrder : 0;
+  const label = typeof labelOrOrder === 'string' ? labelOrOrder : "";
+  
+  return {
+    id: uuidv4(),
+    label,
+    order,
+    indicator: undefined,
+    timeframe: undefined,
+    expectedValue: undefined,
+    description: undefined
+  };
+};
 
 interface StrategyConditionFormProps {
   condition: StrategyCondition;
