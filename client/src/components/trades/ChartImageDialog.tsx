@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, ZoomIn, ZoomOut, Maximize2, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
@@ -34,8 +34,18 @@ export function ChartImageDialog({
   tradePair,
   tradeId = 'unknown'
 }: ChartImageDialogProps) {
-  // Sử dụng hook để kiểm tra thiết bị mobile một cách nhất quán
+  // Device detection hook
   const isMobile = useIsMobile();
+  
+  // Refs for the image viewport and image element
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  
+  // State for zoom and pan functionality
+  const [scale, setScale] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
   // Create list of available images with timeframe and type information (entry/exit)
   const availableImages = [
@@ -78,12 +88,18 @@ export function ChartImageDialog({
   // State to track currently displayed image
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
-  // Reset currentImageIndex when dialog opens
+  // Reset zoom and state when dialog opens or image changes
   useEffect(() => {
     if (isOpen) {
+      resetZoom();
       setCurrentImageIndex(0);
     }
   }, [isOpen]);
+  
+  // Reset zoom when image changes
+  useEffect(() => {
+    resetZoom();
+  }, [currentImageIndex]);
   
   // If no images are available, don't display the dialog
   if (availableImages.length === 0) {
@@ -92,7 +108,7 @@ export function ChartImageDialog({
 
   const currentImage = availableImages[currentImageIndex];
   
-  // Sử dụng hook useCachedImage để lấy ảnh từ cache hoặc tải từ nguồn
+  // Use cached image hook for performance optimization
   const { 
     imageUrl, 
     isLoading, 
@@ -103,31 +119,81 @@ export function ChartImageDialog({
     placeholder: '/icons/blank-chart.svg',
   });
 
+  // Reset zoom and pan to default values
+  const resetZoom = () => {
+    setScale(1);
+    setTranslate({ x: 0, y: 0 });
+  };
+
+  // Zoom in function with maximum limit
+  const zoomIn = () => {
+    const maxZoom = parseFloat(getComputedStyle(document.documentElement)
+      .getPropertyValue('--chart-image-max-scale')) || 3;
+    setScale(prev => Math.min(prev + 0.25, maxZoom));
+  };
+
+  // Zoom out function with minimum limit of 1
+  const zoomOut = () => {
+    setScale(prev => Math.max(prev - 0.25, 1));
+  };
+
+  // Handler for mouse down events (start dragging)
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (scale <= 1) return; // Only allow dragging when zoomed in
+    
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - translate.x,
+      y: e.clientY - translate.y
+    });
+    
+    e.preventDefault();
+  }, [scale, translate]);
+
+  // Handler for mouse move events (dragging)
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging || scale <= 1) return;
+    
+    setTranslate({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+    
+    e.preventDefault();
+  }, [isDragging, dragStart, scale]);
+
+  // Handler for mouse up events (end dragging)
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   // Handler for Previous button
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     setCurrentImageIndex((prev) => 
       prev > 0 ? prev - 1 : availableImages.length - 1
     );
-  };
+  }, [availableImages.length]);
 
   // Handler for Next button
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setCurrentImageIndex((prev) => 
       prev < availableImages.length - 1 ? prev + 1 : 0
     );
-  };
+  }, [availableImages.length]);
   
-  // Setup swipe handlers
+  // Setup swipe handlers for mobile
   const swipeHandlers = useSwipeable({
     onSwipedLeft: handleNext,
     onSwipedRight: handlePrevious,
     preventScrollOnSwipe: true,
     trackMouse: false,
     swipeDuration: 250,
-    // These are reasonable settings for swiping images
-    delta: 10,           // min distance before a swipe starts
-    trackTouch: true,    // track touch input
+    trackTouch: true,
+    delta: 10, // min distance before a swipe starts
   });
+  
+  // Calculate transform style for zooming and panning
+  const imageTransform = `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -139,21 +205,45 @@ export function ChartImageDialog({
           Chart image viewer for trading analysis
         </div>
         
+        {/* Header bar with title and controls */}
         <DialogTitle className="flex items-center justify-between py-3 px-4 border-b">
           <div className="flex flex-col">
-            <span className="font-medium" style={{fontSize: 'var(--text-sm)'}}>
+            <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
               {tradePair} - {currentImage.label}
             </span>
             {availableImages.length > 1 && (
-              <span className="text-muted-foreground" style={{fontSize: 'var(--text-xs)'}}>
+              <span style={{
+                fontSize: 'var(--chart-subtitle-font-size)',
+                color: 'var(--chart-subtitle-color)'
+              }}>
                 {`${currentImageIndex + 1}/${availableImages.length}`}
               </span>
             )}
           </div>
+          
+          {/* Close button */}
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="rounded-full h-8 w-8 text-muted-foreground hover:text-foreground"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </DialogTitle>
         
-        <div {...swipeHandlers} className="chart-content">
-          <div className="relative w-full h-full flex items-center justify-center">
+        {/* Main content area with swipe handlers */}
+        <div className="chart-content">
+          {/* Image viewport with zoom and pan handlers */}
+          <div 
+            ref={viewportRef}
+            className="chart-image-viewport"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            {...(scale <= 1 ? swipeHandlers : {})}
+          >
             {/* Loading indicator */}
             {isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
@@ -178,21 +268,24 @@ export function ChartImageDialog({
               </div>
             )}
             
-            {/* Chart image with container */}
+            {/* Chart image with container - with zoom and transform applied */}
             <div
               className={cn(
                 "chart-image-container",
-                isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
-                "transition-all duration-300 ease-in-out"
+                isLoading || error ? "opacity-0" : "opacity-100",
               )}
+              style={{
+                transform: scale > 1 ? imageTransform : 'none',
+                cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
+              }}
             >
               <img 
+                ref={imageRef}
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn(
                   "chart-image",
-                  (isLoading || error) && "invisible",
-                  "max-h-full object-contain select-none touch-manipulation"
+                  (isLoading || error) && "invisible"
                 )}
                 onClick={(e) => e.stopPropagation()} 
                 decoding="async"
@@ -226,15 +319,6 @@ export function ChartImageDialog({
                   className="chart-nav-button chart-nav-button-prev"
                   onClick={handlePrevious}
                   aria-label="Previous image"
-                  style={{
-                    position: 'absolute',
-                    left: 'var(--spacing-4)',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    padding: 'var(--spacing-2)',
-                    borderRadius: '9999px',
-                    display: 'none',
-                  }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
@@ -245,15 +329,6 @@ export function ChartImageDialog({
                   className="chart-nav-button chart-nav-button-next"
                   onClick={handleNext}
                   aria-label="Next image"
-                  style={{
-                    position: 'absolute',
-                    right: 'var(--spacing-4)',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    padding: 'var(--spacing-2)',
-                    borderRadius: '9999px',
-                    display: 'none',
-                  }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
@@ -263,17 +338,45 @@ export function ChartImageDialog({
             )}
           </div>
           
+          {/* Zoom controls */}
+          <div className="chart-zoom-controls">
+            <button 
+              className="chart-zoom-button"
+              onClick={zoomIn}
+              aria-label="Zoom in"
+              disabled={scale >= 3}
+            >
+              <ZoomIn size={isMobile ? 16 : 20} />
+            </button>
+            <button 
+              className="chart-zoom-button"
+              onClick={zoomOut}
+              aria-label="Zoom out"
+              disabled={scale <= 1}
+            >
+              <ZoomOut size={isMobile ? 16 : 20} />
+            </button>
+            <button 
+              className="chart-zoom-button"
+              onClick={resetZoom}
+              aria-label="Reset zoom"
+              disabled={scale === 1 && translate.x === 0 && translate.y === 0}
+            >
+              <Maximize2 size={isMobile ? 16 : 20} />
+            </button>
+          </div>
+          
           {/* Image Pagination for mobile and desktop */}
           {availableImages.length > 1 && (
             <div className="chart-pagination">
-              <div className="bg-black/50 backdrop-blur-sm py-2 px-3 rounded-full flex items-center gap-2.5 shadow-md">
+              <div className="bg-black/50 backdrop-blur-sm py-2 px-4 rounded-full flex items-center gap-3 shadow-md">
                 {isMobile && (
                   <button
-                    className="w-6 h-6 flex items-center justify-center text-white/90"
+                    className="w-8 h-8 flex items-center justify-center text-white/90"
                     onClick={handlePrevious}
                     aria-label="Previous image"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
@@ -283,7 +386,7 @@ export function ChartImageDialog({
                   <button
                     key={index}
                     className={cn(
-                      "w-2.5 h-2.5 rounded-full transition-all duration-200",
+                      "w-3 h-3 rounded-full transition-all duration-200",
                       index === currentImageIndex 
                         ? "bg-white scale-110" 
                         : "bg-white/30 scale-90 hover:bg-white/50"
@@ -298,11 +401,11 @@ export function ChartImageDialog({
                 
                 {isMobile && (
                   <button
-                    className="w-6 h-6 flex items-center justify-center text-white/90"
+                    className="w-8 h-8 flex items-center justify-center text-white/90"
                     onClick={handleNext}
                     aria-label="Next image"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
