@@ -1295,6 +1295,7 @@
   
   /* Chart image container */
   .chart-image-container {
+    /* Base styling */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1304,6 +1305,25 @@
     position: relative;
     transform-origin: center;
     will-change: transform; /* Optimize performance for transforms */
+  }
+  
+  /* Zoom states for image container */
+  .chart-image-container.zoomed-in {
+    cursor: grab;
+  }
+  
+  .chart-image-container.dragging {
+    cursor: grabbing;
+  }
+  
+  /* No transform state */
+  .chart-image-container.no-transform {
+    transform: none;
+  }
+  
+  /* Add custom transform class that will be set via JavaScript */
+  .chart-image-container.custom-transform {
+    /* Empty rule - transform will be set inline */
   }
   
   /* Chart image - with zoom support */

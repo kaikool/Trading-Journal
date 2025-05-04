@@ -262,11 +262,13 @@ export function ChartImageDialog({
               </div>
             )}
             {/* Chart image with container - with zoom and transform applied */}
-            <div className={cn("chart-image-container", isLoading || error ? "opacity-0" : "opacity-100")}
-              style={{
-                transform: scale > 1 ? imageTransform : 'none',
-                cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'
-              }}>
+            <div className={cn(
+              "chart-image-container", 
+              isLoading || error ? "opacity-0" : "opacity-100",
+              scale > 1 ? "custom-transform zoomed-in" : "no-transform",
+              isDragging && scale > 1 ? "dragging" : ""
+            )}
+              style={{ transform: scale > 1 ? imageTransform : undefined }}>
               <img ref={imageRef}
                 src={imageUrl || '/icons/blank-chart.svg'} 
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
