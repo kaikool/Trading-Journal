@@ -1,3 +1,5 @@
+import React, { useMemo } from 'react';
+
 /**
  * Device performance evaluation system to optimize user experience
  * 
@@ -100,4 +102,72 @@ export async function getOptimalUiConfig() {
     // Stale time for react-query (extended since data rarely changes for single user)
     queryStaleTime: 5 * 60 * 1000 // 5 minutes stale time
   };
+}
+
+/**
+ * Consistent memoization helper for React components
+ * Wraps React.memo with optional conditional usage based on device performance
+ *
+ * @param Component - Component to memoize
+ * @param propsAreEqual - Optional custom comparison function
+ * @param forceEnable - Force memoization regardless of device performance
+ * @returns Memoized component
+ */
+export function memoWithPerf(
+  Component: React.ComponentType<any>,
+  propsAreEqual?: (prevProps: any, nextProps: any) => boolean,
+  forceEnable = false
+): React.ComponentType<any> {
+  // Memoization is always enabled for low/medium performance devices
+  // For high-performance devices, we can be more selective
+  const shouldMemoize = forceEnable || cachedPerformanceRating !== 'high';
+  
+  if (shouldMemoize) {
+    return React.memo(Component, propsAreEqual);
+  }
+  
+  // Return the original component if memoization isn't needed
+  return Component;
+}
+
+/**
+ * Hook for memoizing expensive calculations with performance considerations
+ * Wraps React's useMemo to add conditional usage based on device performance
+ *
+ * @param factory - Function that creates the memoized value
+ * @param dependencies - Array of dependencies for the useMemo hook
+ * @param forceEnable - Force memoization regardless of device performance 
+ * @returns Memoized value
+ */
+export function useMemoWithPerf<T>(
+  factory: () => T,
+  dependencies: React.DependencyList,
+  forceEnable = false
+): T {
+  // For data transformations that are computationally expensive, always memoize
+  // For less expensive operations, only memoize on lower-performance devices
+  const shouldMemoize = forceEnable || cachedPerformanceRating !== 'high';
+  
+  if (shouldMemoize) {
+    return useMemo(factory, dependencies);
+  }
+  
+  // If memoization isn't needed, just call the factory directly
+  return factory();
+}
+
+/**
+ * Helper to determine if a list should use virtualization based on device performance
+ * @param listLength The number of items in the list
+ * @returns Boolean indicating whether virtualization should be used
+ */
+export function shouldUseVirtualization(listLength: number): boolean {
+  // Always virtualize large lists
+  if (listLength > 100) return true;
+  
+  // For medium lists, virtualize on low/medium performance devices
+  if (listLength > 30 && cachedPerformanceRating !== 'high') return true;
+  
+  // Don't virtualize small lists
+  return false;
 }

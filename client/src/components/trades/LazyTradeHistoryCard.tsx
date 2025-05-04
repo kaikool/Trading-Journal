@@ -431,4 +431,18 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
   );
 }
 
-export default memo(LazyTradeHistoryCard);
+// Sử dụng memoWithPerf từ performance.ts để tối ưu memoization
+import { memoWithPerf } from '@/lib/performance';
+
+export default memoWithPerf(LazyTradeHistoryCard, (prevProps, nextProps) => {
+  // Tối ưu so sánh props để tránh re-renders không cần thiết
+  const sameProps = [
+    prevProps.trade.id === nextProps.trade.id,
+    prevProps.trade.updatedAt === nextProps.trade.updatedAt,
+    JSON.stringify(prevProps.trade.profitLoss) === JSON.stringify(nextProps.trade.profitLoss),
+    prevProps.trade.result === nextProps.trade.result
+  ];
+  
+  // Chỉ re-render nếu có bất kỳ giá trị nào thay đổi
+  return sameProps.every(prop => prop === true);
+});
