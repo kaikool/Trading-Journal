@@ -132,6 +132,7 @@ export default function Settings() {
   const { toast } = useToast();
   const userId = auth.currentUser?.uid;
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
+  const [activeTab, setActiveTab] = useState<string>('general');
   
   // Theme management - using the improved ThemeContext
   const { theme, setTheme, isDarkMode } = useTheme();
@@ -391,6 +392,8 @@ export default function Settings() {
     );
   }
   
+
+
   // Main content
   return (
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 space-y-6">
