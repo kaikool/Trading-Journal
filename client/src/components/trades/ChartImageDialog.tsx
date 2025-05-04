@@ -371,7 +371,7 @@ export function ChartImageDialog({
               <div className="chart-pagination-dots">
                 {isMobile && (
                   <button
-                    className="w-8 h-8 flex items-center justify-center text-white/90"
+                    className="chart-zoom-button"
                     onClick={handlePrevious}
                     aria-label="Previous image"
                   >
@@ -400,7 +400,7 @@ export function ChartImageDialog({
                 
                 {isMobile && (
                   <button
-                    className="w-8 h-8 flex items-center justify-center text-white/90"
+                    className="chart-zoom-button"
                     onClick={handleNext}
                     aria-label="Next image"
                   >
