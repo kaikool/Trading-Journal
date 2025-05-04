@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useMemoWithPerf } from "@/lib/performance";
 import { TradingStrategy, StrategyCondition } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { auth, getStrategies, addStrategy, updateStrategy, deleteStrategy } from "@/lib/firebase";
@@ -179,6 +180,34 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
 };
 
 export function StrategiesManagement() {
+  // Memoized helper functions
+  const filterRulesCompliance = useMemo(() => {
+    return (rules: StrategyCondition[], checks: StrategyConditionCheck[]) => {
+      if (!rules || !checks) return [];
+      return rules.map(rule => ({
+        rule,
+        check: checks.find(c => c.conditionId === rule.id) || {
+          conditionId: rule.id,
+          checked: false,
+          passed: false
+        }
+      }));
+    };
+  }, []);
+  
+  const filterEntryCompliance = useMemo(() => {
+    return (conditions: StrategyCondition[], checks: StrategyConditionCheck[]) => {
+      if (!conditions || !checks) return [];
+      return conditions.map(condition => ({
+        condition,
+        check: checks.find(c => c.conditionId === condition.id) || {
+          conditionId: condition.id,
+          checked: false,
+          passed: false
+        }
+      }));
+    };
+  }, []);
   const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -252,11 +281,7 @@ export function StrategiesManagement() {
   /**
    * Updates a condition in an array of conditions
    */
-  const updateConditionInArray = (
-    conditions: StrategyCondition[], 
-    id: string, 
-    updates: Partial<StrategyCondition>
-  ): StrategyCondition[] => {
+  const updateConditionInArray = (conditions: StrategyCondition[], id: string, updates: Partial<StrategyCondition>): StrategyCondition[] => {
     return conditions.map(condition => 
       condition.id === id ? { ...condition, ...updates } : condition
     );
@@ -265,28 +290,15 @@ export function StrategiesManagement() {
   /**
    * Removes a condition from an array by ID
    */
-  const removeConditionFromArray = (
-    conditions: StrategyCondition[], 
-    id: string
-  ): StrategyCondition[] => {
+  const removeConditionFromArray = (conditions: StrategyCondition[], id: string): StrategyCondition[] => {
     return conditions.filter(condition => condition.id !== id);
   };
   
   /**
    * Add a condition to an array of conditions
    */
-  const addConditionToArray = (
-    array: StrategyCondition[], 
-    condition: StrategyCondition
-  ): StrategyCondition[] => {
+  const addConditionToArray = (array: StrategyCondition[], condition: StrategyCondition): StrategyCondition[] => {
     return [...array, condition];
-  };
-  
-  /**
-   * Helper to remove an item from a string array by index
-   */
-  const removeItemFromArray = (array: string[], index: number): string[] => {
-    return array.filter((_, i) => i !== index);
   };
   
   // Fix data when there are multiple default strategies
