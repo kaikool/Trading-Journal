@@ -132,11 +132,11 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
   
   // If it's a string, convert to basic condition
   if (typeof value === 'string') {
-    return createNewStrategyCondition(0, value);
+    return createNewStrategyCondition(0, value, "");
   }
   
   // Default to an empty condition
-  return createNewStrategyCondition(0, String(value || ''));
+  return createNewStrategyCondition(0, String(value || ''), "");
 };
 
 // Helper to fix situations where multiple strategies are marked as default
