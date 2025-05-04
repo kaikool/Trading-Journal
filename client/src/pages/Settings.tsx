@@ -133,8 +133,8 @@ export default function Settings() {
   const userId = auth.currentUser?.uid;
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   
-  // Theme management with simplified API
-  const { theme, setTheme, previewTheme } = useTheme();
+  // Theme management
+  const { theme, setTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
     theme: theme, // Initial value from context
@@ -486,8 +486,8 @@ export default function Settings() {
                     onValueChange={(value) => {
                       const themeValue = value as 'light' | 'dark' | 'system';
                       setSettings({ ...settings, theme: themeValue });
-                      // Preview the theme immediately when selected
-                      previewTheme(themeValue);
+                      // Apply the theme immediately when selected
+                      setTheme(themeValue);
                     }}
                   >
                     <SelectTrigger id="theme" className="w-full">

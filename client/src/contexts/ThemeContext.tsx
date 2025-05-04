@@ -3,13 +3,11 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 // Define supported theme types
 export type ThemeType = 'light' | 'dark' | 'system';
 
-// Context interface - simplified for better consistency
+// Context interface
 interface ThemeContextType {
-  theme: ThemeType; // The current theme setting
-  setTheme: (theme: ThemeType) => void; // Update theme and apply it
-  previewTheme: (theme: ThemeType) => void; // Preview a theme without saving to settings
-  resetThemeToSaved: () => void; // Reset to last saved theme (for cancelling preview)
-  isDarkMode: boolean; // Whether dark mode is active
+  theme: ThemeType; // The current active theme
+  setTheme: (theme: ThemeType) => void; // Apply and save theme permanently
+  isDarkMode: boolean; // Whether dark mode is currently active
   isLoading: boolean; // Loading state
 }
 
@@ -17,8 +15,6 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'system',
   setTheme: () => {},
-  previewTheme: () => {},
-  resetThemeToSaved: () => {},
   isDarkMode: false,
   isLoading: true,
 });
@@ -36,9 +32,6 @@ export function useTheme() {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   // Single source of truth for theme
   const [theme, setThemeState] = useState<ThemeType>('system');
-  
-  // Saved theme (last permanent setting)
-  const [savedTheme, setSavedTheme] = useState<ThemeType>('system');
   
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +52,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const loadedTheme = localStorage.getItem('theme') as ThemeType || 'system';
     setThemeState(loadedTheme);
-    setSavedTheme(loadedTheme);
     setIsLoading(false);
   }, []);
 
@@ -98,26 +90,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Update theme and save it permanently
   const setTheme = (newTheme: ThemeType) => {
     setThemeState(newTheme);
-    setSavedTheme(newTheme);
     localStorage.setItem('theme', newTheme);
-  };
-
-  // Preview a theme without saving permanently
-  const previewTheme = (newTheme: ThemeType) => {
-    setThemeState(newTheme);
-  };
-
-  // Reset to the last saved theme
-  const resetThemeToSaved = () => {
-    setThemeState(savedTheme);
   };
 
   return (
     <ThemeContext.Provider value={{
       theme,
       setTheme,
-      previewTheme,
-      resetThemeToSaved,
       isDarkMode,
       isLoading
     }}>
