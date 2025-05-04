@@ -449,33 +449,69 @@
  * All components use CSS variables defined in :root
  */
 @layer utilities {
-  /* Safe area padding utilities - using CSS variables */
-  .pt-safe { padding-top: var(--safe-top); }
+  /* Auto-hiding Safe Area System */
+  :root {
+    /* Dynamic safe area values with auto-hide functionality */
+    --safe-top-visible: var(--safe-top);
+    --safe-bottom-visible: var(--safe-bottom);
+    --safe-transition: 0.3s ease-out;
+    
+    /* Used to track scrolling state */
+    --is-scrolling: 0;
+  }
+  
+  /* When scrolling, reduce safe areas */
+  html.is-scrolling {
+    --safe-top-visible: 0px;
+    --safe-bottom-visible: 0px;
+  }
+  
+  /* Fix possible transition conflict in mobile nav */
+  .mobile-nav {
+    transition-property: padding-bottom, transform, background-color, border-color !important;
+  }
+  
+  /* Safe area padding utilities using dynamic variables */
+  .pt-safe { 
+    padding-top: var(--safe-top-visible); 
+    transition: padding-top var(--safe-transition);
+  }
   .pr-safe { padding-right: var(--safe-right); }
-  .pb-safe { padding-bottom: var(--safe-bottom); }
+  .pb-safe { 
+    padding-bottom: var(--safe-bottom-visible); 
+    transition: padding-bottom var(--safe-transition);
+  }
   .pl-safe { padding-left: var(--safe-left); }
   
-  /* Combined padding utilities */
+  /* Combined padding utilities with transitions */
   .px-safe {
     padding-left: var(--safe-left);
     padding-right: var(--safe-right);
   }
   .py-safe {
-    padding-top: var(--safe-top);
-    padding-bottom: var(--safe-bottom);
+    padding-top: var(--safe-top-visible);
+    padding-bottom: var(--safe-bottom-visible);
+    transition: padding-top var(--safe-transition), padding-bottom var(--safe-transition);
   }
   .p-safe {
     padding: 
-      var(--safe-top)
+      var(--safe-top-visible)
       var(--safe-right)
-      var(--safe-bottom)
+      var(--safe-bottom-visible)
       var(--safe-left);
+    transition: padding var(--safe-transition);
   }
   
-  /* Safe area margin utilities */
-  .mt-safe { margin-top: var(--safe-top); }
+  /* Safe area margin utilities with transitions */
+  .mt-safe { 
+    margin-top: var(--safe-top-visible); 
+    transition: margin-top var(--safe-transition);
+  }
   .mr-safe { margin-right: var(--safe-right); }
-  .mb-safe { margin-bottom: var(--safe-bottom); }
+  .mb-safe { 
+    margin-bottom: var(--safe-bottom-visible); 
+    transition: margin-bottom var(--safe-transition);
+  }
   .ml-safe { margin-left: var(--safe-left); }
   
   /* Height utilities adjusted for safe areas */
@@ -973,8 +1009,9 @@
       calc(var(--mobile-nav-height) + var(--safe-bottom))
     ) !important;
     
-    /* Safe area padding applied consistently */
-    padding-bottom: var(--safe-bottom) !important;
+    /* Safe area padding applied consistently with auto-hiding */
+    padding-bottom: var(--safe-bottom-visible) !important;
+    transition: padding-bottom var(--safe-transition);
     
     /* Visual appearance - can be themed but position must stay the same */
     background-color: hsl(var(--background));
