@@ -21,7 +21,9 @@ export function InstallPrompt() {
     const isInstalled = isAppInstalled();
     
     if (isInstalled) {
-      return; // Already installed, no need to show prompt
+      // Already installed, no need to show prompt and make sure it's hidden
+      setShowPrompt(false);
+      return;
     }
 
     const handleBeforeInstallPrompt = (e: Event) => {
