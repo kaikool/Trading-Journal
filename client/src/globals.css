@@ -653,23 +653,23 @@
     overflow-x: hidden;
   }
   
-  /* PWA mode enhancements to mobile layout */
-  html.pwa-mode .mobile-layout {
-    /* Handle top safe area consistently */
-    padding-top: var(--safe-top);
+  /* Unified mobile layout styles for both regular and PWA modes
+   * This ensures consistent behavior across all environments
+   */
+  .mobile-layout {
+    /* Base layout styling */
     max-height: 100dvh; /* Dynamic viewport height */
-    overflow-y: auto; /* Allow content scrolling */
     overscroll-behavior-y: none; /* Prevent pull-to-refresh */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    /* Apply safe area to top automatically */
+    padding-top: var(--safe-top);
   }
   
-  /* Main content area in PWA mode */
-  .pwa-main-content {
+  /* Main content area for all mobile modes */
+  .mobile-main-content {
     /* Standardized padding using consistent CSS variables */
-    padding-top: max(var(--safe-top), var(--min-top-padding));
-    padding-bottom: 0; /* Bottom padding removed, handled by spacer */
-    padding-left: max(var(--safe-left), var(--min-side-padding));
-    padding-right: max(var(--safe-right), var(--min-side-padding));
+    padding: 0 max(var(--safe-left), var(--min-side-padding))
+             0 max(var(--safe-right), var(--min-side-padding));
     display: flex; /* Ensure flexbox layout is applied */
     flex-direction: column; /* Stack children vertically */
     flex: 1; /* Take up available space */
@@ -698,18 +698,23 @@
   
   /* UNIFIED BOTTOM SPACER FOR ALL MODES
    * This is the ONLY rule that should control the spacer height
-   * We use the same class for both PWA and regular mode, only adjusting height
+   * The bottom-nav-spacer automatically adapts to safe areas when needed
    */
-  html.pwa-mode .bottom-nav-spacer {
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+  .bottom-nav-spacer {
+    /* Updates: autodetect safe-area presence and apply accordingly */
+    height: max(
+      var(--mobile-nav-height),
+      calc(var(--mobile-nav-height) + var(--safe-bottom))
+    );
   }
   
-  /* DEPRECATED - DO NOT USE .pwa-bottom-spacer
-   * Kept for backward compatibility only
-   * Will be removed in future versions
-   */
+  /* DEPRECATED - Legacy classes that should not be used */
   .pwa-bottom-spacer {
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+    /* Redirecting to the standardized class above */
+    height: max(
+      var(--mobile-nav-height),
+      calc(var(--mobile-nav-height) + var(--safe-bottom))
+    );
   }
   
   /* 
@@ -761,11 +766,13 @@
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
   
-  /* UNIVERSAL SAFE AREA HANDLING - ADJUSTS AUTOMATICALLY BASED ON HTML CLASS
-   * All devices get the same safe-area behavior through the html.pwa-mode class
-   * No need for component-level class toggling
+  /* UNIVERSAL SAFE AREA HANDLING - ADJUSTS AUTOMATICALLY BASED ON DEVICE
+   * Using data attributes and automatic detection for safe areas
+   * This applies to ALL devices with insets, including PWA and notched phones
    */
-  html.pwa-mode .mobile-nav {
+  html[data-has-safe-area="true"] .mobile-nav,
+  html.pwa-mode .mobile-nav,
+  .mobile-nav:has(+ .bottom-nav-spacer[style*="var(--safe-bottom)"]) {
     /* ‼️ SAFE AREA INSET HANDLING - CRITICAL FOR iOS DEVICES ‼️ */
     padding-bottom: var(--safe-bottom) !important;
     height: calc(var(--mobile-nav-height) + var(--safe-bottom)) !important;

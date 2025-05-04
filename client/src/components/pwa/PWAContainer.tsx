@@ -98,26 +98,30 @@ export function PWAContainer() {
     };
   }, []);
 
-  // Apply PWA-specific attributes to the document body for consistent styling
+  // Apply uniform styling that works for both PWA and regular modes
   useEffect(() => {
+    // Always ensure viewport-fit=cover is set for proper safe area handling
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      const currentContent = viewportMeta.getAttribute('content') || '';
+      if (!currentContent.includes('viewport-fit=cover')) {
+        viewportMeta.setAttribute('content', `${currentContent}, viewport-fit=cover`);
+      }
+    }
+    
+    // Add pwa-mode class only for detection, but all styling should be standardized
     if (isPWA()) {
-      // Add PWA mode class to the root HTML element - all styling in globals.css
       document.documentElement.classList.add('pwa-mode');
       
-      // Update viewport meta tag to support safe areas
-      const viewportMeta = document.querySelector('meta[name="viewport"]');
-      if (viewportMeta) {
-        const currentContent = viewportMeta.getAttribute('content') || '';
-        if (!currentContent.includes('viewport-fit=cover')) {
-          viewportMeta.setAttribute('content', `${currentContent}, viewport-fit=cover`);
-        }
-      }
+      // Add safe area detection attribute
+      document.documentElement.setAttribute('data-has-safe-area', 'true');
     }
     
     return () => {
       // Cleanup on unmount
       if (isPWA()) {
         document.documentElement.classList.remove('pwa-mode');
+        document.documentElement.removeAttribute('data-has-safe-area');
       }
     };
   }, []);

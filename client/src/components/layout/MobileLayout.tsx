@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { isPWA } from "@/lib/pwa-helper";
 import MobileNavigator from "./MobileNavigator";
 import { cn } from "@/lib/utils";
 
@@ -9,21 +8,15 @@ interface MobileLayoutProps {
 }
 
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
-  // Detect PWA mode on client side
-  const [isPWAMode, setIsPWAMode] = useState(false);
-  
-  useEffect(() => {
-    // Check if we're in PWA mode
-    setIsPWAMode(isPWA());
-  }, []);
-  
   return (
     <div className="mobile-layout">
-      <main className={isPWAMode ? "pwa-main-content" : "flex-1 px-4"}>
+      {/* Unified main content container with consistent padding and flex layout */}
+      <main className="mobile-main-content">
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
         
+        {/* Spacer to prevent content from being hidden beneath fixed mobile navigation */}
         <div 
           className="bottom-nav-spacer"
           aria-hidden="true" 
@@ -42,7 +35,7 @@ export default function MobileLayout({ children }: MobileLayoutProps) {
     setMounted(true);
   }, []);
 
-  // Không render nếu không phải mobile hoặc chưa mounted (tránh hydration mismatch)
+  // Don't render on non-mobile devices or before mounting to avoid hydration mismatch
   if (!isMobile || !mounted) {
     return <>{children}</>;
   }
