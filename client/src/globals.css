@@ -536,11 +536,6 @@
 
   /* Mobile content with navigation - Standard layout for all pages */
   .mobile-content-with-navigation {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Fallback */
-    min-height: 100dvh; /* Dynamic viewport height */
-    
     /* Standard bottom padding for all pages with mobile navigation */
     padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
     
@@ -899,18 +894,12 @@
     padding-top: var(--safe-top);
   }
   
-  /* Main content area for all mobile modes */
-  .mobile-main-content {
+  /* Các thuộc tính trong mobile-main-content đã được chuyển vào app-content-container
+     Chỉ để lại padding đặc thù cho mobile cho đồng nhất */
+  .mobile-content-with-navigation.app-content-container {
     /* Standardized padding using consistent CSS variables */
     padding: 0 max(var(--safe-left), var(--min-side-padding))
              0 max(var(--safe-right), var(--min-side-padding));
-    display: flex; /* Ensure flexbox layout is applied */
-    flex-direction: column; /* Stack children vertically */
-    flex: 1; /* Take up available space */
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow-y: auto; /* Allow scrolling */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
   /* 
@@ -1662,19 +1651,21 @@
     overflow-x: hidden;
   }
   
-  /* Remove overflow for desktop layout */
-  .desktop-layout-container {
-    overflow: hidden;
-    height: 100vh;
+  /* Unified container for all layouts */
+  .app-layout-container {
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
   
-  /* Content container for desktop */
-  .desktop-content-container {
+  /* Unified content container */
+  .app-content-container {
     flex: 1;
-    overflow: hidden;
     position: relative;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Chart legend styling */

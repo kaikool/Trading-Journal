@@ -9,13 +9,13 @@ interface MobileLayoutProps {
 
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   return (
-    <div className="mobile-layout">
+    <div className="mobile-layout app-layout-container">
       {/* 
         Main content container with safe-area spacing
         Sử dụng CSS media queries để tự động xử lý việc hiển thị trong PWA
         thay vì dùng JavaScript isPWA()
       */}
-      <main className="mobile-main-content mobile-content-with-navigation">
+      <main className="app-content-container mobile-content-with-navigation">
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>

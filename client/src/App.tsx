@@ -269,10 +269,10 @@ function MainContent() {
         </MobileLayout>
       ) : (
         // Nếu là desktop, sử dụng MenuBar ở mode desktop và hiển thị nội dung bên dưới
-        // Áp dụng desktop-layout-container để vô hiệu hóa scroll
-        <div className="flex flex-col w-full desktop-layout-container">
+        // Sử dụng app-layout-container thống nhất cho cả mobile và desktop
+        <div className="flex flex-col w-full app-layout-container">
           <MenuBar mode="desktop" />
-          <div className="mt-16 desktop-content-container"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
+          <div className="mt-16 app-content-container"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
             {renderPageContent()}
           </div>
         </div>
