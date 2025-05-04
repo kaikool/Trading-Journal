@@ -236,7 +236,7 @@ export function ChartImageDialog({
         </div>
         
         {/* Main content area with swipe handlers */}
-        <div className="chart-content pb-safe">
+        <div className="chart-content">
           {/* Image viewport with zoom and pan handlers */}
           <div className="chart-image-viewport"
             onMouseDown={handleMouseDown}

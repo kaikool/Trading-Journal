@@ -449,69 +449,33 @@
  * All components use CSS variables defined in :root
  */
 @layer utilities {
-  /* Auto-hiding Safe Area System */
-  :root {
-    /* Dynamic safe area values with auto-hide functionality */
-    --safe-top-visible: var(--safe-top);
-    --safe-bottom-visible: var(--safe-bottom);
-    --safe-transition: 0.3s ease-out;
-    
-    /* Used to track scrolling state */
-    --is-scrolling: 0;
-  }
-  
-  /* When scrolling, reduce safe areas */
-  html.is-scrolling {
-    --safe-top-visible: 0px;
-    --safe-bottom-visible: 0px;
-  }
-  
-  /* Fix possible transition conflict in mobile nav */
-  .mobile-nav {
-    transition-property: padding-bottom, transform, background-color, border-color !important;
-  }
-  
-  /* Safe area padding utilities using dynamic variables */
-  .pt-safe { 
-    padding-top: var(--safe-top-visible); 
-    transition: padding-top var(--safe-transition);
-  }
+  /* Safe area padding utilities - using CSS variables */
+  .pt-safe { padding-top: var(--safe-top); }
   .pr-safe { padding-right: var(--safe-right); }
-  .pb-safe { 
-    padding-bottom: var(--safe-bottom-visible); 
-    transition: padding-bottom var(--safe-transition);
-  }
+  .pb-safe { padding-bottom: var(--safe-bottom); }
   .pl-safe { padding-left: var(--safe-left); }
   
-  /* Combined padding utilities with transitions */
+  /* Combined padding utilities */
   .px-safe {
     padding-left: var(--safe-left);
     padding-right: var(--safe-right);
   }
   .py-safe {
-    padding-top: var(--safe-top-visible);
-    padding-bottom: var(--safe-bottom-visible);
-    transition: padding-top var(--safe-transition), padding-bottom var(--safe-transition);
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
   }
   .p-safe {
     padding: 
-      var(--safe-top-visible)
+      var(--safe-top)
       var(--safe-right)
-      var(--safe-bottom-visible)
+      var(--safe-bottom)
       var(--safe-left);
-    transition: padding var(--safe-transition);
   }
   
-  /* Safe area margin utilities with transitions */
-  .mt-safe { 
-    margin-top: var(--safe-top-visible); 
-    transition: margin-top var(--safe-transition);
-  }
+  /* Safe area margin utilities */
+  .mt-safe { margin-top: var(--safe-top); }
   .mr-safe { margin-right: var(--safe-right); }
-  .mb-safe { 
-    margin-bottom: var(--safe-bottom-visible); 
-    transition: margin-bottom var(--safe-transition);
-  }
+  .mb-safe { margin-bottom: var(--safe-bottom); }
   .ml-safe { margin-left: var(--safe-left); }
   
   /* Height utilities adjusted for safe areas */
@@ -1009,9 +973,8 @@
       calc(var(--mobile-nav-height) + var(--safe-bottom))
     ) !important;
     
-    /* Safe area padding applied consistently with auto-hiding */
-    padding-bottom: var(--safe-bottom-visible) !important;
-    transition: padding-bottom var(--safe-transition);
+    /* Safe area padding applied consistently */
+    padding-bottom: var(--safe-bottom) !important;
     
     /* Visual appearance - can be themed but position must stay the same */
     background-color: hsl(var(--background));
@@ -1309,8 +1272,8 @@
   /* Safe area padding adjustments for charts on mobile and PWA */
   @media (max-width: 640px), (display-mode: standalone) {
     .chart-content {
-      /* Safe area class '.pb-safe' used directly on chart-content */
-      /* Không cần padding-bottom thêm vì đã có class .pb-safe */
+      /* Use max() to ensure sufficient padding for devices with or without notches */
+      padding-bottom: max(var(--chart-spacing-lg), calc(var(--safe-bottom) + var(--chart-spacing-md)));
     }
   }
   
@@ -1771,34 +1734,24 @@
     @apply text-foreground/70;
   }
   
-  /* Scrollbar styling - Improved alignment */
+  /* Scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
-    padding-right: 0;
-    margin-right: 0;
   }
   
   ::-webkit-scrollbar-track {
     background: hsl(var(--muted));
     border-radius: 8px;
-    margin-right: 0;
   }
   
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.5);
     border-radius: 8px;
-    border: none;
   }
   
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.7);
-  }
-  
-  /* Firefox scrollbar styling */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / 0.5) hsl(var(--muted));
   }
   
   /* Improved accessibility focus-visible styles */

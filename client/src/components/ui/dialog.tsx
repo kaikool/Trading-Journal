@@ -11,8 +11,7 @@ import { cn } from "@/lib/utils"
 // Các thuộc tính chung cho dialog
 const dialogBase = "rounded-lg border shadow-lg bg-background";
 const maxHeightClasses = "max-h-[85dvh] sm:max-h-[85vh]"; // Sử dụng cả dvh và vh
-// Sử dụng lớp overflow với padding đúng cho scrollbar
-const overflowClasses = "overflow-y-auto pr-[0px]";
+const overflowClasses = "overflow-y-auto";
 
 // Sử dụng CSS variables để tuân thủ quy tắc spacing của ứng dụng
 const dialogVariants = {
