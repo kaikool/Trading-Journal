@@ -477,8 +477,19 @@
     --min-side-padding: 16px;
     
     /* Standard values for mobile layout components */
-    --mobile-nav-height: 56px;
     --status-bar-height: 48px;
+    
+    /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES */
+    --mobile-nav-height: 56px;
+    --mobile-nav-z-index: 50;
+    --mobile-nav-blur: 12px;
+    --mobile-nav-anim-speed: 300ms;
+    --mobile-nav-anim-easing: ease-in-out;
+    --mobile-nav-shadow: var(--shadow-sm);
+    --mobile-nav-icon-size: 20px;
+    --mobile-nav-text-size: 10px;
+    --mobile-nav-indicator-height: 3px;
+    --mobile-nav-indicator-width: 12px;
     
     /* Base colors */
     --background: 210 40% 98%;
@@ -734,27 +745,28 @@
    * ‼️ THIS IS THE ONLY PLACE THAT DEFINES POSITION RULES FOR MOBILE NAVIGATOR ‼️
    * Any changes to Mobile Navigator positioning MUST be made here,
    * NOT in component props, inline styles, or other CSS files.
+   * 
+   * All CSS variables are now defined in :root for consistent access across components
    */
   .mobile-nav {
-    /* Central configuration through CSS variables */
-    --mobile-nav-z-index: 50;
-    --mobile-nav-blur: 12px;
-    --mobile-nav-anim-speed: 300ms;
-    --mobile-nav-anim-easing: ease-in-out;
-    --mobile-nav-shadow: var(--shadow-sm);
-    --mobile-nav-icon-size: 20px;
-    --mobile-nav-text-size: 10px;
-    --mobile-nav-indicator-height: 3px;
-    --mobile-nav-indicator-width: 12px;
-    
     /* ‼️ CORE POSITIONING RULES - NEVER OVERRIDE THESE ‼️ */
     position: fixed !important; /* Use !important to prevent any override */
     bottom: 0 !important;       /* Bottom 0 is critical and must never be changed */
     left: 0 !important;         /* Full width requires left 0 */
     right: 0 !important;        /* Full width requires right 0 */
-    height: var(--mobile-nav-height) !important; /* Use variable for responsive height */
-    z-index: var(--mobile-nav-z-index) !important; /* Ensure navigation stays on top */
     width: 100% !important;     /* Explicit 100% width to avoid any layout issues */
+    z-index: var(--mobile-nav-z-index) !important; /* Ensure navigation stays on top */
+    
+    /* UNIFIED HEIGHT CALCULATION - HANDLES ALL DEVICES AUTOMATICALLY
+     * This automatically adjusts for safe area insets on all devices
+     */
+    height: max(
+      var(--mobile-nav-height),
+      calc(var(--mobile-nav-height) + var(--safe-bottom))
+    ) !important;
+    
+    /* Safe area padding applied consistently */
+    padding-bottom: var(--safe-bottom) !important;
     
     /* Visual appearance - can be themed but position must stay the same */
     background-color: hsl(var(--background));
@@ -763,36 +775,23 @@
     -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
     box-shadow: var(--mobile-nav-shadow);
     
+    /* Force GPU acceleration for smoother rendering on all devices */
+    transform: translateZ(0);
+    
     /* Transitions affect ONLY appearance, never position or structure */
     transition: 
       background-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
-  
-  /* UNIVERSAL SAFE AREA HANDLING - ADJUSTS AUTOMATICALLY BASED ON DEVICE
-   * Using media queries, data attributes and automatic detection for safe areas
-   * This applies to ALL devices with insets, including PWA and notched phones
-   */
+
+  /* Enhanced PWA mode styling - only applies visual enhancements */
   @media (display-mode: standalone),
          (display-mode: fullscreen),
          (display-mode: minimal-ui) {
     .mobile-nav {
-      /* Safe area handling for PWA mode */
-      padding-bottom: var(--safe-bottom) !important;
-      height: calc(var(--mobile-nav-height) + var(--safe-bottom)) !important;
+      /* Only apply visual enhancements, positioning is handled by core rules */
       border-top: 1px solid hsl(var(--border) / 0.6);
-      transform: translateZ(0); /* Force GPU acceleration for smoother rendering */
     }
-  }
-  
-  /* Alternative detection methods for devices with safe areas */
-  html[data-has-safe-area="true"] .mobile-nav,
-  .mobile-nav:has(+ .bottom-nav-spacer[style*="var(--safe-bottom)"]) {
-    /* ‼️ SAFE AREA INSET HANDLING - CRITICAL FOR iOS DEVICES ‼️ */
-    padding-bottom: var(--safe-bottom) !important;
-    height: calc(var(--mobile-nav-height) + var(--safe-bottom)) !important;
-    border-top: 1px solid hsl(var(--border) / 0.6);
-    transform: translateZ(0); /* Force GPU acceleration for smoother rendering */
   }
   
   /* Navigation item container */
