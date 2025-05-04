@@ -27,9 +27,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogClose,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Accordion,
