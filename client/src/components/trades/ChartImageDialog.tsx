@@ -203,14 +203,13 @@ export function ChartImageDialog({
     >
       <DialogContent 
         className="p-0 chart-dialog"
-        aria-describedby="chart-image-viewer-description"
       >
         <div id="chart-image-viewer-description" className="sr-only">
           Chart image viewer for trading analysis
         </div>
         
         {/* Header bar with title and controls */}
-        <DialogTitle id="chart-dialog-title" className="flex items-center justify-between py-3 px-4 border-b">
+        <DialogTitle id="chart-dialog-title" className="flex items-center justify-between py-2.5 px-4 border-b">
           <div className="flex flex-col">
             <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
               {tradePair} - {currentImage.label}
@@ -226,14 +225,10 @@ export function ChartImageDialog({
           </div>
           
           {/* Close button */}
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="rounded-full h-8 w-8 text-muted-foreground hover:text-foreground"
+          <X 
+            className="h-4 w-4 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
             onClick={onClose}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          />
         </DialogTitle>
         
         {/* Main content area with swipe handlers */}
@@ -372,14 +367,14 @@ export function ChartImageDialog({
           {/* Image Pagination for mobile and desktop */}
           {availableImages.length > 1 && (
             <div className="chart-pagination">
-              <div className="bg-black/50 backdrop-blur-sm py-2 px-4 rounded-full flex items-center gap-3 shadow-md">
+              <div className="chart-pagination-dots">
                 {isMobile && (
                   <button
-                    className="w-8 h-8 flex items-center justify-center text-white/90"
+                    className="w-6 h-6 flex items-center justify-center text-white/90"
                     onClick={handlePrevious}
                     aria-label="Previous image"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
@@ -389,10 +384,10 @@ export function ChartImageDialog({
                   <button
                     key={index}
                     className={cn(
-                      "w-3 h-3 rounded-full transition-all duration-200",
+                      "chart-pagination-dot",
                       index === currentImageIndex 
-                        ? "bg-white scale-110" 
-                        : "bg-white/30 scale-90 hover:bg-white/50"
+                        ? "chart-pagination-dot-active" 
+                        : "chart-pagination-dot-inactive"
                     )}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -404,11 +399,11 @@ export function ChartImageDialog({
                 
                 {isMobile && (
                   <button
-                    className="w-8 h-8 flex items-center justify-center text-white/90"
+                    className="w-6 h-6 flex items-center justify-center text-white/90"
                     onClick={handleNext}
                     aria-label="Next image"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
