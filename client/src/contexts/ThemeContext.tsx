@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 
 // Define supported theme types
 export type ThemeType = 'light' | 'dark' | 'system';
@@ -10,6 +10,11 @@ interface ThemeContextType {
   isDarkMode: boolean; // Whether dark mode is currently active
   isLoading: boolean; // Loading state
 }
+
+// Kiểm tra giá trị theme có hợp lệ hay không
+const isValidTheme = (theme: any): theme is ThemeType => {
+  return theme === 'light' || theme === 'dark' || theme === 'system';
+};
 
 // Create context with default values
 const ThemeContext = createContext<ThemeContextType>({
@@ -28,26 +33,31 @@ export function useTheme() {
   return context;
 }
 
-// Get valid theme from localStorage or fallback to system
-const getStoredTheme = (): ThemeType => {
-  const storedTheme = localStorage.getItem('theme');
-  // Validate that the stored theme is one of our valid options
-  if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system') {
-    return storedTheme;
-  }
-  return 'system'; // Default fallback
-};
-
 // Theme Provider Component
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Hàm để lấy theme chính xác từ localStorage
+  const getStoredTheme = (): ThemeType => {
+    try {
+      const storedTheme = localStorage.getItem('theme');
+      // Nếu giá trị hợp lệ thì trả về, ngược lại dùng mặc định
+      return isValidTheme(storedTheme) ? storedTheme : 'system';
+    } catch (error) {
+      console.error('Lỗi khi đọc theme từ localStorage:', error);
+      return 'system';
+    }
+  };
+
   // Single source of truth for theme
   const [theme, setThemeState] = useState<ThemeType>(getStoredTheme());
   
-  // Loading state
+  // Theo dõi trạng thái khởi tạo
   const [isLoading, setIsLoading] = useState(true);
   
-  // Dark mode state
+  // Dark mode state 
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Ref để theo dõi trạng thái khởi tạo
+  const initialized = useRef(false);
 
   // Apply dark mode class to document
   const applyDarkMode = (isDark: boolean) => {
@@ -58,27 +68,35 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Initialize and apply theme on mount
+  // Initialize theme once on component mount
   useEffect(() => {
-    // Set initial isDarkMode based on the theme (either from localStorage or default)
-    if (theme === 'system') {
+    if (initialized.current) return;
+
+    const currentTheme = getStoredTheme();
+    
+    // Apply theme based on setting or system preference
+    if (currentTheme === 'system') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(prefersDark);
       applyDarkMode(prefersDark);
     } else {
-      const isDark = theme === 'dark';
+      const isDark = currentTheme === 'dark';
       setIsDarkMode(isDark);
       applyDarkMode(isDark);
     }
     
+    initialized.current = true;
     setIsLoading(false);
   }, []);
 
-  // Apply the current theme whenever it changes
+  // Apply the theme whenever it changes
   useEffect(() => {
     if (isLoading) return;
     
-    // Apply the theme
+    // Save to localStorage first to ensure consistency
+    localStorage.setItem('theme', theme);
+    
+    // Then apply the theme
     if (theme === 'system') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setIsDarkMode(prefersDark);
@@ -88,13 +106,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setIsDarkMode(isDark);
       applyDarkMode(isDark);
     }
-    
-    // Always save to localStorage when theme changes (except during initial loading)
-    localStorage.setItem('theme', theme);
   }, [theme, isLoading]);
 
   // Listen for system theme changes when using 'system' theme
   useEffect(() => {
+    if (isLoading) return;
+    
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
@@ -117,12 +134,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         mediaQuery.removeListener(handleChange);
       };
     }
-  }, [theme]);
+  }, [theme, isLoading]);
 
   // Update theme - this is exposed to components
   const setTheme = (newTheme: ThemeType) => {
+    if (!isValidTheme(newTheme)) {
+      console.error('Giá trị theme không hợp lệ:', newTheme);
+      return;
+    }
+    
     if (newTheme !== theme) {
-      console.log('Theme changed to:', newTheme); // Debug log
+      console.log('Đang áp dụng theme mới:', newTheme);
       setThemeState(newTheme);
     }
   };

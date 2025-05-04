@@ -199,30 +199,25 @@ export default function Settings() {
     enabled: !!userId,
   });
   
+  // Chỉ tải settings từ userData một lần khi component mount
   useEffect(() => {
     if (userData) {
       if (userData.settings) {
         const userSettings = userData.settings as AppSettings;
         
-        if (userSettings.theme) {
-          setTheme(userSettings.theme as 'light' | 'dark' | 'system');
-          setSettings(prev => ({
-            ...userSettings,
-            theme: userSettings.theme as 'light' | 'dark' | 'system'
-          }));
-        } else {
-          setSettings(prev => ({
-            ...userSettings,
-            theme: theme
-          }));
-        }
+        // Tạo một object settings mới với theme từ context (đã được khởi tạo từ localStorage)
+        setSettings(prev => ({
+          ...userSettings,
+          // Ưu tiên theme từ context hơn là từ userData để tránh xung đột
+          theme: theme
+        }));
       }
       
       if (userData.initialBalance) {
         setInitialBalance(userData.initialBalance);
       }
     }
-  }, [userData, setTheme, theme]);
+  }, [userData, theme]);
   
   const saveSettings = async () => {
     if (!userId) return;
