@@ -399,18 +399,47 @@
     min-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
   }
   
-  /* PWA media query helper với các giá trị chuẩn hóa
-   * Sử dụng trực tiếp trong CSS thay vì phụ thuộc vào JavaScript isPWA()
-   * Áp dụng cho tất cả các chế độ PWA: standalone, fullscreen, minimal-ui
+  /* 
+   * PWA MEDIA QUERY HELPERS - CENTRALIZED APPROACH
+   * Centralized media queries for PWA detection
+   * Benefits:
+   * 1. Single source of truth for all PWA detection
+   * 2. Simplified maintenance - change one place affects all uses
+   * 3. Standard coverage for all PWA display modes
    */
+  
+  /* Define variables at root */
+  :root {
+    --is-pwa: 0; /* Default: not in PWA mode */
+    --is-mobile: 0; /* Default: not in mobile view */
+    --is-mobile-or-pwa: 0; /* Default: neither mobile nor PWA */
+  }
+  
+  /* PRIMARY MEDIA QUERY: Detect PWA mode via standard display-mode */
   @media (display-mode: standalone),
          (display-mode: fullscreen),
          (display-mode: minimal-ui) {
-    /* Helper class trống cho các component cần phát hiện PWA mode qua CSS */
-    html {
-      --is-pwa: 1;
+    :root {
+      --is-pwa: 1; /* Flag when in any PWA mode */
+      --is-mobile-or-pwa: 1; /* Also set combined flag */
     }
   }
+  
+  /* PRIMARY MEDIA QUERY: Detect mobile viewport */
+  @media (max-width: 768px) {
+    :root {
+      --is-mobile: 1; /* Flag when in mobile viewport */
+      --is-mobile-or-pwa: 1; /* Also set combined flag */
+    }
+  }
+  
+  /* Helper classes to utilize in CSS selectors */
+  html[data-pwa-mode="true"] {
+    --is-pwa: 1;
+  }
+  
+  /* Mobile viewport specific attributes get captured here */
+  /* These CSS variables can be used anywhere in the stylesheet */
 }
 
   /* MOBILE CONTENT SPACING - ONLY DEFINED ONCE AT THE ROOT LEVEL
@@ -668,20 +697,42 @@
   }
   
   /* Mobile-optimized body styling for both PWA and mobile views
-   * This is a single shared styling that works consistently across modes
+   * Using CSS variables instead of duplicating media queries
    */
-  @media (max-width: 768px), (display-mode: standalone) {
+  body {
+    /* Base styles for all modes */
+    @apply bg-background text-foreground;
+    max-width: 100vw;
+  }
+  
+  /* Apply when either in mobile or PWA mode using CSS variables */
+  @supports (--css: variables) {
     body {
-      @apply bg-background text-foreground;
-      max-width: 100vw;
-      height: 100vh; /* Fallback */
-      height: 100dvh; /* Using dynamic viewport height */
-      overflow: hidden; /* Prevent scrolling of the body */
-      position: fixed; /* Fixed position to force contained behavior */
-      width: 100%; /* Ensure full width */
-      top: 0;
-      left: 0;
-      overscroll-behavior: none; /* Prevent pull-to-refresh */
+      /* These styles only apply when --is-mobile-or-pwa equals 1 */
+      height: calc(100vh * var(--is-mobile-or-pwa, 0));
+      height: calc(100dvh * var(--is-mobile-or-pwa, 0));
+      overflow: calc(hidden * var(--is-mobile-or-pwa, 0));
+      position: calc(fixed * var(--is-mobile-or-pwa, 0));
+      width: calc(100% * var(--is-mobile-or-pwa, 0));
+      top: calc(0px * var(--is-mobile-or-pwa, 0));
+      left: calc(0px * var(--is-mobile-or-pwa, 0));
+      overscroll-behavior: calc(none * var(--is-mobile-or-pwa, 0));
+    }
+  }
+  
+  /* Fallback for browsers that don't support CSS variables */
+  @supports not (--css: variables) {
+    @media (max-width: 768px), (display-mode: standalone) {
+      body {
+        height: 100vh; 
+        height: 100dvh;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        overscroll-behavior: none;
+      }
     }
   }
   
@@ -789,37 +840,63 @@
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
 
-  /* Enhanced PWA mode styling - only applies visual enhancements 
-   * Sử dụng trực tiếp CSS media queries thay vì dựa vào class .pwa-mode
+  /* Enhanced PWA mode styling - use CSS variables for detection
+   * Unified approach using --is-pwa flag instead of repeating media queries
    */
-  @media (display-mode: standalone),
-         (display-mode: fullscreen),
-         (display-mode: minimal-ui) {
+  
+  /* Apply PWA specific styles using the CSS variable approach */
+  @supports (--css: variables) {
+    /* Style specific for PWA mode */
     .mobile-nav {
-      /* Only apply visual enhancements, positioning is handled by core rules */
-      border-top: 1px solid hsl(var(--border) / 0.6);
+      /* Only apply when in PWA mode using the variable multiplier pattern */
+      border-top-color: color-mix(
+        in srgb,
+        hsl(var(--border) / 0.4) calc(100% - (var(--is-pwa) * 100%)),
+        hsl(var(--border) / 0.6) calc(var(--is-pwa) * 100%)
+      );
       
-      /* Ensure it extends all the way to the bottom when in PWA mode to cover home indicator */
-      bottom: 0 !important;
-      margin-bottom: 0 !important;
+      /* These properties are already !important in core styles */
+      /* We don't need to apply them again */
     }
 
-    /* Override global safe area adjustments for the app in PWA mode */
-    /* This ensures nothing gets added beneath the nav bar */
+    /* PWA safe area adjustments using variables */
     html {
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
+      /* When --is-pwa is 1, these become 0 effectively */
+      padding-bottom: calc(var(--padding-bottom, auto) * (1 - var(--is-pwa)));
+      margin-bottom: calc(var(--margin-bottom, auto) * (1 - var(--is-pwa)));
     }
 
-    /* Remove any extra space below the mobile navigator */
-    #root, .mobile-layout {
-      padding-bottom: 0 !important;
-      margin-bottom: 0 !important;
+    /* Mobile layout PWA specifics */
+    .mobile-layout {
+      /* Only set to 0 when in PWA mode */
+      padding-bottom: calc(var(--padding-bottom, auto) * (1 - var(--is-pwa)));
+      margin-bottom: calc(var(--margin-bottom, auto) * (1 - var(--is-pwa)));
     }
     
-    /* Ensure main content respects padding via safe areas */
+    /* Content bottom spacing in PWA mode */
     .mobile-main-content {
-      padding-bottom: var(--safe-bottom) !important;
+      /* Only apply in PWA mode */
+      padding-bottom: calc(var(--safe-bottom) * var(--is-pwa));
+    }
+  }
+  
+  /* Fallback for browsers that don't support CSS variables */
+  @supports not (--css: variables) {
+    @media (display-mode: standalone),
+           (display-mode: fullscreen),
+           (display-mode: minimal-ui) {
+      .mobile-nav {
+        border-top: 1px solid hsl(var(--border) / 0.6);
+      }
+      
+      html, #root, .mobile-layout {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+      }
+      
+      .mobile-main-content {
+        padding-bottom: var(--safe-bottom) !important;
+      }
     }
   }
   
@@ -1002,32 +1079,63 @@
   }
   
   /* Full-screen dialog adjustments for mobile and PWA experience
-   * Instead of conditional styling, we use a single rule that works for all modes
+   * Use CSS variables instead of duplicating media queries  
    */
-  @media (max-width: 640px), (display-mode: standalone) {
+  
+  /* Apply using CSS variable approach for consistent, centralized control */
+  @supports (--css: variables) {
     .chart-dialog {
-      /* Full-screen experience for small screens and standalone mode */
-      height: calc(100vh - var(--safe-top) - 1px);
-      height: calc(100dvh - var(--safe-top) - 1px); /* Dynamic viewport height */
-      max-height: calc(100vh - var(--safe-top) - 1px);
-      max-height: calc(100dvh - var(--safe-top) - 1px);
-      max-width: 100vw;
-      width: 100vw;
+      /* Apply these properties conditionally using --is-mobile-or-pwa variable */
+      height: calc(
+        (100vh - var(--safe-top) - 1px) * var(--is-mobile-or-pwa, 0) + 
+        (min(90vh, 800px) * (1 - var(--is-mobile-or-pwa, 0)))
+      );
+      height: calc(
+        (100dvh - var(--safe-top) - 1px) * var(--is-mobile-or-pwa, 0) + 
+        (min(90vh, 800px) * (1 - var(--is-mobile-or-pwa, 0)))
+      );
+      max-width: calc(
+        100vw * var(--is-mobile-or-pwa, 0) + 
+        95vw * (1 - var(--is-mobile-or-pwa, 0))
+      );
+      width: calc(
+        100vw * var(--is-mobile-or-pwa, 0) + 
+        100% * (1 - var(--is-mobile-or-pwa, 0))
+      );
       
-      /* Standardized positioning */
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      top: var(--safe-top);
-      margin: 0;
+      /* Conditionally apply styling based on mode */
+      position: var(--is-mobile-or-pwa, relative);
+      border-radius: calc(
+        var(--chart-dialog-radius) * (1 - var(--is-mobile-or-pwa, 0)) + 
+        var(--chart-dialog-radius) * var(--is-mobile-or-pwa, 0)
+      );
       
-      /* Rounded corners only on top */
-      border-radius: var(--chart-dialog-radius) var(--chart-dialog-radius) 0 0;
-      
-      /* Better performance on mobile devices */
-      transform: translateZ(0);
-      will-change: transform;
+      /* Only apply these when in mobile or PWA mode */
+      transform: calc(translateZ(0) * var(--is-mobile-or-pwa, 0));
+      will-change: calc(transform * var(--is-mobile-or-pwa, 0));
+    }
+  }
+  
+  /* Fallback for browsers without CSS variable support */
+  @supports not (--css: variables) {
+    @media (max-width: 640px), (display-mode: standalone) {
+      .chart-dialog {
+        height: calc(100vh - var(--safe-top) - 1px);
+        height: calc(100dvh - var(--safe-top) - 1px);
+        max-height: calc(100vh - var(--safe-top) - 1px);
+        max-height: calc(100dvh - var(--safe-top) - 1px);
+        max-width: 100vw;
+        width: 100vw;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: var(--safe-top);
+        margin: 0;
+        border-radius: var(--chart-dialog-radius) var(--chart-dialog-radius) 0 0;
+        transform: translateZ(0);
+        will-change: transform;
+      }
     }
   }
   
