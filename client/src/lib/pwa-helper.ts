@@ -164,6 +164,37 @@ export function isPWA(): boolean {
 }
 
 /**
+ * Marks the HTML element with data attributes for PWA mode detection
+ * This makes it easier for CSS to apply appropriate styles
+ */
+export function markPWAMode(): void {
+  // Check if we're in standalone or fullscreen mode
+  const isPWAMode = window.matchMedia('(display-mode: standalone)').matches || 
+                window.matchMedia('(display-mode: fullscreen)').matches || 
+                (window.navigator as any).standalone === true;
+
+  // Apply data attribute to enable CSS to detect PWA mode
+  if (isPWAMode) {
+    // Mark HTML element for CSS to detect
+    document.documentElement.setAttribute('data-pwa-mode', 'true');
+    
+    // Apply CSS variable for conditional styles
+    document.documentElement.style.setProperty('--is-pwa', '1');
+    document.documentElement.style.setProperty('--is-mobile-or-pwa', '1');
+    
+    // Cố định thêm các thuộc tính trên body để ngăn scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = '0';
+    document.body.style.left = '0';
+    document.body.style.bottom = '0';
+    document.body.style.right = '0';
+    document.body.style.overscrollBehavior = 'none';
+  }
+}
+
+/**
  * Shows installation promotion based on browser support
  * 
  * @returns Boolean indicating if installation promotion is available

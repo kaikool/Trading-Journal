@@ -535,23 +535,28 @@
   /* These CSS variables can be used anywhere in the stylesheet */
 }
 
-  /* Mobile content with navigation - Standard layout for all pages */
+  /* Mobile content with navigation - Standard layout for all pages - THE ONE TRUE SCROLL */
   .mobile-content-with-navigation {
     display: flex;
     flex-direction: column;
     min-height: 100vh; /* Fallback */
     min-height: 100dvh; /* Dynamic viewport height */
-    overflow-y: scroll; /* ONE TRUE SCROLL - thay auto thành scroll để đảm bảo luôn có thanh cuộn */
-    overflow-x: hidden; /* Không cho phép cuộn ngang */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    position: fixed; /* Thay đổi absolute thành fixed để cố định vị trí */
-    top: var(--safe-top); /* Tôn trọng safe area top */
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: calc(100% - var(--safe-top)); /* Điều chỉnh chiều cao để tính đến safe area */
-    z-index: 1; /* Đảm bảo container này nằm trên các thành phần khác */
+    
+    /* SCROLL CONFIGURATION - LOCKED TO THIS CONTAINER ONLY */
+    overflow-y: auto !important; /* Đổi lại thành auto để tránh hiện scroll khi không cần thiết */
+    overflow-x: hidden !important; /* Không cho phép cuộn ngang */
+    -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
+    overscroll-behavior: contain !important; /* Ngăn chặn scroll bounce và chain */
+    
+    /* POSITIONING - CRITICAL FOR SINGLE SCROLL CONTAINER */
+    position: fixed !important; /* Sử dụng fixed để cố định vị trí trong viewport */
+    top: var(--safe-top) !important; /* Tôn trọng safe area top */
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: calc(100% - var(--safe-top)) !important; /* Điều chỉnh chiều cao để tính đến safe area */
+    z-index: 1 !important; /* Đảm bảo container này nằm trên các thành phần khác */
     
     /* Standard bottom padding for all pages with mobile navigation */
     padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
@@ -640,7 +645,7 @@
      * - Allows for properly sized icons (24px) with appropriate padding
      */
     --mobile-nav-height: 3.5rem; /* 56px - standard size, increased from 48px */
-    --mobile-nav-z-index: 50;  /* Keep it above everything else */
+    --mobile-nav-z-index: 100;  /* Keep it above EVERYTHING else, including scroll container */
     --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect */
     --mobile-nav-anim-speed: 300ms;
     --mobile-nav-anim-easing: ease-in-out;

@@ -285,6 +285,11 @@ function App() {
       updateQueryClientConfig().catch(console.error);
     });
     
+    // Sử dụng hàm markPWAMode từ lib để thiết lập chế độ PWA
+    import('./lib/pwa-helper').then(({ markPWAMode }) => {
+      markPWAMode();
+    });
+    
     // Thiết lập thuộc tính data-pwa-mode cho HTML để kích hoạt CSS variables
     const isPWAMode = window.matchMedia('(display-mode: standalone)').matches || 
       // @ts-ignore: navigator.standalone là thuộc tính đặc biệt trên Safari
@@ -292,6 +297,12 @@ function App() {
     
     if (isPWAMode) {
       document.documentElement.setAttribute('data-pwa-mode', 'true');
+      document.documentElement.style.setProperty('--is-pwa', '1');
+      document.documentElement.style.setProperty('--is-mobile-or-pwa', '1');
+      
+      // Thêm ngăn chặn scroll trên các phần tử cơ bản
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.documentElement.removeAttribute('data-pwa-mode');
     }
@@ -301,8 +312,16 @@ function App() {
     const handleDisplayModeChange = (e: MediaQueryListEvent) => {
       if (e.matches) {
         document.documentElement.setAttribute('data-pwa-mode', 'true');
+        document.documentElement.style.setProperty('--is-pwa', '1');
+        document.documentElement.style.setProperty('--is-mobile-or-pwa', '1');
+        
+        // Thêm ngăn chặn scroll trên các phần tử cơ bản
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
       } else {
         document.documentElement.removeAttribute('data-pwa-mode');
+        document.documentElement.style.removeProperty('--is-pwa');
+        document.documentElement.style.removeProperty('--is-mobile-or-pwa');
       }
     };
     
