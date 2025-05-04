@@ -1500,20 +1500,32 @@
     @apply text-foreground/70;
   }
   
-  /* Scrollbar styling */
+  /* Scrollbar styling - adjusted to stay flush with right edge */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
+    /* Keep margin at 0 to ensure it's flush with the edge */
+    margin: 0;
   }
   
+  /* Ensure track stays flush with edge */
   ::-webkit-scrollbar-track {
     background: hsl(var(--muted));
-    border-radius: 8px;
+    border-radius: 0;
+    /* Removed rounded borders on right side to ensure flush with edge */
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
   }
   
+  /* Ensure thumb stays flush with edge */
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.5);
-    border-radius: 8px;
+    border-radius: 0;
+    /* Removed rounded borders on right side to ensure flush with edge */
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    /* Ensure no border/padding pushes thumb away from edge */
+    border-right: 0;
   }
   
   ::-webkit-scrollbar-thumb:hover {

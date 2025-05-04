@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensuring content doesn't create unwanted right margin */
+html, body, #root {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 /* 
  * Chỉ sử dụng một phương pháp tiếp cận nhất quán cho toàn bộ safe area handling.
  * Đã di chuyển toàn bộ safe area utilities vào globals.css trong phần utilities.
