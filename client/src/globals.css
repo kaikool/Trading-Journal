@@ -405,13 +405,13 @@
    * Most components should use the bottom-nav-spacer instead
    */
   .has-mobile-nav-spacing {
-    /* Uses the unified CSS variables for consistency */
-    padding-bottom: calc(var(--mobile-nav-height) + 4px);
+    /* Uses unified CSS variables for consistency with relative units */
+    padding-bottom: calc(var(--mobile-nav-height) + 0.25rem);
     
     /* Safe area handling through CSS variables */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(var(--mobile-nav-height) + 4px), /* Base padding using standard nav height */
+        calc(var(--mobile-nav-height) + 0.25rem), /* Base padding using relative units */
         calc(var(--mobile-nav-height) + var(--safe-bottom)) /* Dynamic padding with safe area */
       );
     }
@@ -432,7 +432,7 @@
   /* Use for content areas that need top inset padding (header areas) - Standardized */
   .pwa-top-inset {
     /* Using unified variables */
-    padding-top: max(var(--safe-top), 8px); /* Using 8px (4px * 2) for minimum padding */
+    padding-top: max(var(--safe-top), 0.5rem); /* Using relative units (was 8px) */
   }
   
   /* Use for page titles or notifications at the very top of the screen - Standardized */
@@ -472,12 +472,12 @@
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     
-    /* Min padding values */
-    --min-top-padding: 4px;
-    --min-side-padding: 16px;
+    /* Min padding values - using relative units instead of fixed px */
+    --min-top-padding: 0.25rem; /* Was 4px */
+    --min-side-padding: 1rem; /* Was 16px */
     
     /* Standard values for mobile layout components */
-    --status-bar-height: 48px;
+    --status-bar-height: 3rem; /* Using relative units for better scaling */
     
     /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES 
      * Following Apple Human Interface Guidelines for Tab Bar
@@ -490,7 +490,7 @@
      */
     --mobile-nav-height: 3rem;
     --mobile-nav-z-index: 50;  /* Keep it above everything else */
-    --mobile-nav-blur: 12px;   /* Subtle blur for glass effect */
+    --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect (was 12px) */
     --mobile-nav-anim-speed: 300ms;
     --mobile-nav-anim-easing: ease-in-out;
     --mobile-nav-shadow: var(--shadow-sm);
@@ -503,8 +503,8 @@
     --mobile-nav-icon-spacing: 0.25rem; /* 4px - Space between icon and label */
     
     /* Active indicator spec */
-    --mobile-nav-indicator-height: 2px;
-    --mobile-nav-indicator-width: 16px; /* Wider for better visibility */
+    --mobile-nav-indicator-height: 0.125rem; /* Was 2px */
+    --mobile-nav-indicator-width: 1rem; /* Was 16px - Wider for better visibility */
     --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
     --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
     
