@@ -540,6 +540,8 @@
     flex-direction: column;
     min-height: 100vh; /* Fallback */
     min-height: 100dvh; /* Dynamic viewport height */
+    overflow-y: auto; /* Đặt overflow scroll CHÍNH vào đây là nơi duy nhất có scroll */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     
     /* Standard bottom padding for all pages with mobile navigation */
     padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
@@ -909,7 +911,7 @@
     flex: 1; /* Take up available space */
     width: 100%; /* Full width */
     height: 100%; /* Full height */
-    overflow-y: auto; /* Allow scrolling */
+    /* Xóa bỏ overflow-y: auto để tránh scroll kép */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
