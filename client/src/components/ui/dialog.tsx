@@ -14,7 +14,7 @@ const safeAreaPadding = "pt-safe pb-safe"; // Đảm bảo tôn trọng safe are
 const mobileHeight = "max-h-[85dvh]"; // Sử dụng dvh (dynamic viewport height) trên thiết bị di động
 const desktopHeight = "sm:max-h-[85vh]"; // Sử dụng vh (viewport height) trên desktop
 
-export const dialogVariants = {
+const dialogVariants = {
   /**
    * Standard Dialog - Kích thước tiêu chuẩn cho dialog thông thường
    * Sử dụng cho hầu hết các dialog trong ứng dụng
@@ -53,7 +53,7 @@ export const dialogVariants = {
  * @param className CSS class bổ sung nếu cần
  * @returns Chuỗi class đã được gộp
  */
-export function useDialogVariant(
+function useDialogVariant(
   variant: keyof typeof dialogVariants = "standard",
   className?: string
 ): string {
@@ -173,7 +173,7 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName
 /**
  * Header Footer Layout - Layout dialog tiêu chuẩn với header và footer cố định
  */
-export function DialogHeaderFooterLayout({
+function DialogHeaderFooterLayout({
   children,
   headerContent,
   footerContent,
@@ -226,4 +226,6 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogHeaderFooterLayout,
+  useDialogVariant,
 }
