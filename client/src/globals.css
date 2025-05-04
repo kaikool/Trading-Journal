@@ -1500,39 +1500,60 @@
     @apply text-foreground/70;
   }
   
-  /* Scrollbar styling - complete redesign for extreme right edge positioning */
-  /* Make scrollbar thinner and flush with edge */
+  /* 
+   * ===============================================
+   * SCROLLBAR STYLING - SINGLE SOURCE OF TRUTH
+   * ===============================================
+   * 
+   * Unified, simplified scrollbar styling approach to ensure
+   * consistent flush-right positioning across the application.
+   * 
+   * IMPORTANT: Do not define scrollbar styles anywhere else!
+   */
+  
+  /* For Firefox: Set scrollbar width to auto (default) to ensure it's at edge */
   * {
-    scrollbar-width: thin;
+    scrollbar-width: auto;
     scrollbar-color: hsla(var(--muted-foreground), 0.5) transparent;
   }
   
-  /* Webkit specific scrollbar styling */
+  /* For Webkit browsers (Chrome, Safari, Edge) */
   ::-webkit-scrollbar {
+    /* Standard thin size */
     width: 6px;
     height: 6px;
+    /* Critical: ensure no margin pushes it from edge */
+    margin: 0;
+    padding: 0;
   }
   
-  /* Completely transparent track to ensure flush edge */
+  /* Pure transparent track for flush positioning */
   ::-webkit-scrollbar-track {
+    /* Transparent background without any styling */
     background: transparent;
+    /* Critical: remove all borders and radius */
     border: none;
+    border-radius: 0;
   }
   
-  /* Thin scrollbar thumb with no border radius on right */
+  /* Simple thumb with no styling that could push from edge */
   ::-webkit-scrollbar-thumb {
-    background-color: hsla(var(--muted-foreground), 0.5);
+    /* Semi-transparent color to blend with any background */
+    background-color: hsla(var(--muted-foreground), 0.4);
+    /* Critical: no radius or borders */
     border-radius: 0;
     border: none;
   }
   
+  /* Hover state slightly more visible */
   ::-webkit-scrollbar-thumb:hover {
-    background-color: hsla(var(--muted-foreground), 0.7);
+    background-color: hsla(var(--muted-foreground), 0.6);
   }
   
-  /* Corner should be transparent to avoid artifacts */
-  ::-webkit-scrollbar-corner {
-    background: transparent;
+  /* Corner and button elements fully transparent */
+  ::-webkit-scrollbar-corner,
+  ::-webkit-scrollbar-button {
+    display: none;
   }
   
   /* Improved accessibility focus-visible styles */
