@@ -830,8 +830,10 @@
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     
-    /* Standard tap target size - Apple recommends min 44x44pt touch targets */
-    min-height: 44px;
+    /* Standard tap target size - Apple recommends min 44x44pt touch targets 
+     * Using relative units but maintaining Apple's recommendation (44px)
+     */
+    min-height: 2.75rem; /* ~44px at default font size */
   }
   
   /* Active state indicator - subtle line above the active item 
@@ -879,7 +881,7 @@
     text-overflow: ellipsis;
     max-width: 100%;
     letter-spacing: -0.01em; /* Slight tightening for iOS feel */
-    padding: 0 4px; /* Small horizontal padding for better text spacing */
+    padding: 0 0.25rem; /* Small horizontal padding (was 4px) */
   }
   
   /* Active tab styling - follows iOS active tab appearance */
@@ -896,7 +898,7 @@
   
   /* Mobile header bar - used in MobileNav */
   .mobile-header {
-    --mobile-header-blur: 8px;
+    --mobile-header-blur: 0.5rem; /* Was 8px */
     
     backdrop-filter: blur(var(--mobile-header-blur));
     -webkit-backdrop-filter: blur(var(--mobile-header-blur));
