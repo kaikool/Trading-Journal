@@ -736,24 +736,7 @@
     }
   }
   
-  /* DEPRECATED - Legacy classes that should not be used
-   * ❌ Don't use these classes! They are maintained only for compatibility
-   * with older components and will be removed in a future update.
-   * Use .bottom-nav-spacer instead.
-   */
-  .pwa-bottom-spacer {
-    /* Match the main bottom-nav-spacer height exactly */
-    height: var(--mobile-nav-height);
-    
-    /* Fix for PWA mode - zero height in standalone mode */
-    @media (display-mode: standalone) {
-      height: 0 !important;
-    }
-    
-    /* Ensure no visible elements in spacer */
-    overflow: hidden;
-    pointer-events: none;
-  }
+  /* Bottom spacing is now fully handled by the standardized .bottom-nav-spacer class */
   
   /* 
    * =======================================================
