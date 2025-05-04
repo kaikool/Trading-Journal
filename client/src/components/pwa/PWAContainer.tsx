@@ -109,20 +109,17 @@ export function PWAContainer() {
       }
     }
     
-    // Add pwa-mode class only for detection, but all styling should be standardized
-    if (isPWA()) {
-      document.documentElement.classList.add('pwa-mode');
-      
-      // Add safe area detection attribute
-      document.documentElement.setAttribute('data-has-safe-area', 'true');
-    }
+    // Không còn cần thiết phải thêm class 'pwa-mode' vì:
+    // 1. CSS đã có media query (display-mode: standalone) để phát hiện PWA
+    // 2. Safe area đã được xử lý tự động thông qua CSS variables
+    // 3. Giảm sự phụ thuộc vào JavaScript để xác định PWA mode
+    
+    // Xử lý safe area là duy nhất cho tất cả môi trường
+    document.documentElement.setAttribute('data-has-safe-area', 'true');
     
     return () => {
-      // Cleanup on unmount
-      if (isPWA()) {
-        document.documentElement.classList.remove('pwa-mode');
-        document.documentElement.removeAttribute('data-has-safe-area');
-      }
+      // Cleanup on unmount - giữ lại để tương thích với code hiện tại
+      document.documentElement.removeAttribute('data-has-safe-area');
     };
   }, []);
 

@@ -398,6 +398,19 @@
     min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
     min-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
   }
+  
+  /* PWA media query helper với các giá trị chuẩn hóa
+   * Sử dụng trực tiếp trong CSS thay vì phụ thuộc vào JavaScript isPWA()
+   * Áp dụng cho tất cả các chế độ PWA: standalone, fullscreen, minimal-ui
+   */
+  @media (display-mode: standalone),
+         (display-mode: fullscreen),
+         (display-mode: minimal-ui) {
+    /* Helper class trống cho các component cần phát hiện PWA mode qua CSS */
+    html {
+      --is-pwa: 1;
+    }
+  }
 }
 
   /* MOBILE CONTENT SPACING - ONLY DEFINED ONCE AT THE ROOT LEVEL
@@ -776,7 +789,9 @@
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
 
-  /* Enhanced PWA mode styling - only applies visual enhancements */
+  /* Enhanced PWA mode styling - only applies visual enhancements 
+   * Sử dụng trực tiếp CSS media queries thay vì dựa vào class .pwa-mode
+   */
   @media (display-mode: standalone),
          (display-mode: fullscreen),
          (display-mode: minimal-ui) {
@@ -800,6 +815,11 @@
     #root, .mobile-layout {
       padding-bottom: 0 !important;
       margin-bottom: 0 !important;
+    }
+    
+    /* Ensure main content respects padding via safe areas */
+    .mobile-main-content {
+      padding-bottom: var(--safe-bottom) !important;
     }
   }
   
