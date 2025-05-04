@@ -1215,12 +1215,29 @@
   /* Chart Dialog Base Container */
   .chart-dialog {
     /* CSS Variables for central configuration */
-    --chart-dialog-radius: 1rem; /* 16px - Updated to standard token value */
+    --chart-dialog-radius: 0.75rem; /* 12px - Reduced from 16px */
     --chart-dialog-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
     --chart-dialog-bg: hsl(var(--card));
     --chart-dialog-z-index: 50;
     --chart-anim-speed: 300ms;
     --chart-mobile-breakpoint: 640px;
+    
+    /* Sizing similar to the strategy dialog */
+    max-width: 95vw !important;
+    width: 95vw !important;
+    
+    @media (min-width: 640px) {
+      max-width: 85vw !important;
+      width: auto !important;
+    }
+    
+    @media (min-width: 768px) {
+      max-width: 78vw !important;
+    }
+    
+    @media (min-width: 1024px) {
+      max-width: 70vw !important;
+    }
     
     /* Typography settings */
     --chart-title-font-size: var(--text-sm); /* 14px - Using global typography scale */

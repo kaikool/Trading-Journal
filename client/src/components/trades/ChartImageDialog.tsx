@@ -205,11 +205,16 @@ export function ChartImageDialog({
     >
       <DialogContent 
         className="p-0 chart-dialog"
+        aria-describedby="chart-dialog-description"
       >
-        {/* Header bar với title và description */}
+        {/* Header với title visible và description hidden */}
         <DialogTitle className="sr-only">
           {dialogTitle}
         </DialogTitle>
+        
+        <div id="chart-dialog-description" className="sr-only">
+          Trading chart analysis for {tradePair}
+        </div>
         
         {/* Thanh tiêu đề nhỏ gọn hơn */}
         <div className="flex flex-col py-2 px-3 border-b text-sm">
