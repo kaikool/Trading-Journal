@@ -1734,24 +1734,34 @@
     @apply text-foreground/70;
   }
   
-  /* Scrollbar styling */
+  /* Scrollbar styling - Improved alignment */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
+    padding-right: 0;
+    margin-right: 0;
   }
   
   ::-webkit-scrollbar-track {
     background: hsl(var(--muted));
     border-radius: 8px;
+    margin-right: 0;
   }
   
   ::-webkit-scrollbar-thumb {
     background: hsl(var(--muted-foreground) / 0.5);
     border-radius: 8px;
+    border: none;
   }
   
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.7);
+  }
+  
+  /* Firefox scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.5) hsl(var(--muted));
   }
   
   /* Improved accessibility focus-visible styles */
