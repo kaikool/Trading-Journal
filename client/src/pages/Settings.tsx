@@ -134,7 +134,7 @@ export default function Settings() {
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   
   // Theme management
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, applyTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
     theme: theme, 
@@ -226,6 +226,7 @@ export default function Settings() {
       });
       
       setTheme(settings.theme);
+      applyTheme(settings.theme); // Apply the theme immediately after saving
       
       toast({
         title: "Settings saved",
@@ -474,9 +475,12 @@ export default function Settings() {
                 <FormField label="Theme" htmlFor="theme">
                   <Select
                     value={settings.theme}
-                    onValueChange={(value) =>
-                      setSettings({ ...settings, theme: value as 'light' | 'dark' | 'system' })
-                    }
+                    onValueChange={(value) => {
+                      const themeValue = value as 'light' | 'dark' | 'system';
+                      setSettings({ ...settings, theme: themeValue });
+                      // Preview the theme immediately when selected
+                      applyTheme(themeValue);
+                    }}
                   >
                     <SelectTrigger id="theme" className="w-full">
                       <SelectValue placeholder="Select theme" />
