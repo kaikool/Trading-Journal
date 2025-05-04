@@ -693,7 +693,7 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
-  /* UNIFIED BOTTOM SPACING
+  /* UNIFIED BOTTOM SPACING - THE SINGLE SOURCE OF TRUTH FOR CONTENT SPACING
    * This is THE ONLY block that defines spacers
    * All content pages should use this spacer to prevent content from being hidden
    * beneath the fixed mobile navigation
@@ -701,8 +701,15 @@
   .bottom-nav-spacer {
     /* Always use margin-top: auto to push the spacer to the bottom of the layout */
     margin-top: auto;
-    /* Base height matches mobile nav height exactly */
-    height: var(--mobile-nav-height);
+    
+    /* UNIFIED HEIGHT CALCULATION - MATCHES MOBILE NAV EXACTLY
+     * This automatically adjusts for safe area insets on all devices
+     * using the same calculation method as .mobile-nav height
+     */
+    height: max(
+      var(--mobile-nav-height),
+      calc(var(--mobile-nav-height) + var(--safe-bottom))
+    );
     
     /* Hide spacer on desktop layouts */
     @media (min-width: 768px) {
@@ -710,21 +717,13 @@
     }
   }
   
-  /* UNIFIED BOTTOM SPACER FOR ALL MODES
-   * This is the ONLY rule that should control the spacer height
-   * The bottom-nav-spacer automatically adapts to safe areas when needed
+  /* DEPRECATED - Legacy classes that should not be used
+   * ❌ Don't use these classes! They are maintained only for compatibility
+   * with older components and will be removed in a future update.
+   * Use .bottom-nav-spacer instead.
    */
-  .bottom-nav-spacer {
-    /* Updates: autodetect safe-area presence and apply accordingly */
-    height: max(
-      var(--mobile-nav-height),
-      calc(var(--mobile-nav-height) + var(--safe-bottom))
-    );
-  }
-  
-  /* DEPRECATED - Legacy classes that should not be used */
   .pwa-bottom-spacer {
-    /* Redirecting to the standardized class above */
+    /* Redirecting to the same calculation as the standardized bottom-nav-spacer class */
     height: max(
       var(--mobile-nav-height),
       calc(var(--mobile-nav-height) + var(--safe-bottom))
