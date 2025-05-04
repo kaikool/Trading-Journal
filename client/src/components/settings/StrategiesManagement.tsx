@@ -96,6 +96,7 @@ const COMMON_EXPECTED_VALUES = [
 
 const addConditionToArray = (array: StrategyCondition[], condition: StrategyCondition): StrategyCondition[] => {
   if (!condition.label.trim()) return array;
+  console.log("[DEBUG] Adding condition to array:", { condition, currentArray: array });
   return [...array, { ...condition, label: condition.label.trim() }];
 };
 
