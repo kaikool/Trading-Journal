@@ -133,8 +133,8 @@ export default function Settings() {
   const userId = auth.currentUser?.uid;
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   
-  // Theme management
-  const { theme, setTheme, applyTheme } = useTheme();
+  // Theme management with simplified API
+  const { theme, setTheme, previewTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
     theme: theme, // Initial value from context
@@ -151,7 +151,7 @@ export default function Settings() {
     showAchievements: true
   });
 
-  // Sync settings.theme with theme context whenever theme changes
+  // Always keep settings.theme in sync with the theme from context
   useEffect(() => {
     setSettings(prev => ({
       ...prev,
@@ -233,8 +233,8 @@ export default function Settings() {
         initialBalance
       });
       
+      // Apply theme permanently when saving settings
       setTheme(settings.theme);
-      applyTheme(settings.theme); // Apply the theme immediately after saving
       
       toast({
         title: "Settings saved",
@@ -486,8 +486,8 @@ export default function Settings() {
                     onValueChange={(value) => {
                       const themeValue = value as 'light' | 'dark' | 'system';
                       setSettings({ ...settings, theme: themeValue });
-                      // Preview the theme immediately when selected and ensure settings stay in sync
-                      applyTheme(themeValue);
+                      // Preview the theme immediately when selected
+                      previewTheme(themeValue);
                     }}
                   >
                     <SelectTrigger id="theme" className="w-full">

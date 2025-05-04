@@ -3,22 +3,22 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 // Define supported theme types
 export type ThemeType = 'light' | 'dark' | 'system';
 
-// Context interface
+// Context interface - simplified for better consistency
 interface ThemeContextType {
-  theme: ThemeType; // Current theme selected in settings
-  currentTheme: ThemeType; // Theme currently being applied
-  setTheme: (theme: ThemeType) => void; // Update theme in settings (doesn't apply immediately)
-  applyTheme: (theme?: ThemeType) => void; // Apply theme immediately
-  isDarkMode: boolean; // Indicates if the current interface is in dark mode
-  isLoading: boolean; // Theme loading state
+  theme: ThemeType; // The current theme setting
+  setTheme: (theme: ThemeType) => void; // Update theme and apply it
+  previewTheme: (theme: ThemeType) => void; // Preview a theme without saving to settings
+  resetThemeToSaved: () => void; // Reset to last saved theme (for cancelling preview)
+  isDarkMode: boolean; // Whether dark mode is active
+  isLoading: boolean; // Loading state
 }
 
 // Create context with default values
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'system',
-  currentTheme: 'system',
   setTheme: () => {},
-  applyTheme: () => {},
+  previewTheme: () => {},
+  resetThemeToSaved: () => {},
   isDarkMode: false,
   isLoading: true,
 });
@@ -34,11 +34,11 @@ export function useTheme() {
 
 // Theme Provider Component
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Theme selected in settings (only changes when saved)
-  const [theme, setTheme] = useState<ThemeType>('system');
+  // Single source of truth for theme
+  const [theme, setThemeState] = useState<ThemeType>('system');
   
-  // Theme currently applied to the UI
-  const [currentTheme, setCurrentTheme] = useState<ThemeType>('system');
+  // Saved theme (last permanent setting)
+  const [savedTheme, setSavedTheme] = useState<ThemeType>('system');
   
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
@@ -46,69 +46,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   // Dark mode state
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Monitor the system's selected theme
-  useEffect(() => {
-    // Initialize from localStorage
-    const savedTheme = localStorage.getItem('theme') as ThemeType;
-    const savedCurrentTheme = localStorage.getItem('currentTheme') as ThemeType;
-    
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-    
-    if (savedCurrentTheme) {
-      setCurrentTheme(savedCurrentTheme);
-    } else if (savedTheme) {
-      // If no currentTheme but theme exists, apply that theme
-      setCurrentTheme(savedTheme);
-    }
-    
-    setIsLoading(false);
-    
-    // Monitor system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (currentTheme === 'system') {
-        setIsDarkMode(e.matches);
-        applyDarkMode(e.matches);
-      }
-    };
-    
-    // Immediately check the system theme
-    if (currentTheme === 'system') {
-      setIsDarkMode(mediaQuery.matches);
-      applyDarkMode(mediaQuery.matches);
-    }
-    
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  // Apply theme immediately
-  const applyTheme = (newTheme?: ThemeType) => {
-    const themeToApply = newTheme || theme;
-    
-    // Update both theme states when applying theme
-    setCurrentTheme(themeToApply);
-    setTheme(themeToApply); // Update theme state too so UI components reflect this
-    
-    // Save both theme values to localStorage
-    localStorage.setItem('currentTheme', themeToApply);
-    localStorage.setItem('theme', themeToApply);
-    
-    if (themeToApply === 'system') {
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(isDarkMode);
-      applyDarkMode(isDarkMode);
-    } else {
-      const isDark = themeToApply === 'dark';
-      setIsDarkMode(isDark);
-      applyDarkMode(isDark);
-    }
-  };
-
-  // Apply or remove dark mode on document
+  // Apply dark mode class to document
   const applyDarkMode = (isDark: boolean) => {
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -117,36 +55,69 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Track changes to currentTheme
+  // Initialize theme from localStorage
+  useEffect(() => {
+    const loadedTheme = localStorage.getItem('theme') as ThemeType || 'system';
+    setThemeState(loadedTheme);
+    setSavedTheme(loadedTheme);
+    setIsLoading(false);
+  }, []);
+
+  // Apply the current theme whenever it changes
   useEffect(() => {
     if (isLoading) return;
     
-    // Use closure at this point instead of state variable to avoid stale value
-    const theme = currentTheme;
-    
     if (theme === 'system') {
-      const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(isDarkMode);
-      applyDarkMode(isDarkMode);
+      // Use system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkMode(prefersDark);
+      applyDarkMode(prefersDark);
     } else {
+      // Use explicit theme
       const isDark = theme === 'dark';
       setIsDarkMode(isDark);
       applyDarkMode(isDark);
     }
-  }, [currentTheme, isLoading]);
+  }, [theme, isLoading]);
 
-  // Change theme in settings (does not apply immediately)
-  const handleSetTheme = (newTheme: ThemeType) => {
-    setTheme(newTheme);
+  // Listen for system theme changes when using 'system' theme
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        setIsDarkMode(e.matches);
+        applyDarkMode(e.matches);
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme]);
+
+  // Update theme and save it permanently
+  const setTheme = (newTheme: ThemeType) => {
+    setThemeState(newTheme);
+    setSavedTheme(newTheme);
     localStorage.setItem('theme', newTheme);
+  };
+
+  // Preview a theme without saving permanently
+  const previewTheme = (newTheme: ThemeType) => {
+    setThemeState(newTheme);
+  };
+
+  // Reset to the last saved theme
+  const resetThemeToSaved = () => {
+    setThemeState(savedTheme);
   };
 
   return (
     <ThemeContext.Provider value={{
       theme,
-      currentTheme,
-      setTheme: handleSetTheme,
-      applyTheme,
+      setTheme,
+      previewTheme,
+      resetThemeToSaved,
       isDarkMode,
       isLoading
     }}>
