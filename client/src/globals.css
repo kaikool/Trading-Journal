@@ -538,16 +538,30 @@
    * Use this class to provide proper spacing for content areas with mobile navigation
    * This creates padding at the bottom of content to ensure nothing is hidden behind the nav bar
    */
+  /* DEPRECATED - No longer used
+   * Instead of this, a transparent spacer div is now added at the end of the content
+   * This makes the bottom spacing invisible and more natural
+   */
   .has-mobile-nav-spacing {
-    /* STANDARD PADDING: Using the navigation height plus buffer space */
-    padding-bottom: calc(var(--mobile-nav-height) + 1rem) !important; /* 1rem (16px) extra space */
+    /* This is kept for backward compatibility but no longer used */
+    padding-bottom: calc(var(--mobile-nav-height) + 1rem);
+  }
+  
+  /* New transparent spacer for mobile navigation */
+  .mobile-nav-transparent-spacer {
+    /* This element takes up space but is invisible */
+    height: calc(var(--mobile-nav-height) + 1rem);
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
     
-    /* Also applying safe area inset when available */
-    @supports (padding: max(0px)) {
-      padding-bottom: max(
-        calc(var(--mobile-nav-height) + 1rem), /* Standard padding with buffer */
-        calc(var(--mobile-nav-height) + var(--safe-bottom) + 0.5rem) /* With safe area added */
-      ) !important; /* Force this styling to take precedence */
+    /* Also handle safe area when available */
+    @supports (max(0px)) {
+      height: max(
+        calc(var(--mobile-nav-height) + 1rem),
+        calc(var(--mobile-nav-height) + var(--safe-bottom) + 0.25rem)
+      );
     }
   }
   
