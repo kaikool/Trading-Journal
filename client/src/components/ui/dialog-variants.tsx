@@ -9,37 +9,40 @@ import { cn } from "@/lib/utils";
 
 // Các thuộc tính chung cho dialog
 const dialogBase = "rounded-lg border shadow-lg bg-background";
+const safeAreaPadding = "pt-safe pb-safe"; // Đảm bảo tôn trọng safe area top và bottom
+const mobileHeight = "max-h-[85dvh]"; // Sử dụng dvh (dynamic viewport height) trên thiết bị di động
+const desktopHeight = "sm:max-h-[85vh]"; // Sử dụng vh (viewport height) trên desktop
 
 export const dialogVariants = {
   /**
    * Standard Dialog - Kích thước tiêu chuẩn cho dialog thông thường
    * Sử dụng cho hầu hết các dialog trong ứng dụng
    */
-  standard: `${dialogBase} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[560px] max-h-[85vh] overflow-y-auto p-3 sm:p-4`,
+  standard: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[560px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-3 sm:p-4`,
   
   /**
    * Chart Dialog - Kích thước tối ưu cho dialog hiển thị biểu đồ
    * Rộng hơn để hiển thị tốt hơn cho nội dung đồ họa
    */
-  chart: `${dialogBase} p-0 chart-dialog`,
+  chart: `${dialogBase} ${safeAreaPadding} p-0 chart-dialog`,
   
   /**
    * Form Dialog - Cho phép dialog chứa form thu thập dữ liệu từ người dùng
    * Kích thước trung bình và có padding phù hợp
    */
-  form: `${dialogBase} max-w-[95vw] w-full sm:max-w-[85vw] md:max-w-[520px] max-h-[85vh] overflow-y-auto p-4 sm:p-5`,
+  form: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[85vw] md:max-w-[520px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-4 sm:p-5`,
   
   /**
    * Compact Dialog - Cho các thông báo hoặc xác nhận nhỏ gọn
    * Kích thước nhỏ và có padding giảm thiểu
    */
-  compact: `${dialogBase} max-w-[95vw] w-full sm:max-w-[400px] max-h-[85vh] overflow-y-auto p-3 sm:p-4`,
+  compact: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[400px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-3 sm:p-4`,
   
   /**
    * Large Dialog - Cho nội dung phức tạp hoặc dữ liệu lớn
    * Kích thước lớn nhất trong hệ thống
    */
-  large: `${dialogBase} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[720px] lg:max-w-[800px] max-h-[90vh] overflow-y-auto p-4 sm:p-5`
+  large: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[720px] lg:max-w-[800px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-4 sm:p-5`
 };
 
 /**
