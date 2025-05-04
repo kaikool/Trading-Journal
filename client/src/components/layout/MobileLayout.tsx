@@ -2,41 +2,27 @@ import React, { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileNavigator from "./MobileNavigator";
 import { cn } from "@/lib/utils";
-import { isPWA } from "@/lib/pwa-helper";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
 }
 
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
-  // Kiểm tra xem ứng dụng có đang chạy ở chế độ PWA không
-  const [isPWAMode, setIsPWAMode] = useState(false);
-  
-  useEffect(() => {
-    // Xác định nếu đang ở chế độ PWA để tối ưu hóa layout
-    setIsPWAMode(isPWA());
-  }, []);
-  
   return (
     <div className="mobile-layout">
-      {/* Unified main content container with consistent padding and flex layout */}
+      {/* 
+        Main content container using safe-area rules
+        Mọi khoảng cách đều đã được xử lý bởi safe-area, không cần spacer thêm
+      */}
       <main className="mobile-main-content">
         <div className="flex-1 flex flex-col w-full">
           {children}
         </div>
-        
         {/* 
-          Spacer để ngăn nội dung bị ẩn dưới thanh điều hướng cố định
-          Trong chế độ PWA, không cần thêm spacer vì đã có CSS xử lý 
+          Đã loại bỏ bottom-nav-spacer không cần thiết
+          Safe-area CSS với biến --safe-bottom đã xử lý khoảng cách này
         */}
-        {!isPWAMode && (
-          <div 
-            className="bottom-nav-spacer"
-            aria-hidden="true" 
-          />
-        )}
       </main>
-      {/* Không có phần tử thừa giữa nội dung chính và thanh điều hướng */}
       <MobileNavigator />
     </div>
   );

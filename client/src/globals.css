@@ -710,33 +710,18 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
   
-  /* UNIFIED BOTTOM SPACING - THE SINGLE SOURCE OF TRUTH FOR CONTENT SPACING
-   * This is THE ONLY block that defines spacers
-   * All content pages should use this spacer to prevent content from being hidden
-   * beneath the fixed mobile navigation
+  /* 
+   * SPACING FOR MOBILE NAVIGATION IS NOW FULLY HANDLED BY CSS VARIABLES AND SAFE AREAS
+   * 
+   * In previous versions, we used a bottom-nav-spacer element to create spacing.
+   * Now, we utilize CSS safe-area variables (--safe-bottom) and proper positioning
+   * to ensure content is always visible and properly spaced without extra DOM elements.
+   *
+   * This approach is:
+   * 1. More efficient (fewer DOM elements)
+   * 2. More reliable across different devices 
+   * 3. Better compatibility with PWA environments
    */
-  .bottom-nav-spacer {
-    /* Always use margin-top: auto to push the spacer to the bottom of the layout */
-    margin-top: auto;
-    
-    /* UNIFIED HEIGHT CALCULATION - MATCHES MOBILE NAV EXACTLY
-     * This automatically adjusts for safe area insets on all devices
-     * using the same calculation method as .mobile-nav height
-     */
-    height: var(--mobile-nav-height);
-    
-    /* Fix for PWA mode to use exact height matching mobile nav without extra space */
-    @media (display-mode: standalone) {
-      height: var(--mobile-nav-height);
-    }
-    
-    /* Hide spacer on desktop layouts */
-    @media (min-width: 768px) {
-      height: 0;
-    }
-  }
-  
-  /* Bottom spacing is now fully handled by the standardized .bottom-nav-spacer class */
   
   /* 
    * =======================================================
