@@ -6,8 +6,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence } from 'framer-motion';
-import { slideInLeftVariants, slideInRightVariants, fadeVariants, useReducedMotion } from '@/lib/motion';
 
 interface ChartImageDialogProps {
   isOpen: boolean;
@@ -132,7 +130,7 @@ export function ChartImageDialog({
   });
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className="p-0 chart-dialog"
         aria-describedby="chart-image-viewer-description"
@@ -157,220 +155,142 @@ export function ChartImageDialog({
         <div {...swipeHandlers} className="chart-content">
           <div className="relative w-full h-full flex items-center justify-center">
             {/* Loading indicator */}
-            <AnimatePresence>
-              {isLoading && (
-                <motion.div 
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <motion.span 
-                      className="mt-2 text-xs font-medium block text-center"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1, duration: 0.2 }}
-                    >
-                      Đang tải...
-                    </motion.span>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="mt-2 text-xs font-medium">Đang tải...</span>
+              </div>
+            )}
             
             {/* Error state */}
-            <AnimatePresence>
-              {error && !isLoading && (
-                <motion.div 
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <motion.div 
-                    className="flex flex-col items-center p-4 rounded-lg bg-card border"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ type: "spring", duration: 0.4, bounce: 0.2 }}
-                  >
-                    <motion.img 
-                      src="/icons/image-not-supported.svg" 
-                      alt="Error loading image"
-                      className="h-12 w-12 opacity-70 mb-3"
-                      initial={{ rotate: -10, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 0.7 }}
-                      transition={{ delay: 0.1, duration: 0.3 }}
-                    />
-                    <motion.span 
-                      className="text-sm text-muted-foreground"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.2, duration: 0.3 }}
-                    >
-                      Không thể tải hình ảnh
-                    </motion.span>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {error && !isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
+                <div className="flex flex-col items-center p-4 rounded-lg bg-card border">
+                  <img 
+                    src="/icons/image-not-supported.svg" 
+                    alt="Error loading image"
+                    className="h-12 w-12 opacity-70 mb-3"
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Không thể tải hình ảnh
+                  </span>
+                </div>
+              </div>
+            )}
             
             {/* Chart image with container */}
             <div
-              className="chart-image-container overflow-hidden relative"
+              className={cn(
+                "chart-image-container",
+                isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100",
+                "transition-all duration-300 ease-in-out"
+              )}
             >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={currentImageIndex}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={fadeVariants}
-                  className={cn(
-                    "w-full h-full",
-                    isLoading || error ? "opacity-0 scale-95" : "opacity-100 scale-100"
-                  )}
-                >
-                  <img 
-                    src={imageUrl || '/icons/blank-chart.svg'} 
-                    alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-                    className={cn(
-                      "chart-image",
-                      (isLoading || error) && "invisible",
-                      "max-h-full object-contain select-none touch-manipulation w-full h-full"
-                    )}
-                    onClick={(e) => e.stopPropagation()} 
-                    decoding="async"
-                    loading="eager"
-                    draggable="false"
-                    onLoad={(e) => {
-                      const img = e.currentTarget;
-                      if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-                        img.classList.remove('invisible');
-                      }
-                    }}
-                    onError={(e) => {
-                      console.error(`Error loading image: ${currentImage.originalSrc}`);
-                      const imgElement = e.currentTarget as HTMLImageElement;
-                      
-                      if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
-                        console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
-                        imgElement.src = currentImage.originalSrc;
-                        return;
-                      }
-                      
-                      imgElement.classList.add('hidden');
-                    }}
-                  />
-                </motion.div>
-              </AnimatePresence>
+              <img 
+                src={imageUrl || '/icons/blank-chart.svg'} 
+                alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
+                className={cn(
+                  "chart-image",
+                  (isLoading || error) && "invisible",
+                  "max-h-full object-contain select-none touch-manipulation"
+                )}
+                onClick={(e) => e.stopPropagation()} 
+                decoding="async"
+                loading="eager"
+                draggable="false"
+                onLoad={(e) => {
+                  const img = e.currentTarget;
+                  if (img.naturalWidth > 1 && img.naturalHeight > 1) {
+                    img.classList.remove('invisible');
+                  }
+                }}
+                onError={(e) => {
+                  console.error(`Error loading image: ${currentImage.originalSrc}`);
+                  const imgElement = e.currentTarget as HTMLImageElement;
+                  
+                  if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
+                    console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
+                    imgElement.src = currentImage.originalSrc;
+                    return;
+                  }
+                  
+                  imgElement.classList.add('hidden');
+                }}
+              />
             </div>
             
             {/* Navigation buttons for desktop and tablets */}
             {availableImages.length > 1 && !isMobile && (
               <>
-                <motion.button
+                <button
                   className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/90 hidden sm:flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/40"
                   onClick={handlePrevious}
                   aria-label="Previous image"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
-                </motion.button>
+                </button>
                 
-                <motion.button
+                <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/40 hover:bg-black/60 text-white/90 hidden sm:flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/40"
                   onClick={handleNext}
                   aria-label="Next image"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
-                </motion.button>
+                </button>
               </>
             )}
           </div>
           
           {/* Image Pagination for mobile and desktop */}
           {availableImages.length > 1 && (
-            <motion.div 
-              className="chart-pagination"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.3 }}
-            >
+            <div className="chart-pagination">
               <div className="bg-black/50 backdrop-blur-sm py-2 px-3 rounded-full flex items-center gap-2.5 shadow-md">
                 {isMobile && (
-                  <motion.button
+                  <button
                     className="w-6 h-6 flex items-center justify-center text-white/90"
                     onClick={handlePrevious}
                     aria-label="Previous image"
-                    whileTap={{ scale: 0.9 }}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
-                  </motion.button>
+                  </button>
                 )}
                 
-                <div className="flex items-center gap-2.5">
-                  {availableImages.map((_, index) => (
-                    <motion.button
-                      key={index}
-                      className={cn(
-                        "w-2.5 h-2.5 rounded-full",
-                        index === currentImageIndex 
-                          ? "bg-white" 
-                          : "bg-white/30 hover:bg-white/50"
-                      )}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCurrentImageIndex(index);
-                      }}
-                      aria-label={`View image ${index + 1}`}
-                      animate={{
-                        scale: index === currentImageIndex ? 1.1 : 0.9,
-                        opacity: index === currentImageIndex ? 1 : 0.7
-                      }}
-                      whileHover={{ 
-                        scale: index === currentImageIndex ? 1.1 : 1,
-                        opacity: index === currentImageIndex ? 1 : 0.9
-                      }}
-                      transition={{ duration: 0.2 }}
-                    />
-                  ))}
-                </div>
+                {availableImages.map((_, index) => (
+                  <button
+                    key={index}
+                    className={cn(
+                      "w-2.5 h-2.5 rounded-full transition-all duration-200",
+                      index === currentImageIndex 
+                        ? "bg-white scale-110" 
+                        : "bg-white/30 scale-90 hover:bg-white/50"
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(index);
+                    }}
+                    aria-label={`View image ${index + 1}`}
+                  />
+                ))}
                 
                 {isMobile && (
-                  <motion.button
+                  <button
                     className="w-6 h-6 flex items-center justify-center text-white/90"
                     onClick={handleNext}
                     aria-label="Next image"
-                    whileTap={{ scale: 0.9 }}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
-                  </motion.button>
+                  </button>
                 )}
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
       </DialogContent>
