@@ -952,7 +952,7 @@ export function StrategiesManagement() {
               New Strategy
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]" variant="form">
+          <DialogContent className="sm:max-w-[700px] md:max-w-[800px]" variant="form">
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
               <DialogDescription className="text-sm">

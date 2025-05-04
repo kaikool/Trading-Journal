@@ -76,8 +76,8 @@ export function StrategyConditionForm({
   isNew = false
 }: StrategyConditionFormProps) {
   return (
-    <div className="mb-4 p-3 border rounded-md bg-card/50">
-      <div className="space-y-3">
+    <div className="mb-4 p-4 border rounded-md bg-card/50 w-full max-w-[800px]">
+      <div className="space-y-4">
         <div>
           <Label htmlFor={`condition-label-${condition.id}`}>Condition</Label>
           <Input 
@@ -92,7 +92,7 @@ export function StrategyConditionForm({
           </p>
         </div>
         
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <Label htmlFor={`condition-indicator-${condition.id}`}>
               <Activity className="h-3 w-3 inline mr-1" />
@@ -102,10 +102,10 @@ export function StrategyConditionForm({
               value={condition.indicator}
               onValueChange={(value) => onChange({ ...condition, indicator: value })}
             >
-              <SelectTrigger id={`condition-indicator-${condition.id}`}>
+              <SelectTrigger id={`condition-indicator-${condition.id}`} className="w-full">
                 <SelectValue placeholder="Select indicator" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="min-w-[180px]">
                 {COMMON_INDICATORS.map(indicator => (
                   <SelectItem key={indicator} value={indicator}>
                     {indicator}
@@ -125,10 +125,10 @@ export function StrategyConditionForm({
               value={condition.timeframe}
               onValueChange={(value) => onChange({ ...condition, timeframe: value })}
             >
-              <SelectTrigger id={`condition-timeframe-${condition.id}`}>
+              <SelectTrigger id={`condition-timeframe-${condition.id}`} className="w-full">
                 <SelectValue placeholder="Select timeframe" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="min-w-[150px]">
                 {COMMON_TIMEFRAMES.map(timeframe => (
                   <SelectItem key={timeframe} value={timeframe}>
                     {timeframe}
@@ -148,10 +148,10 @@ export function StrategyConditionForm({
               value={condition.expectedValue}
               onValueChange={(value) => onChange({ ...condition, expectedValue: value })}
             >
-              <SelectTrigger id={`condition-value-${condition.id}`}>
+              <SelectTrigger id={`condition-value-${condition.id}`} className="w-full">
                 <SelectValue placeholder="Select value" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="min-w-[180px]">
                 {COMMON_EXPECTED_VALUES.map(value => (
                   <SelectItem key={value} value={value}>
                     {value}
