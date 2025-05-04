@@ -1748,14 +1748,13 @@
   button:focus-visible,
   a:focus-visible,
   [role="button"]:focus-visible {
-    box-shadow: var(--shadow-focus);
+    outline: none;
   }
   
   /* Form elements get unique focus styles */
   input:focus-visible, 
   select:focus-visible {
-    border-color: hsl(var(--primary));
-    box-shadow: var(--shadow-focus);
+    outline: none;
   }
   
   /* Glass morphism */
@@ -1928,8 +1927,6 @@
   
   /* Consistent focus style for custom inputs */
   .custom-input:focus {
-    border-color: hsl(var(--primary));
-    box-shadow: var(--shadow-focus);
     outline: none;
   }
   
