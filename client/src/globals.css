@@ -723,10 +723,12 @@
      * This automatically adjusts for safe area insets on all devices
      * using the same calculation method as .mobile-nav height
      */
-    height: max(
-      var(--mobile-nav-height),
-      calc(var(--mobile-nav-height) + var(--safe-bottom))
-    );
+    height: var(--mobile-nav-height);
+    
+    /* Fix for PWA mode to use exact height matching mobile nav without extra space */
+    @media (display-mode: standalone) {
+      height: var(--mobile-nav-height);
+    }
     
     /* Hide spacer on desktop layouts */
     @media (min-width: 768px) {
@@ -740,11 +742,13 @@
    * Use .bottom-nav-spacer instead.
    */
   .pwa-bottom-spacer {
-    /* Redirecting to the same calculation as the standardized bottom-nav-spacer class */
-    height: max(
-      var(--mobile-nav-height),
-      calc(var(--mobile-nav-height) + var(--safe-bottom))
-    );
+    /* Match the main bottom-nav-spacer height exactly */
+    height: var(--mobile-nav-height);
+    
+    /* Fix for PWA mode - zero height in standalone mode */
+    @media (display-mode: standalone) {
+      height: 0 !important;
+    }
     
     /* Ensure no visible elements in spacer */
     overflow: hidden;
@@ -811,6 +815,23 @@
     .mobile-nav {
       /* Only apply visual enhancements, positioning is handled by core rules */
       border-top: 1px solid hsl(var(--border) / 0.6);
+      
+      /* Ensure it extends all the way to the bottom when in PWA mode to cover home indicator */
+      bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Override global safe area adjustments for the app in PWA mode */
+    /* This ensures nothing gets added beneath the nav bar */
+    html {
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Remove any extra space below the mobile navigator */
+    #root, .mobile-layout {
+      padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
     }
   }
   

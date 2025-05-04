@@ -22,6 +22,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
           aria-hidden="true" 
         />
       </main>
+      {/* No extra elements between main content and mobile navigator */}
       <MobileNavigator />
     </div>
   );
