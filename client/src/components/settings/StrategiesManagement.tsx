@@ -1108,25 +1108,26 @@ export function StrategiesManagement() {
             </div>
             
             <div className="flex justify-end gap-2 sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-1 px-0 sm:px-0">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setIsDialogOpen(false);
-                  // Reset new strategy form when canceling
-                  setNewStrategy({
-                    id: uuidv4(),
-                    name: "",
-                    description: "",
-                    rules: [],
-                    entryConditions: [],
-                    exitConditions: [],
-                    isDefault: false,
-                  });
-                }}
-                className="h-8 text-sm"
-              >
-                Cancel
-              </Button>
+              <DialogClose asChild>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    // Reset new strategy form when canceling
+                    setNewStrategy({
+                      id: uuidv4(),
+                      name: "",
+                      description: "",
+                      rules: [],
+                      entryConditions: [],
+                      exitConditions: [],
+                      isDefault: false,
+                    });
+                  }}
+                  className="h-8 text-sm"
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button 
                 onClick={handleCreateStrategy} 
                 disabled={isCreating}
