@@ -1,12 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogTitle, 
+  DialogDescription, 
+  useDialogVariant 
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
 import { cn } from '@/lib/utils';
-import { useDialogVariant } from '@/components/ui/dialog-variants';
 
 interface ChartImageDialogProps {
   isOpen: boolean;
@@ -199,16 +204,13 @@ export function ChartImageDialog({
   const dialogTitle = `${tradePair} - ${currentImage?.label || "Chart"}`;
   const dialogDescription = `Trading chart for ${tradePair}`;
   
-  // Lấy variant class cho dialog chart
-  const dialogClass = useDialogVariant('chart');
-  
   return (
     <Dialog 
       open={isOpen} 
       onOpenChange={(open) => !open && onClose()}
     >
       <DialogContent 
-        className={dialogClass}
+        variant="chart"
       >
         {/* Title và Description theo chuẩn accessibility */}
         <DialogTitle className="sr-only">

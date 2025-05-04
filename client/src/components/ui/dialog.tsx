@@ -4,6 +4,66 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// =======================
+// Dialog Variant System
+// =======================
+
+// Các thuộc tính chung cho dialog
+const dialogBase = "rounded-lg border shadow-lg bg-background";
+const safeAreaPadding = "pt-safe pb-safe"; // Đảm bảo tôn trọng safe area top và bottom
+const mobileHeight = "max-h-[85dvh]"; // Sử dụng dvh (dynamic viewport height) trên thiết bị di động
+const desktopHeight = "sm:max-h-[85vh]"; // Sử dụng vh (viewport height) trên desktop
+
+export const dialogVariants = {
+  /**
+   * Standard Dialog - Kích thước tiêu chuẩn cho dialog thông thường
+   * Sử dụng cho hầu hết các dialog trong ứng dụng
+   */
+  standard: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[560px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-3 sm:p-4`,
+  
+  /**
+   * Chart Dialog - Kích thước tối ưu cho dialog hiển thị biểu đồ
+   * Rộng hơn để hiển thị tốt hơn cho nội dung đồ họa
+   */
+  chart: `${dialogBase} ${safeAreaPadding} p-0 chart-dialog`,
+  
+  /**
+   * Form Dialog - Cho phép dialog chứa form thu thập dữ liệu từ người dùng
+   * Kích thước trung bình và có padding phù hợp
+   */
+  form: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[85vw] md:max-w-[520px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-4 sm:p-5`,
+  
+  /**
+   * Compact Dialog - Cho các thông báo hoặc xác nhận nhỏ gọn
+   * Kích thước nhỏ và có padding giảm thiểu
+   */
+  compact: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[400px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-3 sm:p-4`,
+  
+  /**
+   * Large Dialog - Cho nội dung phức tạp hoặc dữ liệu lớn
+   * Kích thước lớn nhất trong hệ thống
+   */
+  large: `${dialogBase} ${safeAreaPadding} max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[720px] lg:max-w-[800px] ${mobileHeight} ${desktopHeight} overflow-y-auto p-4 sm:p-5`
+};
+
+/**
+ * Hook để lấy class cho dialog dựa trên variant và className bổ sung
+ * 
+ * @param variant Biến thể của dialog (standard, chart, form, compact, large)
+ * @param className CSS class bổ sung nếu cần
+ * @returns Chuỗi class đã được gộp
+ */
+export function useDialogVariant(
+  variant: keyof typeof dialogVariants = "standard",
+  className?: string
+): string {
+  return cn(dialogVariants[variant], className);
+}
+
+// =======================
+// Dialog Components
+// =======================
+
 const Dialog = DialogPrimitive.Root
 
 const DialogTrigger = DialogPrimitive.Trigger
@@ -19,7 +79,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -29,15 +89,18 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+    variant?: keyof typeof dialogVariants
+  }
+>(({ className, children, variant = "standard", ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-        // Safe area classes are managed in variant system
+        "fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
+        // Áp dụng variant styles
+        dialogVariants[variant],
         className
       )}
       {...props}
@@ -106,6 +169,51 @@ const DialogDescription = React.forwardRef<
   />
 ))
 DialogDescription.displayName = DialogPrimitive.Description.displayName
+
+/**
+ * Header Footer Layout - Layout dialog tiêu chuẩn với header và footer cố định
+ */
+export function DialogHeaderFooterLayout({
+  children,
+  headerContent,
+  footerContent,
+  headerClassName,
+  footerClassName,
+  bodyClassName,
+}: {
+  children: React.ReactNode,
+  headerContent?: React.ReactNode,
+  footerContent?: React.ReactNode,
+  headerClassName?: string,
+  footerClassName?: string,
+  bodyClassName?: string,
+}) {
+  return (
+    <>
+      {headerContent && (
+        <div className={cn(
+          "sticky top-0 bg-background py-3 border-b -mt-3 sm:-mt-4 mb-4 px-0 sm:px-0",
+          headerClassName
+        )}>
+          {headerContent}
+        </div>
+      )}
+      
+      <div className={cn("flex-1", bodyClassName)}>
+        {children}
+      </div>
+      
+      {footerContent && (
+        <div className={cn(
+          "sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-4 px-0 sm:px-0",
+          footerClassName
+        )}>
+          {footerContent}
+        </div>
+      )}
+    </>
+  );
+}
 
 export {
   Dialog,

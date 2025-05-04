@@ -10,7 +10,7 @@ import {
   StrategyConditionList,
   createNewCondition as createNewStrategyCondition
 } from "./StrategyConditionInput";
-import { useDialogVariant, DialogHeaderFooterLayout } from "@/components/ui/dialog-variants";
+import { DialogHeaderFooterLayout } from "@/components/ui/dialog";
 
 import {
   Card,
@@ -617,7 +617,7 @@ export function StrategiesManagement() {
             </Button>
           </DialogTrigger>
           <DialogContent 
-            className={useDialogVariant('form')}
+            variant="form"
           >
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
