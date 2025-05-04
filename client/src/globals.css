@@ -528,6 +528,7 @@
   /* Helper classes to utilize in CSS selectors */
   html[data-pwa-mode="true"] {
     --is-pwa: 1;
+    --is-mobile-or-pwa: 1; /* Set combined flag for PWA mode */
   }
   
   /* Mobile viewport specific attributes get captured here */
