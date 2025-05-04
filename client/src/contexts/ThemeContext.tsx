@@ -1,19 +1,19 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Định nghĩa các loại theme được hỗ trợ
+// Define supported theme types
 export type ThemeType = 'light' | 'dark' | 'system';
 
-// Interface cho context
+// Context interface
 interface ThemeContextType {
-  theme: ThemeType; // Theme hiện tại được chọn trong settings
-  currentTheme: ThemeType; // Theme đang được áp dụng thực tế
-  setTheme: (theme: ThemeType) => void; // Cập nhật theme trong settings (không áp dụng ngay)
-  applyTheme: (theme?: ThemeType) => void; // Áp dụng theme ngay lập tức
-  isDarkMode: boolean; // Cho biết giao diện hiện tại có đang hiển thị ở chế độ tối hay không
-  isLoading: boolean; // Trạng thái đang tải theme
+  theme: ThemeType; // Current theme selected in settings
+  currentTheme: ThemeType; // Theme currently being applied
+  setTheme: (theme: ThemeType) => void; // Update theme in settings (doesn't apply immediately)
+  applyTheme: (theme?: ThemeType) => void; // Apply theme immediately
+  isDarkMode: boolean; // Indicates if the current interface is in dark mode
+  isLoading: boolean; // Theme loading state
 }
 
-// Tạo context với giá trị mặc định
+// Create context with default values
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'system',
   currentTheme: 'system',
@@ -23,7 +23,7 @@ const ThemeContext = createContext<ThemeContextType>({
   isLoading: true,
 });
 
-// Hook để sử dụng ThemeContext
+// Hook to use ThemeContext
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
@@ -32,23 +32,23 @@ export function useTheme() {
   return context;
 }
 
-// Component Provider
+// Theme Provider Component
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Theme đang được chọn trong settings (chỉ thay đổi khi lưu)
+  // Theme selected in settings (only changes when saved)
   const [theme, setTheme] = useState<ThemeType>('system');
   
-  // Theme đang thực sự được áp dụng cho UI
+  // Theme currently applied to the UI
   const [currentTheme, setCurrentTheme] = useState<ThemeType>('system');
   
-  // Trạng thái loading
+  // Loading state
   const [isLoading, setIsLoading] = useState(true);
   
-  // Bộ nhớ dark mode
+  // Dark mode state
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Theo dõi chế độ được chọn của hệ thống
+  // Monitor the system's selected theme
   useEffect(() => {
-    // Khởi tạo từ localStorage
+    // Initialize from localStorage
     const savedTheme = localStorage.getItem('theme') as ThemeType;
     const savedCurrentTheme = localStorage.getItem('currentTheme') as ThemeType;
     
@@ -59,13 +59,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (savedCurrentTheme) {
       setCurrentTheme(savedCurrentTheme);
     } else if (savedTheme) {
-      // Nếu không có currentTheme nhưng có theme, áp dụng theme đó
+      // If no currentTheme but theme exists, apply that theme
       setCurrentTheme(savedTheme);
     }
     
     setIsLoading(false);
     
-    // Theo dõi thay đổi chế độ hệ thống
+    // Monitor system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
@@ -75,7 +75,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       }
     };
     
-    // Kiểm tra ngay lập tức chế độ hệ thống
+    // Immediately check the system theme
     if (currentTheme === 'system') {
       setIsDarkMode(mediaQuery.matches);
       applyDarkMode(mediaQuery.matches);
@@ -85,7 +85,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Áp dụng theme ngay lập tức
+  // Apply theme immediately
   const applyTheme = (newTheme?: ThemeType) => {
     const themeToApply = newTheme || theme;
     setCurrentTheme(themeToApply);
@@ -102,7 +102,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Áp dụng hoặc loại bỏ dark mode trên document
+  // Apply or remove dark mode on document
   const applyDarkMode = (isDark: boolean) => {
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -111,11 +111,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Theo dõi thay đổi của currentTheme
+  // Track changes to currentTheme
   useEffect(() => {
     if (isLoading) return;
     
-    // Dùng closure tại thời điểm này thay vì biến state để tránh stale value
+    // Use closure at this point instead of state variable to avoid stale value
     const theme = currentTheme;
     
     if (theme === 'system') {
@@ -129,7 +129,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, [currentTheme, isLoading]);
 
-  // Thay đổi theme trong settings (không áp dụng ngay)
+  // Change theme in settings (does not apply immediately)
   const handleSetTheme = (newTheme: ThemeType) => {
     setTheme(newTheme);
     localStorage.setItem('theme', newTheme);
