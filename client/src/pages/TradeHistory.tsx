@@ -109,17 +109,31 @@ export default function TradeHistory() {
   // Lấy danh sách giao dịch từ data
   const trades = data?.trades || [];
   
-  // Đồng bộ hóa trạng thái sắp xếp giữa component và hook
-  useEffect(() => {
-    if (sortBy !== hookSortBy && hookSortBy) {
-      setSortBy(hookSortBy);
-    }
-  }, [hookSortBy]);
+  // Đồng bộ hóa trạng thái sắp xếp giữa component và hook với cơ chế chống lặp vô hạn
+  const syncInProgress = useRef(false);
   
-  // Đồng bộ hóa từ component đến hook
   useEffect(() => {
-    if (sortBy !== hookSortBy) {
+    // Chỉ xử lý khi không có quá trình đồng bộ hóa đang diễn ra
+    if (!syncInProgress.current && sortBy !== hookSortBy && hookSortBy) {
+      syncInProgress.current = true;
+      setSortBy(hookSortBy);
+      // Reset cờ sau khi state đã được cập nhật
+      setTimeout(() => {
+        syncInProgress.current = false;
+      }, 0);
+    }
+  }, [hookSortBy, sortBy]);
+  
+  // Đồng bộ hóa từ component đến hook với cơ chế chống lặp vô hạn
+  useEffect(() => {
+    // Chỉ xử lý khi không có quá trình đồng bộ hóa đang diễn ra
+    if (!syncInProgress.current && sortBy !== hookSortBy) {
+      syncInProgress.current = true;
       hookSetSortBy(sortBy);
+      // Reset cờ sau khi state đã được cập nhật
+      setTimeout(() => {
+        syncInProgress.current = false;
+      }, 0);
     }
   }, [sortBy, hookSortBy, hookSetSortBy]);
   
@@ -244,20 +258,24 @@ export default function TradeHistory() {
   const [emotionOptions, setEmotionOptions] = useState<string[]>([]);
   const [sessionOptions, setSessionOptions] = useState<string[]>([]);
   
-  // Cập nhật các tùy chọn lọc động từ dữ liệu
+  // Cập nhật các tùy chọn lọc động từ dữ liệu với cơ chế chống lặp vô hạn
+  // Sử dụng biến ref để theo dõi trades đã xử lý tránh các render không cần thiết
+  const processedTradesRef = useRef<string>("");
+  
   useEffect(() => {
     if (!trades || trades.length === 0) return;
     
-    // Kiểm tra xem dữ liệu có thay đổi không bằng cách so sánh số lượng
-    // Tránh cập nhật khi không cần thiết, gây vòng lặp vô hạn
-    const currentOptionsCount = {
-      pairs: pairOptions.length,
-      directions: directionOptions.length,
-      results: resultOptions.length,
-      strategies: strategyOptions.length,
-      emotions: emotionOptions.length,
-      sessions: sessionOptions.length
-    };
+    // Tạo một chuỗi độc đáo đại diện cho bộ trades hiện tại
+    // Chỉ xử lý khi trades thay đổi thực sự
+    const tradesSignature = trades.map(t => t.id).sort().join('|');
+    
+    // Nếu chuỗi giống với lần xử lý trước đó, bỏ qua để tránh vòng lặp
+    if (tradesSignature === processedTradesRef.current) {
+      return;
+    }
+    
+    // Cập nhật chuỗi đã xử lý
+    processedTradesRef.current = tradesSignature;
     
     // Sử dụng Set để loại bỏ các giá trị trùng lặp
     const uniquePairs = new Set<CurrencyPair>();
@@ -278,7 +296,7 @@ export default function TradeHistory() {
       if (trade.sessionType) uniqueSessions.add(trade.sessionType);
     });
     
-    // Chuyển đổi Set thành Array để kiểm tra số lượng
+    // Chuyển đổi Set thành Array
     const newPairs = Array.from(uniquePairs);
     const newDirections = Array.from(uniqueDirections);
     const newResults = Array.from(uniqueResults);
@@ -286,32 +304,14 @@ export default function TradeHistory() {
     const newEmotions = Array.from(uniqueEmotions);
     const newSessions = Array.from(uniqueSessions);
     
-    // Chỉ cập nhật state nếu số lượng tùy chọn đã thay đổi
-    if (currentOptionsCount.pairs !== newPairs.length) {
-      setPairOptions(newPairs);
-    }
+    // Cập nhật state cho tất cả các tùy chọn một lần duy nhất
+    setPairOptions(newPairs);
+    setDirectionOptions(newDirections);
+    setResultOptions(newResults);
+    setStrategyOptions(newStrategies); 
+    setEmotionOptions(newEmotions);
+    setSessionOptions(newSessions);
     
-    if (currentOptionsCount.directions !== newDirections.length) {
-      setDirectionOptions(newDirections);
-    }
-    
-    if (currentOptionsCount.results !== newResults.length) {
-      setResultOptions(newResults);
-    }
-    
-    if (currentOptionsCount.strategies !== newStrategies.length) {
-      setStrategyOptions(newStrategies);
-    }
-    
-    if (currentOptionsCount.emotions !== newEmotions.length) {
-      setEmotionOptions(newEmotions);
-    }
-    
-    if (currentOptionsCount.sessions !== newSessions.length) {
-      setSessionOptions(newSessions);
-    }
-    
-    // Logging để debug
     debug("Dynamic filter options updated:", {
       pairs: newPairs,
       directions: newDirections,
@@ -320,7 +320,7 @@ export default function TradeHistory() {
       emotions: newEmotions,
       sessions: newSessions
     });
-  }, [trades, pairOptions.length, directionOptions.length, resultOptions.length, strategyOptions.length, emotionOptions.length, sessionOptions.length]);
+  }, [trades]); // Chỉ phụ thuộc vào trades để tránh vòng lặp không cần thiết
 
   // Hàm trợ giúp để cập nhật filter một cách nhất quán
   const updateFilter = useCallback((key: string, value: any) => {
