@@ -100,19 +100,29 @@ function fixImagePath(path: string | null | undefined): string | null {
 
 // Define the form schema with Zod
 const tradeFormSchema = z.object({
-  pair: z.string(),
-  direction: z.enum(["BUY", "SELL"]),
+  pair: z.string({
+    required_error: "Currency pair is required"
+  }).min(1, { message: "Please select a currency pair" }),
+  direction: z.enum(["BUY", "SELL"], {
+    required_error: "Direction is required"
+  }),
   entryPrice: z.number({
     required_error: "Entry price is required",
     invalid_type_error: "Entry price must be a number"
+  }).refine(value => value > 0, {
+    message: "Entry price must be greater than 0",
   }),
   stopLoss: z.number({
     required_error: "Stop loss is required",
     invalid_type_error: "Stop loss must be a number"
+  }).refine(value => value > 0, {
+    message: "Stop loss must be greater than 0",
   }),
   takeProfit: z.number({
     required_error: "Take profit is required",
     invalid_type_error: "Take profit must be a number"
+  }).refine(value => value > 0, {
+    message: "Take profit must be greater than 0",
   }),
   lotSize: z.number({
     required_error: "Lot size is required",
@@ -120,10 +130,16 @@ const tradeFormSchema = z.object({
   }).refine(value => value > 0, {
     message: "Lot size must be a positive number",
   }),
-  entryDate: z.string(),
-  strategy: z.string(),
+  entryDate: z.string({
+    required_error: "Entry date is required"
+  }).min(1, { message: "Entry date is required" }),
+  strategy: z.string({
+    required_error: "Trading strategy is required"
+  }).min(1, { message: "Please select a trading strategy" }),
   techPattern: z.string().optional(),
-  emotion: z.string(),
+  emotion: z.string({
+    required_error: "Emotion is required" 
+  }).min(1, { message: "Please select your emotion" }),
   followedPlan: z.boolean().default(true),
   enteredEarly: z.boolean().default(false),
   revenge: z.boolean().default(false),
