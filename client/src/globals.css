@@ -1309,8 +1309,8 @@
   /* Safe area padding adjustments for charts on mobile and PWA */
   @media (max-width: 640px), (display-mode: standalone) {
     .chart-content {
-      /* Use max() to ensure sufficient padding for devices with or without notches */
-      padding-bottom: max(var(--chart-spacing-lg), calc(var(--safe-bottom) + var(--chart-spacing-md)));
+      /* Safe area class '.pb-safe' used directly on chart-content */
+      /* Không cần padding-bottom thêm vì đã có class .pb-safe */
     }
   }
   

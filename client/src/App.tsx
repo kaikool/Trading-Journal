@@ -19,6 +19,7 @@ import AchievementNotificationContainer from "@/components/achievements/Achievem
 import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DataCacheProvider } from "@/contexts/DataCacheContext";
+import { initializeSafeAreaAutoHide } from "@/lib/safe-area-manager";
 
 // Improved dynamic imports with chunking comments for better code splitting
 // Core/frequently used pages - higher priority
@@ -279,11 +280,15 @@ function MainContent() {
 }
 
 function App() {
-  // Configure performance optimization when application starts
+  // Configure performance optimization and safe area handling when application starts
   useEffect(() => {
+    // Initialize query client configuration
     import('./lib/queryClient').then(({ updateQueryClientConfig }) => {
       updateQueryClientConfig().catch(console.error);
     });
+    
+    // Initialize safe area auto-hide system
+    initializeSafeAreaAutoHide();
   }, []);
 
   return (
