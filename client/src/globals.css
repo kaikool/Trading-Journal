@@ -720,8 +720,6 @@
     overflow-x: hidden;
     margin: 0;
     padding: 0;
-    /* Ensure scrollbar is flush with right edge */
-    width: 100vw;
     box-sizing: border-box;
   }
   
@@ -782,9 +780,9 @@
   
   /* Main content area for all mobile modes */
   .mobile-main-content {
-    /* Standardized padding using consistent CSS variables - removed right padding 
-     * to ensure scrollbar is flush with the edge */
-    padding: 0 0 0 max(var(--safe-left), var(--min-side-padding));
+    /* Standardized padding using consistent CSS variables */
+    padding: 0 max(var(--safe-right), var(--min-side-padding))
+             0 max(var(--safe-left), var(--min-side-padding));
     display: flex; /* Ensure flexbox layout is applied */
     flex-direction: column; /* Stack children vertically */
     flex: 1; /* Take up available space */
@@ -794,7 +792,6 @@
     overflow-x: hidden; /* Prevent horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     box-sizing: border-box; /* Ensure padding is included in width */
-    margin-right: 0; /* Ensure no margin pushing scrollbar */
   }
   
   /* 
@@ -1411,7 +1408,6 @@
 
   /* Fix horizontal scrolling issues and ensure scrollbar is correctly positioned */
   .container,
-  form,
   .grid,
   .flex,
   .space-y-6,
@@ -1421,8 +1417,6 @@
     max-width: 100%;
     overflow-x: hidden;
     box-sizing: border-box;
-    padding-right: 0; /* Ensure no padding is pushing the scrollbar */
-    margin-right: 0; /* Ensure no margin is pushing the scrollbar */
   }
   
   /* Chart legend styling */
