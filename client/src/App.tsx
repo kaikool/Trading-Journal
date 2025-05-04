@@ -32,6 +32,7 @@ const NewTrade = lazy(() => import(/* webpackChunkName: "trade-operations" */ "@
 const ViewTrade = lazy(() => import(/* webpackChunkName: "trade-view" */ "@/pages/ViewTradeOptimized"));
 const Analytics = lazy(() => import(/* webpackChunkName: "analytics" */ "@/pages/Analytics"));
 const Settings = lazy(() => import(/* webpackChunkName: "settings" */ "@/pages/Settings"));
+const StrategyDemo = lazy(() => import(/* webpackChunkName: "strategy-demo" */ "@/pages/StrategyDemo"));
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 
@@ -245,6 +246,9 @@ function MainContent() {
           <Route path="/analytics" component={Analytics} />
           {/* Settings page render */}
           <Route path="/settings" component={Settings} />
+          
+          {/* Strategy Demo */}
+          <Route path="/strategy-demo" component={StrategyDemo} />
           
           {/* Fallback to 404 */}
           <Route path="/:rest*" component={NotFound} />

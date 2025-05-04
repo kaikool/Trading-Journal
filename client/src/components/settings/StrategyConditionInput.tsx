@@ -76,7 +76,7 @@ export function StrategyConditionForm({
   isNew = false
 }: StrategyConditionFormProps) {
   return (
-    <div className="mb-4 p-4 border rounded-md bg-card/50 w-full max-w-[800px]">
+    <div className="mb-4 p-4 border rounded-md bg-card/50 w-full max-w-full sm:max-w-[800px]">
       <div className="space-y-4">
         <div>
           <Label htmlFor={`condition-label-${condition.id}`}>Condition</Label>
@@ -105,7 +105,7 @@ export function StrategyConditionForm({
               <SelectTrigger id={`condition-indicator-${condition.id}`} className="w-full">
                 <SelectValue placeholder="Select indicator" />
               </SelectTrigger>
-              <SelectContent className="min-w-[180px]">
+              <SelectContent className="min-w-[200px] max-h-[300px]">
                 {COMMON_INDICATORS.map(indicator => (
                   <SelectItem key={indicator} value={indicator}>
                     {indicator}
@@ -128,7 +128,7 @@ export function StrategyConditionForm({
               <SelectTrigger id={`condition-timeframe-${condition.id}`} className="w-full">
                 <SelectValue placeholder="Select timeframe" />
               </SelectTrigger>
-              <SelectContent className="min-w-[150px]">
+              <SelectContent className="min-w-[150px] max-h-[300px]">
                 {COMMON_TIMEFRAMES.map(timeframe => (
                   <SelectItem key={timeframe} value={timeframe}>
                     {timeframe}
