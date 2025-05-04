@@ -194,25 +194,31 @@ export function ChartImageDialog({
   // Calculate transform style for zooming and panning
   const imageTransform = `scale(${scale}) translate(${translate.x / scale}px, ${translate.y / scale}px)`;
 
+  // Tên dialog và mô tả cho truy cập
+  const dialogTitle = `${tradePair} - ${currentImage?.label || "Chart"}`;
+  const dialogDescription = `Trading chart for ${tradePair}`;
+  
   return (
     <Dialog 
       open={isOpen} 
       onOpenChange={(open) => !open && onClose()}
-      aria-labelledby="chart-dialog-title"
-      aria-describedby="chart-image-viewer-description"
     >
       <DialogContent 
         className="p-0 chart-dialog"
+        aria-describedby="chart-image-viewer-description"
       >
         <div id="chart-image-viewer-description" className="sr-only">
-          Chart image viewer for trading analysis
+          {dialogDescription}
         </div>
         
-        {/* Header bar with title and controls */}
-        <DialogTitle id="chart-dialog-title" className="flex items-center justify-between py-2.5 px-4 border-b">
+        {/* Header bar with title and controls - nhỏ gọn hơn */}
+        <DialogTitle 
+          id="chart-dialog-title" 
+          className="flex items-center justify-between py-2 px-3 border-b text-sm"
+        >
           <div className="flex flex-col">
             <span className="font-medium" style={{fontSize: 'var(--chart-title-font-size)'}}>
-              {tradePair} - {currentImage.label}
+              {dialogTitle}
             </span>
             {availableImages.length > 1 && (
               <span style={{
@@ -224,9 +230,9 @@ export function ChartImageDialog({
             )}
           </div>
           
-          {/* Close button */}
+          {/* Close button nhỏ hơn */}
           <X 
-            className="h-4 w-4 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+            className="h-3.5 w-3.5 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
             onClick={onClose}
           />
         </DialogTitle>
@@ -326,9 +332,9 @@ export function ChartImageDialog({
             <div className="chart-pagination">
               <div className="chart-pagination-dots">
                 {isMobile && (
-                  <button className="w-6 h-6 flex items-center justify-center text-white/90"
+                  <button className="w-5 h-5 flex items-center justify-center text-white/90"
                     onClick={handlePrevious} aria-label="Previous image">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
@@ -345,9 +351,9 @@ export function ChartImageDialog({
                   />
                 ))}
                 {isMobile && (
-                  <button className="w-6 h-6 flex items-center justify-center text-white/90"
+                  <button className="w-5 h-5 flex items-center justify-center text-white/90"
                     onClick={handleNext} aria-label="Next image">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
                   </button>
