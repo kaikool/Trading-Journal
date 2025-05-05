@@ -350,14 +350,14 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
             How trading discipline affects your success rate
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-4">
           <div className="h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={winRateComparisonData}
-                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
-                barCategoryGap={10}
-                barGap={6}
+                margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
+                barCategoryGap="10%" /* Sử dụng phần trăm để dàn đều theo tỷ lệ */
+                barGap={4} /* Thống nhất với quy tắc khoảng cách 4px */
               >
                 <CartesianGrid 
                   strokeDasharray="3 3" 
@@ -370,6 +370,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   tickLine={false}
                   axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
                   tickMargin={4} // Chuẩn hóa theo quy tắc 4px
+                  interval={0} // Hiển thị tất cả tick để dàn đều
                 />
                 <YAxis 
                   tickFormatter={(value) => `${value}%`}
@@ -434,7 +435,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                 {item.description}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-4 sm:px-6 pb-4">
               <div className="h-[160px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -492,7 +493,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
             Detailed breakdown of discipline factors and their impact
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-4">
           <Table>
             <TableHeader>
               <TableRow>
