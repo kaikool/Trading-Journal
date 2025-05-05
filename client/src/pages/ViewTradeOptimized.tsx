@@ -113,6 +113,18 @@ export default function ViewTradeOptimized() {
 
   return (
     <div className="container max-w-5xl px-0 sm:px-4 py-6">
+      {/* Header section - Chuẩn hóa định dạng */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Trade Details
+          </h1>
+          <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
+            View and edit detailed information about your trade
+          </p>
+        </div>
+      </div>
+      
       <Button variant="ghost" onClick={handleBack} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Trade History
