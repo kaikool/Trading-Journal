@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from "react";
+import { useMemo, memo } from "react";
 import {
   Card,
   CardContent,
@@ -30,8 +30,6 @@ import { subDays, isAfter } from "date-fns";
 import { CHART_CONFIG, UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
 import { useTimestamp, DateFormat } from "@/hooks/use-timestamp";
 import { calculateWinRate, calculateProfitFactor } from "@/lib/forex-calculator";
-import { motion } from "framer-motion";
-import { useMotionConfig } from "@/lib/motion.config";
 
 interface KPICardProps {
   title: string;
@@ -44,54 +42,39 @@ interface KPICardProps {
   };
 }
 
-// KPICard with memo to reduce re-renders and animation
+// Tối ưu hóa KPICard với memo để giảm re-render
 const KPICard = memo(function KPICard({ title, value, description, icon, trend }: KPICardProps) {
-  const { variants, enabled } = useMotionConfig();
-  
-  // Component wrapper for card with animation
-  const CardWrapper = enabled ? motion.div : React.Fragment;
-  
-  // Props only applied when animation is enabled
-  const motionProps = enabled ? {
-    initial: "hidden",
-    animate: "visible",
-    variants: variants.card,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
-  } : {};
-  
   return (
-    <CardWrapper {...motionProps}>
-      <Card className="border shadow-sm hover:shadow-md transition-all">
-        <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-md font-semibold">{title}</CardTitle>
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-            {icon}
+    <Card className="border shadow-sm hover:shadow-md transition-all">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-md font-semibold">{title}</CardTitle>
+        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        {trend && (
+          <div className="flex items-center mt-2">
+            {trend.direction === 'up' ? (
+              <ArrowUpCircle className="text-success h-4 w-4 mr-1" />
+            ) : trend.direction === 'down' ? (
+              <ArrowDownCircle className="text-destructive h-4 w-4 mr-1" />
+            ) : (
+              <div className="w-4 mr-1" />
+            )}
+            <span className={`text-xs ${
+              trend.direction === 'up' ? 'text-success' : 
+              trend.direction === 'down' ? 'text-destructive' : 
+              'text-muted-foreground'
+            }`}>
+              {trend.value}
+            </span>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{value}</div>
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
-          {trend && (
-            <div className="flex items-center mt-2">
-              {trend.direction === 'up' ? (
-                <ArrowUpCircle className="text-success h-4 w-4 mr-1" />
-              ) : trend.direction === 'down' ? (
-                <ArrowDownCircle className="text-destructive h-4 w-4 mr-1" />
-              ) : (
-                <div className="w-4 mr-1" />
-              )}
-              <span className={`text-xs ${
-                trend.direction === 'up' ? 'text-success' : 
-                trend.direction === 'down' ? 'text-destructive' : 
-                'text-muted-foreground'
-              }`}>
-                {trend.value}
-              </span>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </CardWrapper>
+        )}
+      </CardContent>
+    </Card>
   );
 });
 
@@ -113,7 +96,7 @@ interface OverviewTabProps {
 }
 
 function OverviewTabContent({ data }: OverviewTabProps) {
-  // Timestamp hook for date handling
+  // Sử dụng hook timestamp cho việc xử lý ngày tháng
   const timestamp = useTimestamp({
     defaultFormat: DateFormat.CHART
   });
@@ -130,8 +113,11 @@ function OverviewTabContent({ data }: OverviewTabProps) {
     trades
   } = data;
 
-  // Equity curve data from trades
+  // Monthly performance data for equity curve
   const equityCurveData = useMemo(() => {
+    // Đã xóa console.log để tăng hiệu suất
+    
+    // Sử dụng tiện ích timestamp để tạo dữ liệu biểu đồ từ trades
     return timestamp.createTimeSeriesData(trades, initialBalance, { sortByDate: true });
   }, [trades, initialBalance, timestamp]);
 
@@ -213,10 +199,10 @@ function OverviewTabContent({ data }: OverviewTabProps) {
   const tradingActivityData = useMemo(() => {
     if (!trades.length) return [];
     
-    // Group trades by month
+    // Nhóm các giao dịch theo tháng
     const tradesByMonth = timestamp.groupTradesByMonth(trades, { dateProp: 'closeDate' });
     
-    // Convert to chart format, using pips instead of profitLoss
+    // Chuyển đổi dữ liệu thành định dạng cần thiết cho biểu đồ, dựa trên pips thay vì profitLoss
     const monthlyData = Object.entries(tradesByMonth).map(([month, monthTrades]) => {
       const wins = monthTrades.filter(trade => (trade.pips || 0) > 0).length;
       const losses = monthTrades.filter(trade => (trade.pips || 0) < 0).length;
@@ -231,23 +217,23 @@ function OverviewTabContent({ data }: OverviewTabProps) {
       };
     });
     
-    // Sort by month
+    // Sắp xếp theo tháng
     return monthlyData.sort((a, b) => {
       const monthA = a.month.split(' ');
       const monthB = b.month.split(' ');
       
-      // Compare year first
+      // So sánh năm trước
       const yearA = parseInt(monthA[1]);
       const yearB = parseInt(monthB[1]);
       if (yearA !== yearB) return yearA - yearB;
       
-      // If same year, compare month
+      // Nếu cùng năm, so sánh tháng
       const monthOrder: Record<string, number> = { 
         'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6, 
         'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12 
       };
       
-      // Get month value or default to 0 if not found
+      // Lấy giá trị tháng hoặc mặc định là 0 nếu không tìm thấy
       const monthValueA = monthA[0] in monthOrder ? monthOrder[monthA[0]] : 0;
       const monthValueB = monthB[0] in monthOrder ? monthOrder[monthB[0]] : 0;
       
@@ -258,7 +244,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
   // Chart colors from configuration
   const COLORS = CHART_CONFIG.COLORS;
 
-  // Custom tooltip for the equity curve - optimization with memo
+  // Custom tooltip for the equity curve - Tối ưu hóa với memo
   const EquityCurveTooltip = memo(({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     
@@ -283,16 +269,16 @@ function OverviewTabContent({ data }: OverviewTabProps) {
     );
   });
 
-  // Custom tooltip for the trading activity chart - optimization with memo
+  // Custom tooltip for the trading activity chart - Tối ưu hóa với memo
   const TradingActivityTooltip = memo(({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     
     const data = payload[0].payload;
-    // Create temporary trades array to calculate win rate
+    // Tạo mảng trades tạm thời để tính win rate bằng hàm chuẩn
     const tempTrades = [
-      ...Array(data.wins).fill({ pips: 1 }),       // Winning trades
-      ...Array(data.losses).fill({ pips: -1 }),    // Losing trades
-      ...Array(data.breakEven || data.trades - data.wins - data.losses).fill({ pips: 0 }) // Breakeven trades
+      ...Array(data.wins).fill({ pips: 1 }),       // Trades thắng
+      ...Array(data.losses).fill({ pips: -1 }),    // Trades thua
+      ...Array(data.breakEven || data.trades - data.wins - data.losses).fill({ pips: 0 }) // Trades hòa
     ];
     const winRate = calculateWinRate(tempTrades).toFixed(0);
     
@@ -320,130 +306,56 @@ function OverviewTabContent({ data }: OverviewTabProps) {
     );
   });
 
-  // Get motion config for component animation
-  const { variants, enabled } = useMotionConfig();
-  
   return (
     <div className="space-y-6">
-      {/* KPI Row with staggered animation */}
-      {enabled ? (
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.1
-              }
-            }
+      {/* KPI Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard
+          title="Account Balance"
+          value={formatCurrency(currentBalance)}
+          description={`Initial: ${formatCurrency(initialBalance)}`}
+          icon={<CircleDollarSign className="h-5 w-5" />}
+          trend={{
+            direction: netProfit >= 0 ? 'up' as const : 'down' as const,
+            value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${profitLossPercentage.toFixed(1)}%)`
           }}
-        >
-          <KPICard
-            key="balance-card"
-            title="Account Balance"
-            value={formatCurrency(currentBalance)}
-            description={`Initial: ${formatCurrency(initialBalance)}`}
-            icon={<CircleDollarSign className="h-5 w-5" />}
-            trend={{
-              direction: netProfit >= 0 ? 'up' as const : 'down' as const,
-              value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${profitLossPercentage.toFixed(1)}%)`
-            }}
-          />
-          
-          <KPICard
-            key="winrate-card"
-            title="Win Rate"
-            value={`${winRate.toFixed(1)}%`}
-            description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
-            icon={<TrendingUp className="h-5 w-5" />}
-            trend={recentPerformanceTrend}
-          />
-          
-          <KPICard
-            key="trades-card"
-            title="Total Trades"
-            value={totalTrades}
-            description="Completed trades"
-            icon={<LineChart className="h-5 w-5" />}
-          />
-          
-          <KPICard
-            key="profit-factor-card"
-            title="Profit Factor"
-            value={(() => {
-              // Use calculateProfitFactor from forex-calculator.ts for consistency
-              const closedTrades = trades.filter(t => t.status !== "OPEN");
-              
-              // Call the standard function with correct parameters
-              const profitFactor = calculateProfitFactor(closedTrades, "pips", "profitLoss");
-              
-              // Handle special case
-              if (profitFactor === Number.POSITIVE_INFINITY) {
-                return '∞';
-              }
-              
-              return profitFactor.toFixed(2);
-            })()}
-            description="Ratio of gross profit to gross loss"
-            icon={<TrendingUp className="h-5 w-5" />}
-          />
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            key="balance-card-static"
-            title="Account Balance"
-            value={formatCurrency(currentBalance)}
-            description={`Initial: ${formatCurrency(initialBalance)}`}
-            icon={<CircleDollarSign className="h-5 w-5" />}
-            trend={{
-              direction: netProfit >= 0 ? 'up' as const : 'down' as const,
-              value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${profitLossPercentage.toFixed(1)}%)`
-            }}
-          />
-          
-          <KPICard
-            key="winrate-card-static"
-            title="Win Rate"
-            value={`${winRate.toFixed(1)}%`}
-            description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
-            icon={<TrendingUp className="h-5 w-5" />}
-            trend={recentPerformanceTrend}
-          />
-          
-          <KPICard
-            key="trades-card-static"
-            title="Total Trades"
-            value={totalTrades}
-            description="Completed trades"
-            icon={<LineChart className="h-5 w-5" />}
-          />
-          
-          <KPICard
-            key="profit-factor-card-static"
-            title="Profit Factor"
-            value={(() => {
-              // Use calculateProfitFactor from forex-calculator.ts for consistency
-              const closedTrades = trades.filter(t => t.status !== "OPEN");
-              
-              // Call the standard function with correct parameters
-              const profitFactor = calculateProfitFactor(closedTrades, "pips", "profitLoss");
-              
-              // Handle special case
-              if (profitFactor === Number.POSITIVE_INFINITY) {
-                return '∞';
-              }
-              
-              return profitFactor.toFixed(2);
-            })()}
-            description="Ratio of gross profit to gross loss"
-            icon={<TrendingUp className="h-5 w-5" />}
-          />
-        </div>
-      )}
+        />
+        
+        <KPICard
+          title="Win Rate"
+          value={`${winRate.toFixed(1)}%`}
+          description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
+          icon={<TrendingUp className="h-5 w-5" />}
+          trend={recentPerformanceTrend}
+        />
+        
+        <KPICard
+          title="Total Trades"
+          value={totalTrades}
+          description="Completed trades"
+          icon={<LineChart className="h-5 w-5" />}
+        />
+        
+        <KPICard
+          title="Profit Factor"
+          value={(() => {
+            // Sử dụng hàm calculateProfitFactor từ forex-calculator.ts cho tính nhất quán
+            const closedTrades = trades.filter(t => t.status !== "OPEN");
+            
+            // Gọi hàm chuẩn với tham số đúng
+            const profitFactor = calculateProfitFactor(closedTrades, "pips", "profitLoss");
+            
+            // Xử lý trường hợp đặc biệt
+            if (profitFactor === Number.POSITIVE_INFINITY) {
+              return '∞';
+            }
+            
+            return profitFactor.toFixed(2);
+          })()}
+          description="Ratio of gross profit to gross loss"
+          icon={<TrendingUp className="h-5 w-5" />}
+        />
+      </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -481,7 +393,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={equityCurveData}
-                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }}
+                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
                   barCategoryGap={12}
                   barGap={6}
                 >
@@ -499,6 +411,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                       />
                     </linearGradient>
                   </defs>
+                  {/* Đã xóa CartesianGrid theo yêu cầu */}
                   <XAxis 
                     dataKey="date" 
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
@@ -507,7 +420,9 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                     tickMargin={8}
                     minTickGap={20}
                   />
-                  <YAxis hide={true} />
+                  <YAxis 
+                    hide={true}
+                  />
                   <Tooltip 
                     content={<EquityCurveTooltip />} 
                     cursor={{
@@ -530,6 +445,83 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                     }}
                     dot={false}
                   />
+                  
+                  {/* Hiển thị điểm đặc biệt - chỉ hiển thị cao nhất, thấp nhất */}
+                  {equityCurveData.map((item, index) => {
+                    // Xác định các điểm đặc biệt
+                    const isFirst = index === 0;
+                    const isLast = index === equityCurveData.length - 1;
+                    
+                    // Tìm điểm cao nhất và thấp nhất
+                    const maxValue = Math.max(...equityCurveData.map(d => d.balance));
+                    const minValue = Math.min(...equityCurveData.map(d => d.balance));
+                    const isMax = item.balance === maxValue;
+                    const isMin = item.balance === minValue;
+                    
+                    // Bỏ qua điểm đầu và điểm cuối, chỉ hiển thị max/min (không phải đầu/cuối)
+                    if (isFirst || isLast || !(isMax || isMin)) {
+                      return null;
+                    }
+                    
+                    // Xác định vị trí nhãn (trên/dưới) dựa trên loại điểm
+                    const position = isMax ? 'top' : 'bottom';
+                    
+                    return (
+                      <ReferenceLine 
+                        key={`point-${index}`}
+                        x={item.date}
+                        y={item.balance}
+                        stroke="transparent"
+                        label={{
+                          value: `${formatCurrency(item.balance, true)}`,
+                          position,
+                          offset: 15,
+                          fill: 'hsl(var(--foreground))',
+                          fontSize: 10,
+                          fontWeight: 500,
+                        }}
+                      />
+                    );
+                  })}
+                  
+                  {/* Hiển thị điểm tròn tại vị trí đặc biệt - chỉ tại điểm cao nhất và thấp nhất */}
+                  {equityCurveData.map((item, index) => {
+                    const isFirst = index === 0;
+                    const isLast = index === equityCurveData.length - 1;
+                    const maxValue = Math.max(...equityCurveData.map(d => d.balance));
+                    const minValue = Math.min(...equityCurveData.map(d => d.balance));
+                    const isMax = item.balance === maxValue;
+                    const isMin = item.balance === minValue;
+                    
+                    // Bỏ qua điểm đầu và điểm cuối, chỉ hiển thị điểm min/max
+                    if (isFirst || isLast || !(isMax || isMin)) {
+                      return null;
+                    }
+                    
+                    // Xác định màu viền của điểm dựa trên loại
+                    let strokeColor = isMax ? COLOR_CONFIG.CHART.POSITIVE : COLOR_CONFIG.CHART.NEGATIVE;
+                    
+                    return (
+                      <ReferenceLine 
+                        key={`dot-${index}`}
+                        x={item.date}
+                        stroke="transparent"
+                        isFront={true}
+                        shape={props => {
+                          return (
+                            <circle 
+                              cx={props.x} 
+                              cy={props.y} 
+                              r={6} 
+                              fill="hsl(var(--background))" 
+                              stroke={strokeColor} 
+                              strokeWidth={2}
+                            />
+                          );
+                        }}
+                      />
+                    );
+                  })}
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -548,7 +540,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               <div className="flex items-center gap-3">
                 {topPerformingPairs.length > 0 && (
                   <Badge variant="outline" className="px-3 py-1 bg-primary/5 text-xs font-medium">
-                    Top 5
+                    Top 3
                   </Badge>
                 )}
               </div>
@@ -582,6 +574,27 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                       />
                     ))}
                   </Pie>
+                  <Tooltip content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      const index = topPerformingPairs.findIndex(p => p.name === data.name);
+                      const color = COLORS[index % COLORS.length];
+                      return (
+                        <div className="bg-background/90 backdrop-blur-sm shadow-md border border-primary/20 rounded-md p-2 text-sm">
+                          <p className="font-medium text-center" style={{ color }}>{data.name}</p>
+                          <div className="mt-1 flex justify-between gap-4">
+                            <span className="text-xs text-muted-foreground">Profit:</span>
+                            <span className="font-medium">{formatCurrency(data.value)}</span>
+                          </div>
+                          <div className="flex justify-between gap-4">
+                            <span className="text-xs text-muted-foreground">Win Rate:</span>
+                            <span className="font-medium">{data.winRate?.toFixed(0) || 0}%</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }} />
                   <Legend 
                     formatter={(value) => {
                       const dataItem = topPerformingPairs.find(item => item.name === value);
@@ -680,6 +693,11 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                   name="Winning Trades" 
                   radius={[4, 4, 0, 0]}
                   barSize={30}
+                  isAnimationActive={false}
+                  animationDuration={0}
+                  className="hover:opacity-100"
+                  onMouseOver={(data, index) => {}}
+                  onMouseOut={(data, index) => {}}
                 />
                 <Bar 
                   dataKey="losses" 
@@ -688,6 +706,11 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                   name="Losing Trades"
                   radius={[4, 4, 0, 0]}
                   barSize={30}
+                  isAnimationActive={false}
+                  animationDuration={0}
+                  className="hover:opacity-100"
+                  onMouseOver={(data, index) => {}}
+                  onMouseOut={(data, index) => {}}
                 />
               </BarChart>
             </ResponsiveContainer>

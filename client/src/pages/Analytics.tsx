@@ -8,8 +8,6 @@ import { UI_CONFIG, DASHBOARD_CONFIG } from "@/lib/config";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { debug, logError } from "@/lib/debug";
-import { motion, AnimatePresence } from "framer-motion";
-import { useMotionConfig } from "@/lib/motion.config";
 
 // Thêm khai báo cho window
 declare global {
@@ -32,7 +30,6 @@ export default function Analytics() {
   // Sử dụng DataCache thay vì local state
   const { trades, userData, isLoading, userId } = useDataCache();
   const { toast } = useToast();
-  const { variants, enabled } = useMotionConfig();
 
   // Logs only in development environment using debug utility
   const devLog = (message: string, data?: any) => {
@@ -421,88 +418,36 @@ export default function Analytics() {
             </div>
           </div>
           
-          {/* Sử dụng AnimatePresence nhưng không dùng mode="wait" để tránh lỗi */}
-          <AnimatePresence>
-            <TabsContent 
-              key="overview-tab"
-              value="overview"
-              motionProps={{
-                initial: "hidden",
-                animate: "visible",
-                exit: "exit",
-                variants: variants.tab,
-                transition: { duration: 0.3, ease: "easeInOut" }
-              }}
-            >
+          {/* Mỗi TabsContent có Suspense riêng để chỉ tab đang mở mới cần loading */}
+            <TabsContent value="overview">
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <OverviewTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent 
-              key="strategy-tab"
-              value="strategy"
-              motionProps={{
-                initial: "hidden",
-                animate: "visible",
-                exit: "exit",
-                variants: variants.tab,
-                transition: { duration: 0.3, ease: "easeInOut" }
-              }}
-            >
+            <TabsContent value="strategy">
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <StrategyTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent 
-              key="discipline-tab"
-              value="discipline"
-              motionProps={{
-                initial: "hidden",
-                animate: "visible",
-                exit: "exit",
-                variants: variants.tab,
-                transition: { duration: 0.3, ease: "easeInOut" }
-              }}
-            >
+            <TabsContent value="discipline">
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <DisciplineTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent 
-              key="emotion-tab"
-              value="emotion"
-              motionProps={{
-                initial: "hidden",
-                animate: "visible",
-                exit: "exit",
-                variants: variants.tab,
-                transition: { duration: 0.3, ease: "easeInOut" }
-              }}
-            >
+            <TabsContent value="emotion">
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <EmotionTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent 
-              key="advanced-tab"
-              value="advanced"
-              motionProps={{
-                initial: "hidden",
-                animate: "visible",
-                exit: "exit",
-                variants: variants.tab,
-                transition: { duration: 0.3, ease: "easeInOut" }
-              }}
-            >
+            <TabsContent value="advanced">
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>
-          </AnimatePresence>
             
 
         </Tabs>

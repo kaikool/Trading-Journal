@@ -1,8 +1,7 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
-import { motion } from "framer-motion"
+
 import { cn } from "@/lib/utils"
-import { useMotionConfig } from "@/lib/motion.config"
 
 const Tabs = TabsPrimitive.Root
 
@@ -36,60 +35,19 @@ const TabsTrigger = React.forwardRef<
 ))
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
-// Enhanced TabsContent wrapper with Framer Motion
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> & {
-    // Optional animation override props
-    motionProps?: {
-      initial?: any;
-      animate?: any;
-      exit?: any;
-      transition?: any;
-      variants?: any;
-    }
-  }
->(({ className, motionProps, ...props }, ref) => {
-  const { variants, enabled } = useMotionConfig();
-  
-  // Default animation props if not specified
-  const defaultMotionProps = {
-    initial: "hidden",
-    animate: "visible",
-    exit: "exit",
-    variants: variants.tab,
-    transition: { duration: 0.3 }
-  };
-  
-  // If animations are disabled or explicitly requested to be disabled, use regular component
-  if (!enabled) {
-    return (
-      <TabsPrimitive.Content
-        ref={ref}
-        className={cn(
-          "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          className
-        )}
-        {...props}
-      />
-    );
-  }
-  
-  // Otherwise use motion-enhanced version
-  return (
-    <TabsPrimitive.Content asChild {...props}>
-      <motion.div
-        ref={ref}
-        className={cn(
-          "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          className
-        )}
-        {...(motionProps || defaultMotionProps)}
-        layout
-      />
-    </TabsPrimitive.Content>
-  );
-});
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+>(({ className, ...props }, ref) => (
+  <TabsPrimitive.Content
+    ref={ref}
+    className={cn(
+      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      className
+    )}
+    {...props}
+  />
+))
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }
