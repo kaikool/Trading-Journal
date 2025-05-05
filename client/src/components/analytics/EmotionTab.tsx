@@ -612,10 +612,11 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       data={emotionDistributionData}
                       cx="50%"
                       cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => 
-                        `${name.length > 8 ? name.substring(0, 8) + '...' : name}: ${(percent * 100).toFixed(1)}%`
-                      }
+                      labelLine={{ stroke: 'hsl(var(--muted-foreground)/40)', strokeWidth: 1 }}
+                      label={({ percent }) => {
+                        const value = (percent * 100).toFixed(1);
+                        return value > 5 ? `${value}%` : '';
+                      }}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
