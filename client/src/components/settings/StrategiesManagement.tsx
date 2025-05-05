@@ -11,6 +11,8 @@ import {
   StrategyConditionList,
   createNewCondition
 } from "./StrategyConditionInput";
+import { StrategyItemWrapper } from "./StrategyItemWrapper";
+import { StrategiesListRenderer } from "./StrategiesListRenderer";
 import { DialogHeaderFooterLayout } from "@/components/ui/dialog";
 
 import {
