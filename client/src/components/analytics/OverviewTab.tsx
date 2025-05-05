@@ -30,6 +30,8 @@ import { subDays, isAfter } from "date-fns";
 import { CHART_CONFIG, UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
 import { useTimestamp, DateFormat } from "@/hooks/use-timestamp";
 import { calculateWinRate, calculateProfitFactor } from "@/lib/forex-calculator";
+import { motion } from "framer-motion";
+import { useMotionConfig } from "@/lib/motion.config";
 
 interface KPICardProps {
   title: string;

@@ -8,6 +8,8 @@ import { UI_CONFIG, DASHBOARD_CONFIG } from "@/lib/config";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { debug, logError } from "@/lib/debug";
+import { motion, AnimatePresence } from "framer-motion";
+import { useMotionConfig } from "@/lib/motion.config";
 
 // Thêm khai báo cho window
 declare global {
@@ -30,6 +32,7 @@ export default function Analytics() {
   // Sử dụng DataCache thay vì local state
   const { trades, userData, isLoading, userId } = useDataCache();
   const { toast } = useToast();
+  const { variants, enabled } = useMotionConfig();
 
   // Logs only in development environment using debug utility
   const devLog = (message: string, data?: any) => {
@@ -419,35 +422,82 @@ export default function Analytics() {
           </div>
           
           {/* Mỗi TabsContent có Suspense riêng để chỉ tab đang mở mới cần loading */}
-            <TabsContent value="overview">
+          <AnimatePresence mode="wait">
+            <TabsContent 
+              value="overview"
+              motionProps={{
+                initial: "hidden",
+                animate: "visible",
+                exit: "exit",
+                variants: variants.tab,
+                transition: { duration: 0.3, ease: "easeInOut" }
+              }}
+            >
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <OverviewTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent value="strategy">
+            <TabsContent 
+              value="strategy"
+              motionProps={{
+                initial: "hidden",
+                animate: "visible",
+                exit: "exit",
+                variants: variants.tab,
+                transition: { duration: 0.3, ease: "easeInOut" }
+              }}
+            >
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <StrategyTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent value="discipline">
+            <TabsContent 
+              value="discipline"
+              motionProps={{
+                initial: "hidden",
+                animate: "visible",
+                exit: "exit",
+                variants: variants.tab,
+                transition: { duration: 0.3, ease: "easeInOut" }
+              }}
+            >
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <DisciplineTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent value="emotion">
+            <TabsContent 
+              value="emotion"
+              motionProps={{
+                initial: "hidden",
+                animate: "visible",
+                exit: "exit",
+                variants: variants.tab,
+                transition: { duration: 0.3, ease: "easeInOut" }
+              }}
+            >
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <EmotionTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
-            <TabsContent value="advanced">
+            <TabsContent 
+              value="advanced"
+              motionProps={{
+                initial: "hidden",
+                animate: "visible",
+                exit: "exit",
+                variants: variants.tab,
+                transition: { duration: 0.3, ease: "easeInOut" }
+              }}
+            >
               <Suspense fallback={<div className="min-h-[400px]"></div>}>
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>
+          </AnimatePresence>
             
 
         </Tabs>
