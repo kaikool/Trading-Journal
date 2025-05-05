@@ -1694,6 +1694,113 @@
     border: 1px solid hsl(var(--border) / var(--stat-card-border-opacity));
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+  
+  /* 
+   * =======================================================
+   * MODERN CARD COMPONENT ENHANCEMENTS
+   * =======================================================
+   */
+   
+  /* Card gradients - các hiệu ứng gradient cho card */
+  .gradient-card {
+    position: relative;
+  }
+  
+  /* Radial gradient background for cards */
+  .bg-radial {
+    background: radial-gradient(circle at top right, var(--gradient-from), var(--gradient-to));
+  }
+  
+  /* Soft gradient colors for cards in light mode */
+  .card-gradient-primary {
+    --gradient-from: hsl(var(--primary) / 0.12);
+    --gradient-to: hsl(var(--primary) / 0.02);
+  }
+  
+  .card-gradient-success {
+    --gradient-from: hsl(var(--success) / 0.12);
+    --gradient-to: hsl(var(--success) / 0.02);
+  }
+  
+  .card-gradient-warning {
+    --gradient-from: hsl(var(--warning) / 0.12);
+    --gradient-to: hsl(var(--warning) / 0.02);
+  }
+  
+  .card-gradient-destructive {
+    --gradient-from: hsl(var(--destructive) / 0.12);
+    --gradient-to: hsl(var(--destructive) / 0.02);
+  }
+  
+  .card-gradient-muted {
+    --gradient-from: hsl(var(--muted) / 0.15);
+    --gradient-to: hsl(var(--muted) / 0.03);
+  }
+  
+  /* Soft gradient colors for cards in dark mode - enhanced for better visibility */
+  .dark .card-gradient-primary {
+    --gradient-from: hsl(var(--primary) / 0.18);
+    --gradient-to: hsl(var(--primary) / 0.03);
+  }
+  
+  .dark .card-gradient-success {
+    --gradient-from: hsl(var(--success) / 0.18);
+    --gradient-to: hsl(var(--success) / 0.03);
+  }
+  
+  .dark .card-gradient-warning {
+    --gradient-from: hsl(var(--warning) / 0.18);
+    --gradient-to: hsl(var(--warning) / 0.03);
+  }
+  
+  .dark .card-gradient-destructive {
+    --gradient-from: hsl(var(--destructive) / 0.18);
+    --gradient-to: hsl(var(--destructive) / 0.03);
+  }
+  
+  .dark .card-gradient-muted {
+    --gradient-from: hsl(var(--muted) / 0.20);
+    --gradient-to: hsl(var(--muted) / 0.04);
+  }
+  
+  /* Các class bổ sung cho card */
+  .card-value {
+    font-size: var(--card-value-size, 1.75rem);
+    font-weight: var(--card-value-weight, 600);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  
+  .card-label {
+    font-size: var(--card-label-size, 0.875rem);
+    font-weight: var(--card-label-weight, 500);
+    color: hsl(var(--muted-foreground));
+  }
+  
+  /* Spotlight effect - tạo hiệu ứng focus vào card khi hover */
+  .card-spotlight {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .card-spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      circle at var(--x, 50%) var(--y, 50%),
+      hsl(var(--primary) / 0.12) 0%,
+      transparent 25%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .card-spotlight:hover::before {
+    opacity: 1;
+  }
 
   /* Fix scrolling issues - both horizontal and vertical for desktop */
   .container,
