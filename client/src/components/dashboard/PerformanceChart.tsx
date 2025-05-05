@@ -170,7 +170,9 @@ export function PerformanceChart({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center" style={{
             fontSize: 'var(--card-title-size)',
-            fontWeight: 'var(--card-title-weight)'
+            fontWeight: 'var(--card-title-weight)',
+            lineHeight: '1.5',
+            padding: '0.125rem 0'
           }}>
             <LineChartIcon style={{
               height: 'var(--card-icon-size)',

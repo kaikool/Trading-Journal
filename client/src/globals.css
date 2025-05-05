@@ -1733,9 +1733,17 @@
     margin: 0 auto;
   }
   
-
-  
-
+  /* Card title fix - ensure proper rendering on all devices */
+  h3.card-title {
+    line-height: 1.5 !important;
+    padding: 0.125rem 0 !important;
+    height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   
   /* Standardize muted text with consistent opacity */
   .text-muted-foreground {
