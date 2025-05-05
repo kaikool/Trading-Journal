@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { logoutUser, auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useLayout } from "@/contexts/LayoutContext";
 import { 
   Menu, 
   X, 
@@ -83,7 +82,6 @@ export default function MenuBar({ mode = 'mobile' }: MenuBarProps) {
   const [mounted, setMounted] = useState(false);
   const user = auth.currentUser;
   const isDesktop = mode === 'desktop';
-  const { headerVisible } = useLayout();
 
   useEffect(() => {
     setMounted(true);
@@ -136,16 +134,12 @@ export default function MenuBar({ mode = 'mobile' }: MenuBarProps) {
   // Xác định class cho header dựa trên mode
   const headerClass = isDesktop 
     ? "h-16 shadow-sm bg-background border-b border-border z-40" 
-    : "fixed top-0 left-0 right-0 h-16 z-40 mobile-header bg-background/95 backdrop-blur-sm border-b border-border/40";
+    : "fixed top-0 left-0 right-0 h-16 z-40 mobile-header";
 
   return (
     <>
       {/* Header - Dùng cho cả mobile và desktop */}
-      <header className={cn(
-        headerClass,
-        mode === 'mobile' && "transition-transform duration-300",
-        mode === 'mobile' && !headerVisible && "-translate-y-full"
-      )}>
+      <header className={headerClass}>
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center space-x-3">
             {mode === 'mobile' && (

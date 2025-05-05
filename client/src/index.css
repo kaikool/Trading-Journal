@@ -49,33 +49,3 @@ body[data-offline-mode="true"] .suspense-boundary::after {
     transform: rotate(360deg);
   }
 }
-
-/* 
- * Auto-hide navigation and header styles 
- * Adds smooth transitions for both Header and MobileNavigator
- */
-.mobile-header {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-  transform: translateY(0);
-  /* Glass effect background */
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.mobile-nav {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-  transform: translateY(0);
-  /* Make sure to respect safe areas */
-  padding-bottom: max(var(--safe-bottom), 8px);
-}
-
-/* Class-based auto-hide with direct CSS selectors */
-html.hide-header .mobile-header {
-  transform: translateY(-100%);
-}
-
-html.hide-nav .mobile-nav {
-  transform: translateY(100%);
-}

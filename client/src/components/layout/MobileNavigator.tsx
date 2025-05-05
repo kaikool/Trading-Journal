@@ -9,7 +9,6 @@ import {
   BarChart2
 } from "lucide-react";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
-import { useLayout } from "@/contexts/LayoutContext";
 
 /**
  * MobileNavigatorItem - An individual tab in the tab bar
@@ -91,12 +90,6 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
-  const { mobileNavVisible } = useLayout();
-  
-  // Ghi log khi việc ẩn/hiện thay đổi
-  useEffect(() => {
-    console.log("Mobile nav visibility:", mobileNavVisible);
-  }, [mobileNavVisible]);
   
   useEffect(() => {
     setMounted(true);
@@ -155,11 +148,7 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
 
   return (
     <nav 
-      className={cn(
-        "mobile-nav no-scroll",
-        "transition-transform duration-300",
-        !mobileNavVisible && "translate-y-full"
-      )}
+      className="mobile-nav no-scroll"
       role="navigation"
       aria-label="Main Navigation"
       onTouchMove={(e) => e.preventDefault()} 
