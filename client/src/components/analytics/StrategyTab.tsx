@@ -567,7 +567,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                 <ComposedChart
                   data={strategyComparisonData} // Show all strategies, không cắt top 5 nữa
                   margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
-                  barCategoryGap={8} // Thống nhất với barCategoryGap của biểu đồ Profit
+                  barCategoryGap="10%" /* Sử dụng phần trăm để dàn đều theo tỷ lệ */
                   barGap={4} // Thống nhất với barGap của biểu đồ Profit
                 >
                   <CartesianGrid 
@@ -581,6 +581,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                     tickLine={false}
                     axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
                     tickMargin={0}
+                    interval={0} // Hiển thị tất cả tick để dàn đều
                   />
                   <YAxis 
                     yAxisId="left"
