@@ -23,7 +23,11 @@ import {
   Target,
   Activity,
   Info,
-  Pencil
+  Pencil,
+  Check,
+  ChevronRight,
+  ArrowDown,
+  Settings2
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -75,149 +79,165 @@ export function StrategyConditionForm({
   onCancel,
   isNew = false
 }: StrategyConditionFormProps) {
+  const [advancedMode, setAdvancedMode] = useState(false);
+  
   return (
-    <div className="mb-2 px-2 py-2 border-l-2 border-primary/20 w-full bg-transparent">
-      <div className="space-y-2">
-        {/* Minimalist condition input */}
-        <div className="relative">
+    <div className="mb-2 w-full bg-transparent border border-primary/5 rounded-md overflow-hidden shadow-sm">
+      <div className="space-y-2 p-2">
+        {/* Streamlined condition input with advanced toggle */}
+        <div className="flex items-center gap-2">
           <Input 
             id={`condition-label-${condition.id}`}
             placeholder="Enter condition..."
             value={condition.label}
             onChange={(e) => onChange({ ...condition, label: e.target.value })}
-            className="border-0 border-b px-0 py-1 rounded-none text-sm font-medium focus-visible:ring-0 focus-visible:border-primary/50"
+            className="h-8 text-sm flex-1"
           />
+          
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setAdvancedMode(!advancedMode)}
+            className="h-8 w-8 p-0 text-muted-foreground"
+            title={advancedMode ? "Hide details" : "Show details"}
+          >
+            <Settings2 className="h-3.5 w-3.5" />
+          </Button>
         </div>
         
-        {/* Ultra-clean selection layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-xs">
-          <div className="flex flex-col">
-            <Select
-              value={condition.indicator}
-              onValueChange={(value) => onChange({ ...condition, indicator: value })}
-            >
-              <SelectTrigger 
-                id={`condition-indicator-${condition.id}`} 
-                className="border-0 h-7 text-xs py-0 px-0 focus:ring-0 bg-transparent"
+        {/* Advanced options */}
+        {advancedMode && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2 bg-muted/20 p-2 rounded-sm">
+            <div>
+              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+                <Activity className="h-3 w-3 mr-1" />
+                Indicator
+              </Label>
+              <Select
+                value={condition.indicator}
+                onValueChange={(value) => onChange({ ...condition, indicator: value })}
               >
-                <div className="flex items-center gap-1">
-                  <Activity className="h-3 w-3 text-muted-foreground" />
+                <SelectTrigger 
+                  id={`condition-indicator-${condition.id}`} 
+                  className="h-7 text-xs"
+                >
                   <SelectValue placeholder="Select indicator" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="min-w-[160px] max-h-[280px]">
-                {COMMON_INDICATORS.map(indicator => (
-                  <SelectItem key={indicator} value={indicator} className="text-xs">
-                    {indicator}
-                  </SelectItem>
-                ))}
-                <SelectItem value="custom" className="text-xs italic">Custom...</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex flex-col">
-            <Select
-              value={condition.timeframe}
-              onValueChange={(value) => onChange({ ...condition, timeframe: value })}
-            >
-              <SelectTrigger 
-                id={`condition-timeframe-${condition.id}`} 
-                className="border-0 h-7 text-xs py-0 px-0 focus:ring-0 bg-transparent"
-              >
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3 text-muted-foreground" />
-                  <SelectValue placeholder="Select timeframe" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="min-w-[120px] max-h-[280px]">
-                {COMMON_TIMEFRAMES.map(timeframe => (
-                  <SelectItem key={timeframe} value={timeframe} className="text-xs">
-                    {timeframe}
-                  </SelectItem>
-                ))}
-                <SelectItem value="custom" className="text-xs italic">Custom...</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="flex flex-col">
-            <Select
-              value={condition.expectedValue}
-              onValueChange={(value) => onChange({ ...condition, expectedValue: value })}
-            >
-              <SelectTrigger 
-                id={`condition-value-${condition.id}`} 
-                className="border-0 h-7 text-xs py-0 px-0 focus:ring-0 bg-transparent"
-              >
-                <div className="flex items-center gap-1">
-                  <Target className="h-3 w-3 text-muted-foreground" />
-                  <SelectValue placeholder="Select value" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="min-w-[160px]">
-                {COMMON_EXPECTED_VALUES.map(value => (
-                  <SelectItem key={value} value={value} className="text-xs">
-                    {value}
-                  </SelectItem>
-                ))}
-                <SelectItem value="custom" className="text-xs italic">Custom...</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        
-        {/* Minimal description input - uses an expandable input that starts small */}
-        <div className="pt-0.5">
-          <div className="relative">
-            <div className="absolute left-0 top-1.5 text-muted-foreground">
-              <Info className="h-2.5 w-2.5" />
+                </SelectTrigger>
+                <SelectContent className="min-w-[160px] max-h-[280px]">
+                  {COMMON_INDICATORS.map(indicator => (
+                    <SelectItem key={indicator} value={indicator} className="text-xs">
+                      {indicator}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom" className="text-xs italic">Custom...</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Textarea
-              id={`condition-description-${condition.id}`}
-              placeholder="Optional details..."
-              value={condition.description || ""}
-              onChange={(e) => onChange({ ...condition, description: e.target.value })}
-              className="text-xs resize-none border-0 bg-muted/30 pl-4 pt-1 pb-1 h-7 focus:h-12 transition-all duration-200 focus:outline-none focus:ring-0"
-            />
+
+            <div>
+              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+                <Clock className="h-3 w-3 mr-1" />
+                Timeframe
+              </Label>
+              <Select
+                value={condition.timeframe}
+                onValueChange={(value) => onChange({ ...condition, timeframe: value })}
+              >
+                <SelectTrigger 
+                  id={`condition-timeframe-${condition.id}`} 
+                  className="h-7 text-xs"
+                >
+                  <SelectValue placeholder="Select timeframe" />
+                </SelectTrigger>
+                <SelectContent className="min-w-[120px] max-h-[280px]">
+                  {COMMON_TIMEFRAMES.map(timeframe => (
+                    <SelectItem key={timeframe} value={timeframe} className="text-xs">
+                      {timeframe}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom" className="text-xs italic">Custom...</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+                <Target className="h-3 w-3 mr-1" />
+                Value
+              </Label>
+              <Select
+                value={condition.expectedValue}
+                onValueChange={(value) => onChange({ ...condition, expectedValue: value })}
+              >
+                <SelectTrigger 
+                  id={`condition-value-${condition.id}`} 
+                  className="h-7 text-xs"
+                >
+                  <SelectValue placeholder="Select value" />
+                </SelectTrigger>
+                <SelectContent className="min-w-[160px]">
+                  {COMMON_EXPECTED_VALUES.map(value => (
+                    <SelectItem key={value} value={value} className="text-xs">
+                      {value}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="custom" className="text-xs italic">Custom...</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="md:col-span-3 mt-1">
+              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+                <Info className="h-3 w-3 mr-1" />
+                Description (optional)
+              </Label>
+              <Textarea
+                id={`condition-description-${condition.id}`}
+                placeholder="Add more details about this condition..."
+                value={condition.description || ""}
+                onChange={(e) => onChange({ ...condition, description: e.target.value })}
+                className="text-xs resize-none min-h-[40px] max-h-[80px]"
+              />
+            </div>
           </div>
-        </div>
+        )}
         
-        {/* Minimalistic action buttons */}
-        <div className="flex justify-end gap-2 pt-1">
+        {/* Action buttons in a clean footer */}
+        <div className="flex justify-end gap-2 pt-1 border-t border-border/10 mt-2">
           {onCancel && (
             <Button 
               variant="ghost" 
               size="sm"
               onClick={onCancel}
-              className="h-6 w-6 p-0 rounded-full"
-              title="Cancel"
+              className="h-7 px-2 text-xs"
             >
-              <X className="h-3 w-3" />
+              <X className="h-3 w-3 mr-1" />
+              Cancel
             </Button>
           )}
           
           {isNew && onAdd ? (
             <Button
-              variant="ghost"
+              variant="default"
               size="sm" 
               onClick={onAdd}
               disabled={!condition.label.trim()}
-              className="h-6 px-2 text-[10px] text-primary hover:text-primary hover:bg-primary/10"
+              className="h-7 px-3 text-xs"
             >
               <Plus className="h-3 w-3 mr-1" />
               Add
             </Button>
           ) : (
             <Button
-              variant="ghost"
+              variant="default"
               size="sm"
               onClick={() => onChange(condition)}
               disabled={!condition.label.trim()}
-              className="h-6 w-6 p-0 rounded-full text-primary hover:bg-primary/10"
-              title="Save changes"
+              className="h-7 px-3 text-xs"
             >
-              <Save className="h-3 w-3" />
+              <Check className="h-3 w-3 mr-1" />
+              Save
             </Button>
           )}
         </div>
@@ -233,93 +253,78 @@ interface StrategyConditionItemProps {
 }
 
 /**
- * Component for displaying a saved strategy condition with ultra-minimalistic design
+ * Component for displaying a saved strategy condition with modern minimalistic design
  */
 export function StrategyConditionItem({
   condition,
   onEdit,
   onDelete
 }: StrategyConditionItemProps) {
+  const hasDetails = condition.indicator || condition.timeframe || condition.expectedValue || condition.description;
+  
   return (
-    <div className="group py-1 border-b border-border/10 last:border-b-0">
-      <div className="flex items-center justify-between">
-        {/* Main condition information with minimalist styling */}
-        <div className="flex-1 flex items-center gap-2 overflow-hidden">
-          {/* Condition label with compact styling */}
-          <div className="font-medium text-sm truncate">
-            {condition.label}
+    <div className="group py-1.5 px-2.5 border rounded-md mb-1.5 bg-background hover:bg-muted/20 transition-colors">
+      <div className="flex items-center justify-between gap-3">
+        {/* Main condition with badge indicators */}
+        <div className="flex-1 flex flex-col gap-1">
+          <div className="flex items-center gap-1.5">
+            <div className="font-medium text-sm">
+              {condition.label}
+            </div>
+            {/* Only show indicators if they exist */}
+            {hasDetails && (
+              <div className="flex items-center gap-1">
+                {condition.indicator && (
+                  <Badge variant="outline" className="px-1 h-4 text-[9px] bg-primary/5 font-normal">
+                    <Activity className="h-2 w-2 mr-0.5" />
+                    {condition.indicator}
+                  </Badge>
+                )}
+                
+                {condition.timeframe && (
+                  <Badge variant="outline" className="px-1 h-4 text-[9px] bg-blue-500/5 border-blue-500/20 text-blue-600 dark:text-blue-400 font-normal">
+                    <Clock className="h-2 w-2 mr-0.5" />
+                    {condition.timeframe}
+                  </Badge>
+                )}
+                
+                {condition.expectedValue && (
+                  <Badge variant="outline" className="px-1 h-4 text-[9px] bg-green-500/5 border-green-500/20 text-green-600 dark:text-green-400 font-normal">
+                    <Target className="h-2 w-2 mr-0.5" />
+                    {condition.expectedValue}
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
           
-          {/* Minimal micro indicators - just dots with tooltips */}
-          <div className="flex items-center space-x-0.5">
-            {condition.indicator && (
-              <div className="relative group/tooltip">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 py-1 px-1.5 bg-popover/90 text-[10px] rounded shadow-sm whitespace-nowrap invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50">
-                  <span className="flex items-center gap-1">
-                    <Activity className="h-2 w-2" />
-                    {condition.indicator}
-                  </span>
-                </div>
-              </div>
-            )}
-            
-            {condition.timeframe && (
-              <div className="relative group/tooltip">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500/60" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 py-1 px-1.5 bg-popover/90 text-[10px] rounded shadow-sm whitespace-nowrap invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-2 w-2" />
-                    {condition.timeframe}
-                  </span>
-                </div>
-              </div>
-            )}
-            
-            {condition.expectedValue && (
-              <div className="relative group/tooltip">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500/60" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 py-1 px-1.5 bg-popover/90 text-[10px] rounded shadow-sm whitespace-nowrap invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50">
-                  <span className="flex items-center gap-1">
-                    <Target className="h-2 w-2" />
-                    {condition.expectedValue}
-                  </span>
-                </div>
-              </div>
-            )}
-            
-            {condition.description && (
-              <div className="relative group/tooltip">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-500/60" />
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 py-1 px-1.5 bg-popover/90 text-[10px] rounded shadow-sm max-w-[180px] invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-opacity z-50">
-                  <span className="line-clamp-3">
-                    {condition.description}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Description - only show if it exists */}
+          {condition.description && (
+            <div className="text-[10px] text-muted-foreground line-clamp-1 pl-1 mt-0.5">
+              {condition.description}
+            </div>
+          )}
         </div>
         
-        {/* Ultra-minimal action buttons */}
-        <div className="flex gap-px opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Action buttons */}
+        <div className="flex gap-1">
           <Button 
             variant="ghost" 
-            size="icon" 
-            className="h-5 w-5 rounded-full"
+            size="sm" 
+            className="h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={() => onEdit(condition.id)}
             title="Edit"
           >
-            <Pencil className="h-2.5 w-2.5 text-muted-foreground" />
+            <Edit className="h-3 w-3 text-muted-foreground" />
           </Button>
           <Button 
             variant="ghost" 
-            size="icon" 
-            className="h-5 w-5 rounded-full"
+            size="sm" 
+            className="h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={() => onDelete(condition.id)}
             title="Delete"
           >
-            <Trash2 className="h-2.5 w-2.5 text-muted-foreground" />
+            <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
           </Button>
         </div>
       </div>
@@ -340,7 +345,7 @@ interface StrategyConditionListProps {
 
 /**
  * Component for displaying and managing a list of strategy conditions
- * Ultra-minimalistic design for efficient screen space usage
+ * Modern, clean design optimized for responsive displays
  */
 export function StrategyConditionList({
   conditions = [],
@@ -376,69 +381,76 @@ export function StrategyConditionList({
   };
   
   return (
-    <div className="border-l-2 border-primary/10 pl-3 py-0.5 mb-3">
-      {/* Integrated header with add button inline */}
-      <div className="flex items-center gap-x-1 mb-1">
-        {icon && <div className="text-muted-foreground">{icon}</div>}
-        {title && (
-          <span className="text-xs font-medium text-foreground/80 flex-1">
-            {title}
-            {conditions.length > 0 && (
-              <span className="ml-1 text-[10px] text-muted-foreground">
-                {conditions.length}
+    <div className="mb-4">
+      {/* Modern header with count badge */}
+      {(title || !hideAddbutton) && (
+        <div className="flex items-center justify-between mb-2">
+          {title && (
+            <div className="flex items-center gap-1">
+              {icon && <span className="text-muted-foreground">{icon}</span>}
+              <span className="font-medium text-sm text-foreground/90">
+                {title}
+                {conditions.length > 0 && (
+                  <Badge variant="secondary" className="ml-2 h-5 px-1.5">
+                    {conditions.length}
+                  </Badge>
+                )}
               </span>
-            )}
-          </span>
-        )}
-        
-        {/* Add button directly in the header row */}
-        {!isAdding && !hideAddbutton && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsAdding(true)}
-            className="h-4 px-1 text-[10px] text-muted-foreground hover:text-primary"
-            title="Add condition"
-          >
-            <Plus className="h-2.5 w-2.5 mr-0.5" />
-            Add
-          </Button>
-        )}
-      </div>
-      
-      {/* Empty state - ultra minimal */}
-      {conditions.length === 0 && !isAdding ? (
-        <div className="text-[10px] text-muted-foreground/70 pl-1 py-1">
-          {emptyMessage}
-        </div>
-      ) : (
-        <div className={cn(
-          "pl-0.5",
-          conditions.length > 5 && "max-h-[220px] overflow-y-auto scrollbar-none"
-        )}>
-          {conditions.map(condition => 
-            editingId === condition.id ? (
-              <StrategyConditionForm
-                key={condition.id}
-                condition={condition}
-                onChange={handleUpdate}
-                onCancel={() => setEditingId(null)}
-              />
-            ) : (
-              <StrategyConditionItem
-                key={condition.id}
-                condition={condition}
-                onEdit={handleEdit}
-                onDelete={onDelete}
-              />
-            )
+            </div>
+          )}
+          
+          {/* Consistent Add button */}
+          {!isAdding && !hideAddbutton && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsAdding(true)}
+              className="h-7 px-2 text-xs"
+            >
+              <Plus className="h-3.5 w-3.5 mr-1" />
+              Add
+            </Button>
           )}
         </div>
       )}
       
-      {/* Add form with clean transition */}
+      {/* Content area with conditions */}
+      <div className={cn(
+        "space-y-0.5",
+        conditions.length > 8 && "max-h-[320px] overflow-y-auto pr-1"
+      )}>
+        {/* Empty state - modern but minimal */}
+        {conditions.length === 0 && !isAdding ? (
+          <div className="text-xs text-muted-foreground border border-dashed border-border/50 rounded-md p-3 text-center">
+            {emptyMessage}
+          </div>
+        ) : (
+          /* Condition items list */
+          <div className="space-y-0">
+            {conditions.map(condition => 
+              editingId === condition.id ? (
+                <StrategyConditionForm
+                  key={condition.id}
+                  condition={condition}
+                  onChange={handleUpdate}
+                  onCancel={() => setEditingId(null)}
+                />
+              ) : (
+                <StrategyConditionItem
+                  key={condition.id}
+                  condition={condition}
+                  onEdit={handleEdit}
+                  onDelete={onDelete}
+                />
+              )
+            )}
+          </div>
+        )}
+      </div>
+      
+      {/* Add new condition form */}
       {isAdding && (
-        <div className="animate-in fade-in-50 duration-100 mt-1">
+        <div className="animate-in fade-in-50 slide-in-from-top-1 duration-100 mt-2">
           <StrategyConditionForm
             condition={newCondition}
             onChange={setNewCondition}

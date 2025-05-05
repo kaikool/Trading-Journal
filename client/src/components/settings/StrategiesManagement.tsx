@@ -297,30 +297,11 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {/* Trading Rules */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium flex items-center">
-                  <ListChecks className="h-4 w-4 mr-2" />
-                  Trading Rules
-                </h4>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    const newCondition = createNewCondition(strategy.rules?.length || 0);
-                    handleFieldChange('rules', 
-                      addConditionToArray(strategy.rules || [], newCondition)
-                    );
-                  }}
-                  className="h-6 px-2 text-xs hover:text-primary"
-                >
-                  <Plus className="h-3.5 w-3.5 mr-1 opacity-70" />
-                  Add
-                </Button>
-              </div>
+            <div className="space-y-1.5 mb-2">
               <StrategyConditionList
-                title=""
-                emptyMessage="No rules defined yet"
+                title="Trading Rules"
+                icon={<ListChecks className="h-4 w-4 mr-1" />}
+                emptyMessage="No rules defined yet. Add your first trading rule."
                 conditions={strategy.rules || []}
                 onAdd={(condition) => handleFieldChange('rules', 
                   addConditionToArray(strategy.rules || [], condition)
@@ -338,30 +319,11 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
               
             {/* Entry Conditions */}
-            <div className="space-y-1.5 mt-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium flex items-center">
-                  <DoorOpen className="h-4 w-4 mr-2" />
-                  Entry Conditions
-                </h4>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    const newCondition = createNewCondition(strategy.entryConditions?.length || 0);
-                    handleFieldChange('entryConditions', 
-                      addConditionToArray(strategy.entryConditions || [], newCondition)
-                    );
-                  }}
-                  className="h-6 px-2 text-xs hover:text-primary"
-                >
-                  <Plus className="h-3.5 w-3.5 mr-1 opacity-70" />
-                  Add
-                </Button>
-              </div>
+            <div className="space-y-1.5 mb-2">
               <StrategyConditionList
-                title=""
-                emptyMessage="No entry conditions defined yet"
+                title="Entry Conditions"
+                icon={<DoorOpen className="h-4 w-4 mr-1" />}
+                emptyMessage="No entry conditions defined yet. Add your first entry condition."
                 conditions={strategy.entryConditions || []}
                 onAdd={(condition) => handleFieldChange('entryConditions', 
                   addConditionToArray(strategy.entryConditions || [], condition)
@@ -379,30 +341,11 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {/* Exit Conditions */}
-            <div className="space-y-1.5 mt-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium flex items-center">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Exit Conditions
-                </h4>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    const newCondition = createNewCondition(strategy.exitConditions?.length || 0);
-                    handleFieldChange('exitConditions', 
-                      addConditionToArray(strategy.exitConditions || [], newCondition)
-                    );
-                  }}
-                  className="h-6 px-2 text-xs hover:text-primary"
-                >
-                  <Plus className="h-3.5 w-3.5 mr-1 opacity-70" />
-                  Add
-                </Button>
-              </div>
+            <div className="space-y-1.5 mb-2">
               <StrategyConditionList
-                title=""
-                emptyMessage="No exit conditions defined yet"
+                title="Exit Conditions"
+                icon={<LogOut className="h-4 w-4 mr-1" />}
+                emptyMessage="No exit conditions defined yet. Add your first exit condition."
                 conditions={strategy.exitConditions || []}
                 onAdd={(condition) => handleFieldChange('exitConditions', 
                   addConditionToArray(strategy.exitConditions || [], condition)
@@ -1121,14 +1064,11 @@ export function StrategiesManagement() {
               </div>
               
               {/* Trading Rules */}
-              <div className="space-y-4 mt-6">
-                <div className="flex items-center mb-1">
-                  <ListChecks className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium">Trading Rules</h4>
-                </div>
+              <div className="mt-6">
                 <StrategyConditionList
-                  title=""
-                  emptyMessage="No rules defined yet. Click 'Add' to create one."
+                  title="Trading Rules"
+                  icon={<ListChecks className="h-4 w-4 mr-1" />}
+                  emptyMessage="No rules defined yet. Click 'Add' to create your first trading rule."
                   conditions={newStrategy.rules || []}
                   onAdd={(condition) => setNewStrategy({
                     ...newStrategy,
@@ -1146,19 +1086,15 @@ export function StrategiesManagement() {
                       rules: (newStrategy.rules || []).filter(rule => rule.id !== id)
                     });
                   }}
-                  icon={<LineChart className="h-4 w-4" />}
                 />
               </div>
               
               {/* Entry Conditions */}
-              <div className="space-y-4 mt-8">
-                <div className="flex items-center mb-1">
-                  <DoorOpen className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium">Entry Conditions</h4>
-                </div>
+              <div className="mt-6">
                 <StrategyConditionList
-                  title=""
-                  emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
+                  title="Entry Conditions"
+                  icon={<DoorOpen className="h-4 w-4 mr-1" />}
+                  emptyMessage="No entry conditions defined yet. Click 'Add' to create your first entry condition."
                   conditions={newStrategy.entryConditions || []}
                   onAdd={(condition) => setNewStrategy({
                     ...newStrategy,
@@ -1176,19 +1112,15 @@ export function StrategiesManagement() {
                       entryConditions: (newStrategy.entryConditions || []).filter(condition => condition.id !== id)
                     });
                   }}
-                  icon={<DoorOpen className="h-4 w-4" />}
                 />
               </div>
               
               {/* Exit Conditions */}
-              <div className="space-y-4 mt-8">
-                <div className="flex items-center mb-1">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  <h4 className="font-medium">Exit Conditions</h4>
-                </div>
+              <div className="mt-6">
                 <StrategyConditionList
-                  title=""
-                  emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
+                  title="Exit Conditions"
+                  icon={<LogOut className="h-4 w-4 mr-1" />}
+                  emptyMessage="No exit conditions defined yet. Click 'Add' to create your first exit condition."
                   conditions={newStrategy.exitConditions || []}
                   onAdd={(condition) => setNewStrategy({
                     ...newStrategy,
@@ -1206,7 +1138,6 @@ export function StrategiesManagement() {
                       exitConditions: (newStrategy.exitConditions || []).filter(condition => condition.id !== id)
                     });
                   }}
-                  icon={<LogOut className="h-4 w-4" />}
                 />
               </div>
               
