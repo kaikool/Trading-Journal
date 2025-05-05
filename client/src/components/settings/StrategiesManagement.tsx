@@ -1053,7 +1053,10 @@ export function StrategiesManagement() {
         onSetEditMode={setEditMode}
         onUpdateStrategy={handleUpdateStrategy}
         onDeleteStrategy={handleDeleteStrategy}
-        onStrategyFieldChange={handleStrategyFieldChange}
+        onStrategyFieldChange={(strategyId, fieldName, value) => {
+          console.log("[DEBUG] Strategy field change from StrategiesListRenderer:", strategyId, fieldName, value);
+          handleStrategyFieldChange(strategyId, fieldName, value);
+        }}
         onSetDefaultStrategy={(strategy) => {
           try {
             setIsSaving(true);
