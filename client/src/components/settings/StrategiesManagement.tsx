@@ -97,7 +97,17 @@ const COMMON_EXPECTED_VALUES = [
 const addConditionToArray = (array: StrategyCondition[], condition: StrategyCondition): StrategyCondition[] => {
   if (!condition.label.trim()) return array;
   console.log("[DEBUG] Adding condition to array:", { condition, currentArray: array });
-  return [...array, { ...condition, label: condition.label.trim() }];
+  // Make sure all properties are properly formatted
+  const formattedCondition: StrategyCondition = {
+    id: condition.id,
+    label: condition.label.trim(),
+    order: condition.order || array.length, 
+    indicator: condition.indicator,
+    timeframe: condition.timeframe,
+    expectedValue: condition.expectedValue,
+    description: condition.description
+  };
+  return [...array, formattedCondition];
 };
 
 const updateConditionInArray = (array: StrategyCondition[], id: string, updates: Partial<StrategyCondition>): StrategyCondition[] => {
@@ -129,7 +139,16 @@ const removeItemFromArray = <T,>(array: T[], index: number): T[] => {
 const ensureConditionFormat = (value: any): StrategyCondition => {
   // If it's already a StrategyCondition, return as is
   if (value && typeof value === 'object' && value.id && value.label) {
-    return value as StrategyCondition;
+    // Ensure it has all required properties with correct types
+    return {
+      id: value.id,
+      label: value.label,
+      order: value.order || 0,
+      indicator: value.indicator, 
+      timeframe: value.timeframe,
+      expectedValue: value.expectedValue,
+      description: value.description
+    };
   }
   
   // Create a new condition with default values
@@ -141,7 +160,11 @@ const ensureConditionFormat = (value: any): StrategyCondition => {
   return {
     id,
     label,
-    order: 0
+    order: 0,
+    indicator: undefined,
+    timeframe: undefined,
+    expectedValue: undefined,
+    description: undefined
   };
 };
 
