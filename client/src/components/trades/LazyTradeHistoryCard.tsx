@@ -320,100 +320,135 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
               </div>
               
               {/* Trade details */}
-              <div className="p-4 flex-grow">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold flex items-center">
-                    {pair}
-                    <span className="text-sm font-normal ml-2 text-muted-foreground">
+              <div className="p-4 flex-grow relative">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <CardIcon
+                      color={direction === "BUY" ? "primary" : "destructive"}
+                      size="sm"
+                      variant="soft"
+                    >
+                      {direction === "BUY" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
+                    </CardIcon>
+                    <h3 className="text-lg font-semibold">
+                      {pair}
+                    </h3>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <CardIcon
+                      color="muted"
+                      size="sm"
+                      variant="soft"
+                    >
+                      <BarChart2 className="h-3.5 w-3.5" />
+                    </CardIcon>
+                    <span className="text-sm ml-1.5 text-muted-foreground font-medium">
                       {strategy}
                     </span>
-
-                  </h3>
-                  
-                  {/* Các nút đã được di chuyển xuống dưới đáy card */}
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Entry:</span> {entryPrice}
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Exit:</span> {exitPrice || 'Open'}
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">SL:</span> {trade.stopLoss}
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">TP:</span> {trade.takeProfit}
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2 text-sm mb-2">
-                  <span className="text-muted-foreground">Date:</span> 
-                  <span>{entryDateStr}</span>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Entry</span>
+                    <span className="font-medium">{entryPrice}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Exit</span>
+                    <span className="font-medium">{exitPrice || 'Open'}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Stop Loss</span>
+                    <span className="font-medium">{trade.stopLoss}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs text-muted-foreground">Take Profit</span>
+                    <span className="font-medium">{trade.takeProfit}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 text-sm mb-3 bg-background/50 p-2 px-2.5 rounded-md border border-border/30 shadow-sm">
+                  <span className="text-xs text-muted-foreground">Date:</span> 
+                  <span className="font-medium">{entryDateStr}</span>
                   {closeDate && (
                     <>
-                      <span className="text-muted-foreground/60">→</span>
-                      <span>{closeDateStr}</span>
+                      <span className="text-muted-foreground/60 mx-1">→</span>
+                      <span className="font-medium">{closeDateStr}</span>
                     </>
                   )}
                 </div>
                 
                 <div className="flex flex-wrap justify-between items-center mt-4 border-t pt-3">
-                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    {/* Nút action icons */}
-                    <Button
-                      variant="ghost"
+                  <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                    {/* Nút action icons với CardIcon */}
+                    <CardIcon
+                      color="primary"
                       size="sm"
-                      className="action-button action-button-view"
+                      variant="soft"
+                      className="cursor-pointer hover:bg-primary/25 transition-colors"
                       onClick={() => handleViewTrade()}
                       title="View Details"
                     >
-                      <EyeIcon className="action-button-icon" />
-                    </Button>
+                      <EyeIcon className="h-3.5 w-3.5" />
+                    </CardIcon>
                     
-                    <Button
-                      variant="ghost"
+                    <CardIcon
+                      color="primary"
                       size="sm"
-                      className="action-button action-button-edit"
+                      variant="soft"
+                      className="cursor-pointer hover:bg-primary/25 transition-colors"
                       onClick={() => onEdit()}
                       title="Edit Trade"
                     >
-                      <PencilIcon className="action-button-icon" />
-                    </Button>
+                      <PencilIcon className="h-3.5 w-3.5" />
+                    </CardIcon>
                     
                     {isTradeOpen && (
-                      <Button
-                        variant="ghost"
+                      <CardIcon
+                        color="warning"
                         size="sm"
-                        className="action-button action-button-close"
+                        variant="soft"
+                        className="cursor-pointer hover:bg-warning/25 transition-colors"
                         onClick={() => setShowCloseForm(true)}
                         title="Close Trade"
                       >
-                        <Lock className="action-button-icon" />
-                      </Button>
+                        <Lock className="h-3.5 w-3.5" />
+                      </CardIcon>
                     )}
                     
-                    <Button
-                      variant="ghost"
+                    <CardIcon
+                      color="destructive"
                       size="sm"
-                      className="action-button action-button-delete"
+                      variant="soft"
+                      className="cursor-pointer hover:bg-destructive/25 transition-colors"
                       onClick={() => onDelete(id)}
                       title="Delete Trade"
                     >
-                      <Trash2Icon className="action-button-icon" />
-                    </Button>
+                      <Trash2Icon className="h-3.5 w-3.5" />
+                    </CardIcon>
                   </div>
                   
                   <div className="flex items-center gap-2 mt-1 sm:mt-0">
                     {!isTradeOpen && ( 
-                      <div className={`pnl-indicator ${
-                        result === 'BE' ? 'pnl-neutral' :
-                        result === 'MANUAL' ? 
-                          (profitLoss > 0 ? 'pnl-profit' : 
-                           profitLoss < 0 ? 'pnl-loss' : 'pnl-neutral') :
-                          (profitLoss > 0 ? 'pnl-profit' : 'pnl-loss')
-                      }`}>
+                      <CardValue
+                        size="sm"
+                        status={
+                          result === 'BE' ? 'neutral' :
+                          result === 'MANUAL' ? 
+                            (profitLoss > 0 ? 'success' : 
+                             profitLoss < 0 ? 'danger' : 'neutral') :
+                            (profitLoss > 0 ? 'success' : 'danger')
+                        }
+                        trend={
+                          result === 'BE' ? 'neutral' :
+                          result === 'MANUAL' ? 
+                            (profitLoss > 0 ? 'up' : 
+                             profitLoss < 0 ? 'down' : 'neutral') :
+                            (profitLoss > 0 ? 'up' : 'down')
+                        }
+                        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/80"
+                      >
                         {result === 'BE' ? <CircleDot className="h-3.5 w-3.5" /> :
                          result === 'MANUAL' ? 
                           (profitLoss > 0 ? <TrendingUpIcon className="h-3.5 w-3.5" /> :
@@ -422,18 +457,19 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                           (profitLoss > 0 ? <TrendingUpIcon className="h-3.5 w-3.5" /> :
                            <TrendingDownIcon className="h-3.5 w-3.5" />)
                         }
-                        <span className="font-medium">{formatCurrency(profitLoss)}</span>
-                      </div>
+                        {formatCurrency(profitLoss)}
+                      </CardValue>
                     )}
                     
                     {!isTradeOpen && (
-                      <div className={`pip-badge ${
-                        result === 'BE' ? 'pip-badge-neutral' :
+                      <div className={cn(
+                        "pip-badge px-2 py-1 rounded-md text-xs font-medium flex items-center",
+                        result === 'BE' ? 'bg-muted/20 text-muted-foreground' :
                         result === 'MANUAL' ? 
-                          (pips > 0 ? 'pip-badge-profit' : 
-                           pips < 0 ? 'pip-badge-loss' : 'pip-badge-neutral') :
-                          (pips > 0 ? 'pip-badge-profit' : 'pip-badge-loss')
-                      }`}>
+                          (pips > 0 ? 'bg-success/10 text-success' : 
+                           pips < 0 ? 'bg-destructive/10 text-destructive' : 'bg-muted/20 text-muted-foreground') :
+                          (pips > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive')
+                      )}>
                         {pips > 0 ? '+' : ''}{pips} pips
                       </div>
                     )}
