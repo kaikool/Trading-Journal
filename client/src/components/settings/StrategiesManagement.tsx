@@ -9,7 +9,7 @@ import {
   StrategyConditionForm,
   StrategyConditionItem,
   StrategyConditionList,
-  createNewCondition as createNewStrategyCondition
+  createNewCondition
 } from "./StrategyConditionInput";
 import { DialogHeaderFooterLayout } from "@/components/ui/dialog";
 
@@ -284,7 +284,7 @@ const StrategyItem = React.memo(function StrategyItem({
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    const newCondition = createNewStrategyCondition(strategy.rules?.length || 0);
+                    const newCondition = createNewCondition(strategy.rules?.length || 0);
                     handleFieldChange('rules', 
                       addConditionToArray(strategy.rules || [], newCondition)
                     );
@@ -326,7 +326,7 @@ const StrategyItem = React.memo(function StrategyItem({
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    const newCondition = createNewStrategyCondition(strategy.entryConditions?.length || 0);
+                    const newCondition = createNewCondition(strategy.entryConditions?.length || 0);
                     handleFieldChange('entryConditions', 
                       addConditionToArray(strategy.entryConditions || [], newCondition)
                     );
@@ -368,7 +368,7 @@ const StrategyItem = React.memo(function StrategyItem({
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    const newCondition = createNewStrategyCondition(strategy.exitConditions?.length || 0);
+                    const newCondition = createNewCondition(strategy.exitConditions?.length || 0);
                     handleFieldChange('exitConditions', 
                       addConditionToArray(strategy.exitConditions || [], newCondition)
                     );
