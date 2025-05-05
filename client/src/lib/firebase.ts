@@ -135,10 +135,53 @@ async function loginUser(email: string, password: string) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
+/**
+ * Đăng nhập với Google và tự động tạo tài khoản nếu cần
+ * 
+ * Trả về kết quả đăng nhập và thông tin bổ sung
+ */
 async function loginWithGoogle() {
-  const { GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
-  const provider = new GoogleAuthProvider();
-  return signInWithPopup(auth, provider);
+  try {
+    const { GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo } = await import("firebase/auth");
+    const provider = new GoogleAuthProvider();
+    
+    // Đăng nhập với Google
+    const result = await signInWithPopup(auth, provider);
+    
+    // Kiểm tra xem người dùng là mới hay không
+    const additionalInfo = getAdditionalUserInfo(result);
+    const isNewUser = additionalInfo?.isNewUser || false;
+    
+    // Nếu là người dùng mới, tạo hồ sơ người dùng trong Firestore
+    if (isNewUser && result.user) {
+      debug("Creating new user profile for Google sign-in");
+      
+      // Lấy thông tin cơ bản từ tài khoản Google
+      const { uid, email, displayName, photoURL } = result.user;
+      
+      // Tạo tài liệu người dùng trong Firestore
+      await setDoc(doc(db, "users", uid), {
+        email,
+        displayName: displayName || email?.split('@')[0] || "User",
+        photoURL,
+        createdAt: serverTimestamp(),
+        provider: "google",
+        initialBalance: DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE,
+        currentBalance: DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE,
+      });
+      
+      debug("User profile created successfully for Google sign-in");
+    }
+    
+    // Trả về kết quả đăng nhập và thêm thông tin isNewUser
+    return {
+      ...result,
+      isNewUser
+    };
+  } catch (error) {
+    logError("Error during Google sign-in:", error);
+    throw error;
+  }
 }
 
 async function registerUser(email: string, password: string, displayName: string) {

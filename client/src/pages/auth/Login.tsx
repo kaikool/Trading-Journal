@@ -155,10 +155,16 @@ export default function Login() {
           onClick={async () => {
             try {
               setIsLoading(true);
-              await loginWithGoogle();
+              const result = await loginWithGoogle();
+              
+              // Lấy thông tin người dùng mới từ kết quả trả về
+              const isNewUser = (result as any).isNewUser;
+              
               toast({
-                title: "Login successful",
-                description: "Welcome to FX Trade Journal!",
+                title: isNewUser ? "Account created" : "Login successful",
+                description: isNewUser 
+                  ? "Your account has been created and you are now signed in!" 
+                  : "Welcome back to FX Trade Journal!",
               });
               setLocation("/");
             } catch (error) {
