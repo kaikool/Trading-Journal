@@ -442,13 +442,19 @@
 
 /* 
  * =======================================================
- * SAFE AREA UTILITY CLASSES
+ * DESIGN SYSTEM UTILITIES - COMPREHENSIVE
  * =======================================================
  * 
- * Unified safe area handling system for the entire application
- * All components use CSS variables defined in :root
+ * Unified design system for the entire application following
+ * modern iOS/macOS and Material You principles.
+ * All components use CSS variables defined in :root for consistency.
  */
 @layer utilities {
+  /* 
+   * SAFE AREA HANDLING
+   * Comprehensive safe area utilities for all device types
+   */
+  
   /* Safe area padding utilities - using CSS variables */
   .pt-safe { padding-top: var(--safe-top); }
   .pr-safe { padding-right: var(--safe-right); }
@@ -492,18 +498,63 @@
   }
   
   /* 
-   * PWA MEDIA QUERY HELPERS - CENTRALIZED APPROACH
-   * Centralized media queries for PWA detection
-   * Benefits:
-   * 1. Single source of truth for all PWA detection
-   * 2. Simplified maintenance - change one place affects all uses
-   * 3. Standard coverage for all PWA display modes
+   * LAYOUT SYSTEM
+   * Standard layout classes based on 4px grid system
+   */
+   
+  /* Content containers with standard spacing */
+  .content-container {
+    padding: var(--spacing-4);
+    width: 100%;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+  
+  .content-container-sm {
+    max-width: 640px;
+  }
+  
+  .content-container-md {
+    max-width: 768px;
+  }
+  
+  .content-container-lg {
+    max-width: 1024px;
+  }
+
+  /* Content block spacing utilities */
+  .section-spacing {
+    margin-bottom: var(--spacing-6);
+  }
+  
+  .section-spacing-lg {
+    margin-bottom: var(--spacing-8);
+  }
+  
+  /* Flex layout utilities */
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* 
+   * RESPONSIVE & PWA DETECTION
+   * Centralized media queries for device and PWA detection
    */
   
   /* Define variables at root */
   :root {
     --is-pwa: 0; /* Default: not in PWA mode */
     --is-mobile: 0; /* Default: not in mobile view */
+    --is-tablet: 0; /* Default: not in tablet view */
+    --is-desktop: 0; /* Default: not in desktop view */
     --is-mobile-or-pwa: 0; /* Default: neither mobile nor PWA */
   }
   
@@ -517,11 +568,23 @@
     }
   }
   
-  /* PRIMARY MEDIA QUERY: Detect mobile viewport */
-  @media (max-width: 768px) {
+  /* PRIMARY MEDIA QUERY: Detect viewport sizes */
+  @media (max-width: 640px) {
     :root {
       --is-mobile: 1; /* Flag when in mobile viewport */
       --is-mobile-or-pwa: 1; /* Also set combined flag */
+    }
+  }
+  
+  @media (min-width: 641px) and (max-width: 1024px) {
+    :root {
+      --is-tablet: 1; /* Flag when in tablet viewport */
+    }
+  }
+  
+  @media (min-width: 1025px) {
+    :root {
+      --is-desktop: 1; /* Flag when in desktop viewport */
     }
   }
   
@@ -530,8 +593,37 @@
     --is-pwa: 1;
   }
   
-  /* Mobile viewport specific attributes get captured here */
-  /* These CSS variables can be used anywhere in the stylesheet */
+  /* 
+   * ELEVATION SYSTEM
+   * Standardized elevation levels for UI components
+   */
+  .elevation-1 {
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .elevation-2 {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .elevation-3 {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  /* 
+   * MOTION SYSTEM
+   * Standard transitions for UI interactions
+   */
+  .motion-standard {
+    transition: all var(--transition-standard);
+  }
+  
+  .motion-fast {
+    transition: all var(--transition-fast);
+  }
+  
+  .motion-slow {
+    transition: all var(--transition-slow);
+  }
 }
 
   /* Mobile content with navigation - Standard layout for all pages */
@@ -597,51 +689,145 @@
 /* ======================================= */
 @layer base {
   :root {
-    /* Safe area variables */
+    /* 
+     * =======================================================
+     * FOUNDATIONAL DESIGN SYSTEM
+     * =======================================================
+     */
+    
+    /* 
+     * SPACING SCALE - 4px Grid System
+     * All component spacing should be based on these values
+     */
+    --space-0: 0rem;
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+    
+    /* 
+     * TYPOGRAPHY SCALE
+     * Standardized type sizes across the application
+     */
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-md: 1rem;       /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+    
+    /* Font weights */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Line heights */
+    --line-height-none: 1;
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+    --line-height-loose: 2;
+    
+    /* Letter spacing */
+    --letter-spacing-tighter: -0.05em;
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0em;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    
+    /* 
+     * BORDER RADIUS
+     * Consistent rounded corners
+     */
+    --radius-none: 0;
+    --radius-sm: 0.125rem;   /* 2px */
+    --radius-md: 0.25rem;    /* 4px - matches spacing grid */
+    --radius-lg: 0.5rem;     /* 8px - matches spacing grid */
+    --radius-xl: 0.75rem;    /* 12px - matches spacing grid */
+    --radius-2xl: 1rem;      /* 16px - matches spacing grid */
+    --radius-full: 9999px;
+    
+    /* 
+     * ANIMATION & TRANSITIONS
+     * Standard timing functions and durations
+     */
+    --transition-fast: 150ms;
+    --transition-standard: 250ms;
+    --transition-slow: 350ms;
+    --transition-function-default: cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-function-linear: linear;
+    --transition-function-in: cubic-bezier(0.4, 0, 1, 1);
+    --transition-function-out: cubic-bezier(0, 0, 0.2, 1);
+    --transition-function-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* 
+     * SHADOWS & ELEVATION
+     * Consistent elevation levels
+     */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+    --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 1px 4px 0 rgba(0, 0, 0, 0.02);
+    --shadow-card-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.06), 0 1px 6px 0 rgba(0, 0, 0, 0.03);
+    --shadow-button: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-elevated: 0 16px 32px -1px rgba(0, 0, 0, 0.12), 0 8px 16px -2px rgba(0, 0, 0, 0.08);
+    --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+    --shadow-focus: 0 0 0 2px rgba(var(--primary), 0.2);
+    
+    /*
+     * SAFE AREA HANDLING
+     * Variables for device notches and insets
+     */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     
-    /* Min padding values - using relative units instead of fixed px */
-    --min-top-padding: 0.25rem; /* Was 4px */
-    --min-side-padding: 1rem; /* Was 16px */
+    /* Min padding values - consistent with spacing scale */
+    --min-top-padding: var(--space-1); /* 4px */
+    --min-side-padding: var(--space-4); /* 16px */
     
-    /* Standard values for mobile layout components */
-    --status-bar-height: 3rem; /* Using relative units for better scaling */
-    
-    /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES 
-     * Following Apple Human Interface Guidelines for Tab Bar and Material Design
-     * https://developer.apple.com/design/human-interface-guidelines/components/navigation/tab-bars
-     * https://material.io/components/bottom-navigation/specs
+    /* 
+     * MOBILE UI & NAVIGATION
+     * Following Apple Human Interface Guidelines & Material Design
      */
+    --status-bar-height: 3rem; /* 48px */
     
-    /* UPDATED: Base mobile navigation height increased for better tap targets and visual prominence
-     * - Using exactly 3.5rem = 56px at default font size (16px)
-     * - This matches Material Design minimum height recommendation (56px) 
-     * - Provides larger tap targets for better accessibility
-     * - Allows for properly sized icons (24px) with appropriate padding
-     */
-    --mobile-nav-height: 3.5rem; /* 56px - standard size, increased from 48px */
-    --mobile-nav-z-index: 50;  /* Keep it above everything else */
-    --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect */
-    --mobile-nav-anim-speed: 300ms;
-    --mobile-nav-anim-easing: ease-in-out;
+    /* Base navigation values */
+    --mobile-nav-height: 3.5rem; /* 56px - Material Design standard */
+    --mobile-nav-z-index: 50;
+    --mobile-nav-blur: 0.75rem;
+    --mobile-nav-anim-speed: var(--transition-standard);
+    --mobile-nav-anim-easing: var(--transition-function-in-out);
     --mobile-nav-shadow: var(--shadow-sm);
     --mobile-nav-active-color: hsl(var(--primary));
     --mobile-nav-inactive-color: hsl(var(--muted-foreground));
     
-    /* UPDATED: Icon and Label specs per standard guidelines */
-    --mobile-nav-icon-size: 1.5rem;   /* 24px - Standard mobile icon size */
-    --mobile-nav-text-size: 0.75rem;  /* 12px - Increased for better readability (was 10px) */
-    --mobile-nav-icon-spacing: 0.375rem; /* 6px - Increased spacing for better visual hierarchy (was 4px) */
-    --mobile-nav-item-padding: 0.75rem; /* 12px - Standard padding around items for proper spacing */
+    /* Navigation UI components */
+    --mobile-nav-icon-size: 1.5rem;       /* 24px */
+    --mobile-nav-text-size: 0.75rem;      /* 12px */
+    --mobile-nav-icon-spacing: 0.375rem;  /* 6px */
+    --mobile-nav-item-padding: 0.75rem;   /* 12px */
     
-    /* Active indicator specs - enhanced for better visibility */
+    /* Active state indicators */
     --mobile-nav-indicator-height: 0.125rem; /* 2px */
-    --mobile-nav-indicator-width: 1.5rem;    /* 24px - Increased for better visibility (was 16px) */
-    --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
-    --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
+    --mobile-nav-indicator-width: 1.5rem;    /* 24px */
+    --mobile-nav-active-weight: var(--font-weight-semibold);
+    --mobile-nav-inactive-weight: var(--font-weight-normal);
     
     /* Base colors - Modern financial app, iOS 17/macOS Sonoma inspired */
     --background: 210 25% 98%;
