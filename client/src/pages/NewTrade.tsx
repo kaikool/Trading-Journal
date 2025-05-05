@@ -3,7 +3,14 @@ import { useLocation } from "wouter";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import TradeFormNew from "@/components/trades/TradeFormNew";
-import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardGradient, 
+  CardHeader, 
+  CardTitle, 
+  CardIcon 
+} from "@/components/ui/card";
 import { Loader2, LineChart } from "lucide-react";
 
 export default function NewTrade() {
@@ -37,18 +44,44 @@ export default function NewTrade() {
       </div>
 
       {isSubmitting ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="text-center">
-            <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-5" />
+        <Card className="relative overflow-hidden card-spotlight">
+          <CardGradient 
+            variant="primary"
+            intensity="subtle"
+            direction="top-right"
+          />
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-primary/10 p-6 mb-5">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            </div>
             <h3 className="text-lg font-semibold">Saving your trade...</h3>
             <p className="text-muted-foreground mt-2 max-w-md">
               Please wait while we record your trade details and process any uploaded images.
             </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ) : (
-        <Card className="overflow-x-hidden">
-          <CardContent className="px-4 sm:px-6 pt-4 pb-4">
+        <Card className="relative overflow-hidden card-spotlight">
+          <CardGradient 
+            variant="primary"
+            intensity="subtle"
+            direction="bottom-left"
+          />
+          
+          <CardHeader className="pb-0">
+            <CardTitle className="text-base font-medium flex items-center gap-2">
+              <CardIcon
+                color="primary"
+                size="sm"
+                variant="soft"
+              >
+                <LineChart className="h-4 w-4" />
+              </CardIcon>
+              New Trade Entry
+            </CardTitle>
+          </CardHeader>
+          
+          <CardContent>
             <TradeFormNew 
               mode="new"
               userId={userId}
