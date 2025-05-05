@@ -1677,14 +1677,21 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
+    max-width: 100%;
   }
   
-  /* Unified content container */
+  /* App content container - unified styles */
   .app-content-container {
     flex: 1;
     position: relative;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    max-width: 1200px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
   /* Chart legend styling */

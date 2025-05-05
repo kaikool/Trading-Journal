@@ -16,7 +16,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         thay vì dùng JavaScript isPWA()
       */}
       <main className="app-content-container mobile-content-with-navigation">
-        <div className="flex-1 flex flex-col w-full">
+        <div className="flex-1 flex flex-col w-full max-w-md mx-auto">
           {children}
         </div>
         {/* Main content container now has standardized bottom padding directly in mobile-content-with-navigation class */}

@@ -276,7 +276,7 @@ function MainContent() {
         // Sử dụng app-layout-container thống nhất cho cả mobile và desktop
         <div className="flex flex-col w-full app-layout-container">
           <MenuBar mode="desktop" />
-          <div className="mt-16 app-content-container"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
+          <div className="mt-16 app-content-container max-w-7xl mx-auto"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
             {renderPageContent()}
           </div>
         </div>
