@@ -488,7 +488,8 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                       tickLine={false}
                       axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                      tickMargin={4} // Chuẩn hóa theo quy tắc 4px
+                      tickMargin={4}
+                      interval={0} /* Hiển thị tất cả các giá trị trục X */
                     />
                     <YAxis 
                       dataKey="name"
@@ -496,7 +497,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       tick={false}
                       tickLine={false}
                       axisLine={false}
-                      width={8} // Chuẩn hóa theo quy tắc 4px
+                      width={8} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
                     />
                     <Tooltip content={<EmotionWinRateTooltip />} />
                     <Bar 
@@ -606,7 +607,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
             {emotionDistributionData.length > 0 ? (
               <div className="h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+                  <PieChart margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */>
                     <Pie
                       data={emotionDistributionData}
                       cx="50%"
@@ -663,7 +664,8 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
-                    tickMargin={4} // Chuẩn hóa theo quy tắc 4px
+                    tickMargin={4}
+                    interval={0} /* Hiển thị tất cả các giá trị trục X */
                   />
                   <YAxis 
                     hide 
@@ -677,7 +679,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                     iconSize={6}
                     wrapperStyle={{
                       fontSize: "10px",
-                      paddingTop: "4px", // Chuẩn hóa theo quy tắc 4px
+                      paddingTop: "4px" /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
                     }}
                     iconType="circle"
                   />
