@@ -68,20 +68,7 @@ export default function NewTrade() {
             direction="bottom-left"
           />
           
-          <CardHeader className="pb-0">
-            <CardTitle className="text-base font-medium flex items-center gap-2">
-              <CardIcon
-                color="primary"
-                size="sm"
-                variant="soft"
-              >
-                <LineChart className="h-4 w-4" />
-              </CardIcon>
-              New Trade Entry
-            </CardTitle>
-          </CardHeader>
-          
-          <CardContent>
+          <CardContent className="pt-6">
             <TradeFormNew 
               mode="new"
               userId={userId}
