@@ -183,7 +183,7 @@ export function RecentTradesCard({
   if (isLoading) {
     return (
       <Card className="border shadow-sm h-full flex flex-col">
-        <CardHeader className="pb-2">
+        <CardHeader className="dashboard-card-header">
           <div className="flex justify-between">
             <div>
               <Skeleton className="h-7 w-40 mb-2" />
@@ -211,7 +211,7 @@ export function RecentTradesCard({
 
   return (
     <Card className="border shadow-sm h-full flex flex-col">
-      <CardHeader className="pb-2">
+      <CardHeader className="dashboard-card-header">
         <div className="flex justify-between">
           <div>
             <CardTitle className="text-xl font-semibold flex items-center">
@@ -225,7 +225,7 @@ export function RecentTradesCard({
         </div>
       </CardHeader>
       
-      <CardContent className="py-1 flex-grow">
+      <CardContent className="dashboard-card-content py-1 flex-grow">
         {trades.length > 0 ? (
           <div className="divide-y divide-border/30">
             {memoizedTradesList}

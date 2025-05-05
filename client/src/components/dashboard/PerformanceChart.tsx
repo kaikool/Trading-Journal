@@ -74,13 +74,13 @@ export function PerformanceChart({
   if (effectiveIsLoading) {
     return (
       <Card className="balance-chart">
-        <CardHeader className="pb-2">
+        <CardHeader className="dashboard-card-header">
           <div className="flex justify-between items-center">
             <Skeleton className="h-7 w-40" />
             <Skeleton className="h-6 w-24" />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="dashboard-card-content">
           <Skeleton className="h-[var(--balance-chart-height)] w-full" />
         </CardContent>
       </Card>
@@ -91,7 +91,7 @@ export function PerformanceChart({
   if (!data || data.length === 0) {
     return (
       <Card className="balance-chart">
-        <CardHeader className="pb-2">
+        <CardHeader className="dashboard-card-header">
           <div className="flex justify-between items-center">
             <CardTitle className="flex items-center card-title" style={{
               fontSize: 'var(--card-title-size)',
@@ -108,7 +108,7 @@ export function PerformanceChart({
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="balance-chart-empty">
+        <CardContent className="balance-chart-empty dashboard-card-content">
           <Info className="balance-chart-empty-icon" />
           <p className="balance-chart-empty-title">No performance data available</p>
           <p className="balance-chart-empty-subtitle">Complete trades will appear in this chart</p>
@@ -168,7 +168,7 @@ export function PerformanceChart({
   
   return (
     <Card className="balance-chart">
-      <CardHeader className="pb-2">
+      <CardHeader className="dashboard-card-header">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
@@ -205,7 +205,7 @@ export function PerformanceChart({
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="dashboard-card-content">
         <div className="balance-chart-container">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
