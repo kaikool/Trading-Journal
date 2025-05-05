@@ -70,3 +70,12 @@ body[data-offline-mode="true"] .suspense-boundary::after {
   /* Make sure to respect safe areas */
   padding-bottom: max(var(--safe-bottom), 8px);
 }
+
+/* Class-based auto-hide with direct CSS selectors */
+html.hide-header .mobile-header {
+  transform: translateY(-100%);
+}
+
+html.hide-nav .mobile-nav {
+  transform: translateY(100%);
+}

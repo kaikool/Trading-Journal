@@ -10,19 +10,59 @@ interface MobileLayoutProps {
 
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   const { initScrollListener, removeScrollListener } = useLayout();
-  const contentRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLElement>(null);
   
   // Thiết lập scroll listener khi component mount
   useEffect(() => {
+    console.log("MobileLayout mounted, setting up scroll listener");
+    
+    // Thêm một sự kiện cuộn trực tiếp
+    const handleDirectScroll = () => {
+      console.log("Direct scroll detected");
+      
+      // Lấy vị trí cuộn hiện tại
+      const scrollY = window.scrollY;
+      const lastScrollY = contentRef.current?.getAttribute('data-last-scroll') || '0';
+      const lastScrollYNum = parseInt(lastScrollY);
+      
+      // Lưu vị trí cuộn mới
+      contentRef.current?.setAttribute('data-last-scroll', scrollY.toString());
+      
+      // Điều chỉnh trạng thái UI
+      if (scrollY < 10) {
+        // Always show when near top
+        document.documentElement.classList.remove('hide-header');
+        document.documentElement.classList.remove('hide-nav');
+      } else {
+        // Show/hide based on scroll direction
+        if (scrollY > lastScrollYNum + 10) {
+          // Scrolling down - hide
+          document.documentElement.classList.add('hide-header');
+          document.documentElement.classList.add('hide-nav'); 
+        } else if (scrollY < lastScrollYNum - 10) {
+          // Scrolling up - show
+          document.documentElement.classList.remove('hide-header');
+          document.documentElement.classList.remove('hide-nav');
+        }
+      }
+    };
+    
     // Đợi một chút để đảm bảo DOM đã render
     const timer = setTimeout(() => {
-      // Kết nối scroll container với LayoutContext
-      initScrollListener('#mobile-content-container');
-    }, 100);
+      // Thêm sự kiện scroll trực tiếp vào window
+      window.addEventListener('scroll', handleDirectScroll, { passive: true });
+      
+      // Cũng thử kết nối qua LayoutContext
+      if (contentRef.current) {
+        console.log("Container ref found:", contentRef.current);
+        initScrollListener('', contentRef.current);
+      }
+    }, 500);
     
     // Cleanup khi unmount
     return () => {
       clearTimeout(timer);
+      window.removeEventListener('scroll', handleDirectScroll);
       removeScrollListener();
     };
   }, [initScrollListener, removeScrollListener]);

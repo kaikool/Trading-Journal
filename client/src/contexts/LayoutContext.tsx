@@ -12,7 +12,7 @@ export interface LayoutContextType {
   headerVisible: boolean;
   mobileNavVisible: boolean;
   // Scroll event handler để kết nối vào container
-  initScrollListener: (containerId: string) => void;
+  initScrollListener: (containerId: string, element?: HTMLElement | null) => void;
   removeScrollListener: () => void;
 }
 
@@ -117,19 +117,25 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
   }, []);
   
   // Hàm khởi tạo listener cho sự kiện cuộn
-  const initScrollListener = useCallback((containerId: string) => {
+  const initScrollListener = useCallback((containerId: string, element?: HTMLElement | null) => {
     // Xóa listener cũ nếu có
     removeScrollListener();
     
     // Đảm bảo chúng ta đang kết nối với DOM
-    console.log(`Init scroll listener for: ${containerId}`);
+    console.log(`Init scroll listener with ${element ? 'element reference' : 'selector: ' + containerId}`);
     
     // Đợi để DOM được render hoàn chỉnh
     setTimeout(() => {
-      // Tìm container bằng ID
-      const container = document.querySelector(containerId) as HTMLElement;
+      // Ưu tiên sử dụng tham chiếu DOM được truyền vào
+      let container: HTMLElement | null = element || null;
+      
+      // Nếu không có tham chiếu, thử sử dụng selector
+      if (!container && containerId) {
+        container = document.querySelector(containerId) as HTMLElement;
+      }
+      
       if (!container) {
-        console.warn(`Scroll container with ID ${containerId} not found`);
+        console.warn('No scroll container found');
         return;
       }
       
@@ -143,7 +149,9 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
       
       // Lưu hàm cleanup
       cleanupRef.current = () => {
-        container.removeEventListener('scroll', handleScroll);
+        if (container) {
+          container.removeEventListener('scroll', handleScroll);
+        }
       };
     }, 500);
   }, [handleScroll]);
