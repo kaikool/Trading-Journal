@@ -189,7 +189,7 @@ export function TradingStatsCard({
   
   // Component render
   return (
-    <Card className="relative overflow-hidden card-spotlight">
+    <Card className="relative overflow-hidden">
       {/* Gradient background dựa trên performance */}
       <CardGradient 
         variant={gradientVariant}
@@ -234,7 +234,10 @@ export function TradingStatsCard({
             return (
               <div 
                 key={index} 
-                className="bg-background/50 p-3 rounded-lg border border-border/30 shadow-sm"
+                className={cn(
+                  "p-3 rounded-lg border border-border/30 shadow-sm",
+                  stat.bgColor // Sử dụng màu nền đã được định nghĩa trong mỗi stat
+                )}
                 title={stat.tooltip}
               >
                 <div className="flex justify-between items-center mb-2">
