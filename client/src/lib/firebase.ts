@@ -142,42 +142,80 @@ async function loginUser(email: string, password: string) {
  */
 async function loginWithGoogle() {
   try {
-    const { GoogleAuthProvider, signInWithPopup, getAdditionalUserInfo } = await import("firebase/auth");
+    const { 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      getAdditionalUserInfo, 
+      fetchSignInMethodsForEmail, 
+      linkWithCredential,
+      EmailAuthProvider,
+      signInWithEmailAndPassword 
+    } = await import("firebase/auth");
+    
     const provider = new GoogleAuthProvider();
     
-    // Đăng nhập với Google
-    const result = await signInWithPopup(auth, provider);
-    
-    // Kiểm tra xem người dùng là mới hay không
-    const additionalInfo = getAdditionalUserInfo(result);
-    const isNewUser = additionalInfo?.isNewUser || false;
-    
-    // Nếu là người dùng mới, tạo hồ sơ người dùng trong Firestore
-    if (isNewUser && result.user) {
-      debug("Creating new user profile for Google sign-in");
+    try {
+      // Đăng nhập với Google
+      const result = await signInWithPopup(auth, provider);
       
-      // Lấy thông tin cơ bản từ tài khoản Google
-      const { uid, email, displayName, photoURL } = result.user;
+      // Kiểm tra xem người dùng là mới hay không
+      const additionalInfo = getAdditionalUserInfo(result);
+      const isNewUser = additionalInfo?.isNewUser || false;
       
-      // Tạo tài liệu người dùng trong Firestore
-      await setDoc(doc(db, "users", uid), {
-        email,
-        displayName: displayName || email?.split('@')[0] || "User",
-        photoURL,
-        createdAt: serverTimestamp(),
-        provider: "google",
-        initialBalance: DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE,
-        currentBalance: DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE,
-      });
+      // Nếu là người dùng mới, tạo hồ sơ người dùng trong Firestore
+      if (isNewUser && result.user) {
+        debug("Creating new user profile for Google sign-in");
+        
+        // Lấy thông tin cơ bản từ tài khoản Google
+        const { uid, email, displayName, photoURL } = result.user;
+        
+        // Tạo tài liệu người dùng trong Firestore
+        await setDoc(doc(db, "users", uid), {
+          email,
+          displayName: displayName || email?.split('@')[0] || "User",
+          photoURL,
+          createdAt: serverTimestamp(),
+          provider: "google",
+          initialBalance: DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE,
+          currentBalance: DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE,
+        });
+        
+        debug("User profile created successfully for Google sign-in");
+      }
       
-      debug("User profile created successfully for Google sign-in");
+      // Trả về kết quả đăng nhập và thêm thông tin isNewUser
+      return {
+        ...result,
+        isNewUser
+      };
+    } catch (error: any) {
+      // Xử lý trường hợp email đã tồn tại nhưng dùng phương thức khác
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        // Lấy email từ lỗi
+        const email = error.customData?.email;
+        if (!email) throw error;
+        
+        debug(`Email ${email} đã tồn tại với phương thức khác`);
+        
+        // Kiểm tra phương thức đăng nhập hiện có
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        
+        // Nếu email/password là một trong các phương thức, thông báo người dùng
+        if (methods.includes('password')) {
+          throw new Error(
+            `Tài khoản với email ${email} đã tồn tại. Vui lòng đăng nhập bằng mật khẩu hoặc sử dụng chức năng khôi phục mật khẩu.`
+          );
+        } else {
+          // Trường hợp các nhà cung cấp khác
+          throw new Error(
+            `Email ${email} đã được liên kết với một phương thức đăng nhập khác (${methods.join(', ')}). Vui lòng sử dụng phương thức đó.`
+          );
+        }
+      }
+      
+      // Nếu là lỗi khác, đẩy lên xử lý ở trên
+      throw error;
     }
-    
-    // Trả về kết quả đăng nhập và thêm thông tin isNewUser
-    return {
-      ...result,
-      isNewUser
-    };
   } catch (error) {
     logError("Error during Google sign-in:", error);
     throw error;
