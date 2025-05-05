@@ -672,13 +672,14 @@ export function StrategiesManagement() {
   }, [setNewRule, setNewEntryCondition, setNewExitCondition, setNewTimeframe]);
   
   // State for a new strategy
-  const [newStrategy, setNewStrategy] = useState<TradingStrategy>({
+  const [newStrategy, setNewStrategy] = useState<Omit<TradingStrategy, 'userId' | 'timeframes' | 'createdAt' | 'updatedAt'> & { timeframes?: string[] }>({
     id: uuidv4(),
     name: "",
     description: "",
     rules: [],
     entryConditions: [],
     exitConditions: [],
+    timeframes: [],
     isDefault: false,
   });
   
@@ -902,6 +903,8 @@ export function StrategiesManagement() {
       // Now add the new strategy
       const strategyWithTimestamps = {
         ...newStrategy,
+        userId,
+        timeframes: newStrategy.timeframes || [],
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now()
       };
@@ -911,7 +914,7 @@ export function StrategiesManagement() {
       // Add to local state with the new ID
       setStrategies(prevStrategies => [
         ...prevStrategies,
-        { ...strategyWithTimestamps, id: newStrategyId }
+        { ...strategyWithTimestamps, id: newStrategyId } as TradingStrategy
       ]);
       
       // Reset form
@@ -922,6 +925,7 @@ export function StrategiesManagement() {
         rules: [],
         entryConditions: [],
         exitConditions: [],
+        timeframes: [],
         isDefault: false,
       });
       
@@ -1175,6 +1179,7 @@ export function StrategiesManagement() {
                       rules: [],
                       entryConditions: [],
                       exitConditions: [],
+                      timeframes: [],
                       isDefault: false,
                     });
                   }}
