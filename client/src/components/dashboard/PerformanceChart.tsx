@@ -205,7 +205,7 @@ export function PerformanceChart({
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="pt-0 pb-4 px-4 sm:px-6">
         <div className="balance-chart-container">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
