@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext, ReactNode, useMemo } from 'react';
+import { createContext, useState, useEffect, useContext, ReactNode, useMemo, useCallback } from 'react';
 import { auth, onTradesSnapshot, getUserData } from '@/lib/firebase';
 import { debug, logError } from '@/lib/debug';
 
@@ -31,19 +31,69 @@ const CACHE_VERSION = 1; // Version hiện tại của cache schema
 export const DataCacheContext = createContext<DataCacheContextType | undefined>(undefined);
 
 export function DataCacheProvider({ children }: { children: ReactNode }) {
-  const [trades, setTrades] = useState<any[]>([]);
-  const [userData, setUserData] = useState<any>(null);
+  // Mã bọc dữ liệu - một state duy nhất chứa toàn bộ trạng thái dữ liệu 
+  const [dataState, setDataState] = useState({
+    trades: [] as any[],
+    userData: null as any,
+    isTradesLoaded: false,
+    isUserDataLoaded: false,
+    isCacheValid: false
+  });
+  
+  // State riêng để quản lý user authentication và loading
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(0);
-  
-  // Thêm các state mới để tracking trạng thái cụ thể
-  const [isTradesLoaded, setIsTradesLoaded] = useState(false);
-  const [isUserDataLoaded, setIsUserDataLoaded] = useState(false);
-  const [isCacheValid, setIsCacheValid] = useState(false);
 
-  // Load cached data initially
+  // Memoize hàm updateCache để tránh tạo lại trong mỗi render
+  const updateCache = useCallback((data: Omit<CachedData, 'version'>) => {
+    try {
+      // Only cache if we have both userData and trades
+      if (data.userData && data.trades && data.trades.length > 0) {
+        // Add version to data before saving
+        const dataWithVersion: CachedData = {
+          ...data,
+          version: CACHE_VERSION
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataWithVersion));
+        debug('[DataCache] Updated cache');
+        
+        // Update all cache-related state in one operation để tránh nhiều lần re-render
+        setDataState(prevState => ({
+          ...prevState,
+          isCacheValid: true,
+          isTradesLoaded: true,
+          isUserDataLoaded: true
+        }));
+      }
+    } catch (error) {
+      logError('[DataCache] Error updating cache:', error);
+      setDataState(prevState => ({
+        ...prevState,
+        isCacheValid: false
+      }));
+    }
+  }, []);
+
+  // Force refresh data - memoize để tránh re-render
+  const refreshData = useCallback(() => {
+    setLastRefresh(Date.now());
+  }, []);
+
+  // Clear cache - memoize để tránh re-render
+  const clearCache = useCallback(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      debug('[DataCache] Cache cleared');
+      refreshData();
+    } catch (error) {
+      logError('[DataCache] Error clearing cache:', error);
+    }
+  }, [refreshData]);
+
+  // Gộp useEffect cho xử lý auth và cache initialization 
   useEffect(() => {
+    // Khởi tạo từ cache
     const loadFromCache = () => {
       try {
         const cachedDataStr = localStorage.getItem(STORAGE_KEY);
@@ -55,18 +105,15 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
           // Kiểm tra phiên bản cache và thời hạn
           if (cachedData.version === CACHE_VERSION && 
               now - cachedData.lastUpdated < CACHE_EXPIRY_TIME) {
-            setTrades(cachedData.trades || []);
-            setUserData(cachedData.userData || null);
-            setIsCacheValid(true);
             
-            // Nếu cache có dữ liệu đầy đủ, đánh dấu là đã loaded
-            if (cachedData.trades && cachedData.trades.length > 0) {
-              setIsTradesLoaded(true);
-            }
-            
-            if (cachedData.userData) {
-              setIsUserDataLoaded(true);
-            }
+            // Cập nhật toàn bộ state trong một lần để tránh nhiều lần re-render
+            setDataState({
+              trades: cachedData.trades || [],
+              userData: cachedData.userData || null,
+              isCacheValid: true,
+              isTradesLoaded: cachedData.trades && cachedData.trades.length > 0,
+              isUserDataLoaded: !!cachedData.userData
+            });
             
             debug('[DataCache] Loaded data from cache');
           } else {
@@ -77,37 +124,40 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
             } else {
               debug('[DataCache] Cache expired, will refresh data');
             }
-            setIsCacheValid(false);
           }
         }
       } catch (error) {
         logError('[DataCache] Error loading from cache:', error);
         // Clear potentially corrupted cache
         localStorage.removeItem(STORAGE_KEY);
-        setIsCacheValid(false);
       }
     };
     
+    // Load cache ngay khi component mount
     loadFromCache();
-  }, []);
-
-  // Listen for authentication changes
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    
+    // Đăng ký Auth listener
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid);
       } else {
         setUserId(null);
-        setUserData(null);
-        setTrades([]);
+        // Reset trạng thái khi đăng xuất
+        setDataState({
+          trades: [],
+          userData: null,
+          isTradesLoaded: false,
+          isUserDataLoaded: false,
+          isCacheValid: false
+        });
         setIsLoading(false);
       }
     });
     
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
 
-  // Fetch or refresh data when userId changes or when refresh is triggered
+  // Fetch và sync data khi userId thay đổi hoặc khi refresh được trigger
   useEffect(() => {
     if (!userId) return;
     
@@ -135,23 +185,26 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
     }
     
-    // Store current trades reference for comparison
-    const currentTrades = trades;
-    const currentUserData = userData;
+    // Lưu trữ tham chiếu hiện tại để tránh stale closure
+    const { trades: currentTrades, userData: currentUserData } = dataState;
     
     // Tối ưu hóa fetch user data để sử dụng cached data nếu có
     const fetchUserData = async () => {
       try {
         // Nếu đã có userData và không phải refresh, tránh re-fetch
-        if (currentUserData && lastRefresh === 0) {
+        if (currentUserData && lastRefresh === 0 && dataState.isUserDataLoaded) {
           debug('[DataCache] Using existing userData, avoiding re-fetch');
           return;
         }
         
         const data = await getUserData(userId);
         if (data) {
-          setUserData(data);
-          setIsUserDataLoaded(true);
+          // Update userData trong một lần
+          setDataState(prevState => ({
+            ...prevState,
+            userData: data,
+            isUserDataLoaded: true
+          }));
           
           // Update cache
           updateCache({ 
@@ -177,22 +230,32 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
           debug(`[DataCache] Received ${fetchedTrades.length} trades from snapshot`);
           
           // Sử dụng function form của setState để tránh dependency loop
-          setTrades(fetchedTrades);
-          setIsTradesLoaded(true);
-          setIsLoading(false);
+          setDataState(prevState => {
+            // Kiểm tra nếu có thay đổi thực sự
+            const tradesChanged = JSON.stringify(fetchedTrades) !== JSON.stringify(prevState.trades);
+            
+            if (tradesChanged) {
+              debug('[DataCache] Trades changed, updating cache');
+              // Update cache outside of setState để tránh re-render thêm
+              setTimeout(() => {
+                updateCache({ 
+                  trades: fetchedTrades, 
+                  userData: prevState.userData, 
+                  lastUpdated: Date.now()
+                });
+              }, 0);
+            } else {
+              debug('[DataCache] Trades unchanged, avoiding cache update');
+            }
+            
+            return {
+              ...prevState,
+              trades: fetchedTrades,
+              isTradesLoaded: true
+            };
+          });
           
-          // Chỉ update cache khi có thay đổi thực sự - sử dụng ref đóng lại từ closure
-          if (JSON.stringify(fetchedTrades) !== JSON.stringify(currentTrades)) {
-            debug('[DataCache] Trades changed, updating cache');
-            // Update cache with new trades
-            updateCache({ 
-              trades: fetchedTrades, 
-              userData: currentUserData, 
-              lastUpdated: Date.now()
-            });
-          } else {
-            debug('[DataCache] Trades unchanged, avoiding cache update');
-          }
+          setIsLoading(false);
         },
         (error) => {
           logError("[DataCache] Error fetching trades:", error);
@@ -219,67 +282,25 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       return () => {}; // Return empty cleanup function
     }
-  }, [userId, lastRefresh]); // Loại bỏ trades và userData khỏi danh sách dependencies
-
-  // Helper function to update the cache
-  const updateCache = (data: Omit<CachedData, 'version'>) => {
-    try {
-      // Only cache if we have both userData and trades
-      if (data.userData && data.trades && data.trades.length > 0) {
-        // Add version to data before saving
-        const dataWithVersion: CachedData = {
-          ...data,
-          version: CACHE_VERSION
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataWithVersion));
-        debug('[DataCache] Updated cache');
-        
-        // Update cache validity state
-        setIsCacheValid(true);
-        setIsTradesLoaded(true);
-        setIsUserDataLoaded(true);
-      }
-    } catch (error) {
-      logError('[DataCache] Error updating cache:', error);
-      setIsCacheValid(false);
-    }
-  };
-
-  // Force refresh data
-  const refreshData = () => {
-    setLastRefresh(Date.now());
-  };
-
-  // Clear cache
-  const clearCache = () => {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      debug('[DataCache] Cache cleared');
-      refreshData();
-    } catch (error) {
-      logError('[DataCache] Error clearing cache:', error);
-    }
-  };
+  }, [userId, lastRefresh, updateCache, dataState]); 
 
   // Memoize value để tránh re-render
   const value = useMemo(() => ({
-    trades,
-    userData,
+    trades: dataState.trades,
+    userData: dataState.userData,
     isLoading,
     userId,
     refreshData,
     clearCache,
-    isCacheValid,
-    isTradesLoaded,
-    isUserDataLoaded
+    isCacheValid: dataState.isCacheValid,
+    isTradesLoaded: dataState.isTradesLoaded,
+    isUserDataLoaded: dataState.isUserDataLoaded
   }), [
-    trades, 
-    userData, 
+    dataState,
     isLoading, 
     userId, 
-    isCacheValid, 
-    isTradesLoaded, 
-    isUserDataLoaded
+    refreshData,
+    clearCache
   ]);
 
   return (
