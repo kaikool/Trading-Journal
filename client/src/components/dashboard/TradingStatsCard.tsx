@@ -1,4 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardIcon,
+  CardGradient, 
+  CardValue 
+} from "@/components/ui/card";
 import { 
   BarChart2, 
   TrendingUp, 
@@ -37,21 +45,23 @@ export function TradingStatsCard({
   // Loading state
   if (isLoading) {
     return (
-      <Card className="border shadow-sm">
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
+      <Card className="relative overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-8 rounded-md" />
             <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-5 w-24 rounded-full" />
           </div>
+          <Skeleton className="h-6 w-24 rounded-full" />
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {Array(4).fill(0).map((_, index) => (
-              <div key={index} className="stat-skeleton-tile">
-                <div className="stat-skeleton-header">
-                  <Skeleton className="h-4 w-24" />
+              <div key={index} className="bg-muted/10 p-3 rounded-lg border border-muted/30">
+                <div className="flex justify-between items-center mb-2">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-6 w-6 rounded-md" />
                 </div>
-                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-7 w-16 mt-1" />
               </div>
             ))}
           </div>
@@ -171,60 +181,84 @@ export function TradingStatsCard({
     );
   }
   
+  // Xác định gradient variant dựa trên performance
+  const gradientVariant = performancePoints === 3 ? 'success' : 
+                         performancePoints === 2 ? 'primary' :
+                         performancePoints === 1 ? 'warning' :
+                         performancePoints === 0 ? 'destructive' : 'default';
+  
   // Component render
   return (
-    <Card>
-      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="flex items-center card-title" style={{
-            fontSize: 'var(--card-title-size)',
-            fontWeight: 'var(--card-title-weight)',
-            lineHeight: '1.5',
-            padding: '0.125rem 0'
-          }}>
-            <BarChart2 style={{
-              height: 'var(--card-icon-size)',
-              width: 'var(--card-icon-size)',
-              marginRight: 'var(--spacing-2)'
-            }} className="text-primary" />
-            Trading Statistics
-          </CardTitle>
-          
-          <div className={cn(
-            "flex items-center px-3 py-1 rounded-full text-xs font-medium",
-            performanceConfig.badgeClass
-          )}>
-            <performanceConfig.icon className="h-3.5 w-3.5 mr-1.5" />
-            {performanceConfig.tag}
-          </div>
+    <Card className="relative overflow-hidden card-spotlight">
+      {/* Gradient background dựa trên performance */}
+      <CardGradient 
+        variant={gradientVariant}
+        intensity="subtle"
+        direction="top-right"
+      />
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <CardIcon
+            color="primary"
+            size="sm"
+            variant="soft"
+          >
+            <BarChart2 className="h-4 w-4" />
+          </CardIcon>
+          Trading Statistics
+        </CardTitle>
+        
+        <div className={cn(
+          "flex items-center px-3 py-1 rounded-full text-xs font-medium",
+          performanceConfig.badgeClass
+        )}>
+          <performanceConfig.icon className="h-3.5 w-3.5 mr-1.5" />
+          {performanceConfig.tag}
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
+      <CardContent>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
-            <div 
-              key={index} 
-              className="stat-card stat-card-compact"
-              title={stat.tooltip}
-              // Đã di chuyển CSS variables vào globals.css với class .stat-card-compact
-            >
-              <div className="stat-card-header">
-                <div className={cn("stat-card-title", stat.color)}>
-                  {stat.label}
+          {stats.map((stat, index) => {
+            // Map các trạng thái màu sắc sang các cấu hình CardIcon và CardValue
+            const iconColor = stat.color.includes('primary') ? 'primary' :
+                            stat.color.includes('success') ? 'success' :
+                            stat.color.includes('destructive') ? 'destructive' :
+                            stat.color.includes('warning') ? 'warning' : 'muted';
+            
+            const valueStatus = stat.color.includes('success') ? 'success' :
+                              stat.color.includes('destructive') ? 'danger' :
+                              stat.color.includes('warning') ? 'warning' : 'default';
+            
+            return (
+              <div 
+                key={index} 
+                className="bg-background/50 p-3 rounded-lg border border-border/30 shadow-sm"
+                title={stat.tooltip}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {stat.label}
+                  </span>
+                  <CardIcon
+                    color={iconColor}
+                    size="sm"
+                    variant="soft"
+                  >
+                    <stat.icon className="h-3.5 w-3.5" />
+                  </CardIcon>
                 </div>
-                <div className={cn(
-                  "stat-card-icon-container",
-                  stat.bgColor
-                )}>
-                  <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
-                </div>
+                <CardValue
+                  size="md"
+                  status={valueStatus}
+                  className="font-bold"
+                >
+                  {stat.value}
+                </CardValue>
               </div>
-              <div className={cn("stat-card-value", stat.color)}>
-                {stat.value}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>
