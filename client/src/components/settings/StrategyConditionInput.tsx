@@ -68,6 +68,7 @@ interface StrategyConditionFormProps {
   onChange: (condition: StrategyCondition) => void;
   onAdd?: () => void;
   onCancel?: () => void;
+  onSave?: () => void;
   isNew?: boolean;
 }
 
@@ -79,6 +80,7 @@ export function StrategyConditionForm({
   onChange,
   onAdd,
   onCancel,
+  onSave,
   isNew = false
 }: StrategyConditionFormProps) {
   const [advancedMode, setAdvancedMode] = useState(false);
@@ -259,8 +261,13 @@ export function StrategyConditionForm({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Người dùng bấm Save thì mới gọi onChange
-                onChange({...condition});
+                console.log("Save button clicked");
+                // Người dùng bấm Save thì gọi onSave (nếu có) ngược lại thì gọi onChange
+                if (onSave) {
+                  onSave();
+                } else {
+                  onChange({...condition});
+                }
               }}
               disabled={!condition.label.trim()}
               className="h-7 px-3 text-xs"
@@ -416,7 +423,10 @@ export function StrategyConditionList({
   };
   
   // Khi Save, mới gọi onUpdate
+  // Hàm này sẽ được gọi khi nhấn nút Save
   const handleUpdate = (updatedCondition: StrategyCondition) => {
+    console.log("Saving condition:", updatedCondition);
+    
     // Đơn giản hóa: tạo đối tượng updates rõ ràng thay vì truyền toàn bộ đối tượng
     const cleanUpdates = {
       label: updatedCondition.label,
@@ -501,6 +511,13 @@ export function StrategyConditionList({
                   onCancel={() => setEditingId(null)}
                   onAdd={undefined}
                   isNew={false}
+                  onSave={() => {
+                    console.log("Saving from custom save handler");
+                    const updatedCondition = editingConditions[condition.id];
+                    if (updatedCondition) {
+                      handleUpdate(updatedCondition);
+                    }
+                  }}
                 />
               ) : (
                 <StrategyConditionItem
