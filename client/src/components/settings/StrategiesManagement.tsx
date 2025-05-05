@@ -500,6 +500,7 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
   onUpdateStrategy,
   onDeleteStrategy,
   onSetDefaultStrategy,
+  handleStrategyFieldChange, // Add this prop
   // Form state variables
   newRule,
   newEntryCondition,
@@ -534,34 +535,39 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
     setNewExitCondition("");
     setNewTimeframe("");
   }, [setNewRule, setNewEntryCondition, setNewExitCondition, setNewTimeframe]);
-
+  
   return (
     <Accordion type="single" collapsible className="space-y-2">
-      {strategies.map((strategy) => (
-        <StrategyItem
-          key={strategy.id}
-          strategy={strategy}
-          isEditMode={editMode === strategy.id}
-          isSaving={isSaving}
-          onEdit={() => onSetEditMode(strategy.id)}
-          onUpdate={onUpdateStrategy}
-          onDelete={() => {
-            if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
-              onDeleteStrategy(strategy.id, strategy.name);
-            }
-          }}
-          onSetAsDefault={() => onSetDefaultStrategy(strategy)}
-          onEditFieldChange={(fieldName, value) => {
-            // Gọi đến hàm cập nhật từ component cha
-            handleStrategyFieldChange(strategy.id, fieldName, value);
-          }}
-          newRule={newRule}
-          newEntryCondition={newEntryCondition}
-          newExitCondition={newExitCondition}
-          newTimeframe={newTimeframe}
-          resetFormFields={resetFormFields}
-        />
-      ))}
+      {strategies.map((strategy) => {
+        // Handler function defined inside map for each strategy
+        const handleEditFieldChange = (fieldName: string, value: any) => {
+          console.log("[DEBUG] handleEditFieldChange called for strategy:", strategy.id, fieldName, value);
+          handleStrategyFieldChange(strategy.id, fieldName, value);
+        };
+        
+        return (
+          <StrategyItem
+            key={strategy.id}
+            strategy={strategy}
+            isEditMode={editMode === strategy.id}
+            isSaving={isSaving}
+            onEdit={() => onSetEditMode(strategy.id)}
+            onUpdate={onUpdateStrategy}
+            onDelete={() => {
+              if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
+                onDeleteStrategy(strategy.id, strategy.name);
+              }
+            }}
+            onSetAsDefault={() => onSetDefaultStrategy(strategy)}
+            onEditFieldChange={handleEditFieldChange}
+            newRule={newRule}
+            newEntryCondition={newEntryCondition}
+            newExitCondition={newExitCondition}
+            newTimeframe={newTimeframe}
+            resetFormFields={resetFormFields}
+          />
+        );
+      })}
     </Accordion>
   );
 });
