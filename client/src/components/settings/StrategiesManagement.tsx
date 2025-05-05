@@ -113,13 +113,34 @@ const addConditionToArray = (array: StrategyCondition[], condition: StrategyCond
 };
 
 const updateConditionInArray = (array: StrategyCondition[], id: string, updates: Partial<StrategyCondition>): StrategyCondition[] => {
-  return array.map(condition => 
-    condition.id === id ? { ...condition, ...updates } : condition
-  );
+  // Đơn giản hóa, tạo mảng mới cho mỗi phần tử
+  return array.map(condition => {
+    if (condition.id === id) {
+      // Tạo đối tượng mới hoàn toàn
+      return {
+        id: condition.id,
+        label: updates.label !== undefined ? updates.label : condition.label,
+        order: updates.order !== undefined ? updates.order : condition.order,
+        indicator: updates.indicator !== undefined ? updates.indicator : condition.indicator,
+        timeframe: updates.timeframe !== undefined ? updates.timeframe : condition.timeframe,
+        expectedValue: updates.expectedValue !== undefined ? updates.expectedValue : condition.expectedValue,
+        description: updates.description !== undefined ? updates.description : condition.description
+      };
+    }
+    // Trả về bản sao của condition nếu không phải là id đang cập nhật
+    return {...condition};
+  });
 };
 
 const removeConditionFromArray = (array: StrategyCondition[], id: string): StrategyCondition[] => {
-  return array.filter(condition => condition.id !== id);
+  // Lọc đơn giản, tạo mảng mới
+  const newArray = array.filter(condition => condition.id !== id);
+  
+  // Cập nhật lại thứ tự (order) cho mỗi phần tử
+  return newArray.map((condition, index) => ({
+    ...condition,
+    order: index
+  }));
 };
 
 // Helper to add item to array

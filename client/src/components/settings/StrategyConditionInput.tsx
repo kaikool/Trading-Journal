@@ -93,12 +93,16 @@ export function StrategyConditionForm({
             placeholder="Enter condition..."
             value={condition.label}
             onChange={(e) => {
-              // Sử dụng bản sao mới tránh tham chiếu đối tượng gốc
-              const updatedCondition = {
-                ...condition,
-                label: e.target.value
-              };
-              onChange(updatedCondition);
+              // Tạo đối tượng condition mới với giá trị label mới
+              onChange({
+                id: condition.id,
+                label: e.target.value,
+                order: condition.order,
+                indicator: condition.indicator,
+                timeframe: condition.timeframe,
+                expectedValue: condition.expectedValue,
+                description: condition.description
+              });
             }}
             className="h-8 text-sm flex-1"
           />
@@ -126,11 +130,16 @@ export function StrategyConditionForm({
               <Select
                 value={condition.indicator}
                 onValueChange={(value) => {
-                  const updatedCondition = {
-                    ...condition,
-                    indicator: value
-                  };
-                  onChange(updatedCondition);
+                  // Tạo đối tượng mới với các thuộc tính cụ thể
+                  onChange({
+                    id: condition.id,
+                    label: condition.label,
+                    order: condition.order,
+                    indicator: value,
+                    timeframe: condition.timeframe,
+                    expectedValue: condition.expectedValue,
+                    description: condition.description
+                  });
                 }}
               >
                 <SelectTrigger 
@@ -395,7 +404,18 @@ export function StrategyConditionList({
   };
   
   const handleUpdate = (updatedCondition: StrategyCondition) => {
-    onUpdate(updatedCondition.id, updatedCondition);
+    // Đơn giản hóa: tạo đối tượng updates rõ ràng thay vì truyền toàn bộ đối tượng
+    const cleanUpdates = {
+      label: updatedCondition.label,
+      order: updatedCondition.order,
+      indicator: updatedCondition.indicator,
+      timeframe: updatedCondition.timeframe,
+      expectedValue: updatedCondition.expectedValue,
+      description: updatedCondition.description
+    };
+    
+    // Gọi onUpdate với id và đối tượng updates đã được làm sạch
+    onUpdate(updatedCondition.id, cleanUpdates);
     setEditingId(null);
   };
   
