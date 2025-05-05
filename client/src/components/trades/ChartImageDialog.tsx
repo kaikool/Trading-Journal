@@ -11,6 +11,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useMotionConfig } from '@/lib/motion.config';
 
 interface ChartImageDialogProps {
   isOpen: boolean;
@@ -204,6 +206,7 @@ export function ChartImageDialog({
   // Tên dialog và mô tả cho truy cập
   const dialogTitle = `${tradePair} - ${currentImage?.label || "Chart"}`;
   const dialogDescription = `Trading chart for ${tradePair}`;
+  const { variants, enabled } = useMotionConfig();
   
   return (
     <Dialog 
@@ -224,7 +227,12 @@ export function ChartImageDialog({
         </DialogDescription>
         
         {/* Thanh tiêu đề nhỏ gọn hơn */}
-        <div className="flex flex-col py-2 px-3 border-b text-sm">
+        <motion.div 
+          className="flex flex-col py-2 px-3 border-b text-sm"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <span className="font-medium chart-title">
             {dialogTitle}
           </span>
@@ -233,12 +241,16 @@ export function ChartImageDialog({
               {`${currentImageIndex + 1}/${availableImages.length}`}
             </span>
           )}
-        </div>
+        </motion.div>
         
         {/* Main content area with swipe handlers */}
         <div className="chart-content">
           {/* Image viewport with zoom and pan handlers */}
-          <div className="chart-image-viewport"
+          <motion.div 
+            className="chart-image-viewport"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -246,101 +258,192 @@ export function ChartImageDialog({
             {...(scale <= 1 ? swipeHandlers : {})}
           >
             {/* Loading indicator */}
-            {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="mt-2 text-xs font-medium">Đang tải...</span>
-              </div>
-            )}
+            <AnimatePresence>
+              {isLoading && (
+                <motion.div 
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  <motion.span 
+                    className="mt-2 text-xs font-medium"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                  >
+                    Đang tải...
+                  </motion.span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Error state */}
-            {error && !isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10">
-                <div className="flex flex-col items-center p-4 rounded-lg bg-card border">
-                  <img src="/icons/image-not-supported.svg" alt="Error loading image" className="h-12 w-12 opacity-70 mb-3" />
-                  <span className="text-sm text-muted-foreground">Không thể tải hình ảnh</span>
-                </div>
-              </div>
-            )}
+            <AnimatePresence>
+              {error && !isLoading && (
+                <motion.div 
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 z-10"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <motion.div 
+                    className="flex flex-col items-center p-4 rounded-lg bg-card border"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", damping: 20 }}
+                  >
+                    <img src="/icons/image-not-supported.svg" alt="Error loading image" className="h-12 w-12 opacity-70 mb-3" />
+                    <span className="text-sm text-muted-foreground">Không thể tải hình ảnh</span>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Chart image with container - with zoom and transform applied */}
-            <div className={cn(
-              "chart-image-container", 
-              isLoading || error ? "opacity-0" : "opacity-100",
-              scale > 1 ? "custom-transform zoomed-in" : "no-transform",
-              isDragging && scale > 1 ? "dragging" : ""
-            )}
-              style={{ transform: scale > 1 ? imageTransform : undefined }}>
-              <img ref={imageRef}
-                src={imageUrl || '/icons/blank-chart.svg'} 
-                alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
-                className={cn("chart-image", (isLoading || error) && "invisible")}
-                onClick={(e) => e.stopPropagation()} 
-                decoding="async"
-                loading="eager"
-                draggable="false"
-                onLoad={(e) => {
-                  const img = e.currentTarget;
-                  if (img.naturalWidth > 1 && img.naturalHeight > 1) {
-                    img.classList.remove('invisible');
-                  }
-                }}
-                onError={(e) => {
-                  console.error(`Error loading image: ${currentImage.originalSrc}`);
-                  const imgElement = e.currentTarget as HTMLImageElement;
-                  if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
-                    console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
-                    imgElement.src = currentImage.originalSrc;
-                    return;
-                  }
-                  imgElement.classList.add('hidden');
-                }}
-              />
-            </div>
+            <AnimatePresence>
+              <motion.div 
+                className={cn(
+                  "chart-image-container", 
+                  isLoading || error ? "opacity-0" : "opacity-100",
+                  scale > 1 ? "custom-transform zoomed-in" : "no-transform",
+                  isDragging && scale > 1 ? "dragging" : ""
+                )}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isLoading || error ? 0 : 1 }}
+                transition={{ duration: 0.3 }}
+                style={{ transform: scale > 1 ? imageTransform : undefined }}
+              >
+                <img 
+                  ref={imageRef}
+                  src={imageUrl || '/icons/blank-chart.svg'} 
+                  alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
+                  className={cn("chart-image", (isLoading || error) && "invisible")}
+                  onClick={(e) => e.stopPropagation()} 
+                  decoding="async"
+                  loading="eager"
+                  draggable="false"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    if (img.naturalWidth > 1 && img.naturalHeight > 1) {
+                      img.classList.remove('invisible');
+                    }
+                  }}
+                  onError={(e) => {
+                    console.error(`Error loading image: ${currentImage.originalSrc}`);
+                    const imgElement = e.currentTarget as HTMLImageElement;
+                    if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
+                      console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
+                      imgElement.src = currentImage.originalSrc;
+                      return;
+                    }
+                    imgElement.classList.add('hidden');
+                  }}
+                />
+              </motion.div>
+            </AnimatePresence>
             
             {/* Navigation buttons for desktop and tablets */}
             {availableImages.length > 1 && !isMobile && (
               <>
-                <button className="chart-nav-button chart-nav-button-prev" onClick={handlePrevious} aria-label="Previous image">
+                <motion.button 
+                  className="chart-nav-button chart-nav-button-prev" 
+                  onClick={handlePrevious} 
+                  aria-label="Previous image"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
-                </button>
-                <button className="chart-nav-button chart-nav-button-next" onClick={handleNext} aria-label="Next image">
+                </motion.button>
+                <motion.button 
+                  className="chart-nav-button chart-nav-button-next" 
+                  onClick={handleNext} 
+                  aria-label="Next image"
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
-                </button>
+                </motion.button>
               </>
             )}
-          </div>
+          </motion.div>
           
           {/* Zoom controls */}
-          <div className="chart-zoom-controls">
-            <button className="chart-zoom-button" onClick={zoomIn} aria-label="Zoom in" disabled={scale >= 3}>
+          <motion.div 
+            className="chart-zoom-controls"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+          >
+            <motion.button 
+              className="chart-zoom-button" 
+              onClick={zoomIn} 
+              aria-label="Zoom in" 
+              disabled={scale >= 3}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <ZoomIn size={isMobile ? 16 : 20} />
-            </button>
-            <button className="chart-zoom-button" onClick={zoomOut} aria-label="Zoom out" disabled={scale <= 1}>
+            </motion.button>
+            <motion.button 
+              className="chart-zoom-button" 
+              onClick={zoomOut} 
+              aria-label="Zoom out" 
+              disabled={scale <= 1}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <ZoomOut size={isMobile ? 16 : 20} />
-            </button>
-            <button className="chart-zoom-button" onClick={resetZoom} aria-label="Reset zoom" 
-              disabled={scale === 1 && translate.x === 0 && translate.y === 0}>
+            </motion.button>
+            <motion.button 
+              className="chart-zoom-button" 
+              onClick={resetZoom} 
+              aria-label="Reset zoom" 
+              disabled={scale === 1 && translate.x === 0 && translate.y === 0}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
               <Maximize2 size={isMobile ? 16 : 20} />
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
           
           {/* Image Pagination for mobile and desktop */}
           {availableImages.length > 1 && (
-            <div className="chart-pagination">
+            <motion.div 
+              className="chart-pagination"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+            >
               <div className="chart-pagination-dots">
                 {isMobile && (
-                  <button className="w-5 h-5 flex items-center justify-center text-white/90"
-                    onClick={handlePrevious} aria-label="Previous image">
+                  <motion.button 
+                    className="w-5 h-5 flex items-center justify-center text-white/90"
+                    onClick={handlePrevious} 
+                    aria-label="Previous image"
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
-                  </button>
+                  </motion.button>
                 )}
                 {availableImages.map((_, index) => (
-                  <button key={index}
+                  <motion.button 
+                    key={index}
                     className={cn("chart-pagination-dot",
                       index === currentImageIndex ? "chart-pagination-dot-active" : "chart-pagination-dot-inactive")}
                     onClick={(e) => {
@@ -348,18 +451,27 @@ export function ChartImageDialog({
                       setCurrentImageIndex(index);
                     }}
                     aria-label={`View image ${index + 1}`}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.4 + (index * 0.05) }}
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
                   />
                 ))}
                 {isMobile && (
-                  <button className="w-5 h-5 flex items-center justify-center text-white/90"
-                    onClick={handleNext} aria-label="Next image">
+                  <motion.button 
+                    className="w-5 h-5 flex items-center justify-center text-white/90"
+                    onClick={handleNext} 
+                    aria-label="Next image"
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
-                  </button>
+                  </motion.button>
                 )}
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </DialogContent>
