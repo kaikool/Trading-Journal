@@ -51,8 +51,32 @@
   --spacing-12: 3rem;      /* 48px */
   --spacing-16: 4rem;      /* 64px */
   
-  /* Card component system */
+  /* Enhanced Card component system */
   --card-title-size: var(--text-xl);     /* 20px */
+  --card-padding: var(--spacing-4);      /* 16px */
+  --card-radius: var(--radius);
+  
+  /* Card Elevation & Visual Hierarchy */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --card-gradient-light: linear-gradient(145deg, hsl(var(--card)/0.92), hsl(var(--card)/0.97));
+  --card-gradient-dark: linear-gradient(145deg, hsl(var(--card)/0.85), hsl(var(--card)/0.92));
+  
+  /* Card Status Colors with Opacity Variants */
+  --card-success-bg: hsl(var(--success)/0.07);
+  --card-success-border: hsl(var(--success)/0.2);
+  --card-warning-bg: hsl(var(--warning)/0.07);
+  --card-warning-border: hsl(var(--warning)/0.2);
+  --card-error-bg: hsl(var(--destructive)/0.07);
+  --card-error-border: hsl(var(--destructive)/0.2);
+  --card-info-bg: hsl(var(--info)/0.07);
+  --card-info-border: hsl(var(--info)/0.2);
+  
+  /* Card Visual Components */
+  --card-icon-size: var(--icon-md);      /* 20px standard icon size */
+  --card-icon-container-size: 2rem;      /* 32px standard container */
+  --card-icon-bg-opacity: 0.1;
+  --card-border-opacity: 0.15;
   --card-title-weight: 600;              /* semibold */
   --card-subtitle-size: var(--text-sm);  /* 14px */
   --card-subtitle-weight: 500;           /* medium */
