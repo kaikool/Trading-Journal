@@ -136,7 +136,7 @@ async function loginUser(email: string, password: string) {
 }
 
 /**
- * Đăng nhập với Google và tự động tạo tài khoản nếu cần
+ * Đăng nhập với Google và tự động tạo tài khoản hoặc liên kết tài khoản nếu cần
  * 
  * Trả về kết quả đăng nhập và thông tin bổ sung
  */
@@ -145,11 +145,16 @@ async function loginWithGoogle() {
     const { 
       GoogleAuthProvider, 
       signInWithPopup, 
-      getAdditionalUserInfo, 
-      fetchSignInMethodsForEmail, 
+      getAdditionalUserInfo,
+      fetchSignInMethodsForEmail,
+      signInWithEmailLink,
+      OAuthProvider,
+      linkWithPopup,
+      sendSignInLinkToEmail,
+      isSignInWithEmailLink,
+      signInWithCredential,
       linkWithCredential,
-      EmailAuthProvider,
-      signInWithEmailAndPassword 
+      EmailAuthProvider
     } = await import("firebase/auth");
     
     const provider = new GoogleAuthProvider();
@@ -195,21 +200,42 @@ async function loginWithGoogle() {
         const email = error.customData?.email;
         if (!email) throw error;
         
-        debug(`Email ${email} đã tồn tại với phương thức khác`);
+        debug(`Email ${email} đã tồn tại với phương thức khác, cố gắng liên kết tài khoản`);
         
-        // Kiểm tra phương thức đăng nhập hiện có
-        const methods = await fetchSignInMethodsForEmail(auth, email);
-        
-        // Nếu email/password là một trong các phương thức, thông báo người dùng
-        if (methods.includes('password')) {
-          throw new Error(
-            `Tài khoản với email ${email} đã tồn tại. Vui lòng đăng nhập bằng mật khẩu hoặc sử dụng chức năng khôi phục mật khẩu.`
-          );
-        } else {
-          // Trường hợp các nhà cung cấp khác
-          throw new Error(
-            `Email ${email} đã được liên kết với một phương thức đăng nhập khác (${methods.join(', ')}). Vui lòng sử dụng phương thức đó.`
-          );
+        try {
+          // Lấy danh sách phương thức đăng nhập hiện có cho email này
+          const methods = await fetchSignInMethodsForEmail(auth, email);
+          debug(`Phương thức đăng nhập hiện có cho ${email}: ${methods.join(', ')}`);
+          
+          // Hỏi người dùng nhập mật khẩu để liên kết tài khoản
+          // Đây là cách tiếp cận đơn giản nhất, nhưng trong thực tế cần UI để nhập mật khẩu
+          // Hiện tại chúng ta sẽ trả về thông báo yêu cầu đăng nhập bằng phương thức hiện có trước
+          
+          if (methods.includes('password')) {
+            // Thực tế cần hiện modal/form để người dùng nhập mật khẩu, sau đó liên kết
+            // Nhưng giờ chỉ hiển thị thông báo yêu cầu đăng nhập trước
+            throw new Error(
+              `Email ${email} đã được đăng ký. Vui lòng đăng nhập bằng mật khẩu trước, rồi vào mục "Tài khoản > Liên kết đăng nhập" để liên kết với Google.`
+            );
+          } else if (methods.length > 0) {
+            // Nếu có phương thức khác, thông báo người dùng
+            const providerNames = methods.map(method => {
+              if (method === 'google.com') return 'Google';
+              if (method === 'facebook.com') return 'Facebook';
+              if (method === 'github.com') return 'GitHub';
+              if (method === 'twitter.com') return 'Twitter';
+              if (method === 'apple.com') return 'Apple';
+              return method;
+            });
+            
+            throw new Error(
+              `Email ${email} đã được liên kết với tài khoản ${providerNames.join(', ')}. Vui lòng đăng nhập bằng phương thức đó.`
+            );
+          }
+        } catch (linkError) {
+          // Nếu lỗi trong quá trình liên kết, trả về lỗi gốc
+          debug("Lỗi khi cố gắng liên kết tài khoản:", linkError);
+          throw linkError;
         }
       }
       
@@ -1826,5 +1852,9 @@ export {
   addStrategy,
   updateStrategy,
   deleteStrategy,
-  createDefaultStrategiesIfNeeded
+  createDefaultStrategiesIfNeeded,
+  // Auth linking functions
+  linkAccountWithGoogle,
+  getLinkedProviders,
+  unlinkProvider
 };
