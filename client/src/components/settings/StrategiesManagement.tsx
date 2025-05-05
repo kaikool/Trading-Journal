@@ -692,73 +692,6 @@ const StrategyItem = React.memo(function StrategyItem({
   );
 });
 
-// Memoized strategy list renderer component
-const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
-  strategies,
-  editMode,
-  isSaving,
-  onSetEditMode,
-  onUpdateStrategy,
-  onDeleteStrategy,
-  onStrategyFieldChange,
-  onSetDefaultStrategy,
-  newRule,
-  newEntryCondition,
-  newExitCondition,
-  newTimeframe,
-  resetFormFields,
-}: {
-  strategies: TradingStrategy[];
-  editMode: string | null;
-  isSaving: boolean;
-  onSetEditMode: (id: string | null) => void;
-  onUpdateStrategy: (strategy: TradingStrategy) => void;
-  onDeleteStrategy: (id: string, name: string) => void;
-  onStrategyFieldChange: (strategyId: string, fieldName: string, value: any) => void;
-  onSetDefaultStrategy: (strategy: TradingStrategy) => void;
-  newRule: string;
-  newEntryCondition: string;
-  newExitCondition: string;
-  newTimeframe: string;
-  resetFormFields: () => void;
-}) {
-  return (
-    <Accordion type="single" collapsible className="space-y-2">
-      {strategies.map((strategy) => {
-        // Handler function for each strategy's field changes 
-        const handleEditFieldChange = (fieldName: string, value: any) => {
-          console.log("[DEBUG] Strategy field change:", strategy.id, fieldName, value);
-          // Pass to parent component to update state
-          onStrategyFieldChange(strategy.id, fieldName, value);
-        };
-        
-        return (
-          <StrategyItem
-            key={strategy.id}
-            strategy={strategy}
-            isEditMode={editMode === strategy.id}
-            isSaving={isSaving}
-            onEdit={() => onSetEditMode(strategy.id)}
-            onUpdate={onUpdateStrategy}
-            onDelete={() => {
-              if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
-                onDeleteStrategy(strategy.id, strategy.name);
-              }
-            }}
-            onSetAsDefault={() => onSetDefaultStrategy(strategy)}
-            onEditFieldChange={handleEditFieldChange}
-            newRule={newRule}
-            newEntryCondition={newEntryCondition}
-            newExitCondition={newExitCondition}
-            newTimeframe={newTimeframe}
-            resetFormFields={resetFormFields}
-          />
-        );
-      })}
-    </Accordion>
-  );
-});
-
 export function StrategiesManagement() {
   // Define local interfaces for rule and condition checks
   interface ConditionCheck {
@@ -785,9 +718,6 @@ export function StrategiesManagement() {
   const [newEntryCondition, setNewEntryCondition] = useState("");
   const [newExitCondition, setNewExitCondition] = useState("");
   const [newTimeframe, setNewTimeframe] = useState("");
-  
-  // State for field values while editing
-  const [editFieldValues, setEditFieldValues] = useState<Record<string, Record<string, any>>>({});
   
   // Initialize the toast hook
   const toast = useToast().toast;
@@ -1097,21 +1027,39 @@ export function StrategiesManagement() {
     }
     
     return (
-      <StrategiesListRenderer
-        strategies={strategies}
-        editMode={editMode}
-        isSaving={isSaving}
-        onSetEditMode={setEditMode}
-        onUpdateStrategy={handleUpdateStrategy}
-        onDeleteStrategy={handleDeleteStrategy}
-        onStrategyFieldChange={handleStrategyFieldChange}
-        onSetDefaultStrategy={handleSetDefaultStrategy}
-        newRule={newRule}
-        newEntryCondition={newEntryCondition}
-        newExitCondition={newExitCondition}
-        newTimeframe={newTimeframe}
-        resetFormFields={resetFormFields}
-      />
+      <Accordion type="single" collapsible className="space-y-2">
+        {strategies.map((strategy) => {
+          // Handler function for each strategy's field changes 
+          const handleEditFieldChange = (fieldName: string, value: any) => {
+            console.log("[DEBUG] Strategy field change:", strategy.id, fieldName, value);
+            // Pass to parent component to update state
+            handleStrategyFieldChange(strategy.id, fieldName, value);
+          };
+          
+          return (
+            <StrategyItem
+              key={strategy.id}
+              strategy={strategy}
+              isEditMode={editMode === strategy.id}
+              isSaving={isSaving}
+              onEdit={() => setEditMode(strategy.id)}
+              onUpdate={handleUpdateStrategy}
+              onDelete={() => {
+                if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
+                  handleDeleteStrategy(strategy.id, strategy.name);
+                }
+              }}
+              onSetAsDefault={() => handleSetDefaultStrategy(strategy)}
+              onEditFieldChange={handleEditFieldChange}
+              newRule={newRule}
+              newEntryCondition={newEntryCondition}
+              newExitCondition={newExitCondition}
+              newTimeframe={newTimeframe}
+              resetFormFields={resetFormFields}
+            />
+          );
+        })}
+      </Accordion>
     );
   }, [strategies, editMode, isSaving, handleUpdateStrategy, handleDeleteStrategy, 
       handleStrategyFieldChange, handleSetDefaultStrategy, newRule, newEntryCondition, 
