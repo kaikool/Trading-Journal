@@ -167,7 +167,7 @@ export function PerformanceChart({
   const formattedPercentChange = `${isPositiveTrend ? "+" : ""}${percentChange.toFixed(1)}%`;
   
   return (
-    <Card className="balance-chart">
+    <Card>
       <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
