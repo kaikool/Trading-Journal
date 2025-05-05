@@ -67,9 +67,9 @@ export function LazyTradeViewEdit({
   
   // Trade Details Display - used in both tabs
   const TradeDetailsDisplay = () => (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row gap-4 px-4 py-3">
       {/* Image container */}
-      <div className="relative w-full md:w-48 h-48 bg-gray-100 dark:bg-gray-800 flex-shrink-0 cursor-pointer group" 
+      <div className="relative w-full md:w-48 h-48 bg-background/50 flex-shrink-0 cursor-pointer group overflow-hidden rounded-md border border-border/30 shadow-sm" 
            onClick={() => setShowChartDialog(true)}>
         {trade.entryImage ? (
           <>
@@ -84,8 +84,9 @@ export function LazyTradeViewEdit({
             </div>
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <span>No Chart</span>
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
+            <Maximize2 className="h-8 w-8 mb-2 opacity-40" />
+            <span>No Chart Image</span>
           </div>
         )}
         
@@ -112,7 +113,7 @@ export function LazyTradeViewEdit({
       </div>
       
       {/* Trade details */}
-      <div className="p-4 flex-grow">
+      <div className="p-0 flex-grow">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <CardIcon
@@ -320,11 +321,11 @@ export function LazyTradeViewEdit({
               
               {/* Notes Section */}
               {trade.notes && (
-                <div className="px-6 py-4 mt-4 mx-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
+                <div className="px-6 py-4 mt-4 mx-4 mb-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
                   <h4 className="text-sm font-medium mb-2 flex items-center">
                     <CardIcon
                       color="primary"
-                      size="xs"
+                      size="sm"
                       variant="soft"
                       className="mr-1.5"
                     >
@@ -340,11 +341,11 @@ export function LazyTradeViewEdit({
               
               {/* Closing Notes Section */}
               {trade.closingNote && (
-                <div className="px-6 py-4 mt-4 mx-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
+                <div className="px-6 py-4 mt-4 mx-4 mb-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
                   <h4 className="text-sm font-medium mb-2 flex items-center">
                     <CardIcon
                       color={Number(trade.profitLoss) > 0 ? "success" : Number(trade.profitLoss) < 0 ? "destructive" : "warning"}
-                      size="xs"
+                      size="sm"
                       variant="soft"
                       className="mr-1.5"
                     >
@@ -357,6 +358,9 @@ export function LazyTradeViewEdit({
                   </p>
                 </div>
               )}
+              
+              {/* Add spacing at the bottom when there are no notes */}
+              {!trade.closingNote && !trade.notes && <div className="pb-4" />}
               
 
             </TabsContent>
