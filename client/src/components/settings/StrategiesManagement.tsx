@@ -912,9 +912,16 @@ export function StrategiesManagement() {
       const newStrategyId = await addStrategy(userId, strategyWithTimestamps);
       
       // Add to local state with the new ID
+      const newStrategyDocId = typeof newStrategyId === 'object' && newStrategyId ? 
+        (newStrategyId.id || '') : 
+        (typeof newStrategyId === 'string' ? newStrategyId : '');
+      
       setStrategies(prevStrategies => [
         ...prevStrategies,
-        { ...strategyWithTimestamps, id: newStrategyId } as TradingStrategy
+        { 
+          ...strategyWithTimestamps, 
+          id: newStrategyDocId
+        } as TradingStrategy
       ]);
       
       // Reset form
