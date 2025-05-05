@@ -982,8 +982,26 @@ export function StrategiesManagement() {
         {strategies.map((strategy) => {
           // Handler function for each strategy's field changes 
           const handleEditFieldChange = (fieldName: string, value: any) => {
-            // Đơn giản hóa: Không log, chỉ cập nhật state
-            handleStrategyFieldChange(strategy.id, fieldName, value);
+            // Đảm bảo tạo bản sao sạch để tránh cấu trúc tuần hoàn (cyclic structure)
+            let cleanValue = value;
+            
+            // Nếu là object hoặc array, tạo deep clone sạch (không có tham chiếu tuần hoàn)
+            if (typeof value === 'object' && value !== null) {
+              try {
+                // Sử dụng JSON để tạo bản sao sạch
+                cleanValue = JSON.parse(JSON.stringify(value));
+              } catch (err) {
+                // Nếu có lỗi cyclic structure, tạo bản sao thủ công
+                if (Array.isArray(value)) {
+                  cleanValue = [...value];
+                } else {
+                  cleanValue = {...value};
+                }
+              }
+            }
+            
+            // Cập nhật state với giá trị sạch
+            handleStrategyFieldChange(strategy.id, fieldName, cleanValue);
           };
           
           return (
