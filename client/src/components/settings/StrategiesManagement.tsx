@@ -280,8 +280,23 @@ const StrategyItem = React.memo(function StrategyItem({
                   <ListChecks className="h-4 w-4 mr-2" />
                   Trading Rules
                 </h4>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const newCondition = createNewStrategyCondition(strategy.rules?.length || 0);
+                    handleFieldChange('rules', 
+                      addConditionToArray(strategy.rules || [], newCondition)
+                    );
+                  }}
+                  className="h-6 px-2 text-xs hover:text-primary"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1 opacity-70" />
+                  Add
+                </Button>
               </div>
               <StrategyConditionList
+                hideAddbutton={true}
                 title=""
                 emptyMessage="No rules defined yet"
                 conditions={strategy.rules || []}
@@ -307,8 +322,23 @@ const StrategyItem = React.memo(function StrategyItem({
                   <DoorOpen className="h-4 w-4 mr-2" />
                   Entry Conditions
                 </h4>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const newCondition = createNewStrategyCondition(strategy.entryConditions?.length || 0);
+                    handleFieldChange('entryConditions', 
+                      addConditionToArray(strategy.entryConditions || [], newCondition)
+                    );
+                  }}
+                  className="h-6 px-2 text-xs hover:text-primary"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1 opacity-70" />
+                  Add
+                </Button>
               </div>
               <StrategyConditionList
+                hideAddbutton={true}
                 title=""
                 emptyMessage="No entry conditions defined yet"
                 conditions={strategy.entryConditions || []}
@@ -334,8 +364,23 @@ const StrategyItem = React.memo(function StrategyItem({
                   <LogOut className="h-4 w-4 mr-2" />
                   Exit Conditions
                 </h4>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const newCondition = createNewStrategyCondition(strategy.exitConditions?.length || 0);
+                    handleFieldChange('exitConditions', 
+                      addConditionToArray(strategy.exitConditions || [], newCondition)
+                    );
+                  }}
+                  className="h-6 px-2 text-xs hover:text-primary"
+                >
+                  <Plus className="h-3.5 w-3.5 mr-1 opacity-70" />
+                  Add
+                </Button>
               </div>
               <StrategyConditionList
+                hideAddbutton={true}
                 title=""
                 emptyMessage="No exit conditions defined yet"
                 conditions={strategy.exitConditions || []}

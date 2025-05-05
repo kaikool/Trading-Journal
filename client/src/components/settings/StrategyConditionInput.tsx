@@ -335,6 +335,7 @@ interface StrategyConditionListProps {
   title: string;
   emptyMessage: string;
   icon?: React.ReactNode;
+  hideAddbutton?: boolean;
 }
 
 /**
@@ -348,7 +349,8 @@ export function StrategyConditionList({
   onDelete,
   title,
   emptyMessage,
-  icon
+  icon,
+  hideAddbutton = false
 }: StrategyConditionListProps) {
   const [newCondition, setNewCondition] = useState<StrategyCondition>(
     createNewCondition(conditions.length)
@@ -390,7 +392,7 @@ export function StrategyConditionList({
         )}
         
         {/* Add button directly in the header row */}
-        {!isAdding && (
+        {!isAdding && !hideAddbutton && (
           <Button
             variant="ghost"
             size="sm"
