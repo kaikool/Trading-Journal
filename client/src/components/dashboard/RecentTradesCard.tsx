@@ -211,12 +211,30 @@ export function RecentTradesCard({
 
   return (
     <Card variant="accent" className="h-full flex flex-col overflow-hidden">
-      {/* Add subtle pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 pointer-events-none" />
+      {/* Add enhanced gradient pattern overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/3 to-transparent opacity-60 pointer-events-none" />
       
-      {/* Add decorative chart icon */}
-      <div className="absolute top-4 right-4 opacity-5 pointer-events-none">
-        <ClipboardList className="h-24 w-24 text-primary" />
+      {/* Add decorative trading grid pattern */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="tradingGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 0 10 L 40 10 M 10 0 L 10 40 M 0 20 L 40 20 M 20 0 L 20 40 M 0 30 L 40 30 M 30 0 L 30 40" 
+                stroke="currentColor" strokeOpacity="0.3" strokeWidth="0.5" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#tradingGrid)" />
+        </svg>
+      </div>
+      
+      {/* Add decorative trading symbols with better visibility */}
+      <div className="absolute top-8 right-8 opacity-20 pointer-events-none">
+        <div className="relative">
+          <ClipboardList className="h-28 w-28 text-primary/60" />
+          <div className="absolute top-1/4 right-1/4 transform rotate-12">
+            <ExternalLink className="h-10 w-10 text-primary/80" />
+          </div>
+        </div>
       </div>
       
       <CardHeader withBackground className="px-4 sm:px-6 pt-4 pb-2 relative z-10">

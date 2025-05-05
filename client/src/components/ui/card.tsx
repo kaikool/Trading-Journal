@@ -17,19 +17,19 @@ const Card = React.forwardRef<
       // Enhanced base styling to avoid pure white backgrounds
       "bg-gradient-to-br from-card/90 to-card",
       
-      // Variant styles
-      variant === 'default' && "border-border/30 border shadow-[var(--shadow-card)]",
-      variant === 'outline' && "border-border/40 border bg-card/90",
-      variant === 'elevated' && "border-0 shadow-[var(--shadow-md)] bg-card/95",
-      variant === 'gradient' && "border-0 shadow-[var(--shadow-md)] bg-gradient-to-br from-primary/5 to-primary/10",
-      variant === 'accent' && "border-primary/20 border shadow-[var(--shadow-sm)] bg-primary/5",
+      // Enhanced Variant styles with gradient backgrounds
+      variant === 'default' && "border-border/30 border shadow-[var(--shadow-card)] bg-gradient-to-br from-card/95 to-card",
+      variant === 'outline' && "border-border/40 border bg-gradient-to-br from-card/95 to-card/90",
+      variant === 'elevated' && "border-0 shadow-[var(--shadow-md)] bg-gradient-to-br from-card/90 to-card",
+      variant === 'gradient' && "border-0 shadow-[var(--shadow-md)] bg-gradient-to-br from-primary/10 to-primary/5",
+      variant === 'accent' && "border-primary/20 border shadow-[var(--shadow-sm)] bg-gradient-to-br from-primary/10 to-primary/5",
       variant === 'status' && [
         "border shadow-[var(--shadow-sm)]",
-        status === 'success' && "border-success/20 bg-success/5",
-        status === 'warning' && "border-warning/20 bg-warning/5",
-        status === 'error' && "border-destructive/20 bg-destructive/5",
-        status === 'info' && "border-info/20 bg-info/5",
-        status === 'neutral' && "border-border/30 bg-card/90",
+        status === 'success' && "bg-gradient-to-br from-success/10 to-success/5 border-success/20",
+        status === 'warning' && "bg-gradient-to-br from-warning/10 to-warning/5 border-warning/20",
+        status === 'error' && "bg-gradient-to-br from-destructive/10 to-destructive/5 border-destructive/20",
+        status === 'info' && "bg-gradient-to-br from-info/10 to-info/5 border-info/20",
+        status === 'neutral' && "bg-gradient-to-br from-card/95 to-card/90 border-border/30",
       ],
       
       // Hover effects

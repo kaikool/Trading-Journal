@@ -199,10 +199,21 @@ export function TradingStatsCard({
       {/* Add subtle pattern overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 pointer-events-none" />
       
-      {/* Add decorative chart/stats shape */}
-      <div className="absolute bottom-0 right-0 w-24 h-24 opacity-10 pointer-events-none">
+      {/* Add decorative chart/stats shape with better visibility */}
+      <div className="absolute bottom-0 right-0 w-40 h-40 opacity-20 pointer-events-none">
         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10,90 L10,50 L30,70 L50,30 L70,50 L90,20 L90,90 Z" fill="currentColor" />
+          <path d="M10,90 L10,50 L30,70 L50,30 L70,50 L90,20 L90,90 Z" 
+            fill="url(#statsGradient)" 
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeOpacity="0.5"
+          />
+          <defs>
+            <linearGradient id="statsGradient" x1="10" y1="90" x2="90" y2="20" gradientUnits="userSpaceOnUse">
+              <stop stopColor="currentColor" stopOpacity="0.3" />
+              <stop offset="1" stopColor="currentColor" stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
         </svg>
       </div>
       
@@ -230,21 +241,24 @@ export function TradingStatsCard({
           {stats.map((stat, index) => (
             <div 
               key={index} 
-              className="stat-card stat-card-compact bg-card/80 backdrop-blur-sm border border-border/10 hover:border-border/20 transition-colors"
+              className="stat-card stat-card-compact relative bg-card/80 backdrop-blur-sm border border-border/10 hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden"
               title={stat.tooltip}
             >
-              <div className="stat-card-header">
+              {/* Add subtle stat-specific hover effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+              
+              <div className="stat-card-header relative z-10">
                 <div className={cn("stat-card-title font-medium", stat.color)}>
                   {stat.label}
                 </div>
                 <div className={cn(
-                  "stat-card-icon-container rounded-lg",
+                  "stat-card-icon-container rounded-lg flex items-center justify-center w-7 h-7 transition-transform group-hover:scale-110 duration-300",
                   stat.bgColor
                 )}>
-                  <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
+                  <stat.icon className={cn("h-4 w-4", stat.color)} />
                 </div>
               </div>
-              <div className={cn("stat-card-value font-bold", stat.color)}>
+              <div className={cn("stat-card-value font-bold relative z-10", stat.color)}>
                 {stat.value}
               </div>
             </div>

@@ -111,8 +111,13 @@ export function AccountSummaryCard({
       status={cardStatus}
       className="overflow-hidden"
     >
-      {/* Add subtle gradient background effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-60 pointer-events-none" />
+      {/* Simple gradient background overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-60 pointer-events-none" />
+      
+      {/* Simple decorative dollar sign */}
+      <div className="absolute top-4 right-4 opacity-15 pointer-events-none">
+        <DollarSign className="h-20 w-20 text-primary" />
+      </div>
       
       <CardHeader className="px-4 sm:px-6 pt-4 pb-2 relative z-10">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -178,21 +183,35 @@ export function AccountSummaryCard({
           </div>
         </div>
         
-        {/* Progress bar with enhanced styling */}
+        {/* Progress bar with enhanced styling and gradient */}
         <div className="space-y-1.5">
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span className="font-medium">Initial</span>
-            <span className="font-medium">Current</span>
+            <span className="font-medium flex items-center">
+              <DollarSign className="h-3 w-3 mr-1 opacity-70" />
+              Initial
+            </span>
+            <span className="font-medium flex items-center">
+              Current
+              <DollarSign className="h-3 w-3 ml-1 opacity-70" />
+            </span>
           </div>
-          <Progress 
-            value={balancePercentage} 
-            max={200}
-            className="h-2.5 bg-muted/20 rounded-md overflow-hidden" 
-            indicatorClassName={cn(
-              statusColorClasses.progressBar,
-              "transition-all duration-700 ease-out"
-            )}
-          />
+          
+          {/* Simple gradient progress bar */}
+          <div className="relative">
+            <Progress 
+              value={balancePercentage} 
+              max={200}
+              className="h-3 bg-muted/20 rounded-md overflow-hidden" 
+              indicatorClassName={cn(
+                "bg-gradient-to-r transition-all duration-500 ease-out",
+                isPositive 
+                  ? "from-success/80 to-success" 
+                  : isPositive === false 
+                    ? "from-destructive/80 to-destructive" 
+                    : "from-primary/80 to-primary"
+              )}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>
