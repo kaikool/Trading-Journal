@@ -500,7 +500,7 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
   onUpdateStrategy,
   onDeleteStrategy,
   onSetDefaultStrategy,
-  handleStrategyFieldChange, // Add this prop
+  onStrategyFieldChange, // Renamed from handleStrategyFieldChange for consistency
   // Form state variables
   newRule,
   newEntryCondition,
@@ -518,7 +518,7 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
   onUpdateStrategy: (strategy: TradingStrategy) => void;
   onDeleteStrategy: (id: string, name: string) => void;
   onSetDefaultStrategy: (strategy: TradingStrategy) => void;
-  handleStrategyFieldChange: (strategyId: string, fieldName: string, value: any) => void;
+  onStrategyFieldChange: (strategyId: string, fieldName: string, value: any) => void;
   // Form state variables
   newRule: string;
   newEntryCondition: string;
@@ -539,10 +539,11 @@ const StrategiesListRenderer = React.memo(function StrategiesListRenderer({
   return (
     <Accordion type="single" collapsible className="space-y-2">
       {strategies.map((strategy) => {
-        // Handler function defined inside map for each strategy
+        // Handler function for each strategy's field changes 
         const handleEditFieldChange = (fieldName: string, value: any) => {
-          console.log("[DEBUG] handleEditFieldChange called for strategy:", strategy.id, fieldName, value);
-          handleStrategyFieldChange(strategy.id, fieldName, value);
+          console.log("[DEBUG] Strategy field change:", strategy.id, fieldName, value);
+          // Pass to parent component to update state
+          onStrategyFieldChange(strategy.id, fieldName, value);
         };
         
         return (
@@ -980,7 +981,7 @@ export function StrategiesManagement() {
         onSetEditMode={setEditMode}
         onUpdateStrategy={handleUpdateStrategy}
         onDeleteStrategy={handleDeleteStrategy}
-        handleStrategyFieldChange={handleStrategyFieldChange}
+        onStrategyFieldChange={handleStrategyFieldChange}
         onSetDefaultStrategy={(strategy) => {
           try {
             setIsSaving(true);
