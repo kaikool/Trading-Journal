@@ -200,8 +200,8 @@ export function TradingStatsCard({
         </div>
       </CardHeader>
       
-      <CardContent className="pt-1 pb-2 px-2 sm:px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <div 
               key={index} 
