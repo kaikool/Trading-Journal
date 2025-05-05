@@ -253,9 +253,19 @@ const StrategyItem = React.memo(function StrategyItem({
   // Memoized handler for updating fields in edit mode
   const handleFieldChange = useCallback((fieldName: string, value: any) => {
     if (onEditFieldChange) {
-      onEditFieldChange(fieldName, value);
+      console.log(`[DEBUG] StrategyItem (${strategy.id}) triggering field change:`, fieldName, typeof value);
+      
+      // Special debug for conditions arrays
+      if (fieldName === 'entryConditions' || fieldName === 'exitConditions' || fieldName === 'rules') {
+        console.log(`[DEBUG] Array field changed: ${fieldName}, items:`, Array.isArray(value) ? value.length : 'not an array');
+        // Create a clean copy to avoid any reference issues
+        const cleanValue = Array.isArray(value) ? [...value] : value;
+        onEditFieldChange(fieldName, cleanValue);
+      } else {
+        onEditFieldChange(fieldName, value);
+      }
     }
-  }, [onEditFieldChange]);
+  }, [onEditFieldChange, strategy.id]);
 
   return (
     <AccordionItem
@@ -723,15 +733,32 @@ export function StrategiesManagement() {
   
   // Handler for updating fields of a strategy in edit mode
   const handleStrategyFieldChange = useCallback((strategyId: string, fieldName: string, value: any) => {
-    console.log(`[DEBUG] Updating strategy ${strategyId}, field ${fieldName}`);
+    console.log(`[DEBUG] Updating strategy ${strategyId}, field ${fieldName}, value:`, JSON.stringify(value));
     
-    setStrategies(prevStrategies => 
-      prevStrategies.map(strategy => 
+    // Handle special cases for arrays like entry/exit conditions
+    if (fieldName === 'entryConditions' || fieldName === 'exitConditions') {
+      console.log('[DEBUG] Handling condition array update:', Array.isArray(value) ? value.length : 'not array');
+    }
+    
+    // Use a function to get fresh state
+    setStrategies(prevStrategies => {
+      // Debug current state
+      console.log('[DEBUG] Current strategies count:', prevStrategies.length);
+      
+      // Find the strategy being updated
+      const targetStrategy = prevStrategies.find(s => s.id === strategyId);
+      console.log('[DEBUG] Found strategy to update:', targetStrategy ? 'yes' : 'no');
+      
+      // Create new array with updates
+      const updated = prevStrategies.map(strategy => 
         strategy.id === strategyId 
           ? { ...strategy, [fieldName]: value }
           : strategy
-      )
-    );
+      );
+      
+      console.log('[DEBUG] Updated strategies count:', updated.length);
+      return updated;
+    });
   }, []);
   
   // Handler for updating a strategy

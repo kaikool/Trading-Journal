@@ -91,8 +91,12 @@ export function StrategyConditionForm({
             placeholder="Enter condition..."
             value={condition.label}
             onChange={(e) => {
+              console.log("[DEBUG] Input event:", e.type, e.target.value);
+              console.log("[DEBUG] Condition before update:", {...condition});
               const newLabel = e.target.value;
-              onChange({ ...condition, label: newLabel });
+              const newCondition = { ...condition, label: newLabel };
+              console.log("[DEBUG] New condition:", {...newCondition});
+              onChange(newCondition);
             }}
             className="h-8 text-sm flex-1"
           />
@@ -397,11 +401,18 @@ export function StrategyConditionList({
   const handleUpdate = (updatedCondition: StrategyCondition) => {
     // Create a cleaned copy of the condition to avoid React re-render issues
     const cleanedCondition = {...updatedCondition};
-    console.log("[DEBUG] Saving condition:", cleanedCondition);
+    console.log("[DEBUG] Saving condition:", JSON.stringify(cleanedCondition));
+    console.log("[DEBUG] StrategyConditionList props:", {
+      conditionsCount: conditions.length,
+      editing: editingId,
+      cleanedId: cleanedCondition.id
+    });
     
     // Delay updating to prevent blur or focus issues
     setTimeout(() => {
+      console.log("[DEBUG] Calling onUpdate with:", cleanedCondition.id, JSON.stringify(cleanedCondition));
       onUpdate(cleanedCondition.id, cleanedCondition);
+      console.log("[DEBUG] Setting editingId to null");
       setEditingId(null);
     }, 10);
   };
