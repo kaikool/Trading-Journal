@@ -97,7 +97,7 @@ export function AccountSummaryCard({
 
   return (
     <Card className="border shadow-sm">
-      <CardHeader className="pb-2">
+      <CardHeader className="dashboard-card-header">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
@@ -131,8 +131,8 @@ export function AccountSummaryCard({
         </div>
       </CardHeader>
       
-      <CardContent>
-        <div className="flex flex-wrap items-end justify-between gap-2 mb-6">
+      <CardContent className="dashboard-card-content">
+        <div className="flex flex-wrap items-end justify-between gap-2 mb-4">
           <div>
             <div className="text-3xl font-bold mb-1">
               {formatCurrency(currentBalance)}
