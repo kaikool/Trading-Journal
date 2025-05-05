@@ -625,6 +625,17 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       ))}
                     </Pie>
                     <Tooltip content={<EmotionDistributionTooltip />} />
+                    <Legend 
+                      align="center" 
+                      verticalAlign="bottom"
+                      height={36}
+                      iconSize={6}
+                      wrapperStyle={{
+                        fontSize: "10px",
+                        paddingBottom: "4px" /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
+                      }}
+                      iconType="circle"
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
