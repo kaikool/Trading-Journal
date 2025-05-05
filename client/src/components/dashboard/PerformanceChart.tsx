@@ -108,7 +108,7 @@ export function PerformanceChart({
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="balance-chart-empty">
+        <CardContent className="balance-chart-empty" style={{ minHeight: '200px' }}>
           <Info className="balance-chart-empty-icon" />
           <p className="balance-chart-empty-title">No performance data available</p>
           <p className="balance-chart-empty-subtitle">Complete trades will appear in this chart</p>
