@@ -274,14 +274,16 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {/* Trading Rules */}
-            <div className="space-y-4">
-              <div className="flex items-center mb-1">
-                <ListChecks className="h-4 w-4 mr-2" />
-                <h4 className="font-medium">Trading Rules</h4>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium flex items-center">
+                  <ListChecks className="h-4 w-4 mr-2" />
+                  Trading Rules
+                </h4>
               </div>
               <StrategyConditionList
-                title=""
-                emptyMessage="No rules defined yet. Click 'Add' to create one."
+                title="Trading Rules"
+                emptyMessage="No rules defined yet"
                 conditions={strategy.rules || []}
                 onAdd={(condition) => handleFieldChange('rules', 
                   addConditionToArray(strategy.rules || [], condition)
@@ -295,19 +297,20 @@ const StrategyItem = React.memo(function StrategyItem({
                     removeConditionFromArray(strategy.rules || [], id)
                   );
                 }}
-                icon={<LineChart className="h-4 w-4" />}
               />
             </div>
               
             {/* Entry Conditions */}
-            <div className="space-y-4 mt-5">
-              <div className="flex items-center mb-1">
-                <DoorOpen className="h-4 w-4 mr-2" />
-                <h4 className="font-medium">Entry Conditions</h4>
+            <div className="space-y-3 mt-5">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium flex items-center">
+                  <DoorOpen className="h-4 w-4 mr-2" />
+                  Entry Conditions
+                </h4>
               </div>
               <StrategyConditionList
-                title=""
-                emptyMessage="No entry conditions defined yet. Click 'Add' to create one."
+                title="Entry Conditions"
+                emptyMessage="No entry conditions defined yet"
                 conditions={strategy.entryConditions || []}
                 onAdd={(condition) => handleFieldChange('entryConditions', 
                   addConditionToArray(strategy.entryConditions || [], condition)
@@ -321,19 +324,20 @@ const StrategyItem = React.memo(function StrategyItem({
                     removeConditionFromArray(strategy.entryConditions || [], id)
                   );
                 }}
-                icon={<DoorOpen className="h-4 w-4" />}
               />
             </div>
               
             {/* Exit Conditions */}
-            <div className="space-y-4 mt-5">
-              <div className="flex items-center mb-1">
-                <LogOut className="h-4 w-4 mr-2" />
-                <h4 className="font-medium">Exit Conditions</h4>
+            <div className="space-y-3 mt-5">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium flex items-center">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Exit Conditions
+                </h4>
               </div>
               <StrategyConditionList
-                title=""
-                emptyMessage="No exit conditions defined yet. Click 'Add' to create one."
+                title="Exit Conditions"
+                emptyMessage="No exit conditions defined yet"
                 conditions={strategy.exitConditions || []}
                 onAdd={(condition) => handleFieldChange('exitConditions', 
                   addConditionToArray(strategy.exitConditions || [], condition)
@@ -347,7 +351,6 @@ const StrategyItem = React.memo(function StrategyItem({
                     removeConditionFromArray(strategy.exitConditions || [], id)
                   );
                 }}
-                icon={<LogOut className="h-4 w-4" />}
               />
             </div>
             
