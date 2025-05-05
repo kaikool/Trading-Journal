@@ -1692,6 +1692,7 @@
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
+    padding-bottom: 0; /* Loại bỏ padding-bottom mặc định */
   }
   
   /* Chart legend styling */
@@ -1827,8 +1828,8 @@
     
     /* Base container styling */
     border-radius: var(--balance-chart-radius);
-    box-shadow: var(--balance-chart-shadow);
-    border: 1px solid hsl(var(--border) / var(--balance-chart-border-opacity));
+    /*box-shadow: var(--balance-chart-shadow);
+    border: 1px solid hsl(var(--border) / var(--balance-chart-border-opacity));*/
     transition: box-shadow 0.2s ease-in-out;
   }
   
