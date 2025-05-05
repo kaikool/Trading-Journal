@@ -723,32 +723,14 @@ export function StrategiesManagement() {
   
   // Handler for updating fields of a strategy in edit mode
   const handleStrategyFieldChange = useCallback((strategyId: string, fieldName: string, value: any) => {
-    console.log(`[DEBUG] Updating strategy ${strategyId}, field ${fieldName}, value:`, JSON.stringify(value));
-    
-    // Handle special cases for arrays like entry/exit conditions
-    if (fieldName === 'entryConditions' || fieldName === 'exitConditions') {
-      console.log('[DEBUG] Handling condition array update:', Array.isArray(value) ? value.length : 'not array');
-    }
-    
-    // Use a function to get fresh state
-    setStrategies(prevStrategies => {
-      // Debug current state
-      console.log('[DEBUG] Current strategies count:', prevStrategies.length);
-      
-      // Find the strategy being updated
-      const targetStrategy = prevStrategies.find(s => s.id === strategyId);
-      console.log('[DEBUG] Found strategy to update:', targetStrategy ? 'yes' : 'no');
-      
-      // Create new array with updates
-      const updated = prevStrategies.map(strategy => 
+    // Đơn giản hóa: Cập nhật trực tiếp vào state
+    setStrategies(prevStrategies => 
+      prevStrategies.map(strategy => 
         strategy.id === strategyId 
           ? { ...strategy, [fieldName]: value }
           : strategy
-      );
-      
-      console.log('[DEBUG] Updated strategies count:', updated.length);
-      return updated;
-    });
+      )
+    );
   }, []);
   
   // Handler for updating a strategy
@@ -1000,8 +982,7 @@ export function StrategiesManagement() {
         {strategies.map((strategy) => {
           // Handler function for each strategy's field changes 
           const handleEditFieldChange = (fieldName: string, value: any) => {
-            console.log("[DEBUG] Strategy field change:", strategy.id, fieldName, value);
-            // Pass to parent component to update state
+            // Đơn giản hóa: Không log, chỉ cập nhật state
             handleStrategyFieldChange(strategy.id, fieldName, value);
           };
           
