@@ -449,6 +449,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 }}
                 className="h-8"
               >
+                <X className="h-3.5 w-3.5 mr-1.5" />
                 Cancel
               </Button>
               <Button 
@@ -982,7 +983,7 @@ export function StrategiesManagement() {
               strategy={strategy}
               isEditMode={editMode === strategy.id}
               isSaving={isSaving}
-              onEdit={() => setEditMode(strategy.id)}
+              onEdit={() => setEditMode(editMode === strategy.id ? null : strategy.id)}
               onUpdate={handleUpdateStrategy}
               onDelete={() => {
                 if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
