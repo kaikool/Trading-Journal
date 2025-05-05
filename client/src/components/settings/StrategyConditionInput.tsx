@@ -51,18 +51,15 @@ const COMMON_EXPECTED_VALUES = [
 ];
 
 // Create a new StrategyCondition with default values
-export function createNewCondition(order: number): StrategyCondition {
-  console.log("[DEBUG] Creating new condition with order:", order);
-  return {
-    id: uuidv4(),
-    label: "",
-    order,
-    indicator: undefined,
-    timeframe: undefined,
-    expectedValue: undefined,
-    description: undefined
-  };
-}
+export const createNewCondition = (order: number): StrategyCondition => ({
+  id: uuidv4(),
+  label: "",
+  order,
+  indicator: undefined,
+  timeframe: undefined,
+  expectedValue: undefined,
+  description: undefined
+});
 
 interface StrategyConditionFormProps {
   condition: StrategyCondition;
@@ -93,23 +90,7 @@ export function StrategyConditionForm({
             id={`condition-label-${condition.id}`}
             placeholder="Enter condition..."
             value={condition.label}
-            onChange={(e) => {
-              console.log("[DEBUG] Input event:", e.type, e.target.value);
-              
-              // Nắm bắt giá trị hiện tại từ event để đảm bảo cập nhật chính xác
-              const newLabel = e.target.value;
-              
-              // Gọi onChange với một hàm callback để React có thể xử lý đúng
-              const newCondition = { 
-                ...condition,
-                id: condition.id,  // Đảm bảo ID không bị thay đổi
-                label: newLabel,
-                order: condition.order // Đảm bảo order không bị thay đổi
-              };
-              
-              console.log("[DEBUG] Sending update with new condition:", {...newCondition});
-              onChange(newCondition);
-            }}
+            onChange={(e) => onChange({...condition, label: e.target.value})}
             className="h-8 text-sm flex-1"
           />
           
@@ -135,17 +116,7 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.indicator}
-                onValueChange={(value) => {
-                  console.log("[DEBUG] Selected indicator:", value);
-                  // Tạo bản sao mới của condition để cập nhật indicator
-                  const updatedCondition = { 
-                    ...condition,
-                    id: condition.id,  // Giữ nguyên ID
-                    order: condition.order, // Giữ nguyên order
-                    indicator: value 
-                  };
-                  onChange(updatedCondition);
-                }}
+                onValueChange={(value) => onChange({...condition, indicator: value})}
               >
                 <SelectTrigger 
                   id={`condition-indicator-${condition.id}`} 
@@ -171,17 +142,7 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.timeframe}
-                onValueChange={(value) => {
-                  console.log("[DEBUG] Selected timeframe:", value);
-                  // Tạo bản sao mới của condition để cập nhật timeframe
-                  const updatedCondition = { 
-                    ...condition,
-                    id: condition.id,
-                    order: condition.order,
-                    timeframe: value 
-                  };
-                  onChange(updatedCondition);
-                }}
+                onValueChange={(value) => onChange({...condition, timeframe: value})}
               >
                 <SelectTrigger 
                   id={`condition-timeframe-${condition.id}`} 
@@ -207,17 +168,7 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.expectedValue}
-                onValueChange={(value) => {
-                  console.log("[DEBUG] Selected value:", value);
-                  // Tạo bản sao mới của condition để cập nhật expectedValue
-                  const updatedCondition = { 
-                    ...condition,
-                    id: condition.id,
-                    order: condition.order,
-                    expectedValue: value 
-                  };
-                  onChange(updatedCondition);
-                }}
+                onValueChange={(value) => onChange({...condition, expectedValue: value})}
               >
                 <SelectTrigger 
                   id={`condition-value-${condition.id}`} 
@@ -245,19 +196,7 @@ export function StrategyConditionForm({
                 id={`condition-description-${condition.id}`}
                 placeholder="Add more details about this condition..."
                 value={condition.description || ""}
-                onChange={(e) => {
-                  console.log("[DEBUG] Description changed:", e.target.value);
-                  const newDescription = e.target.value;
-                  
-                  // Tạo bản sao mới của condition để cập nhật description
-                  const updatedCondition = { 
-                    ...condition,
-                    id: condition.id,
-                    order: condition.order,
-                    description: newDescription 
-                  };
-                  onChange(updatedCondition);
-                }}
+                onChange={(e) => onChange({...condition, description: e.target.value})}
                 className="text-xs resize-none min-h-[40px] max-h-[80px]"
               />
             </div>
@@ -296,15 +235,7 @@ export function StrategyConditionForm({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log("[DEBUG] Save button clicked, condition:", JSON.stringify(condition));
-                
-                // Tạo một bản sao sạch khi lưu
-                const cleanedCondition = {
-                  ...condition,
-                  id: condition.id,
-                  order: condition.order
-                };
-                onChange(cleanedCondition);
+                onChange({...condition});
               }}
               disabled={!condition.label.trim()}
               className="h-7 px-3 text-xs"
@@ -438,19 +369,8 @@ export function StrategyConditionList({
   
   const handleAdd = () => {
     if (newCondition.label.trim()) {
-      console.log("[DEBUG] Adding new condition:", JSON.stringify(newCondition));
-      
-      // Đảm bảo tạo bản sao sạch trước khi thêm mới
-      const newConditionCopy = JSON.parse(JSON.stringify(newCondition));
-      
-      // Thêm điều kiện mới (sử dụng bản sao)
-      onAdd(newConditionCopy);
-      
-      // Tạo một điều kiện mới sạch cho lần thêm tiếp theo
-      const nextCondition = createNewCondition(conditions.length + 1);
-      console.log("[DEBUG] Created next empty condition:", JSON.stringify(nextCondition));
-      
-      setNewCondition(nextCondition);
+      onAdd(newCondition);
+      setNewCondition(createNewCondition(conditions.length + 1));
       setIsAdding(false);
     }
   };
@@ -460,16 +380,7 @@ export function StrategyConditionList({
   };
   
   const handleUpdate = (updatedCondition: StrategyCondition) => {
-    // Deep clone để đảm bảo không có tham chiếu trực tiếp đến đối tượng gốc
-    const cleanedCondition = JSON.parse(JSON.stringify(updatedCondition));
-    console.log("[DEBUG] Saving condition:", JSON.stringify(cleanedCondition));
-    
-    // Gọi onUpdate trực tiếp, không sử dụng setTimeout
-    console.log("[DEBUG] Calling onUpdate with:", cleanedCondition.id);
-    onUpdate(cleanedCondition.id, cleanedCondition);
-    console.log("[DEBUG] Setting editingId to null");
-    
-    // Cập nhật UI để kết thúc việc chỉnh sửa
+    onUpdate(updatedCondition.id, updatedCondition);
     setEditingId(null);
   };
   
