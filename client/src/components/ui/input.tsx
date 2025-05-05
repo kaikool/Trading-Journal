@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
  * @version 2.0.0
  */
 
+// Define input style variants with CVA
 const inputVariants = cva(
   // Base styling
   [
@@ -29,7 +30,7 @@ const inputVariants = cva(
   {
     variants: {
       // Size variants
-      size: {
+      inputSize: {
         // Standard size
         default: "h-10 px-3 py-2 rounded-md",
         
@@ -59,7 +60,7 @@ const inputVariants = cva(
       },
       
       // Width variants
-      width: {
+      inputWidth: {
         // Full width (default)
         full: "w-full",
         
@@ -80,17 +81,41 @@ const inputVariants = cva(
       },
     },
     defaultVariants: {
-      size: "default",
+      inputSize: "default",
       variant: "default",
-      width: "full",
+      inputWidth: "full",
       roundness: "default",
     },
   }
 )
 
+// Type for our enhanced input props, ensuring no conflict with HTML attributes
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof inputVariants> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'width'> {
+  /**
+   * Size variant for the input
+   * @default 'default'
+   */
+  inputSize?: VariantProps<typeof inputVariants>["inputSize"];
+  
+  /**
+   * Visual appearance variant
+   * @default 'default'
+   */
+  variant?: VariantProps<typeof inputVariants>["variant"];
+  
+  /**
+   * Width behavior
+   * @default 'full'
+   */
+  inputWidth?: VariantProps<typeof inputVariants>["inputWidth"];
+  
+  /**
+   * Corner roundness
+   * @default 'default'
+   */
+  roundness?: VariantProps<typeof inputVariants>["roundness"];
+  
   /**
    * Error state
    * Applies error styling to input when true
@@ -119,10 +144,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ 
     className, 
     type, 
-    size,
-    variant,
-    width,
-    roundness,
+    inputSize = "default",
+    variant = "default",
+    inputWidth = "full",
+    roundness = "default",
     error = false,
     leftElement,
     rightElement,
@@ -169,7 +194,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              inputVariants({ size, variant, width, roundness }),
+              inputVariants({ 
+                inputSize, 
+                variant, 
+                inputWidth, 
+                roundness 
+              }),
               leftElement && "pl-10",
               rightElement && "pr-10",
               error && "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30",
@@ -194,7 +224,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          inputVariants({ size, variant, width, roundness }),
+          inputVariants({ 
+            inputSize, 
+            variant, 
+            inputWidth, 
+            roundness 
+          }),
           error && "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30",
           className
         )}
