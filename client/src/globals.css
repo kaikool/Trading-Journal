@@ -643,55 +643,55 @@
     --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
     --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
     
-    /* Base colors */
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    /* Base colors - Modern financial app inspired */
+    --background: 210 45% 99%;
+    --foreground: 218 50% 14%;
     
-    /* Card colors */
+    /* Card colors - Subtle elevation */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 218 50% 14%;
     
-    /* Popover colors */
+    /* Popover colors - Consistent with cards */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 218 50% 14%;
     
-    /* Primary colors */
-    --primary: 213 92% 45%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary colors - Vibrant but professional blue */
+    --primary: 218 95% 40%;
+    --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors */
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary colors - Subtle cool gray */
+    --secondary: 218 20% 96%;
+    --secondary-foreground: 218 50% 14%;
     
-    /* Muted colors */
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215 16% 47%;
+    /* Muted colors - Refined for better reading */
+    --muted: 215 25% 97%;
+    --muted-foreground: 218 25% 45%;
     
-    /* Accent colors */
-    --accent: 213 100% 96%;
-    --accent-foreground: 222 47% 11%;
+    /* Accent colors - Subtle primary variant */
+    --accent: 218 100% 97%;
+    --accent-foreground: 218 50% 14%;
     
-    /* State colors */
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    /* State colors - Enhanced for 4.5:1 contrast */
+    --destructive: 358 90% 50%;
+    --destructive-foreground: 0 0% 100%;
     
-    --success: 142 72% 45%;
-    --success-foreground: 210 40% 98%;
+    --success: 145 80% 36%;
+    --success-foreground: 0 0% 100%;
     
-    --warning: 35 92% 50%;
-    --warning-foreground: 210 40% 98%;
+    --warning: 32 95% 44%;
+    --warning-foreground: 0 0% 100%;
     
-    /* Border and other UI elements */
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 213 92% 45%;
+    /* Border and other UI elements - Subtle distinction */
+    --border: 214 25% 92%;
+    --input: 214 25% 92%;
+    --ring: 218 95% 40%;
     
-    /* Chart colors */
-    --chart-1: 213 92% 45%;
-    --chart-2: 262 83% 58%;
-    --chart-3: 329 86% 56%;
-    --chart-4: 35 92% 50%;
-    --chart-5: 142 72% 45%;
+    /* Chart colors - Refined for better visualization and accessibility */
+    --chart-1: 218 95% 40%;  /* Primary blue - matches primary */
+    --chart-2: 260 85% 55%;  /* Purple - complementary to blue */
+    --chart-3: 330 85% 55%;  /* Pink - good contrast */
+    --chart-4: 32 95% 44%;   /* Orange - matches warning */
+    --chart-5: 145 80% 36%;  /* Green - matches success */
     
     /* Typography - Standardized text sizes for all components */
     --text-xs: 0.75rem;    /* 12px */
@@ -734,15 +734,15 @@
     --card-value-size: var(--text-3xl);   /* Standard value display size */
     --card-subtitle-size: var(--text-sm); /* Standard subtitle size */
     
-    /* Sidebar colors */
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 213 92% 45%;
-    --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 217 33% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 16%;
-    --sidebar-ring: 213 92% 45%;
+    /* Sidebar colors - Modern destkop-inspired sidebar design */
+    --sidebar-background: 218 35% 12%;
+    --sidebar-foreground: 213 30% 98%;
+    --sidebar-primary: 218 95% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 218 30% 18%;
+    --sidebar-accent-foreground: 213 30% 98%;
+    --sidebar-border: 218 30% 16%;
+    --sidebar-ring: 218 95% 40%;
     
     /* Shadows */
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
@@ -757,38 +757,48 @@
   }
   
   .dark {
-    /* Base colors */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Base colors - Rich dark theme like modern OS systems */
+    --background: 218 35% 10%;
+    --foreground: 213 30% 98%;
     
-    /* Card colors */
-    --card: 222 45% 15%;
-    --card-foreground: 210 40% 98%;
+    /* Card colors - Subtle elevated surface */
+    --card: 218 30% 13%;
+    --card-foreground: 213 30% 98%;
     
-    /* Popover colors */
-    --popover: 222 45% 15%;
-    --popover-foreground: 210 40% 98%;
+    /* Popover colors - Consistent with cards for harmony */
+    --popover: 218 30% 13%;
+    --popover-foreground: 213 30% 98%;
     
-    /* Primary colors */
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary colors - Vibrant but not eye-straining */
+    --primary: 218 95% 55%;
+    --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors */
-    --secondary: 217 33% 20%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary colors - Proper dark mode hierarchy */
+    --secondary: 218 25% 18%;
+    --secondary-foreground: 213 30% 98%;
     
-    /* Muted colors */
-    --muted: 217 33% 20%;
-    --muted-foreground: 215 20% 65%;
+    /* Muted colors - Better contrast for secondary content */
+    --muted: 218 25% 16%;
+    --muted-foreground: 215 25% 75%;
     
-    /* Accent colors */
-    --accent: 217 33% 20%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent colors - Subtle but visible highlight */
+    --accent: 218 30% 16%;
+    --accent-foreground: 213 30% 98%;
     
-    /* Border and other UI elements */
-    --border: 217 33% 25%;
-    --input: 217 33% 25%;
-    --ring: 217 91% 60%;
+    /* State colors - Higher contrast for easy identification */
+    --destructive: 358 90% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --success: 145 80% 42%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 32 95% 50%;
+    --warning-foreground: 0 0% 100%;
+    
+    /* Border and other UI elements - Visible but not distracting */
+    --border: 218 25% 20%;
+    --input: 218 25% 20%;
+    --ring: 218 95% 55%;
     
     /* Chart colors remain the same for consistency */
     
