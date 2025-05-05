@@ -182,8 +182,8 @@ export function RecentTradesCard({
   
   if (isLoading) {
     return (
-      <Card className="border shadow-sm h-full flex flex-col">
-        <CardHeader className="pb-2">
+      <Card className="h-full flex flex-col">
+        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
           <div className="flex justify-between">
             <div>
               <Skeleton className="h-7 w-40 mb-2" />
@@ -191,7 +191,7 @@ export function RecentTradesCard({
             </div>
           </div>
         </CardHeader>
-        <CardContent className="py-2 flex-grow">
+        <CardContent className="pt-2 pb-4 px-4 sm:px-6 flex-grow">
           {Array(3).fill(0).map((_, index) => (
             <div key={index} className="flex items-center justify-between py-3 border-b last:border-0">
               <div className="space-y-1">
@@ -202,7 +202,7 @@ export function RecentTradesCard({
             </div>
           ))}
         </CardContent>
-        <CardFooter className="pt-2 pb-3">
+        <CardFooter className="px-4 sm:px-6 pt-2 pb-4">
           <Skeleton className="h-9 w-28" />
         </CardFooter>
       </Card>
@@ -210,8 +210,8 @@ export function RecentTradesCard({
   }
 
   return (
-    <Card className="border shadow-sm h-full flex flex-col">
-      <CardHeader className="pb-2">
+    <Card className="h-full flex flex-col">
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex justify-between">
           <div>
             <CardTitle className="text-xl font-semibold flex items-center">
@@ -225,7 +225,7 @@ export function RecentTradesCard({
         </div>
       </CardHeader>
       
-      <CardContent className="py-1 flex-grow">
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6 flex-grow">
         {trades.length > 0 ? (
           <div className="divide-y divide-border/30">
             {memoizedTradesList}
@@ -249,7 +249,7 @@ export function RecentTradesCard({
       </CardContent>
       
       {trades.length > 0 && (
-        <CardFooter className="pt-1 pb-3">
+        <CardFooter className="px-4 sm:px-6 pt-2 pb-4">
           <Button 
             variant="outline" 
             size="sm"
