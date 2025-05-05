@@ -39,7 +39,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         ref={contentRef}
         id="mobile-content-container"
       >
-        <div className="flex-1 flex flex-col w-full max-w-md mx-auto">
+        <div className="flex-1 flex flex-col w-full max-w-md mx-auto pt-16">
           {children}
         </div>
         {/* Main content container now has standardized bottom padding directly in mobile-content-with-navigation class */}
