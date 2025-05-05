@@ -309,7 +309,7 @@ async function updateDisplayName(newDisplayName: string) {
   }
 }
 
-// Các hàm liên kết tài khoản đã được triển khai ở cuối file
+// Hàm cập nhật dữ liệu người dùng
 
 async function updateUserData(userId: string, data: any) {
   const userRef = doc(db, "users", userId);
