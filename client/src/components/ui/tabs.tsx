@@ -46,6 +46,7 @@ const TabsContent = React.forwardRef<
       animate?: any;
       exit?: any;
       transition?: any;
+      variants?: any;
     }
   }
 >(({ className, motionProps, ...props }, ref) => {

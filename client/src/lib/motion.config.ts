@@ -114,6 +114,13 @@ export const achievementVariants = {
   exit: { opacity: 0, scale: 0.9, y: 20 }
 };
 
+// Card variants for dashboard cards
+export const cardVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 10 }
+};
+
 // Staggered children variants
 export const staggerContainer = {
   hidden: { opacity: 0 },
@@ -146,7 +153,10 @@ export function useMotionConfig() {
         fade: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
         scale: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
         slide: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
-        dialog: { hidden: { opacity: 0 }, visible: { opacity: 1 } }
+        dialog: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+        card: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+        tab: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+        achievement: { hidden: { opacity: 0 }, visible: { opacity: 1 } }
       }
     };
   }
@@ -164,7 +174,8 @@ export function useMotionConfig() {
       tab: tabVariants,
       toast: toastVariants,
       overlay: overlayVariants,
-      achievement: achievementVariants
+      achievement: achievementVariants,
+      card: cardVariants
     }
   };
 }
