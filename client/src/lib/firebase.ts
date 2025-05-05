@@ -3,6 +3,7 @@ import { getAuth, type User, signOut, updateProfile, createUserWithEmailAndPassw
 import { calculatePips, calculateProfit } from './forex-calculator';
 import { DASHBOARD_CONFIG } from './config';
 import { debug, logError, logWarning } from './debug';
+import { processTradeTrigger } from './achievements-service';
 import { TradingStrategy } from "@/types";
 import { 
   getFirestore, 
@@ -329,6 +330,15 @@ async function addTrade(userId: string, tradeData: any) {
     });
     
     debug("Trade added successfully with ID:", docRef.id);
+    
+    // Trigger achievement processing for trade creation
+    try {
+      await processTradeTrigger(userId, 'create');
+      debug("Achievement processing triggered for new trade");
+    } catch (achievementError) {
+      // Log but don't fail if achievement processing fails
+      logError("Error processing achievements for new trade:", achievementError);
+    }
     
     // Return an object with id for easier access
     return {
@@ -746,6 +756,15 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any) {
       await updateAccountBalance(userId);
     }
     
+    // Trigger achievement processing for trade update
+    try {
+      await processTradeTrigger(userId, 'update');
+      debug("Achievement processing triggered for trade update");
+    } catch (achievementError) {
+      // Log but don't fail if achievement processing fails
+      logError("Error processing achievements for trade update:", achievementError);
+    }
+    
     return tradeData;
   } catch (error) {
     logError("Error updating trade:", error);
@@ -863,6 +882,15 @@ async function deleteTrade(userId: string, tradeId: string) {
     
     // Cập nhật số dư tài khoản sau khi xóa giao dịch
     await updateAccountBalance(userId);
+    
+    // Trigger achievement processing for trade deletion
+    try {
+      await processTradeTrigger(userId, 'delete');
+      debug("Achievement processing triggered for trade deletion");
+    } catch (achievementError) {
+      // Log but don't fail if achievement processing fails
+      logError("Error processing achievements for trade deletion:", achievementError);
+    }
     
     return true;
   } catch (error) {
