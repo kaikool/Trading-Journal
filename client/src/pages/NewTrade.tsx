@@ -48,7 +48,7 @@ export default function NewTrade() {
         </div>
       ) : (
         <Card className="overflow-x-hidden">
-          <CardContent className="p-4 sm:p-6">
+          <CardContent className="px-4 sm:px-6 pt-4 pb-4">
             <TradeFormNew 
               mode="new"
               userId={userId}

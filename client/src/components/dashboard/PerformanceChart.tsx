@@ -74,13 +74,13 @@ export function PerformanceChart({
   if (effectiveIsLoading) {
     return (
       <Card className="balance-chart">
-        <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
+        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
           <div className="flex justify-between items-center">
             <Skeleton className="h-7 w-40" />
             <Skeleton className="h-6 w-24" />
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6">
+        <CardContent className="px-4 sm:px-6 pt-0 pb-4">
           <Skeleton className="h-[var(--balance-chart-height)] w-full min-h-[200px]" />
         </CardContent>
       </Card>
@@ -91,7 +91,7 @@ export function PerformanceChart({
   if (!data || data.length === 0) {
     return (
       <Card className="balance-chart">
-        <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
+        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
           <div className="flex justify-between items-center">
             <CardTitle className="flex items-center card-title" style={{
               fontSize: 'var(--card-title-size)',
@@ -108,7 +108,7 @@ export function PerformanceChart({
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 balance-chart-empty" style={{ minHeight: '200px' }}>
+        <CardContent className="px-4 sm:px-6 pt-0 pb-4 balance-chart-empty" style={{ minHeight: '200px' }}>
           <Info className="balance-chart-empty-icon" />
           <p className="balance-chart-empty-title">No performance data available</p>
           <p className="balance-chart-empty-subtitle">Complete trades will appear in this chart</p>
@@ -168,7 +168,7 @@ export function PerformanceChart({
   
   return (
     <Card>
-      <CardHeader className="p-4 pb-2 sm:p-6 sm:pb-2">
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
@@ -199,7 +199,7 @@ export function PerformanceChart({
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+      <CardContent className="pt-0 pb-4 px-4 sm:px-6">
         <div className="balance-chart-container" style={{ minHeight: '200px' }}>
           <ResponsiveContainer width="100%" height="100%" minHeight={200}>
             <AreaChart
