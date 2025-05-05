@@ -397,14 +397,14 @@ export default function Settings() {
       setLinkedProviders(updatedProviders);
       
       toast({
-        title: "Tài khoản đã được liên kết",
-        description: "Tài khoản Google của bạn đã được liên kết thành công.",
+        title: "Account linked",
+        description: "Your Google account has been linked successfully.",
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Liên kết thất bại",
-        description: error instanceof Error ? error.message : "Có lỗi xảy ra khi liên kết tài khoản.",
+        title: "Link failed",
+        description: error instanceof Error ? error.message : "An error occurred while linking your account.",
       });
     } finally {
       setIsLinkingGoogle(false);
@@ -417,8 +417,8 @@ export default function Settings() {
     if (linkedProviders.length <= 1) {
       toast({
         variant: "destructive",
-        title: "Không thể hủy liên kết",
-        description: "Bạn phải có ít nhất một phương thức đăng nhập. Hãy thêm phương thức khác trước khi hủy phương thức này.",
+        title: "Cannot unlink",
+        description: "You must have at least one login method. Add another method before removing this one.",
       });
       return;
     }
@@ -436,14 +436,14 @@ export default function Settings() {
       setLinkedProviders(updatedProviders);
       
       toast({
-        title: "Đã hủy liên kết",
-        description: `Phương thức đăng nhập "${getProviderName(providerId)}" đã được hủy.`,
+        title: "Unlinked successfully",
+        description: `Login method "${getProviderName(providerId)}" has been unlinked.`,
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Hủy liên kết thất bại",
-        description: error instanceof Error ? error.message : "Có lỗi xảy ra khi hủy liên kết.",
+        title: "Unlink failed",
+        description: error instanceof Error ? error.message : "An error occurred while unlinking your account.",
       });
     } finally {
       setIsUnlinking(false);
@@ -1128,16 +1128,16 @@ export default function Settings() {
           </SettingsSection>
           
           <SettingsSection 
-            title="Phương thức đăng nhập"
-            description="Quản lý các phương thức đăng nhập và liên kết tài khoản"
+            title="Login Methods"
+            description="Manage login methods and account linking"
           >
             <div className="space-y-4 sm:space-y-6">
               {/* Danh sách các phương thức đăng nhập hiện tại */}
               <div className="space-y-3">
-                <h4 className="text-sm font-medium border-b pb-2 mb-3">Phương thức đăng nhập hiện tại</h4>
+                <h4 className="text-sm font-medium border-b pb-2 mb-3">Current Login Methods</h4>
                 
                 {linkedProviders.length === 0 ? (
-                  <div className="text-sm text-muted-foreground italic">Đang tải...</div>
+                  <div className="text-sm text-muted-foreground italic">Loading...</div>
                 ) : (
                   linkedProviders.map((provider) => (
                     <div 
@@ -1165,7 +1165,7 @@ export default function Settings() {
                               <Mail className="h-4 w-4" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-medium">Email/Mật khẩu</h4>
+                              <h4 className="text-sm font-medium">Email/Password</h4>
                               <p className="text-xs text-muted-foreground">{auth.currentUser?.email}</p>
                             </div>
                           </>
@@ -1196,7 +1196,7 @@ export default function Settings() {
                         ) : (
                           <Link2Off className="h-3.5 w-3.5" />
                         )}
-                        <span className="ml-1.5">Hủy liên kết</span>
+                        <span className="ml-1.5">Unlink</span>
                       </Button>
                     </div>
                   ))
@@ -1205,7 +1205,7 @@ export default function Settings() {
               
               {/* Thêm phương thức đăng nhập */}
               <div className="pt-2">
-                <h4 className="text-sm font-medium border-b pb-2 mb-3">Thêm phương thức đăng nhập</h4>
+                <h4 className="text-sm font-medium border-b pb-2 mb-3">Add Login Method</h4>
                 
                 <div className="space-y-3">
                   {/* Google đăng nhập */}
@@ -1219,7 +1219,7 @@ export default function Settings() {
                         </div>
                         <div>
                           <h4 className="text-sm font-medium">Google</h4>
-                          <p className="text-xs text-muted-foreground">Liên kết tài khoản Google của bạn</p>
+                          <p className="text-xs text-muted-foreground">Link your Google account</p>
                         </div>
                       </div>
                       
@@ -1233,12 +1233,12 @@ export default function Settings() {
                         {isLinkingGoogle ? (
                           <>
                             <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
-                            <span>Đang liên kết...</span>
+                            <span>Linking...</span>
                           </>
                         ) : (
                           <>
                             <Link className="h-3.5 w-3.5 mr-1.5" />
-                            <span>Liên kết</span>
+                            <span>Link</span>
                           </>
                         )}
                       </Button>
@@ -1250,8 +1250,8 @@ export default function Settings() {
                     <p className="flex items-start">
                       <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                       <span>
-                        Bạn phải duy trì ít nhất một phương thức đăng nhập cho tài khoản. 
-                        Thêm một phương thức đăng nhập mới trước khi xóa phương thức cuối cùng.
+                        You must maintain at least one login method for your account.
+                        Add a new login method before removing the last one.
                       </span>
                     </p>
                   </div>
@@ -1261,18 +1261,18 @@ export default function Settings() {
           </SettingsSection>
           
           <SettingsSection 
-            title="Phiên đăng nhập" 
-            description="Quản lý phiên đăng nhập và bảo mật tài khoản"
+            title="Login Session" 
+            description="Manage login sessions and account security"
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-muted/30 border border-border/40">
                 <div>
                   <div>
-                    <h4 className="text-sm font-medium">Phiên hiện tại</h4>
+                    <h4 className="text-sm font-medium">Current Session</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {auth.currentUser?.metadata?.lastSignInTime 
-                        ? `Bắt đầu từ ${new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString()}` 
-                        : 'Phiên hiện tại'}
+                        ? `Started from ${new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString()}` 
+                        : 'Current session'}
                     </p>
                   </div>
                 </div>
@@ -1283,7 +1283,7 @@ export default function Settings() {
                   className="text-xs space-x-1"
                 >
                   <LogOut className="h-3.5 w-3.5 mr-1" />
-                  <span>Đăng xuất</span>
+                  <span>Logout</span>
                 </Button>
               </div>
             </div>
