@@ -259,6 +259,7 @@ export function StrategyConditionForm({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                // Người dùng bấm Save thì mới gọi onChange
                 onChange({...condition});
               }}
               disabled={!condition.label.trim()}
@@ -391,18 +392,30 @@ export function StrategyConditionList({
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   
-  const handleAdd = () => {
-    if (newCondition.label.trim()) {
-      onAdd(newCondition);
-      setNewCondition(createNewCondition(conditions.length + 1));
-      setIsAdding(false);
-    }
-  };
+  // Thêm state để giữ các thay đổi trước khi lưu
+  const [editingConditions, setEditingConditions] = useState<Record<string, StrategyCondition>>({});
   
+  // Khi bắt đầu edit, lưu trạng thái hiện tại vào state
   const handleEdit = (id: string) => {
+    const conditionToEdit = conditions.find(c => c.id === id);
+    if (conditionToEdit) {
+      setEditingConditions({
+        ...editingConditions,
+        [id]: { ...conditionToEdit }
+      });
+    }
     setEditingId(id);
   };
   
+  // Khi nhập liệu, chỉ cập nhật state local, không gọi onUpdate
+  const handleEditChange = (updatedCondition: StrategyCondition) => {
+    setEditingConditions({
+      ...editingConditions,
+      [updatedCondition.id]: updatedCondition
+    });
+  };
+  
+  // Khi Save, mới gọi onUpdate
   const handleUpdate = (updatedCondition: StrategyCondition) => {
     // Đơn giản hóa: tạo đối tượng updates rõ ràng thay vì truyền toàn bộ đối tượng
     const cleanUpdates = {
@@ -417,6 +430,19 @@ export function StrategyConditionList({
     // Gọi onUpdate với id và đối tượng updates đã được làm sạch
     onUpdate(updatedCondition.id, cleanUpdates);
     setEditingId(null);
+    
+    // Xóa khỏi editingConditions vì đã lưu
+    const newEditingConditions = { ...editingConditions };
+    delete newEditingConditions[updatedCondition.id];
+    setEditingConditions(newEditingConditions);
+  };
+  
+  const handleAdd = () => {
+    if (newCondition.label.trim()) {
+      onAdd(newCondition);
+      setNewCondition(createNewCondition(conditions.length + 1));
+      setIsAdding(false);
+    }
   };
   
   return (
@@ -470,9 +496,11 @@ export function StrategyConditionList({
               editingId === condition.id ? (
                 <StrategyConditionForm
                   key={condition.id}
-                  condition={condition}
-                  onChange={handleUpdate}
+                  condition={editingConditions[condition.id] || condition}
+                  onChange={handleEditChange}
                   onCancel={() => setEditingId(null)}
+                  onAdd={undefined}
+                  isNew={false}
                 />
               ) : (
                 <StrategyConditionItem
