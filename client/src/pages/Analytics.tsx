@@ -422,7 +422,6 @@ export default function Analytics() {
           </div>
           
           {/* Mỗi TabsContent có Suspense riêng để chỉ tab đang mở mới cần loading */}
-          <AnimatePresence mode="wait">
             <TabsContent 
               value="overview"
               motionProps={{
@@ -497,7 +496,6 @@ export default function Analytics() {
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>
-          </AnimatePresence>
             
 
         </Tabs>

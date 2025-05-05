@@ -342,6 +342,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           }}
         >
           <KPICard
+            key="balance-card"
             title="Account Balance"
             value={formatCurrency(currentBalance)}
             description={`Initial: ${formatCurrency(initialBalance)}`}
@@ -353,6 +354,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           />
           
           <KPICard
+            key="winrate-card"
             title="Win Rate"
             value={`${winRate.toFixed(1)}%`}
             description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
@@ -361,6 +363,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           />
           
           <KPICard
+            key="trades-card"
             title="Total Trades"
             value={totalTrades}
             description="Completed trades"
@@ -368,6 +371,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           />
           
           <KPICard
+            key="profit-factor-card"
             title="Profit Factor"
             value={(() => {
               // Use calculateProfitFactor from forex-calculator.ts for consistency
@@ -390,6 +394,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <KPICard
+            key="balance-card-static"
             title="Account Balance"
             value={formatCurrency(currentBalance)}
             description={`Initial: ${formatCurrency(initialBalance)}`}
@@ -401,6 +406,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           />
           
           <KPICard
+            key="winrate-card-static"
             title="Win Rate"
             value={`${winRate.toFixed(1)}%`}
             description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
@@ -409,6 +415,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           />
           
           <KPICard
+            key="trades-card-static"
             title="Total Trades"
             value={totalTrades}
             description="Completed trades"
@@ -416,6 +423,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           />
           
           <KPICard
+            key="profit-factor-card-static"
             title="Profit Factor"
             value={(() => {
               // Use calculateProfitFactor from forex-calculator.ts for consistency

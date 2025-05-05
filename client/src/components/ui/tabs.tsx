@@ -85,6 +85,7 @@ const TabsContent = React.forwardRef<
           className
         )}
         {...(motionProps || defaultMotionProps)}
+        layout
       />
     </TabsPrimitive.Content>
   );
