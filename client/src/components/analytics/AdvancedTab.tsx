@@ -539,12 +539,12 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
             Account equity progression with maximum drawdown: {formatCurrency(cumulativePnLData.maxDrawdown)}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-4">
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={cumulativePnLData.timeData}
-                margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
+                margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
               >
                 <defs>
                   <linearGradient id="colorPnL" x1="0" y1="0" x2="0" y2="1">
@@ -598,12 +598,12 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
               Win rates and profitability by day of the week
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pb-4">
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={dayOfWeekData}
-                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
+                  margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
                 >
                   <CartesianGrid 
                     strokeDasharray="3 3" 
@@ -655,11 +655,11 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
               Trade outcomes vs. risk:reward ratios
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pb-4">
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart
-                  margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
+                  margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
                 >
                   <CartesianGrid 
                     strokeDasharray="3 3" 

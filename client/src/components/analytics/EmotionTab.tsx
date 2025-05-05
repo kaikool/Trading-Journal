@@ -615,7 +615,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       labelLine={{ stroke: 'hsl(var(--muted-foreground)/40)', strokeWidth: 1 }}
                       label={({ percent }) => {
                         const value = (percent * 100).toFixed(1);
-                        return value > 5 ? `${value}%` : '';
+                        return parseFloat(value) > 5 ? `${value}%` : '';
                       }}
                       outerRadius={80}
                       fill="#8884d8"
