@@ -1,86 +1,218 @@
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
-const Card = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    hover?: boolean;
-    variant?: 'default' | 'outline' | 'elevated';
+/**
+ * Redesigned Card Component System
+ * 
+ * An elegant, modern card system optimized for financial applications with:
+ * - Consistent and subtle elevation using shadows instead of heavy borders
+ * - Appropriate background contrast against the page (never pure white)
+ * - Responsive sizing with rem/em units 
+ * - Proper information hierarchy for financial data display
+ * - Support for different density layouts (compact, default, relaxed)
+ */
+
+type CardVariant = 'default' | 'outline' | 'elevated' | 'subtle' | 'filled';
+type CardDensity = 'compact' | 'default' | 'relaxed';
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  hover?: boolean;
+  variant?: CardVariant;
+  density?: CardDensity;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, hover = true, variant = 'default', density = 'default', ...props }, ref) => {
+    // Map density to appropriate padding classes
+    const densityClasses = {
+      compact: "p-3 sm:p-4",
+      default: "p-4 sm:p-5",
+      relaxed: "p-5 sm:p-6"
+    };
+    
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          // Base styling - consistent border radius and text color
+          "rounded-lg text-card-foreground",
+          
+          // Background colors by variant - never use pure white/black
+          variant === 'default' && "bg-card/95",
+          variant === 'outline' && "bg-background/50", 
+          variant === 'elevated' && "bg-card",
+          variant === 'subtle' && "bg-muted/30 dark:bg-muted/10",
+          variant === 'filled' && "bg-secondary/20 dark:bg-secondary/10",
+          
+          // Border and shadow styling by variant - subtle but visible
+          variant === 'default' && "border border-border/20 shadow-sm",
+          variant === 'outline' && "border border-border/30", 
+          variant === 'elevated' && "border-0 shadow-md",
+          variant === 'subtle' && "border border-border/10 shadow-sm",
+          variant === 'filled' && "border border-border/10",
+          
+          // Hover effect - subtle elevation change
+          hover && "transition-all duration-200 ease-in-out",
+          hover && variant !== 'elevated' && "hover:shadow-md",
+          hover && variant === 'elevated' && "hover:shadow-lg",
+          
+          // Density-based padding
+          densityClasses[density],
+          
+          // User-provided classes override defaults
+          className
+        )}
+        {...props}
+      />
+    );
   }
->(({ className, hover = true, variant = 'default', ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "rounded-lg bg-card text-card-foreground",
-      variant === 'default' && "border-border/30 border shadow-[var(--shadow-sm)]",
-      variant === 'outline' && "border-border/40 border",
-      variant === 'elevated' && "border-0 shadow-[var(--shadow-md)]",
-      hover && "transition-all duration-200 hover:shadow-[var(--shadow-md)]",
-      className
-    )}
-    {...props}
-  />
-))
-Card.displayName = "Card"
+);
+Card.displayName = "Card";
 
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-))
-CardHeader.displayName = "CardHeader"
+interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  density?: CardDensity;
+}
 
-const CardTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-normal tracking-normal",
-      className
-    )}
-    {...props}
-  />
-))
-CardTitle.displayName = "CardTitle"
+const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
+  ({ className, density = 'default', ...props }, ref) => {
+    // Calculate padding based on density
+    const paddingClasses = {
+      compact: "px-0 pt-0 pb-2",
+      default: "px-0 pt-0 pb-3", 
+      relaxed: "px-0 pt-0 pb-4"
+    };
+    
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "flex flex-col space-y-1.5",
+          paddingClasses[density],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+CardHeader.displayName = "CardHeader";
 
-const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-CardDescription.displayName = "CardDescription"
+interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  size?: 'sm' | 'md' | 'lg';
+}
 
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
-CardContent.displayName = "CardContent"
+const CardTitle = React.forwardRef<HTMLParagraphElement, CardTitleProps>(
+  ({ className, size = 'md', ...props }, ref) => {
+    // Size variants for the title
+    const sizeClasses = {
+      sm: "text-base font-medium",
+      md: "text-lg font-semibold", 
+      lg: "text-xl font-semibold"
+    };
+    
+    return (
+      <h3
+        ref={ref}
+        className={cn(
+          "leading-tight tracking-tight",
+          sizeClasses[size],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+CardTitle.displayName = "CardTitle";
 
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-))
-CardFooter.displayName = "CardFooter"
+interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  size?: 'sm' | 'md';
+}
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
+  ({ className, size = 'md', ...props }, ref) => {
+    const sizeClasses = {
+      sm: "text-xs",
+      md: "text-sm"
+    };
+    
+    return (
+      <p
+        ref={ref}
+        className={cn(
+          "text-muted-foreground",
+          sizeClasses[size],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+CardDescription.displayName = "CardDescription";
+
+interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  density?: CardDensity;
+}
+
+const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
+  ({ className, density = 'default', ...props }, ref) => {
+    const paddingClasses = {
+      compact: "px-0 py-2",
+      default: "px-0 py-3",
+      relaxed: "px-0 py-4"
+    };
+    
+    return (
+      <div 
+        ref={ref} 
+        className={cn(
+          paddingClasses[density],
+          className
+        )} 
+        {...props} 
+      />
+    );
+  }
+);
+CardContent.displayName = "CardContent";
+
+interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+  density?: CardDensity;
+}
+
+const CardFooter = React.forwardRef<HTMLDivElement, CardFooterProps>(
+  ({ className, density = 'default', ...props }, ref) => {
+    const paddingClasses = {
+      compact: "px-0 pt-2 pb-0",
+      default: "px-0 pt-3 pb-0", 
+      relaxed: "px-0 pt-4 pb-0"
+    };
+    
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "flex items-center",
+          paddingClasses[density],
+          className
+        )}
+        {...props}
+      />
+    );
+  }
+);
+CardFooter.displayName = "CardFooter";
+
+export { 
+  Card, 
+  CardHeader, 
+  CardFooter, 
+  CardTitle, 
+  CardDescription, 
+  CardContent,
+  // Export types for reuse
+  type CardVariant,
+  type CardDensity,
+  type CardProps
+}

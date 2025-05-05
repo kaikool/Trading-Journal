@@ -1547,133 +1547,158 @@
   
   /* 
    * =======================================================
-   * STAT CARD COMPONENT SYSTEM
+   * MODERN FINANCIAL CARD SYSTEM
    * =======================================================
    * 
-   * Unified styling for the StatCard component
-   * All styles defined in one place to ensure consistency and responsive behavior
-   * Organized with CSS variables for better maintainability
+   * A comprehensive styling system for all cards in the application,
+   * optimized for financial data display with proper information
+   * hierarchy, consistent styling, and modern aesthetics.
    */
   
-  /* Stat Card Base Container */
+  /* 
+   * STAT CARD COMPONENT
+   * Used for displaying key metrics and statistics 
+   */
   .stat-card {
-    /* Central configuration through CSS variables following 4px spacing rule */
+    /* Base configuration with CSS variables using 4px spacing rule */
     --stat-card-padding: 1rem; /* 16px - Tailwind p-4 */
     --stat-card-radius: var(--radius);
-    --stat-card-border-opacity: 0.3;
+    --stat-card-border-opacity: 0.15; /* Reduced opacity for subtlety */
     --stat-card-shadow: var(--shadow-sm);
     --stat-card-hover-shadow: var(--shadow-md);
     --stat-card-anim-speed: 200ms;
     --stat-card-z-index: 10;
     
-    /* Value and title typography */
-    --stat-value-font-size: 1.75rem;
+    /* Modern typography with better visual hierarchy */
+    --stat-value-font-size: 1.5rem; /* Slightly smaller for better fit */
     --stat-value-font-weight: 600;
     --stat-title-font-size: 0.875rem;
     --stat-title-font-weight: 500;
-    --stat-suffix-font-size: 1.125rem;
+    --stat-suffix-font-size: 1rem; /* Smaller suffix for better proportion */
     
-    /* Icon configuration */
-    --stat-icon-size: 1.25rem;
-    --stat-icon-container-size: 2rem;
-    --stat-icon-container-padding: 0.375rem; /* 6px - Tailwind p-1.5 */
-    --stat-icon-container-radius: 9999px;
+    /* Icon configuration - smaller, more elegant */
+    --stat-icon-size: 1.125rem;
+    --stat-icon-container-size: 1.75rem; /* Smaller for better proportion */
+    --stat-icon-container-padding: 0.25rem; /* 4px - Following 4px grid */
+    --stat-icon-container-radius: 0.375rem; /* Softer corners for icon containers */
     
-    /* Progress bar config */
+    /* Progress bar config - subtle but visible */
     --stat-progress-height: 0.25rem; /* 4px - Following 4px spacing rule */
     --stat-progress-radius: 9999px;
     
-    /* Base container styling */
+    /* Base container styling - softer appearance */
     padding: var(--stat-card-padding);
     border-radius: var(--stat-card-radius);
     box-shadow: var(--stat-card-shadow);
+    background-color: hsl(var(--card) / 0.98); /* Slightly transparent */
     border: 1px solid hsl(var(--border) / var(--stat-card-border-opacity));
     overflow: hidden;
     position: relative;
     transition: all var(--stat-card-anim-speed) ease-in-out;
   }
   
-  /* Compact variant for stat cards in grid layout */
+  /* Compact variant for stat cards in grid layout - denser display */
   .stat-card-compact {
-    --stat-card-padding: 0.75rem; /* 12px - Following 4px rule - Tailwind p-3 */
-    --stat-value-font-size: 1.5rem;
+    --stat-card-padding: 0.75rem; /* 12px - Following 4px rule */
+    --stat-value-font-size: 1.25rem; /* Smaller for compact cards */
+    --stat-icon-container-size: 1.5rem; /* Smaller icon container */
     padding: var(--stat-card-padding);
+    background-color: hsl(var(--card) / 0.5); /* Semi-transparent for layered effect */
+    backdrop-filter: blur(8px); /* Subtle glass effect for modern look */
+    -webkit-backdrop-filter: blur(8px);
   }
   
-  /* Hover effects */
+  /* Subtle hover effect - gentle elevation increase */
   .stat-card:hover {
     box-shadow: var(--stat-card-hover-shadow);
+    border-color: hsl(var(--border) / 0.25); /* Slightly more visible on hover */
+    transform: translateY(-1px); /* Subtle lift effect */
   }
   
-  /* Background gradient effect */
+  /* Background gradient effect for accent cards */
   .stat-card-bg {
     position: absolute;
     inset: 0;
-    opacity: 0.5;
+    opacity: 0.04; /* Very subtle by default */
     transition: opacity var(--stat-card-anim-speed) ease-in-out;
+    background-image: linear-gradient(
+      135deg, 
+      transparent 0%, 
+      rgba(255, 255, 255, 0.05) 100%
+    );
   }
   
   .stat-card:hover .stat-card-bg {
-    opacity: 0.7;
+    opacity: 0.06; /* Slightly more visible on hover */
   }
   
-  /* Header container */
+  /* Header container - better spacing */
   .stat-card-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.75rem;
+    align-items: center; /* Better vertical alignment */
+    margin-bottom: 0.5rem; /* 8px - Following 4px grid */
     position: relative;
     z-index: var(--stat-card-z-index);
   }
   
-  /* Stat card title */
+  /* Stat card title - clearer, more readable */
   .stat-card-title {
     font-size: var(--stat-title-font-size);
     font-weight: var(--stat-title-font-weight);
     color: hsl(var(--muted-foreground));
+    letter-spacing: -0.01em; /* Slightly tighter for financial data */
   }
   
-  /* Icon container */
+  /* Icon container - more modern and subtle */
   .stat-card-icon-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--stat-icon-container-padding);
+    width: var(--stat-icon-container-size);
+    height: var(--stat-icon-container-size);
     border-radius: var(--stat-icon-container-radius);
+    padding: var(--stat-icon-container-padding);
+    backdrop-filter: blur(4px); /* Subtle glass effect */
+    -webkit-backdrop-filter: blur(4px);
   }
   
-  /* Main value display */
+  /* Main value display - clean and prominent */
   .stat-card-value {
     font-size: var(--stat-value-font-size);
     font-weight: var(--stat-value-font-weight);
-    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em; /* Slightly tighter for financial figures */
+    margin-bottom: 0.25rem;
     position: relative;
     z-index: var(--stat-card-z-index);
-    letter-spacing: -0.025em;
   }
   
-  /* Value suffix */
+  /* Value suffix - more proportional */
   .stat-card-suffix {
     font-size: var(--stat-suffix-font-size);
-    margin-left: 0.25rem;
-    opacity: 0.8;
+    margin-left: 0.125rem;
+    opacity: 0.7; /* More subtle */
+    font-weight: 500; /* Medium weight for suffix */
   }
   
-  /* Progress bar container */
+  /* Progress bar container - modern and subtle */
   .stat-card-progress-container {
     width: 100%;
-    background-color: hsl(var(--muted) / 0.4);
+    background-color: hsl(var(--muted) / 0.2); /* Less contrast for background */
     border-radius: var(--stat-progress-radius);
     height: var(--stat-progress-height);
     margin-top: 0.5rem;
     position: relative;
     z-index: var(--stat-card-z-index);
+    overflow: hidden; /* Ensure progress bar stays contained */
   }
   
-  /* Progress bar */
+  /* Progress bar - smoother animation */
   .stat-card-progress {
     height: 100%;
     border-radius: var(--stat-progress-radius);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother easing */
   }
   
   /* Supporting text */
