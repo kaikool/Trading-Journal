@@ -543,9 +543,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 <div className="space-y-0.5">
                   {strategy.rules.map((rule, index) => (
                     <div key={rule.id} className="pl-1 py-0.5 text-sm flex items-center">
-                      <span className="text-[11px] text-muted-foreground mr-2">
-                        {index + 1}.
-                      </span>
+                      <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-primary/70 mr-2"></span>
                       <span>{rule.label}</span>
                     </div>
                   ))}
@@ -571,9 +569,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 <div className="space-y-0.5">
                   {strategy.entryConditions.map((condition, index) => (
                     <div key={condition.id} className="pl-1 py-0.5 text-sm flex items-center">
-                      <span className="text-[11px] text-muted-foreground mr-2">
-                        {index + 1}.
-                      </span>
+                      <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-blue-500/70 mr-2"></span>
                       <span>{condition.label}</span>
                     </div>
                   ))}
@@ -599,9 +595,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 <div className="space-y-0.5">
                   {strategy.exitConditions.map((condition, index) => (
                     <div key={condition.id} className="pl-1 py-0.5 text-sm flex items-center">
-                      <span className="text-[11px] text-muted-foreground mr-2">
-                        {index + 1}.
-                      </span>
+                      <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-red-500/70 mr-2"></span>
                       <span>{condition.label}</span>
                     </div>
                   ))}
