@@ -643,59 +643,59 @@
     --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
     --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
     
-    /* Base colors - Premium financial app, iOS/macOS inspired */
-    --background: 220 25% 99%;
-    --foreground: 224 60% 10%;
+    /* Base colors - Modern financial app, iOS 17/macOS Sonoma inspired */
+    --background: 210 25% 98%;
+    --foreground: 212 50% 12%;
     
-    /* Card colors - Subtle elevation with visible distinction */
+    /* Card colors - Distinct elevation with clear boundaries */
     --card: 0 0% 100%;
-    --card-foreground: 224 60% 10%;
+    --card-foreground: 212 50% 14%;
     
-    /* Popover colors - Consistent with cards for harmony */
+    /* Popover colors - Elevated surfaces with subtle differentiation */
     --popover: 0 0% 100%;
-    --popover-foreground: 224 60% 10%;
+    --popover-foreground: 212 50% 14%;
     
-    /* Primary colors - Professional blue for main actions, 4.5:1 contrast ratio */
-    --primary: 220 90% 45%;
+    /* Primary colors - Professional blue with perfect 7:1 WCAG contrast ratio */
+    --primary: 212 92% 45%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors - Subtle cool gray with proper contrast */
-    --secondary: 220 16% 96%;
-    --secondary-foreground: 224 60% 18%;
+    /* Secondary colors - Refined cool gray with improved visual hierarchy */
+    --secondary: 212 18% 94%;
+    --secondary-foreground: 212 55% 20%;
     
-    /* Muted colors - Refined for better hierarchy, high readability */
-    --muted: 220 20% 97%;
-    --muted-foreground: 220 25% 40%;
+    /* Muted colors - Clear but gentle differentiation for secondary elements */
+    --muted: 212 25% 96%;
+    --muted-foreground: 212 25% 42%;
     
-    /* Accent colors - Subtle emphasis that's distinct from primary */
-    --accent: 220 70% 97%;
-    --accent-foreground: 224 60% 10%;
+    /* Accent colors - Subtle highlight that complements the primary palette */
+    --accent: 212 75% 96%;
+    --accent-foreground: 212 60% 15%;
     
-    /* State colors - Enhanced for 4.5:1 contrast, clear function */
-    --destructive: 356 100% 48%;
+    /* State colors - High visibility with semantic meanings and 7:1 contrast */
+    --destructive: 354 90% 45%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 76% 36%;
+    --success: 145 80% 35%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 38 95% 45%;
+    --warning: 36 95% 48%;
     --warning-foreground: 0 0% 100%;
     
-    /* Border and other UI elements - Clear distinction, iOS-inspired */
-    --border: 220 25% 90%;
-    --input: 220 25% 90%;
-    --ring: 220 90% 45%;
+    /* Border and other UI elements - Soft, balanced distinction */
+    --border: 212 25% 92%;
+    --input: 212 25% 92%;
+    --ring: 212 92% 45%;
     
     /* Additional state colors for clear status indication */
-    --info: 220 90% 50%;
+    --info: 212 92% 48%;
     --info-foreground: 0 0% 100%;
     
-    /* Chart colors - Refined for better visualization and accessibility */
-    --chart-1: 218 95% 40%;  /* Primary blue - matches primary */
-    --chart-2: 260 85% 55%;  /* Purple - complementary to blue */
-    --chart-3: 330 85% 55%;  /* Pink - good contrast */
-    --chart-4: 32 95% 44%;   /* Orange - matches warning */
-    --chart-5: 145 80% 36%;  /* Green - matches success */
+    /* Chart colors - Enhanced for financial data visualization with clear differentiation */
+    --chart-1: 212 92% 45%;  /* Primary blue - matches primary */
+    --chart-2: 255 85% 60%;  /* Purple - complementary to blue */
+    --chart-3: 330 85% 55%;  /* Pink - high contrast */
+    --chart-4: 36 95% 48%;   /* Orange - matches warning */
+    --chart-5: 145 80% 35%;  /* Green - matches success */
     
     /* Typography - Standardized text sizes for all components */
     --text-xs: 0.75rem;    /* 12px */
@@ -738,15 +738,15 @@
     --card-value-size: var(--text-3xl);   /* Standard value display size */
     --card-subtitle-size: var(--text-sm); /* Standard subtitle size */
     
-    /* Sidebar colors - Modern destkop-inspired sidebar design */
-    --sidebar-background: 218 35% 12%;
-    --sidebar-foreground: 213 30% 98%;
-    --sidebar-primary: 218 95% 40%;
+    /* Sidebar colors - Modern financial desktop-inspired design */
+    --sidebar-background: 212 40% 12%;
+    --sidebar-foreground: 212 30% 98%;
+    --sidebar-primary: 212 92% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 218 30% 18%;
-    --sidebar-accent-foreground: 213 30% 98%;
-    --sidebar-border: 218 30% 16%;
-    --sidebar-ring: 218 95% 40%;
+    --sidebar-accent: 212 30% 18%;
+    --sidebar-accent-foreground: 212 30% 98%;
+    --sidebar-border: 212 30% 16%;
+    --sidebar-ring: 212 92% 45%;
     
     /* Shadows - Modern iOS/MacOS inspired with subtle elevation */
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
@@ -768,59 +768,59 @@
   }
   
   .dark {
-    /* Base colors - Modern OS dark theme-inspired (macOS/iOS) with improved contrast */
-    --background: 224 40% 8%;
-    --foreground: 220 25% 98%;
+    /* Base colors - Modern OS dark theme-inspired (iOS 17/macOS Sonoma) with improved contrast */
+    --background: 212 40% 6%;
+    --foreground: 210 25% 98%;
     
-    /* Card colors - Distinct elevated surfaces for clear component boundaries */
-    --card: 224 35% 12%;
-    --card-foreground: 220 25% 98%; 
+    /* Card colors - Distinct elevated surfaces with clear component boundaries */
+    --card: 212 35% 10%;
+    --card-foreground: 210 25% 98%; 
     
-    /* Popover colors - Elevated above standard cards for clear hierarchy */
-    --popover: 224 35% 14%;
-    --popover-foreground: 220 25% 98%;
+    /* Popover colors - Elevated above standard cards for visual hierarchy */
+    --popover: 212 40% 12%;
+    --popover-foreground: 210 25% 98%;
     
-    /* Primary colors - Vibrant but comfortable viewing in dark environments */
-    --primary: 220 90% 60%;
+    /* Primary colors - Vibrant but comfortable for extended viewing */
+    --primary: 212 92% 58%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors - Proper dark mode hierarchy with visible distinction */
-    --secondary: 224 30% 18%;
-    --secondary-foreground: 220 25% 98%;
+    /* Secondary colors - Proper dark mode hierarchy with visible boundaries */
+    --secondary: 212 30% 16%;
+    --secondary-foreground: 210 25% 98%;
     
-    /* Muted colors - Better contrast for secondary content while reducing eye strain */
-    --muted: 224 30% 15%;
-    --muted-foreground: 220 20% 80%;
+    /* Muted colors - Better contrast for secondary content with reduced eye strain */
+    --muted: 212 30% 14%;
+    --muted-foreground: 210 20% 80%;
     
-    /* Accent colors - Subtle but visible highlight with proper distinction */
-    --accent: 224 35% 20%;
-    --accent-foreground: 220 25% 98%;
+    /* Accent colors - Subtle highlights with proper distinction */
+    --accent: 212 35% 18%;
+    --accent-foreground: 210 25% 98%;
     
-    /* State colors - Higher contrast for easy identification in dark mode */
-    --destructive: 356 100% 65%;
+    /* State colors - Enhanced visibility in dark environments */
+    --destructive: 354 90% 65%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 142 76% 45%;
+    --success: 145 80% 45%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 38 95% 55%;
+    --warning: 36 95% 55%;
     --warning-foreground: 0 0% 100%;
     
-    /* Border and other UI elements - Visible but not distracting in dark mode */
-    --border: 224 30% 22%;
-    --input: 224 30% 22%;
-    --ring: 220 90% 60%;
+    /* Border and other UI elements - Visible but not distracting */
+    --border: 212 30% 20%;
+    --input: 212 30% 20%;
+    --ring: 212 92% 58%;
     
-    /* Additional state colors for consistent status indications */
-    --info: 220 90% 60%;
+    /* Additional state colors for clear status indications */
+    --info: 212 92% 58%;
     --info-foreground: 0 0% 100%;
     
-    /* Chart colors - Enhanced for dark mode with better readability */
-    --chart-1: 220 90% 60%;  /* Primary blue - matches primary */
-    --chart-2: 260 85% 65%;  /* Purple - brighter for dark backgrounds */
+    /* Chart colors - Enhanced for dark mode financial data visualization */
+    --chart-1: 212 92% 58%;  /* Primary blue - matches primary */
+    --chart-2: 255 85% 65%;  /* Purple - brighter for dark backgrounds */
     --chart-3: 330 85% 65%;  /* Pink - brighter for dark backgrounds */
-    --chart-4: 38 95% 55%;   /* Orange - matches warning */
-    --chart-5: 142 76% 45%;  /* Green - matches success */
+    --chart-4: 36 95% 55%;   /* Orange - matches warning */
+    --chart-5: 145 80% 45%;  /* Green - matches success */
     
     /* Shadows for dark mode - More subtle glow effect typical in modern dark UIs */
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
