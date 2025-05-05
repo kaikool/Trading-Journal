@@ -1,13 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileNavigator from "./MobileNavigator";
 import { cn } from "@/lib/utils";
+import { useLayout } from "@/contexts/LayoutContext";
 
 interface MobileLayoutProps {
   children: React.ReactNode;
 }
 
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
+  const { initScrollListener, removeScrollListener } = useLayout();
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  // Thiết lập scroll listener khi component mount
+  useEffect(() => {
+    // Đợi một chút để đảm bảo DOM đã render
+    const timer = setTimeout(() => {
+      // Kết nối scroll container với LayoutContext
+      initScrollListener('.mobile-content-with-navigation');
+    }, 100);
+    
+    // Cleanup khi unmount
+    return () => {
+      clearTimeout(timer);
+      removeScrollListener();
+    };
+  }, [initScrollListener, removeScrollListener]);
+  
   return (
     <div className="mobile-layout app-layout-container">
       {/* 
@@ -15,7 +34,11 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
         Sử dụng CSS media queries để tự động xử lý việc hiển thị trong PWA
         thay vì dùng JavaScript isPWA()
       */}
-      <main className="app-content-container mobile-content-with-navigation">
+      <main 
+        className="app-content-container mobile-content-with-navigation" 
+        ref={contentRef}
+        id="mobile-content-container"
+      >
         <div className="flex-1 flex flex-col w-full max-w-md mx-auto">
           {children}
         </div>
