@@ -859,6 +859,7 @@ export function StrategiesManagement() {
   
   // Memoized callback for handling strategy field changes
   const handleStrategyFieldChange = useCallback((strategyId: string, fieldName: string, value: any) => {
+    console.log("[DEBUG] handleStrategyFieldChange:", strategyId, fieldName, value);
     setStrategies(prev => 
       prev.map(s => s.id === strategyId 
         ? { ...s, [fieldName]: value } 
