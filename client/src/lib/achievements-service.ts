@@ -14,6 +14,7 @@ import {
 import { Achievement } from '@/types';
 import { defineAchievements } from './achievements-data';
 import { useAchievementNotifications, findNewlyUnlockedAchievements, checkForLevelUp } from './achievement-notification-service';
+import { getUserMetrics, calculateAndUpdateAllMetrics, TradeMetrics } from './trade-metrics-service';
 
 // Mapping of points to levels
 // Higher levels require more points
@@ -95,6 +96,39 @@ export function calculatePointsForNextLevel(currentPoints: number): {
     nextLevelPoints,
     progress
   };
+}
+
+/**
+ * Kiểm tra xem thành tựu đã đáp ứng điều kiện chưa
+ * @param metrics - Trade metrics để kiểm tra
+ * @param achievement - Thành tựu cần kiểm tra
+ * @returns true nếu thành tựu đạt điều kiện, false nếu không
+ */
+function checkAchievementCriteria(metrics: TradeMetrics, achievement: Achievement): boolean {
+  const { metricName, metricValue, comparison } = achievement.criteria;
+  
+  // Lấy giá trị metrics tương ứng với tên metrics trong tiêu chí
+  const actualValue = metrics[metricName as keyof TradeMetrics];
+  
+  // Kiểm tra nếu không có giá trị
+  if (actualValue === undefined || actualValue === null) {
+    return false;
+  }
+  
+  // Số hóa giá trị để so sánh
+  const numericValue = Number(actualValue);
+  
+  // So sánh theo loại
+  switch (comparison) {
+    case 'greater':
+      return numericValue >= metricValue;
+    case 'equals':
+      return numericValue === metricValue;
+    case 'less':
+      return numericValue <= metricValue;
+    default:
+      return false;
+  }
 }
 
 class AchievementsService {
@@ -243,88 +277,212 @@ class AchievementsService {
       console.error('Error updating user achievement:', error);
     }
   }
+
+  /**
+   * Cập nhật tiến trình của một thành tựu
+   * @param userId - ID người dùng Firebase
+   * @param achievementId - ID thành tựu
+   * @param progress - Tiến trình hoàn thành (0-100)
+   */
+  async updateAchievementProgress(
+    userId: string,
+    achievementId: string,
+    progress: number
+  ): Promise<void> {
+    try {
+      // Đảm bảo tiến trình trong khoảng 0-100
+      const validatedProgress = Math.max(0, Math.min(100, progress));
+
+      // Cập nhật trong Firestore
+      const userAchievementsRef = doc(db, 'userAchievements', userId);
+      await updateDoc(userAchievementsRef, {
+        [`achievements.${achievementId}.progress`]: validatedProgress,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      console.error('Error updating achievement progress:', error);
+    }
+  }
   
   /**
    * Process achievements based on updated data
    * Automatically updates any achievements that match the criteria
    * @param userId - Firebase user ID
-   * @param checkData - Data to check against achievement criteria
+   * @param forceRefresh - Force recalculate all metrics
    */
-  async processAchievements(userId: string, checkData: any): Promise<void> {
-    // Get current user achievements
-    const userData = await this.getUserAchievements(userId);
-    
-    if (!userData) return;
-    
-    // First, store previous state for comparison later
-    const prevAchievements = { ...userData.achievements };
-    const prevLevel = userData.level || 1;
-    
-    // Process each achievement to see if it should be updated
-    const achievements = defineAchievements();
-    for (const achievement of achievements) {
-      // Check if achievement is already complete
-      const isAlreadyComplete = userData.achievements[achievement.id]?.isComplete || false;
+  async processAchievements(userId: string, forceRefresh: boolean = false): Promise<void> {
+    try {
+      // Get current user achievements
+      const userData = await this.getUserAchievements(userId);
       
-      if (!isAlreadyComplete) {
-        // Check if achievement should be completed based on criteria
-        // This is a placeholder - actual implementation depends on achievement criteria
-        let shouldComplete = false;
+      if (!userData) return;
+      
+      // First, store previous state for comparison later
+      const prevAchievements = { ...userData.achievements };
+      const prevLevel = userData.level || 1;
+      
+      // Recalculate all metrics if forced or if there are no metrics yet
+      let metrics: TradeMetrics | null;
+      
+      if (forceRefresh) {
+        // Recalculate all metrics from scratch
+        metrics = await calculateAndUpdateAllMetrics(userId);
+      } else {
+        // Try to get existing metrics
+        metrics = await getUserMetrics(userId);
         
-        // Example check for win rate achievements
-        if (achievement.id.includes('win-rate') && checkData.winRate) {
-          const requiredRate = parseInt(achievement.id.split('-')[2]) / 100;
-          shouldComplete = checkData.winRate >= requiredRate;
-        }
-        
-        // Example check for trades count achievements
-        if (achievement.id.includes('trades-count') && checkData.totalTrades) {
-          const requiredCount = parseInt(achievement.id.split('-')[2]);
-          shouldComplete = checkData.totalTrades >= requiredCount;
-        }
-        
-        // Example check for profit achievements
-        if (achievement.id.includes('profit-') && checkData.totalProfit) {
-          const requiredProfit = parseInt(achievement.id.split('-')[1]);
-          shouldComplete = checkData.totalProfit >= requiredProfit;
-        }
-        
-        // If achievement criteria met, update it
-        if (shouldComplete) {
-          await this.updateUserAchievement(userId, achievement.id, true);
+        // If no metrics exist, calculate them
+        if (!metrics) {
+          metrics = await calculateAndUpdateAllMetrics(userId);
         }
       }
+      
+      // If still no metrics, stop
+      if (!metrics) {
+        console.error('Failed to get or calculate metrics');
+        return;
+      }
+      
+      // Process each achievement to see if it should be updated
+      const achievements = defineAchievements();
+      for (const achievement of achievements) {
+        // Check if achievement is already complete
+        const isAlreadyComplete = userData.achievements[achievement.id]?.isComplete || false;
+        
+        if (!isAlreadyComplete) {
+          // Check if achievement should be completed based on criteria
+          const shouldComplete = checkAchievementCriteria(metrics, achievement);
+          
+          // If achievement criteria met, update it
+          if (shouldComplete) {
+            await this.updateUserAchievement(userId, achievement.id, true);
+          } else {
+            // Update progress for streak-based achievements
+            if (achievement.criteria.streak) {
+              const metricValue = metrics[achievement.criteria.metricName as keyof TradeMetrics] as number;
+              const targetValue = achievement.criteria.metricValue;
+              
+              // Calculate progress percentage
+              const progressPercent = Math.min(100, Math.floor((metricValue / targetValue) * 100));
+              
+              // Update progress
+              await this.updateAchievementProgress(userId, achievement.id, progressPercent);
+            }
+          }
+        }
+      }
+      
+      // Get updated user achievements to check for notifications
+      const updatedUserData = await this.getUserAchievements(userId);
+      
+      if (updatedUserData) {
+        // Find newly unlocked achievements
+        const newlyUnlocked = findNewlyUnlockedAchievements(
+          prevAchievements,
+          updatedUserData.achievements,
+          defineAchievements()
+        );
+        
+        // Enqueue notifications for all newly unlocked achievements
+        if (newlyUnlocked.length > 0) {
+          const { enqueueAchievement } = useAchievementNotifications.getState();
+          
+          // Schedule notifications with a small delay between them
+          newlyUnlocked.forEach((achievement, index) => {
+            setTimeout(() => {
+              enqueueAchievement(achievement);
+            }, index * 500); // 500ms delay between notifications
+          });
+        }
+        
+        // Check for level up
+        const currentLevel = updatedUserData.level || 1;
+        if (checkForLevelUp(prevLevel, currentLevel)) {
+          const { showLevelUp } = useAchievementNotifications.getState();
+          showLevelUp(currentLevel);
+        }
+      }
+    } catch (error) {
+      console.error('Error processing achievements:', error);
     }
-    
-    // Get updated user achievements to check for notifications
-    const updatedUserData = await this.getUserAchievements(userId);
-    
-    if (updatedUserData) {
-      // Find newly unlocked achievements
-      const newlyUnlocked = findNewlyUnlockedAchievements(
-        prevAchievements,
-        updatedUserData.achievements,
-        defineAchievements()
-      );
+  }
+  
+  /**
+   * Trigger achievement processing after trade actions
+   * @param userId - Firebase user ID
+   * @param action - The action performed (create, update, delete)
+   */
+  async processTradeTrigger(userId: string, action: 'create' | 'update' | 'delete'): Promise<void> {
+    // Force refresh metrics and process achievements
+    await calculateAndUpdateAllMetrics(userId);
+    await this.processAchievements(userId, false);
+  }
+  
+  /**
+   * Get all user achievements with additional information
+   * @param userId - Firebase user ID
+   * @returns Enhanced achievement data with progress information
+   */
+  async getEnhancedAchievements(userId: string): Promise<{
+    achievements: Achievement[];
+    totalPoints: number;
+    level: number;
+    nextLevel: {
+      level: number;
+      pointsNeeded: number;
+      progress: number;
+    };
+  }> {
+    try {
+      // Get user achievement data
+      const userData = await this.getUserAchievements(userId);
       
-      // Enqueue notifications for all newly unlocked achievements
-      if (newlyUnlocked.length > 0) {
-        const { enqueueAchievement } = useAchievementNotifications.getState();
+      if (!userData) {
+        throw new Error('User achievements not found');
+      }
+      
+      // Get all achievement definitions
+      const allAchievements = defineAchievements();
+      
+      // Enhance with completion status and progress
+      const enhancedAchievements = allAchievements.map(achievement => {
+        const userAchievement = userData.achievements[achievement.id];
         
-        // Schedule notifications with a small delay between them
-        newlyUnlocked.forEach((achievement, index) => {
-          setTimeout(() => {
-            enqueueAchievement(achievement);
-          }, index * 500); // 500ms delay between notifications
-        });
-      }
+        return {
+          ...achievement,
+          isComplete: userAchievement?.isComplete || false,
+          dateEarned: userAchievement?.completedAt ? new Date(userAchievement.completedAt.seconds * 1000).toISOString() : undefined,
+          progress: userAchievement?.progress || 0
+        };
+      });
       
-      // Check for level up
-      const currentLevel = updatedUserData.level || 1;
-      if (checkForLevelUp(prevLevel, currentLevel)) {
-        const { showLevelUp } = useAchievementNotifications.getState();
-        showLevelUp(currentLevel);
-      }
+      // Calculate next level info
+      const nextLevelInfo = calculatePointsForNextLevel(userData.totalPoints);
+      
+      return {
+        achievements: enhancedAchievements,
+        totalPoints: userData.totalPoints || 0,
+        level: userData.level || 1,
+        nextLevel: {
+          level: nextLevelInfo.nextLevel,
+          pointsNeeded: nextLevelInfo.pointsNeeded,
+          progress: nextLevelInfo.progress
+        }
+      };
+    } catch (error) {
+      console.error('Error getting enhanced achievements:', error);
+      
+      // Return empty data
+      return {
+        achievements: [],
+        totalPoints: 0,
+        level: 1,
+        nextLevel: {
+          level: 2,
+          pointsNeeded: 100,
+          progress: 0
+        }
+      };
     }
   }
 }
@@ -333,4 +491,9 @@ export const achievementsService = new AchievementsService();
 
 // Export directly for backward compatibility with existing code
 export const getUserAchievements = (userId: string) => achievementsService.getUserAchievements(userId);
-export const processUserAchievements = (userId: string, checkData?: any) => achievementsService.processAchievements(userId, checkData ?? {});
+export const processUserAchievements = (userId: string, forceRefresh: boolean = false) => 
+  achievementsService.processAchievements(userId, forceRefresh);
+export const processTradeTrigger = (userId: string, action: 'create' | 'update' | 'delete') => 
+  achievementsService.processTradeTrigger(userId, action);
+export const getEnhancedAchievements = (userId: string) => 
+  achievementsService.getEnhancedAchievements(userId);

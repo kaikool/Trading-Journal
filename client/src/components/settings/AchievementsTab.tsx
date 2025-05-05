@@ -3,11 +3,24 @@ import { useMemoWithPerf } from "@/lib/performance";
 import { useQuery } from "@tanstack/react-query";
 import { auth } from "@/lib/firebase";
 import { Achievement, UserAchievements } from "@/types";
-import { getUserAchievements, processUserAchievements } from "@/lib/achievements-service";
+import { 
+  getUserAchievements, 
+  processUserAchievements,
+  getEnhancedAchievements,
+  processTradeTrigger 
+} from "@/lib/achievements-service";
 import { defineAchievements } from "@/lib/achievements-data";
-import { getIconByName, achievementLevelColors, achievementCategoryColors, achievementLevelLabel, calculateLevelProgress, achievementLevelRank } from "@/lib/achievements-data";
+import { 
+  getIconByName, 
+  achievementLevelColors, 
+  achievementCategoryColors, 
+  achievementLevelLabel, 
+  calculateLevelProgress, 
+  achievementLevelRank 
+} from "@/lib/achievements-data";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useAchievementNotifications } from "@/lib/achievement-notification-service";
 
 
 import {
@@ -193,12 +206,24 @@ export const AchievementsTab: React.FC<{
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // Fetch achievements from Firebase
+  // Fetch enhanced achievements from Firebase - includes detailed progress
   const { 
-    data: userAchievements, 
+    data: enhancedAchievementsData, 
     isLoading, 
     error, 
     refetch 
+  } = useQuery({
+    queryKey: [`/enhancedAchievements/${userId}`],
+    queryFn: async () => {
+      if (!userId) return null;
+      return await getEnhancedAchievements(userId);
+    },
+    enabled: !!userId,
+  });
+  
+  // Access legacy user achievements for backward compatibility
+  const { 
+    data: userAchievements
   } = useQuery({
     queryKey: [`/userAchievements/${userId}`],
     queryFn: async () => {
@@ -272,7 +297,7 @@ export const AchievementsTab: React.FC<{
     );
   }
   
-  if (error || !userAchievements) {
+  if (error || !enhancedAchievementsData || !userAchievements) {
     return (
       <div className="p-6 text-center">
         <AlertCircle className="h-8 w-8 mx-auto mb-3 text-destructive" />
@@ -483,6 +508,103 @@ export const AchievementsTab: React.FC<{
             <p className="text-xs text-muted-foreground mb-3">
               These buttons will trigger achievement notifications for testing purposes.
             </p>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => {
+                  if (!userId) return;
+                  // Test achievement notification
+                  const randomAchievement = achievementsList[Math.floor(Math.random() * achievementsList.length)];
+                  const { enqueueAchievement } = useAchievementNotifications.getState();
+                  enqueueAchievement(randomAchievement);
+                }}
+                className="h-8 text-xs"
+              >
+                <Trophy className="h-3.5 w-3.5 mr-1.5" />
+                Random Achievement
+              </Button>
+              
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={() => {
+                  if (!userId) return;
+                  // Test level up notification
+                  const { showLevelUp } = useAchievementNotifications.getState();
+                  const currentLevel = userAchievements?.level || 1;
+                  const nextLevel = Math.min(9, currentLevel + 1);
+                  showLevelUp(nextLevel);
+                }}
+                className="h-8 text-xs"
+              >
+                <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                Level Up
+              </Button>
+              
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={async () => {
+                  if (!userId) return;
+                  // Force refresh
+                  setIsRefreshing(true);
+                  try {
+                    await processUserAchievements(userId, true);
+                    await refetch();
+                  } catch (error) {
+                    console.error("Error refreshing achievements:", error);
+                  } finally {
+                    setIsRefreshing(false);
+                  }
+                }}
+                className="h-8 text-xs"
+                disabled={isRefreshing}
+              >
+                {isRefreshing ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                ) : (
+                  <RefreshCcw className="h-3.5 w-3.5 mr-1.5" />
+                )}
+                Force Refresh
+              </Button>
+              
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={async () => {
+                  if (!userId) return;
+                  // Simulate creating a trade
+                  await processTradeTrigger(userId, 'create');
+                  await refetch();
+                }}
+                className="h-8 text-xs"
+              >
+                <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+                Simulate Create Trade
+              </Button>
+              
+              <Button 
+                size="sm" 
+                variant="outline"
+                onClick={async () => {
+                  if (!userId) return;
+                  // Simulate updating a trade
+                  await processTradeTrigger(userId, 'update');
+                  await refetch();
+                }}
+                className="h-8 text-xs"
+              >
+                <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+                Simulate Update Trade
+              </Button>
+            </div>
+            
+            <div className="mt-4 bg-yellow-100 dark:bg-yellow-950/20 p-2 rounded text-xs text-yellow-800 dark:text-yellow-300">
+              <AlertCircle className="h-3.5 w-3.5 inline-block mr-1" />
+              For testing only. These actions will be logged in development.
+            </div>
           </div>
         </div>
       )}
