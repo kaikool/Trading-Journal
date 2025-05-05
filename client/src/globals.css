@@ -880,6 +880,8 @@
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: auto; /* Cho phép cuộn dọc cho nội dung */
+    position: relative; /* Đảm bảo vị trí tương đối cho các con absolute */
   }
   
   /* Unified mobile layout styles for both regular and PWA modes
@@ -892,6 +894,7 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     /* Apply safe area to top automatically */
     padding-top: var(--safe-top);
+    touch-action: pan-y; /* Chỉ cho phép vuốt dọc */
   }
   
   /* Các thuộc tính trong mobile-main-content đã được chuyển vào app-content-container
@@ -948,6 +951,14 @@
       var(--mobile-nav-height),
       calc(var(--mobile-nav-height) + var(--safe-bottom))
     ) !important;
+    
+    /* Ngăn chặn cuộn và kéo */
+    overflow: hidden !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
     
     /* Safe area padding applied consistently */
     padding-bottom: var(--safe-bottom) !important;
@@ -1045,7 +1056,7 @@
     /* UPDATED: Added standard padding for better visual balance */
     padding: var(--mobile-nav-item-padding) 0.5rem;
     
-    position: relative;
+    position: relative; /* Chỉ giữ lại một lần khai báo position */
     overflow: hidden;
     color: var(--mobile-nav-inactive-color);
     transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
@@ -1058,9 +1069,6 @@
      * Following Material Design minimum touch target guidelines
      */
     min-height: 3.5rem; /* 56px - Matches Material Design standard */
-    
-    /* Add subtle hover effect */
-    position: relative;
   }
   
   /* Add feedback for active/pressed state */
