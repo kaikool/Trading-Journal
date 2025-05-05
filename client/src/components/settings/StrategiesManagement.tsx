@@ -1056,7 +1056,11 @@ export function StrategiesManagement() {
                   id="name"
                   placeholder="e.g., Breakout Trading"
                   value={newStrategy.name}
-                  onChange={(e) => setNewStrategy({...newStrategy, name: e.target.value})}
+                  onChange={(e) => {
+                    // Tạo bản sao mới để tránh tham chiếu đối tượng gốc
+                    const value = e.target.value;
+                    setNewStrategy({...newStrategy, name: value});
+                  }}
                   className="h-9"
                 />
               </div>
@@ -1068,7 +1072,10 @@ export function StrategiesManagement() {
                   placeholder="Describe your trading strategy..."
                   rows={2}
                   value={newStrategy.description}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewStrategy({...newStrategy, description: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    const value = e.target.value;
+                    setNewStrategy({...newStrategy, description: value});
+                  }}
                   className="min-h-[60px] text-sm"
                 />
               </div>

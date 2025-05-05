@@ -92,7 +92,14 @@ export function StrategyConditionForm({
             id={`condition-label-${condition.id}`}
             placeholder="Enter condition..."
             value={condition.label}
-            onChange={(e) => onChange({...condition, label: e.target.value})}
+            onChange={(e) => {
+              // Sử dụng bản sao mới tránh tham chiếu đối tượng gốc
+              const updatedCondition = {
+                ...condition,
+                label: e.target.value
+              };
+              onChange(updatedCondition);
+            }}
             className="h-8 text-sm flex-1"
           />
           
@@ -118,7 +125,13 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.indicator}
-                onValueChange={(value) => onChange({...condition, indicator: value})}
+                onValueChange={(value) => {
+                  const updatedCondition = {
+                    ...condition,
+                    indicator: value
+                  };
+                  onChange(updatedCondition);
+                }}
               >
                 <SelectTrigger 
                   id={`condition-indicator-${condition.id}`} 
