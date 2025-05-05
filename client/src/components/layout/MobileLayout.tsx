@@ -17,7 +17,7 @@ const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
     // Đợi một chút để đảm bảo DOM đã render
     const timer = setTimeout(() => {
       // Kết nối scroll container với LayoutContext
-      initScrollListener('.mobile-content-with-navigation');
+      initScrollListener('#mobile-content-container');
     }, 100);
     
     // Cleanup khi unmount

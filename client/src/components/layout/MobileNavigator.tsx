@@ -93,6 +93,11 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
   const { mobileNavVisible } = useLayout();
   
+  // Ghi log khi việc ẩn/hiện thay đổi
+  useEffect(() => {
+    console.log("Mobile nav visibility:", mobileNavVisible);
+  }, [mobileNavVisible]);
+  
   useEffect(() => {
     setMounted(true);
     

@@ -69,6 +69,8 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
     
     // Lấy vị trí cuộn hiện tại
     const scrollY = (event.target as Element).scrollTop;
+    console.log("Scroll event detected:", scrollY);
+    
     // Lấy vị trí cuộn trước đó
     const lastScrollY = lastScrollYRef.current;
     // Cập nhật vị trí cuộn trước đó
@@ -78,11 +80,13 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
     if (scrollY < 10) {
       setHeaderVisible(true);
       setMobileNavVisible(true);
+      console.log("Near top, showing elements");
       return;
     }
     
     // Xác định hướng cuộn
     const isScrollingDown = scrollY > lastScrollY;
+    console.log("Scrolling direction:", isScrollingDown ? "down" : "up");
     
     // Đặt trạng thái đang cuộn
     isScrollingRef.current = true;
@@ -92,13 +96,18 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
       window.clearTimeout(scrollTimeoutRef.current);
     }
     
-    // Ẩn/hiện header và mobile navigation dựa trên hướng cuộn
-    if (isScrollingDown) {
-      setHeaderVisible(false);
-      setMobileNavVisible(false);
-    } else {
-      setHeaderVisible(true);
-      setMobileNavVisible(true);
+    // Chỉ thay đổi trạng thái khi cuộn đủ xa
+    if (Math.abs(scrollY - lastScrollY) > 10) {
+      // Ẩn/hiện header và mobile navigation dựa trên hướng cuộn
+      if (isScrollingDown) {
+        console.log("Hiding elements");
+        setHeaderVisible(false);
+        setMobileNavVisible(false);
+      } else {
+        console.log("Showing elements");
+        setHeaderVisible(true);
+        setMobileNavVisible(true);
+      }
     }
     
     // Đặt timeout để reset trạng thái đang cuộn
@@ -112,23 +121,31 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
     // Xóa listener cũ nếu có
     removeScrollListener();
     
-    // Tìm container bằng ID
-    const container = document.querySelector(containerId) as HTMLElement;
-    if (!container) {
-      console.warn(`Scroll container with ID ${containerId} not found`);
-      return;
-    }
+    // Đảm bảo chúng ta đang kết nối với DOM
+    console.log(`Init scroll listener for: ${containerId}`);
     
-    // Lưu tham chiếu đến container
-    scrollContainerRef.current = container;
-    
-    // Gắn sự kiện cuộn
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Lưu hàm cleanup
-    cleanupRef.current = () => {
-      container.removeEventListener('scroll', handleScroll);
-    };
+    // Đợi để DOM được render hoàn chỉnh
+    setTimeout(() => {
+      // Tìm container bằng ID
+      const container = document.querySelector(containerId) as HTMLElement;
+      if (!container) {
+        console.warn(`Scroll container with ID ${containerId} not found`);
+        return;
+      }
+      
+      // Lưu tham chiếu đến container
+      scrollContainerRef.current = container;
+      
+      console.log(`Found container, attaching listener`, container);
+      
+      // Gắn sự kiện cuộn
+      container.addEventListener('scroll', handleScroll, { passive: true });
+      
+      // Lưu hàm cleanup
+      cleanupRef.current = () => {
+        container.removeEventListener('scroll', handleScroll);
+      };
+    }, 500);
   }, [handleScroll]);
   
   // Hàm xóa listener cho sự kiện cuộn
