@@ -200,7 +200,7 @@ export function TradingStatsCard({
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <div 
