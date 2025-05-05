@@ -90,7 +90,10 @@ export function StrategyConditionForm({
             id={`condition-label-${condition.id}`}
             placeholder="Enter condition..."
             value={condition.label}
-            onChange={(e) => onChange({ ...condition, label: e.target.value })}
+            onChange={(e) => {
+              const newLabel = e.target.value;
+              onChange({ ...condition, label: newLabel });
+            }}
             className="h-8 text-sm flex-1"
           />
           
@@ -196,7 +199,10 @@ export function StrategyConditionForm({
                 id={`condition-description-${condition.id}`}
                 placeholder="Add more details about this condition..."
                 value={condition.description || ""}
-                onChange={(e) => onChange({ ...condition, description: e.target.value })}
+                onChange={(e) => {
+                  const newDescription = e.target.value;
+                  onChange({ ...condition, description: newDescription });
+                }}
                 className="text-xs resize-none min-h-[40px] max-h-[80px]"
               />
             </div>
