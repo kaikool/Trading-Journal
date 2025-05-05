@@ -208,7 +208,14 @@ export function StrategyConditionForm({
               <Select
                 value={condition.expectedValue}
                 onValueChange={(value) => {
-                  const updatedCondition = { ...condition, expectedValue: value };
+                  console.log("[DEBUG] Selected value:", value);
+                  // Tạo bản sao mới của condition để cập nhật expectedValue
+                  const updatedCondition = { 
+                    ...condition,
+                    id: condition.id,
+                    order: condition.order,
+                    expectedValue: value 
+                  };
                   onChange(updatedCondition);
                 }}
               >
@@ -239,8 +246,17 @@ export function StrategyConditionForm({
                 placeholder="Add more details about this condition..."
                 value={condition.description || ""}
                 onChange={(e) => {
+                  console.log("[DEBUG] Description changed:", e.target.value);
                   const newDescription = e.target.value;
-                  onChange({ ...condition, description: newDescription });
+                  
+                  // Tạo bản sao mới của condition để cập nhật description
+                  const updatedCondition = { 
+                    ...condition,
+                    id: condition.id,
+                    order: condition.order,
+                    description: newDescription 
+                  };
+                  onChange(updatedCondition);
                 }}
                 className="text-xs resize-none min-h-[40px] max-h-[80px]"
               />
@@ -280,7 +296,15 @@ export function StrategyConditionForm({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                onChange({...condition});
+                console.log("[DEBUG] Save button clicked, condition:", JSON.stringify(condition));
+                
+                // Tạo một bản sao sạch khi lưu
+                const cleanedCondition = {
+                  ...condition,
+                  id: condition.id,
+                  order: condition.order
+                };
+                onChange(cleanedCondition);
               }}
               disabled={!condition.label.trim()}
               className="h-7 px-3 text-xs"
@@ -414,8 +438,19 @@ export function StrategyConditionList({
   
   const handleAdd = () => {
     if (newCondition.label.trim()) {
-      onAdd(newCondition);
-      setNewCondition(createNewCondition(conditions.length + 1));
+      console.log("[DEBUG] Adding new condition:", JSON.stringify(newCondition));
+      
+      // Đảm bảo tạo bản sao sạch trước khi thêm mới
+      const newConditionCopy = JSON.parse(JSON.stringify(newCondition));
+      
+      // Thêm điều kiện mới (sử dụng bản sao)
+      onAdd(newConditionCopy);
+      
+      // Tạo một điều kiện mới sạch cho lần thêm tiếp theo
+      const nextCondition = createNewCondition(conditions.length + 1);
+      console.log("[DEBUG] Created next empty condition:", JSON.stringify(nextCondition));
+      
+      setNewCondition(nextCondition);
       setIsAdding(false);
     }
   };
