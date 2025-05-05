@@ -169,8 +169,8 @@ export function PerformanceChart({
   return (
     <Card className="balance-chart">
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between gap-2 w-full">
-          <CardTitle className="flex items-center card-title whitespace-nowrap" style={{
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
             fontWeight: 'var(--card-title-weight)',
             lineHeight: '1.5',
@@ -184,7 +184,7 @@ export function PerformanceChart({
             Balance History
           </CardTitle>
           
-          <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
+          <div className="flex items-center gap-3">
             <div className={cn(
               "balance-chart-badge",
               chartColors.bg, chartColors.text
