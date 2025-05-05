@@ -390,7 +390,7 @@ export default function Dashboard() {
   }, [trades]);
   
   return (
-    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 pt-6 space-y-4">
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4 space-y-4">
       {/* Header - Phong cách được chuẩn hóa để nhất quán với các trang khác */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div>
