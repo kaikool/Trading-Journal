@@ -253,19 +253,9 @@ const StrategyItem = React.memo(function StrategyItem({
   // Memoized handler for updating fields in edit mode
   const handleFieldChange = useCallback((fieldName: string, value: any) => {
     if (onEditFieldChange) {
-      console.log(`[DEBUG] StrategyItem (${strategy.id}) triggering field change:`, fieldName, typeof value);
-      
-      // Special debug for conditions arrays
-      if (fieldName === 'entryConditions' || fieldName === 'exitConditions' || fieldName === 'rules') {
-        console.log(`[DEBUG] Array field changed: ${fieldName}, items:`, Array.isArray(value) ? value.length : 'not an array');
-        // Create a clean copy to avoid any reference issues
-        const cleanValue = Array.isArray(value) ? [...value] : value;
-        onEditFieldChange(fieldName, cleanValue);
-      } else {
-        onEditFieldChange(fieldName, value);
-      }
+      onEditFieldChange(fieldName, value);
     }
-  }, [onEditFieldChange, strategy.id]);
+  }, [onEditFieldChange]);
 
   return (
     <AccordionItem
