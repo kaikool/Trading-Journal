@@ -1155,6 +1155,17 @@
     letter-spacing: -0.02em;
   }
   
+  /* Class để ngăn chặn cuộn và tương tác khác */
+  .no-scroll {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+    pointer-events: auto !important;
+    -webkit-overflow-scrolling: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+  }
+  
   /* Mobile header bar - used in MobileNav */
   .mobile-header {
     --mobile-header-blur: 0.5rem; /* Was 8px */

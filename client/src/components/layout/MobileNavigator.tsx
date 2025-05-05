@@ -33,16 +33,23 @@ export function MobileNavigatorItem({ icon, activeIcon, label, href, isActive }:
   useEffect(() => {
     setReducedMotion(detectReducedMotion());
   }, []);
+
+  // Prevent touch events from propagating
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
   
   return (
     <Link
       to={href}
       className={cn(
-        "mobile-nav-item",
+        "mobile-nav-item no-scroll",
         isActive && "active" // Apply active state styling
       )}
       aria-current={isActive ? "page" : undefined}
       aria-label={`${label} ${isActive ? '(current page)' : ''}`}
+      onTouchMove={handleTouchMove}
     >
       {/* Indicator line for active tab - following Apple HIG indicators */}
       {isActive && (
@@ -132,17 +139,28 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
     }
   ];
 
+  // Hàm ngăn chặn cuộn từ thanh điều hướng
+  const preventScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    // Chặn sự kiện cuộn bằng cách ngăn chặn lan truyền
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <nav 
-      className="mobile-nav"
+      className="mobile-nav no-scroll"
       role="navigation"
       aria-label="Main Navigation"
+      onTouchMove={(e) => e.preventDefault()} 
+      onScroll={preventScroll}
     >
       <div 
         className={cn(
-          "grid w-full h-full", 
+          "grid w-full h-full no-scroll", 
           devicePerformance === 'low' ? 'grid-cols-3' : 'grid-cols-5'
         )}
+        onTouchMove={(e) => e.preventDefault()}
+        onScroll={preventScroll}
       >
         {devicePerformance === 'low' ? (
           // Simplified interface for low-performance devices
