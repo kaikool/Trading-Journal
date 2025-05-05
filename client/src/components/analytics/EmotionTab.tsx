@@ -394,7 +394,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
           Continue recording emotions with your trades to unlock insights
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6 pb-4">
         <div className="flex items-start gap-3">
           <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
             <Lightbulb className="h-4 w-4" />
@@ -429,7 +429,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               Analysis of how emotions impact your trading performance
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pb-4">
             <div className="space-y-4">
               {emotionInsights.map((insight, index) => (
                 <div key={index} className="flex items-start gap-3">
@@ -464,15 +464,15 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               How your emotional state affects trade success
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pb-4">
             {winRateByEmotionData.length > 0 ? (
               <div className="h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={winRateByEmotionData}
-                    margin={{ top: 4, right: 8, left: 0, bottom: 4 }} // Chuẩn hóa theo quy tắc 4px
+                    margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
                     layout="vertical"
-                    barCategoryGap={8}
+                    barCategoryGap="10%"
                     barGap={4}
                   >
                     <CartesianGrid 
@@ -602,7 +602,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               Distribution of emotions across your trades
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pb-4">
             {emotionDistributionData.length > 0 ? (
               <div className="h-[260px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -649,13 +649,13 @@ export default function EmotionTab({ data }: EmotionTabProps) {
             Sequence of emotions across your trading history
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pb-4">
           {emotionTimelineData.length > 0 ? (
             <div className="h-[260px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={emotionTimelineData}
-                  margin={{ top: 8, right: 8, left: 0, bottom: 0 }} // Chuẩn hóa theo quy tắc 4px
+                  margin={{ top: 4, right: 4, left: 4, bottom: 4 }} /* Tuân thủ tiêu chuẩn margin 4px đồng nhất */
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground)/15)" />
                   <XAxis
@@ -719,7 +719,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               Detailed performance metrics by emotional state
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pb-4">
             <Table>
               <TableHeader>
                 <TableRow>
