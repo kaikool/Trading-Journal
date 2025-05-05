@@ -6,7 +6,9 @@ import {
   CardDescription, 
   CardFooter, 
   CardHeader, 
-  CardTitle 
+  CardTitle,
+  CardIcon,
+  CardGradient
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -182,57 +184,90 @@ export function RecentTradesCard({
   
   if (isLoading) {
     return (
-      <Card className="h-full flex flex-col">
-        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-          <div className="flex justify-between">
-            <div>
-              <Skeleton className="h-7 w-40 mb-2" />
-              <Skeleton className="h-4 w-56" />
+      <Card className="h-full flex flex-col relative overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-8 w-8 rounded-md" />
+              <Skeleton className="h-6 w-40" />
             </div>
+            <Skeleton className="h-4 w-56 mt-2" />
           </div>
         </CardHeader>
-        <CardContent className="pt-2 pb-4 px-4 sm:px-6 flex-grow">
+        
+        <CardContent className="py-2 flex-grow">
           {Array(3).fill(0).map((_, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b last:border-0">
+            <div key={index} className="flex items-center justify-between py-3 border-b border-border/30 last:border-0">
               <div className="space-y-1">
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-3 w-32" />
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <Skeleton className="h-3.5 w-32" />
               </div>
-              <Skeleton className="h-8 w-16" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-16 rounded-md" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
             </div>
           ))}
         </CardContent>
-        <CardFooter className="px-4 sm:px-6 pt-2 pb-4">
+        
+        <CardFooter>
           <Skeleton className="h-9 w-28" />
         </CardFooter>
       </Card>
     );
   }
 
+  // Calculate card gradient based on win rate
+  const hasCompletedTrades = trades.filter(t => t.status !== 'OPEN' && t.profitLoss !== undefined).length > 0;
+  const winCount = trades.filter(t => (t.pips || 0) > 0).length;
+  const winRate = hasCompletedTrades ? (winCount / trades.length) * 100 : 0;
+  
+  // Gradient variant based on win rate
+  const gradientVariant = winRate >= 60 ? 'success' : 
+                          winRate >= 40 ? 'primary' :
+                          winRate > 0 ? 'warning' : 'default';
+
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-        <div className="flex justify-between">
-          <div>
-            <CardTitle className="text-xl font-semibold flex items-center">
-              <ClipboardList className="h-5 w-5 mr-2 text-primary" />
-              Recent Trades
-            </CardTitle>
-            <CardDescription className="mt-1">
-              Your latest trading activities
-            </CardDescription>
-          </div>
+    <Card className="h-full flex flex-col relative overflow-hidden card-spotlight">
+      {hasCompletedTrades && (
+        <CardGradient 
+          variant={gradientVariant}
+          intensity="subtle"
+          direction="bottom-right"
+        />
+      )}
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <div>
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <CardIcon
+              color="primary"
+              size="sm"
+              variant="soft"
+            >
+              <ClipboardList className="h-4 w-4" />
+            </CardIcon>
+            Recent Trades
+          </CardTitle>
+          <CardDescription className="mt-1">
+            Your latest trading activities
+          </CardDescription>
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2 pb-4 px-4 sm:px-6 flex-grow">
+      <CardContent className="py-2 flex-grow">
         {trades.length > 0 ? (
           <div className="divide-y divide-border/30">
             {memoizedTradesList}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full py-10 text-center">
-            <ClipboardList className="h-10 w-10 text-muted-foreground/30 mb-2" />
+            <div className="rounded-full bg-muted/10 p-3 mb-3">
+              <ClipboardList className="h-10 w-10 text-muted-foreground/40" />
+            </div>
             <p className="font-medium text-muted-foreground">No recent activity</p>
             <p className="text-sm text-muted-foreground/70 mt-1 max-w-xs">
               Add your first trade to see your recent activity here
@@ -249,7 +284,7 @@ export function RecentTradesCard({
       </CardContent>
       
       {trades.length > 0 && (
-        <CardFooter className="px-4 sm:px-6 pt-2 pb-4">
+        <CardFooter>
           <Button 
             variant="outline" 
             size="sm"
