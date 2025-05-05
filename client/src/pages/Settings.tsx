@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { auth, db, updateUserData, updateDisplayName, logoutUser } from "@/lib/firebase";
+import { 
+  auth, 
+  db, 
+  updateUserData, 
+  updateDisplayName, 
+  logoutUser,
+  linkAccountWithGoogle,
+  getLinkedProviders,
+  unlinkProvider,
+  getProviderName
+} from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
@@ -55,6 +65,10 @@ import {
   Trophy,
   AlertTriangle,
   BookOpen,
+  Link,
+  Link2Off,
+  Github,
+  Mail,
 } from "lucide-react";
 
 interface SettingsSectionProps {
@@ -175,6 +189,11 @@ export default function Settings() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
+  // Liên kết tài khoản
+  const [linkedProviders, setLinkedProviders] = useState<string[]>([]);
+  const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
+  const [isUnlinking, setIsUnlinking] = useState(false);
+  
   // Check device performance
   useEffect(() => {
     evaluateDevicePerformance().then(performance => {
@@ -219,6 +238,22 @@ export default function Settings() {
       }
     }
   }, [userData, theme]);
+  
+  // Lấy danh sách các phương thức xác thực đã liên kết
+  useEffect(() => {
+    const loadLinkedProviders = async () => {
+      try {
+        if (auth.currentUser) {
+          const providers = await getLinkedProviders();
+          setLinkedProviders(providers);
+        }
+      } catch (error) {
+        console.error("Error loading linked providers:", error);
+      }
+    };
+    
+    loadLinkedProviders();
+  }, []);
   
   const saveSettings = async () => {
     if (!userId) return;
@@ -347,6 +382,71 @@ export default function Settings() {
         description: error instanceof Error ? error.message : "An error occurred",
       });
       setIsChangingPassword(false);
+    }
+  };
+  
+  // Xử lý liên kết với Google
+  const handleLinkGoogle = async () => {
+    setIsLinkingGoogle(true);
+    
+    try {
+      await linkAccountWithGoogle();
+      
+      // Cập nhật danh sách nhà cung cấp sau khi liên kết
+      const updatedProviders = await getLinkedProviders();
+      setLinkedProviders(updatedProviders);
+      
+      toast({
+        title: "Tài khoản đã được liên kết",
+        description: "Tài khoản Google của bạn đã được liên kết thành công.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Liên kết thất bại",
+        description: error instanceof Error ? error.message : "Có lỗi xảy ra khi liên kết tài khoản.",
+      });
+    } finally {
+      setIsLinkingGoogle(false);
+    }
+  };
+  
+  // Xử lý hủy liên kết
+  const handleUnlinkProvider = async (providerId: string) => {
+    // Kiểm tra xem người dùng không thể hủy liên kết phương thức cuối cùng
+    if (linkedProviders.length <= 1) {
+      toast({
+        variant: "destructive",
+        title: "Không thể hủy liên kết",
+        description: "Bạn phải có ít nhất một phương thức đăng nhập. Hãy thêm phương thức khác trước khi hủy phương thức này.",
+      });
+      return;
+    }
+    
+    setIsUnlinking(true);
+    
+    try {
+      // Thêm '.com' vào providerId nếu cần
+      const fullProviderId = providerId.includes('.com') ? providerId : `${providerId}.com`;
+      
+      await unlinkProvider(fullProviderId);
+      
+      // Cập nhật danh sách nhà cung cấp sau khi hủy liên kết
+      const updatedProviders = await getLinkedProviders();
+      setLinkedProviders(updatedProviders);
+      
+      toast({
+        title: "Đã hủy liên kết",
+        description: `Phương thức đăng nhập "${getProviderName(providerId)}" đã được hủy.`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Hủy liên kết thất bại",
+        description: error instanceof Error ? error.message : "Có lỗi xảy ra khi hủy liên kết.",
+      });
+    } finally {
+      setIsUnlinking(false);
     }
   };
   
