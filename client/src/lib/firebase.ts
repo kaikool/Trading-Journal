@@ -200,40 +200,43 @@ async function loginWithGoogle() {
         const email = error.customData?.email;
         if (!email) throw error;
         
-        debug(`Email ${email} đã tồn tại với phương thức khác, cố gắng liên kết tài khoản`);
+        debug(`Email ${email} đã tồn tại với phương thức khác, cố gắng tự động đăng nhập và liên kết tài khoản`);
         
         try {
           // Lấy danh sách phương thức đăng nhập hiện có cho email này
           const methods = await fetchSignInMethodsForEmail(auth, email);
           debug(`Phương thức đăng nhập hiện có cho ${email}: ${methods.join(', ')}`);
           
-          // Hỏi người dùng nhập mật khẩu để liên kết tài khoản
-          // Đây là cách tiếp cận đơn giản nhất, nhưng trong thực tế cần UI để nhập mật khẩu
-          // Hiện tại chúng ta sẽ trả về thông báo yêu cầu đăng nhập bằng phương thức hiện có trước
-          
           if (methods.includes('password')) {
-            // Thực tế cần hiện modal/form để người dùng nhập mật khẩu, sau đó liên kết
-            // Nhưng giờ chỉ hiển thị thông báo yêu cầu đăng nhập trước
+            // Chúng ta cần tạo modal yêu cầu mật khẩu và đăng nhập tự động
+            // Hiện tại, sẽ gửi thông báo với hướng dẫn rõ ràng hơn
             throw new Error(
-              `Email ${email} đã được đăng ký. Vui lòng đăng nhập bằng mật khẩu trước, rồi vào mục "Tài khoản > Liên kết đăng nhập" để liên kết với Google.`
+              `Email ${email} đã được đăng ký. Để kích hoạt đăng nhập Google, vui lòng:\n1. Đăng nhập bằng email/mật khẩu.\n2. Vào "Tài khoản > Liên kết tài khoản" để kết nối với Google.\n3. Từ lần sau, bạn có thể đăng nhập bằng cả hai phương thức.`
             );
-          } else if (methods.length > 0) {
-            // Nếu có phương thức khác, thông báo người dùng
-            const providerNames = methods.map(method => {
-              if (method === 'google.com') return 'Google';
-              if (method === 'facebook.com') return 'Facebook';
-              if (method === 'github.com') return 'GitHub';
-              if (method === 'twitter.com') return 'Twitter';
-              if (method === 'apple.com') return 'Apple';
-              return method;
-            });
+          } else {
+            // Tìm provider đầu tiên để thử đăng nhập
+            let primaryProvider = methods[0];
             
+            // Chuyển đổi tên provider thủ công vì getProviderName chưa được khai báo
+            let providerName = "phương thức khác";
+            if (primaryProvider === 'google.com') providerName = 'Google';
+            else if (primaryProvider === 'facebook.com') providerName = 'Facebook';
+            else if (primaryProvider === 'github.com') providerName = 'GitHub';
+            else if (primaryProvider === 'twitter.com') providerName = 'Twitter';
+            else if (primaryProvider === 'apple.com') providerName = 'Apple';
+            else if (primaryProvider === 'password') providerName = 'Email/Mật khẩu';
+            
+            if (primaryProvider === 'google.com') {
+              throw new Error(`Email ${email} đã được liên kết với Google, nhưng đang gặp lỗi xác thực. Vui lòng thử lại sau.`);
+            }
+            
+            // Nếu không phải Google, hiển thị thông báo để đăng nhập bằng phương thức hiện có
             throw new Error(
-              `Email ${email} đã được liên kết với tài khoản ${providerNames.join(', ')}. Vui lòng đăng nhập bằng phương thức đó.`
+              `Email ${email} đã được liên kết với tài khoản ${providerName}. Hãy đăng nhập bằng ${providerName} trước, sau đó vào phần "Tài khoản > Liên kết đăng nhập" để kết nối với Google.`
             );
           }
         } catch (linkError) {
-          // Nếu lỗi trong quá trình liên kết, trả về lỗi gốc
+          // Nếu lỗi trong quá trình liên kết, trả về lỗi
           debug("Lỗi khi cố gắng liên kết tài khoản:", linkError);
           throw linkError;
         }
@@ -1823,6 +1826,114 @@ async function createDefaultStrategiesIfNeeded(userId: string) {
   }
 }
 
+/**
+ * Liên kết tài khoản hiện tại với Google
+ * 
+ * Yêu cầu người dùng đã đăng nhập bằng mật khẩu hoặc phương thức khác
+ */
+async function linkAccountWithGoogle() {
+  try {
+    // Kiểm tra xem đã đăng nhập chưa
+    if (!auth.currentUser) {
+      throw new Error("Bạn phải đăng nhập để liên kết tài khoản");
+    }
+    
+    const { GoogleAuthProvider, linkWithPopup } = await import("firebase/auth");
+    const provider = new GoogleAuthProvider();
+    
+    // Thực hiện liên kết
+    const result = await linkWithPopup(auth.currentUser, provider);
+    debug(`Đã liên kết tài khoản với Google thành công: ${result.user.email}`);
+    
+    // Cập nhật thông tin người dùng trong Firestore nếu cần
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      linkedProviders: [
+        "google",
+        ...(await getLinkedProviders())
+      ],
+      lastUpdated: serverTimestamp()
+    });
+    
+    return result;
+  } catch (error) {
+    logError("Lỗi khi liên kết tài khoản với Google:", error);
+    throw error;
+  }
+}
+
+/**
+ * Chuyển đổi ID nhà cung cấp thành tên dễ đọc
+ * @param providerId ID của nhà cung cấp (e.g., 'google.com')
+ * @returns Tên hiển thị của nhà cung cấp (e.g., 'Google')
+ */
+function getProviderName(providerId: string): string {
+  if (providerId === 'google.com') return 'Google';
+  if (providerId === 'facebook.com') return 'Facebook';
+  if (providerId === 'github.com') return 'GitHub';
+  if (providerId === 'twitter.com') return 'Twitter';
+  if (providerId === 'apple.com') return 'Apple';
+  if (providerId === 'password') return 'Email/Mật khẩu';
+  return providerId;
+}
+
+/**
+ * Lấy danh sách các phương thức liên kết tài khoản
+ */
+async function getLinkedProviders(): Promise<string[]> {
+  try {
+    if (!auth.currentUser) return [];
+    
+    // Danh sách providers được lấy từ providerId trong providerData
+    const providers = auth.currentUser.providerData.map(
+      provider => provider.providerId.replace('.com', '')
+    );
+    
+    // Chuyển đổi Set thành mảng để tránh lỗi TypeScript
+    const uniqueProviders = Array.from(new Set(providers));
+    return uniqueProviders;
+  } catch (error) {
+    logError("Lỗi khi lấy danh sách nhà cung cấp đã liên kết:", error);
+    return [];
+  }
+}
+
+/**
+ * Hủy liên kết với một nhà cung cấp xác thực
+ * 
+ * @param providerId ID của nhà cung cấp (ví dụ: 'google.com', 'password')
+ */
+async function unlinkProvider(providerId: string) {
+  try {
+    if (!auth.currentUser) {
+      throw new Error("Bạn phải đăng nhập để hủy liên kết tài khoản");
+    }
+    
+    // Kiểm tra xem có nhiều hơn 1 phương thức không - đảm bảo luôn có ít nhất một cách đăng nhập
+    const providers = auth.currentUser.providerData;
+    if (providers.length <= 1) {
+      throw new Error("Không thể hủy liên kết phương thức đăng nhập duy nhất. Hãy thêm phương thức khác trước.");
+    }
+    
+    const { unlink } = await import("firebase/auth");
+    
+    // Thực hiện hủy liên kết
+    await unlink(auth.currentUser, providerId);
+    
+    // Cập nhật thông tin trong Firestore
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, {
+      linkedProviders: await getLinkedProviders(),
+      lastUpdated: serverTimestamp()
+    });
+    
+    return true;
+  } catch (error) {
+    logError("Lỗi khi hủy liên kết nhà cung cấp:", error);
+    throw error;
+  }
+}
+
 // Export all functions
 export {
   initFirebase,
@@ -1856,5 +1967,6 @@ export {
   // Auth linking functions
   linkAccountWithGoogle,
   getLinkedProviders,
-  unlinkProvider
+  unlinkProvider,
+  getProviderName
 };
