@@ -47,28 +47,30 @@ export default function NewTrade() {
           </div>
         </div>
       ) : (
-        <div className="bg-card rounded-lg border border-border/40 p-3 sm:p-6 overflow-x-hidden">
-          <TradeFormNew 
-            mode="new"
-            userId={userId}
-            onSubmitting={setIsSubmitting}
-            onSuccess={() => {
-              toast({
-                title: "Trade saved successfully",
-                description: "Your trade has been recorded and added to your journal.",
-              });
-              setLocation("/history");
-            }}
-            onError={(error) => {
-              toast({
-                variant: "destructive",
-                title: "Failed to save trade",
-                description: error instanceof Error ? error.message : "An error occurred",
-              });
-              setIsSubmitting(false);
-            }}
-          />
-        </div>
+        <Card className="overflow-x-hidden">
+          <CardContent className="px-4 sm:px-6 pt-4 pb-4">
+            <TradeFormNew 
+              mode="new"
+              userId={userId}
+              onSubmitting={setIsSubmitting}
+              onSuccess={() => {
+                toast({
+                  title: "Trade saved successfully",
+                  description: "Your trade has been recorded and added to your journal.",
+                });
+                setLocation("/history");
+              }}
+              onError={(error) => {
+                toast({
+                  variant: "destructive",
+                  title: "Failed to save trade",
+                  description: error instanceof Error ? error.message : "An error occurred",
+                });
+                setIsSubmitting(false);
+              }}
+            />
+          </CardContent>
+        </Card>
       )}
     </div>
   );
