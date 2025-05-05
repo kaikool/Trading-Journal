@@ -210,7 +210,19 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
 
       {inView ? (
         <Card 
-          className="mb-4 overflow-hidden cursor-pointer relative card-spotlight"
+          className={cn(
+            "mb-4 overflow-hidden cursor-pointer relative card-spotlight border-[1.5px]",
+            // Thêm viền màu theo trạng thái giao dịch
+            isTradeOpen 
+              ? "border-primary/60" // Giao dịch đang mở
+              : result === 'TP' || profitLoss > 0 
+                ? "border-success/60" // Take profit hoặc lãi
+                : result === 'SL' || profitLoss < 0
+                  ? "border-destructive/60" // Stop loss hoặc lỗ
+                  : result === 'BE' 
+                    ? "border-warning/60" // Break even
+                    : "border-primary/60" // Mặc định hoặc đóng thủ công
+          )}
           onClick={() => handleViewTrade()}
         >
           {/* Gradient background phù hợp với loại giao dịch */}
