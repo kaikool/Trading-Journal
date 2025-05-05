@@ -319,7 +319,6 @@ const StrategyItem = React.memo(function StrategyItem({
                 </Button>
               </div>
               <StrategyConditionList
-                hideAddbutton={true}
                 title=""
                 emptyMessage="No rules defined yet"
                 conditions={strategy.rules || []}
@@ -361,7 +360,6 @@ const StrategyItem = React.memo(function StrategyItem({
                 </Button>
               </div>
               <StrategyConditionList
-                hideAddbutton={true}
                 title=""
                 emptyMessage="No entry conditions defined yet"
                 conditions={strategy.entryConditions || []}
@@ -403,7 +401,6 @@ const StrategyItem = React.memo(function StrategyItem({
                 </Button>
               </div>
               <StrategyConditionList
-                hideAddbutton={true}
                 title=""
                 emptyMessage="No exit conditions defined yet"
                 conditions={strategy.exitConditions || []}
