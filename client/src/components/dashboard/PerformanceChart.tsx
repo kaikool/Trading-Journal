@@ -1,4 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle, 
+  CardIcon,
+  CardGradient,
+  CardValue
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, ReferenceArea, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
 import { ArrowUp, ArrowDown, LineChart as LineChartIcon, Info } from "lucide-react";
@@ -73,15 +81,16 @@ export function PerformanceChart({
   // Loading state - use effectiveIsLoading that includes empty array case
   if (effectiveIsLoading) {
     return (
-      <Card className="balance-chart">
-        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-          <div className="flex justify-between items-center">
-            <Skeleton className="h-7 w-40" />
-            <Skeleton className="h-6 w-24" />
+      <Card className="relative overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-8 rounded-md" />
+            <Skeleton className="h-6 w-40" />
           </div>
+          <Skeleton className="h-6 w-24 rounded-full" />
         </CardHeader>
-        <CardContent className="px-4 sm:px-6 pt-0 pb-4">
-          <Skeleton className="h-[var(--balance-chart-height)] w-full min-h-[200px]" />
+        <CardContent>
+          <Skeleton className="h-[var(--balance-chart-height)] w-full min-h-[200px] rounded-lg" />
         </CardContent>
       </Card>
     );
@@ -90,28 +99,27 @@ export function PerformanceChart({
   // Empty state - now this only happens when data is really empty, not during loading
   if (!data || data.length === 0) {
     return (
-      <Card className="balance-chart">
-        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center card-title" style={{
-              fontSize: 'var(--card-title-size)',
-              fontWeight: 'var(--card-title-weight)',
-              lineHeight: '1.5',
-              padding: '0.125rem 0'
-            }}>
-              <LineChartIcon style={{
-                height: 'var(--card-icon-size)',
-                width: 'var(--card-icon-size)',
-                marginRight: 'var(--spacing-2)'
-              }} className="text-primary" />
-              Balance History
-            </CardTitle>
-          </div>
+      <Card className="relative overflow-hidden">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-base font-medium flex items-center gap-2">
+            <CardIcon
+              color="primary"
+              size="sm"
+              variant="soft"
+            >
+              <LineChartIcon className="h-4 w-4" />
+            </CardIcon>
+            Balance History
+          </CardTitle>
         </CardHeader>
-        <CardContent className="px-4 sm:px-6 pt-0 pb-4 balance-chart-empty" style={{ minHeight: '200px' }}>
-          <Info className="balance-chart-empty-icon" />
-          <p className="balance-chart-empty-title">No performance data available</p>
-          <p className="balance-chart-empty-subtitle">Complete trades will appear in this chart</p>
+        <CardContent className="flex flex-col items-center justify-center text-center min-h-[200px] py-10">
+          <div className="rounded-full bg-muted/10 p-3 mb-3">
+            <Info className="h-8 w-8 text-muted-foreground/40" />
+          </div>
+          <p className="font-medium text-muted-foreground">No performance data available</p>
+          <p className="text-sm text-muted-foreground/70 mt-1 max-w-xs">
+            Complete trades will appear in this chart
+          </p>
         </CardContent>
       </Card>
     );
@@ -166,40 +174,51 @@ export function PerformanceChart({
   
   const formattedPercentChange = `${isPositiveTrend ? "+" : ""}${percentChange.toFixed(1)}%`;
   
-  return (
-    <Card>
-      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="flex items-center card-title" style={{
-            fontSize: 'var(--card-title-size)',
-            fontWeight: 'var(--card-title-weight)',
-            lineHeight: '1.5',
-            padding: '0.125rem 0'
-          }}>
-            <LineChartIcon style={{
-              height: 'var(--card-icon-size)',
-              width: 'var(--card-icon-size)',
-              marginRight: 'var(--spacing-2)'
-            }} className="text-primary" />
-            Balance History
-          </CardTitle>
-          
-          <div className="flex items-center gap-3">
-            <div className={cn(
-              "balance-chart-badge",
-              chartColors.bg, chartColors.text
-            )}>
-              {isPositiveTrend ? 
-                <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
-                <ArrowDown className="h-3.5 w-3.5 mr-1" />}
-              {formattedPercentChange}
-            </div>
+  // Gradient variant based on performance
+  const gradientVariant = isPositiveTrend ? 'success' : 'destructive';
 
+  return (
+    <Card className="relative overflow-hidden card-spotlight">
+      <CardGradient 
+        variant={gradientVariant}
+        intensity="subtle"
+        direction="top-left"
+      />
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <CardIcon
+            color="primary"
+            size="sm"
+            variant="soft"
+          >
+            <LineChartIcon className="h-4 w-4" />
+          </CardIcon>
+          Balance History
+        </CardTitle>
+        
+        <div className="flex items-center gap-2">
+          <CardValue
+            size="sm"
+            className="font-medium"
+            status={isPositiveTrend ? 'success' : 'danger'}
+          >
+            {UI_CONFIG.CURRENCY_SYMBOL}{currentBalance.toFixed(2)}
+          </CardValue>
+          
+          <div className={cn(
+            "flex items-center px-3 py-1 rounded-full text-xs font-medium",
+            chartColors.bg, chartColors.text
+          )}>
+            {isPositiveTrend ? 
+              <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
+              <ArrowDown className="h-3.5 w-3.5 mr-1" />}
+            {formattedPercentChange}
           </div>
         </div>
       </CardHeader>
       
-      <CardContent className="pt-0 pb-4 px-4 sm:px-6">
+      <CardContent>
         <div className="balance-chart-container" style={{ minHeight: '200px' }}>
           <ResponsiveContainer width="100%" height="100%" minHeight={200}>
             <AreaChart
