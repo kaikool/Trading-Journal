@@ -274,7 +274,7 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {/* Trading Rules */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
                   <ListChecks className="h-4 w-4 mr-2" />
@@ -316,7 +316,7 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
               
             {/* Entry Conditions */}
-            <div className="space-y-2 mt-5">
+            <div className="space-y-1.5 mt-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
                   <DoorOpen className="h-4 w-4 mr-2" />
@@ -358,7 +358,7 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
               
             {/* Exit Conditions */}
-            <div className="space-y-2 mt-5">
+            <div className="space-y-1.5 mt-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
                   <LogOut className="h-4 w-4 mr-2" />

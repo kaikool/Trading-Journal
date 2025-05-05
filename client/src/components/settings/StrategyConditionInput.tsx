@@ -241,7 +241,7 @@ export function StrategyConditionItem({
   onDelete
 }: StrategyConditionItemProps) {
   return (
-    <div className="group py-1.5 border-b border-border/10 last:border-b-0">
+    <div className="group py-1 border-b border-border/10 last:border-b-0">
       <div className="flex items-center justify-between">
         {/* Main condition information with minimalist styling */}
         <div className="flex-1 flex items-center gap-2 overflow-hidden">
@@ -376,9 +376,9 @@ export function StrategyConditionList({
   };
   
   return (
-    <div className="border-l-2 border-primary/10 pl-3 py-1 mb-4">
+    <div className="border-l-2 border-primary/10 pl-3 py-0.5 mb-3">
       {/* Integrated header with add button inline */}
-      <div className="flex items-center gap-x-1 mb-1.5">
+      <div className="flex items-center gap-x-1 mb-1">
         {icon && <div className="text-muted-foreground">{icon}</div>}
         {title && (
           <span className="text-xs font-medium text-foreground/80 flex-1">
