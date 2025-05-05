@@ -27,15 +27,13 @@ export default function NewTrade() {
 
   return (
     <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 overflow-x-hidden">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            New Trade
-          </h1>
-          <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
-            Record your trade details to track performance and gain insights
-          </p>
-        </div>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          New Trade
+        </h1>
+        <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
+          Record your trade details to track performance and gain insights
+        </p>
       </div>
 
       {isSubmitting ? (

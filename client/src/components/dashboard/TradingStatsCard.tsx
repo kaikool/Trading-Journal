@@ -174,7 +174,7 @@ export function TradingStatsCard({
   // Component render
   return (
     <Card className="border shadow-sm">
-      <CardHeader className="dashboard-card-header">
+      <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
@@ -200,8 +200,8 @@ export function TradingStatsCard({
         </div>
       </CardHeader>
       
-      <CardContent className="dashboard-card-content">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <CardContent>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <div 
               key={index} 

@@ -1745,23 +1745,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Dashboard specific optimizations - compact layout */
-  .dashboard-card-header {
-    padding: 1rem !important;
-    padding-bottom: 0.5rem !important;
-  }
-  
-  .dashboard-card-content {
-    padding: 1rem !important;
-    padding-top: 0.5rem !important;
-  }
-  
-  /* Remove bottom padding from last children in card content */
-  .dashboard-card-content > *:last-child {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  
   /* Standardize muted text with consistent opacity */
   .text-muted-foreground {
     @apply text-foreground/70;

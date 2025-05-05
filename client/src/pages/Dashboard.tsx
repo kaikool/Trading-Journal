@@ -390,21 +390,19 @@ export default function Dashboard() {
   }, [trades]);
   
   return (
-    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-4 space-y-4">
-      {/* Header - Phong cách được chuẩn hóa để nhất quán với các trang khác */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Trading Dashboard
-          </h1>
-          <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
-            View your trading activity and performance metrics
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+          Trading Dashboard
+        </h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          View your trading activity and performance metrics
+        </p>
       </div>
       
       {/* Main content layout */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-6">
         {/* First row: Account Summary */}
         {userData ? (
           <AccountSummaryCard
