@@ -119,7 +119,10 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.indicator}
-                onValueChange={(value) => onChange({ ...condition, indicator: value })}
+                onValueChange={(value) => {
+                  const updatedCondition = { ...condition, indicator: value };
+                  onChange(updatedCondition);
+                }}
               >
                 <SelectTrigger 
                   id={`condition-indicator-${condition.id}`} 
@@ -145,7 +148,10 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.timeframe}
-                onValueChange={(value) => onChange({ ...condition, timeframe: value })}
+                onValueChange={(value) => {
+                  const updatedCondition = { ...condition, timeframe: value };
+                  onChange(updatedCondition);
+                }}
               >
                 <SelectTrigger 
                   id={`condition-timeframe-${condition.id}`} 
@@ -171,7 +177,10 @@ export function StrategyConditionForm({
               </Label>
               <Select
                 value={condition.expectedValue}
-                onValueChange={(value) => onChange({ ...condition, expectedValue: value })}
+                onValueChange={(value) => {
+                  const updatedCondition = { ...condition, expectedValue: value };
+                  onChange(updatedCondition);
+                }}
               >
                 <SelectTrigger 
                   id={`condition-value-${condition.id}`} 
@@ -238,7 +247,11 @@ export function StrategyConditionForm({
             <Button
               variant="default"
               size="sm"
-              onClick={() => onChange(condition)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onChange({...condition});
+              }}
               disabled={!condition.label.trim()}
               className="h-7 px-3 text-xs"
             >
@@ -382,8 +395,15 @@ export function StrategyConditionList({
   };
   
   const handleUpdate = (updatedCondition: StrategyCondition) => {
-    onUpdate(updatedCondition.id, updatedCondition);
-    setEditingId(null);
+    // Create a cleaned copy of the condition to avoid React re-render issues
+    const cleanedCondition = {...updatedCondition};
+    console.log("[DEBUG] Saving condition:", cleanedCondition);
+    
+    // Delay updating to prevent blur or focus issues
+    setTimeout(() => {
+      onUpdate(cleanedCondition.id, cleanedCondition);
+      setEditingId(null);
+    }, 10);
   };
   
   return (
