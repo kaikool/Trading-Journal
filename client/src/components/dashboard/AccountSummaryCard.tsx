@@ -74,7 +74,7 @@ export function AccountSummaryCard({
   // Loading state
   if (isLoading) {
     return (
-      <Card variant="gradient">
+      <Card className="border shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <Skeleton className="h-6 w-36" />
@@ -94,41 +94,26 @@ export function AccountSummaryCard({
 
   // Calculate percentage for progress bar
   const balancePercentage = Math.min(Math.max((currentBalance / initialBalance) * 100, 0), 200);
-  
-  // Determine card variant based on performance
-  const cardVariant = hasTrades 
-    ? (isPositive ? 'status' : 'status')
-    : 'gradient';
-  
-  // Determine card status based on performance
-  const cardStatus = hasTrades
-    ? (isPositive ? 'success' : 'error')
-    : 'info';
 
   return (
-    <Card 
-      variant={cardVariant} 
-      status={cardStatus}
-      className="overflow-hidden"
-    >
-      {/* Simple gradient background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent opacity-60 pointer-events-none" />
-      
-      {/* Simple decorative dollar sign */}
-      <div className="absolute top-4 right-4 opacity-15 pointer-events-none">
-        <DollarSign className="h-20 w-20 text-primary" />
-      </div>
-      
-      <CardHeader className="px-4 sm:px-6 pt-4 pb-2 relative z-10">
+    <Card>
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle 
-            size="md"
-            withIcon={<Wallet className="text-primary" />}
-          >
+          <CardTitle className="flex items-center card-title" style={{
+            fontSize: 'var(--card-title-size)',
+            fontWeight: 'var(--card-title-weight)',
+            lineHeight: '1.5',
+            padding: '0.125rem 0'
+          }}>
+            <Wallet style={{
+              height: 'var(--card-icon-size)',
+              width: 'var(--card-icon-size)',
+              marginRight: 'var(--spacing-2)'
+            }} className="text-primary" />
             Account Balance
           </CardTitle>
           
-          {/* Performance badge when trades exist */}
+          {/* Chỉ hiển thị badge khi có giao dịch */}
           {hasTrades && (
             <div className={cn(
               "flex items-center px-3 py-1 rounded-full text-xs font-medium",
@@ -146,72 +131,41 @@ export function AccountSummaryCard({
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2 pb-4 px-4 sm:px-6 relative z-10">
-        {/* Main balance display with enhanced visual styling */}
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-2 mb-6">
           <div>
-            <div className="text-3xl font-bold mb-1 flex items-center">
-              <span className="mr-1 text-primary/80">$</span>
-              {formatNumber(currentBalance)}
+            <div className="text-3xl font-bold mb-1">
+              {formatCurrency(currentBalance)}
             </div>
-            
-            {/* P&L display with appropriate styling */}
+            {/* Chỉ hiển thị phần này khi có giao dịch */}
             {hasTrades ? (
-              <div className={cn(
-                "text-sm font-medium flex items-center", 
-                statusColorClasses.text
-              )}>
-                {isPositive ? (
-                  <ArrowUp className="h-3.5 w-3.5 mr-1" />
-                ) : (
-                  <ArrowDown className="h-3.5 w-3.5 mr-1" />
-                )}
+              <div className={cn("text-sm font-medium", statusColorClasses.text)}>
                 {isPositive ? "+" : ""}{formatCurrency(Math.abs(profitLoss))}
               </div>
             ) : (
-              <div className="text-sm text-muted-foreground flex items-center">
-                <Minus className="h-3.5 w-3.5 mr-1 opacity-70" />
+              <div className="text-sm text-muted-foreground">
                 No trade history yet
               </div>
             )}
           </div>
           
-          {/* Enhanced badge for initial balance */}
-          <div className="flex items-center text-xs font-medium bg-muted/20 dark:bg-muted/15 backdrop-blur-sm px-3 py-1.5 rounded-md">
-            <DollarSign className="h-3.5 w-3.5 mr-1 text-primary/70" />
+          <div className="flex items-center text-xs text-muted-foreground bg-muted/10 px-3 py-1.5 rounded-md">
+            <DollarSign className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
             {formatNumber(initialBalance)} initial
           </div>
         </div>
         
-        {/* Progress bar with enhanced styling and gradient */}
         <div className="space-y-1.5">
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span className="font-medium flex items-center">
-              <DollarSign className="h-3 w-3 mr-1 opacity-70" />
-              Initial
-            </span>
-            <span className="font-medium flex items-center">
-              Current
-              <DollarSign className="h-3 w-3 ml-1 opacity-70" />
-            </span>
+            <span>Initial</span>
+            <span>Current</span>
           </div>
-          
-          {/* Simple gradient progress bar */}
-          <div className="relative">
-            <Progress 
-              value={balancePercentage} 
-              max={200}
-              className="h-3 bg-muted/20 rounded-md overflow-hidden" 
-              indicatorClassName={cn(
-                "bg-gradient-to-r transition-all duration-500 ease-out",
-                isPositive 
-                  ? "from-success/80 to-success" 
-                  : isPositive === false 
-                    ? "from-destructive/80 to-destructive" 
-                    : "from-primary/80 to-primary"
-              )}
-            />
-          </div>
+          <Progress 
+            value={balancePercentage} 
+            max={200}
+            className="h-2 bg-muted/20" 
+            indicatorClassName={statusColorClasses.progressBar}
+          />
         </div>
       </CardContent>
     </Card>

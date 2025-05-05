@@ -37,14 +37,14 @@ export function TradingStatsCard({
   // Loading state
   if (isLoading) {
     return (
-      <Card variant="gradient">
-        <CardHeader withBackground className="pb-2">
+      <Card className="border shadow-sm">
+        <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <Skeleton className="h-6 w-40" />
             <Skeleton className="h-5 w-24 rounded-full" />
           </div>
         </CardHeader>
-        <CardContent withBackground={false}>
+        <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {Array(4).fill(0).map((_, index) => (
               <div key={index} className="stat-skeleton-tile">
@@ -171,58 +171,22 @@ export function TradingStatsCard({
     );
   }
   
-  // Determine card variant based on performance
-  let cardVariant: 'default' | 'outline' | 'elevated' | 'gradient' | 'accent' | 'status' = 'gradient'; // Default style
-  let cardStatus: 'success' | 'warning' | 'error' | 'info' | 'neutral' = 'neutral'; // Default status
-  
-  // Set card variant/status based on performance level
-  if (totalTrades >= 10) {
-    cardVariant = 'status';
-    if (performancePoints === 3) {
-      cardStatus = 'success';
-    } else if (performancePoints === 2) {
-      cardStatus = 'info';
-    } else if (performancePoints === 1) {
-      cardStatus = 'warning';
-    } else {
-      cardStatus = 'error';
-    }
-  }
-  
-  // Component render with enhanced styling
+  // Component render
   return (
-    <Card 
-      variant={cardVariant} 
-      status={cardStatus}
-      className="overflow-hidden"
-    >
-      {/* Add subtle pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 pointer-events-none" />
-      
-      {/* Add decorative chart/stats shape with better visibility */}
-      <div className="absolute bottom-0 right-0 w-40 h-40 opacity-20 pointer-events-none">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10,90 L10,50 L30,70 L50,30 L70,50 L90,20 L90,90 Z" 
-            fill="url(#statsGradient)" 
-            stroke="currentColor"
-            strokeWidth="1"
-            strokeOpacity="0.5"
-          />
-          <defs>
-            <linearGradient id="statsGradient" x1="10" y1="90" x2="90" y2="20" gradientUnits="userSpaceOnUse">
-              <stop stopColor="currentColor" stopOpacity="0.3" />
-              <stop offset="1" stopColor="currentColor" stopOpacity="0.1" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
-      
-      <CardHeader withBackground className="px-4 sm:px-6 pt-4 pb-2 relative z-10">
+    <Card>
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle 
-            size="md"
-            withIcon={<BarChart2 className="text-primary" />}
-          >
+          <CardTitle className="flex items-center card-title" style={{
+            fontSize: 'var(--card-title-size)',
+            fontWeight: 'var(--card-title-weight)',
+            lineHeight: '1.5',
+            padding: '0.125rem 0'
+          }}>
+            <BarChart2 style={{
+              height: 'var(--card-icon-size)',
+              width: 'var(--card-icon-size)',
+              marginRight: 'var(--spacing-2)'
+            }} className="text-primary" />
             Trading Statistics
           </CardTitle>
           
@@ -236,29 +200,27 @@ export function TradingStatsCard({
         </div>
       </CardHeader>
       
-      <CardContent className="pt-2 pb-4 px-4 sm:px-6 relative z-10">
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, index) => (
             <div 
               key={index} 
-              className="stat-card stat-card-compact relative bg-card/80 backdrop-blur-sm border border-border/10 hover:border-primary/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group overflow-hidden"
+              className="stat-card stat-card-compact"
               title={stat.tooltip}
+              // Đã di chuyển CSS variables vào globals.css với class .stat-card-compact
             >
-              {/* Add subtle stat-specific hover effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-              
-              <div className="stat-card-header relative z-10">
-                <div className={cn("stat-card-title font-medium", stat.color)}>
+              <div className="stat-card-header">
+                <div className={cn("stat-card-title", stat.color)}>
                   {stat.label}
                 </div>
                 <div className={cn(
-                  "stat-card-icon-container rounded-lg flex items-center justify-center w-7 h-7 transition-transform group-hover:scale-110 duration-300",
+                  "stat-card-icon-container",
                   stat.bgColor
                 )}>
-                  <stat.icon className={cn("h-4 w-4", stat.color)} />
+                  <stat.icon className={cn("h-3.5 w-3.5", stat.color)} />
                 </div>
               </div>
-              <div className={cn("stat-card-value font-bold relative z-10", stat.color)}>
+              <div className={cn("stat-card-value", stat.color)}>
                 {stat.value}
               </div>
             </div>

@@ -182,8 +182,8 @@ export function RecentTradesCard({
   
   if (isLoading) {
     return (
-      <Card variant="gradient" className="h-full flex flex-col">
-        <CardHeader withBackground className="px-4 sm:px-6 pt-4 pb-2">
+      <Card className="h-full flex flex-col">
+        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
           <div className="flex justify-between">
             <div>
               <Skeleton className="h-7 w-40 mb-2" />
@@ -193,7 +193,7 @@ export function RecentTradesCard({
         </CardHeader>
         <CardContent className="pt-2 pb-4 px-4 sm:px-6 flex-grow">
           {Array(3).fill(0).map((_, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b border-border/10 last:border-0">
+            <div key={index} className="flex items-center justify-between py-3 border-b last:border-0">
               <div className="space-y-1">
                 <Skeleton className="h-4 w-20" />
                 <Skeleton className="h-3 w-32" />
@@ -202,7 +202,7 @@ export function RecentTradesCard({
             </div>
           ))}
         </CardContent>
-        <CardFooter withBorder className="px-4 sm:px-6 pt-2 pb-4">
+        <CardFooter className="px-4 sm:px-6 pt-2 pb-4">
           <Skeleton className="h-9 w-28" />
         </CardFooter>
       </Card>
@@ -210,67 +210,35 @@ export function RecentTradesCard({
   }
 
   return (
-    <Card variant="accent" className="h-full flex flex-col overflow-hidden">
-      {/* Add enhanced gradient pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-primary/3 to-transparent opacity-60 pointer-events-none" />
-      
-      {/* Add decorative trading grid pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="tradingGrid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 0 10 L 40 10 M 10 0 L 10 40 M 0 20 L 40 20 M 20 0 L 20 40 M 0 30 L 40 30 M 30 0 L 30 40" 
-                stroke="currentColor" strokeOpacity="0.3" strokeWidth="0.5" fill="none" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#tradingGrid)" />
-        </svg>
-      </div>
-      
-      {/* Add decorative trading symbols with better visibility */}
-      <div className="absolute top-8 right-8 opacity-20 pointer-events-none">
-        <div className="relative">
-          <ClipboardList className="h-28 w-28 text-primary/60" />
-          <div className="absolute top-1/4 right-1/4 transform rotate-12">
-            <ExternalLink className="h-10 w-10 text-primary/80" />
-          </div>
-        </div>
-      </div>
-      
-      <CardHeader withBackground className="px-4 sm:px-6 pt-4 pb-2 relative z-10">
+    <Card className="h-full flex flex-col">
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex justify-between">
           <div>
-            <CardTitle 
-              size="md"
-              withIcon={<ClipboardList className="text-primary" />}
-            >
+            <CardTitle className="text-xl font-semibold flex items-center">
+              <ClipboardList className="h-5 w-5 mr-2 text-primary" />
               Recent Trades
             </CardTitle>
-            <CardDescription 
-              size="xs" 
-              className="mt-1"
-              withIcon={<Clock className="h-3 w-3" />}
-            >
+            <CardDescription className="mt-1">
               Your latest trading activities
             </CardDescription>
           </div>
         </div>
       </CardHeader>
       
-      <CardContent withPadding="sm" className="flex-grow relative z-10">
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6 flex-grow">
         {trades.length > 0 ? (
-          <div className="divide-y divide-border/20 bg-card/60 backdrop-blur-sm rounded-md border border-border/10">
+          <div className="divide-y divide-border/30">
             {memoizedTradesList}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full py-10 text-center bg-card/60 backdrop-blur-sm rounded-md border border-border/10">
-            <ClipboardList className="h-10 w-10 text-primary/20 mb-2" />
-            <p className="font-medium text-primary/80">No recent activity</p>
-            <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+          <div className="flex flex-col items-center justify-center h-full py-10 text-center">
+            <ClipboardList className="h-10 w-10 text-muted-foreground/30 mb-2" />
+            <p className="font-medium text-muted-foreground">No recent activity</p>
+            <p className="text-sm text-muted-foreground/70 mt-1 max-w-xs">
               Add your first trade to see your recent activity here
             </p>
             <Button 
-              variant="default" 
+              variant="outline" 
               className="mt-4"
               onClick={() => setLocation("/trade/new")}
             >
@@ -281,11 +249,11 @@ export function RecentTradesCard({
       </CardContent>
       
       {trades.length > 0 && (
-        <CardFooter withBorder withBackground className="px-4 sm:px-6 pt-2 pb-4 relative z-10">
+        <CardFooter className="px-4 sm:px-6 pt-2 pb-4">
           <Button 
             variant="outline" 
             size="sm"
-            className="w-full sm:w-auto bg-card/80 backdrop-blur-sm"
+            className="w-full sm:w-auto"
             onClick={handleViewAllTrades}
           >
             View All Trades
