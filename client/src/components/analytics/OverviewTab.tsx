@@ -649,7 +649,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={tradingActivityData}
-                margin={{ top: 4, right: 4, left: 4, bottom: 4 }}
+                margin={{ top: 4, right: 0, left: 8, bottom: 4 }}
                 barCategoryGap={12}
                 barGap={6}
               >
