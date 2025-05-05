@@ -1128,18 +1128,151 @@ export default function Settings() {
           </SettingsSection>
           
           <SettingsSection 
-            title="Account Security" 
-            description="Manage your account security settings and active sessions"
+            title="Phương thức đăng nhập"
+            description="Quản lý các phương thức đăng nhập và liên kết tài khoản"
+          >
+            <div className="space-y-4 sm:space-y-6">
+              {/* Danh sách các phương thức đăng nhập hiện tại */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium border-b pb-2 mb-3">Phương thức đăng nhập hiện tại</h4>
+                
+                {linkedProviders.length === 0 ? (
+                  <div className="text-sm text-muted-foreground italic">Đang tải...</div>
+                ) : (
+                  linkedProviders.map((provider) => (
+                    <div 
+                      key={provider} 
+                      className="flex items-center justify-between p-3 rounded-lg border border-border/40 bg-card"
+                    >
+                      <div className="flex items-center space-x-3">
+                        {provider === 'google' && (
+                          <>
+                            <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+                                <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032 s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2 C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                              </svg>
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium">Google</h4>
+                              <p className="text-xs text-muted-foreground">{auth.currentUser?.email}</p>
+                            </div>
+                          </>
+                        )}
+                        
+                        {provider === 'password' && (
+                          <>
+                            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                              <Mail className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium">Email/Mật khẩu</h4>
+                              <p className="text-xs text-muted-foreground">{auth.currentUser?.email}</p>
+                            </div>
+                          </>
+                        )}
+                        
+                        {provider !== 'google' && provider !== 'password' && (
+                          <>
+                            <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                              <User className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-medium">{getProviderName(provider)}</h4>
+                              <p className="text-xs text-muted-foreground">{auth.currentUser?.email}</p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleUnlinkProvider(provider)}
+                        disabled={linkedProviders.length <= 1 || isUnlinking}
+                        className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive"
+                      >
+                        {isUnlinking ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Link2Off className="h-3.5 w-3.5" />
+                        )}
+                        <span className="ml-1.5">Hủy liên kết</span>
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              {/* Thêm phương thức đăng nhập */}
+              <div className="pt-2">
+                <h4 className="text-sm font-medium border-b pb-2 mb-3">Thêm phương thức đăng nhập</h4>
+                
+                <div className="space-y-3">
+                  {/* Google đăng nhập */}
+                  {!linkedProviders.includes('google') && (
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-border/40 bg-card">
+                      <div className="flex items-center space-x-3">
+                        <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+                            <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032 s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2 C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium">Google</h4>
+                          <p className="text-xs text-muted-foreground">Liên kết tài khoản Google của bạn</p>
+                        </div>
+                      </div>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleLinkGoogle}
+                        disabled={isLinkingGoogle}
+                        className="h-8"
+                      >
+                        {isLinkingGoogle ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                            <span>Đang liên kết...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Link className="h-3.5 w-3.5 mr-1.5" />
+                            <span>Liên kết</span>
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {/* Thông báo ghi chú */}
+                  <div className="p-3 rounded-lg bg-muted/30 text-xs text-muted-foreground">
+                    <p className="flex items-start">
+                      <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                      <span>
+                        Bạn phải duy trì ít nhất một phương thức đăng nhập cho tài khoản. 
+                        Thêm một phương thức đăng nhập mới trước khi xóa phương thức cuối cùng.
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SettingsSection>
+          
+          <SettingsSection 
+            title="Phiên đăng nhập" 
+            description="Quản lý phiên đăng nhập và bảo mật tài khoản"
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-muted/30 border border-border/40">
                 <div>
                   <div>
-                    <h4 className="text-sm font-medium">Current Session</h4>
+                    <h4 className="text-sm font-medium">Phiên hiện tại</h4>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {auth.currentUser?.metadata?.lastSignInTime 
-                        ? `Started ${new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString()}` 
-                        : 'Current session'}
+                        ? `Bắt đầu từ ${new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString()}` 
+                        : 'Phiên hiện tại'}
                     </p>
                   </div>
                 </div>
@@ -1150,7 +1283,7 @@ export default function Settings() {
                   className="text-xs space-x-1"
                 >
                   <LogOut className="h-3.5 w-3.5 mr-1" />
-                  <span>Sign Out</span>
+                  <span>Đăng xuất</span>
                 </Button>
               </div>
             </div>
