@@ -421,8 +421,10 @@ export default function Analytics() {
             </div>
           </div>
           
-          {/* Mỗi TabsContent có Suspense riêng để chỉ tab đang mở mới cần loading */}
+          {/* Sử dụng AnimatePresence nhưng không dùng mode="wait" để tránh lỗi */}
+          <AnimatePresence>
             <TabsContent 
+              key="overview-tab"
               value="overview"
               motionProps={{
                 initial: "hidden",
@@ -438,6 +440,7 @@ export default function Analytics() {
             </TabsContent>
             
             <TabsContent 
+              key="strategy-tab"
               value="strategy"
               motionProps={{
                 initial: "hidden",
@@ -453,6 +456,7 @@ export default function Analytics() {
             </TabsContent>
             
             <TabsContent 
+              key="discipline-tab"
               value="discipline"
               motionProps={{
                 initial: "hidden",
@@ -468,6 +472,7 @@ export default function Analytics() {
             </TabsContent>
             
             <TabsContent 
+              key="emotion-tab"
               value="emotion"
               motionProps={{
                 initial: "hidden",
@@ -483,6 +488,7 @@ export default function Analytics() {
             </TabsContent>
             
             <TabsContent 
+              key="advanced-tab"
               value="advanced"
               motionProps={{
                 initial: "hidden",
@@ -496,6 +502,7 @@ export default function Analytics() {
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>
+          </AnimatePresence>
             
 
         </Tabs>

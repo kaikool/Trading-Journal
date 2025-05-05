@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
 import { evaluateDevicePerformance } from "@/lib/performance";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { DASHBOARD_CONFIG } from "@/lib/config";
@@ -571,9 +572,12 @@ export default function Settings() {
             </TabsList>
           </div>
         </div>
-        
         {/* General settings tab */}
-        <TabsContent value="general" className="mt-6 space-y-6">
+        <TabsContent 
+          key="general-tab"
+          value="general" 
+          className="mt-6 space-y-6"
+        >
           <SettingsSection 
             title="Appearance" 
             description="Customize the look and feel of your application"
