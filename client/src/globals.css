@@ -643,48 +643,52 @@
     --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
     --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
     
-    /* Base colors - Modern financial app inspired */
-    --background: 210 45% 99%;
-    --foreground: 218 50% 14%;
+    /* Base colors - Premium financial app, iOS/macOS inspired */
+    --background: 220 25% 99%;
+    --foreground: 224 60% 10%;
     
-    /* Card colors - Subtle elevation */
+    /* Card colors - Subtle elevation with visible distinction */
     --card: 0 0% 100%;
-    --card-foreground: 218 50% 14%;
+    --card-foreground: 224 60% 10%;
     
-    /* Popover colors - Consistent with cards */
+    /* Popover colors - Consistent with cards for harmony */
     --popover: 0 0% 100%;
-    --popover-foreground: 218 50% 14%;
+    --popover-foreground: 224 60% 10%;
     
-    /* Primary colors - Vibrant but professional blue */
-    --primary: 218 95% 40%;
+    /* Primary colors - Professional blue for main actions, 4.5:1 contrast ratio */
+    --primary: 220 90% 45%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors - Subtle cool gray */
-    --secondary: 218 20% 96%;
-    --secondary-foreground: 218 50% 14%;
+    /* Secondary colors - Subtle cool gray with proper contrast */
+    --secondary: 220 16% 96%;
+    --secondary-foreground: 224 60% 18%;
     
-    /* Muted colors - Refined for better reading */
-    --muted: 215 25% 97%;
-    --muted-foreground: 218 25% 45%;
+    /* Muted colors - Refined for better hierarchy, high readability */
+    --muted: 220 20% 97%;
+    --muted-foreground: 220 25% 40%;
     
-    /* Accent colors - Subtle primary variant */
-    --accent: 218 100% 97%;
-    --accent-foreground: 218 50% 14%;
+    /* Accent colors - Subtle emphasis that's distinct from primary */
+    --accent: 220 70% 97%;
+    --accent-foreground: 224 60% 10%;
     
-    /* State colors - Enhanced for 4.5:1 contrast */
-    --destructive: 358 90% 50%;
+    /* State colors - Enhanced for 4.5:1 contrast, clear function */
+    --destructive: 356 100% 48%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 145 80% 36%;
+    --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 32 95% 44%;
+    --warning: 38 95% 45%;
     --warning-foreground: 0 0% 100%;
     
-    /* Border and other UI elements - Subtle distinction */
-    --border: 214 25% 92%;
-    --input: 214 25% 92%;
-    --ring: 218 95% 40%;
+    /* Border and other UI elements - Clear distinction, iOS-inspired */
+    --border: 220 25% 90%;
+    --input: 220 25% 90%;
+    --ring: 220 90% 45%;
+    
+    /* Additional state colors for clear status indication */
+    --info: 220 90% 50%;
+    --info-foreground: 0 0% 100%;
     
     /* Chart colors - Refined for better visualization and accessibility */
     --chart-1: 218 95% 40%;  /* Primary blue - matches primary */
@@ -744,70 +748,93 @@
     --sidebar-border: 218 30% 16%;
     --sidebar-ring: 218 95% 40%;
     
-    /* Shadows */
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-    --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.08), 0 6px 12px -6px rgba(0, 0, 0, 0.04);
-    --shadow-xl: 0 10px 20px -5px rgba(0, 0, 0, 0.1), 0 2px 8px -2px rgba(0, 0, 0, 0.05);
-    --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.35);
+    /* Shadows - Modern iOS/MacOS inspired with subtle elevation */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+    --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0,
+    0, 0, 0.04);
+    --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.09), 0 8px 16px -8px rgba(0, 0, 0, 0.06);
+    --shadow-xl: 0 20px 30px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -10px rgba(0, 0, 0, 0.08);
+    
+    /* Card and interactive element shadows for clean elevation */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
+    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06), 0 3px 6px rgba(0, 0, 0, 0.04);
+    --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --shadow-focus: 0 0 0 3px hsla(var(--primary) / 0.35);
     
     /* Border radius */
     --radius: 0.75rem;
   }
   
   .dark {
-    /* Base colors - Rich dark theme like modern OS systems */
-    --background: 218 35% 10%;
-    --foreground: 213 30% 98%;
+    /* Base colors - Modern OS dark theme-inspired (macOS/iOS) with improved contrast */
+    --background: 224 40% 8%;
+    --foreground: 220 25% 98%;
     
-    /* Card colors - Subtle elevated surface */
-    --card: 218 30% 13%;
-    --card-foreground: 213 30% 98%;
+    /* Card colors - Distinct elevated surfaces for clear component boundaries */
+    --card: 224 35% 12%;
+    --card-foreground: 220 25% 98%; 
     
-    /* Popover colors - Consistent with cards for harmony */
-    --popover: 218 30% 13%;
-    --popover-foreground: 213 30% 98%;
+    /* Popover colors - Elevated above standard cards for clear hierarchy */
+    --popover: 224 35% 14%;
+    --popover-foreground: 220 25% 98%;
     
-    /* Primary colors - Vibrant but not eye-straining */
-    --primary: 218 95% 55%;
+    /* Primary colors - Vibrant but comfortable viewing in dark environments */
+    --primary: 220 90% 60%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary colors - Proper dark mode hierarchy */
-    --secondary: 218 25% 18%;
-    --secondary-foreground: 213 30% 98%;
+    /* Secondary colors - Proper dark mode hierarchy with visible distinction */
+    --secondary: 224 30% 18%;
+    --secondary-foreground: 220 25% 98%;
     
-    /* Muted colors - Better contrast for secondary content */
-    --muted: 218 25% 16%;
-    --muted-foreground: 215 25% 75%;
+    /* Muted colors - Better contrast for secondary content while reducing eye strain */
+    --muted: 224 30% 15%;
+    --muted-foreground: 220 20% 80%;
     
-    /* Accent colors - Subtle but visible highlight */
-    --accent: 218 30% 16%;
-    --accent-foreground: 213 30% 98%;
+    /* Accent colors - Subtle but visible highlight with proper distinction */
+    --accent: 224 35% 20%;
+    --accent-foreground: 220 25% 98%;
     
-    /* State colors - Higher contrast for easy identification */
-    --destructive: 358 90% 60%;
+    /* State colors - Higher contrast for easy identification in dark mode */
+    --destructive: 356 100% 65%;
     --destructive-foreground: 0 0% 100%;
     
-    --success: 145 80% 42%;
+    --success: 142 76% 45%;
     --success-foreground: 0 0% 100%;
     
-    --warning: 32 95% 50%;
+    --warning: 38 95% 55%;
     --warning-foreground: 0 0% 100%;
     
-    /* Border and other UI elements - Visible but not distracting */
-    --border: 218 25% 20%;
-    --input: 218 25% 20%;
-    --ring: 218 95% 55%;
+    /* Border and other UI elements - Visible but not distracting in dark mode */
+    --border: 224 30% 22%;
+    --input: 224 30% 22%;
+    --ring: 220 90% 60%;
     
-    /* Chart colors remain the same for consistency */
+    /* Additional state colors for consistent status indications */
+    --info: 220 90% 60%;
+    --info-foreground: 0 0% 100%;
     
-    /* Shadows for dark mode - matching light mode naming convention for consistency */
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
-    --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.5), 0 6px 12px -6px rgba(0, 0, 0, 0.4);
-    --shadow-xl: 0 10px 20px -5px rgba(0, 0, 0, 0.5), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+    /* Chart colors - Enhanced for dark mode with better readability */
+    --chart-1: 220 90% 60%;  /* Primary blue - matches primary */
+    --chart-2: 260 85% 65%;  /* Purple - brighter for dark backgrounds */
+    --chart-3: 330 85% 65%;  /* Pink - brighter for dark backgrounds */
+    --chart-4: 38 95% 55%;   /* Orange - matches warning */
+    --chart-5: 142 76% 45%;  /* Green - matches success */
+    
+    /* Shadows for dark mode - More subtle glow effect typical in modern dark UIs */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px -1px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.35);
+    --shadow-xl: 0 16px 24px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.4);
+
+    /* Card and interactive element shadows - subtle glow for dark mode */
+    --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
+    --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 8px 18px rgba(0, 0, 0, 0.6);
+    --shadow-focus: 0 0 0 3px hsla(var(--primary) / 0.45);
   }
 
   * {
