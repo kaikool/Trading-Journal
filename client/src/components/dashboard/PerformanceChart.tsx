@@ -168,7 +168,7 @@ export function PerformanceChart({
   
   return (
     <Card className="balance-chart">
-      <CardHeader className="pb-2">
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',

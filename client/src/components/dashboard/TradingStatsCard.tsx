@@ -173,8 +173,8 @@ export function TradingStatsCard({
   
   // Component render
   return (
-    <Card className="border shadow-sm">
-      <CardHeader className="pb-2">
+    <Card>
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
