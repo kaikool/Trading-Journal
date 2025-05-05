@@ -96,18 +96,20 @@ const COMMON_EXPECTED_VALUES = [
 
 const addConditionToArray = (array: StrategyCondition[], condition: StrategyCondition): StrategyCondition[] => {
   if (!condition.label.trim()) return array;
-  console.log("[DEBUG] Adding condition to array:", { condition, currentArray: array });
-  // Make sure all properties are properly formatted
-  const formattedCondition: StrategyCondition = {
-    id: condition.id,
-    label: condition.label.trim(),
-    order: condition.order || array.length, 
-    indicator: condition.indicator,
-    timeframe: condition.timeframe,
-    expectedValue: condition.expectedValue,
-    description: condition.description
-  };
-  return [...array, formattedCondition];
+  
+  // Đơn giản hóa tối đa, không logging
+  return [
+    ...array, 
+    {
+      id: condition.id,
+      label: condition.label.trim(),
+      order: array.length,
+      indicator: condition.indicator,
+      timeframe: condition.timeframe,
+      expectedValue: condition.expectedValue,
+      description: condition.description
+    }
+  ];
 };
 
 const updateConditionInArray = (array: StrategyCondition[], id: string, updates: Partial<StrategyCondition>): StrategyCondition[] => {
