@@ -211,27 +211,27 @@
 }
 
 .pnl-profit {
-  color: hsl(142 72% 45%);
+  color: hsl(145 80% 35%); /* Refined success green */
 }
 
 .dark .pnl-profit {
-  color: hsl(142 72% 60%);
+  color: hsl(145 75% 55%); /* Brighter for dark mode with equal contrast */
 }
 
 .pnl-loss {
-  color: hsl(0 84% 60%);
+  color: hsl(354 90% 45%); /* Refined destructive red */
 }
 
 .dark .pnl-loss {
-  color: hsl(0 84% 75%);
+  color: hsl(354 85% 65%); /* Brighter for dark mode with equal contrast */
 }
 
 .pnl-neutral {
-  color: hsl(35 92% 50%);
+  color: hsl(36 95% 48%); /* Refined warning amber */
 }
 
 .dark .pnl-neutral {
-  color: hsl(35 92% 65%);
+  color: hsl(36 90% 60%); /* Brighter for dark mode with equal contrast */
 }
 
 /* Pip badge styling */
@@ -242,33 +242,33 @@
 }
 
 .pip-badge-profit {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: hsl(142 72% 30%);
+  background-color: hsla(145, 80%, 35%, 0.12);
+  color: hsl(145 80% 30%);
 }
 
 .dark .pip-badge-profit {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: hsl(142 72% 75%);
+  background-color: hsla(145, 75%, 45%, 0.15);
+  color: hsl(145 75% 70%);
 }
 
 .pip-badge-loss {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: hsl(0 84% 40%);
+  background-color: hsla(354, 90%, 45%, 0.12);
+  color: hsl(354 90% 35%);
 }
 
 .dark .pip-badge-loss {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: hsl(0 84% 80%);
+  background-color: hsla(354, 85%, 60%, 0.15);
+  color: hsl(354 85% 75%);
 }
 
 .pip-badge-neutral {
-  background-color: rgba(245, 158, 11, 0.1);
-  color: hsl(35 92% 40%);
+  background-color: hsla(36, 95%, 48%, 0.12);
+  color: hsl(36 95% 35%);
 }
 
 .dark .pip-badge-neutral {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: hsl(35 92% 75%);
+  background-color: hsla(36, 90%, 55%, 0.15);
+  color: hsl(36 90% 70%);
 }
 
 /* Action button styling */
@@ -285,55 +285,55 @@
 }
 
 .action-button-view {
-  color: hsl(213 92% 45%);
+  color: hsl(212 92% 45%);
 }
 .action-button-view:hover {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: hsla(212, 92%, 45%, 0.12);
 }
 .dark .action-button-view {
-  color: hsl(213 92% 65%);
+  color: hsl(212 92% 58%);
 }
 .dark .action-button-view:hover {
-  background-color: rgba(59, 130, 246, 0.15);
+  background-color: hsla(212, 92%, 58%, 0.15);
 }
 
 .action-button-edit {
-  color: hsl(35 92% 50%);
+  color: hsl(36 95% 48%);
 }
 .action-button-edit:hover {
-  background-color: rgba(245, 158, 11, 0.1);
+  background-color: hsla(36, 95%, 48%, 0.12);
 }
 .dark .action-button-edit {
-  color: hsl(35 92% 65%);
+  color: hsl(36 90% 55%);
 }
 .dark .action-button-edit:hover {
-  background-color: rgba(245, 158, 11, 0.15);
+  background-color: hsla(36, 90%, 55%, 0.15);
 }
 
 .action-button-close {
-  color: hsl(142 72% 45%);
+  color: hsl(145 80% 35%);
 }
 .action-button-close:hover {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: hsla(145, 80%, 35%, 0.12);
 }
 .dark .action-button-close {
-  color: hsl(142 72% 60%);
+  color: hsl(145 75% 55%);
 }
 .dark .action-button-close:hover {
-  background-color: rgba(16, 185, 129, 0.15);
+  background-color: hsla(145, 75%, 55%, 0.15);
 }
 
 .action-button-delete {
-  color: hsl(0 84% 60%);
+  color: hsl(354 90% 45%);
 }
 .action-button-delete:hover {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: hsla(354, 90%, 45%, 0.12);
 }
 .dark .action-button-delete {
-  color: hsl(0 84% 75%);
+  color: hsl(354 85% 60%);
 }
 .dark .action-button-delete:hover {
-  background-color: rgba(239, 68, 68, 0.15);
+  background-color: hsla(354, 85%, 60%, 0.15);
 }
 
 /* Image placeholder styling */
@@ -1000,12 +1000,12 @@
     /* Safe area padding applied consistently */
     padding-bottom: var(--safe-bottom) !important;
     
-    /* Visual appearance - can be themed but position must stay the same */
-    background-color: hsl(var(--background));
-    border-top: 1px solid hsl(var(--border) / 0.4);
+    /* Visual appearance - enhanced for modern iOS/Android look */
+    background-color: hsla(var(--background), 0.9);
+    border-top: 1px solid hsla(var(--border), 0.35);
     backdrop-filter: blur(var(--mobile-nav-blur));
     -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
-    box-shadow: var(--mobile-nav-shadow);
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
     
     /* Force GPU acceleration for smoother rendering on all devices */
     transform: translateZ(0);
@@ -1203,14 +1203,15 @@
     -webkit-user-select: none !important;
   }
   
-  /* Mobile header bar - used in MobileNav */
+  /* Mobile header bar - enhanced modern design */
   .mobile-header {
-    --mobile-header-blur: 0.5rem; /* Was 8px */
+    --mobile-header-blur: 0.75rem; /* Increased for subtle glass effect */
     
     backdrop-filter: blur(var(--mobile-header-blur));
     -webkit-backdrop-filter: blur(var(--mobile-header-blur));
-    border-bottom: 1px solid hsl(var(--border) / 0.4);
-    background-color: hsl(var(--background) / 0.95);
+    border-bottom: 1px solid hsla(var(--border), 0.35);
+    background-color: hsla(var(--background), 0.92);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   }
   
   /* Mobile sidebar navigation wrapper */
