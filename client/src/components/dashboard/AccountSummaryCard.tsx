@@ -97,7 +97,7 @@ export function AccountSummaryCard({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center card-title" style={{
             fontSize: 'var(--card-title-size)',
@@ -131,7 +131,7 @@ export function AccountSummaryCard({
         </div>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-2 mb-6">
           <div>
             <div className="text-3xl font-bold mb-1">
