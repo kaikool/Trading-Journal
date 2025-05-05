@@ -274,7 +274,7 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {/* Trading Rules */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
                   <ListChecks className="h-4 w-4 mr-2" />
@@ -282,7 +282,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 </h4>
               </div>
               <StrategyConditionList
-                title="Trading Rules"
+                title=""
                 emptyMessage="No rules defined yet"
                 conditions={strategy.rules || []}
                 onAdd={(condition) => handleFieldChange('rules', 
@@ -301,7 +301,7 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
               
             {/* Entry Conditions */}
-            <div className="space-y-3 mt-5">
+            <div className="space-y-2 mt-5">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
                   <DoorOpen className="h-4 w-4 mr-2" />
@@ -309,7 +309,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 </h4>
               </div>
               <StrategyConditionList
-                title="Entry Conditions"
+                title=""
                 emptyMessage="No entry conditions defined yet"
                 conditions={strategy.entryConditions || []}
                 onAdd={(condition) => handleFieldChange('entryConditions', 
@@ -328,7 +328,7 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
               
             {/* Exit Conditions */}
-            <div className="space-y-3 mt-5">
+            <div className="space-y-2 mt-5">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
                   <LogOut className="h-4 w-4 mr-2" />
@@ -336,7 +336,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 </h4>
               </div>
               <StrategyConditionList
-                title="Exit Conditions"
+                title=""
                 emptyMessage="No exit conditions defined yet"
                 conditions={strategy.exitConditions || []}
                 onAdd={(condition) => handleFieldChange('exitConditions', 
