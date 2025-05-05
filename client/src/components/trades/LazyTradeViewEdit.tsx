@@ -1,6 +1,15 @@
 import { lazy, Suspense, useState } from "react";
-import { Loader2, ArrowUp, ArrowDown, PencilIcon, 
-         ArrowLeft, Trash2Icon, BookOpenCheck, Maximize2 } from "lucide-react";
+import { 
+  Loader2, 
+  ArrowUp, 
+  ArrowDown, 
+  PencilIcon, 
+  ArrowLeft, 
+  Trash2Icon, 
+  BookOpenCheck, 
+  Maximize2,
+  BarChart2
+} from "lucide-react";
 import { Trade } from "@/types";
 
 // Define TradeDiscipline interface for better type safety
@@ -12,7 +21,13 @@ interface TradeDiscipline {
   movedStopLoss: boolean;
 }
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardGradient, 
+  CardIcon, 
+  CardValue 
+} from "@/components/ui/card";
 import { formatTimestamp } from "@/lib/format-timestamp";
 import { cn, formatCurrency } from "@/lib/utils";
 import { getTradeStatusConfig, TradeStatus } from "@/lib/trade-status-config";
@@ -98,89 +113,137 @@ export function LazyTradeViewEdit({
       
       {/* Trade details */}
       <div className="p-4 flex-grow">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
-          <h3 className="text-lg font-semibold flex items-center">
-            {trade.pair}
-            <span className="text-sm font-normal ml-2 text-gray-500">
-              {trade.strategy}
-            </span>
-          </h3>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <CardIcon
+              color={trade.direction === "BUY" ? "primary" : "destructive"}
+              size="sm"
+              variant="soft"
+            >
+              {trade.direction === "BUY" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
+            </CardIcon>
+            <h3 className="text-lg font-semibold">
+              {trade.pair}
+            </h3>
+          </div>
           
           <div className="flex mt-2 md:mt-0 items-center">
-            {/* Tabs are outside this component */}
+            <CardIcon
+              color="muted"
+              size="sm"
+              variant="soft"
+              className="mr-1.5"
+            >
+              <BarChart2 className="h-3.5 w-3.5" />
+            </CardIcon>
+            <span className="text-sm text-muted-foreground font-medium">
+              {trade.strategy}
+            </span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
-          <div>
-            <span className="text-gray-500">Entry:</span> {trade.entryPrice}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Entry</span>
+            <span className="font-medium">{trade.entryPrice}</span>
           </div>
-          <div>
-            <span className="text-gray-500">Exit:</span> {trade.exitPrice || 'Open'}
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Exit</span>
+            <span className="font-medium">{trade.exitPrice || 'Open'}</span>
           </div>
-          <div>
-            <span className="text-gray-500">Entry Date:</span> {formatTimestamp(trade.entryDate)}
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Entry Date</span>
+            <span className="font-medium">{formatTimestamp(trade.entryDate)}</span>
           </div>
-          <div>
-            <span className="text-gray-500">Exit Date:</span> {trade.closeDate ? formatTimestamp(trade.closeDate) : 'Open'}
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Exit Date</span>
+            <span className="font-medium">{trade.closeDate ? formatTimestamp(trade.closeDate) : 'Open'}</span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
-          <div>
-            <span className="text-gray-500">Stop Loss:</span> {trade.stopLoss}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Stop Loss</span>
+            <span className="font-medium">{trade.stopLoss}</span>
           </div>
-          <div>
-            <span className="text-gray-500">Take Profit:</span> {trade.takeProfit}
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Take Profit</span>
+            <span className="font-medium">{trade.takeProfit}</span>
           </div>
-          <div>
-            <span className="text-gray-500">Pips:</span> 
-            <span className={Number(trade.pips) >= 0 ? 'profit-text' : 'loss-text'}>
-              {Number(trade.pips) >= 0 ? ' +' : ' '}{trade.pips}
-            </span>
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">Pips</span>
+            <CardValue
+              size="sm"
+              status={Number(trade.pips) > 0 ? 'success' : Number(trade.pips) < 0 ? 'danger' : 'neutral'}
+              trend={Number(trade.pips) > 0 ? 'up' : Number(trade.pips) < 0 ? 'down' : 'neutral'}
+            >
+              {Number(trade.pips) >= 0 ? '+' : ''}{trade.pips}
+            </CardValue>
           </div>
-          <div>
-            <span className="text-gray-500">P/L:</span>
-            <span className={Number(trade.profitLoss) >= 0 ? 'profit-text' : 'loss-text'}>
-              {Number(trade.profitLoss) >= 0 ? ' +' : ' '}{formatCurrency(Number(trade.profitLoss))}
-            </span>
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground">P/L</span>
+            <CardValue
+              size="sm"
+              status={Number(trade.profitLoss) > 0 ? 'success' : Number(trade.profitLoss) < 0 ? 'danger' : 'neutral'}
+              trend={Number(trade.profitLoss) > 0 ? 'up' : Number(trade.profitLoss) < 0 ? 'down' : 'neutral'}
+            >
+              {Number(trade.profitLoss) >= 0 ? '+' : ''}{formatCurrency(Number(trade.profitLoss))}
+            </CardValue>
           </div>
         </div>
         
         {/* Discipline Factors */}
         {trade.discipline && (
-          <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800">
-            <h4 className="text-sm font-medium mb-2">Trade Discipline</h4>
+          <div className="mt-3 bg-background/50 p-3 rounded-md border border-border/30 shadow-sm">
+            <h4 className="text-sm font-medium mb-2 flex items-center">
+              <CardIcon
+                color="primary"
+                size="sm"
+                variant="soft"
+                className="mr-1.5"
+              >
+                <BookOpenCheck className="h-3 w-3" />
+              </CardIcon>
+              Trade Discipline
+            </h4>
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
-              <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                <div className={`discipline-indicator ${trade.discipline.followedPlan ? 'discipline-indicator-yes' : 'discipline-indicator-no'}`}></div>
+              <div className={cn(
+                "text-xs py-1 px-2 rounded-md flex items-center",
+                trade.discipline.followedPlan 
+                  ? "bg-success/10 text-success" 
+                  : "bg-destructive/10 text-destructive"
+              )}>
+                <div className={cn(
+                  "h-2 w-2 rounded-full mr-1.5",
+                  trade.discipline.followedPlan ? "bg-success" : "bg-destructive"
+                )}></div>
                 <span>{trade.discipline.followedPlan ? 'Followed Plan' : 'Plan Deviation'}</span>
               </div>
               
               {trade.discipline.enteredEarly && (
-                <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                  <div className="discipline-indicator bg-amber-500"></div>
+                <div className="text-xs py-1 px-2 bg-warning/10 text-warning rounded-md flex items-center">
+                  <div className="h-2 w-2 rounded-full mr-1.5 bg-warning"></div>
                   <span>Entered Early</span>
                 </div>
               )}
               
               {trade.discipline.revenge && (
-                <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                  <div className="discipline-indicator discipline-indicator-no"></div>
+                <div className="text-xs py-1 px-2 bg-destructive/10 text-destructive rounded-md flex items-center">
+                  <div className="h-2 w-2 rounded-full mr-1.5 bg-destructive"></div>
                   <span>Revenge Trade</span>
                 </div>
               )}
               
               {trade.discipline.overLeveraged && (
-                <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                  <div className="h-2 w-2 rounded-full mr-1.5 bg-red-500"></div>
+                <div className="text-xs py-1 px-2 bg-destructive/10 text-destructive rounded-md flex items-center">
+                  <div className="h-2 w-2 rounded-full mr-1.5 bg-destructive"></div>
                   <span>Over Leveraged</span>
                 </div>
               )}
               
               {trade.discipline.movedStopLoss && (
-                <div className="text-xs py-1 px-2 bg-slate-100 dark:bg-slate-800 rounded-md flex items-center">
-                  <div className="h-2 w-2 rounded-full mr-1.5 bg-red-500"></div>
+                <div className="text-xs py-1 px-2 bg-destructive/10 text-destructive rounded-md flex items-center">
+                  <div className="h-2 w-2 rounded-full mr-1.5 bg-destructive"></div>
                   <span>Moved Stop Loss</span>
                 </div>
               )}
@@ -205,7 +268,17 @@ export function LazyTradeViewEdit({
         tradePair={trade.pair}
       />
       
-      <Card className="mb-4 overflow-hidden">
+      <Card className="mb-4 overflow-hidden relative border-[1.5px]">
+        <CardGradient 
+          variant={
+            !trade.result ? 'default' :
+            trade.result === 'TP' || Number(trade.profitLoss) > 0 ? 'success' :
+            trade.result === 'SL' || Number(trade.profitLoss) < 0 ? 'destructive' :
+            trade.result === 'BE' ? 'warning' : 'default'
+          }
+          intensity="subtle"
+          direction="top-right"
+        />
         <CardContent className="p-0">
           <div className="border-b border-slate-200 dark:border-slate-800">
             <Tabs defaultValue="view" value={activeTab} onValueChange={setActiveTab}>
@@ -247,9 +320,19 @@ export function LazyTradeViewEdit({
               
               {/* Notes Section */}
               {trade.notes && (
-                <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800">
-                  <h4 className="text-sm font-medium mb-2">Notes</h4>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap pl-1">
+                <div className="px-6 py-4 mt-4 mx-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
+                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                    <CardIcon
+                      color="primary"
+                      size="xs"
+                      variant="soft"
+                      className="mr-1.5"
+                    >
+                      <BookOpenCheck className="h-3 w-3" />
+                    </CardIcon>
+                    Trade Notes
+                  </h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap pl-1">
                     {trade.notes}
                   </p>
                 </div>
@@ -257,9 +340,19 @@ export function LazyTradeViewEdit({
               
               {/* Closing Notes Section */}
               {trade.closingNote && (
-                <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800">
-                  <h4 className="text-sm font-medium mb-2">Closing Notes</h4>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-wrap pl-1">
+                <div className="px-6 py-4 mt-4 mx-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
+                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                    <CardIcon
+                      color={Number(trade.profitLoss) > 0 ? "success" : Number(trade.profitLoss) < 0 ? "destructive" : "warning"}
+                      size="xs"
+                      variant="soft"
+                      className="mr-1.5"
+                    >
+                      <BookOpenCheck className="h-3 w-3" />
+                    </CardIcon>
+                    Closing Notes
+                  </h4>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap pl-1">
                     {trade.closingNote}
                   </p>
                 </div>
