@@ -194,13 +194,7 @@ export function PerformanceChart({
                 <ArrowDown className="h-3.5 w-3.5 mr-1" />}
               {formattedPercentChange}
             </div>
-            
-            <div className="balance-chart-value">
-              {UI_CONFIG.CURRENCY_SYMBOL}{new Intl.NumberFormat('en-US', { 
-                minimumFractionDigits: 2, 
-                maximumFractionDigits: 2 
-              }).format(currentBalance)}
-            </div>
+
           </div>
         </div>
       </CardHeader>
