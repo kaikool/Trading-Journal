@@ -204,7 +204,7 @@ function MainContent() {
         // Trong mobile layout áp dụng min-height, trong desktop không cần vì đã xử lý ở container parent
         isMobile ? "min-h-[calc(100vh-4rem)]" : "",
         // Trong mobile layout không cần các padding này vì đã được xử lý bởi MobileLayout
-        isMobile ? "" : "px-4 sm:px-6 lg:px-8",
+        isMobile ? "" : "px-4 pb-6 sm:px-6 sm:pb-8 lg:px-8",
         // Thêm className để hiển thị loading state
         !isPageReady && "pointer-events-none opacity-80"
       )}
