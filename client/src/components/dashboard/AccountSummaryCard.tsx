@@ -1,5 +1,13 @@
-import { ArrowDown, ArrowUp, DollarSign, Wallet, Minus } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowDown, ArrowUp, DollarSign, Wallet, Minus, TrendingUp, TrendingDown } from "lucide-react";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle,
+  CardIcon, 
+  CardGradient,
+  CardValue
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -95,48 +103,76 @@ export function AccountSummaryCard({
   // Calculate percentage for progress bar
   const balancePercentage = Math.min(Math.max((currentBalance / initialBalance) * 100, 0), 200);
 
+  // Xác định loại gradient dựa trên performance
+  const gradientVariant = isPositive === null 
+    ? 'default' 
+    : isPositive 
+      ? 'success' 
+      : 'destructive';
+      
+  // Xác định biểu tượng trend
+  const trendIcon = isPositive === null 
+    ? <Minus className="h-4 w-4" /> 
+    : isPositive 
+      ? <TrendingUp className="h-4 w-4" /> 
+      : <TrendingDown className="h-4 w-4" />;
+  
+  // Xác định status cho CardValue
+  const valueStatus = isPositive === null 
+    ? 'default' 
+    : isPositive 
+      ? 'success' 
+      : 'danger';
+  
   return (
-    <Card>
-      <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="flex items-center card-title" style={{
-            fontSize: 'var(--card-title-size)',
-            fontWeight: 'var(--card-title-weight)',
-            lineHeight: '1.5',
-            padding: '0.125rem 0'
-          }}>
-            <Wallet style={{
-              height: 'var(--card-icon-size)',
-              width: 'var(--card-icon-size)',
-              marginRight: 'var(--spacing-2)'
-            }} className="text-primary" />
-            Account Balance
-          </CardTitle>
-          
-          {/* Chỉ hiển thị badge khi có giao dịch */}
-          {hasTrades && (
-            <div className={cn(
-              "flex items-center px-3 py-1 rounded-full text-xs font-medium",
-              statusColorClasses.bg, statusColorClasses.text
-            )}>
-              {isPositive === null ? 
-                <Minus className="h-3.5 w-3.5 mr-1" /> : 
-                isPositive ? 
-                  <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
-                  <ArrowDown className="h-3.5 w-3.5 mr-1" />
-              }
-              {isPositive === true ? "+" : ""}{profitLossPercentage.toFixed(1)}%
-            </div>
-          )}
-        </div>
+    <Card className="relative overflow-hidden card-spotlight">
+      {/* Gradient background cho card */}
+      <CardGradient 
+        variant={gradientVariant} 
+        intensity="subtle" 
+        direction="top-right" 
+      />
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <CardIcon 
+            color="primary" 
+            size="sm"
+            variant="soft"
+          >
+            <Wallet className="h-4 w-4" />
+          </CardIcon>
+          Account Balance
+        </CardTitle>
+        
+        {/* Chỉ hiển thị badge khi có giao dịch */}
+        {hasTrades && (
+          <div className={cn(
+            "flex items-center px-3 py-1 rounded-full text-xs font-medium",
+            statusColorClasses.bg, statusColorClasses.text
+          )}>
+            {isPositive === null ? 
+              <Minus className="h-3.5 w-3.5 mr-1" /> : 
+              isPositive ? 
+                <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
+                <ArrowDown className="h-3.5 w-3.5 mr-1" />
+            }
+            {isPositive === true ? "+" : ""}{profitLossPercentage.toFixed(1)}%
+          </div>
+        )}
       </CardHeader>
       
-      <CardContent className="pt-2 pb-4 px-4 sm:px-6">
+      <CardContent>
         <div className="flex flex-wrap items-end justify-between gap-2 mb-6">
           <div>
-            <div className="text-3xl font-bold mb-1">
+            <CardValue
+              size="lg"
+              status={valueStatus}
+              className="mb-1"
+            >
               {formatCurrency(currentBalance)}
-            </div>
+            </CardValue>
+            
             {/* Chỉ hiển thị phần này khi có giao dịch */}
             {hasTrades ? (
               <div className={cn("text-sm font-medium", statusColorClasses.text)}>
@@ -149,7 +185,7 @@ export function AccountSummaryCard({
             )}
           </div>
           
-          <div className="flex items-center text-xs text-muted-foreground bg-muted/10 px-3 py-1.5 rounded-md">
+          <div className="flex items-center text-xs bg-background/50 border border-border/30 px-3 py-1.5 rounded-md shadow-sm">
             <DollarSign className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
             {formatNumber(initialBalance)} initial
           </div>

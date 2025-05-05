@@ -1,7 +1,14 @@
 import { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent, 
+  CardIcon, 
+  CardGradient,
+  CardImage,
+  CardValue
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +28,8 @@ import {
   Ban,
   Maximize2,
   CircleDot,
-  Loader2
+  Loader2,
+  BarChart2
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -202,14 +210,26 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
 
       {inView ? (
         <Card 
-          className="mb-4 overflow-hidden cursor-pointer"
+          className="mb-4 overflow-hidden cursor-pointer relative card-spotlight"
           onClick={() => handleViewTrade()}
         >
+          {/* Gradient background phù hợp với loại giao dịch */}
+          <CardGradient 
+            variant={
+              !result ? 'default' :
+              result === 'WIN' || profitLoss > 0 ? 'success' :
+              result === 'LOSS' || profitLoss < 0 ? 'destructive' :
+              'default'
+            }
+            intensity="subtle"
+            direction="top-right"
+          />
+          
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
-              {/* Thumbnail container - fixed size for consistency */}
+              {/* Thumbnail container with CardImage */}
               <div 
-                className="relative w-full md:w-48 h-48 bg-muted/40 dark:bg-muted flex-shrink-0 cursor-pointer group"
+                className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group"
                 onClick={handleOpenChartDialog}
               >
                 {displayUrl ? (

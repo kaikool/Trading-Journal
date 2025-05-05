@@ -5,6 +5,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardIcon,
+  CardGradient,
+  CardValue
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -44,19 +47,73 @@ interface KPICardProps {
 
 // Tối ưu hóa KPICard với memo để giảm re-render
 const KPICard = memo(function KPICard({ title, value, description, icon, trend }: KPICardProps) {
+  // Xác định màu gradient dựa trên loại trend
+  const gradientVariant = trend?.direction === 'up' 
+    ? 'success' 
+    : trend?.direction === 'down' 
+      ? 'destructive' 
+      : 'primary';
+      
+  // Xác định status cho CardValue
+  const valueStatus = trend?.direction === 'up' 
+    ? 'success' 
+    : trend?.direction === 'down' 
+      ? 'danger' 
+      : 'default';
+  
   return (
-    <Card className="h-full border shadow-sm hover:shadow-md transition-all">
-      <CardHeader className="px-4 sm:px-6 pt-4 pb-2 flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-md font-semibold">{title}</CardTitle>
-        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-          {icon}
-        </div>
+    <Card 
+      className="h-full relative overflow-hidden" 
+      variant="subtle"
+    >
+      {/* Gradient background cho card */}
+      <CardGradient 
+        variant={gradientVariant} 
+        intensity="subtle" 
+        direction="top-right" 
+      />
+      
+      <CardHeader 
+        className="flex flex-row items-center justify-between"
+        compact={true}
+        withIcon={true}
+      >
+        <CardTitle 
+          className="text-base font-medium"
+          withIcon={true}
+          iconPosition="right"
+        >
+          {title}
+          <CardIcon 
+            color={
+              trend?.direction === 'up' 
+                ? 'success' 
+                : trend?.direction === 'down' 
+                  ? 'destructive' 
+                  : 'primary'
+            }
+            size="sm"
+          >
+            {icon}
+          </CardIcon>
+        </CardTitle>
       </CardHeader>
-      <CardContent className="px-4 sm:px-6 pb-4">
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground mt-1">{description}</p>
+      
+      <CardContent compact={true}>
+        <CardValue 
+          size="lg" 
+          status={valueStatus}
+          className="mb-1 font-bold"
+        >
+          {value}
+        </CardValue>
+        
+        <p className="text-xs text-muted-foreground mb-2">
+          {description}
+        </p>
+        
         {trend && (
-          <div className="flex items-center mt-2">
+          <div className="flex items-center mt-1">
             {trend.direction === 'up' ? (
               <ArrowUpCircle className="text-success h-4 w-4 mr-1.5" />
             ) : trend.direction === 'down' ? (
@@ -64,11 +121,12 @@ const KPICard = memo(function KPICard({ title, value, description, icon, trend }
             ) : (
               <div className="w-4 mr-1.5" />
             )}
-            <span className={`text-xs ${
+            <span className={cn(
+              "text-xs font-medium",
               trend.direction === 'up' ? 'text-success' : 
               trend.direction === 'down' ? 'text-destructive' : 
               'text-muted-foreground'
-            }`}>
+            )}>
               {trend.value}
             </span>
           </div>
