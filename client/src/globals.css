@@ -1838,6 +1838,7 @@
     height: var(--balance-chart-height);
     width: 100%;
     position: relative;
+    min-height: 200px; /* Ensure minimum height even if variables fail to load */
   }
   
   /* Chart percentage badge */

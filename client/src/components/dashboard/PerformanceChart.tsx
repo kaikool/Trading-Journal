@@ -81,7 +81,7 @@ export function PerformanceChart({
           </div>
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-[var(--balance-chart-height)] w-full" />
+          <Skeleton className="h-[var(--balance-chart-height)] w-full min-h-[200px]" />
         </CardContent>
       </Card>
     );
@@ -200,8 +200,8 @@ export function PerformanceChart({
       </CardHeader>
       
       <CardContent className="pt-0 pb-4 px-4 sm:px-6">
-        <div className="balance-chart-container">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="balance-chart-container" style={{ minHeight: '200px' }}>
+          <ResponsiveContainer width="100%" height="100%" minHeight={200}>
             <AreaChart
               data={data}
               margin={{
