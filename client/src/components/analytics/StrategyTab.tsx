@@ -663,7 +663,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
             Comprehensive breakdown of all your trading strategies
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-3 py-2 overflow-x-auto">
+        <CardContent className="px-4 sm:px-6 pb-4 overflow-x-auto">
           <Table className="compact-table">
             <TableHeader>
               <TableRow>
