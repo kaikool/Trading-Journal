@@ -373,14 +373,16 @@ export default function Analytics() {
 
   return (
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 via-primary to-primary/80 bg-clip-text text-transparent">
-          Analytics
-        </h1>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base">
-          Advanced analytics and insights for your trading performance
-        </p>
+      {/* Header - Chuẩn hóa định dạng */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Analytics
+          </h1>
+          <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
+            Advanced analytics and insights for your trading performance
+          </p>
+        </div>
       </div>
       
       {/* Main content */}
