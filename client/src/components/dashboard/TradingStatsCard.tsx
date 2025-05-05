@@ -234,12 +234,20 @@ export function TradingStatsCard({
             return (
               <div 
                 key={index} 
-                className={cn(
-                  "p-3 rounded-lg border border-border/30 shadow-sm",
-                  stat.bgColor // Sử dụng màu nền đã được định nghĩa trong mỗi stat
-                )}
+                className="p-3 rounded-lg border border-border/30 shadow-sm relative overflow-hidden"
                 title={stat.tooltip}
               >
+                {/* Thêm gradient background cho mỗi card con */}
+                <div className={cn(
+                  "absolute inset-0",
+                  stat.color.includes('success') 
+                    ? "bg-gradient-to-tr from-success/5 via-success/20 to-success/10" 
+                    : stat.color.includes('destructive')
+                      ? "bg-gradient-to-tr from-destructive/5 via-destructive/20 to-destructive/10"
+                      : stat.color.includes('warning')
+                        ? "bg-gradient-to-tr from-warning/5 via-warning/20 to-warning/10"
+                        : "bg-gradient-to-tr from-primary/5 via-primary/20 to-primary/10"
+                )}></div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs font-medium text-muted-foreground">
                     {stat.label}
