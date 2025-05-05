@@ -45,24 +45,24 @@ interface KPICardProps {
 // Tối ưu hóa KPICard với memo để giảm re-render
 const KPICard = memo(function KPICard({ title, value, description, icon, trend }: KPICardProps) {
   return (
-    <Card className="border shadow-sm hover:shadow-md transition-all">
-      <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
+    <Card className="h-full border shadow-sm hover:shadow-md transition-all">
+      <CardHeader className="px-4 sm:px-6 pt-4 pb-2 flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-md font-semibold">{title}</CardTitle>
         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
           {icon}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-4 sm:px-6 pt-0 pb-4">
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground mt-1">{description}</p>
         {trend && (
           <div className="flex items-center mt-2">
             {trend.direction === 'up' ? (
-              <ArrowUpCircle className="text-success h-4 w-4 mr-1" />
+              <ArrowUpCircle className="text-success h-4 w-4 mr-1.5" />
             ) : trend.direction === 'down' ? (
-              <ArrowDownCircle className="text-destructive h-4 w-4 mr-1" />
+              <ArrowDownCircle className="text-destructive h-4 w-4 mr-1.5" />
             ) : (
-              <div className="w-4 mr-1" />
+              <div className="w-4 mr-1.5" />
             )}
             <span className={`text-xs ${
               trend.direction === 'up' ? 'text-success' : 
@@ -361,7 +361,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Equity Curve Chart */}
         <Card className="border shadow-sm border-border/40 overflow-hidden">
-          <CardHeader className="pb-2 pt-4 px-5">
+          <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-xl font-semibold flex items-center">
                 <LineChart className="h-5 w-5 mr-2 text-primary" />
@@ -388,7 +388,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               Account balance progression over {equityCurveData.length} data points
             </CardDescription>
           </CardHeader>
-          <CardContent className="pb-4">
+          <CardContent className="px-4 sm:px-6 pt-0 pb-4">
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -530,7 +530,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
 
         {/* Profit by Pair Chart */}
         <Card className="shadow-sm border border-border/40 overflow-hidden h-full">
-          <CardHeader className="pb-2 pt-4 px-5">
+          <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-xl font-semibold flex items-center">
                 <PieChartIcon className="h-5 w-5 mr-2 text-primary" />
@@ -549,7 +549,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               Top performing currency pairs by profit
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6 pt-0 pb-4">
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
@@ -625,7 +625,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
 
       {/* Trading Activity */}
       <Card className="border shadow-sm border-border/40 overflow-hidden">
-        <CardHeader className="pb-2 pt-4 px-5">
+        <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="text-xl font-semibold flex items-center">
               <BarChart className="h-5 w-5 mr-2 text-primary" />
@@ -644,7 +644,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             Monthly trade volume with win/loss breakdown
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 pt-0 pb-4">
           <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
