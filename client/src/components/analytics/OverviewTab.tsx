@@ -52,7 +52,7 @@ const KPICard = memo(function KPICard({ title, value, description, icon, trend }
           {icon}
         </div>
       </CardHeader>
-      <CardContent className="px-4 sm:px-6 pt-0 pb-4">
+      <CardContent className="px-4 sm:px-6 pb-4">
         <div className="text-2xl font-bold">{value}</div>
         <p className="text-xs text-muted-foreground mt-1">{description}</p>
         {trend && (
@@ -388,7 +388,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               Account balance progression over {equityCurveData.length} data points
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-4 sm:px-6 pt-0 pb-4">
+          <CardContent className="px-4 sm:px-6 pb-4">
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
@@ -549,7 +549,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               Top performing currency pairs by profit
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-4 sm:px-6 pt-0 pb-4">
+          <CardContent className="px-4 sm:px-6 pb-4">
             <div className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
@@ -644,7 +644,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             Monthly trade volume with win/loss breakdown
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-4 sm:px-6 pt-0 pb-4">
+        <CardContent className="px-4 sm:px-6 pb-4">
           <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
