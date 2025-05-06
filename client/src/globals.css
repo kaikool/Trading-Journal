@@ -463,13 +463,14 @@
   }
   .py-safe {
     padding-top: var(--safe-top);
-    padding-bottom: var(--safe-bottom);
+    padding-bottom: var(--spacing-bottom-safe);
   }
+  /* Sử dụng các biến chuẩn hóa cho padding đầy đủ */
   .p-safe {
     padding: 
       var(--safe-top)
       var(--safe-right)
-      var(--safe-bottom)
+      var(--spacing-bottom-safe)
       var(--safe-left);
   }
   
@@ -570,7 +571,7 @@
     padding-left: max(var(--safe-left), var(--min-side-padding));
     padding-right: max(var(--safe-right), var(--min-side-padding));
     padding-top: var(--safe-top);
-    padding-bottom: var(--safe-bottom);
+    padding-bottom: var(--spacing-bottom-safe);
   }
   
   .pwa-top-inset {
@@ -585,7 +586,7 @@
   }
   
   .pwa-bottom-inset {
-    padding-bottom: var(--safe-bottom);
+    padding-bottom: var(--spacing-bottom-safe);
   }
   
   /* Full-bleed content that respects safe areas - Standardized */
