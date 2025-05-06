@@ -1016,6 +1016,9 @@
     /* Safe area padding applied consistently */
     padding-bottom: var(--safe-bottom) !important;
     
+    /* Keyboard-aware animation properties */
+    transition: transform 0.3s var(--mobile-nav-anim-easing), opacity 0.3s var(--mobile-nav-anim-easing) !important;
+    
     /* Visual appearance - enhanced for modern iOS/Android look */
     background-color: hsla(var(--background), 0.9);
     border-top: 1px solid hsla(var(--border), 0.35);
@@ -1216,6 +1219,13 @@
     -webkit-overflow-scrolling: none !important;
     user-select: none !important;
     -webkit-user-select: none !important;
+  }
+  
+  /* Keyboard-aware navigation states - hidden when keyboard is active */
+  .mobile-nav.keyboard-active {
+    transform: translateY(100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
   
   /* Mobile header bar - enhanced modern design */

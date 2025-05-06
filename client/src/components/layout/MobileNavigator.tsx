@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { 
@@ -9,6 +9,7 @@ import {
   BarChart2
 } from "lucide-react";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
+import { debug } from "@/lib/debug";
 
 /**
  * MobileNavigatorItem - An individual tab in the tab bar
@@ -90,6 +91,69 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
+  const [keyboardActive, setKeyboardActive] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const supportsVisualViewport = typeof window !== 'undefined' && 'visualViewport' in window;
+  
+  // Handle keyboard visibility through multiple detection methods
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const handleFocusIn = (e: FocusEvent) => {
+      // Check if focused element is an input, textarea, or select
+      const target = e.target as HTMLElement;
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+        debug('[KeyboardAware] Input focused, keyboard likely visible');
+        setKeyboardActive(true);
+      }
+    };
+    
+    const handleFocusOut = (e: FocusEvent) => {
+      // When blur happens, keyboard likely closed
+      const target = e.target as HTMLElement;
+      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+        debug('[KeyboardAware] Input blurred, keyboard likely hidden');
+        setKeyboardActive(false);
+      }
+    };
+    
+    const handleResize = () => {
+      // Check if viewport height changed significantly (indicates keyboard opened/closed)
+      // Note: This is a backup detection method, used together with focusin/focusout
+      if (supportsVisualViewport) {
+        const visualViewport = window.visualViewport;
+        const windowHeight = window.innerHeight;
+        // If viewport is significantly smaller than window, keyboard is likely visible
+        const heightDifference = windowHeight - visualViewport.height;
+        const isKeyboardVisible = heightDifference > 150; // Typical keyboard height is >150px
+        if (isKeyboardVisible !== keyboardActive) {
+          debug('[KeyboardAware] Viewport height change detected, keyboard:', isKeyboardVisible);
+          setKeyboardActive(isKeyboardVisible);
+        }
+      }
+    };
+    
+    // Listen for these events on the document
+    document.addEventListener('focusin', handleFocusIn);
+    document.addEventListener('focusout', handleFocusOut);
+    
+    // Use the VisualViewport API if available, otherwise fall back to window resize
+    if (supportsVisualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+    } else {
+      window.addEventListener('resize', handleResize);
+    }
+    
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn);
+      document.removeEventListener('focusout', handleFocusOut);
+      if (supportsVisualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+      } else {
+        window.removeEventListener('resize', handleResize);
+      }
+    };
+  }, [mounted, keyboardActive, supportsVisualViewport]);
   
   useEffect(() => {
     setMounted(true);
@@ -148,7 +212,11 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
 
   return (
     <nav 
-      className="mobile-nav no-scroll"
+      ref={navRef}
+      className={cn(
+        "mobile-nav no-scroll",
+        keyboardActive && "keyboard-active" // Apply keyboard-active class when keyboard is visible
+      )}
       role="navigation"
       aria-label="Main Navigation"
       onTouchMove={(e) => e.preventDefault()} 
