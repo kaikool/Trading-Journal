@@ -120,7 +120,7 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
     const handleResize = () => {
       // Check if viewport height changed significantly (indicates keyboard opened/closed)
       // Note: This is a backup detection method, used together with focusin/focusout
-      if (supportsVisualViewport) {
+      if (supportsVisualViewport && window.visualViewport) {
         const visualViewport = window.visualViewport;
         const windowHeight = window.innerHeight;
         // If viewport is significantly smaller than window, keyboard is likely visible
@@ -138,8 +138,9 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
     document.addEventListener('focusout', handleFocusOut);
     
     // Use the VisualViewport API if available, otherwise fall back to window resize
-    if (supportsVisualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
+    const visualViewport = window.visualViewport;
+    if (supportsVisualViewport && visualViewport) {
+      visualViewport.addEventListener('resize', handleResize);
     } else {
       window.addEventListener('resize', handleResize);
     }
@@ -147,8 +148,8 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
     return () => {
       document.removeEventListener('focusin', handleFocusIn);
       document.removeEventListener('focusout', handleFocusOut);
-      if (supportsVisualViewport) {
-        window.visualViewport.removeEventListener('resize', handleResize);
+      if (supportsVisualViewport && visualViewport) {
+        visualViewport.removeEventListener('resize', handleResize);
       } else {
         window.removeEventListener('resize', handleResize);
       }

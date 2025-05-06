@@ -1016,9 +1016,6 @@
     /* Safe area padding applied consistently */
     padding-bottom: var(--safe-bottom) !important;
     
-    /* Keyboard-aware animation properties */
-    transition: transform 0.3s var(--mobile-nav-anim-easing), opacity 0.3s var(--mobile-nav-anim-easing) !important;
-    
     /* Visual appearance - enhanced for modern iOS/Android look */
     background-color: hsla(var(--background), 0.9);
     border-top: 1px solid hsla(var(--border), 0.35);
@@ -1029,8 +1026,10 @@
     /* Force GPU acceleration for smoother rendering on all devices */
     transform: translateZ(0);
     
-    /* Transitions affect ONLY appearance, never position or structure */
+    /* All transitions combined - animation for both keyboard visibility and theme changes */
     transition: 
+      transform var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
+      opacity var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
       background-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
