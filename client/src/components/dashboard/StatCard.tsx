@@ -1,11 +1,20 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle,
+  CardIcon, 
+  CardGradient,
+  CardValue
+} from "@/components/ui/card";
 
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
-  color?: "default" | "gold" | "teal" | "primary";
+  color?: "default" | "gold" | "teal" | "primary" | "success" | "warning" | "destructive";
   suffix?: string;
   supportingText?: string | React.ReactNode;
   progressValue?: number;
@@ -22,92 +31,109 @@ export default function StatCard({
   progressValue,
   isLoading = false,
 }: StatCardProps) {
-  // Enhanced color configuration with modern, subtle gradients
-  const colorConfig = {
-    default: {
-      iconClass: "text-primary bg-primary/15 backdrop-blur-sm",
-      progressClass: "bg-gradient-to-r from-primary/70 via-primary/80 to-primary",
-      gradientClass: "bg-gradient-to-tl from-primary/5 via-primary/10 to-primary/5",
-    },
-    gold: {
-      iconClass: "text-amber-500 bg-amber-500/15 backdrop-blur-sm",
-      progressClass: "bg-gradient-to-r from-amber-400/70 via-amber-400/80 to-amber-500",
-      gradientClass: "bg-gradient-to-tl from-amber-500/5 via-amber-400/10 to-amber-300/5",
-    },
-    teal: {
-      iconClass: "text-teal-600 bg-teal-500/15 backdrop-blur-sm",
-      progressClass: "bg-gradient-to-r from-teal-500/70 via-teal-500/80 to-teal-600",
-      gradientClass: "bg-gradient-to-tl from-teal-500/5 via-teal-400/10 to-teal-300/5",
-    },
-    primary: {
-      iconClass: "text-primary bg-primary/15 backdrop-blur-sm",
-      progressClass: "bg-gradient-to-r from-primary/70 via-primary/80 to-primary",
-      gradientClass: "bg-gradient-to-tl from-primary/5 via-primary/10 to-primary/5",
-    },
+  // Map color options to UI card component properties
+  const colorMapping = {
+    default: "primary",
+    gold: "warning",
+    teal: "success",
+    primary: "primary",
+    success: "success",
+    warning: "warning",
+    destructive: "destructive"
   };
+
+  // Map to gradient variant - handle both string approaches
+  const gradientVariant = colorMapping[color] || "primary";
+  
+  // Icon color based on card color
+  const iconColor = color === "gold" ? "warning" : colorMapping[color] || "primary";
+  
+  // Progress bar styles based on color
+  const progressBarClass = 
+    color === "gold" ? "bg-gradient-to-r from-amber-400/70 via-amber-400/90 to-amber-500" :
+    color === "teal" ? "bg-gradient-to-r from-teal-500/70 via-teal-500/90 to-teal-600" :
+    color === "success" ? "bg-gradient-to-r from-success/70 via-success/90 to-success" :
+    color === "warning" ? "bg-gradient-to-r from-warning/70 via-warning/90 to-warning" :
+    color === "destructive" ? "bg-gradient-to-r from-destructive/70 via-destructive/90 to-destructive" :
+    "bg-gradient-to-r from-primary/70 via-primary/90 to-primary";
 
   // Loading/skeleton state
   if (isLoading) {
     return (
-      <div className="stat-card-skeleton">
-        <div className="flex justify-between mb-2 relative z-10">
-          <div className="h-5 w-24 bg-muted/60 rounded-md" />
-          <div className="h-7 w-7 bg-muted/60 rounded-full" />
-        </div>
-        <div className="h-8 w-20 bg-muted/60 rounded-md mb-2" />
-        {progressValue !== undefined && (
-          <div className="relative z-10 mt-4 pt-1">
-            <div className="w-full bg-muted/60 rounded-full h-2" />
+      <Card className="border shadow-sm h-[138px]">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <div className="h-5 w-24 bg-muted/60 rounded-md" />
+            <div className="h-7 w-7 bg-muted/60 rounded-full" />
           </div>
-        )}
-        {supportingText && (
-          <div className="h-5 w-36 bg-muted/60 rounded-md mt-2" />
-        )}
-      </div>
+        </CardHeader>
+        <CardContent>
+          <div className="h-8 w-20 bg-muted/60 rounded-md mb-2" />
+          {progressValue !== undefined && (
+            <div className="relative z-10 mt-4 pt-1">
+              <div className="w-full bg-muted/60 rounded-full h-2" />
+            </div>
+          )}
+          {supportingText && (
+            <div className="h-5 w-36 bg-muted/60 rounded-md mt-2" />
+          )}
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="stat-card group shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
-      {/* Gradient background effect */}
-      <div className={cn(
-        "stat-card-bg",
-        colorConfig[color].gradientClass
-      )} />
+    <Card className="relative overflow-hidden card-spotlight">
+      {/* Gradient background for card */}
+      <CardGradient 
+        variant={gradientVariant as any} 
+        intensity="subtle" 
+        direction="top-right" 
+      />
       
-      {/* Card header with title and icon */}
-      <div className="stat-card-header">
-        <span className="stat-card-title">{title}</span>
-        <div className={cn("stat-card-icon-container", colorConfig[color].iconClass)}>
-          {icon}
-        </div>
-      </div>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-base font-medium flex items-center gap-2">
+          <CardIcon 
+            color={iconColor as any} 
+            size="sm"
+            variant="soft"
+          >
+            {icon}
+          </CardIcon>
+          {title}
+        </CardTitle>
+      </CardHeader>
       
-      {/* Main value display */}
-      <div className="stat-card-value">
-        {value}
-        {suffix && <span className="stat-card-suffix">{suffix}</span>}
-      </div>
-      
-      {/* Progress bar (if needed) */}
-      {progressValue !== undefined && (
-        <div className="stat-card-progress-container">
-          <div 
-            className={cn(
-              "stat-card-progress", 
-              colorConfig[color].progressClass
-            )} 
-            style={{"--progress-width": `${progressValue}%`} as React.CSSProperties}
-          />
-        </div>
-      )}
-      
-      {/* Supporting text/content (optional) */}
-      {supportingText && (
-        <div className="stat-card-supporting-text">
-          {supportingText}
-        </div>
-      )}
-    </div>
+      <CardContent>
+        <CardValue
+          size="md"
+          status="default"
+          className="mb-1"
+        >
+          {value}
+          {suffix && <span className="ml-1 text-lg opacity-80">{suffix}</span>}
+        </CardValue>
+        
+        {/* Progress bar (if needed) */}
+        {progressValue !== undefined && (
+          <div className="w-full bg-muted/20 rounded-full h-2 mt-3">
+            <div 
+              className={cn(
+                "h-full rounded-full", 
+                progressBarClass
+              )} 
+              style={{width: `${progressValue}%`}}
+            />
+          </div>
+        )}
+        
+        {/* Supporting text/content (optional) */}
+        {supportingText && (
+          <div className="text-sm text-muted-foreground mt-2">
+            {supportingText}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

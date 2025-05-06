@@ -232,22 +232,18 @@ export function TradingStatsCard({
                               stat.color.includes('warning') ? 'warning' : 'default';
             
             return (
-              <div 
-                key={index} 
-                className="p-3 rounded-lg border border-border/30 shadow-sm relative overflow-hidden"
+              <Card 
+                key={index}
+                className="relative overflow-hidden p-3 h-auto card-spotlight"
                 title={stat.tooltip}
               >
-                {/* Enhanced gradient background with modern, subtle styling */}
-                <div className={cn(
-                  "absolute inset-0",
-                  stat.color.includes('success') 
-                    ? "bg-gradient-to-tl from-success/5 via-success/15 to-success/5 backdrop-blur-[0.5px]" 
-                    : stat.color.includes('destructive')
-                      ? "bg-gradient-to-tl from-destructive/5 via-destructive/15 to-destructive/5 backdrop-blur-[0.5px]"
-                      : stat.color.includes('warning')
-                        ? "bg-gradient-to-tl from-warning/5 via-warning/15 to-warning/5 backdrop-blur-[0.5px]"
-                        : "bg-gradient-to-tl from-primary/5 via-primary/15 to-primary/5 backdrop-blur-[0.5px]"
-                )}></div>
+                {/* Gradient background for each stat card */}
+                <CardGradient 
+                  variant={iconColor as any}
+                  intensity="subtle" 
+                  direction="top-right" 
+                />
+                
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs font-medium text-muted-foreground">
                     {stat.label}
@@ -267,7 +263,7 @@ export function TradingStatsCard({
                 >
                   {stat.value}
                 </CardValue>
-              </div>
+              </Card>
             );
           })}
         </div>
