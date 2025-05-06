@@ -22,27 +22,27 @@ export default function StatCard({
   progressValue,
   isLoading = false,
 }: StatCardProps) {
-  // Color configuration for different card styles
+  // Enhanced color configuration with modern, subtle gradients
   const colorConfig = {
     default: {
-      iconClass: "text-primary bg-primary/10",
-      progressClass: "bg-gradient-to-r from-primary/80 to-primary",
-      gradientClass: "bg-gradient-to-br from-primary/5 to-primary/0",
+      iconClass: "text-primary bg-primary/15 backdrop-blur-sm",
+      progressClass: "bg-gradient-to-r from-primary/70 via-primary/80 to-primary",
+      gradientClass: "bg-gradient-to-tl from-primary/5 via-primary/10 to-primary/5",
     },
     gold: {
-      iconClass: "text-amber-500 bg-amber-500/10",
-      progressClass: "bg-gradient-to-r from-amber-400 to-amber-500",
-      gradientClass: "bg-gradient-to-br from-amber-500/5 to-amber-500/0",
+      iconClass: "text-amber-500 bg-amber-500/15 backdrop-blur-sm",
+      progressClass: "bg-gradient-to-r from-amber-400/70 via-amber-400/80 to-amber-500",
+      gradientClass: "bg-gradient-to-tl from-amber-500/5 via-amber-400/10 to-amber-300/5",
     },
     teal: {
-      iconClass: "text-teal-600 bg-teal-500/10",
-      progressClass: "bg-gradient-to-r from-teal-500/80 to-teal-600",
-      gradientClass: "bg-gradient-to-br from-teal-500/5 to-teal-500/0",
+      iconClass: "text-teal-600 bg-teal-500/15 backdrop-blur-sm",
+      progressClass: "bg-gradient-to-r from-teal-500/70 via-teal-500/80 to-teal-600",
+      gradientClass: "bg-gradient-to-tl from-teal-500/5 via-teal-400/10 to-teal-300/5",
     },
     primary: {
-      iconClass: "text-primary bg-primary/10",
-      progressClass: "bg-gradient-to-r from-primary/80 to-primary",
-      gradientClass: "bg-gradient-to-br from-primary/5 to-primary/0",
+      iconClass: "text-primary bg-primary/15 backdrop-blur-sm",
+      progressClass: "bg-gradient-to-r from-primary/70 via-primary/80 to-primary",
+      gradientClass: "bg-gradient-to-tl from-primary/5 via-primary/10 to-primary/5",
     },
   };
 
@@ -68,7 +68,7 @@ export default function StatCard({
   }
 
   return (
-    <div className="stat-card group">
+    <div className="stat-card group shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
       {/* Gradient background effect */}
       <div className={cn(
         "stat-card-bg",

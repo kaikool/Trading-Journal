@@ -237,16 +237,16 @@ export function TradingStatsCard({
                 className="p-3 rounded-lg border border-border/30 shadow-sm relative overflow-hidden"
                 title={stat.tooltip}
               >
-                {/* Thêm gradient background cho mỗi card con */}
+                {/* Enhanced gradient background with modern, subtle styling */}
                 <div className={cn(
                   "absolute inset-0",
                   stat.color.includes('success') 
-                    ? "bg-gradient-to-tr from-success/5 via-success/20 to-success/10" 
+                    ? "bg-gradient-to-tl from-success/5 via-success/15 to-success/5 backdrop-blur-[0.5px]" 
                     : stat.color.includes('destructive')
-                      ? "bg-gradient-to-tr from-destructive/5 via-destructive/20 to-destructive/10"
+                      ? "bg-gradient-to-tl from-destructive/5 via-destructive/15 to-destructive/5 backdrop-blur-[0.5px]"
                       : stat.color.includes('warning')
-                        ? "bg-gradient-to-tr from-warning/5 via-warning/20 to-warning/10"
-                        : "bg-gradient-to-tr from-primary/5 via-primary/20 to-primary/10"
+                        ? "bg-gradient-to-tl from-warning/5 via-warning/15 to-warning/5 backdrop-blur-[0.5px]"
+                        : "bg-gradient-to-tl from-primary/5 via-primary/15 to-primary/5 backdrop-blur-[0.5px]"
                 )}></div>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs font-medium text-muted-foreground">
