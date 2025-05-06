@@ -534,7 +534,6 @@
   /* These CSS variables can be used anywhere in the stylesheet */
 }
 
-  /* Bottom spacing utilities - Unified System */
   .has-nav-spacing {
     padding-bottom: var(--spacing-bottom-nav) !important;
   }
@@ -547,7 +546,6 @@
     padding-bottom: var(--spacing-bottom-safe) !important;
   }
   
-  /* Margin versions */
   .has-nav-spacing-margin {
     margin-bottom: var(--spacing-bottom-nav) !important;
   }
@@ -556,11 +554,7 @@
     margin-bottom: var(--spacing-bottom-nav-safe) !important;
   }
   
-  /* Mobile content with navigation - Standard layout for all pages */
   .mobile-content-with-navigation {
-    /* Standard bottom padding for all pages with mobile navigation
-     * Using the unified spacing system variables
-     */
     padding-bottom: var(--spacing-bottom-nav-safe) !important;
   }
   
