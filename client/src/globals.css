@@ -537,12 +537,12 @@
   /* Mobile content with navigation - Standard layout for all pages */
   .mobile-content-with-navigation {
     /* Standard bottom padding for all pages with mobile navigation */
-    padding-bottom: calc(var(--mobile-nav-height) + 0.25rem) !important;
+    padding-bottom: var(--mobile-nav-height) !important;
     
     /* Safe area handling for different devices */
     @supports (padding: max(0px)) {
       padding-bottom: max(
-        calc(var(--mobile-nav-height) + 0.25rem), /* Base padding with 4px */
+        var(--mobile-nav-height), /* Base padding without extra space */
         calc(var(--mobile-nav-height) + var(--safe-bottom)) /* With safe area */
       ) !important;
     }
