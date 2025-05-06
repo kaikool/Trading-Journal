@@ -1026,10 +1026,8 @@
     /* Force GPU acceleration for smoother rendering on all devices */
     transform: translateZ(0);
     
-    /* All transitions combined - animation for both keyboard visibility and theme changes */
+    /* Transitions affect ONLY appearance, never position or structure */
     transition: 
-      transform var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
-      opacity var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
       background-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
       border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
   }
@@ -1218,13 +1216,6 @@
     -webkit-overflow-scrolling: none !important;
     user-select: none !important;
     -webkit-user-select: none !important;
-  }
-  
-  /* Keyboard-aware navigation states - hidden when keyboard is active */
-  .mobile-nav.keyboard-active {
-    transform: translateY(100%) !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
   }
   
   /* Mobile header bar - enhanced modern design */

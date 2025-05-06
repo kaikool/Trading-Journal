@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { 
@@ -9,7 +9,6 @@ import {
   BarChart2
 } from "lucide-react";
 import { evaluateDevicePerformance, detectReducedMotion } from "@/lib/performance";
-import { debug } from "@/lib/debug";
 
 /**
  * MobileNavigatorItem - An individual tab in the tab bar
@@ -91,125 +90,6 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
   const [location] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [devicePerformance, setDevicePerformance] = useState<'high' | 'medium' | 'low'>('high');
-  const [keyboardActive, setKeyboardActive] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
-  const supportsVisualViewport = typeof window !== 'undefined' && 'visualViewport' in window;
-  
-  // Handle keyboard visibility through multiple detection methods
-  useEffect(() => {
-    if (!mounted) return;
-    
-    // Kiểm tra xem có input nào đang focus không khi component mount
-    const checkCurrentFocus = () => {
-      const activeElement = document.activeElement;
-      if (activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(activeElement.tagName)) {
-        debug('[KeyboardAware] Input already focused on mount, keyboard likely visible');
-        setKeyboardActive(true);
-      }
-    };
-    
-    // Chạy kiểm tra ngay khi component mount
-    checkCurrentFocus();
-    
-    const handleFocusIn = (e: FocusEvent) => {
-      // Check if focused element is an input, textarea, or select
-      const target = e.target as HTMLElement;
-      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        debug('[KeyboardAware] Input focused, keyboard likely visible');
-        // Force immediate keyboard active state
-        setKeyboardActive(true);
-        
-        // Đối với iOS, đôi khi sự kiện focusin không kích hoạt khi bàn phím xuất hiện
-        // Thêm một timeout nhỏ để đảm bảo trạng thái được cập nhật
-        setTimeout(() => {
-          setKeyboardActive(true);
-        }, 50);
-      }
-    };
-    
-    const handleFocusOut = (e: FocusEvent) => {
-      // When blur happens, keyboard likely closed
-      const target = e.target as HTMLElement;
-      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        debug('[KeyboardAware] Input blurred, keyboard likely hidden');
-        setKeyboardActive(false);
-      }
-    };
-    
-    // Lưu trữ chiều cao ban đầu của viewport
-    const savedHeight = useRef<number>(window.innerHeight);
-    
-    // Phát hiện thay đổi kích thước viewport do bàn phím
-    const handleResize = () => {
-      // Check if viewport height changed significantly (indicates keyboard opened/closed)
-      // Note: This is a backup detection method, used together with focusin/focusout
-      
-      // Phương thức 1: Sử dụng VisualViewport API (Chrome, Safari mới)
-      if (supportsVisualViewport && window.visualViewport) {
-        const visualViewport = window.visualViewport;
-        const windowHeight = window.innerHeight;
-        // If viewport is significantly smaller than window, keyboard is likely visible
-        const heightDifference = windowHeight - visualViewport.height;
-        const isKeyboardVisible = heightDifference > 150; // Typical keyboard height is >150px
-        
-        if (isKeyboardVisible !== keyboardActive) {
-          debug('[KeyboardAware] VisualViewport API: keyboard visible =', isKeyboardVisible);
-          setKeyboardActive(isKeyboardVisible);
-        }
-      } 
-      // Phương thức 2: So sánh chiều cao hiện tại với chiều cao ban đầu (phương pháp truyền thống)
-      else {
-        const currentHeight = window.innerHeight;
-        // Nếu viewport bị giảm hơn 20% chiều cao ban đầu, thì bàn phím có thể đang hiển thị
-        const heightReduction = savedHeight.current - currentHeight;
-        const percentReduction = (heightReduction / savedHeight.current) * 100;
-        
-        if (percentReduction > 20 && !keyboardActive) {
-          debug('[KeyboardAware] Window resize: keyboard visible, reduction =', percentReduction.toFixed(1) + '%');
-          setKeyboardActive(true);
-        } else if (percentReduction < 10 && keyboardActive) {
-          debug('[KeyboardAware] Window resize: keyboard hidden, reduction =', percentReduction.toFixed(1) + '%');
-          setKeyboardActive(false);
-        }
-      }
-    };
-    
-    // Direct click handler for input elements as backup method
-    // Một số trình duyệt trên iOS có thể không kích hoạt focusin, nhưng sẽ kích hoạt click
-    const handleClick = (e: MouseEvent | TouchEvent) => {
-      const target = e.target as HTMLElement;
-      if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        debug('[KeyboardAware] Input clicked, keyboard likely to appear');
-        setKeyboardActive(true);
-      }
-    };
-    
-    // Listen for these events on the document
-    document.addEventListener('focusin', handleFocusIn);
-    document.addEventListener('focusout', handleFocusOut);
-    document.addEventListener('click', handleClick);
-    document.addEventListener('touchstart', handleClick);
-    
-    // Use the VisualViewport API if available, otherwise fall back to window resize
-    const visualViewport = window.visualViewport;
-    if (supportsVisualViewport && visualViewport) {
-      visualViewport.addEventListener('resize', handleResize);
-    } else {
-      window.addEventListener('resize', handleResize);
-    }
-    
-    return () => {
-      document.removeEventListener('focusin', handleFocusIn);
-      document.removeEventListener('focusout', handleFocusOut);
-      document.removeEventListener('click', handleClick);
-      document.removeEventListener('touchstart', handleClick);
-      if (supportsVisualViewport && visualViewport) {
-        visualViewport.removeEventListener('resize', handleResize);
-      } else {
-        window.removeEventListener('resize', handleResize);
-      }
-    };
-  }, [mounted, keyboardActive, supportsVisualViewport]);
   
   useEffect(() => {
     setMounted(true);
@@ -268,11 +148,7 @@ export default function MobileNavigator({}: MobileNavigatorProps = {}) {
 
   return (
     <nav 
-      ref={navRef}
-      className={cn(
-        "mobile-nav no-scroll",
-        keyboardActive && "keyboard-active" // Apply keyboard-active class when keyboard is visible
-      )}
+      className="mobile-nav no-scroll"
       role="navigation"
       aria-label="Main Navigation"
       onTouchMove={(e) => e.preventDefault()} 
