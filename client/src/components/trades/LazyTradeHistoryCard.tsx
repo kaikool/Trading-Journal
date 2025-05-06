@@ -211,7 +211,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
       {inView ? (
         <Card 
           className={cn(
-            "mb-4 overflow-hidden cursor-pointer relative card-spotlight border-[1.5px]",
+            "has-nav-spacing-margin overflow-hidden cursor-pointer relative card-spotlight border-[1.5px]",
             // Thêm viền màu theo trạng thái giao dịch
             isTradeOpen 
               ? "border-primary/60" // Giao dịch đang mở
@@ -493,7 +493,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
         </Card>
       ) : (
         // Skeleton loading when not in view
-        <Skeleton className="w-full h-48 mb-4" />
+        <Skeleton className="w-full h-48 has-nav-spacing-margin" />
       )}
     </div>
   );
