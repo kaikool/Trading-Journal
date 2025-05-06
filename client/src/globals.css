@@ -534,18 +534,34 @@
   /* These CSS variables can be used anywhere in the stylesheet */
 }
 
+  /* Bottom spacing utilities - Unified System */
+  .has-nav-spacing {
+    padding-bottom: var(--spacing-bottom-nav) !important;
+  }
+  
+  .has-nav-spacing-safe {
+    padding-bottom: var(--spacing-bottom-nav-safe) !important;
+  }
+  
+  .has-safe-bottom {
+    padding-bottom: var(--spacing-bottom-safe) !important;
+  }
+  
+  /* Margin versions */
+  .has-nav-spacing-margin {
+    margin-bottom: var(--spacing-bottom-nav) !important;
+  }
+  
+  .has-nav-spacing-safe-margin {
+    margin-bottom: var(--spacing-bottom-nav-safe) !important;
+  }
+  
   /* Mobile content with navigation - Standard layout for all pages */
   .mobile-content-with-navigation {
-    /* Standard bottom padding for all pages with mobile navigation */
-    padding-bottom: var(--mobile-nav-height) !important;
-    
-    /* Safe area handling for different devices */
-    @supports (padding: max(0px)) {
-      padding-bottom: max(
-        var(--mobile-nav-height), /* Base padding without extra space */
-        calc(var(--mobile-nav-height) + var(--safe-bottom)) /* With safe area */
-      ) !important;
-    }
+    /* Standard bottom padding for all pages with mobile navigation
+     * Using the unified spacing system variables
+     */
+    padding-bottom: var(--spacing-bottom-nav-safe) !important;
   }
   
   /* Layout utilities for PWA that respect device notches and home indicators - Standardized */
@@ -597,7 +613,7 @@
 /* ======================================= */
 @layer base {
   :root {
-    /* Safe area variables */
+    /* Safe area insets - base definitions */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -606,6 +622,11 @@
     /* Min padding values - using relative units instead of fixed px */
     --min-top-padding: 0.25rem; /* Was 4px */
     --min-side-padding: 1rem; /* Was 16px */
+    
+    /* Unified bottom spacing system */
+    --spacing-bottom-nav: var(--mobile-nav-height);
+    --spacing-bottom-nav-safe: max(var(--mobile-nav-height), calc(var(--mobile-nav-height) + var(--safe-bottom)));
+    --spacing-bottom-safe: var(--safe-bottom);
     
     /* Standard values for mobile layout components */
     --status-bar-height: 3rem; /* Using relative units for better scaling */
@@ -934,8 +955,11 @@
     touch-action: pan-y; /* Chỉ cho phép vuốt dọc */
   }
   
-  /* Các thuộc tính trong mobile-main-content đã được chuyển vào app-content-container
-     Chỉ để lại padding đặc thù cho mobile cho đồng nhất */
+  /* Bottom spacing is now handled through a unified system:
+   * 1. CSS Variables: --spacing-bottom-nav, --spacing-bottom-nav-safe, --spacing-bottom-safe
+   * 2. Utility classes: .has-nav-spacing, .has-nav-spacing-safe, .has-safe-bottom
+   * 3. See bottom-spacing-audit.md for complete documentation
+   */
   .mobile-content-with-navigation.app-content-container {
     /* Standardized padding using consistent CSS variables */
     padding: 0 max(var(--safe-left), var(--min-side-padding))
@@ -983,11 +1007,9 @@
     
     /* UNIFIED HEIGHT CALCULATION - HANDLES ALL DEVICES AUTOMATICALLY
      * This automatically adjusts for safe area insets on all devices
+     * Using the new unified spacing system
      */
-    height: max(
-      var(--mobile-nav-height),
-      calc(var(--mobile-nav-height) + var(--safe-bottom))
-    ) !important;
+    height: var(--spacing-bottom-nav-safe) !important;
     
     /* Ngăn chặn cuộn và kéo */
     overflow: hidden !important;
@@ -1049,11 +1071,10 @@
       margin-bottom: calc(var(--margin-bottom, auto) * (1 - var(--is-pwa)));
     }
     
-    /* Content bottom spacing in PWA mode */
-    .mobile-main-content {
-      /* Only apply in PWA mode */
-      padding-bottom: calc(var(--safe-bottom) * var(--is-pwa));
-    }
+    /* Content bottom spacing is now handled by unified classes:
+     * .has-nav-spacing, .has-nav-spacing-safe, .has-safe-bottom
+     * The legacy mobile-main-content class has been deprecated
+     */
   }
   
   /* Fallback for browsers that don't support CSS variables */
@@ -1070,9 +1091,9 @@
         margin-bottom: 0 !important;
       }
       
-      .mobile-main-content {
-        padding-bottom: var(--safe-bottom) !important;
-      }
+      /* Use the new unified spacing classes instead:
+       * .has-nav-spacing, .has-nav-spacing-safe, .has-safe-bottom
+       */
     }
   }
   

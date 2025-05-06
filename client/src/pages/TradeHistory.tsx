@@ -959,8 +959,9 @@ export default function TradeHistory() {
         </Card>
       )}
 
-      {/* Trade Cards - All trades displayed without pagination */}
-      <div className="mb-2 space-y-5">
+      {/* Trade Cards - All trades displayed without pagination 
+          Using the unified safe-area-aware utility class for bottom spacing */}
+      <div className="has-nav-spacing-safe space-y-5">
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
