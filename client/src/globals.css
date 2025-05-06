@@ -558,33 +558,26 @@
     padding-bottom: var(--spacing-bottom-nav-safe) !important;
   }
   
-  /* Layout utilities for PWA that respect device notches and home indicators - Standardized */
   .pwa-container {
-    /* Basic styling */
     width: 100%;
     margin: 0 auto;
-    /* Safe area handling - Using unified variables */
     padding-left: max(var(--safe-left), var(--min-side-padding));
     padding-right: max(var(--safe-right), var(--min-side-padding));
     padding-top: var(--safe-top);
     padding-bottom: var(--safe-bottom);
   }
   
-  /* Use for content areas that need top inset padding (header areas) - Standardized */
   .pwa-top-inset {
-    /* Using unified variables */
-    padding-top: max(var(--safe-top), 0.5rem); /* Using relative units (was 8px) */
+    padding-top: max(var(--safe-top), 0.5rem);
   }
   
-  /* Use for page titles or notifications at the very top of the screen - Standardized */
   .pwa-status-bar-area {
     padding-top: var(--safe-top);
     height: calc(var(--status-bar-height) + var(--safe-top));
     display: flex;
-    align-items: flex-end; /* Align content at the bottom of the status bar area */
+    align-items: flex-end;
   }
   
-  /* For bottom fixed elements other than navigation - Standardized */
   .pwa-bottom-inset {
     padding-bottom: var(--safe-bottom);
   }
