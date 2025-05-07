@@ -1305,7 +1305,6 @@ export default function Settings() {
           </SettingsSection>
           <SettingsSection 
             title="API Integration" 
-            description="Configure external API keys for market data integration"
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 gap-4">
@@ -1336,14 +1335,13 @@ export default function Settings() {
                     </button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    API key for fetching real-time market prices from TwelveData. 
                     <a 
                       href="https://twelvedata.com/pricing" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-primary hover:underline ml-1"
+                      className="text-primary hover:underline"
                     >
-                      Get a key
+                      Get API key
                     </a>
                   </p>
                 </FormField>
@@ -1373,9 +1371,7 @@ export default function Settings() {
                   <p className="flex items-start">
                     <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                     <span>
-                      API keys are stored securely in your browser's local storage. 
-                      We do not store your API keys on our servers. Using your own API key 
-                      helps us maintain service quality and respects API rate limits.
+                      API key được lưu trong localStorage và không gửi lên server.
                     </span>
                   </p>
                 </div>
@@ -1385,7 +1381,6 @@ export default function Settings() {
           
           <SettingsSection 
             title="Login Session" 
-            description="Manage login sessions and account security"
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-muted/30 border border-border/40">
