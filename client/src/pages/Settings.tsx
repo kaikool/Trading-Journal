@@ -58,6 +58,7 @@ import {
   ShieldCheck,
   BarChart3,
   AlertCircle,
+  CircleDollarSign,
   LogOut,
   Check,
   Palette,
@@ -837,11 +838,12 @@ export default function Settings() {
                 
                 <FormField label="Initial Balance" htmlFor="initialBalance">
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      {settings.currency === 'USD' ? '$' : 
-                       settings.currency === 'EUR' ? '€' : 
-                       settings.currency === 'GBP' ? '£' : '¥'}
-                    </span>
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      {settings.currency === 'USD' ? <DollarSign className="h-4 w-4" /> : 
+                       settings.currency === 'EUR' ? <CircleDollarSign className="h-4 w-4" /> : 
+                       settings.currency === 'GBP' ? <CircleDollarSign className="h-4 w-4" /> : 
+                       <CircleDollarSign className="h-4 w-4" />}
+                    </div>
                     <Input
                       id="initialBalance"
                       type="text"
@@ -853,7 +855,7 @@ export default function Settings() {
                           setInitialBalance(inputValue === '' ? 0 : Number(inputValue));
                         }
                       }}
-                      className="pl-8"
+                      className="pl-10"
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">

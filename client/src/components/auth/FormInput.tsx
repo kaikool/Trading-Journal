@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
 interface FormInputProps {
   form: UseFormReturn<any, any>;
