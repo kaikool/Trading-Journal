@@ -11,7 +11,8 @@ import {
   unlinkProvider,
   getProviderName
 } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { getApiKey, getApiKeyFromFirebase, saveApiKeyToFirebase } from "@/lib/market-price-service";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
@@ -203,6 +204,23 @@ export default function Settings() {
   const [apiSettings, setApiSettings] = useState({
     twelvedataApiKey: localStorage.getItem('twelvedata_api_key') || ''
   });
+  
+  // Lấy API key từ Firebase khi component mount
+  useEffect(() => {
+    async function loadApiKeyFromFirebase() {
+      const apiKey = await getApiKeyFromFirebase();
+      if (apiKey) {
+        setApiSettings(prev => ({
+          ...prev,
+          twelvedataApiKey: apiKey
+        }));
+      }
+    }
+    
+    if (auth.currentUser) {
+      loadApiKeyFromFirebase();
+    }
+  }, []);
   const [showApiKey, setShowApiKey] = useState(false);
   const [isSavingApi, setIsSavingApi] = useState(false);
   
@@ -462,22 +480,40 @@ export default function Settings() {
     }
   };
   
-  // Save API settings to localStorage
+  // Save API settings to Firebase and localStorage
   const saveApiSettings = async () => {
     setIsSavingApi(true);
     
     try {
-      // Store API key in localStorage
       if (apiSettings.twelvedataApiKey) {
-        localStorage.setItem('twelvedata_api_key', apiSettings.twelvedataApiKey);
+        // Lưu API key vào Firebase và localStorage
+        const savedToFirebase = await saveApiKeyToFirebase(apiSettings.twelvedataApiKey);
+        
+        toast({
+          title: "API settings saved",
+          description: savedToFirebase 
+            ? "Your API key has been saved to your account and will be available on all devices." 
+            : "Your API key has been saved locally only. Sign in to sync across devices.",
+        });
       } else {
+        // Xóa API key khỏi localStorage
         localStorage.removeItem('twelvedata_api_key');
+        
+        // Nếu đã đăng nhập, cũng xóa khỏi Firestore
+        if (auth.currentUser) {
+          try {
+            // Lưu một chuỗi rỗng - saveApiKeyToFirebase sẽ xử lý cập nhật
+            await saveApiKeyToFirebase("");
+          } catch (error) {
+            console.error("Failed to remove API key from Firebase:", error);
+          }
+        }
+        
+        toast({
+          title: "API settings cleared",
+          description: "Your API key has been removed.",
+        });
       }
-      
-      toast({
-        title: "API settings saved",
-        description: "Your API settings have been updated successfully.",
-      });
     } catch (error) {
       toast({
         variant: "destructive",

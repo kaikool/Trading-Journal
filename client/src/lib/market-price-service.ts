@@ -7,6 +7,8 @@
 
 import { debug, logError, logWarning } from './debug';
 import axios from 'axios';
+import { auth, db } from './firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 // Kiểu dữ liệu trả về từ TwelveData API
 interface TwelveDataPrice {
@@ -29,9 +31,68 @@ const priceCache: PriceCache = {};
 // Thời gian cache (15 giây)
 const CACHE_DURATION = 15 * 1000;
 
-// Lấy API key từ local storage nếu có
+// Lấy API key từ Firestore, fallback về localStorage nếu chưa đăng nhập
+export async function getApiKeyFromFirebase(): Promise<string | null> {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      debug('[MarketPrice] No authenticated user, using localStorage fallback');
+      return localStorage.getItem('twelvedata_api_key');
+    }
+    
+    const userDocRef = doc(db, "users", user.uid);
+    const userDoc = await getDoc(userDocRef);
+    
+    if (userDoc.exists() && userDoc.data().apiSettings?.twelvedataApiKey) {
+      debug('[MarketPrice] Using API key from Firebase');
+      return userDoc.data().apiSettings.twelvedataApiKey;
+    }
+    
+    // Fallback to localStorage if key not found in Firebase
+    debug('[MarketPrice] API key not found in Firebase, using localStorage fallback');
+    return localStorage.getItem('twelvedata_api_key');
+  } catch (error) {
+    logError('[MarketPrice] Error getting API key from Firebase:', error);
+    return localStorage.getItem('twelvedata_api_key');
+  }
+}
+
+// Lấy API key từ localStorage
+// Sử dụng cho trường hợp đồng bộ, không đợi Promise
+// Lưu ý: Phiên bản này không truy vấn Firebase để tránh chờ đợi
 export function getApiKey(): string | null {
   return localStorage.getItem('twelvedata_api_key');
+}
+
+// Lưu API key vào Firestore
+export async function saveApiKeyToFirebase(apiKey: string): Promise<boolean> {
+  try {
+    const user = auth.currentUser;
+    if (!user) {
+      debug('[MarketPrice] No authenticated user, saving to localStorage only');
+      localStorage.setItem('twelvedata_api_key', apiKey);
+      return false;
+    }
+    
+    const userDocRef = doc(db, "users", user.uid);
+    
+    // Cập nhật document người dùng với API key
+    await updateDoc(userDocRef, {
+      "apiSettings.twelvedataApiKey": apiKey,
+      "apiSettings.updatedAt": new Date()
+    });
+    
+    // Vẫn lưu vào localStorage để sử dụng trong trường hợp chưa đăng nhập
+    localStorage.setItem('twelvedata_api_key', apiKey);
+    debug('[MarketPrice] API key saved to Firebase and localStorage');
+    
+    return true;
+  } catch (error) {
+    logError('[MarketPrice] Error saving API key to Firebase:', error);
+    // Fallback to localStorage
+    localStorage.setItem('twelvedata_api_key', apiKey);
+    return false;
+  }
 }
 
 // Cấu hình cho axios - sử dụng proxy server local
@@ -68,8 +129,24 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
     
     debug(`[MarketPrice] Using formatted symbol: ${formattedSymbol}`);
     
-    // Kiểm tra xem có API key từ localStorage không
-    const userApiKey = getApiKey();
+    // Ưu tiên lấy API key từ Firebase nếu đã đăng nhập
+    let userApiKey = getApiKey(); // Lấy từ localStorage để phản hồi nhanh
+    
+    try {
+      // Thử lấy API key từ Firebase nếu đã đăng nhập 
+      if (auth.currentUser) {
+        const firebaseApiKey = await getApiKeyFromFirebase();
+        if (firebaseApiKey) {
+          userApiKey = firebaseApiKey;
+          // Cập nhật localStorage để lần sau không cần truy vấn Firebase
+          localStorage.setItem('twelvedata_api_key', firebaseApiKey);
+        }
+      }
+    } catch (error) {
+      // Lỗi khi lấy từ Firebase, tiếp tục sử dụng key từ localStorage
+      logError('[MarketPrice] Error getting API key from Firebase:', error);
+    }
+    
     const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
     
     // Gọi API thông qua proxy server
@@ -132,8 +209,24 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
     
     debug(`[MarketPrice] Using formatted symbols: ${formattedSymbolsStr}`);
     
-    // Kiểm tra xem có API key từ localStorage không
-    const userApiKey = getApiKey();
+    // Ưu tiên lấy API key từ Firebase nếu đã đăng nhập
+    let userApiKey = getApiKey(); // Lấy từ localStorage để phản hồi nhanh
+    
+    try {
+      // Thử lấy API key từ Firebase nếu đã đăng nhập 
+      if (auth.currentUser) {
+        const firebaseApiKey = await getApiKeyFromFirebase();
+        if (firebaseApiKey) {
+          userApiKey = firebaseApiKey;
+          // Cập nhật localStorage để lần sau không cần truy vấn Firebase
+          localStorage.setItem('twelvedata_api_key', firebaseApiKey);
+        }
+      }
+    } catch (error) {
+      // Lỗi khi lấy từ Firebase, tiếp tục sử dụng key từ localStorage
+      logError('[MarketPrice] Error getting API key from Firebase:', error);
+    }
+    
     const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
     
     // Gọi API thông qua proxy server
