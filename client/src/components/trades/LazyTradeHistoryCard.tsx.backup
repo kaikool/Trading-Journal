@@ -45,7 +45,6 @@ import DirectionBadge from "./DirectionBadge";
 import axios from "axios";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface TradeHistoryCardProps {
   trade: any;

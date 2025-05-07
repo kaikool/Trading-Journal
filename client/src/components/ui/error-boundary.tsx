@@ -121,7 +121,7 @@ export interface ErrorFallbackProps {
 
 // Type cho withErrorBoundary HOC options
 export interface WithErrorBoundaryOptions {
-  fallback?: React.ComponentType<ErrorFallbackProps> | React.ReactNode;
+  fallback?: ((props: { error: Error; resetErrorBoundary: () => void }) => React.ReactNode) | React.ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   onReset?: () => void;
 }
