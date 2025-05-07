@@ -522,37 +522,92 @@ async function getPaginatedTrades(
   sortOption: string = 'newest'
 ) {
   try {
-    // Sử dụng getAllTrades thay vì truy vấn chỉ một trang
-    // Điều này cho phép chúng ta sắp xếp trên toàn bộ dữ liệu, không chỉ trang hiện tại
-    const allTrades = await getAllTrades(userId);
+    debug(`Getting paginated trades with sort option: ${sortOption}`);
     
-    // Tổng số giao dịch
-    const totalCount = allTrades.length;
+    // Tham chiếu đến bộ sưu tập trades
+    const tradesRef = collection(db, "users", userId, "trades");
     
-    // Đánh dấu trang hiện tại dựa trên lastDoc nếu có
-    // Nếu không có lastDoc, bắt đầu từ đầu
-    let startIndex = 0;
+    // Đếm tổng số giao dịch trước khi truy vấn phân trang (hiệu suất tốt hơn)
+    const countSnapshot = await getCountFromServer(query(tradesRef));
+    const totalCount = countSnapshot.data().count;
+    
+    debug(`Total trades count for ${userId}: ${totalCount}`);
+    
+    // Cấu hình query dựa trên sortOption
+    let queryField: string;
+    let queryDirection: 'asc' | 'desc';
+    
+    // Xác định sortOption
+    switch(sortOption) {
+      case 'oldest':
+        queryField = 'createdAt';
+        queryDirection = 'asc';
+        break;
+      case 'profit':
+        queryField = 'profitLoss';
+        queryDirection = 'desc';
+        break;
+      case 'loss':
+        queryField = 'profitLoss';
+        queryDirection = 'asc';
+        break;
+      case 'newest':
+      default:
+        queryField = 'createdAt';
+        queryDirection = 'desc';
+        break;
+    }
+    
+    // Tạo base query với orderBy
+    let q = query(tradesRef, orderBy(queryField, queryDirection), limit(pageSize));
+    
+    // Nếu có lastDoc, thêm startAfter
     if (lastDoc) {
-      const lastDocId = lastDoc.id;
-      const lastDocIndex = allTrades.findIndex(trade => trade.id === lastDocId);
-      if (lastDocIndex !== -1) {
-        startIndex = lastDocIndex + 1; // Bắt đầu từ sau lastDoc
+      try {
+        // Nếu lastDoc chỉ là ID, lấy reference đầy đủ
+        if (typeof lastDoc === 'string' || (lastDoc && lastDoc.id && !lastDoc.exists)) {
+          const docId = typeof lastDoc === 'string' ? lastDoc : lastDoc.id;
+          debug(`Converting ID to document reference: ${docId}`);
+          const docRef = doc(db, "users", userId, "trades", docId);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            q = query(q, startAfter(docSnap));
+          } else {
+            logWarning(`Document reference not found for ID: ${docId}`);
+          }
+        } else if (lastDoc.exists) {
+          // Nếu đã là document reference đầy đủ
+          q = query(q, startAfter(lastDoc));
+        }
+      } catch (err) {
+        logError("Error creating pagination query with lastDoc:", err);
       }
     }
     
-    // Slice phần trang hiện tại
-    const endIndex = Math.min(startIndex + pageSize, totalCount);
+    // Thực hiện truy vấn phân trang
+    const querySnapshot = await getDocs(q);
     
-    // Lấy document cuối cùng để dùng cho truy vấn tiếp theo
-    const lastVisible = endIndex < totalCount 
-      ? { id: allTrades[endIndex - 1].id } 
+    // Xử lý kết quả
+    const trades = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        isOpen: !data.closeDate
+      };
+    });
+    
+    // Lấy document cuối cùng cho lần truy vấn tiếp theo
+    const lastVisible = querySnapshot.docs.length > 0 
+      ? querySnapshot.docs[querySnapshot.docs.length - 1]
       : null;
     
-    debug(`Pagination for ${userId}: page size ${pageSize}, start index ${startIndex}, end index ${endIndex}, total ${totalCount}`);
+    debug(`Retrieved ${trades.length} trades for page (server-side pagination)`);
     
-    // Trả về kết quả bao gồm dữ liệu và thông tin phân trang
+    // Trả về kết quả
     return {
-      trades: allTrades.slice(startIndex, endIndex),
+      trades,
       lastDoc: lastVisible,
       totalCount
     };
@@ -1406,17 +1461,73 @@ async function getStrategies(userId: string): Promise<Array<TradingStrategy & { 
   }
 }
 
+/**
+ * Tạo một listeners Firebase được tối ưu cho strategies
+ * 
+ * Cải tiến:
+ * 1. Cache control để tránh xử lý callback trễ
+ * 2. Debounce để giảm số lần render không cần thiết
+ * 3. Xử lý lỗi toàn diện
+ * 4. Chỉ nhận thay đổi thực, tránh nhận duplicate từ metadata
+ * 
+ * @param userId ID của người dùng cần theo dõi strategies
+ * @param callback Hàm xử lý khi có dữ liệu mới
+ * @returns Hàm unsubscribe
+ */
 function onStrategiesSnapshot(userId: string, callback: (strategies: any[]) => void) {
+  if (!userId) return () => {}; // Return noop function if userId is not provided
+  
+  // Sử dụng tham chiếu bộ sưu tập
   const strategiesRef = collection(db, "users", userId, "strategies");
   const q = query(strategiesRef, orderBy("createdAt", "desc"));
   
-  return onSnapshot(q, (querySnapshot) => {
-    const strategies = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    callback(strategies);
-  });
+  // Biến version theo dõi trạng thái listener
+  let cacheVersion = 0;
+  const currentCacheVersion = cacheVersion;
+  
+  // Biến debounce để giảm số lần cập nhật
+  let debounceTimeout: NodeJS.Timeout | null = null;
+  
+  // Đăng ký listener với optimization options
+  const unsubscribe = onSnapshot(
+    q, 
+    { includeMetadataChanges: false }, // Chỉ nhận khi có thay đổi thực sự
+    (snapshot) => {
+      // Nếu phiên bản cache đã thay đổi, bỏ qua callback này
+      if (currentCacheVersion !== cacheVersion) return;
+      
+      // Xóa timeout trước nếu có
+      if (debounceTimeout) clearTimeout(debounceTimeout);
+      
+      // Kỹ thuật debounce để giảm thiểu re-render
+      debounceTimeout = setTimeout(() => {
+        const strategies = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Gọi callback với dữ liệu
+        callback(strategies);
+      }, 100); // Debounce 100ms
+    }, 
+    (error) => {
+      logError("Error listening to strategies:", error);
+    }
+  );
+  
+  // Cải thiện cleanup function
+  return () => {
+    // Tăng version để bỏ qua các callback trễ
+    cacheVersion++;
+    
+    // Xóa timeout nếu đang có
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+    
+    // Hủy đăng ký listener
+    unsubscribe();
+  };
 }
 
 async function getStrategyById(userId: string, strategyId: string) {
