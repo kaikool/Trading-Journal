@@ -189,22 +189,26 @@
 
     <!-- Script vô hiệu hóa cử chỉ vuốt mặc định của Safari -->
     <script>
-      // Giải pháp 1: Vô hiệu hóa cử chỉ vuốt quay lại/tiến tới Safari (swipe back/forward)
+      // Vô hiệu hóa cử chỉ vuốt quay lại/tiến tới Safari (swipe back/forward)
       document.addEventListener('DOMContentLoaded', function() {
         // Thêm CSS trực tiếp để vô hiệu hóa cử chỉ vuốt
         const style = document.createElement('style');
         style.textContent = `
           /* Vô hiệu hóa cử chỉ vuốt Safari trên PWA */
-          html, body {
+          html {
             overscroll-behavior-x: none;
-            touch-action: pan-y;
-            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+          }
+          body {
+            overflow-x: hidden;
+            position: relative;
+            width: 100%;
           }
         `;
         document.head.appendChild(style);
       });
 
-      // Giải pháp 2: Sử dụng history.pushState để ngăn Safari quay lại trang trước
+      // Sử dụng history.pushState để ngăn Safari quay lại trang trước
       window.addEventListener('load', function() {
         // Thêm một dummy state vào history để ngăn Safari quay lại
         window.history.pushState({page: 'initial'}, document.title, window.location.href);
@@ -215,28 +219,6 @@
           window.history.pushState({page: 'blocked'}, document.title, window.location.href);
         });
       });
-      
-      // Giải pháp 3: Bắt và ngăn chặn các cử chỉ vuốt ngang
-      let startX = 0;
-      let startY = 0;
-      
-      document.addEventListener('touchstart', function(e) {
-        startX = e.touches[0].pageX;
-        startY = e.touches[0].pageY;
-      }, {passive: true});
-      
-      document.addEventListener('touchmove', function(e) {
-        // Giá trị ngưỡng để xác định vuốt ngang
-        const threshold = 10;
-        const diffX = startX - e.touches[0].pageX;
-        const diffY = startY - e.touches[0].pageY;
-        
-        // Nếu chuyển động ngang (left/right) và lớn hơn chuyển động dọc (up/down)
-        if (Math.abs(diffX) > threshold && Math.abs(diffX) > Math.abs(diffY)) {
-          e.preventDefault();
-          return false;
-        }
-      }, {passive: false});
     </script>
 
     <script type="module" src="/src/main.tsx"></script>

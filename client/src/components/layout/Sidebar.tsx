@@ -193,14 +193,18 @@ export function Sidebar({ className }: { className?: string }) {
   const edgeSwipeZone = 20; // Vùng nhận diện vuốt từ cạnh trái (px)
   
   // Xử lý sự kiện vuốt (swipe) cho mobile
-  const handleTouchStart = (e: TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
+  const handleTouchStart = (e: React.TouchEvent | TouchEvent) => {
+    if ('touches' in e) {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    }
   };
   
-  const handleTouchMove = (e: TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-    touchEndY.current = e.touches[0].clientY;
+  const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
+    if ('touches' in e) {
+      touchEndX.current = e.touches[0].clientX;
+      touchEndY.current = e.touches[0].clientY;
+    }
   };
   
   const handleTouchEnd = () => {
