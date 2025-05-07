@@ -93,7 +93,7 @@ export function Sidebar({ className }: { className?: string }) {
   const user = auth.currentUser;
   const { direction, isScrolling } = useScrollDirection();
   const { isActive } = useUserActivity(2000);
-  const [menuVisible, setMenuVisible] = useState(true);
+  // Không cần state hiển thị menu nữa, chỉ cần isOpen để quản lý drawer
   
   useEffect(() => {
     setMounted(true);
@@ -149,41 +149,7 @@ export function Sidebar({ className }: { className?: string }) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
   
-  // Tinh chỉnh cơ chế hiện/ẩn menu thông minh hơn
-  useEffect(() => {
-    // Menu logic:
-    // - Chỉ hiện menu khi user ngừng tương tác và dừng cuộn một thời gian
-    // - Ẩn menu khi user đang đọc nội dung và cuộn (bất kể hướng nào)
-    // - Ẩn menu khi user không tương tác trong thời gian dài (tránh lấn át nội dung)
-    // - User chủ động nhấn vào hot zone ở góc trái dưới sẽ hiện menu
-    
-    const handleVisibility = () => {
-      // Chỉ hiện menu khi user chủ động tương tác (không dựa vào hướng cuộn)
-      // Hiện khi user tương tác trực tiếp nhưng không cuộn
-      if (isActive && !isScrolling && direction === 'idle') {
-        setMenuVisible(true);
-      }
-      
-      // Khi cuộn xuống: luôn ẩn menu
-      else if (direction === 'down' && isScrolling) {
-        // Tạo độ trễ khi ẩn để có cảm giác mượt mà, không đột ngột
-        const timeout = setTimeout(() => {
-          setMenuVisible(false);
-        }, 150);
-        return () => clearTimeout(timeout);
-      }
-      
-      // Cuộn lên mạnh (di chuyển nhanh) cũng sẽ ẩn menu
-      else if (direction === 'up' && isScrolling) {
-        // Không làm gì - giữ nguyên trạng thái của nút menu
-        // User sẽ dùng hot zone nếu họ cần menu
-      }
-    };
-
-    // Áp dụng xử lý này với một chút debounce để tránh trigger quá nhiều
-    const debounceTimeout = setTimeout(handleVisibility, 50);
-    return () => clearTimeout(debounceTimeout);
-  }, [direction, isScrolling, isActive]);
+  // Đã xóa phần logic hiện/ẩn menu vì bây giờ dùng vuốt từ cạnh trái thay thế
 
   // Các biến để xử lý vuốt từ cạnh trái để hiện sidebar
   const touchStartX = useRef(0);
@@ -216,7 +182,6 @@ export function Sidebar({ className }: { className?: string }) {
       !isOpen // Chỉ mở sidebar khi nó đang đóng
     ) {
       setIsOpen(true);
-      setMenuVisible(true);
     }
     
     // Nếu vuốt từ phải qua trái khi sidebar đang mở
@@ -229,7 +194,7 @@ export function Sidebar({ className }: { className?: string }) {
     }
   };
   
-  // Khu vực "hot zone" ở góc trái dưới để hiện nút menu
+  // Khu vực "hot zone" ở góc trái dưới để hiện sidebar (không còn cần thiết nhưng vẫn giữ để bổ sung tính năng)
   const handleBodyClick = (e: MouseEvent) => {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
@@ -238,8 +203,8 @@ export function Sidebar({ className }: { className?: string }) {
     const isInHotZone = e.clientX < windowWidth * 0.3 && e.clientY > windowHeight * 0.7;
     
     if (isInHotZone) {
-      // Hiện menu với animation mượt mà ngay lập tức
-      setMenuVisible(true);
+      // Mở sidebar khi click vào hot zone
+      setIsOpen(true);
     }
   };
 
@@ -265,25 +230,10 @@ export function Sidebar({ className }: { className?: string }) {
   // Prevent hydration mismatch
   if (!mounted) return null;
 
-  // Mobile sidebar version (slide-out drawer) with floating button
+  // Mobile sidebar version (slide-out drawer) - không cần nút menu vì đã có vuốt từ cạnh trái
   if (isMobile) {
     return (
       <>
-        {/* Floating Menu Button */}
-        <Button
-          onClick={toggleSidebar}
-          variant="default"
-          size="icon"
-          className={cn(
-            "fixed left-4 bottom-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90",
-            menuVisible 
-              ? "opacity-100 translate-y-0 transition-all duration-300 ease-out" 
-              : "opacity-0 translate-y-16 transition-all duration-500 ease-in"
-          )}
-          aria-label="Open menu"
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
         
         {/* Mobile Sidebar Overlay */}
         <div 
