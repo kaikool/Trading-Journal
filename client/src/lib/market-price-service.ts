@@ -58,10 +58,15 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
     // Nếu không có trong cache hoặc đã hết hạn, gọi API
     debug(`[MarketPrice] Fetching real-time price for ${normalizedSymbol}`);
     
+    // Chuyển đổi ký hiệu sang định dạng TwelveData
+    const formattedSymbol = formatSymbolForAPI(normalizedSymbol);
+    
+    debug(`[MarketPrice] Using formatted symbol: ${formattedSymbol}`);
+    
     // Gọi API thông qua proxy server
     const response = await apiClient.get('/price', {
       params: {
-        symbol: normalizedSymbol,
+        symbol: formattedSymbol,
         format: 'JSON'
       }
     });
@@ -111,10 +116,16 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
     
     debug(`[MarketPrice] Fetching prices for multiple symbols: ${symbolsStr}`);
     
+    // Định dạng mảng các ký hiệu theo TwelveData API
+    const formattedSymbols = normalizedSymbols.map(s => formatSymbolForAPI(s));
+    const formattedSymbolsStr = formattedSymbols.join(',');
+    
+    debug(`[MarketPrice] Using formatted symbols: ${formattedSymbolsStr}`);
+    
     // Gọi API thông qua proxy server
     const response = await apiClient.get('/price', {
       params: {
-        symbol: symbolsStr,
+        symbol: formattedSymbolsStr,
         format: 'JSON'
       }
     });
@@ -183,9 +194,21 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
  * Ví dụ: "EURUSD" -> "EUR/USD"
  */
 export function formatSymbolForAPI(symbol: string): string {
-  // Với hàng hóa như XAUUSD (Gold/USD), giữ nguyên
-  if (symbol.startsWith('XAU') || symbol.startsWith('XAG')) {
+  if (!symbol) return "";
+  
+  // Ký hiệu đã đúng định dạng TwelveData API
+  if (symbol.includes('/')) {
     return symbol;
+  }
+  
+  // Xử lý đặc biệt cho XAUUSD (Gold) -> 'XAU/USD'
+  if (symbol.toUpperCase() === 'XAUUSD') {
+    return 'XAU/USD';
+  }
+  
+  // Xử lý đặc biệt cho XAGUSD (Silver) -> 'XAG/USD'
+  if (symbol.toUpperCase() === 'XAGUSD') {
+    return 'XAG/USD';
   }
   
   // Đối với các cặp tiền tệ, thêm dấu '/'
