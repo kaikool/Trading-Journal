@@ -86,67 +86,45 @@ export function StrategyConditionForm({
   const [advancedMode, setAdvancedMode] = useState(false);
   
   return (
-    <div className="mb-2 w-full bg-transparent border border-primary/5 rounded-md overflow-hidden shadow-sm">
-      <div className="space-y-2 p-2">
-        {/* Streamlined condition input with advanced toggle */}
-        <div className="flex items-center gap-2">
+    <div className="mb-2 w-full bg-card/30 border border-border/30 rounded-md overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
+      <div className="space-y-1.5 p-2">
+        {/* Compact condition input with advanced toggle */}
+        <div className="flex items-center gap-1.5">
           <Input 
             id={`condition-label-${condition.id}`}
             placeholder="Enter condition..."
             value={condition.label}
-            onChange={(e) => {
-              // Tạo đối tượng condition mới với giá trị label mới
-              onChange({
-                id: condition.id,
-                label: e.target.value,
-                order: condition.order,
-                indicator: condition.indicator,
-                timeframe: condition.timeframe,
-                expectedValue: condition.expectedValue,
-                description: condition.description
-              });
-            }}
-            className="h-8 text-sm flex-1"
+            onChange={(e) => onChange({...condition, label: e.target.value})}
+            className="h-7 text-sm flex-1 bg-transparent"
           />
           
           <Button
             type="button"
-            variant="ghost"
+            variant={advancedMode ? "secondary" : "ghost"}
             size="sm"
             onClick={() => setAdvancedMode(!advancedMode)}
-            className="h-8 w-8 p-0 text-muted-foreground"
+            className="h-7 w-7 p-0 text-muted-foreground"
             title={advancedMode ? "Hide details" : "Show details"}
           >
             <Settings2 className="h-3.5 w-3.5" />
           </Button>
         </div>
         
-        {/* Advanced options */}
+        {/* Compact, modern advanced options */}
         {advancedMode && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2 bg-muted/20 p-2 rounded-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-1.5 bg-muted/10 p-2 rounded-md border border-border/30">
             <div>
-              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+              <Label className="text-[10px] font-medium text-primary/80 mb-1 flex items-center">
                 <Activity className="h-3 w-3 mr-1" />
                 Indicator
               </Label>
               <Select
                 value={condition.indicator}
-                onValueChange={(value) => {
-                  // Tạo đối tượng mới với các thuộc tính cụ thể
-                  onChange({
-                    id: condition.id,
-                    label: condition.label,
-                    order: condition.order,
-                    indicator: value,
-                    timeframe: condition.timeframe,
-                    expectedValue: condition.expectedValue,
-                    description: condition.description
-                  });
-                }}
+                onValueChange={(value) => onChange({...condition, indicator: value})}
               >
                 <SelectTrigger 
                   id={`condition-indicator-${condition.id}`} 
-                  className="h-7 text-xs"
+                  className="h-6 text-xs"
                 >
                   <SelectValue placeholder="Select indicator" />
                 </SelectTrigger>
@@ -162,7 +140,7 @@ export function StrategyConditionForm({
             </div>
 
             <div>
-              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+              <Label className="text-[10px] font-medium text-blue-500/80 mb-1 flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
                 Timeframe
               </Label>
@@ -172,7 +150,7 @@ export function StrategyConditionForm({
               >
                 <SelectTrigger 
                   id={`condition-timeframe-${condition.id}`} 
-                  className="h-7 text-xs"
+                  className="h-6 text-xs"
                 >
                   <SelectValue placeholder="Select timeframe" />
                 </SelectTrigger>
@@ -188,9 +166,9 @@ export function StrategyConditionForm({
             </div>
             
             <div>
-              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+              <Label className="text-[10px] font-medium text-green-500/80 mb-1 flex items-center">
                 <Target className="h-3 w-3 mr-1" />
-                Value
+                Expected Value
               </Label>
               <Select
                 value={condition.expectedValue}
@@ -198,7 +176,7 @@ export function StrategyConditionForm({
               >
                 <SelectTrigger 
                   id={`condition-value-${condition.id}`} 
-                  className="h-7 text-xs"
+                  className="h-6 text-xs"
                 >
                   <SelectValue placeholder="Select value" />
                 </SelectTrigger>
@@ -213,8 +191,8 @@ export function StrategyConditionForm({
               </Select>
             </div>
             
-            <div className="md:col-span-3 mt-1">
-              <Label className="text-[10px] text-muted-foreground mb-1 flex items-center">
+            <div className="md:col-span-3">
+              <Label className="text-[10px] font-medium text-muted-foreground/90 mb-1 flex items-center">
                 <Info className="h-3 w-3 mr-1" />
                 Description (optional)
               </Label>
@@ -223,20 +201,20 @@ export function StrategyConditionForm({
                 placeholder="Add more details about this condition..."
                 value={condition.description || ""}
                 onChange={(e) => onChange({...condition, description: e.target.value})}
-                className="text-xs resize-none min-h-[40px] max-h-[80px]"
+                className="text-xs resize-none min-h-[36px] max-h-[70px] bg-background/50"
               />
             </div>
           </div>
         )}
         
         {/* Action buttons in a clean footer */}
-        <div className="flex justify-end gap-2 pt-1 border-t border-border/10 mt-2">
+        <div className="flex justify-end gap-1.5 pt-1 border-t border-border/20 mt-1.5">
           {onCancel && (
             <Button 
               variant="ghost" 
               size="sm"
               onClick={onCancel}
-              className="h-7 px-2 text-xs"
+              className="h-6 px-2 text-xs"
             >
               <X className="h-3 w-3 mr-1" />
               Cancel
@@ -249,7 +227,7 @@ export function StrategyConditionForm({
               size="sm" 
               onClick={onAdd}
               disabled={!condition.label.trim()}
-              className="h-7 px-3 text-xs"
+              className="h-6 px-2.5 text-xs bg-primary/90 hover:bg-primary"
             >
               <Plus className="h-3 w-3 mr-1" />
               Add
@@ -261,8 +239,6 @@ export function StrategyConditionForm({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log("Save button clicked");
-                // Người dùng bấm Save thì gọi onSave (nếu có) ngược lại thì gọi onChange
                 if (onSave) {
                   onSave();
                 } else {
@@ -270,7 +246,7 @@ export function StrategyConditionForm({
                 }
               }}
               disabled={!condition.label.trim()}
-              className="h-7 px-3 text-xs"
+              className="h-6 px-2.5 text-xs bg-primary/90 hover:bg-primary"
             >
               <Check className="h-3 w-3 mr-1" />
               Save
@@ -299,34 +275,34 @@ export function StrategyConditionItem({
   const hasDetails = condition.indicator || condition.timeframe || condition.expectedValue || condition.description;
   
   return (
-    <div className="group py-1.5 px-2.5 border rounded-md mb-1.5 bg-background hover:bg-muted/20 transition-colors">
-      <div className="flex items-center justify-between gap-3">
+    <div className="group py-1 px-2 border border-border/30 rounded-md mb-1 bg-card/30 hover:bg-muted/10 hover:border-primary/20 hover:shadow-sm transition-all duration-200">
+      <div className="flex items-center justify-between gap-2">
         {/* Main condition with badge indicators */}
-        <div className="flex-1 flex flex-col gap-1">
-          <div className="flex items-center gap-1.5">
-            <div className="font-medium text-sm">
+        <div className="flex-1 flex flex-col gap-0.5 py-0.5">
+          <div className="flex items-center flex-wrap gap-1">
+            <div className="font-medium text-xs text-foreground/90">
               {condition.label}
             </div>
             {/* Only show indicators if they exist */}
             {hasDetails && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center flex-wrap gap-0.5">
                 {condition.indicator && (
-                  <Badge variant="outline" className="px-1 h-4 text-[9px] bg-primary/5 font-normal">
-                    <Activity className="h-2 w-2 mr-0.5" />
+                  <Badge variant="outline" className="px-1 h-3.5 text-[9px] bg-primary/5 border-primary/20 font-normal">
+                    <Activity className="h-2 w-2 mr-0.5 text-primary/80" />
                     {condition.indicator}
                   </Badge>
                 )}
                 
                 {condition.timeframe && (
-                  <Badge variant="outline" className="px-1 h-4 text-[9px] bg-blue-500/5 border-blue-500/20 text-blue-600 dark:text-blue-400 font-normal">
-                    <Clock className="h-2 w-2 mr-0.5" />
+                  <Badge variant="outline" className="px-1 h-3.5 text-[9px] bg-blue-500/5 border-blue-500/20 text-blue-600 dark:text-blue-400 font-normal">
+                    <Clock className="h-2 w-2 mr-0.5 text-blue-500/80" />
                     {condition.timeframe}
                   </Badge>
                 )}
                 
                 {condition.expectedValue && (
-                  <Badge variant="outline" className="px-1 h-4 text-[9px] bg-green-500/5 border-green-500/20 text-green-600 dark:text-green-400 font-normal">
-                    <Target className="h-2 w-2 mr-0.5" />
+                  <Badge variant="outline" className="px-1 h-3.5 text-[9px] bg-green-500/5 border-green-500/20 text-green-600 dark:text-green-400 font-normal">
+                    <Target className="h-2 w-2 mr-0.5 text-green-500/80" />
                     {condition.expectedValue}
                   </Badge>
                 )}
@@ -336,31 +312,31 @@ export function StrategyConditionItem({
           
           {/* Description - only show if it exists */}
           {condition.description && (
-            <div className="text-[10px] text-muted-foreground line-clamp-1 pl-1 mt-0.5">
+            <div className="text-[9px] text-muted-foreground line-clamp-1 pl-0.5">
               {condition.description}
             </div>
           )}
         </div>
         
-        {/* Action buttons */}
-        <div className="flex gap-1">
+        {/* Action buttons - smaller, better positioned */}
+        <div className="flex gap-0.5 ml-auto">
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-150"
             onClick={() => onEdit(condition.id)}
             title="Edit"
           >
-            <Edit className="h-3 w-3 text-muted-foreground" />
+            <Pencil className="h-2.5 w-2.5 text-muted-foreground hover:text-primary" />
           </Button>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-6 w-6 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="h-5 w-5 p-0 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-150"
             onClick={() => onDelete(condition.id)}
             title="Delete"
           >
-            <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+            <Trash2 className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
           </Button>
         </div>
       </div>
@@ -456,17 +432,17 @@ export function StrategyConditionList({
   };
   
   return (
-    <div className="mb-4">
+    <div className="mb-3">
       {/* Modern header with count badge */}
       {(title || !hideAddbutton) && (
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-1.5">
           {title && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               {icon && <span className="text-muted-foreground">{icon}</span>}
-              <span className="font-medium text-sm text-foreground/90">
-                {title}
+              <span className="font-medium text-xs text-foreground/90 bg-gradient-to-r from-primary/80 to-primary bg-clip-text text-transparent">
+                {title.toUpperCase()}
                 {conditions.length > 0 && (
-                  <Badge variant="secondary" className="ml-2 h-5 px-1.5">
+                  <Badge variant="secondary" className="ml-1.5 h-4 px-1 text-[10px]">
                     {conditions.length}
                   </Badge>
                 )}
@@ -480,9 +456,9 @@ export function StrategyConditionList({
               variant="outline"
               size="sm"
               onClick={() => setIsAdding(true)}
-              className="h-7 px-2 text-xs"
+              className="h-6 px-2 text-[10px] border-dashed border-border/50 hover:border-primary/30 hover:bg-primary/5"
             >
-              <Plus className="h-3.5 w-3.5 mr-1" />
+              <Plus className="h-3 w-3 mr-1" />
               Add
             </Button>
           )}
@@ -492,11 +468,11 @@ export function StrategyConditionList({
       {/* Content area with conditions */}
       <div className={cn(
         "space-y-0.5",
-        conditions.length > 8 && "max-h-[320px] overflow-y-auto pr-1"
+        conditions.length > 8 && "max-h-[320px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent"
       )}>
         {/* Empty state - modern but minimal */}
         {conditions.length === 0 && !isAdding ? (
-          <div className="text-xs text-muted-foreground border border-dashed border-border/50 rounded-md p-3 text-center">
+          <div className="text-[10px] text-muted-foreground border border-dashed border-border/40 rounded-md p-2 text-center bg-muted/5">
             {emptyMessage}
           </div>
         ) : (
@@ -512,7 +488,6 @@ export function StrategyConditionList({
                   onAdd={undefined}
                   isNew={false}
                   onSave={() => {
-                    console.log("Saving from custom save handler");
                     const updatedCondition = editingConditions[condition.id];
                     if (updatedCondition) {
                       handleUpdate(updatedCondition);
@@ -534,7 +509,7 @@ export function StrategyConditionList({
       
       {/* Add new condition form */}
       {isAdding && (
-        <div className="animate-in fade-in-50 slide-in-from-top-1 duration-100 mt-2">
+        <div className="animate-in fade-in-50 slide-in-from-top-1 duration-100 mt-1.5">
           <StrategyConditionForm
             condition={newCondition}
             onChange={setNewCondition}
