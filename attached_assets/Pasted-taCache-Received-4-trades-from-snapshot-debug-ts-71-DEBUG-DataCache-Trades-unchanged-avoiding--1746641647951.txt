@@ -1,0 +1,45 @@
+taCache] Received 4 trades from snapshot
+debug.ts:71 [DEBUG] [DataCache] Trades unchanged, avoiding cache update
+debug.ts:69 [DEBUG] [Dashboard] Performance data calculation, userData: available
+debug.ts:69 [DEBUG] [Dashboard] Using initial balance: 20000
+debug.ts:69 [DEBUG] [Dashboard] Generated performance data points: 5
+debug.ts:69 [DEBUG] Dashboard trading stats calculation: {allTrades: 4, closedTrades: 4, openTrades: 0}
+debug.ts:69 [DEBUG] Dashboard trading stats by PIP: {winning: 1, losing: 3, breakEven: 0, total: 4}
+debug.ts:69 [DEBUG] DEBUG TRADES CALCULATION: (4) [{…}, {…}, {…}, {…}]
+debug.ts:69 [DEBUG] Chi tiết profit/loss: {tradesWithProfit: 1, tradesWithLoss: 3, tradesWithBreakEven: 0, individualProfits: Array(1), individualLosses: Array(3)}
+debug.ts:69 [DEBUG] [Dashboard] Balance calculation: {initialBalance: 20000, currentBalance: 19920.89, tradesCount: 4}
+debug.ts:71 [DEBUG] [DataCache] Unsubscribing from trades snapshot
+debug.ts:71 [DEBUG] Trades snapshot listener unsubscribed and cleaned up
+debug.ts:71 [DEBUG] [DataCache] Using valid cache, skipping loading state
+debug.ts:71 [DEBUG] [DataCache] Setting up trades snapshot listener
+debug.ts:71 [DEBUG] [DataCache] Using existing userData, avoiding re-fetch
+debug.ts:71 [DEBUG] [DataCache] Received 4 trades from snapshot
+debug.ts:71 [DEBUG] [DataCache] Trades unchanged, avoiding cache update
+debug.ts:69 [DEBUG] [Dashboard] Performance data calculation, userData: available
+debug.ts:69 [DEBUG] [Dashboard] Using initial balance: 20000
+debug.ts:69 [DEBUG] [Dashboard] Generated performance data points: 5
+debug.ts:69 [DEBUG] Dashboard trading stats calculation: {allTrades: 4, closedTrades: 4, openTrades: 0}
+debug.ts:69 [DEBUG] Dashboard trading stats by PIP: {winning: 1, losing: 3, breakEven: 0, total: 4}
+debug.ts:69 [DEBUG] DEBUG TRADES CALCULATION: (4) [{…}, {…}, {…}, {…}]
+debug.ts:69 [DEBUG] Chi tiết profit/loss: {tradesWithProfit: 1, tradesWithLoss: 3, tradesWithBreakEven: 0, individualProfits: Array(1), individualLosses: Array(3)}
+debug.ts:69 [DEBUG] [Dashboard] Balance calculation: {initialBalance: 20000, currentBalance: 19920.89, tradesCount: 4}
+debug.ts:71 [DEBUG] [DataCache] Unsubscribing from trades snapshot
+debug.ts:71 [DEBUG] Trades snapshot listener unsubscribed and cleaned up
+debug.ts:71 [DEBUG] [DataCache] Using valid cache, skipping loading state
+debug.ts:71 [DEBUG] [DataCache] Setting up trades snapshot listener
+debug.ts:71 [DEBUG] [DataCache] Using existing userData, avoiding re-fetch
+debug.ts:71 [DEBUG] [DataCache] Received 4 trades from snapshot
+debug.ts:71 [DEBUG] [DataCache] Trades unchanged, avoiding cache update
+debug.ts:69 [DEBUG] [Dashboard] Performance data calculation, userData: available
+debug.ts:69 [DEBUG] [Dashboard] Using initial balance: 20000
+debug.ts:69 [DEBUG] [Dashboard] Generated performance data points: 5
+debug.ts:69 [DEBUG] Dashboard trading stats calculation: {allTrades: 4, closedTrades: 4, openTrades: 0}
+debug.ts:69 [DEBUG] Dashboard trading stats by PIP: {winning: 1, losing: 3, breakEven: 0, total: 4}
+debug.ts:69 [DEBUG] DEBUG TRADES CALCULATION: (4) [{…}, {…}, {…}, {…}]
+debug.ts:69 [DEBUG] Chi tiết profit/loss: {tradesWithProfit: 1, tradesWithLoss: 3, tradesWithBreakEven: 0, individualProfits: Array(1), individualLosses: Array(3)}
+debug.ts:69 [DEBUG] [Dashboard] Balance calculation: {initialBalance: 20000, currentBalance: 19920.89, tradesCount: 4}
+debug.ts:71 [DEBUG] [DataCache] Unsubscribing from trades snapshot
+debug.ts:71 [DEBUG] Trades snapshot listener unsubscribed and cleaned up
+debug.ts:71 [DEBUG] [DataCache] Using valid cache, skipping loading state
+debug.ts:71 [DEBUG] [DataCache] Setting up trades snapshot listener
+debug.ts:71 [DEBUG] [DataCache] Using exist
