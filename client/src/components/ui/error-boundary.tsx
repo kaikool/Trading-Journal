@@ -121,7 +121,7 @@ export interface ErrorFallbackProps {
 
 // Type cho withErrorBoundary HOC options
 export interface WithErrorBoundaryOptions {
-  fallback?: React.ComponentType<ErrorFallbackProps> | React.ReactNode;
+  fallback?: ReactNode | ((props: { error: Error; resetErrorBoundary: () => void }) => ReactNode);
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   onReset?: () => void;
 }
@@ -136,7 +136,17 @@ export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   options: WithErrorBoundaryOptions = {}
 ): React.ComponentType<P> {
-  const { fallback, onError, onReset } = options;
+  const { fallback: rawFallback, onError, onReset } = options;
+  
+  // Chuyển đổi Component fallback sang function fallback nếu cần
+  let fallback = rawFallback;
+  if (rawFallback && typeof rawFallback !== 'function' && 'type' in (rawFallback as any)) {
+    const FallbackComponent = rawFallback;
+    fallback = (props: { error: Error; resetErrorBoundary: () => void }) => 
+      React.isValidElement(FallbackComponent) 
+        ? React.cloneElement(FallbackComponent as React.ReactElement, props) 
+        : FallbackComponent;
+  }
   
   // Tạo ra một functional component mới bao bọc Component đầu vào
   const WrappedComponent = (props: P) => {
