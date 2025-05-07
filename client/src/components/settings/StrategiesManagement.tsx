@@ -191,25 +191,25 @@ const StrategyItem = React.memo(function StrategyItem({
           : "border-border/50"
       )}
     >
-      <AccordionTrigger className="px-4 py-3 hover:bg-muted/30 transition-colors">
-        <div className="flex items-center justify-between w-full gap-2">
-          <div className="flex items-center text-left gap-3">
+      <AccordionTrigger className="px-3 py-2 hover:bg-muted/30 transition-colors">
+        <div className="flex items-center justify-between w-full gap-1.5">
+          <div className="flex items-center text-left gap-2">
             <div className={cn(
-              "flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0",
+              "flex items-center justify-center w-7 h-7 rounded-full flex-shrink-0",
               strategy.isDefault 
                 ? "bg-primary/15 text-primary/90 border border-primary/20" 
                 : "bg-muted/40 text-muted-foreground/80 border border-border/50"
             )}>
-              <BookCopy className="h-4 w-4" />
+              <BookCopy className="h-3.5 w-3.5" />
             </div>
             <div className="flex flex-col">
-              <span className="font-semibold text-sm">{strategy.name}</span>
+              <span className="font-medium text-sm">{strategy.name}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 flex-shrink-0">
             {strategy.isDefault && (
-              <Badge variant="outline" className="font-normal text-xs h-6 border-primary/30 bg-primary/10 text-primary">
-                <Bookmark className="h-3 w-3 mr-1" />
+              <Badge variant="outline" className="font-normal text-xs h-5 px-1.5 py-0 border-primary/30 bg-primary/10 text-primary">
+                <Bookmark className="h-2.5 w-2.5 mr-0.5" />
                 Default
               </Badge>
             )}
@@ -419,37 +419,37 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-4">
                 {strategy.description && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
-                    <h3 className="text-sm font-semibold mb-2 flex items-center bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">
-                      <LineChart className="h-4 w-4 mr-1.5 text-primary/80" />
+                  <div className="app-accordion-content-section p-3">
+                    <h3 className="app-accordion-heading text-sm flex items-center">
+                      <LineChart className="h-3.5 w-3.5 mr-1 text-primary/80" />
                       Strategy Overview
                     </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{strategy.description}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{strategy.description}</p>
                   </div>
                 )}
                 
                 {strategy.rules && strategy.rules.length > 0 && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
-                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">
-                      <ListChecks className="h-4 w-4 mr-1.5 text-primary/80" />
+                  <div className="app-accordion-content-section p-3">
+                    <h3 className="app-accordion-heading text-sm flex items-center">
+                      <ListChecks className="h-3.5 w-3.5 mr-1 text-primary/80" />
                       Trading Rules
                     </h3>
-                    <ul className="space-y-3">
+                    <ul className="space-y-2">
                       {strategy.rules.map((rule) => (
-                        <li key={rule.id} className="flex gap-2.5 group">
+                        <li key={rule.id} className="flex gap-2 group">
                           <div className="mt-0.5 flex-shrink-0">
-                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-primary/20 bg-primary/5 rounded-full">
-                              <Check className="h-3.5 w-3.5 text-primary" />
+                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-primary/20 bg-primary/5 rounded-full">
+                              <Check className="h-3 w-3 text-primary" />
                             </Badge>
                           </div>
                           <div>
-                            <span className="text-sm font-medium">{rule.label}</span>
+                            <span className="text-xs font-medium">{rule.label}</span>
                             {rule.description && (
-                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{rule.description}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{rule.description}</p>
                             )}
                           </div>
                         </li>
@@ -461,23 +461,23 @@ const StrategyItem = React.memo(function StrategyItem({
               
               <div className="space-y-4">
                 {strategy.entryConditions && strategy.entryConditions.length > 0 && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
-                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-success/90 to-success/70 bg-clip-text text-transparent">
-                      <DoorOpen className="h-4 w-4 mr-1.5 text-success/80" />
+                  <div className="app-accordion-content-section p-3">
+                    <h3 className="app-accordion-heading text-sm flex items-center bg-gradient-to-r from-success/90 to-success/70">
+                      <DoorOpen className="h-3.5 w-3.5 mr-1 text-success/80" />
                       Entry Conditions
                     </h3>
-                    <ul className="space-y-3">
+                    <ul className="space-y-2">
                       {strategy.entryConditions.map((condition) => (
-                        <li key={condition.id} className="flex gap-2.5 group">
+                        <li key={condition.id} className="flex gap-2 group">
                           <div className="mt-0.5 flex-shrink-0">
-                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-success/20 bg-success/5 rounded-full">
-                              <ArrowDown className="h-3.5 w-3.5 text-success" />
+                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-success/20 bg-success/5 rounded-full">
+                              <ArrowDown className="h-3 w-3 text-success" />
                             </Badge>
                           </div>
                           <div>
-                            <span className="text-sm font-medium">{condition.label}</span>
+                            <span className="text-xs font-medium">{condition.label}</span>
                             {condition.description && (
-                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{condition.description}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{condition.description}</p>
                             )}
                           </div>
                         </li>
@@ -487,23 +487,23 @@ const StrategyItem = React.memo(function StrategyItem({
                 )}
                 
                 {strategy.exitConditions && strategy.exitConditions.length > 0 && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
-                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-destructive/90 to-destructive/70 bg-clip-text text-transparent">
-                      <LogOut className="h-4 w-4 mr-1.5 text-destructive/80" />
+                  <div className="app-accordion-content-section p-3">
+                    <h3 className="app-accordion-heading text-sm flex items-center bg-gradient-to-r from-destructive/90 to-destructive/70">
+                      <LogOut className="h-3.5 w-3.5 mr-1 text-destructive/80" />
                       Exit Conditions
                     </h3>
-                    <ul className="space-y-3">
+                    <ul className="space-y-2">
                       {strategy.exitConditions.map((condition) => (
-                        <li key={condition.id} className="flex gap-2.5 group">
+                        <li key={condition.id} className="flex gap-2 group">
                           <div className="mt-0.5 flex-shrink-0">
-                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-destructive/20 bg-destructive/5 rounded-full">
-                              <ArrowUp className="h-3.5 w-3.5 text-destructive" />
+                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-destructive/20 bg-destructive/5 rounded-full">
+                              <ArrowUp className="h-3 w-3 text-destructive" />
                             </Badge>
                           </div>
                           <div>
-                            <span className="text-sm font-medium">{condition.label}</span>
+                            <span className="text-xs font-medium">{condition.label}</span>
                             {condition.description && (
-                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{condition.description}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{condition.description}</p>
                             )}
                           </div>
                         </li>
@@ -515,14 +515,14 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {strategy.timeframes && strategy.timeframes.length > 0 && (
-              <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
-                <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-secondary/90 to-muted-foreground/70 bg-clip-text text-transparent">
-                  <Clock className="h-4 w-4 mr-1.5 text-muted-foreground/80" />
+              <div className="app-accordion-content-section p-3">
+                <h3 className="app-accordion-heading text-sm flex items-center bg-gradient-to-r from-primary/80 to-secondary/80">
+                  <Clock className="h-3.5 w-3.5 mr-1 text-primary/80" />
                   Recommended Timeframes
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 mt-2">
                   {strategy.timeframes.sort().map(tf => (
-                    <Badge key={tf} variant="secondary" className="px-2.5 py-1.5 h-7 text-xs bg-secondary/40 hover:bg-secondary/60 transition-colors border border-secondary/20">
+                    <Badge key={tf} variant="secondary" className="px-2 py-0.5 text-xs bg-secondary/30 hover:bg-secondary/50 transition-colors border border-secondary/20">
                       {tf}
                     </Badge>
                   ))}
@@ -530,36 +530,36 @@ const StrategyItem = React.memo(function StrategyItem({
               </div>
             )}
             
-            <div className="flex justify-end gap-2 border-t border-border/20 mt-4 pt-4">
+            <div className="flex justify-end gap-1.5 border-t border-border/20 mt-3 pt-3">
               {!strategy.isDefault && (
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={onSetAsDefault}
                   disabled={isSaving}
-                  className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary hover:shadow-sm transition-all duration-200 h-9"
+                  className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary h-8 px-2 text-xs"
                 >
-                  <Bookmark className="h-3.5 w-3.5 mr-1.5" />
-                  Set as Default
+                  <Bookmark className="h-3 w-3 mr-1" />
+                  Default
                 </Button>
               )}
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={onEdit}
-                className="bg-secondary/30 hover:bg-secondary/50 hover:shadow-sm transition-all duration-200 h-9"
+                className="bg-secondary/30 hover:bg-secondary/50 h-8 px-2 text-xs"
               >
-                <Edit className="h-3.5 w-3.5 mr-1.5" />
-                Edit Strategy
+                <Edit className="h-3 w-3 mr-1" />
+                Edit
               </Button>
               <Button 
                 variant="outline" 
                 size="sm"
-                className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10 hover:shadow-sm transition-all duration-200 h-9"
+                className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10 h-8 px-2 text-xs"
                 onClick={onDelete}
                 disabled={isSaving}
               >
-                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                <Trash2 className="h-3 w-3 mr-1" />
                 Delete
               </Button>
             </div>
