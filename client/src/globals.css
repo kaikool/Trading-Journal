@@ -626,6 +626,17 @@
   padding-right: env(safe-area-inset-right, 0px);
 }
 
+/* Page container with responsive safe area padding */
+.page-container {
+  max-width: 7xl;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: max(env(safe-area-inset-left, 0px), 1rem);
+  padding-right: max(env(safe-area-inset-right, 0px), 1rem);
+  padding-top: max(env(safe-area-inset-top, 0px), 1.5rem);
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 1.5rem);
+}
+
 /* ======================================= */
 /* Base layer definitions */
 /* ======================================= */
