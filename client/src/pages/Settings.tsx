@@ -579,7 +579,7 @@ export default function Settings() {
             Settings
           </h1>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Customize your trading journal preferences
+            Configuration options
           </p>
         </div>
         
@@ -742,7 +742,7 @@ export default function Settings() {
               
               <OptionItem
                 title="Notifications"
-                description="Receive alerts and updates about your trades and account"
+                description="Trade alerts and account updates"
                 control={
                   <Switch
                     id="notifications"
@@ -756,7 +756,7 @@ export default function Settings() {
               
               <OptionItem
                 title="Date Format"
-                description="Choose how dates are displayed throughout the application"
+                description="Date display format"
                 control={
                   <Select
                     value={settings.dateFormat}
@@ -796,7 +796,7 @@ export default function Settings() {
               
               <OptionItem
                 title="Balance History Visibility"
-                description="Show your account balance history in dashboard charts"
+                description="Show balance history in dashboard"
                 control={
                   <Switch
                     id="showBalanceHistory"
@@ -998,7 +998,7 @@ export default function Settings() {
                 
                 <OptionItem
                   title="Auto-Calculate Lot Size"
-                  description="Automatically calculate the lot size based on your risk parameters"
+                  description="Calculate lot size from risk settings"
                   control={
                     <Switch
                       id="autoCalculateLotSize"
