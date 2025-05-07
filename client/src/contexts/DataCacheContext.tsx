@@ -161,31 +161,42 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
     }
     
-    const { trades: currentTrades, userData: currentUserData } = dataState;
-    
     const fetchUserData = async () => {
       try {
-        if (currentUserData && lastRefresh === 0 && dataState.isUserDataLoaded) {
-          debug('[DataCache] Using existing userData, avoiding re-fetch');
-          return;
-        }
-        
-        const data = await getUserData(userId);
-        if (data) {
-          setDataState(prevState => ({
-            ...prevState,
-            userData: data,
-            isUserDataLoaded: true
-          }));
+        // Using a functional update to always get the latest state
+        setDataState(prevState => {
+          // First check if we can use existing userData
+          if (prevState.userData && lastRefresh === 0 && prevState.isUserDataLoaded) {
+            debug('[DataCache] Using existing userData, avoiding re-fetch');
+            return prevState; // No change needed
+          }
           
-          updateCache({ 
-            trades: currentTrades, 
-            userData: data, 
-            lastUpdated: Date.now()
+          // Otherwise, fetch the new data
+          getUserData(userId).then(data => {
+            if (data) {
+              // Update with the fetched data
+              setDataState(current => ({
+                ...current,
+                userData: data,
+                isUserDataLoaded: true
+              }));
+              
+              // Also update the cache with latest trades and new userData
+              updateCache({ 
+                trades: current.trades, 
+                userData: data, 
+                lastUpdated: Date.now()
+              });
+            }
+          }).catch(error => {
+            logError("[DataCache] Error fetching user data:", error);
           });
-        }
+          
+          // Return unchanged state initially
+          return prevState;
+        });
       } catch (error) {
-        logError("[DataCache] Error fetching user data:", error);
+        logError("[DataCache] Error in fetchUserData outer block:", error);
       }
     };
     
@@ -276,7 +287,7 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       return () => {};
     }
-  }, [userId, lastRefresh, updateCache, dataState]); 
+  }, [userId, lastRefresh, updateCache]); // Removed dataState dependency to prevent infinite loops
 
   const value = useMemo(() => ({
     trades: dataState.trades,
