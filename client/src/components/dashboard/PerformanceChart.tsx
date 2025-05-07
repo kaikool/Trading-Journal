@@ -197,24 +197,14 @@ export function PerformanceChart({
           Balance History
         </CardTitle>
         
-        <div className="flex items-center gap-2">
-          <CardValue
-            size="sm"
-            className="font-medium"
-            status={isPositiveTrend ? 'success' : 'danger'}
-          >
-            {UI_CONFIG.CURRENCY_SYMBOL}{currentBalance.toFixed(2)}
-          </CardValue>
-          
-          <div className={cn(
-            "flex items-center px-3 py-1 rounded-full text-xs font-medium",
-            chartColors.bg, chartColors.text
-          )}>
-            {isPositiveTrend ? 
-              <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
-              <ArrowDown className="h-3.5 w-3.5 mr-1" />}
-            {formattedPercentChange}
-          </div>
+        <div className={cn(
+          "flex items-center px-3 py-1 rounded-full text-xs font-medium",
+          chartColors.bg, chartColors.text
+        )}>
+          {isPositiveTrend ? 
+            <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
+            <ArrowDown className="h-3.5 w-3.5 mr-1" />}
+          {formattedPercentChange}
         </div>
       </CardHeader>
       
