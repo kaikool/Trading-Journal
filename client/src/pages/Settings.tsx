@@ -604,20 +604,27 @@ export default function Settings() {
       </div>
       
       {/* Tabs navigation */}
-      <Tabs defaultValue="general" className="mb-4 w-full">
+      <Tabs defaultValue="general" className="mb-4 w-full" value={activeTab} onValueChange={setActiveTab}>
         <div className="overflow-x-auto mb-4 sm:mb-6 touch-pan-x">
           <div className="mx-auto px-1">
             <TabsList className="w-full flex flex-row items-center justify-between p-1 rounded-xl bg-muted/80">
               <TabsTrigger 
                 value="general" 
-                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-3 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
-                <User className="h-4 w-4 flex-shrink-0" />
+                <Palette className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">General</span>
               </TabsTrigger>
               <TabsTrigger 
+                value="account" 
+                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-3 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <User className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Account</span>
+              </TabsTrigger>
+              <TabsTrigger 
                 value="trading" 
-                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-3 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
                 <BarChart3 className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
