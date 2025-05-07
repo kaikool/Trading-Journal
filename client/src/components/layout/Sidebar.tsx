@@ -152,29 +152,31 @@ export function Sidebar({ className }: { className?: string }) {
   // Tinh chỉnh cơ chế hiện/ẩn menu thông minh hơn
   useEffect(() => {
     // Menu logic:
-    // - Hiện menu khi user cuộn lên hoặc tạm dừng cuộn (có ý định điều hướng)
-    // - Hiện menu khi user vừa tương tác với màn hình và đang không cuộn
-    // - Ẩn menu khi user đang đọc nội dung và cuộn xuống
+    // - Chỉ hiện menu khi user ngừng tương tác và dừng cuộn một thời gian
+    // - Ẩn menu khi user đang đọc nội dung và cuộn (bất kể hướng nào)
     // - Ẩn menu khi user không tương tác trong thời gian dài (tránh lấn át nội dung)
+    // - User chủ động nhấn vào hot zone ở góc trái dưới sẽ hiện menu
     
     const handleVisibility = () => {
-      // Trường hợp cuộn lên: hiện menu dần dần, mượt mà
-      if (direction === 'up') {
+      // Chỉ hiện menu khi user chủ động tương tác (không dựa vào hướng cuộn)
+      // Hiện khi user tương tác trực tiếp nhưng không cuộn
+      if (isActive && !isScrolling && direction === 'idle') {
         setMenuVisible(true);
       }
       
-      // Hiện menu khi user có tương tác và đang không cuộn
-      else if (isActive && !isScrolling) {
-        setMenuVisible(true);
-      }
-      
-      // Khi cuộn xuống: ẩn menu nhưng với độ trễ nhẹ để tránh ẩn quá nhanh
+      // Khi cuộn xuống: luôn ẩn menu
       else if (direction === 'down' && isScrolling) {
         // Tạo độ trễ khi ẩn để có cảm giác mượt mà, không đột ngột
         const timeout = setTimeout(() => {
           setMenuVisible(false);
         }, 150);
         return () => clearTimeout(timeout);
+      }
+      
+      // Cuộn lên mạnh (di chuyển nhanh) cũng sẽ ẩn menu
+      else if (direction === 'up' && isScrolling) {
+        // Không làm gì - giữ nguyên trạng thái của nút menu
+        // User sẽ dùng hot zone nếu họ cần menu
       }
     };
 
