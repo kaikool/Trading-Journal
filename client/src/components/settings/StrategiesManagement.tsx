@@ -432,72 +432,66 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 {strategy.description && (
-                  <div className="bg-gradient-to-br from-card to-background p-0.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-                    <div className="bg-background/90 p-4 rounded-[7px] border border-border/30 h-full">
-                      <h3 className="text-base font-bold mb-3 flex items-center bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase tracking-wide">
-                        <LineChart className="h-5 w-5 mr-2 text-primary" strokeWidth={2.5} />
-                        TỔNG QUAN CHIẾN LƯỢC
-                      </h3>
-                      <p className="text-sm text-foreground/80 leading-relaxed">{strategy.description}</p>
-                    </div>
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-2 flex items-center bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">
+                      <LineChart className="h-4 w-4 mr-1.5 text-primary/80" />
+                      Strategy Overview
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{strategy.description}</p>
                   </div>
                 )}
                 
                 {strategy.rules && strategy.rules.length > 0 && (
-                  <div className="bg-gradient-to-br from-card to-background p-0.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-                    <div className="bg-background/90 p-4 rounded-[7px] border border-border/30 h-full">
-                      <h3 className="text-base font-bold mb-3 flex items-center bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent uppercase tracking-wide">
-                        <ListChecks className="h-5 w-5 mr-2 text-blue-500" strokeWidth={2.5} />
-                        QUY TẮC GIAO DỊCH
-                      </h3>
-                      <ul className="space-y-3">
-                        {strategy.rules.map((rule) => (
-                          <li key={rule.id} className="flex gap-3 group bg-blue-500/5 px-3 py-2 rounded-md border border-blue-500/10 hover:border-blue-500/30 transition-all">
-                            <div className="mt-0.5 flex-shrink-0">
-                              <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-blue-500/20 bg-blue-500/10 rounded-full">
-                                <Check className="h-3.5 w-3.5 text-blue-500" />
-                              </Badge>
-                            </div>
-                            <div>
-                              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{rule.label}</span>
-                              {rule.description && (
-                                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{rule.description}</p>
-                              )}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">
+                      <ListChecks className="h-4 w-4 mr-1.5 text-primary/80" />
+                      Trading Rules
+                    </h3>
+                    <ul className="space-y-3">
+                      {strategy.rules.map((rule) => (
+                        <li key={rule.id} className="flex gap-2.5 group">
+                          <div className="mt-0.5 flex-shrink-0">
+                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-primary/20 bg-primary/5 rounded-full">
+                              <Check className="h-3.5 w-3.5 text-primary" />
+                            </Badge>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{rule.label}</span>
+                            {rule.description && (
+                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{rule.description}</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
               </div>
               
               <div className="space-y-4">
                 {strategy.entryConditions && strategy.entryConditions.length > 0 && (
-                  <div className="bg-gradient-to-br from-card to-background p-0.5 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-                    <div className="bg-background/90 p-4 rounded-[7px] border border-border/30 h-full">
-                      <h3 className="text-base font-bold mb-3 flex items-center bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent uppercase tracking-wide">
-                        <DoorOpen className="h-5 w-5 mr-2 text-green-500" strokeWidth={2.5} />
-                        ĐIỀU KIỆN VÀO LỆNH
-                      </h3>
-                      <ul className="space-y-3">
-                        {strategy.entryConditions.map((condition) => (
-                          <li key={condition.id} className="flex gap-3 group bg-green-500/5 px-3 py-2 rounded-md border border-green-500/10 hover:border-green-500/30 transition-all">
-                            <div className="mt-0.5 flex-shrink-0">
-                              <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-green-500/20 bg-green-500/10 rounded-full">
-                                <ArrowDown className="h-3.5 w-3.5 text-green-600" />
-                              </Badge>
-                            </div>
-                            <div>
-                              <span className="text-sm font-medium text-green-700 dark:text-green-300">{condition.label}</span>
-                              {condition.description && (
-                                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{condition.description}</p>
-                              )}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-success/90 to-success/70 bg-clip-text text-transparent">
+                      <DoorOpen className="h-4 w-4 mr-1.5 text-success/80" />
+                      Entry Conditions
+                    </h3>
+                    <ul className="space-y-3">
+                      {strategy.entryConditions.map((condition) => (
+                        <li key={condition.id} className="flex gap-2.5 group">
+                          <div className="mt-0.5 flex-shrink-0">
+                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-success/20 bg-success/5 rounded-full">
+                              <ArrowDown className="h-3.5 w-3.5 text-success" />
+                            </Badge>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{condition.label}</span>
+                            {condition.description && (
+                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{condition.description}</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
                 
