@@ -1,0 +1,140 @@
+import React, { lazy, Suspense, useState, useEffect } from 'react';
+import { LoadingFallback } from './LoadingFallback';
+import ErrorBoundary from '@/components/ui/error-boundary';
+import { Button } from '@/components/ui/button';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { debug } from '@/lib/debug';
+
+interface SafeLazyLoadProps {
+  moduleLoader: () => Promise<any>;
+  fallback?: React.ReactNode;
+  height?: number | string;
+  retryOnError?: boolean;
+  children?: React.ReactNode;
+}
+
+/**
+ * Improved component for safely lazy-loading React components
+ * Designed to handle:
+ * - Loading failures due to network issues
+ * - MIME type errors in PWA mode
+ * - Provides better fallback UI with retry mechanism
+ */
+export function SafeLazyLoad({
+  moduleLoader,
+  fallback,
+  height = 300,
+  retryOnError = true,
+  children
+}: SafeLazyLoadProps) {
+  const [LazyComponent, setLazyComponent] = useState<React.ComponentType<any> | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Safely load the module with error handling
+  useEffect(() => {
+    if (LazyComponent) return;
+    
+    // Reset error state when trying to load again
+    setError(null);
+    
+    moduleLoader()
+      .then(module => {
+        // Handle both default and named exports
+        const Component = module.default || module;
+        setLazyComponent(() => Component);
+      })
+      .catch(err => {
+        debug('Error lazy loading component:', err);
+        setError(err);
+      });
+  }, [moduleLoader, retryCount]);
+
+  // Handle retry action
+  const handleRetry = () => {
+    setError(null);
+    setRetryCount(prev => prev + 1);
+  };
+
+  // If we've loaded the component, render it
+  if (LazyComponent) {
+    return <LazyComponent {...(children as any)} />;
+  }
+
+  // If there was an error loading
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: typeof height === 'number' ? height : 300 }}>
+        <div className="w-full max-w-md mx-auto p-4">
+          <Alert variant="destructive" className="mb-4">
+            <AlertTriangle className="h-5 w-5 mr-2" />
+            <AlertTitle>Error Loading Content</AlertTitle>
+            <AlertDescription>
+              {error?.message || 'There was a problem loading this component.'}
+              {navigator.onLine ? '' : ' (You appear to be offline)'}
+            </AlertDescription>
+          </Alert>
+          
+          {retryOnError && (
+            <div className="flex justify-center mt-4">
+              <Button onClick={handleRetry} className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Retry
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Still loading
+  return fallback || <LoadingFallback height={typeof height === 'number' ? height : undefined} />;
+}
+
+/**
+ * Create a safely lazy-loaded component that handles MIME type errors
+ * 
+ * @param factory Function that loads the component module
+ * @returns A lazy-loaded component wrapped with error handling
+ */
+export function createSafeLazyComponent<T>(factory: () => Promise<{ default: React.ComponentType<T> }>) {
+  const LazyComponent = lazy(factory);
+  
+  return function SafeLazyComponent(props: T & { fallback?: React.ReactNode; height?: number | string }) {
+    const { fallback, height, ...componentProps } = props as any;
+    
+    return (
+      <ErrorBoundary
+        fallback={({ error, resetErrorBoundary }) => (
+          <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: height || 300 }}>
+            <div className="w-full max-w-md mx-auto p-4">
+              <Alert variant="destructive" className="mb-4">
+                <AlertTriangle className="h-5 w-5 mr-2" />
+                <AlertTitle>Error Loading Content</AlertTitle>
+                <AlertDescription>
+                  {error?.message || 'There was a problem loading this component.'}
+                  {navigator.onLine ? '' : ' (You appear to be offline)'}
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex justify-center mt-4">
+                <Button onClick={resetErrorBoundary} className="gap-2">
+                  <RefreshCw className="h-4 w-4" />
+                  Retry
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      >
+        <Suspense fallback={fallback || <LoadingFallback height={height || 300} />}>
+          <LazyComponent {...componentProps} />
+        </Suspense>
+      </ErrorBoundary>
+    );
+  };
+}
+
+export default SafeLazyLoad;

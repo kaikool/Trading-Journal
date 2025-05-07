@@ -144,8 +144,17 @@ function isFirebaseRequest(url) {
  * Check if a request is for a static asset we can cache
  */
 function isCacheableRequest(url) {
-  const fileExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.woff', '.woff2', '.ttf'];
-  return fileExtensions.some(ext => url.pathname.endsWith(ext)) || isVersionedAsset(url);
+  const fileExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.json', '.map'];
+  
+  // Detect React lazy-loaded chunks which might not have file extensions
+  const isReactChunk = url.pathname.includes('/assets/') && 
+                    (url.pathname.includes('chunk-') || 
+                     url.pathname.includes('analytics-') || 
+                     url.pathname.includes('settings-'));
+  
+  return fileExtensions.some(ext => url.pathname.endsWith(ext)) || 
+         isVersionedAsset(url) || 
+         isReactChunk;
 }
 
 /**
@@ -175,14 +184,38 @@ async function generateFallbackResponse(request) {
   }
   
   if (request.destination === 'script') {
+    // Check if it's an ES module
+    const isModule = request.url.includes('type=module') || 
+                     request.url.includes('/assets/') || 
+                     request.headers.get('Accept')?.includes('text/javascript');
+                     
     return new Response('console.log("Offline script fallback");', {
-      headers: { 'Content-Type': 'application/javascript' }
+      headers: { 
+        'Content-Type': isModule ? 'text/javascript' : 'application/javascript',
+        'Cache-Control': 'no-cache' 
+      }
     });
   }
   
   if (request.destination === 'style') {
     return new Response('/* Offline style fallback */', {
-      headers: { 'Content-Type': 'text/css' }
+      headers: { 
+        'Content-Type': 'text/css',
+        'Cache-Control': 'no-cache' 
+      }
+    });
+  }
+  
+  // Handle React lazy-loaded chunks specifically
+  if (request.url.includes('/assets/') && 
+      (request.url.includes('chunk-') || 
+       request.url.includes('analytics-') || 
+       request.url.includes('settings-'))) {
+    return new Response('export default {};', {
+      headers: { 
+        'Content-Type': 'text/javascript',
+        'Cache-Control': 'no-cache' 
+      }
     });
   }
   

@@ -1,4 +1,4 @@
-import { useMemo, Suspense, lazy } from "react";
+import { useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, BarChart2, LineChart, PieChart, TrendingUp, BarChart4 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,7 @@ import { UI_CONFIG, DASHBOARD_CONFIG } from "@/lib/config";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { debug, logError } from "@/lib/debug";
+import { createSafeLazyComponent } from "@/components/dynamic/SafeLazyLoad";
 
 // Thêm khai báo cho window
 declare global {
@@ -16,13 +17,23 @@ declare global {
   }
 }
 
-// Lazy load các tab với webpackChunkName để tối ưu hóa code splitting
-// Mỗi tab sẽ được load khi cần thiết, giảm initial load size
-const OverviewTab = lazy(() => import(/* webpackChunkName: "analytics-overview" */ "@/components/analytics/OverviewTab"));
-const StrategyTab = lazy(() => import(/* webpackChunkName: "analytics-strategy" */ "@/components/analytics/StrategyTab"));
-const DisciplineTab = lazy(() => import(/* webpackChunkName: "analytics-discipline" */ "@/components/analytics/DisciplineTab"));
-const EmotionTab = lazy(() => import(/* webpackChunkName: "analytics-emotion" */ "@/components/analytics/EmotionTab"));
-const AdvancedTab = lazy(() => import(/* webpackChunkName: "analytics-advanced" */ "@/components/analytics/AdvancedTab"));
+// Use the createSafeLazyComponent helper for better error handling
+// This fixes MIME type issues in PWA mode and provides better error recovery
+const OverviewTab = createSafeLazyComponent(() => 
+  import(/* webpackChunkName: "analytics-overview" */ "@/components/analytics/OverviewTab")
+);
+const StrategyTab = createSafeLazyComponent(() => 
+  import(/* webpackChunkName: "analytics-strategy" */ "@/components/analytics/StrategyTab")
+);
+const DisciplineTab = createSafeLazyComponent(() => 
+  import(/* webpackChunkName: "analytics-discipline" */ "@/components/analytics/DisciplineTab")
+);
+const EmotionTab = createSafeLazyComponent(() => 
+  import(/* webpackChunkName: "analytics-emotion" */ "@/components/analytics/EmotionTab")
+);
+const AdvancedTab = createSafeLazyComponent(() => 
+  import(/* webpackChunkName: "analytics-advanced" */ "@/components/analytics/AdvancedTab")
+);
 
 
 
