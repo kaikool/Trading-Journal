@@ -832,7 +832,7 @@ export default function Settings() {
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Email address associated with your account
+                    Your account email
                   </p>
                 </FormField>
                 
@@ -860,7 +860,7 @@ export default function Settings() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Name displayed to other users in the app
+                    Visible name in the app
                   </p>
                 </FormField>
               </div>
@@ -904,7 +904,7 @@ export default function Settings() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Primary currency used for profit/loss calculations
+                    Currency for P/L calculations
                   </p>
                 </FormField>
                 
@@ -931,7 +931,7 @@ export default function Settings() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Your initial deposit amount, used to calculate performance metrics
+                    Starting amount for performance calculations
                   </p>
                 </FormField>
               </div>
@@ -967,7 +967,7 @@ export default function Settings() {
                     <span>Aggressive (5%)</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    The percentage of your account balance to risk on each trade
+                    Account balance risk per trade
                   </p>
                 </div>
                 
@@ -992,7 +992,7 @@ export default function Settings() {
                     <span>1:5</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    The default risk-to-reward ratio for your trades
+                    Default profit target vs. stop loss ratio
                   </p>
                 </div>
                 
@@ -1037,7 +1037,7 @@ export default function Settings() {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    This will be pre-selected when creating new trades
+                    Pre-selected for new trades
                   </p>
                 </FormField>
                 
@@ -1062,7 +1062,7 @@ export default function Settings() {
                     <span>Standard (2.00)</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5">
-                    Default position size, 1 standard lot = 100,000 units of the base currency
+                    Position size for new trades
                   </p>
                 </div>
               </div>
@@ -1324,8 +1324,7 @@ export default function Settings() {
                     <p className="flex items-start">
                       <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                       <span>
-                        You must maintain at least one login method for your account.
-                        Add a new login method before removing the last one.
+                        Keep at least one login method active.
                       </span>
                     </p>
                   </div>
@@ -1334,7 +1333,7 @@ export default function Settings() {
             </div>
           </SettingsSection>
           <SettingsSection 
-            title="API Integration" 
+            title="API Integration"
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 gap-4">
@@ -1401,7 +1400,7 @@ export default function Settings() {
                   <p className="flex items-start">
                     <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                     <span>
-                      API key is stored in localStorage and not sent to the server.
+                      API key syncs across devices when logged in.
                     </span>
                   </p>
                 </div>
