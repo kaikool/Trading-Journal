@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
+import ErrorBoundary from "@/components/ui/error-boundary";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -216,35 +217,38 @@ function MainContent() {
         </div>
       )}
       
-      <Suspense fallback={
-        <div className="flex items-center justify-center h-[70vh]">
-          <div className="flex flex-col items-center gap-2">
-            <Loader2 className="h-7 w-7 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Đang tải...</p>
+            {/* Import và sử dụng Error Boundary */}
+      <ErrorBoundary>
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-[70vh]">
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Đang tải...</p>
+            </div>
           </div>
-        </div>
-      }>
-        <Switch>
-          {/* Auth routes */}
-          <Route path="/auth/login" component={Login} />
-          <Route path="/auth/register" component={Register} />
-          
-          {/* Protected routes */}
-          <Route path="/" component={Dashboard} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/trade/new" component={NewTrade} />
-          <Route path="/trade/edit/:tradeId" component={ViewTrade} />
-          <Route path="/trade/view/:tradeId" component={ViewTrade} />
-          <Route path="/trade/history" component={TradeHistory} />
-          <Route path="/history" component={TradeHistory} />
-          <Route path="/analytics" component={Analytics} />
-          {/* Settings page render */}
-          <Route path="/settings" component={Settings} />
-          
-          {/* Fallback to 404 */}
-          <Route path="/:rest*" component={NotFound} />
-        </Switch>
-      </Suspense>
+        }>
+          <Switch>
+            {/* Auth routes */}
+            <Route path="/auth/login" component={Login} />
+            <Route path="/auth/register" component={Register} />
+            
+            {/* Protected routes */}
+            <Route path="/" component={Dashboard} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/trade/new" component={NewTrade} />
+            <Route path="/trade/edit/:tradeId" component={ViewTrade} />
+            <Route path="/trade/view/:tradeId" component={ViewTrade} />
+            <Route path="/trade/history" component={TradeHistory} />
+            <Route path="/history" component={TradeHistory} />
+            <Route path="/analytics" component={Analytics} />
+            {/* Settings page render */}
+            <Route path="/settings" component={Settings} />
+            
+            {/* Fallback to 404 */}
+            <Route path="/:rest*" component={NotFound} />
+          </Switch>
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
   
