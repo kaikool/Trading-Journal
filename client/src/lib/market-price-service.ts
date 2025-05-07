@@ -31,13 +31,25 @@ const priceCache: PriceCache = {};
 // Thời gian cache (15 giây)
 const CACHE_DURATION = 15 * 1000;
 
-// Lấy API key từ Firestore, fallback về localStorage nếu chưa đăng nhập
+// Lấy API key từ Firestore, fallback về localStorage hoặc window.ENV nếu chưa đăng nhập
 export async function getApiKeyFromFirebase(): Promise<string | null> {
   try {
     const user = auth.currentUser;
     if (!user) {
-      debug('[MarketPrice] No authenticated user, using localStorage fallback');
-      return localStorage.getItem('twelvedata_api_key');
+      debug('[MarketPrice] No authenticated user, using fallback sources');
+      // Ưu tiên sử dụng localStorage trước
+      const localKey = localStorage.getItem('twelvedata_api_key');
+      if (localKey) {
+        return localKey;
+      }
+      
+      // Nếu không có trong localStorage, kiểm tra window.ENV (môi trường production)
+      if (typeof window !== 'undefined' && window.ENV?.TWELVEDATA_API_KEY) {
+        debug('[MarketPrice] Using API key from window.ENV');
+        return window.ENV.TWELVEDATA_API_KEY;
+      }
+      
+      return null;
     }
     
     const userDocRef = doc(db, "users", user.uid);
@@ -49,19 +61,54 @@ export async function getApiKeyFromFirebase(): Promise<string | null> {
     }
     
     // Fallback to localStorage if key not found in Firebase
-    debug('[MarketPrice] API key not found in Firebase, using localStorage fallback');
-    return localStorage.getItem('twelvedata_api_key');
+    debug('[MarketPrice] API key not found in Firebase, using fallback sources');
+    const localKey = localStorage.getItem('twelvedata_api_key');
+    if (localKey) {
+      return localKey;
+    }
+    
+    // Kiểm tra window.ENV (môi trường production)
+    if (typeof window !== 'undefined' && window.ENV?.TWELVEDATA_API_KEY) {
+      debug('[MarketPrice] Using API key from window.ENV');
+      return window.ENV.TWELVEDATA_API_KEY;
+    }
+    
+    return null;
   } catch (error) {
     logError('[MarketPrice] Error getting API key from Firebase:', error);
-    return localStorage.getItem('twelvedata_api_key');
+    
+    // Trong trường hợp lỗi, thử các nguồn dự phòng
+    const localKey = localStorage.getItem('twelvedata_api_key');
+    if (localKey) {
+      return localKey;
+    }
+    
+    // Kiểm tra window.ENV (môi trường production)
+    if (typeof window !== 'undefined' && window.ENV?.TWELVEDATA_API_KEY) {
+      debug('[MarketPrice] Using API key from window.ENV');
+      return window.ENV.TWELVEDATA_API_KEY;
+    }
+    
+    return null;
   }
 }
 
-// Lấy API key từ localStorage
+// Lấy API key từ tất cả các nguồn có thể
 // Sử dụng cho trường hợp đồng bộ, không đợi Promise
-// Lưu ý: Phiên bản này không truy vấn Firebase để tránh chờ đợi
 export function getApiKey(): string | null {
-  return localStorage.getItem('twelvedata_api_key');
+  // Ưu tiên sử dụng localStorage trước
+  const localKey = localStorage.getItem('twelvedata_api_key');
+  if (localKey) {
+    return localKey;
+  }
+  
+  // Kiểm tra window.ENV (môi trường production)
+  if (typeof window !== 'undefined' && window.ENV?.TWELVEDATA_API_KEY) {
+    debug('[MarketPrice] Using API key from window.ENV');
+    return window.ENV.TWELVEDATA_API_KEY;
+  }
+  
+  return null;
 }
 
 // Lưu API key vào Firestore
