@@ -94,4 +94,29 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 }
 
+/**
+ * Higher Order Component để bọc một component với ErrorBoundary
+ * Dùng cho các component nằm ngoài Suspense/Switch trong App.tsx
+ * 
+ * @param Component Component cần bọc với ErrorBoundary
+ * @param fallbackUI UI hiển thị khi có lỗi (tùy chọn)
+ */
+export const withErrorBoundary = <P extends object>(
+  Component: React.ComponentType<P>,
+  fallbackUI?: React.ReactNode
+) => {
+  // Tạo ra một functional component mới bao bọc Component đầu vào
+  const WrappedComponent = (props: P) => (
+    <ErrorBoundary fallback={fallbackUI}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+  
+  // Đặt tên cho component để dễ debug
+  const displayName = Component.displayName || Component.name || 'Component';
+  WrappedComponent.displayName = `withErrorBoundary(${displayName})`;
+  
+  return WrappedComponent;
+};
+
 export default ErrorBoundary;
