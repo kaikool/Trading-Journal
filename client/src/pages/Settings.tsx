@@ -865,7 +865,18 @@ export default function Settings() {
                 </FormField>
               </div>
               
-              <div className="grid gap-4 sm:gap-6">
+
+            </div>
+          </SettingsSection>
+        </TabsContent>
+        
+        {/* Trading settings tab */}
+        <TabsContent value="trading" className="mt-6 space-y-6">
+          <SettingsSection 
+            title="Risk Management" 
+          >
+            <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-4 sm:space-y-5">
                 <FormField label="Initial Balance" htmlFor="initialBalance">
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
@@ -889,18 +900,7 @@ export default function Settings() {
                     Starting amount for performance calculations
                   </p>
                 </FormField>
-              </div>
-            </div>
-          </SettingsSection>
-        </TabsContent>
-        
-        {/* Trading settings tab */}
-        <TabsContent value="trading" className="mt-6 space-y-6">
-          <SettingsSection 
-            title="Risk Management" 
-          >
-            <div className="space-y-6 sm:space-y-8">
-              <div className="space-y-4 sm:space-y-5">
+                
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <Label htmlFor="defaultRiskPerTrade" className="text-sm font-medium">Default Risk Per Trade (%)</Label>
