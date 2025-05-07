@@ -90,7 +90,7 @@ export function SafeLazyLoad({
   }
 
   // Still loading
-  return fallback || <LoadingFallback height={typeof height === 'number' ? height : undefined} />;
+  return fallback || <LoadingFallback height={typeof height === 'number' ? height : undefined} showSpinner={true} />;
 }
 
 /**
@@ -129,7 +129,7 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
           </div>
         )}
       >
-        <Suspense fallback={fallback || <LoadingFallback height={height || 300} />}>
+        <Suspense fallback={fallback || <LoadingFallback height={height || 300} showSpinner={true} />}>
           <LazyComponent {...componentProps} />
         </Suspense>
       </ErrorBoundary>

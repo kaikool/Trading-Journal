@@ -5,13 +5,14 @@ interface LoadingFallbackProps {
   height?: number;
   className?: string;
   simple?: boolean;
+  showSpinner?: boolean;
 }
 
-export function LoadingFallback({ height = 200, className = '', simple = false }: LoadingFallbackProps) {
+export function LoadingFallback({ height = 200, className = '', simple = false, showSpinner = true }: LoadingFallbackProps) {
   if (simple) {
     return (
       <div className={`flex items-center justify-center ${className}`} style={{ height: `${height}px` }}>
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        {showSpinner && <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />}
       </div>
     );
   }

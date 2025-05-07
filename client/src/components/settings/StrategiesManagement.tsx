@@ -590,9 +590,9 @@ export function StrategiesManagement() {
     id: uuidv4(),
     name: "",
     description: "",
-    rules: [],
-    entryConditions: [],
-    exitConditions: [],
+    rules: [] as StrategyCondition[],
+    entryConditions: [] as StrategyCondition[],
+    exitConditions: [] as StrategyCondition[],
     timeframes: [],
     isDefault: false,
   });
@@ -819,12 +819,17 @@ export function StrategiesManagement() {
       }
       
       // Create the new strategy
-      const newStrategyId = await addStrategy(userId, strategyWithTimestamp as TradingStrategy);
+      const result = await addStrategy(userId, strategyWithTimestamp as TradingStrategy);
       
-      // Update the strategy with its new ID from Firestore
-      const completeStrategy = {
-        ...strategyWithTimestamp,
-        id: newStrategyId
+      // Extract proper ID from result - addStrategy returns {id: string} object
+      const newStrategyId = typeof result === 'object' && result !== null && 'id' in result 
+        ? result.id 
+        : result;
+      
+      // Create a properly typed strategy object with the correct ID structure
+      const completeStrategy: TradingStrategy = {
+        ...strategyWithTimestamp as any, // Force type conversion
+        id: newStrategyId as string // Ensure id is a string, not an object
       };
       
       // Update local state
@@ -833,7 +838,7 @@ export function StrategiesManagement() {
           ? prev.map(s => ({ ...s, isDefault: false }))
           : [...prev];
         
-        return [...updatedStrategies, completeStrategy as TradingStrategy];
+        return [...updatedStrategies, completeStrategy];
       });
       
       // Reset form and close dialog
@@ -841,9 +846,9 @@ export function StrategiesManagement() {
         id: uuidv4(),
         name: "",
         description: "",
-        rules: [],
-        entryConditions: [],
-        exitConditions: [],
+        rules: [] as StrategyCondition[],
+        entryConditions: [] as StrategyCondition[],
+        exitConditions: [] as StrategyCondition[],
         timeframes: [],
         isDefault: false,
       });
@@ -1051,9 +1056,9 @@ export function StrategiesManagement() {
                       id: uuidv4(),
                       name: "",
                       description: "",
-                      rules: [],
-                      entryConditions: [],
-                      exitConditions: [],
+                      rules: [] as StrategyCondition[],
+                      entryConditions: [] as StrategyCondition[],
+                      exitConditions: [] as StrategyCondition[],
                       timeframes: [],
                       isDefault: false,
                     });
