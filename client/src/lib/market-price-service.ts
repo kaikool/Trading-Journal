@@ -29,6 +29,11 @@ const priceCache: PriceCache = {};
 // Thời gian cache (15 giây)
 const CACHE_DURATION = 15 * 1000;
 
+// Lấy API key từ local storage nếu có
+export function getApiKey(): string | null {
+  return localStorage.getItem('twelvedata_api_key');
+}
+
 // Cấu hình cho axios - sử dụng proxy server local
 const apiClient = axios.create({
   baseURL: '/api/twelvedata',  // Sử dụng proxy server local
@@ -63,12 +68,17 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
     
     debug(`[MarketPrice] Using formatted symbol: ${formattedSymbol}`);
     
+    // Kiểm tra xem có API key từ localStorage không
+    const userApiKey = getApiKey();
+    const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
+    
     // Gọi API thông qua proxy server
     const response = await apiClient.get('/price', {
       params: {
         symbol: formattedSymbol,
         format: 'JSON'
-      }
+      },
+      headers
     });
     
     // Xác thực response

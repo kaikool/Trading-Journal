@@ -1303,6 +1303,85 @@ export default function Settings() {
               </div>
             </div>
           </SettingsSection>
+          <SettingsSection 
+            title="API Integration" 
+            description="Configure external API keys for market data integration"
+          >
+            <div className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 gap-4">
+                <FormField label="TwelveData API Key" htmlFor="twelvedataApiKey">
+                  <div className="relative">
+                    <Input
+                      id="twelvedataApiKey"
+                      type={showApiKey ? "text" : "password"}
+                      placeholder="Enter your TwelveData API key"
+                      className="pr-10"
+                      value={apiSettings.twelvedataApiKey || ""}
+                      onChange={(e) => setApiSettings({
+                        ...apiSettings,
+                        twelvedataApiKey: e.target.value
+                      })}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      aria-label={showApiKey ? "Hide API key" : "Show API key"}
+                    >
+                      {showApiKey ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    API key for fetching real-time market prices from TwelveData. 
+                    <a 
+                      href="https://twelvedata.com/pricing" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline ml-1"
+                    >
+                      Get a key
+                    </a>
+                  </p>
+                </FormField>
+                
+                <div className="pt-2">
+                  <Button 
+                    onClick={saveApiSettings} 
+                    disabled={isSavingApi}
+                    className="w-full sm:w-auto"
+                  >
+                    {isSavingApi ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" />
+                        Save API Settings
+                      </>
+                    )}
+                  </Button>
+                </div>
+                
+                {/* Thông tin về việc sử dụng API */}
+                <div className="p-3 rounded-lg bg-muted/30 text-xs text-muted-foreground">
+                  <p className="flex items-start">
+                    <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                    <span>
+                      API keys are stored securely in your browser's local storage. 
+                      We do not store your API keys on our servers. Using your own API key 
+                      helps us maintain service quality and respects API rate limits.
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </SettingsSection>
           
           <SettingsSection 
             title="Login Session" 

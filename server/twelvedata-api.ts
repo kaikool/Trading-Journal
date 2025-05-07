@@ -34,10 +34,17 @@ async function proxyTwelveDataRequest(req: Request, res: Response) {
     }
 
     // Đảm bảo rằng API key được cung cấp
-    const apiKey = process.env.TWELVEDATA_API_KEY;
+    // Kiểm tra header X-API-KEY trước (từ client settings)
+    let apiKey = req.headers['x-api-key'] as string;
+    
+    // Nếu không có API key trong header, sử dụng API key từ môi trường
     if (!apiKey) {
-      log('TwelveData API key not found in environment variables', 'error');
-      return res.status(500).json({ error: 'API key not configured' });
+      const envApiKey = process.env.TWELVEDATA_API_KEY;
+      if (!envApiKey) {
+        log('TwelveData API key not found in request or environment variables', 'error');
+        return res.status(500).json({ error: 'API key not configured' });
+      }
+      apiKey = envApiKey;
     }
 
     // Chuẩn bị các tham số cho API call theo hướng dẫn TwelveData
