@@ -335,10 +335,32 @@ self.addEventListener('fetch', (event) => {
   // Firebase requests - Network only strategy, don't cache
   if (isFirebaseRequest(requestUrl.href)) {
     event.respondWith(
-      fetch(event.request).catch(() => {
-        console.log('Firebase request failed', requestUrl.href);
-        return generateFallbackResponse(event.request);
-      })
+      (async () => {
+        try {
+          // Create a new request without cache-control header to avoid CORS issues
+          const newRequest = new Request(event.request.url, {
+            method: event.request.method,
+            headers: (() => {
+              const headers = new Headers();
+              for (const [key, value] of event.request.headers.entries()) {
+                // Skip cache-control header which causes CORS issues with Firebase Storage
+                if (key.toLowerCase() !== 'cache-control') {
+                  headers.append(key, value);
+                }
+              }
+              return headers;
+            })(),
+            mode: 'cors',
+            credentials: event.request.credentials,
+            redirect: event.request.redirect
+          });
+          
+          return await fetch(newRequest);
+        } catch (error) {
+          console.log('Firebase request failed', requestUrl.href, error);
+          return generateFallbackResponse(event.request);
+        }
+      })()
     );
     return;
   }
