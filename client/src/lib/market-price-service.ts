@@ -29,14 +29,14 @@ const priceCache: PriceCache = {};
 // Thời gian cache (15 giây)
 const CACHE_DURATION = 15 * 1000;
 
-// Cấu hình cho axios
+// Cấu hình cho axios - sử dụng proxy server local
 const apiClient = axios.create({
-  baseURL: 'https://api.twelvedata.com',
+  baseURL: '/api/twelvedata',  // Sử dụng proxy server local
   timeout: 5000,
 });
 
 /**
- * Lấy giá real-time từ TwelveData API
+ * Lấy giá real-time từ TwelveData API qua proxy server
  * 
  * @param symbol Cặp tiền tệ (vd: "EURUSD")
  * @returns Promise với giá hiện tại
@@ -57,17 +57,11 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
     
     // Nếu không có trong cache hoặc đã hết hạn, gọi API
     debug(`[MarketPrice] Fetching real-time price for ${normalizedSymbol}`);
-
-    // Lấy API key từ biến môi trường hoặc window.ENV
-    const apiKey = getApiKey();
-    if (!apiKey) {
-      throw new Error('TwelveData API key not found');
-    }
     
+    // Gọi API thông qua proxy server
     const response = await apiClient.get('/price', {
       params: {
         symbol: normalizedSymbol,
-        apikey: apiKey,
         format: 'JSON'
       }
     });
@@ -117,16 +111,10 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
     
     debug(`[MarketPrice] Fetching prices for multiple symbols: ${symbolsStr}`);
     
-    // Lấy API key
-    const apiKey = getApiKey();
-    if (!apiKey) {
-      throw new Error('TwelveData API key not found');
-    }
-    
+    // Gọi API thông qua proxy server
     const response = await apiClient.get('/price', {
       params: {
         symbol: symbolsStr,
-        apikey: apiKey,
         format: 'JSON'
       }
     });
@@ -188,30 +176,6 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
     
     throw error;
   }
-}
-
-/**
- * Lấy API key từ environment hoặc window.ENV
- */
-function getApiKey(): string | null {
-  // Thứ tự ưu tiên: 
-  // 1. window.ENV (với prefix VITE_)
-  // 2. import.meta.env (với prefix VITE_)
-  
-  if (typeof window !== 'undefined' && window.ENV && window.ENV.VITE_TWELVEDATA_API_KEY) {
-    return window.ENV.VITE_TWELVEDATA_API_KEY;
-  }
-  
-  if (import.meta.env.VITE_TWELVEDATA_API_KEY) {
-    return import.meta.env.VITE_TWELVEDATA_API_KEY;
-  }
-  
-  // Fallback: Có thể server đã set API key ở biến môi trường không có prefix VITE_
-  if (import.meta.env.TWELVEDATA_API_KEY) {
-    return import.meta.env.TWELVEDATA_API_KEY;
-  }
-  
-  return null;
 }
 
 /**

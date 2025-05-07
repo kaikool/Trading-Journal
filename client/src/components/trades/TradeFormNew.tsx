@@ -35,6 +35,10 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+// Import component tùy chỉnh và service
+import { GetPriceButton } from './GetPriceButton';
+import { isSymbolSupported } from '@/lib/market-price-service';
 
 
 // Types & Utils
@@ -313,6 +317,9 @@ export default function TradeFormNew(props: TradeFormProps) {
   const [riskRewardRatio, setRiskRewardRatio] = useState<number>(0);
   const [accountBalance, setAccountBalance] = useState<number>(DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE);
   const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
+  
+  // State để kiểm soát khả năng lấy giá real-time dựa trên cặp tiền được chọn
+  const [canFetchPrice, setCanFetchPrice] = useState<boolean>(false);
   
   // Automatically load draft when component mounts - no notification
   useEffect(() => {
@@ -770,6 +777,21 @@ export default function TradeFormNew(props: TradeFormProps) {
   const [pair, direction, entryPrice, stopLoss, takeProfit, exitPrice, lotSize] = watch([
     "pair", "direction", "entryPrice", "stopLoss", "takeProfit", "exitPrice", "lotSize"
   ]);
+  
+  // Kiểm tra và cập nhật khả năng lấy giá real-time khi cặp tiền thay đổi
+  useEffect(() => {
+    // Kiểm tra xem cặp tiền hiện tại có được hỗ trợ bởi TwelveData API không
+    if (pair) {
+      const supported = isSymbolSupported(pair);
+      setCanFetchPrice(supported);
+      
+      if (!supported) {
+        debug(`[TradeForm] Currency pair ${pair} is not supported by TwelveData API`);
+      }
+    } else {
+      setCanFetchPrice(false);
+    }
+  }, [pair]);
   
   // Watch for toggle fields to ensure they're reactive
   const [followedPlan, enteredEarly, revenge, overLeveraged, movedStopLoss, hasNews] = watch([
@@ -1817,16 +1839,39 @@ export default function TradeFormNew(props: TradeFormProps) {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Entry Price */}
                       <div>
-                        <Label htmlFor="entryPrice" className="font-medium text-sm mb-1.5 inline-block">Entry Price</Label>
-                        <NumberInput
-                          id="entryPrice"
-                          placeholder="0.0000"
-                          className="font-mono h-10 text-sm"
-                          value={form.getValues("entryPrice")}
-                          onChange={(value) => form.setValue("entryPrice", value || 0)}
-                          decimalPlaces={4}
-                          inputMode="decimal"
-                        />
+                        <div className="flex items-center justify-between">
+                          <Label htmlFor="entryPrice" className="font-medium text-sm mb-1.5 inline-block">Entry Price</Label>
+                          {canFetchPrice && (
+                            <GetPriceButton 
+                              symbol={pair} 
+                              onPriceFetched={(price) => {
+                                form.setValue("entryPrice", price);
+                                // Tính lại Risk-to-Reward ratio sau khi cập nhật giá
+                                if (stopLoss && takeProfit) {
+                                  const ratio = calculateRiskRewardRatio(
+                                    price, 
+                                    stopLoss, 
+                                    takeProfit, 
+                                    direction as Direction
+                                  );
+                                  setRiskRewardRatio(ratio);
+                                }
+                              }}
+                              tooltipText="Get current market price from TwelveData API"
+                            />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <NumberInput
+                            id="entryPrice"
+                            placeholder="0.0000"
+                            className="font-mono h-10 text-sm"
+                            value={form.getValues("entryPrice")}
+                            onChange={(value) => form.setValue("entryPrice", value || 0)}
+                            decimalPlaces={4}
+                            inputMode="decimal"
+                          />
+                        </div>
                         {form.formState.errors.entryPrice && (
                           <p className="text-xs text-destructive mt-1">
                             {form.formState.errors.entryPrice.message as string}
