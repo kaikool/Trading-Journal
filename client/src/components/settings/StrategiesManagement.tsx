@@ -432,9 +432,9 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 {strategy.description && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
-                    <h3 className="text-sm font-semibold mb-2 flex items-center text-primary/90">
-                      <LineChart className="h-4 w-4 mr-1.5 text-primary/70" />
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-2 flex items-center bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">
+                      <LineChart className="h-4 w-4 mr-1.5 text-primary/80" />
                       Strategy Overview
                     </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{strategy.description}</p>
@@ -442,23 +442,23 @@ const StrategyItem = React.memo(function StrategyItem({
                 )}
                 
                 {strategy.rules && strategy.rules.length > 0 && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
-                    <h3 className="text-sm font-semibold mb-2 flex items-center text-primary/90">
-                      <ListChecks className="h-4 w-4 mr-1.5 text-primary/70" />
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-primary/90 to-primary/70 bg-clip-text text-transparent">
+                      <ListChecks className="h-4 w-4 mr-1.5 text-primary/80" />
                       Trading Rules
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {strategy.rules.map((rule) => (
-                        <li key={rule.id} className="flex gap-2 group">
+                        <li key={rule.id} className="flex gap-2.5 group">
                           <div className="mt-0.5 flex-shrink-0">
-                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-primary/20 bg-primary/5">
-                              <Check className="h-3 w-3 text-primary" />
+                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-primary/20 bg-primary/5 rounded-full">
+                              <Check className="h-3.5 w-3.5 text-primary" />
                             </Badge>
                           </div>
                           <div>
                             <span className="text-sm font-medium">{rule.label}</span>
                             {rule.description && (
-                              <p className="text-xs text-muted-foreground mt-0.5">{rule.description}</p>
+                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{rule.description}</p>
                             )}
                           </div>
                         </li>
@@ -470,23 +470,23 @@ const StrategyItem = React.memo(function StrategyItem({
               
               <div className="space-y-4">
                 {strategy.entryConditions && strategy.entryConditions.length > 0 && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
-                    <h3 className="text-sm font-semibold mb-2 flex items-center text-success/90">
-                      <DoorOpen className="h-4 w-4 mr-1.5 text-success/70" />
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-success/90 to-success/70 bg-clip-text text-transparent">
+                      <DoorOpen className="h-4 w-4 mr-1.5 text-success/80" />
                       Entry Conditions
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {strategy.entryConditions.map((condition) => (
-                        <li key={condition.id} className="flex gap-2 group">
+                        <li key={condition.id} className="flex gap-2.5 group">
                           <div className="mt-0.5 flex-shrink-0">
-                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-success/20 bg-success/5">
-                              <ArrowDown className="h-3 w-3 text-success" />
+                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-success/20 bg-success/5 rounded-full">
+                              <ArrowDown className="h-3.5 w-3.5 text-success" />
                             </Badge>
                           </div>
                           <div>
                             <span className="text-sm font-medium">{condition.label}</span>
                             {condition.description && (
-                              <p className="text-xs text-muted-foreground mt-0.5">{condition.description}</p>
+                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{condition.description}</p>
                             )}
                           </div>
                         </li>
@@ -496,23 +496,23 @@ const StrategyItem = React.memo(function StrategyItem({
                 )}
                 
                 {strategy.exitConditions && strategy.exitConditions.length > 0 && (
-                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
-                    <h3 className="text-sm font-semibold mb-2 flex items-center text-destructive/90">
-                      <LogOut className="h-4 w-4 mr-1.5 text-destructive/70" />
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                    <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-destructive/90 to-destructive/70 bg-clip-text text-transparent">
+                      <LogOut className="h-4 w-4 mr-1.5 text-destructive/80" />
                       Exit Conditions
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {strategy.exitConditions.map((condition) => (
-                        <li key={condition.id} className="flex gap-2 group">
+                        <li key={condition.id} className="flex gap-2.5 group">
                           <div className="mt-0.5 flex-shrink-0">
-                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-destructive/20 bg-destructive/5">
-                              <ArrowUp className="h-3 w-3 text-destructive" />
+                            <Badge variant="outline" className="w-6 h-6 flex items-center justify-center p-0 border-destructive/20 bg-destructive/5 rounded-full">
+                              <ArrowUp className="h-3.5 w-3.5 text-destructive" />
                             </Badge>
                           </div>
                           <div>
                             <span className="text-sm font-medium">{condition.label}</span>
                             {condition.description && (
-                              <p className="text-xs text-muted-foreground mt-0.5">{condition.description}</p>
+                              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{condition.description}</p>
                             )}
                           </div>
                         </li>
@@ -524,14 +524,14 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {strategy.timeframes && strategy.timeframes.length > 0 && (
-              <div className="bg-card/30 p-4 rounded-lg border border-border/30">
-                <h3 className="text-sm font-semibold mb-2 flex items-center">
-                  <Clock className="h-4 w-4 mr-1.5 text-muted-foreground" />
-                  Timeframes
+              <div className="bg-card/30 p-4 rounded-lg border border-border/30 shadow-sm hover:shadow-md transition-all duration-200">
+                <h3 className="text-sm font-semibold mb-3 flex items-center bg-gradient-to-r from-secondary/90 to-muted-foreground/70 bg-clip-text text-transparent">
+                  <Clock className="h-4 w-4 mr-1.5 text-muted-foreground/80" />
+                  Recommended Timeframes
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {strategy.timeframes.sort().map(tf => (
-                    <Badge key={tf} variant="secondary" className="px-2 py-1 text-xs bg-secondary/50 hover:bg-secondary/70 transition-colors">
+                    <Badge key={tf} variant="secondary" className="px-2.5 py-1.5 h-7 text-xs bg-secondary/40 hover:bg-secondary/60 transition-colors border border-secondary/20">
                       {tf}
                     </Badge>
                   ))}
@@ -539,14 +539,14 @@ const StrategyItem = React.memo(function StrategyItem({
               </div>
             )}
             
-            <div className="flex justify-end gap-2 pt-1 border-t border-border/20 mt-4 pt-4">
+            <div className="flex justify-end gap-2 border-t border-border/20 mt-4 pt-4">
               {!strategy.isDefault && (
                 <Button 
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
                   onClick={onSetAsDefault}
                   disabled={isSaving}
-                  className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary"
+                  className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary hover:shadow-sm transition-all duration-200 h-9"
                 >
                   <Bookmark className="h-3.5 w-3.5 mr-1.5" />
                   Set as Default
@@ -556,15 +556,15 @@ const StrategyItem = React.memo(function StrategyItem({
                 variant="outline" 
                 size="sm" 
                 onClick={onEdit}
-                className="bg-secondary/30 hover:bg-secondary/50"
+                className="bg-secondary/30 hover:bg-secondary/50 hover:shadow-sm transition-all duration-200 h-9"
               >
                 <Edit className="h-3.5 w-3.5 mr-1.5" />
-                Edit
+                Edit Strategy
               </Button>
               <Button 
                 variant="outline" 
                 size="sm"
-                className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10"
+                className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10 hover:shadow-sm transition-all duration-200 h-9"
                 onClick={onDelete}
                 disabled={isSaving}
               >
