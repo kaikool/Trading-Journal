@@ -207,8 +207,8 @@ export function Sidebar({ className }: { className?: string }) {
     
     // Cấu hình trình phát hiện vuốt từ cạnh trái
     const swipeDetector = setupEdgeSwipeDetector({
-      edgeSize: 30, // Vùng nhận diện vuốt rộng hơn (30px từ cạnh trái)
-      minSwipeDistance: 60, // Khoảng cách vuốt nhỏ hơn để dễ trigger
+      edgeSize: 5, // Phát hiện từ mép cạnh trái (dung sai 5px)
+      minSwipeDistance: 40, // Giảm khoảng cách vuốt tối thiểu để dễ trigger
       onEdgeSwipe: () => {
         setIsOpen(true);
         setMenuVisible(true);

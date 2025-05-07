@@ -20,9 +20,9 @@ export interface SwipeDetectorOptions {
 
 export function setupEdgeSwipeDetector(options: SwipeDetectorOptions) {
   const {
-    edgeSize = 20,
-    minSwipeDistance = 70,
-    maxVerticalDistance = 100,
+    edgeSize = 0, // 0px - Phát hiện từ ngay mép cạnh trái
+    minSwipeDistance = 50, // Giảm khoảng cách vuốt tối thiểu xuống 50px
+    maxVerticalDistance = 150, // Tăng dung sai vuốt dọc
     onEdgeSwipe,
     onReverseSwipe
   } = options;
