@@ -877,7 +877,10 @@ export default function Settings() {
           >
             <div className="space-y-6 sm:space-y-8">
               <div className="space-y-4 sm:space-y-5">
-                <FormField label="Initial Balance" htmlFor="initialBalance">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label htmlFor="initialBalance" className="text-sm font-medium">Initial Balance</Label>
+                  </div>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                       <DollarSign className="h-4 w-4" />
@@ -899,7 +902,7 @@ export default function Settings() {
                   <p className="text-xs text-muted-foreground mt-1.5">
                     Starting amount for performance calculations
                   </p>
-                </FormField>
+                </div>
                 
                 <div>
                   <div className="flex justify-between items-center mb-2">
