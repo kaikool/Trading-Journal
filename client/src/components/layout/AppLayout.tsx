@@ -105,8 +105,8 @@ export function AppLayout({ children }: AppLayoutProps) {
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
             // Luôn tôn trọng bottom safe area, top safe area xử lý theo scroll position
             respectSafeArea 
-              ? "pt-4 pb-8 safe-area-bottom" 
-              : "pt-0 pb-8 safe-area-bottom"
+              ? "pt-4 pb-4 safe-area-bottom" 
+              : "pt-0 pb-4 safe-area-bottom"
           )}
         >
           {children}
