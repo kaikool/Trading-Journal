@@ -151,38 +151,20 @@ export function Sidebar({ className }: SidebarProps) {
   // Prevent hydration mismatch
   if (!mounted) return null;
 
-  // Mobile sidebar version (slide-out drawer)
+  // Mobile sidebar version (slide-out drawer) with floating button
   if (isMobile) {
     return (
       <>
-        {/* Mobile Header */}
-        <header className="fixed top-0 left-0 right-0 h-16 z-40 bg-background border-b border-border">
-          <div className="flex items-center justify-between px-4 h-full">
-            <div className="flex items-center space-x-3">
-              <Button
-                onClick={toggleSidebar}
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full"
-                aria-label="Open menu"
-              >
-                <Menu className="h-5 w-5 text-foreground/90" />
-              </Button>
-              <div className="font-semibold text-lg flex items-center">
-                <AppLogo className="mr-2" size="sm" variant="dark" />
-                <span className="truncate">FX Trade Journal</span>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
-        </header>
+        {/* Floating Menu Button */}
+        <Button
+          onClick={toggleSidebar}
+          variant="default"
+          size="icon"
+          className="fixed left-4 top-4 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90"
+          aria-label="Open menu"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
         
         {/* Mobile Sidebar Overlay */}
         <div 

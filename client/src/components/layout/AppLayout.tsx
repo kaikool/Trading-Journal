@@ -42,8 +42,8 @@ export function AppLayout({ children }: AppLayoutProps) {
           !isMobile && "md:ml-[72px]",
           // If sidebar is expanded, increase margin
           !isMobile && !sidebarCollapsed && "md:ml-[256px]",
-          // On mobile, add top padding for the header
-          isMobile && "pt-16"
+          // On mobile, no need for header padding anymore
+          isMobile && "pt-0"
         )}
       >
         <div className="p-4 sm:p-6 max-w-7xl mx-auto">
