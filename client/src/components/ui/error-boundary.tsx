@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 
-// Props cho ErrorBoundary component
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode | ((props: { error: Error; resetErrorBoundary: () => void }) => ReactNode);
@@ -12,7 +11,6 @@ interface ErrorBoundaryProps {
   resetKeys?: any[];
 }
 
-// State cho ErrorBoundary component
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
@@ -20,7 +18,7 @@ interface ErrorBoundaryState {
 }
 
 /**
- * ErrorBoundary component cho việc bắt và hiển thị lỗi một cách thân thiện
+ * ErrorBoundary component for catching and displaying errors gracefully
  * 
  * Được thiết kế để phát hiện lỗi trong quá trình tải lazy-loaded components
  * và các lỗi rendering khác, hiển thị UI thân thiện thay vì crash ứng dụng.
@@ -37,76 +35,76 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Cập nhật state để hiển thị fallback UI
-    return { 
-      hasError: true, 
+    return {
+      hasError: true,
       error,
       errorInfo: null
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log lỗi vào console và gọi callback onError nếu được cung cấp
-    console.error("Error caught by ErrorBoundary:", error, errorInfo);
-    
-    this.setState({ 
-      errorInfo 
-    });
-    
+    // Gọi onError callback nếu được cung cấp
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
+    
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    this.setState({
+      errorInfo
+    });
   }
 
   handleRetry = (): void => {
-    // Reset state để cố gắng render lại
+    // Gọi onReset callback nếu được cung cấp
+    if (this.props.onReset) {
+      this.props.onReset();
+    }
+    
+    // Reset state và render lại children
     this.setState({
       hasError: false,
       error: null,
       errorInfo: null
     });
-    
-    // Gọi callback onReset nếu được cung cấp
-    if (this.props.onReset) {
-      this.props.onReset();
-    }
-  };
+  }
 
   render(): ReactNode {
     const { hasError, error } = this.state;
     const { children, fallback } = this.props;
 
     if (hasError && error) {
-      // Nếu có fallback được truyền vào, sử dụng nó
+      // Nếu có custom fallback UI được cung cấp
       if (fallback) {
-        // Nếu fallback là một function, gọi nó với error và resetErrorBoundary
+        // Xử lý cả trường hợp fallback là component và function
         if (typeof fallback === 'function') {
-          return fallback({ 
-            error, 
-            resetErrorBoundary: this.handleRetry 
+          return fallback({
+            error,
+            resetErrorBoundary: this.handleRetry
           });
         }
-        // Nếu không, render fallback trực tiếp
         return fallback;
       }
 
-      // Fallback mặc định nếu không có fallback nào được cung cấp
+      // Fallback UI mặc định
       return (
-        <Alert variant="destructive" className="my-4">
-          <AlertTriangle className="h-5 w-5" />
-          <AlertTitle className="ml-2">Đã xảy ra lỗi</AlertTitle>
-          <AlertDescription className="mt-2">
-            <div className="text-sm mb-3">{error.message}</div>
-            <Button 
-              onClick={this.handleRetry}
-              variant="secondary"
-              size="sm"
-              className="mt-2"
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Thử lại
-            </Button>
-          </AlertDescription>
-        </Alert>
+        <div className="flex items-center justify-center min-h-[150px] w-full">
+          <div className="w-full max-w-md mx-auto p-4">
+            <Alert variant="destructive" className="mb-4">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              <AlertTitle>Đã xảy ra lỗi</AlertTitle>
+              <AlertDescription>
+                {error?.message || 'Có lỗi xảy ra khi tải nội dung này.'}
+              </AlertDescription>
+            </Alert>
+            
+            <div className="flex justify-center mt-4">
+              <Button onClick={this.handleRetry} className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Thử lại
+              </Button>
+            </div>
+          </div>
+        </div>
       );
     }
 
@@ -115,29 +113,15 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 }
 
-// Props cho ErrorFallback component
+// Type cho fallback component props
 export interface ErrorFallbackProps {
   error: Error;
   resetErrorBoundary: () => void;
 }
 
-// Default ErrorFallback component
-export const DefaultErrorFallback = ({ error, resetErrorBoundary }: ErrorFallbackProps) => (
-  <div className="p-4 border border-red-500 rounded-md bg-red-50 dark:bg-red-900/20 my-4">
-    <h2 className="text-lg font-semibold text-red-800 dark:text-red-300 mb-2">Lỗi Tải Phần Tử UI</h2>
-    <p className="text-sm text-red-600 dark:text-red-400 mb-4">{error.message}</p>
-    <button
-      className="px-3 py-1 bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-700 transition-colors"
-      onClick={resetErrorBoundary}
-    >
-      Thử Lại
-    </button>
-  </div>
-);
-
-// Options cho withErrorBoundary HOC
+// Type cho withErrorBoundary HOC options
 export interface WithErrorBoundaryOptions {
-  fallback?: ReactNode | ((props: { error: Error; resetErrorBoundary: () => void }) => ReactNode);
+  fallback?: React.ComponentType<ErrorFallbackProps> | React.ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   onReset?: () => void;
 }
@@ -146,7 +130,7 @@ export interface WithErrorBoundaryOptions {
  * Higher Order Component để bọc một component với ErrorBoundary
  * 
  * @param Component Component cần bọc với ErrorBoundary
- * @param options Tùy chọn cho ErrorBoundary
+ * @param options Các tùy chọn cho ErrorBoundary
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
@@ -154,6 +138,7 @@ export function withErrorBoundary<P extends object>(
 ): React.ComponentType<P> {
   const { fallback, onError, onReset } = options;
   
+  // Tạo ra một functional component mới bao bọc Component đầu vào
   const WrappedComponent = (props: P) => {
     return (
       <ErrorBoundary 
@@ -166,7 +151,7 @@ export function withErrorBoundary<P extends object>(
     );
   };
   
-  // Set display name for easier debugging
+  // Đặt tên cho component để dễ debug
   const displayName = Component.displayName || Component.name || 'Component';
   WrappedComponent.displayName = `withErrorBoundary(${displayName})`;
   

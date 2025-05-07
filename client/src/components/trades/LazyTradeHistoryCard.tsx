@@ -45,7 +45,6 @@ import DirectionBadge from "./DirectionBadge";
 import axios from "axios";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface TradeHistoryCardProps {
   trade: any;
@@ -72,8 +71,11 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     rootMargin: '200px', // Pre-load trước 200px
   });
   
-  // State management for UI interactions
+  // Lazy state cho hình ảnh
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [showCloseForm, setShowCloseForm] = useState(false);
+  // State cho dialog xem ảnh biểu đồ
   const [showChartDialog, setShowChartDialog] = useState(false);
   
   // Lấy giá trị từ trade một cách an toàn
@@ -168,7 +170,12 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     placeholder: '/icons/blank-chart.svg',
   });
 
-  // Không còn cần theo dõi trạng thái ảnh nữa vì OptimizedImage đã xử lý
+  // Theo dõi trạng thái ảnh
+  useEffect(() => {
+    if (cachedImageUrl && !isImageLoading) {
+      setImageLoaded(true);
+    }
+  }, [cachedImageUrl, isImageLoading]);
   
 
 
@@ -238,39 +245,66 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 onClick={handleOpenChartDialog}
               >
                 {displayUrl ? (
-                  <div className="trade-card-image-container relative">
-                    <OptimizedImage
-                      src={displayUrl}
-                      alt={`${pair} ${direction} trade chart`}
-                      tradeId={id}
-                      imageType={imageType}
-                      aspectRatio="1/1"
-                      className="w-full h-full object-cover rounded-tl-md rounded-tr-md md:rounded-tr-none md:rounded-bl-md"
-                      containerClassName="h-48 w-full"
-                      placeholder="/icons/blank-chart.svg"
-                      fallbackSrc="/icons/image-not-supported.svg"
-                      loading="lazy"
-                      priority={false}
-                      onLoad={() => {
-                        console.log(`Image loaded successfully for trade ${id}`);
-                      }}
-                      onError={(e) => {
-                        console.error(`Error loading image for trade ${id}: ${displayUrl}`);
-                      }}
-                    />
-                    
-                    {/* Zoom overlay icon */}
-                    <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 hover:opacity-100 cursor-pointer">
-                      <Maximize2 className="h-8 w-8 text-white" />
+                  <div className="trade-card-image-container">
+                    {/* Placeholder image (always shown initially) */}
+                    <div className={`trade-card-placeholder bg-gray-100 dark:bg-gray-800 ${imageLoaded && !isImageLoading ? 'trade-card-placeholder-hidden' : 'trade-card-placeholder-visible'}`}>
+                      {isImageLoading && (
+                        <div className="flex flex-col items-center justify-center">
+                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
+                        </div>
+                      )}
                     </div>
                     
-                    {/* Badge showing which timeframe is displayed */}
-                    <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                      {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
+                    {/* Actual image (hidden until loaded) */}
+                    <div className={`trade-card-image ${imageLoaded && !isImageLoading ? 'loaded' : ''}`}>
+                      <img 
+                        ref={imageRef}
+                        src={cachedImageUrl || '/icons/blank-chart.svg'}
+                        alt={`${pair} ${direction} trade chart`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        decoding="async"
+                        onLoad={() => {
+                          // Only set as loaded if it's not an error image
+                          if (cachedImageUrl && !cachedImageUrl.includes('image-not-supported')) {
+                            setImageLoaded(true);
+                          }
+                        }}
+                        onError={(e) => {
+                          console.error(`Error displaying image for trade ${id}: ${displayUrl}`);
+                          const imgElement = e.currentTarget as HTMLImageElement;
+                          
+                          // Không hiển thị lỗi tạm thời - giữ nguyên trạng thái loading
+                          // Thử tải lại một lần nữa với URL gốc nếu có
+                          if (displayUrl && imgElement.src !== displayUrl) {
+                            console.log(`Retrying with original URL: ${displayUrl}`);
+                            imgElement.src = displayUrl;
+                            return;
+                          }
+                          
+                          // Sử dụng state để quản lý ẩn/hiện thay vì thêm class
+                          setImageLoaded(false);
+                        }}
+                      />
                     </div>
+                    
+                    {/* Zoom icon and timeframe badge - Only show when image is successfully loaded */}
+                    {imageLoaded && !isImageLoading && !imageError && (
+                      <>
+                        {/* Zoom overlay icon that appears on hover */}
+                        <div className="trade-card-zoom-overlay">
+                          <Maximize2 className="h-8 w-8 text-white" />
+                        </div>
+                        
+                        {/* Badge showing which timeframe is displayed */}
+                        <div className="trade-card-timeframe-badge">
+                          {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
+                        </div>
+                      </>
+                    )}
                   </div>
                 ) : (
-                  <div className="w-full h-48 flex items-center justify-center text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-tl-md rounded-tr-md md:rounded-tr-none md:rounded-bl-md">
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
                     <span>No Chart</span>
                   </div>
                 )}
