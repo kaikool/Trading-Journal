@@ -43,14 +43,8 @@ export function setupEdgeSwipeDetector(options: SwipeDetectorOptions) {
     const style = document.createElement('style');
     style.id = 'disable-safari-swipe';
     style.textContent = `
-      html {
+      html, body {
         overscroll-behavior-x: none;
-        overflow-x: hidden;
-      }
-      body {
-        overflow-x: hidden;
-        position: relative;
-        width: 100%;
       }
     `;
     document.head.appendChild(style);
