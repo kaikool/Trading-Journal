@@ -166,11 +166,11 @@ function isCacheableRequest(url) {
  */
 async function generateFallbackResponse(request) {
   // Make sure url is available before using includes
-  const requestUrl = request?.url || '';
+  const reqUrl = request?.url || '';
   
-  if (request.destination === 'image' || requestUrl.includes('.png') || requestUrl.includes('.jpg')) {
+  if (request.destination === 'image' || reqUrl.includes('.png') || reqUrl.includes('.jpg')) {
     // For charts, use blank canvas background
-    if (requestUrl.includes('chart')) {
+    if (reqUrl.includes('chart')) {
       const cachedCanvas = await caches.match(OFFLINE_CANVAS_URL);
       if (cachedCanvas) return cachedCanvas;
     }
@@ -192,9 +192,9 @@ async function generateFallbackResponse(request) {
   
   if (request.destination === 'script') {
     // Check if it's an ES module
-    const requestUrl = request?.url || '';
-    const isModule = requestUrl.includes('type=module') || 
-                     requestUrl.includes('/assets/') || 
+    const scriptUrl = request?.url || '';
+    const isModule = scriptUrl.includes('type=module') || 
+                     scriptUrl.includes('/assets/') || 
                      request.headers.get('Accept')?.includes('text/javascript');
                      
     return new Response('console.log("Offline script fallback");', {
@@ -215,11 +215,11 @@ async function generateFallbackResponse(request) {
   }
   
   // Handle React lazy-loaded chunks specifically
-  const requestUrl = request?.url || '';
-  if (requestUrl.includes('/assets/') && 
-      (requestUrl.includes('chunk-') || 
-       requestUrl.includes('analytics-') || 
-       requestUrl.includes('settings-'))) {
+  const chunkUrl = request?.url || '';
+  if (chunkUrl.includes('/assets/') && 
+      (chunkUrl.includes('chunk-') || 
+       chunkUrl.includes('analytics-') || 
+       chunkUrl.includes('settings-'))) {
     return new Response('export default {};', {
       headers: { 
         'Content-Type': 'text/javascript',

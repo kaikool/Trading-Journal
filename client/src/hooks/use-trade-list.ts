@@ -258,7 +258,10 @@ export function useTradeList(options: {
     // Loại bỏ logs thường xuyên để tránh vòng lặp vô tận trong console
     // Chỉ log thông tin cơ bản về số lượng
     if (trades.length > 0 && process.env.NODE_ENV === 'development') {
-      debug("Applying sort:", sortBy, "on", trades.length, "trades"); 
+      // Chỉ log khi số lượng trades đáng kể để tránh spam
+      if (trades.length >= 10) {
+        debug("Applying sort:", sortBy, "on", trades.length, "trades");
+      }
     }
     
     let result = [...trades] as Trade[];
@@ -478,10 +481,16 @@ export function useTradeList(options: {
       // Profit và Loss đã được sắp xếp ở trên
     } else {
       // Sort theo ngày nếu không phải profit/loss
-      debug("Applying sort:", sortBy, "on", result.length, "trades");
+      // Chỉ log khi số lượng trades đáng kể để tránh spam
+      if (result.length >= 10) {
+        debug("Applying sort:", sortBy, "on", result.length, "trades");
+      }
       
       if (sortBy === "newest") {
-        debug("Sorting by newest first");
+        // Chỉ log khi số lượng trades đáng kể
+        if (result.length >= 10) {
+          debug("Sorting by newest first");
+        }
         result.sort((a, b) => {
           // Trade mở luôn hiển thị đầu tiên
           if (a.isOpen && !b.isOpen) return -1;
