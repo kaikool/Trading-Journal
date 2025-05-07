@@ -798,114 +798,6 @@ export default function Settings() {
           
 
           
-          <SettingsSection 
-            title="Password & Authentication" 
-          >
-            {passwordError && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{passwordError}</AlertDescription>
-              </Alert>
-            )}
-            
-            <div className="grid gap-6">
-              <FormField label="Current Password" htmlFor="currentPassword">
-                <div className="relative">
-                  <Input
-                    id="currentPassword"
-                    type={showCurrentPassword ? "text" : "password"}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    aria-label={showCurrentPassword ? "Hide password" : "Show password"}
-                  >
-                    {showCurrentPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </FormField>
-              
-              <FormField label="New Password" htmlFor="newPassword">
-                <div className="relative">
-                  <Input
-                    id="newPassword"
-                    type={showNewPassword ? "text" : "password"}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    aria-label={showNewPassword ? "Hide password" : "Show password"}
-                  >
-                    {showNewPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1.5">
-                  Password must be at least 6 characters long
-                </p>
-              </FormField>
-              
-              <FormField label="Confirm New Password" htmlFor="confirmPassword">
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-              </FormField>
-              
-              <div className="pt-2">
-                <Button 
-                  onClick={changePassword} 
-                  disabled={isChangingPassword}
-                  className="w-full sm:w-auto"
-                >
-                  {isChangingPassword ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="mr-2 h-4 w-4" />
-                      Update Password
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          </SettingsSection>
           
 
           
@@ -991,30 +883,7 @@ export default function Settings() {
             </div>
           </SettingsSection>
           
-          <SettingsSection 
-            title="Account Management" 
-          >
-            <div className="space-y-6">
-              <div className="p-3 border border-destructive/20 bg-destructive/5 rounded-md">
-                <h3 className="text-destructive text-sm font-medium mb-2 flex items-center">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Log out from all devices
-                </h3>
-                <p className="text-xs text-muted-foreground mb-3">
-                  This will end all your active sessions and require you to log in again on all devices.
-                </p>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={handleLogout}
-                  className="w-full sm:w-auto text-xs h-8"
-                >
-                  <LogOut className="h-3.5 w-3.5 mr-1.5" />
-                  Log Out
-                </Button>
-              </div>
-            </div>
-          </SettingsSection>
+
         </TabsContent>
         
         {/* Account tab */}
