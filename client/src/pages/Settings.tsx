@@ -1059,7 +1059,6 @@ export default function Settings() {
         <TabsContent value="security" className="mt-6 space-y-6">
           <SettingsSection 
             title="Password & Authentication" 
-            description="Update your account password and security preferences"
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
@@ -1169,7 +1168,6 @@ export default function Settings() {
           
           <SettingsSection 
             title="Login Methods"
-            description="Manage login methods and account linking"
           >
             <div className="space-y-4 sm:space-y-6">
               {/* Current login methods list */}
