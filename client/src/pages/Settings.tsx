@@ -606,8 +606,8 @@ export default function Settings() {
       {/* Tabs navigation */}
       <Tabs defaultValue="general" className="mb-4 w-full">
         <div className="overflow-x-auto mb-4 sm:mb-6 touch-pan-x">
-          <div className="min-w-max mx-auto px-1">
-            <TabsList className="w-fit sm:w-auto flex flex-nowrap h-auto justify-start p-1 space-x-1 rounded-xl bg-muted/80">
+          <div className="mx-auto px-1">
+            <TabsList className="w-full grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-xl bg-muted/80">
               <TabsTrigger 
                 value="general" 
                 className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
@@ -636,7 +636,6 @@ export default function Settings() {
                 <Trophy className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Achievements</span>
               </TabsTrigger>
-
             </TabsList>
           </div>
         </div>
