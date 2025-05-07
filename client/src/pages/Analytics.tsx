@@ -417,35 +417,25 @@ export default function Analytics() {
             </div>
           </div>
           
-          {/* Mỗi TabsContent có Suspense riêng để chỉ tab đang mở mới cần loading */}
+          {/* Tabs content without Suspense for simplicity */}
             <TabsContent value="overview">
-              <Suspense fallback={<div className="min-h-[400px]"></div>}>
-                <OverviewTab data={analyticsData} />
-              </Suspense>
+              <OverviewTab data={analyticsData} />
             </TabsContent>
             
             <TabsContent value="strategy">
-              <Suspense fallback={<div className="min-h-[400px]"></div>}>
-                <StrategyTab data={analyticsData} />
-              </Suspense>
+              <StrategyTab data={analyticsData} />
             </TabsContent>
             
             <TabsContent value="discipline">
-              <Suspense fallback={<div className="min-h-[400px]"></div>}>
-                <DisciplineTab data={analyticsData} />
-              </Suspense>
+              <DisciplineTab data={analyticsData} />
             </TabsContent>
             
             <TabsContent value="emotion">
-              <Suspense fallback={<div className="min-h-[400px]"></div>}>
-                <EmotionTab data={analyticsData} />
-              </Suspense>
+              <EmotionTab data={analyticsData} />
             </TabsContent>
             
             <TabsContent value="advanced">
-              <Suspense fallback={<div className="min-h-[400px]"></div>}>
-                <AdvancedTab data={analyticsData} />
-              </Suspense>
+              <AdvancedTab data={analyticsData} />
             </TabsContent>
             
 
