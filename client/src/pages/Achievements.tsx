@@ -70,10 +70,10 @@ export default function AchievementsPage() {
       
       {/* Main content */}
       {isLoading ? (
-        <LoadingFallback height={400} simple />
+        <LoadingFallback height={400} simple showSpinner={true} />
       ) : (
         <div className="space-y-8">
-          <Suspense fallback={<LoadingFallback height={400} />}>
+          <Suspense fallback={<LoadingFallback height={400} showSpinner={true} />}>
             <AchievementsTab
               showNotifications={showNotifications}
               onToggleNotifications={setShowNotifications}

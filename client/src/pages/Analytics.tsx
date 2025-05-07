@@ -437,13 +437,13 @@ export default function Analytics() {
             </TabsContent>
             
             <TabsContent value="emotion">
-              <Suspense fallback={<LoadingFallback height={300} />}>
+              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
                 <EmotionTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="advanced">
-              <Suspense fallback={<LoadingFallback height={300} />}>
+              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>
