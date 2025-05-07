@@ -26,10 +26,10 @@ export default function StrategiesPage() {
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6">
       {/* Main content */}
       {isLoading ? (
-        <LoadingFallback height={400} simple />
+        <LoadingFallback height={400} simple showSpinner={true} />
       ) : (
         <div className="space-y-8">
-          <Suspense fallback={<LoadingFallback height={400} />}>
+          <Suspense fallback={<LoadingFallback height={400} showSpinner={true} />}>
             <StrategiesManagement />
           </Suspense>
         </div>
