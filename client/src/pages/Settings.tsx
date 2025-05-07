@@ -796,64 +796,7 @@ export default function Settings() {
             </div>
           </SettingsSection>
           
-          <SettingsSection 
-            title="Account Information" 
-          >
-            <div className="grid gap-4 sm:gap-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <FormField label="Email Address" htmlFor="email">
-                  <div className="relative">
-                    <Input
-                      id="email"
-                      value={auth.currentUser?.email || ""}
-                      className="pr-20"
-                      disabled
-                    />
-                    <Badge 
-                      variant="secondary" 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-0"
-                    >
-                      <Check className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    Your account email
-                  </p>
-                </FormField>
-                
-                <FormField label="Display Name" htmlFor="displayName">
-                  <div className="flex space-x-2">
-                    <Input
-                      id="displayName"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      placeholder="Your display name"
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={handleUpdateDisplayName} 
-                      disabled={isUpdatingDisplayName}
-                      variant="outline"
-                      size="icon"
-                      className="px-3"
-                    >
-                      {isUpdatingDisplayName ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Check className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    Visible name in the app
-                  </p>
-                </FormField>
-              </div>
-              
 
-            </div>
-          </SettingsSection>
           
           <SettingsSection 
             title="Password & Authentication" 
