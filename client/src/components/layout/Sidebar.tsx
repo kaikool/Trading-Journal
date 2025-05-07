@@ -149,29 +149,50 @@ export function Sidebar({ className }: { className?: string }) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
   
-  // Smart menu visibility management
+  // Tinh chỉnh cơ chế hiện/ẩn menu thông minh hơn
   useEffect(() => {
-    // Show menu on:
-    // 1. User is active but not scrolling (reading/viewing content)
-    // 2. User scrolls up (looking for navigation)
-    // Hide menu on:
-    // 1. User is scrolling down (reading content)
-    // 2. User has been inactive for a while (not engaged)
+    // Menu logic:
+    // - Hiện menu khi user cuộn lên hoặc tạm dừng cuộn (có ý định điều hướng)
+    // - Hiện menu khi user vừa tương tác với màn hình và đang không cuộn
+    // - Ẩn menu khi user đang đọc nội dung và cuộn xuống
+    // - Ẩn menu khi user không tương tác trong thời gian dài (tránh lấn át nội dung)
+    
+    const handleVisibility = () => {
+      // Trường hợp cuộn lên: hiện menu dần dần, mượt mà
+      if (direction === 'up') {
+        setMenuVisible(true);
+      }
+      
+      // Hiện menu khi user có tương tác và đang không cuộn
+      else if (isActive && !isScrolling) {
+        setMenuVisible(true);
+      }
+      
+      // Khi cuộn xuống: ẩn menu nhưng với độ trễ nhẹ để tránh ẩn quá nhanh
+      else if (direction === 'down' && isScrolling) {
+        // Tạo độ trễ khi ẩn để có cảm giác mượt mà, không đột ngột
+        const timeout = setTimeout(() => {
+          setMenuVisible(false);
+        }, 150);
+        return () => clearTimeout(timeout);
+      }
+    };
 
-    if (direction === 'up' || (isActive && !isScrolling)) {
-      setMenuVisible(true);
-    } else if (direction === 'down' && isScrolling) {
-      setMenuVisible(false);
-    }
+    // Áp dụng xử lý này với một chút debounce để tránh trigger quá nhiều
+    const debounceTimeout = setTimeout(handleVisibility, 50);
+    return () => clearTimeout(debounceTimeout);
   }, [direction, isScrolling, isActive]);
 
-  // Force menu to appear when user taps bottom left corner
+  // Khu vực "hot zone" ở góc trái dưới để hiện nút menu
   const handleBodyClick = (e: MouseEvent) => {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     
-    // If click is in the bottom left quadrant of the screen
-    if (e.clientX < windowWidth * 0.3 && e.clientY > windowHeight * 0.7) {
+    // Khi user chạm vào góc trái dưới (khu vực 30% chiều rộng x 30% chiều cao)
+    const isInHotZone = e.clientX < windowWidth * 0.3 && e.clientY > windowHeight * 0.7;
+    
+    if (isInHotZone) {
+      // Hiện menu với animation mượt mà ngay lập tức
       setMenuVisible(true);
     }
   };
@@ -198,8 +219,10 @@ export function Sidebar({ className }: { className?: string }) {
           variant="default"
           size="icon"
           className={cn(
-            "fixed left-4 bottom-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300",
-            menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"
+            "fixed left-4 bottom-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90",
+            menuVisible 
+              ? "opacity-100 translate-y-0 transition-all duration-300 ease-out" 
+              : "opacity-0 translate-y-16 transition-all duration-500 ease-in"
           )}
           aria-label="Open menu"
         >
