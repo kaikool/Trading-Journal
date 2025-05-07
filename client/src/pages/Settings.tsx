@@ -63,7 +63,7 @@ import {
   ShieldCheck,
   BarChart3,
   AlertCircle,
-  CircleDollarSign,
+
   LogOut,
   Check,
   Palette,
@@ -865,56 +865,11 @@ export default function Settings() {
                 </FormField>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <FormField label="Account Currency" htmlFor="currency">
-                  <Select
-                    value={settings.currency}
-                    onValueChange={(value) =>
-                      setSettings({ ...settings, currency: value as 'USD' | 'EUR' | 'GBP' | 'JPY' })
-                    }
-                  >
-                    <SelectTrigger id="currency" className="w-full">
-                      <SelectValue placeholder="Select currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">
-                        <div className="flex items-center">
-                          <DollarSign className="h-4 w-4 mr-2" />
-                          USD - US Dollar
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="EUR">
-                        <div className="flex items-center">
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          EUR - Euro
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="GBP">
-                        <div className="flex items-center">
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          GBP - British Pound
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="JPY">
-                        <div className="flex items-center">
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          JPY - Japanese Yen
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    Currency for P/L calculations
-                  </p>
-                </FormField>
-                
+              <div className="grid gap-4 sm:gap-6">
                 <FormField label="Initial Balance" htmlFor="initialBalance">
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      {settings.currency === 'USD' ? <DollarSign className="h-4 w-4" /> : 
-                       settings.currency === 'EUR' ? <CircleDollarSign className="h-4 w-4" /> : 
-                       settings.currency === 'GBP' ? <CircleDollarSign className="h-4 w-4" /> : 
-                       <CircleDollarSign className="h-4 w-4" />}
+                      <DollarSign className="h-4 w-4" />
                     </div>
                     <Input
                       id="initialBalance"
