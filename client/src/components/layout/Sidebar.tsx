@@ -169,13 +169,13 @@ export function Sidebar({ className }: SidebarProps) {
     }
   }, [direction, isScrolling, isActive]);
 
-  // Force menu to appear when user taps bottom right corner
+  // Force menu to appear when user taps bottom left corner
   const handleBodyClick = (e: MouseEvent) => {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     
-    // If click is in the bottom right quadrant of the screen
-    if (e.clientX > windowWidth * 0.7 && e.clientY > windowHeight * 0.7) {
+    // If click is in the bottom left quadrant of the screen
+    if (e.clientX < windowWidth * 0.3 && e.clientY > windowHeight * 0.7) {
       setMenuVisible(true);
     }
   };
@@ -202,7 +202,7 @@ export function Sidebar({ className }: SidebarProps) {
           variant="default"
           size="icon"
           className={cn(
-            "fixed right-4 bottom-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300",
+            "fixed left-4 bottom-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300",
             menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"
           )}
           aria-label="Open menu"
