@@ -730,14 +730,7 @@ export default function Settings() {
               />
             </div>
           </SettingsSection>
-          
-
-          
-          
-
-          
           {/* Removed API Settings section as it's not being used */}
-
         </TabsContent>
         
         {/* Account tab */}
