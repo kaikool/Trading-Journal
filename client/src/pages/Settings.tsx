@@ -615,7 +615,6 @@ export default function Settings() {
         <TabsContent value="general" className="mt-6 space-y-6">
           <SettingsSection 
             title="Appearance" 
-            description="Customize the look and feel of your application"
           >
             <div className="grid gap-4 sm:gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -777,7 +776,6 @@ export default function Settings() {
           
           <SettingsSection 
             title="Account Information" 
-            description="Manage your account details and preferences"
           >
             <div className="grid gap-4 sm:gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -909,7 +907,6 @@ export default function Settings() {
         <TabsContent value="trading" className="mt-6 space-y-6">
           <SettingsSection 
             title="Risk Management" 
-            description="Configure your default risk parameters and position sizing"
           >
             <div className="space-y-6 sm:space-y-8">
               <div className="space-y-4 sm:space-y-5">
@@ -982,7 +979,6 @@ export default function Settings() {
           
           <SettingsSection 
             title="Trading Defaults" 
-            description="Configure default parameters for new trades"
           >
             <div className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -1176,7 +1172,7 @@ export default function Settings() {
             description="Manage login methods and account linking"
           >
             <div className="space-y-4 sm:space-y-6">
-              {/* Danh sách các phương thức đăng nhập hiện tại */}
+              {/* Current login methods list */}
               <div className="space-y-3">
                 <h4 className="text-sm font-medium border-b pb-2 mb-3">Current Login Methods</h4>
                 
@@ -1247,12 +1243,12 @@ export default function Settings() {
                 )}
               </div>
               
-              {/* Thêm phương thức đăng nhập */}
+              {/* Add login method */}
               <div className="pt-2">
                 <h4 className="text-sm font-medium border-b pb-2 mb-3">Add Login Method</h4>
                 
                 <div className="space-y-3">
-                  {/* Google đăng nhập */}
+                  {/* Google login */}
                   {!linkedProviders.includes('google') && (
                     <div className="flex items-center justify-between p-3 rounded-lg border border-border/40 bg-card">
                       <div className="flex items-center space-x-3">
@@ -1289,7 +1285,7 @@ export default function Settings() {
                     </div>
                   )}
                   
-                  {/* Thông báo ghi chú */}
+                  {/* Note message */}
                   <div className="p-3 rounded-lg bg-muted/30 text-xs text-muted-foreground">
                     <p className="flex items-start">
                       <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
@@ -1366,12 +1362,12 @@ export default function Settings() {
                   </Button>
                 </div>
                 
-                {/* Thông tin về việc sử dụng API */}
+                {/* API usage information */}
                 <div className="p-3 rounded-lg bg-muted/30 text-xs text-muted-foreground">
                   <p className="flex items-start">
                     <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                     <span>
-                      API key được lưu trong localStorage và không gửi lên server.
+                      API key is stored in localStorage and not sent to the server.
                     </span>
                   </p>
                 </div>
