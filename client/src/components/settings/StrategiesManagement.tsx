@@ -461,35 +461,35 @@ const StrategyItem = React.memo(function StrategyItem({
               </Label>
             </div>
             
-            {/* Action buttons */}
-            <div className="pt-2 flex justify-end space-x-2">
+            {/* Actions */}
+            <div className="flex justify-end space-x-2 pt-3 border-t mt-4">
               <Button 
                 variant="outline" 
-                size="sm"
+                size="sm" 
+                className="h-8 px-3"
                 onClick={() => {
-                  onEdit(); // Exit edit mode
-                  resetFormFields(); // Clear any temporary form state
+                  resetFormFields();
+                  onEdit();
                 }}
-                className="h-8"
               >
-                <X className="h-3.5 w-3.5 mr-1.5" />
                 Cancel
               </Button>
               <Button 
-                size="sm"
-                className="h-8"
+                variant="default" 
+                size="sm" 
+                className="h-8 px-3"
                 onClick={() => onUpdate(strategy)}
                 disabled={isSaving}
               >
                 {isSaving ? (
                   <>
-                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                     Saving...
                   </>
                 ) : (
                   <>
-                    <Save className="h-3.5 w-3.5 mr-1.5" />
-                    Save Changes
+                    <Save className="mr-1.5 h-3.5 w-3.5" />
+                    Save
                   </>
                 )}
               </Button>
@@ -497,27 +497,76 @@ const StrategyItem = React.memo(function StrategyItem({
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Description */}
+            {/* Display description if available */}
             {strategy.description && (
-              <div className="text-sm text-muted-foreground">
-                {strategy.description}
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground">
+                  {strategy.description}
+                </p>
               </div>
             )}
             
-            {/* Timeframes Badge List - Only show if there are timeframes */}
-            {(strategy.timeframes || []).length > 0 && (
-              <div className="space-y-1.5">
-                <h4 className="text-xs font-medium flex items-center">
-                  <Clock className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+            {/* Trading Rules */}
+            {(strategy.rules && strategy.rules.length > 0) && (
+              <div className="mb-5">
+                <h4 className="font-medium text-sm flex items-center mb-2">
+                  <ListChecks className="h-4 w-4 mr-1.5" />
+                  Trading Rules
+                </h4>
+                <ul className="pl-5 space-y-1">
+                  {(strategy.rules || []).map(rule => (
+                    <li key={rule.id} className="text-sm list-disc">
+                      {rule.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* Entry Conditions */}
+            {(strategy.entryConditions && strategy.entryConditions.length > 0) && (
+              <div className="mb-5">
+                <h4 className="font-medium text-sm flex items-center mb-2">
+                  <DoorOpen className="h-4 w-4 mr-1.5" />
+                  Entry Conditions
+                </h4>
+                <ul className="pl-5 space-y-1">
+                  {(strategy.entryConditions || []).map(condition => (
+                    <li key={condition.id} className="text-sm list-disc">
+                      {condition.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* Exit Conditions */}
+            {(strategy.exitConditions && strategy.exitConditions.length > 0) && (
+              <div className="mb-5">
+                <h4 className="font-medium text-sm flex items-center mb-2">
+                  <LogOut className="h-4 w-4 mr-1.5" />
+                  Exit Conditions
+                </h4>
+                <ul className="pl-5 space-y-1">
+                  {(strategy.exitConditions || []).map(condition => (
+                    <li key={condition.id} className="text-sm list-disc">
+                      {condition.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* Timeframes */}
+            {(strategy.timeframes && strategy.timeframes.length > 0) && (
+              <div className="mb-3">
+                <h4 className="font-medium text-sm flex items-center mb-1.5">
+                  <Clock className="h-4 w-4 mr-1.5" />
                   Timeframes
                 </h4>
                 <div className="flex flex-wrap gap-1.5">
                   {(strategy.timeframes || []).sort().map(tf => (
-                    <Badge 
-                      key={tf} 
-                      variant="secondary"
-                      className="px-1.5 py-0 text-xs h-5"
-                    >
+                    <Badge key={tf} variant="secondary" className="text-xs">
                       {tf}
                     </Badge>
                   ))}
@@ -525,123 +574,37 @@ const StrategyItem = React.memo(function StrategyItem({
               </div>
             )}
             
-            {/* Trading Rules */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-medium flex items-center">
-                <ListChecks className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
-                Trading Rules {strategy.rules && strategy.rules.length > 0 && (
-                  <span className="text-[11px] ml-1.5 text-muted-foreground">
-                    ({strategy.rules.length})
-                  </span>
-                )}
-              </h4>
-              {(!strategy.rules || strategy.rules.length === 0) ? (
-                <div className="text-xs text-muted-foreground py-1">
-                  No trading rules defined
-                </div>
-              ) : (
-                <div className="space-y-0.5">
-                  {strategy.rules.map((rule, index) => (
-                    <div key={rule.id} className="pl-1 py-0.5 text-sm flex items-center">
-                      <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-primary/70 mr-2"></span>
-                      <span>{rule.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Entry Conditions */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-medium flex items-center">
-                <DoorOpen className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
-                Entry Conditions {strategy.entryConditions && strategy.entryConditions.length > 0 && (
-                  <span className="text-[11px] ml-1.5 text-muted-foreground">
-                    ({strategy.entryConditions.length})
-                  </span>
-                )}
-              </h4>
-              {(!strategy.entryConditions || strategy.entryConditions.length === 0) ? (
-                <div className="text-xs text-muted-foreground py-1">
-                  No entry conditions defined
-                </div>
-              ) : (
-                <div className="space-y-0.5">
-                  {strategy.entryConditions.map((condition, index) => (
-                    <div key={condition.id} className="pl-1 py-0.5 text-sm flex items-center">
-                      <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-blue-500/70 mr-2"></span>
-                      <span>{condition.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Exit Conditions */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-medium flex items-center">
-                <LogOut className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
-                Exit Conditions {strategy.exitConditions && strategy.exitConditions.length > 0 && (
-                  <span className="text-[11px] ml-1.5 text-muted-foreground">
-                    ({strategy.exitConditions.length})
-                  </span>
-                )}
-              </h4>
-              {(!strategy.exitConditions || strategy.exitConditions.length === 0) ? (
-                <div className="text-xs text-muted-foreground py-1">
-                  No exit conditions defined
-                </div>
-              ) : (
-                <div className="space-y-0.5">
-                  {strategy.exitConditions.map((condition, index) => (
-                    <div key={condition.id} className="pl-1 py-0.5 text-sm flex items-center">
-                      <span className="flex-shrink-0 h-1.5 w-1.5 rounded-full bg-red-500/70 mr-2"></span>
-                      <span>{condition.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            
-            {/* Action buttons */}
-            <div className="pt-1.5 flex justify-between">
-              <div>
-                {/* Only show "Set as default" button if not already default */}
-                {!strategy.isDefault && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={onSetAsDefault}
-                    className="h-8 text-xs"
-                    disabled={isSaving}
-                  >
-                    <Bookmark className="h-3.5 w-3.5 mr-1.5 opacity-70" />
-                    Set as Default
-                  </Button>
-                )}
-              </div>
-              <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
+            {/* Actions */}
+            <div className="flex justify-end space-x-2 pt-3 border-t">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={onDelete}
+              >
+                <Trash2 className="h-3.5 w-3.5 mr-1" />
+                Delete
+              </Button>
+              {!strategy.isDefault && (
+                <Button
+                  variant="outline"
                   size="sm"
-                  onClick={onDelete}
-                  className="h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/20"
-                  disabled={isSaving}
+                  className="h-7 text-xs"
+                  onClick={onSetAsDefault}
                 >
-                  <Trash2 className="h-3.5 w-3.5 mr-1.5 opacity-70" />
-                  Delete
+                  <Bookmark className="h-3.5 w-3.5 mr-1" />
+                  Set Default
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={onEdit}
-                  className="h-8 text-xs"
-                  disabled={isSaving}
-                >
-                  <Edit className="h-3.5 w-3.5 mr-1.5 opacity-70" />
-                  Edit
-                </Button>
-              </div>
+              )}
+              <Button
+                variant="secondary"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={onEdit}
+              >
+                <Edit className="h-3.5 w-3.5 mr-1" />
+                Edit
+              </Button>
             </div>
           </div>
         )}
@@ -668,28 +631,11 @@ export function StrategiesManagement() {
   const [isSaving, setIsSaving] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   
-  // State for dialog
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // Get current user ID
+  const userId = auth.currentUser?.uid;
   
-  // State for managing ephemeral values - avoid uncontrolled inputs
-  const [newRule, setNewRule] = useState("");
-  const [newEntryCondition, setNewEntryCondition] = useState("");
-  const [newExitCondition, setNewExitCondition] = useState("");
-  const [newTimeframe, setNewTimeframe] = useState("");
-  
-  // Initialize the toast hook
-  const toast = useToast().toast;
-  
-  // Reset all form fields
-  const resetFormFields = useCallback(() => {
-    setNewRule("");
-    setNewEntryCondition("");
-    setNewExitCondition("");
-    setNewTimeframe("");
-  }, [setNewRule, setNewEntryCondition, setNewExitCondition, setNewTimeframe]);
-  
-  // State for a new strategy
-  const [newStrategy, setNewStrategy] = useState<Omit<TradingStrategy, 'userId' | 'timeframes' | 'createdAt' | 'updatedAt'> & { timeframes?: string[] }>({
+  // State for new strategy form
+  const [newStrategy, setNewStrategy] = useState<TradingStrategy>({
     id: uuidv4(),
     name: "",
     description: "",
@@ -700,248 +646,261 @@ export function StrategiesManagement() {
     isDefault: false,
   });
   
-  // Load strategies from Firebase
+  // Popup dialog for new strategy
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  
+  // Helper state for form fields
+  const [newRule, setNewRule] = useState("");
+  const [newEntryCondition, setNewEntryCondition] = useState("");
+  const [newExitCondition, setNewExitCondition] = useState("");
+  const [newTimeframe, setNewTimeframe] = useState("");
+  
+  // Toast notifications
+  const { toast } = useToast();
+  
+  // useEffect hook for loading strategies
   useEffect(() => {
     let isMounted = true;
     
-    const loadStrategies = async () => {
-      if (!auth.currentUser) return;
+    async function loadStrategies() {
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
       
       try {
-        const userId = auth.currentUser.uid;
-        const strategiesData = await getStrategies(userId);
-        
-        // Fix multiple default strategies if needed
-        const correctedStrategies = await fixMultipleDefaultStrategies(strategiesData);
+        const strategies = await getStrategies(userId);
         
         if (isMounted) {
-          setStrategies(correctedStrategies);
+          // Fix any issues with multiple default strategies
+          const fixedStrategies = await fixMultipleDefaultStrategies(strategies);
+          setStrategies(fixedStrategies);
           setLoading(false);
         }
       } catch (error) {
         console.error("Error loading strategies:", error);
         if (isMounted) {
-          setLoading(false);
           toast({
             title: "Error loading strategies",
-            description: "Could not load your trading strategies. Please try refreshing the page.",
-            variant: "destructive"
+            description: "There was a problem loading your trading strategies. Please try again.",
+            variant: "destructive",
           });
+          setLoading(false);
         }
       }
-    };
+    }
     
     loadStrategies();
     
+    // Cleanup
     return () => {
       isMounted = false;
     };
-  }, [toast]);
+  }, [userId, toast]);
   
-  // Handler for updating fields of a strategy in edit mode
-  const handleStrategyFieldChange = useCallback((strategyId: string, fieldName: string, value: any) => {
-    // Đơn giản hóa tối đa: Cập nhật trực tiếp vào state với giá trị mới
-    // Không xử lý đặc biệt, chỉ áp dụng giá trị mới vào đối tượng
-    setStrategies(prevStrategies => 
-      prevStrategies.map(strategy => 
-        strategy.id === strategyId 
-          ? { ...strategy, [fieldName]: value }
-          : strategy
-      )
-    );
-  }, []);
+  // Function to handle editing a strategy
+  const handleEditStrategy = (strategyId: string) => {
+    if (editMode === strategyId) {
+      setEditMode(null);
+    } else {
+      setEditMode(strategyId);
+    }
+  };
   
-  // Handler for updating a strategy
-  const handleUpdateStrategy = useCallback(async (strategy: TradingStrategy) => {
-    if (!auth.currentUser) return;
+  // Reset form fields
+  const resetFormFields = () => {
+    setNewRule("");
+    setNewEntryCondition("");
+    setNewExitCondition("");
+    setNewTimeframe("");
+  };
+  
+  // Function to update a strategy
+  const handleUpdateStrategy = async (strategy: TradingStrategy) => {
+    if (!userId) return;
     
     setIsSaving(true);
     
     try {
-      const userId = auth.currentUser.uid;
-      
-      // First, check if this strategy is being set as default
+      // Check if this strategy is being set as default
       if (strategy.isDefault) {
-        // Update all other strategies to be non-default
-        const updates = strategies
-          .filter(s => s.id !== strategy.id && s.isDefault)
-          .map(s => updateStrategy(userId, s.id, {
-            ...s,
-            isDefault: false,
-            updatedAt: Timestamp.now()
-          }));
-        
-        // Wait for all updates to complete
-        if (updates.length > 0) {
-          await Promise.all(updates);
+        // Update all other strategies to not be default
+        for (const s of strategies) {
+          if (s.id !== strategy.id && s.isDefault) {
+            await updateStrategy(userId, s.id, {
+              ...s,
+              isDefault: false,
+            });
+          }
         }
       }
       
-      // Now update this strategy
-      const updatedStrategy = {
+      // Update strategy with timestamp
+      await updateStrategy(userId, strategy.id, {
         ...strategy,
-        updatedAt: Timestamp.now()
-      };
+        updatedAt: Timestamp.now(),
+      });
       
-      await updateStrategy(userId, strategy.id, updatedStrategy);
+      // Optimistic update in UI
+      setStrategies(prev => 
+        prev.map(s => {
+          if (s.id === strategy.id) {
+            return { ...strategy, updatedAt: Timestamp.now() };
+          }
+          // If this strategy is now default, make sure others are not
+          if (strategy.isDefault && s.isDefault && s.id !== strategy.id) {
+            return { ...s, isDefault: false };
+          }
+          return s;
+        })
+      );
       
-      // Exit edit mode
+      // Close edit mode
       setEditMode(null);
-      
-      // Reset form fields
-      resetFormFields();
       
       toast({
         title: "Strategy updated",
-        description: `${strategy.name} has been updated successfully`,
+        description: "Your trading strategy has been updated successfully.",
       });
     } catch (error) {
       console.error("Error updating strategy:", error);
       toast({
         title: "Error updating strategy",
-        description: "Could not update your strategy. Please try again.",
-        variant: "destructive"
+        description: "There was a problem updating your strategy. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsSaving(false);
     }
-  }, [strategies, toast, resetFormFields]);
+  };
   
-  // Handler for deleting a strategy
-  const handleDeleteStrategy = useCallback(async (id: string, name: string) => {
-    if (!auth.currentUser) return;
+  // Function to delete a strategy
+  const handleDeleteStrategy = async (strategyId: string) => {
+    if (!userId) return;
     
-    setIsSaving(true);
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this strategy? This action cannot be undone."
+    );
+    
+    if (!confirmed) return;
     
     try {
-      const userId = auth.currentUser.uid;
+      await deleteStrategy(userId, strategyId);
       
-      await deleteStrategy(userId, id);
-      
-      setStrategies(prevStrategies => 
-        prevStrategies.filter(strategy => strategy.id !== id)  
-      );
+      // Remove from local state
+      setStrategies(prev => prev.filter(s => s.id !== strategyId));
       
       toast({
         title: "Strategy deleted",
-        description: `${name} has been deleted`,
+        description: "Your trading strategy has been deleted successfully.",
       });
     } catch (error) {
       console.error("Error deleting strategy:", error);
       toast({
         title: "Error deleting strategy",
-        description: "Could not delete your strategy. Please try again.",
-        variant: "destructive"
+        description: "There was a problem deleting your strategy. Please try again.",
+        variant: "destructive",
       });
-    } finally {
-      setIsSaving(false);
     }
-  }, [toast]);
+  };
   
-  // Handler for setting a strategy as default
-  const handleSetDefaultStrategy = useCallback(async (strategy: TradingStrategy) => {
-    if (!auth.currentUser) return;
+  // Function to set a strategy as default
+  const handleSetAsDefault = async (strategyId: string) => {
+    if (!userId) return;
     
     try {
-      setIsSaving(true);
-      
-      // Update all other strategies to be non-default
-      const updatedStrategies = strategies.map(s => {
-        if (s.id === strategy.id) {
-          return { ...s, isDefault: true };
+      // Update all strategies, setting only the selected one as default
+      const strategiesUpdates = strategies.map(s => {
+        const isNowDefault = s.id === strategyId;
+        
+        // If the strategy status is changing, update in database
+        if (s.isDefault !== isNowDefault) {
+          updateStrategy(userId, s.id, {
+            ...s,
+            isDefault: isNowDefault,
+          }).catch(console.error);
         }
-        return { ...s, isDefault: false };
+        
+        // Return updated strategy for local state
+        return {
+          ...s,
+          isDefault: isNowDefault
+        };
       });
       
-      setStrategies(updatedStrategies);
-      
-      // Update in database
-      const userId = auth.currentUser.uid;
-      
-      // Run updates in parallel
-      await Promise.all([
-        // Set this strategy as default
-        updateStrategy(userId, strategy.id, {
-          ...strategy,
-          isDefault: true,
-          updatedAt: Timestamp.now()
-        }),
-        // Make all other strategies non-default
-        ...strategies
-          .filter(s => s.id !== strategy.id && s.isDefault)
-          .map(s => updateStrategy(userId, s.id, {
-            ...s,
-            isDefault: false,
-            updatedAt: Timestamp.now()
-          }))
-      ]);
+      // Update local state
+      setStrategies(strategiesUpdates);
       
       toast({
-        title: "Default strategy updated",
-        description: `${strategy.name} is now your default strategy`,
+        title: "Default strategy set",
+        description: "Your default trading strategy has been updated.",
       });
     } catch (error) {
       console.error("Error setting default strategy:", error);
       toast({
-        title: "Error",
-        description: "Could not set default strategy. Please try again.",
-        variant: "destructive"
+        title: "Error setting default strategy",
+        description: "There was a problem updating your default strategy. Please try again.",
+        variant: "destructive",
       });
-    } finally {
-      setIsSaving(false);
     }
-  }, [strategies, toast]);
+  };
   
-  // Handler for creating a new strategy
-  const handleCreateStrategy = useCallback(async () => {
-    if (!auth.currentUser || !newStrategy.name.trim()) return;
+  // Function to create a new strategy
+  const handleCreateStrategy = async () => {
+    if (!userId) return;
+    
+    // Validate required fields
+    if (!newStrategy.name.trim()) {
+      toast({
+        title: "Missing required fields",
+        description: "Please provide a name for your trading strategy.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsCreating(true);
     
     try {
-      const userId = auth.currentUser.uid;
+      // Check if this strategy is being set as default
+      const existingDefault = strategies.find(s => s.isDefault);
       
-      // If this will be the default strategy, update all others first
-      if (newStrategy.isDefault && strategies.some(s => s.isDefault)) {
-        const updates = strategies
-          .filter(s => s.isDefault)
-          .map(s => updateStrategy(userId, s.id, {
-            ...s,
-            isDefault: false,
-            updatedAt: Timestamp.now()
-          }));
-        
-        // Wait for all updates to complete
-        if (updates.length > 0) {
-          await Promise.all(updates);
-        }
+      if (newStrategy.isDefault && existingDefault) {
+        // Update existing default strategy
+        await updateStrategy(userId, existingDefault.id, {
+          ...existingDefault,
+          isDefault: false,
+        });
       }
       
-      // Now add the new strategy
-      const strategyWithTimestamps = {
+      // Add new strategy to database
+      const strategyId = await addStrategy(userId, {
         ...newStrategy,
-        userId,
-        timeframes: newStrategy.timeframes || [],
         createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now()
+        updatedAt: Timestamp.now(),
+      });
+      
+      // Add to local state
+      const createdStrategy = {
+        ...newStrategy,
+        id: strategyId,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
       };
       
-      const newStrategyId = await addStrategy(userId, strategyWithTimestamps);
+      // Update other strategies if this is default
+      if (newStrategy.isDefault) {
+        setStrategies(prev => 
+          prev.map(s => ({
+            ...s,
+            isDefault: false
+          })).concat([createdStrategy])
+        );
+      } else {
+        setStrategies(prev => [...prev, createdStrategy]);
+      }
       
-      // Add to local state with the new ID
-      const newStrategyDocId = typeof newStrategyId === 'object' && newStrategyId ? 
-        (newStrategyId.id || '') : 
-        (typeof newStrategyId === 'string' ? newStrategyId : '');
-      
-      setStrategies(prevStrategies => [
-        ...prevStrategies,
-        { 
-          ...strategyWithTimestamps, 
-          id: newStrategyDocId
-        } as TradingStrategy
-      ]);
-      
-      // Reset form
+      // Reset form and close dialog
       setNewStrategy({
         id: uuidv4(),
         name: "",
@@ -952,91 +911,89 @@ export function StrategiesManagement() {
         timeframes: [],
         isDefault: false,
       });
-      
-      // Close dialog
+      resetFormFields();
       setIsDialogOpen(false);
       
       toast({
         title: "Strategy created",
-        description: `${newStrategy.name} has been created successfully`,
+        description: "Your new trading strategy has been created successfully.",
       });
     } catch (error) {
       console.error("Error creating strategy:", error);
       toast({
         title: "Error creating strategy",
-        description: "Could not create your strategy. Please try again.",
-        variant: "destructive"
+        description: "There was a problem creating your strategy. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setIsCreating(false);
     }
-  }, [newStrategy, strategies, toast]);
+  };
   
-  // Memoized strategy list renderer function
+  // Function to handle editing a field of the strategy being edited
+  const handleEditFieldChange = (strategyId: string, fieldName: string, value: any) => {
+    setStrategies(prev =>
+      prev.map(s => {
+        if (s.id === strategyId) {
+          return { ...s, [fieldName]: value };
+        }
+        return s;
+      })
+    );
+  };
+  
+  // Render strategies list - optimized with useMemo
   const renderStrategyList = useMemoWithPerf(() => {
     if (strategies.length === 0) {
       return (
-        <Card className="p-8">
-          <div className="flex flex-col items-center justify-center h-40 text-center">
-            <BookCopy className="h-12 w-12 mb-4 text-muted-foreground" />
-            <h3 className="font-medium text-xl">No strategies yet</h3>
-            <p className="text-muted-foreground max-w-md mt-1 mb-4">
-              Create your first trading strategy to improve consistency and track performance
-            </p>
-            <Button
-              onClick={() => setIsDialogOpen(true)}
-              className="flex items-center space-x-2"
-            >
-              <Plus size={16} />
-              <span>Create Your First Strategy</span>
-            </Button>
+        <div className="text-center py-6 border rounded-lg bg-background">
+          <div className="flex flex-col items-center justify-center space-y-3">
+            <BookCopy className="h-10 w-10 text-muted-foreground/40" />
+            <div className="space-y-1">
+              <h3 className="text-lg font-medium">No strategies yet</h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Create your first trading strategy to organize your trading approach.
+              </p>
+            </div>
           </div>
-        </Card>
+        </div>
       );
     }
     
     return (
-      <Accordion type="single" collapsible className="space-y-2">
-        {strategies.map((strategy) => {
-          // Handler function for each strategy's field changes 
-          // Đơn giản hóa tối đa: chỉ là hàm trung gian gọi hàm khác
-          const handleEditFieldChange = (fieldName: string, value: any) => {
-            handleStrategyFieldChange(strategy.id, fieldName, value);
-          };
-          
-          return (
-            <StrategyItem
-              key={strategy.id}
-              strategy={strategy}
-              isEditMode={editMode === strategy.id}
-              isSaving={isSaving}
-              onEdit={() => setEditMode(editMode === strategy.id ? null : strategy.id)}
-              onUpdate={handleUpdateStrategy}
-              onDelete={() => {
-                if (confirm(`Are you sure you want to delete "${strategy.name}" strategy?`)) {
-                  handleDeleteStrategy(strategy.id, strategy.name);
-                }
-              }}
-              onSetAsDefault={() => handleSetDefaultStrategy(strategy)}
-              onEditFieldChange={handleEditFieldChange}
-              newRule={newRule}
-              newEntryCondition={newEntryCondition}
-              newExitCondition={newExitCondition}
-              newTimeframe={newTimeframe}
-              resetFormFields={resetFormFields}
-            />
-          );
-        })}
+      <Accordion
+        type="multiple"
+        defaultValue={strategies.length === 1 ? [strategies[0].id] : []}
+        className="space-y-3"
+      >
+        {strategies.map(strategy => (
+          <StrategyItem
+            key={strategy.id}
+            strategy={strategy}
+            isEditMode={editMode === strategy.id}
+            onEdit={() => handleEditStrategy(strategy.id)}
+            onUpdate={handleUpdateStrategy}
+            onDelete={() => handleDeleteStrategy(strategy.id)}
+            onSetAsDefault={() => handleSetAsDefault(strategy.id)}
+            isSaving={isSaving}
+            onEditFieldChange={(fieldName, value) => 
+              handleEditFieldChange(strategy.id, fieldName, value)
+            }
+            newRule={newRule}
+            newEntryCondition={newEntryCondition}
+            newExitCondition={newExitCondition}
+            newTimeframe={newTimeframe}
+            resetFormFields={resetFormFields}
+          />
+        ))}
       </Accordion>
     );
-  }, [strategies, editMode, isSaving, handleUpdateStrategy, handleDeleteStrategy, 
-      handleStrategyFieldChange, handleSetDefaultStrategy, newRule, newEntryCondition, 
-      newExitCondition, newTimeframe, resetFormFields, setEditMode]);
+  }, [strategies, editMode, isSaving, newRule, newEntryCondition, newExitCondition, newTimeframe]);
   
-  // Render loading state
+  // Show loading state
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
+      <div className="flex justify-center items-center h-40">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -1048,7 +1005,20 @@ export function StrategiesManagement() {
         <div>
           <h3 className="text-lg font-medium">Trading Strategies</h3>
         </div>
-        
+      </div>
+      
+      {/* Render strategies list using memoized function */}
+      {renderStrategyList}
+      
+      {/* Add New Strategy Button at the bottom */}
+      <div className="flex justify-center mt-6">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Strategy
+            </Button>
+          </DialogTrigger>
           <DialogContent className="sm:max-w-[700px] md:max-w-[800px] lg:max-w-[900px] overflow-y-auto max-h-[85vh]" variant="form">
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
@@ -1229,9 +1199,6 @@ export function StrategiesManagement() {
           </DialogContent>
         </Dialog>
       </div>
-      
-      {/* Render strategies list using memoized function */}
-      {renderStrategyList}
     </div>
   );
 }
