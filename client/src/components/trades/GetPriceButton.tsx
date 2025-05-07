@@ -12,7 +12,10 @@ import {
   BarChart3, 
   Coins,
   DollarSign,
-  CandlestickChart
+  CandlestickChart,
+  Cable,
+  Webhook,
+  Plug
 } from 'lucide-react';
 import { useMarketPrice } from '@/hooks/use-market-price';
 import { debug } from '@/lib/debug';
@@ -88,27 +91,13 @@ export function GetPriceButton({
     return `${hours}h ago`;
   };
   
-  // Lựa chọn biểu tượng phù hợp cho loại tài sản
-  const getAssetIcon = () => {
-    const upperSymbol = symbol.toUpperCase();
-    
+  // Sử dụng biểu tượng API chung cho tất cả các cặp tiền tệ
+  const getApiIcon = () => {
     // Xác định cỡ biểu tượng theo kích thước nút
     const iconClass = iconSize;
     
-    if (upperSymbol.includes('XAU') || upperSymbol.includes('GOLD')) {
-      return <Coins className={iconClass} />;
-    }
-    
-    if (upperSymbol.includes('JPY')) {
-      return <CandlestickChart className={iconClass} />;
-    }
-    
-    if (upperSymbol.includes('EUR') || upperSymbol.includes('GBP')) {
-      return <BarChart3 className={iconClass} />;
-    }
-    
-    // Mặc định cho các cặp tiền tệ
-    return <DollarSign className={iconClass} />;
+    // Sử dụng biểu tượng Webhook (API) cho tất cả các cặp tiền tệ
+    return <Webhook className={iconClass} />;
   };
   
   // Xác định kích thước nút dựa trên props
@@ -138,7 +127,7 @@ export function GetPriceButton({
             ) : lastFetchTime ? (
               <CheckCircle className={`${iconSize} text-green-500`} />
             ) : (
-              getAssetIcon()
+              getApiIcon()
             )}
           </Button>
         </TooltipTrigger>
