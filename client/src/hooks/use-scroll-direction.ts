@@ -11,7 +11,7 @@ interface ScrollState {
   isScrolling: boolean;
 }
 
-export function useScrollDirection(threshold = 10, idleTimeout = 1500): ScrollState {
+export function useScrollDirection(threshold = 5, idleTimeout = 1000): ScrollState {
   const [scrollState, setScrollState] = useState<ScrollState>({
     direction: 'idle',
     lastScrollTop: 0,

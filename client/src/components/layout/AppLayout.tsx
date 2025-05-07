@@ -29,15 +29,33 @@ export function AppLayout({ children }: AppLayoutProps) {
     setMounted(true);
   }, []);
 
-  // Handle safe area behavior based on scroll direction
+  // Smooth transition for safe area behavior with debounce
   useEffect(() => {
-    if (direction === 'down' && isScrolling) {
-      // When scrolling down, allow content to flow into safe areas
-      setRespectSafeArea(false);
-    } else if (direction === 'up' && isScrolling) {
-      // When scrolling up, restore safe areas
-      setRespectSafeArea(true);
-    }
+    const handleSafeAreaTransition = () => {
+      // Only change state if we're actively scrolling (prevents end-of-page jitter)
+      if (!isScrolling) return;
+      
+      // When near bottom of page, always keep safe areas to prevent bounce effect
+      const isNearBottom = 
+        window.innerHeight + window.scrollY >= 
+        document.documentElement.scrollHeight - 100;
+        
+      if (isNearBottom) {
+        setRespectSafeArea(true);
+        return;
+      }
+      
+      // Normal scrolling behavior
+      if (direction === 'down') {
+        setRespectSafeArea(false);
+      } else if (direction === 'up') {
+        setRespectSafeArea(true);
+      }
+    };
+    
+    // Add debounce to prevent rapid state changes
+    const timeoutId = setTimeout(handleSafeAreaTransition, 50);
+    return () => clearTimeout(timeoutId);
   }, [direction, isScrolling]);
 
   // Prevent hydration mismatch by not rendering until mounted
@@ -62,11 +80,11 @@ export function AppLayout({ children }: AppLayoutProps) {
       >
         <div 
           className={cn(
-            "transition-all duration-300 max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
-            // Apply safe area padding conditionally for top and bottom only
+            "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right pb-24",
+            // Apply safe area padding conditionally for top and bottom only with extra bottom space to prevent bounce
             respectSafeArea 
-              ? "pt-4 pb-4 sm:pt-6 sm:pb-6 safe-area-top safe-area-bottom" 
-              : "pt-0 pb-0 sm:pt-0 sm:pb-0"
+              ? "pt-4 safe-area-top safe-area-bottom" 
+              : "pt-0"
           )}
         >
           {children}
