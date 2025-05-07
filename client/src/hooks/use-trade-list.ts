@@ -255,16 +255,10 @@ export function useTradeList(options: {
   const applyFilters = useCallback((trades: any[]) => {
     if (!trades || trades.length === 0) return [];
     
-    // Chi giữ lại logs cần thiết và chỉ hiển thị trong development
-    if (process.env.NODE_ENV === 'development') {
-      debug("TradeHistory filters changed:", filters);
-      debug("TradeHistory sortBy changed:", sortBy);
-      debug("Initial trades count:", trades.length);
-      
-      // Giữ lại log cơ bản về trade đầu tiên nếu cần debug
-      if (trades.length > 0) {
-        debug("First trade ID:", trades[0]?.id || "Unknown");
-      }
+    // Loại bỏ logs thường xuyên để tránh vòng lặp vô tận trong console
+    // Chỉ log thông tin cơ bản về số lượng
+    if (trades.length > 0 && process.env.NODE_ENV === 'development') {
+      debug("Applying sort:", sortBy, "on", trades.length, "trades"); 
     }
     
     let result = [...trades] as Trade[];

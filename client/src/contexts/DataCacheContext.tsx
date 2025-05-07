@@ -175,17 +175,23 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
           getUserData(userId).then(data => {
             if (data) {
               // Update with the fetched data
-              setDataState(current => ({
-                ...current,
-                userData: data,
-                isUserDataLoaded: true
-              }));
-              
-              // Also update the cache with latest trades and new userData
-              updateCache({ 
-                trades: current.trades, 
-                userData: data, 
-                lastUpdated: Date.now()
+              // Call setDataState and updateCache in sequence with prevState
+              setDataState(currState => {
+                // Use latest state from callback to ensure we have current data
+                const updatedState = {
+                  ...currState,
+                  userData: data,
+                  isUserDataLoaded: true
+                };
+                
+                // Also update the cache with latest trades and new userData
+                updateCache({ 
+                  trades: updatedState.trades, 
+                  userData: data, 
+                  lastUpdated: Date.now()
+                });
+                
+                return updatedState;
               });
             }
           }).catch(error => {
