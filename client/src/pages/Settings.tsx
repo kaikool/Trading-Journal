@@ -11,7 +11,7 @@ import {
   unlinkProvider,
   getProviderName
 } from "@/lib/firebase";
-import { getApiKey, getApiKeyFromFirebase, saveApiKeyToFirebase } from "@/lib/market-price-service";
+// Removed import for API key management
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
@@ -200,29 +200,7 @@ export default function Settings() {
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
   const [isUnlinking, setIsUnlinking] = useState(false);
   
-  // API Settings state
-  const [apiSettings, setApiSettings] = useState({
-    twelvedataApiKey: localStorage.getItem('twelvedata_api_key') || ''
-  });
-  
-  // Lấy API key từ Firebase khi component mount
-  useEffect(() => {
-    async function loadApiKeyFromFirebase() {
-      const apiKey = await getApiKeyFromFirebase();
-      if (apiKey) {
-        setApiSettings(prev => ({
-          ...prev,
-          twelvedataApiKey: apiKey
-        }));
-      }
-    }
-    
-    if (auth.currentUser) {
-      loadApiKeyFromFirebase();
-    }
-  }, []);
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [isSavingApi, setIsSavingApi] = useState(false);
+  // API Settings đã bị xóa
   
   // Check device performance
   useEffect(() => {
@@ -480,50 +458,7 @@ export default function Settings() {
     }
   };
   
-  // Save API settings to Firebase and localStorage
-  const saveApiSettings = async () => {
-    setIsSavingApi(true);
-    
-    try {
-      if (apiSettings.twelvedataApiKey) {
-        // Lưu API key vào Firebase và localStorage
-        const savedToFirebase = await saveApiKeyToFirebase(apiSettings.twelvedataApiKey);
-        
-        toast({
-          title: "API settings saved",
-          description: savedToFirebase 
-            ? "Your API key has been saved to your account and will be available on all devices." 
-            : "Your API key has been saved locally only. Sign in to sync across devices.",
-        });
-      } else {
-        // Xóa API key khỏi localStorage
-        localStorage.removeItem('twelvedata_api_key');
-        
-        // Nếu đã đăng nhập, cũng xóa khỏi Firestore
-        if (auth.currentUser) {
-          try {
-            // Lưu một chuỗi rỗng - saveApiKeyToFirebase sẽ xử lý cập nhật
-            await saveApiKeyToFirebase("");
-          } catch (error) {
-            console.error("Failed to remove API key from Firebase:", error);
-          }
-        }
-        
-        toast({
-          title: "API settings cleared",
-          description: "Your API key has been removed.",
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error saving API settings",
-        description: error instanceof Error ? error.message : "An error occurred",
-      });
-    } finally {
-      setIsSavingApi(false);
-    }
-  };
+  // Save API settings đã bị xóa
   
   // Loading state with skeleton UI
   if (isLoading) {
@@ -801,88 +736,7 @@ export default function Settings() {
           
 
           
-          <SettingsSection 
-            title="API Settings"
-          >
-            <div className="space-y-6">
-              <FormField label="TwelveData API Key" htmlFor="twelvedataApiKey">
-                <div className="relative">
-                  <Input
-                    id="twelvedataApiKey"
-                    type={showApiKey ? "text" : "password"}
-                    value={apiSettings.twelvedataApiKey}
-                    onChange={(e) => 
-                      setApiSettings({
-                        ...apiSettings,
-                        twelvedataApiKey: e.target.value
-                      })
-                    }
-                    className="pr-10"
-                    placeholder="Enter your TwelveData API key"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    aria-label={showApiKey ? "Hide API key" : "Show API key"}
-                  >
-                    {showApiKey ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1.5 flex items-center justify-between">
-                  Used for real-time market data
-                  <a 
-                    href="https://twelvedata.com/pricing" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Get API key
-                  </a>
-                </p>
-              </FormField>
-              
-              <div className="pt-2">
-                <Button 
-                  onClick={saveApiSettings} 
-                  disabled={isSavingApi}
-                  className="w-full sm:w-auto"
-                >
-                  {isSavingApi ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="mr-2 h-4 w-4" />
-                      Save API Settings
-                    </>
-                  )}
-                </Button>
-              </div>
-              
-              {/* API usage information */}
-              <div className="mt-4 p-3 bg-muted/60 rounded-md">
-                <div className="flex items-start space-x-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>
-                      TwelveData offers a free plan with up to 800 API calls per day. This is sufficient for most users.
-                    </p>
-                    <p>
-                      Your API key is stored securely in your Firebase profile and is used only for market data requests.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </SettingsSection>
-          
+          {/* Removed API Settings section as it's not being used */}
 
         </TabsContent>
         
