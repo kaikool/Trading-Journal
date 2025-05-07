@@ -185,47 +185,38 @@ const StrategyItem = React.memo(function StrategyItem({
     <AccordionItem
       value={strategy.id}
       className={cn(
-        "border rounded-lg overflow-hidden mb-3 transition-all duration-200",
+        "app-accordion-item mb-2 border",
         strategy.isDefault 
-          ? "border-primary/30 bg-primary/5 shadow-[0_2px_10px_-2px_rgba(var(--primary),0.15)]" 
-          : "hover:border-border/60 hover:shadow-sm"
+          ? "border-primary/30" 
+          : "border-border/50"
       )}
     >
-      <AccordionTrigger className="px-4 py-4 hover:bg-muted/30 transition-colors">
+      <AccordionTrigger className="px-4 py-3 hover:bg-muted/30 transition-colors">
         <div className="flex items-center justify-between w-full gap-2">
           <div className="flex items-center text-left gap-3">
             <div className={cn(
-              "flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0",
+              "flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0",
               strategy.isDefault 
                 ? "bg-primary/15 text-primary/90 border border-primary/20" 
                 : "bg-muted/40 text-muted-foreground/80 border border-border/50"
             )}>
-              <BookCopy className="h-5 w-5" />
+              <BookCopy className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
               <span className="font-semibold text-sm">{strategy.name}</span>
-              {strategy.description && (
-                <span className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{strategy.description}</span>
-              )}
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {strategy.isDefault && (
-              <Badge variant="outline" className="font-normal text-xs h-7 border-primary/30 bg-primary/10 text-primary">
-                <Bookmark className="h-3.5 w-3.5 mr-1.5" />
-                Default Strategy
-              </Badge>
-            )}
-            {strategy.timeframes && strategy.timeframes.length > 0 && (
-              <Badge variant="secondary" className="text-xs h-7 px-2.5 bg-secondary/50">
-                <Clock className="h-3.5 w-3.5 mr-1.5 opacity-70" />
-                {strategy.timeframes.length} Timeframes
+              <Badge variant="outline" className="font-normal text-xs h-6 border-primary/30 bg-primary/10 text-primary">
+                <Bookmark className="h-3 w-3 mr-1" />
+                Default
               </Badge>
             )}
           </div>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="px-5 pb-5 pt-2">
+      <AccordionContent className="app-accordion-content px-3 pb-3 pt-1">
         {isEditMode ? (
           <div className="space-y-5">
             <div className="space-y-4 bg-muted/10 p-4 rounded-lg border border-border/40">
