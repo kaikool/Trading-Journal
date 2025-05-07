@@ -24,8 +24,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useUserActivity } from "@/hooks/use-user-activity";
 
-// Navigation items shared across all sidebar modes - keep as component internal constant
-const NAVIGATION_ITEMS = [
+// Define navigation items internal to this component
+const SIDEBAR_LINKS = [
   { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", href: "/" },
   { icon: <TrendingUp className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
   { icon: <History className="h-5 w-5" />, label: "History", href: "/trade/history" },
@@ -33,49 +33,45 @@ const NAVIGATION_ITEMS = [
   { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
 
-interface SidebarItemProps {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-  isActive: boolean;
-  collapsed?: boolean;
-  onClick?: () => void;
-}
-
 // Individual sidebar navigation item
-export const SidebarItem = ({ 
+function SidebarItem({ 
   icon, 
   label, 
   href, 
   isActive, 
   collapsed = false, 
   onClick 
-}: SidebarItemProps) => (
-  <li>
-    <Link
-      to={href}
-      onClick={onClick}
-      className={cn(
-        "flex items-center px-4 py-3 text-sm rounded-md transition-all",
-        collapsed ? "justify-center" : "",
-        isActive
-          ? "text-primary-foreground bg-primary shadow-sm font-medium"
-          : "text-foreground/80 hover:bg-muted hover:text-foreground"
-      )}
-    >
-      <span className="w-5 h-5 flex items-center justify-center">
-        {icon}
-      </span>
-      {!collapsed && <span className="ml-3">{label}</span>}
-      {collapsed && (
-        <span className="sr-only">{label}</span>
-      )}
-    </Link>
-  </li>
-);
-
-interface SidebarProps {
-  className?: string;
+}: {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+  isActive: boolean;
+  collapsed?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <li>
+      <Link
+        to={href}
+        onClick={onClick}
+        className={cn(
+          "flex items-center px-4 py-3 text-sm rounded-md transition-all",
+          collapsed ? "justify-center" : "",
+          isActive
+            ? "text-primary-foreground bg-primary shadow-sm font-medium"
+            : "text-foreground/80 hover:bg-muted hover:text-foreground"
+        )}
+      >
+        <span className="w-5 h-5 flex items-center justify-center">
+          {icon}
+        </span>
+        {!collapsed && <span className="ml-3">{label}</span>}
+        {collapsed && (
+          <span className="sr-only">{label}</span>
+        )}
+      </Link>
+    </li>
+  );
 }
 
 /**
@@ -87,7 +83,7 @@ interface SidebarProps {
  * 
  * Uses LayoutContext to manage collapse state that persists across sessions
  */
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { toast } = useToast();
@@ -265,7 +261,7 @@ export function Sidebar({ className }: SidebarProps) {
           {/* Navigation Items */}
           <nav className="p-4">
             <ul className="space-y-1">
-              {NAVIGATION_ITEMS.map(item => (
+              {SIDEBAR_LINKS.map(item => (
                 <SidebarItem
                   key={item.href}
                   icon={item.icon}
@@ -345,7 +341,7 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Navigation Items */}
       <nav className="flex-1 overflow-y-auto p-3">
         <ul className="space-y-1">
-          {NAVIGATION_ITEMS.map(item => (
+          {SIDEBAR_LINKS.map(item => (
             <SidebarItem
               key={item.href}
               icon={item.icon}
