@@ -1,7 +1,7 @@
 import React from 'react';
-import { StrategiesManagement } from '@/components/settings/StrategiesManagement';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { BookCopy } from 'lucide-react';
+import { StrategyList } from '@/components/strategies/StrategyList';
 
 export default function StrategiesPage() {
   return (
@@ -12,7 +12,7 @@ export default function StrategiesPage() {
       />
       
       <div className="mt-6">
-        <StrategiesManagement />
+        <StrategyList />
       </div>
     </div>
   );
