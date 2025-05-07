@@ -88,14 +88,17 @@ export function AppLayout({ children }: AppLayoutProps) {
           isMobile && "pt-0"
         )}
       >
-        {/* Đã loại bỏ div safe area riêng vì đã áp dụng trong container */}
+        {/* Safe area vùng đầu trang */}
+        {respectSafeArea && (
+          <div className="safe-area-top w-full h-0" />
+        )}
         
         <div 
           className={cn(
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
-            // Đảm bảo luôn tôn trọng safe area ở trạng thái mặc định (trước khi cuộn)
+            // Bottom safe area luôn được áp dụng, top safe area xử lý riêng ở trên
             respectSafeArea 
-              ? "pt-4 pb-4 safe-area-top safe-area-bottom" 
+              ? "pt-4 pb-4 safe-area-bottom" 
               : "pt-0 pb-0"
           )}
         >

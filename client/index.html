@@ -187,45 +187,24 @@
     <!-- Script này PHẢI tồn tại trong môi trường production để tránh lỗi Firebase auth/api-key-not-valid -->
     <script src="/config.js"></script>
 
-    <!-- Script vô hiệu hóa cử chỉ vuốt mặc định của Safari và bổ sung vuốt từ cạnh trái -->
+    <!-- Script vô hiệu hóa cử chỉ vuốt mặc định của Safari -->
     <script>
-      // Vô hiệu hóa cử chỉ vuốt quay lại/tiến tới Safari (swipe back/forward)
+      // Giải pháp 1: Vô hiệu hóa cử chỉ vuốt quay lại/tiến tới Safari (swipe back/forward)
       document.addEventListener('DOMContentLoaded', function() {
         // Thêm CSS trực tiếp để vô hiệu hóa cử chỉ vuốt
         const style = document.createElement('style');
         style.textContent = `
           /* Vô hiệu hóa cử chỉ vuốt Safari trên PWA */
-          html {
+          html, body {
             overscroll-behavior-x: none;
-            overflow-x: hidden;
-          }
-          body {
-            overflow-x: hidden;
-            position: relative;
-            width: 100%;
-          }
-          
-          /* Tạo vùng vuốt đặc biệt ở cạnh trái của màn hình */
-          .swipe-zone-visible {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 20px; 
-            height: 100vh;
-            background: rgba(0,0,0,0.02);
-            z-index: 10;
-            pointer-events: auto;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
           }
         `;
         document.head.appendChild(style);
-        
-        // Tạo phần tử vuốt ở cạnh trái màn hình
-        const swipeZone = document.createElement('div');
-        swipeZone.className = 'swipe-zone-visible';
-        document.body.appendChild(swipeZone);
       });
 
-      // Sử dụng history.pushState để ngăn Safari quay lại trang trước
+      // Giải pháp 2: Sử dụng history.pushState để ngăn Safari quay lại trang trước
       window.addEventListener('load', function() {
         // Thêm một dummy state vào history để ngăn Safari quay lại
         window.history.pushState({page: 'initial'}, document.title, window.location.href);
@@ -237,13 +216,27 @@
         });
       });
       
-      // Thêm thông báo cho người dùng khi họ lần đầu vào ứng dụng
-      setTimeout(function() {
-        if (!localStorage.getItem('swipe-hint-shown')) {
-          // Có thể thêm hint chỉ dẫn vuốt từ cạnh trái để mở menu ở đây
-          localStorage.setItem('swipe-hint-shown', 'true');
+      // Giải pháp 3: Bắt và ngăn chặn các cử chỉ vuốt ngang
+      let startX = 0;
+      let startY = 0;
+      
+      document.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].pageX;
+        startY = e.touches[0].pageY;
+      }, {passive: true});
+      
+      document.addEventListener('touchmove', function(e) {
+        // Giá trị ngưỡng để xác định vuốt ngang
+        const threshold = 10;
+        const diffX = startX - e.touches[0].pageX;
+        const diffY = startY - e.touches[0].pageY;
+        
+        // Nếu chuyển động ngang (left/right) và lớn hơn chuyển động dọc (up/down)
+        if (Math.abs(diffX) > threshold && Math.abs(diffX) > Math.abs(diffY)) {
+          e.preventDefault();
+          return false;
         }
-      }, 2000);
+      }, {passive: false});
     </script>
 
     <script type="module" src="/src/main.tsx"></script>
