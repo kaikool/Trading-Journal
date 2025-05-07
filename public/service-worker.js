@@ -6,7 +6,7 @@
  * CẬP NHẬT: Chuyển từ Firebase Functions sang Firebase Storage Web SDK trực tiếp
  */
 
-const APP_VERSION = 'v3.0.0'; // Major version change with new error handling
+const APP_VERSION = 'v2.1.1'; // Updated with improved error handling
 const CACHE_NAME = 'forex-journal-cache-' + APP_VERSION;
 const OFFLINE_URL = '/offline.html';
 const FALLBACK_IMAGE = '/icons/offline.png';
@@ -116,40 +116,17 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();  // Ensures that newly registered SW becomes active as soon as possible
   
   event.waitUntil(
-    (async () => {
-      try {
-        const cache = await caches.open(CACHE_NAME);
-        
-        // Chỉ cache các assets thiết yếu nhất để tránh lỗi
-        const essentialAssets = [
-          '/',
-          '/index.html',
-          '/offline.html',
-          '/favicon.ico',
-          '/favicon.svg',
-          FALLBACK_IMAGE,
-          OFFLINE_CANVAS_URL
-        ];
-        
-        console.log('Caching essential assets for version:', APP_VERSION);
-        await cache.addAll(essentialAssets);
-        
-        // Sau đó thêm các asset còn lại một cách tuần tự để tránh các lỗi đồng thời
-        const otherAssets = STATIC_ASSETS.filter(asset => !essentialAssets.includes(asset));
-        
-        for (const asset of otherAssets) {
-          try {
-            await cache.add(asset);
-          } catch (err) {
-            console.warn('Failed to cache asset:', asset, err);
-          }
-        }
-        
-        console.log('Service Worker installation complete');
-      } catch (error) {
-        console.error('Service Worker installation failed:', error);
-      }
-    })()
+    caches.open(CACHE_NAME).then((cache) => {
+      // Cache static assets and splash screens
+      return cache.addAll([
+        ...STATIC_ASSETS,
+        ...IOS_SPLASH_SCREENS
+      ]).catch(err => {
+        console.error('Error caching static assets:', err);
+        // Continue even if some assets fail to cache
+        return Promise.resolve();
+      });
+    })
   );
 });
 
@@ -358,32 +335,10 @@ self.addEventListener('fetch', (event) => {
   // Firebase requests - Network only strategy, don't cache
   if (isFirebaseRequest(requestUrl.href)) {
     event.respondWith(
-      (async () => {
-        try {
-          // Create a new request without cache-control header to avoid CORS issues
-          const newRequest = new Request(event.request.url, {
-            method: event.request.method,
-            headers: (() => {
-              const headers = new Headers();
-              for (const [key, value] of event.request.headers.entries()) {
-                // Skip cache-control header which causes CORS issues with Firebase Storage
-                if (key.toLowerCase() !== 'cache-control') {
-                  headers.append(key, value);
-                }
-              }
-              return headers;
-            })(),
-            mode: 'cors',
-            credentials: event.request.credentials,
-            redirect: event.request.redirect
-          });
-          
-          return await fetch(newRequest);
-        } catch (error) {
-          console.log('Firebase request failed', requestUrl.href, error);
-          return generateFallbackResponse(event.request);
-        }
-      })()
+      fetch(event.request).catch(() => {
+        console.log('Firebase request failed', requestUrl.href);
+        return generateFallbackResponse(event.request);
+      })
     );
     return;
   }

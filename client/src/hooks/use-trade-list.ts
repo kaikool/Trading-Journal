@@ -518,10 +518,7 @@ export function useTradeList(options: {
       }
     }
     
-    // Chỉ log khi số lượng trades đáng kể và ở chế độ development
-    if (process.env.NODE_ENV === 'development' && result.length >= 10) {
-      debug("Filtered trades count:", result.length);
-    }
+    debug("Filtered trades count:", result.length);
     return result;
   }, [filters, sortBy]);
 
@@ -548,10 +545,7 @@ export function useTradeList(options: {
     
     // Nếu initialFilters thay đổi, cập nhật filters
     if (currentFiltersJson !== previousFiltersJson) {
-      // Chỉ log khi cần debug filter logic và ở chế độ development
-      if (process.env.NODE_ENV === 'development') {
-        debug("Initial filters changed: ", initialFilters);
-      }
+      debug("Initial filters changed: ", initialFilters);
       initialFiltersRef.current = initialFilters;
       setFilters(initialFilters);
     }
