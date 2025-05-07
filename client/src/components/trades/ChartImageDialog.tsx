@@ -10,6 +10,7 @@ import { Loader2, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 import { cn } from '@/lib/utils';
 
 interface ChartImageDialogProps {
@@ -42,8 +43,7 @@ export function ChartImageDialog({
   // Device detection hook
   const isMobile = useIsMobile();
   
-  // Ref for the image element
-  const imageRef = useRef<HTMLImageElement>(null);
+  // Không cần ref cho OptimizedImage vì đã xử lý ở component
   
   // State for zoom and pan functionality
   const [scale, setScale] = useState(1);
@@ -269,14 +269,19 @@ export function ChartImageDialog({
               isDragging && scale > 1 ? "dragging" : ""
             )}
               style={{ transform: scale > 1 ? imageTransform : undefined }}>
-              <img ref={imageRef}
-                src={imageUrl || '/icons/blank-chart.svg'} 
+              <OptimizedImage
+                src={currentImage.originalSrc}
                 alt={`${tradePair} ${currentImage.type} chart (${currentImage.timeframe})`}
                 className={cn("chart-image", (isLoading || error) && "invisible")}
-                onClick={(e) => e.stopPropagation()} 
-                decoding="async"
+                containerClassName="w-full h-full"
+                tradeId={tradeId}
+                imageType={currentImage.imageType}
+                placeholder="/icons/blank-chart.svg"
+                fallbackSrc="/icons/image-not-supported.svg"
                 loading="eager"
-                draggable="false"
+                priority
+                objectFit="contain"
+                onClick={(e) => e.stopPropagation()}
                 onLoad={(e) => {
                   const img = e.currentTarget;
                   if (img.naturalWidth > 1 && img.naturalHeight > 1) {
@@ -285,13 +290,6 @@ export function ChartImageDialog({
                 }}
                 onError={(e) => {
                   console.error(`Error loading image: ${currentImage.originalSrc}`);
-                  const imgElement = e.currentTarget as HTMLImageElement;
-                  if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
-                    console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
-                    imgElement.src = currentImage.originalSrc;
-                    return;
-                  }
-                  imgElement.classList.add('hidden');
                 }}
               />
             </div>
