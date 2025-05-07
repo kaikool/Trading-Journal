@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 
-import MobileLayout from "@/components/layout/MobileLayout";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
@@ -199,10 +199,7 @@ function MainContent() {
       key={currentRoute}
       className={cn(
         "transition-opacity",
-        // Trong mobile layout áp dụng min-height, trong desktop không cần vì đã xử lý ở container parent
-        isMobile ? "min-h-[calc(100vh-4rem)]" : "",
-        // Trong mobile layout không cần các padding này vì đã được xử lý bởi MobileLayout
-        isMobile ? "" : "px-4 sm:px-6 lg:px-8",
+        "min-h-[calc(100vh-4rem)]",
         // Thêm className để hiển thị loading state
         !isPageReady && "pointer-events-none opacity-80"
       )}
@@ -260,19 +257,10 @@ function MainContent() {
     <>
       {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
       
-      {/* Layout sẽ được cập nhật với Sidebar mới */}
-      {isMobile ? (
-        <MobileLayout>
-          {renderPageContent()}
-        </MobileLayout>
-      ) : (
-        // Temporary desktop layout without navigation - will be replaced with new Sidebar
-        <div className="flex flex-col w-full app-layout-container">
-          <div className="app-content-container max-w-7xl mx-auto">
-            {renderPageContent()}
-          </div>
-        </div>
-      )}
+      {/* Unified layout system with new Sidebar */}
+      <AppLayout>
+        {renderPageContent()}
+      </AppLayout>
     </>
   );
 }
