@@ -55,18 +55,15 @@ export default function Dashboard() {
   
   // Performance data calculation - memoized directly
   const performanceData = useMemo((): DataPoint[] => {
-    devLog("[Dashboard] Performance data calculation, userData:", 
-      userData ? "available" : "not available");
+    // Đã loại bỏ log không cần thiết gây ghi log trùng lặp
     
     // Make sure userData is loaded to avoid flickering with default balance
     if (!userData) {
-      devLog("[Dashboard] userData not available, returning empty array");
       return []; // Return empty array to show loading state instead of default balance
     }
     
     // Use initialBalance from userData only when it's available
     const initialBalance = userData.initialBalance;
-    devLog("[Dashboard] Using initial balance:", initialBalance);
     
     // If no trades, show just the initial balance point
     if (!trades.length) {
@@ -348,12 +345,6 @@ export default function Dashboard() {
     
     // Tính toán current balance từ initial balance và trades
     const currentBalance = calculateCurrentBalance(initialBalance, trades);
-    
-    devLog("[Dashboard] Balance calculation:", { 
-      initialBalance, 
-      currentBalance, 
-      tradesCount: trades.length 
-    });
     
     // Tính P&L từ balance
     const pnlData = calculatePnL(initialBalance, currentBalance, trades);
