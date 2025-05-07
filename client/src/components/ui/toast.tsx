@@ -16,8 +16,8 @@ const ToastViewport = React.forwardRef<
     className={cn(
       // Desktop (md+): Top-right, Mobile: Bottom (full width) respecting safe areas
       "fixed z-[100] flex max-h-screen flex-col-reverse gap-2 p-4",
-      // Mobile: Bottom position, full width
-      "bottom-0 left-0 right-0 w-full pwa-bottom-inset",
+      // Mobile: Bottom position, full width with safe area inset
+      "bottom-0 left-0 right-0 w-full safe-area-bottom",
       // Tablet+: Top-right position, limited width
       "md:top-4 md:bottom-auto md:right-4 md:left-auto md:w-auto md:max-w-[420px] md:flex-col-reverse",
       className
