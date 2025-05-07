@@ -945,17 +945,23 @@ export function StrategiesManagement() {
   
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 via-primary to-primary/80 bg-clip-text text-transparent">Trading Strategies</h2>
           <p className="text-muted-foreground mt-1 text-sm md:text-base">
             Create and manage your trading strategies for consistent trading performance
           </p>
         </div>
-        
+      </div>
+      
+      {/* Render strategies list using memoized function */}
+      {renderStrategyList}
+      
+      {/* Add Strategy Button at bottom */}
+      <div className="flex justify-center mt-6 pt-4 border-t border-border/20">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="default" size="sm">
+            <Button variant="default" size="sm" className="w-full max-w-sm">
               <Plus className="h-4 w-4 mr-1.5" />
               Add Strategy
             </Button>
@@ -1087,9 +1093,6 @@ export function StrategiesManagement() {
           </DialogContent>
         </Dialog>
       </div>
-      
-      {/* Render strategies list using memoized function */}
-      {renderStrategyList}
     </div>
   );
 }
