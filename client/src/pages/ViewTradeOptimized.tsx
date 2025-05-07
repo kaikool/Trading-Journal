@@ -112,7 +112,7 @@ export default function ViewTradeOptimized() {
   };
 
   return (
-    <div className="container max-w-5xl px-0 sm:px-4 pb-6">
+    <div className="container max-w-5xl px-0 sm:px-4">
       <div className="mt-4">
         <Button variant="ghost" onClick={handleBack} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
