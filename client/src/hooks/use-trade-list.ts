@@ -32,16 +32,21 @@ export function useTradeList(options: {
   const [filters, setFilters] = useState<TradeFilterOptions>(initialFilters);
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">(initialSortBy);
   
-  // Effect để cập nhật sortBy khi initialSortBy thay đổi
+  // Effect để cập nhật sortBy khi initialSortBy thay đổi - tối ưu để tránh invalidate liên tục
+  const lastSortByRef = useRef(initialSortBy);
   useEffect(() => {
-    if (initialSortBy !== sortBy) {
+    if (initialSortBy !== lastSortByRef.current) {
       debug("useTradeList: Updating sortBy from initialSortBy:", initialSortBy);
+      lastSortByRef.current = initialSortBy;
       setSortBy(initialSortBy);
       
-      // Khi thay đổi sắp xếp, vô hiệu hóa tất cả các truy vấn liên quan để buộc refetch
-      queryClient.invalidateQueries({ queryKey: ['trades', userId] });
+      // Chỉ invalidate khi cần thiết, sử dụng exact match để tối ưu hóa
+      queryClient.invalidateQueries({ 
+        queryKey: ['trades', userId, sortBy],
+        exact: true
+      });
     }
-  }, [initialSortBy, sortBy, userId, queryClient, setSortBy]);
+  }, [initialSortBy, userId, queryClient, setSortBy]);
   
   // Cache kết quả truy vấn để tối ưu
   const allTradesRef = useRef<Trade[]>([]);
@@ -229,40 +234,67 @@ export function useTradeList(options: {
   });
   
   // Nếu bật realtime, thêm listener để cập nhật khi có thay đổi
+  // Sử dụng ref để theo dõi và phòng ngừa re-renders không cần thiết
+  const lastTradesUpdateRef = useRef(0);
+  const lastTradesDataRef = useRef<string>('');
+  
   useEffect(() => {
     if (!userId || !enableRealtime) return;
     
+    debug("[DataCache] Trades snapshot listener setup");
     const unsubscribe = firebase.onTradesSnapshot(userId, (updatedTrades) => {
+      // Kiểm tra xem dữ liệu có thay đổi thực sự hay không để tránh re-render
+      try {
+        const newTradesData = JSON.stringify(updatedTrades.map(t => ({ id: t.id, updatedAt: t.updatedAt })));
+        if (newTradesData === lastTradesDataRef.current) {
+          debug("[DataCache] Trades snapshot unchanged, avoiding update");
+          return;
+        }
+        lastTradesDataRef.current = newTradesData;
+      } catch (error) {
+        // Nếu có lỗi khi so sánh JSON, vẫn tiếp tục cập nhật
+        logError("[DataCache] Error comparing trades data:", error);
+      }
+      
+      const now = Date.now();
+      const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
+      
+      // Thêm debounce để tránh cập nhật quá nhanh
+      if (timeSinceLastUpdate < 500) {
+        debug("[DataCache] Debouncing trades update, too frequent");
+        return;
+      }
+      
       debug("Realtime trades update received:", updatedTrades.length);
+      lastTradesUpdateRef.current = now;
       
       // Cập nhật danh sách trades trong cache
       allTradesRef.current = updatedTrades as Trade[];
       totalTradesCountRef.current = updatedTrades.length;
       
-      // Cập nhật cache của React Query
-      queryClient.invalidateQueries({ queryKey: ['trades', userId] });
+      // Cập nhật cache của React Query - chỉ invalidate query hiện tại
+      queryClient.invalidateQueries({ 
+        queryKey: ['trades', userId, sortBy, JSON.stringify(filters)],
+        exact: true
+      });
       
       // Fetch lại dữ liệu hiện tại nếu có thay đổi
       refetch();
     });
     
     return () => {
+      debug("[DataCache] Trades snapshot listener unsubscribed and cleaned up");
       unsubscribe(); // Hủy đăng ký listener khi unmount
     };
-  }, [userId, enableRealtime, queryClient, refetch, allTradesRef, totalTradesCountRef]);
+  }, [userId, enableRealtime, queryClient, refetch, sortBy, filters]);
   
   // Lọc dữ liệu dựa trên các filter
+  // Sử dụng memozied function cho applyFilters để tránh tính toán lại khi re-render
+  // nếu dữ liệu đầu vào không thay đổi
   const applyFilters = useCallback((trades: any[]) => {
     if (!trades || trades.length === 0) return [];
     
-    // Loại bỏ logs thường xuyên để tránh vòng lặp vô tận trong console
-    // Chỉ log thông tin cơ bản về số lượng
-    if (trades.length > 0 && process.env.NODE_ENV === 'development') {
-      // Chỉ log khi số lượng trades đáng kể để tránh spam
-      if (trades.length >= 10) {
-        debug("Applying sort:", sortBy, "on", trades.length, "trades");
-      }
-    }
+    // Bỏ hầu hết các log không cần thiết để giảm thiểu logging và cải thiện hiệu suất
     
     let result = [...trades] as Trade[];
 
@@ -526,6 +558,8 @@ export function useTradeList(options: {
   const filteredTrades = applyFilters(data?.trades || []);
   
   // Theo dõi sự thay đổi của initialFilters và cập nhật filters
+  // Sử dụng useRef để theo dõi thay đổi thực sự, tránh hiệu ứng re-render và cập nhật liên tục
+  const filtersChangeCounterRef = useRef(0);
   useEffect(() => {
     // Use try-catch to handle potential circular references in JSON
     let currentFiltersJson = '{}';
@@ -543,13 +577,17 @@ export function useTradeList(options: {
       logError('Error stringifying previous filters:', err);
     }
     
-    // Nếu initialFilters thay đổi, cập nhật filters
+    // Nếu initialFilters thay đổi thực sự (so sánh JSON)
     if (currentFiltersJson !== previousFiltersJson) {
-      debug("Initial filters changed: ", initialFilters);
-      initialFiltersRef.current = initialFilters;
+      // Chỉ log khi thay đổi thực sự để tránh spam console
+      filtersChangeCounterRef.current++;
+      debug("Initial filters changed [" + filtersChangeCounterRef.current + "]: ", initialFilters);
+      
+      // Cập nhật ref để lần sau so sánh chính xác
+      initialFiltersRef.current = JSON.parse(JSON.stringify(initialFilters));
       setFilters(initialFilters);
     }
-  }, [initialFilters, initialFiltersRef, setFilters]);
+  }, [initialFilters, setFilters]);
   
   return {
     data: {
