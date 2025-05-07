@@ -62,9 +62,11 @@ export function AppLayout({ children }: AppLayoutProps) {
       >
         <div 
           className={cn(
-            "transition-all duration-300 max-w-7xl mx-auto",
-            // Apply safe area padding conditionally
-            respectSafeArea ? "p-4 sm:p-6 safe-area-inset" : "p-0 sm:p-0"
+            "transition-all duration-300 max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
+            // Apply safe area padding conditionally for top and bottom only
+            respectSafeArea 
+              ? "pt-4 pb-4 sm:pt-6 sm:pb-6 safe-area-top safe-area-bottom" 
+              : "pt-0 pb-0 sm:pt-0 sm:pb-0"
           )}
         >
           {children}
