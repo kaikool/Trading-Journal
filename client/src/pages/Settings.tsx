@@ -636,13 +636,7 @@ export default function Settings() {
                 <Trophy className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Achievements</span>
               </TabsTrigger>
-              <TabsTrigger 
-                value="security" 
-                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
-              >
-                <ShieldCheck className="h-4 w-4 flex-shrink-0" />
-                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Security</span>
-              </TabsTrigger>
+
             </TabsList>
           </div>
         </div>
