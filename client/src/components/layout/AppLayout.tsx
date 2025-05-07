@@ -23,20 +23,35 @@ export function AppLayout({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
   const [respectSafeArea, setRespectSafeArea] = useState(true);
+  // Tính toán chiều cao của viewport 
+  const [viewportHeight, setViewportHeight] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  // Logic đơn giản hóa cho safe area - luôn tôn trọng safe area không phụ thuộc cuộn
-  useEffect(() => {
+    
     // Luôn tôn trọng safe area để tránh hiệu ứng giật khi cuộn
     setRespectSafeArea(true);
+    
+    // Cập nhật chiều cao viewport ngay khi component mount
+    if (typeof window !== 'undefined') {
+      setViewportHeight(window.innerHeight);
+      
+      // Theo dõi thay đổi kích thước cửa sổ
+      const handleResize = () => {
+        setViewportHeight(window.innerHeight);
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   }, []);
 
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) return null;
-
+  
   return (
     <div className="relative min-h-screen bg-background">
       {/* Sidebar Component - handles both mobile (drawer) and desktop (fixed) sidebar */}
@@ -45,7 +60,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Main Content Area */}
       <main 
         className={cn(
-          "flex-1 transition-all duration-300 ease-in-out min-h-screen",
+          "flex-1 transition-all duration-300 ease-in-out min-h-screen flex flex-col",
           // On desktop, add left margin equal to the sidebar width
           !isMobile && "md:ml-[72px]",
           // If sidebar is expanded, increase margin
@@ -53,6 +68,12 @@ export function AppLayout({ children }: AppLayoutProps) {
           // On mobile, no need for header padding anymore
           isMobile && "pt-0"
         )}
+        style={{ 
+          minHeight: viewportHeight > 0 ? `${viewportHeight}px` : '100vh',
+          // Đảm bảo không có hiệu ứng "nhảy" khi scroll
+          overflowY: 'scroll',
+          overscrollBehavior: 'none'
+        }}
       >
         {/* Safe area vùng đầu trang */}
         {respectSafeArea && (
@@ -61,9 +82,8 @@ export function AppLayout({ children }: AppLayoutProps) {
         
         <div 
           className={cn(
-            "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
+            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow",
             // Luôn tôn trọng safe area, top safe area xử lý theo scroll position
-            // Sử dụng 2rem (pb-8) cho padding bottom nhất quán cho tất cả trang
             respectSafeArea 
               ? "pt-4 pb-8 safe-area-bottom" 
               : "pt-0 pb-8 safe-area-bottom"
