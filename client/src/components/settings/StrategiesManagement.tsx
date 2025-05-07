@@ -1047,18 +1047,8 @@ export function StrategiesManagement() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-lg font-medium">Trading Strategies</h3>
-          <p className="text-sm text-muted-foreground">
-            Manage your trading strategies and rules
-          </p>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Strategy
-            </Button>
-          </DialogTrigger>
           <DialogContent className="sm:max-w-[700px] md:max-w-[800px] lg:max-w-[900px] overflow-y-auto max-h-[85vh]" variant="form">
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
