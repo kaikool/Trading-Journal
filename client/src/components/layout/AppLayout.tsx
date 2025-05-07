@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "./Sidebar";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useScrollDirection } from "@/hooks/use-scroll-direction";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -21,10 +22,23 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
+  const { direction, isScrolling } = useScrollDirection();
+  const [respectSafeArea, setRespectSafeArea] = useState(true);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Handle safe area behavior based on scroll direction
+  useEffect(() => {
+    if (direction === 'down' && isScrolling) {
+      // When scrolling down, allow content to flow into safe areas
+      setRespectSafeArea(false);
+    } else if (direction === 'up' && isScrolling) {
+      // When scrolling up, restore safe areas
+      setRespectSafeArea(true);
+    }
+  }, [direction, isScrolling]);
 
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) return null;
@@ -46,7 +60,13 @@ export function AppLayout({ children }: AppLayoutProps) {
           isMobile && "pt-0"
         )}
       >
-        <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+        <div 
+          className={cn(
+            "transition-all duration-300 max-w-7xl mx-auto",
+            // Apply safe area padding conditionally
+            respectSafeArea ? "p-4 sm:p-6 safe-area-inset" : "p-0 sm:p-0"
+          )}
+        >
           {children}
         </div>
       </main>
