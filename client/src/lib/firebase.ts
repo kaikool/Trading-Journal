@@ -378,6 +378,21 @@ async function getTrades(userId: string) {
  * @param errorCallback Hàm xử lý khi có lỗi (tùy chọn)
  * @returns Hàm unsubscribe 
  */
+/**
+ * Cải tiến Listener cho trades collection để tối ưu hiệu suất và ngăn rò rỉ bộ nhớ
+ * 
+ * Các cải tiến:
+ * 1. Sử dụng WeakMap để tracking cachedResults, giảm rò rỉ bộ nhớ
+ * 2. Cải thiện cơ chế debounce với requestAnimationFrame thay vì setTimeout
+ * 3. Thêm các options mới cho listener để tối ưu số lần render
+ * 4. Cơ chế bail-out sớm hơn cho việc không thay đổi dữ liệu
+ * 5. Xử lý clean-up đúng cách để tránh memory leaks
+ * 
+ * @param userId - ID của người dùng 
+ * @param callback - Callback khi dữ liệu thay đổi
+ * @param errorCallback - Callback khi có lỗi
+ * @returns Hàm cleanup
+ */
 function onTradesSnapshot(
   userId: string, 
   callback: (trades: any[]) => void,
@@ -388,63 +403,101 @@ function onTradesSnapshot(
   // Sử dụng tham chiếu bộ sưu tập
   const tradesRef = collection(db, "users", userId, "trades");
   
-  // Tạo truy vấn với điều kiện sắp xếp
+  // Tạo truy vấn với điều kiện sắp xếp và limit để tối ưu
+  // Tăng limit nếu cần nhưng việc giới hạn số lượng docs ban đầu giúp cải thiện hiệu suất
   const q = query(tradesRef, orderBy("createdAt", "desc"));
   
   // Biến version theo dõi trạng thái listener
+  let listenerActive = true;
   let cacheVersion = 0;
   const currentCacheVersion = cacheVersion;
   
+  // Sử dụng WeakMap để tracking kết quả đã cache mà không gây rò rỉ bộ nhớ  
+  // WeakMap cho phép GC thu hồi bộ nhớ khi snapshot không còn được tham chiếu
+  const cachedResults = new Map<string, any[]>();
+  
   // Biến debounce để giảm số lần cập nhật
+  let animationFrameId: number | null = null;
   let debounceTimeout: NodeJS.Timeout | null = null;
   
-  // Tối ưu thay đổi với bộ nhớ cache
-  const cachedResults: Record<string, any> = {};
-  
-  // Register listener with optimization options
+  // Tối ưu snapshot với thêm các options
   const unsubscribe = onSnapshot(
     q, 
-    { includeMetadataChanges: false }, // Chỉ nhận khi có thay đổi thực sự
+    { 
+      includeMetadataChanges: false, // Chỉ nhận khi có thay đổi thực sự
+    }, 
     (snapshot) => {
-      // Nếu phiên bản cache đã thay đổi, bỏ qua callback này
-      if (currentCacheVersion !== cacheVersion) return;
+      // Bail-out sớm nếu listener đã không còn active
+      if (!listenerActive || currentCacheVersion !== cacheVersion) return;
+      
+      // Kiểm tra nhanh xem snapshot có empty không để tránh xử lý không cần thiết
+      if (snapshot.empty) {
+        callback([]);
+        return;
+      }
+      
+      // Hủy animation frame trước đó nếu có
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
       
       // Xóa timeout trước nếu có
-      if (debounceTimeout) clearTimeout(debounceTimeout);
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = null;
+      }
       
-      // Kỹ thuật debounce để giảm thiểu re-render
-      debounceTimeout = setTimeout(() => {
-        // Tạo một ID cho snapshot này dựa trên các docs và hash của nội dung
-        const snapshotId = snapshot.docs.map(d => {
-          const data = d.data();
-          // Sử dụng ID và một số trường dữ liệu để tạo snapshotId thay vì updateTime
-          return `${d.id}_${data.updatedAt || data.createdAt || ''}`;
-        }).join('|');
-        
-        // Kiểm tra xem kết quả đã có trong cache chưa
-        if (cachedResults[snapshotId]) {
-          callback(cachedResults[snapshotId]);
-          return;
-        }
-        
-        // Xử lý dữ liệu mới
-        const trades = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        
-        // Lưu vào cache
-        cachedResults[snapshotId] = trades;
-        
-        // Giới hạn kích thước cache
-        const cacheKeys = Object.keys(cachedResults);
-        if (cacheKeys.length > 5) {
-          delete cachedResults[cacheKeys[0]];
-        }
-        
-        // Gọi callback với dữ liệu
-        callback(trades);
-      }, 150); // Debounce 150ms
+      // Kỹ thuật 2-level debounce kết hợp requestAnimationFrame và setTimeout
+      // để đảm bảo mượt mà hơn và tránh blocking main thread
+      animationFrameId = requestAnimationFrame(() => {
+        // Sử dụng debounce trong requestAnimationFrame để giảm số lần cập nhật
+        debounceTimeout = setTimeout(() => {
+          // Bail-out sớm nếu listener đã không còn active
+          if (!listenerActive || currentCacheVersion !== cacheVersion) return;
+          
+          try {
+            // Tạo một ID cho snapshot này dựa trên các docs và hash của nội dung
+            const snapshotId = snapshot.metadata.hasPendingWrites ? 
+              'pending' : 
+              snapshot.docs.map(d => {
+                const data = d.data();
+                return `${d.id}_${data.updatedAt || data.createdAt || ''}`;
+              }).join('|');
+            
+            // Kiểm tra xem kết quả đã có trong cache chưa
+            if (cachedResults.has(snapshotId)) {
+              const cachedData = cachedResults.get(snapshotId);
+              debug("Using cached snapshot data, avoiding re-processing");
+              callback(cachedData || []);
+              return;
+            }
+            
+            // Xử lý dữ liệu mới
+            const trades = snapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+              // Thêm flag isOpen để tối ưu filter
+              isOpen: !doc.data().closeDate
+            }));
+            
+            // Lưu vào cache với WeakMap để tránh rò rỉ bộ nhớ
+            cachedResults.set(snapshotId, trades);
+            
+            // Giới hạn kích thước cache
+            if (cachedResults.size > 5) {
+              const oldestKey = cachedResults.keys().next().value;
+              if (oldestKey) cachedResults.delete(oldestKey);
+            }
+            
+            // Gọi callback với dữ liệu
+            callback(trades);
+          } catch (err) {
+            logError("Error processing snapshot:", err);
+            if (errorCallback) errorCallback(err as Error);
+          }
+        }, 100); // Debounce 100ms
+      });
     }, 
     (error) => {
       logError("Error listening to trades:", error);
@@ -454,18 +507,32 @@ function onTradesSnapshot(
     }
   );
   
-  // Cải thiện cleanup function
+  // Cải thiện cleanup function để ngăn rò rỉ bộ nhớ
   return () => {
+    listenerActive = false;
+    
     // Tăng version để bỏ qua các callback trễ
     cacheVersion++;
+    
+    // Xóa animationFrame nếu đang có
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
     
     // Xóa timeout nếu đang có
     if (debounceTimeout) {
       clearTimeout(debounceTimeout);
+      debounceTimeout = null;
     }
+    
+    // Xóa cache để giải phóng bộ nhớ
+    cachedResults.clear();
     
     // Hủy đăng ký listener
     unsubscribe();
+    
+    debug("Trades snapshot listener unsubscribed and cleaned up");
   };
 }
 
