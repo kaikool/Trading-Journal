@@ -211,12 +211,16 @@ const StrategyItem = React.memo(function StrategyItem({
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {strategy.isDefault && (
-              <div className="flex items-center px-2 py-1 rounded-md bg-amber-400/20 text-amber-500 dark:text-amber-300 dark:bg-amber-300/10 border border-amber-400/20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 mr-1.5">
-                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                </svg>
-                <span className="font-medium text-xs">CHIẾN LƯỢC MẶC ĐỊNH</span>
-              </div>
+              <Badge variant="outline" className="font-normal text-xs h-7 border-primary/30 bg-primary/10 text-primary">
+                <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                Default Strategy
+              </Badge>
+            )}
+            {strategy.timeframes && strategy.timeframes.length > 0 && (
+              <Badge variant="secondary" className="text-xs h-7 px-2.5 bg-secondary/50">
+                <Clock className="h-3.5 w-3.5 mr-1.5 opacity-70" />
+                {strategy.timeframes.length} Timeframes
+              </Badge>
             )}
           </div>
         </div>
@@ -379,22 +383,19 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
             
             {/* Default Strategy Toggle */}
-            <div className="flex items-center space-x-2 mt-4 bg-amber-400/10 p-3 rounded-md border border-amber-400/20">
+            <div className="flex items-center space-x-2 mt-4">
               <Checkbox
                 id={`isDefault-${strategy.id}`}
                 checked={strategy.isDefault || false}
                 onCheckedChange={(checked) => handleFieldChange('isDefault', checked === true)}
-                className="text-amber-500 border-amber-400/50"
               />
               <Label 
                 htmlFor={`isDefault-${strategy.id}`} 
                 className="text-sm font-medium cursor-pointer"
               >
                 <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 mr-1.5 text-amber-500">
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                  </svg>
-                  ĐẶT LÀM CHIẾN LƯỢC MẶC ĐỊNH
+                  <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                  Set as default strategy
                 </div>
               </Label>
             </div>
