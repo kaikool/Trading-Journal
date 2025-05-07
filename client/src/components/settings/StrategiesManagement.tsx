@@ -1,31 +1,17 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useMemoWithPerf } from "@/lib/performance";
 import { TradingStrategy, StrategyCondition } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { auth, getStrategies, addStrategy, updateStrategy, deleteStrategy } from "@/lib/firebase";
 import { Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import {
-  StrategyConditionForm,
-  StrategyConditionItem,
   StrategyConditionList,
-  createNewCondition
 } from "./StrategyConditionInput";
-import { DialogHeaderFooterLayout } from "@/components/ui/dialog";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -43,7 +29,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -58,17 +43,14 @@ import {
   Save, 
   Check,
   X,
-  AlertCircle,
   Loader2,
   BookCopy,
   Bookmark,
-  TimerIcon,
   ListChecks,
   ArrowDown,
   ArrowUp,
   DoorOpen,
   LogOut,
-  Activity,
   LineChart,
   Clock
 } from "lucide-react";
@@ -77,27 +59,9 @@ import { cn } from "@/lib/utils";
 // Common timeframes for forex
 const COMMON_TIMEFRAMES = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MN"];
 
-// Common indicators for forex
-const COMMON_INDICATORS = [
-  "EMA", "SMA", "MACD", "RSI", "Bollinger Bands", "Stochastic", 
-  "ADX", "Ichimoku", "Support/Resistance", "Trend Line", "Fibonacci", 
-  "Pivot Points", "Price Action", "Candlestick Pattern", "Volume", "ATR"
-];
-
-// Common expected values
-const COMMON_EXPECTED_VALUES = [
-  "Uptrend", "Downtrend", "Sideways", "Above Level", "Below Level", 
-  "Cross Up", "Cross Down", "Breakout", "Pullback", "Divergence",
-  "Overbought", "Oversold", "High Volume", "Low Volume", "Confluence"
-];
-
-// Helpers for handling StrategyCondition arrays
-// Using createNewCondition imported from StrategyConditionInput.tsx
-
+// Helper functions for handling StrategyCondition arrays
 const addConditionToArray = (array: StrategyCondition[], condition: StrategyCondition): StrategyCondition[] => {
   if (!condition.label.trim()) return array;
-  
-  // Đơn giản hóa tối đa, không logging
   return [
     ...array, 
     {
@@ -113,10 +77,8 @@ const addConditionToArray = (array: StrategyCondition[], condition: StrategyCond
 };
 
 const updateConditionInArray = (array: StrategyCondition[], id: string, updates: Partial<StrategyCondition>): StrategyCondition[] => {
-  // Đơn giản hóa, tạo mảng mới cho mỗi phần tử
   return array.map(condition => {
     if (condition.id === id) {
-      // Tạo đối tượng mới hoàn toàn
       return {
         id: condition.id,
         label: updates.label !== undefined ? updates.label : condition.label,
@@ -127,68 +89,16 @@ const updateConditionInArray = (array: StrategyCondition[], id: string, updates:
         description: updates.description !== undefined ? updates.description : condition.description
       };
     }
-    // Trả về bản sao của condition nếu không phải là id đang cập nhật
     return {...condition};
   });
 };
 
 const removeConditionFromArray = (array: StrategyCondition[], id: string): StrategyCondition[] => {
-  // Lọc đơn giản, tạo mảng mới
   const newArray = array.filter(condition => condition.id !== id);
-  
-  // Cập nhật lại thứ tự (order) cho mỗi phần tử
   return newArray.map((condition, index) => ({
     ...condition,
     order: index
   }));
-};
-
-// Helper to add item to array
-const addItemToArray = <T,>(array: T[], item: T): T[] => {
-  return [...array, item];
-};
-
-// Helper to update item in array
-const updateItemInArray = <T,>(array: T[], index: number, newValue: T): T[] => {
-  return array.map((item, i) => (i === index ? newValue : item));
-};
-
-// Helper to remove item from array by index
-const removeItemFromArray = <T,>(array: T[], index: number): T[] => {
-  return [...array.slice(0, index), ...array.slice(index + 1)];
-};
-
-// Helper to ensure a value is a properly formatted StrategyCondition
-const ensureConditionFormat = (value: any): StrategyCondition => {
-  // If it's already a StrategyCondition, return as is
-  if (value && typeof value === 'object' && value.id && value.label) {
-    // Ensure it has all required properties with correct types
-    return {
-      id: value.id,
-      label: value.label,
-      order: value.order || 0,
-      indicator: value.indicator, 
-      timeframe: value.timeframe,
-      expectedValue: value.expectedValue,
-      description: value.description
-    };
-  }
-  
-  // Create a new condition with default values
-  const id = typeof value === 'object' && value.id ? value.id : uuidv4();
-  const label = typeof value === 'string' ? value : 
-                typeof value === 'object' && value.label ? value.label : 
-                String(value || '');
-  
-  return {
-    id,
-    label,
-    order: 0,
-    indicator: undefined,
-    timeframe: undefined,
-    expectedValue: undefined,
-    description: undefined
-  };
 };
 
 // Helper to fix situations where multiple strategies are marked as default
@@ -196,7 +106,7 @@ const fixMultipleDefaultStrategies = async (strategies: TradingStrategy[]): Prom
   const defaultStrategies = strategies.filter(s => s.isDefault === true);
   
   if (defaultStrategies.length <= 1) {
-    return strategies; // Nothing to fix
+    return strategies;
   }
   
   console.log(`Found ${defaultStrategies.length} default strategies, fixing...`);
@@ -249,12 +159,7 @@ const StrategyItem = React.memo(function StrategyItem({
   onDelete,
   onSetAsDefault,
   isSaving,
-  // New expanded props to avoid closure issues
-  editFieldValues,
   onEditFieldChange,
-  newRule,
-  newEntryCondition,
-  newExitCondition,
   newTimeframe,
   resetFormFields
 }: {
@@ -265,11 +170,7 @@ const StrategyItem = React.memo(function StrategyItem({
   onDelete: () => void;
   onSetAsDefault: () => void;
   isSaving: boolean;
-  editFieldValues?: Record<string, any>;
   onEditFieldChange?: (fieldName: string, value: any) => void;
-  newRule: string;
-  newEntryCondition: string;
-  newExitCondition: string;
   newTimeframe: string;
   resetFormFields: () => void;
 }) {
@@ -284,39 +185,77 @@ const StrategyItem = React.memo(function StrategyItem({
     <AccordionItem
       value={strategy.id}
       className={cn(
-        "border rounded-lg overflow-hidden",
-        strategy.isDefault ? "border-primary/20 bg-primary/5" : ""
+        "border rounded-lg overflow-hidden mb-3 transition-all duration-200",
+        strategy.isDefault 
+          ? "border-primary/30 bg-primary/5 shadow-[0_2px_10px_-2px_rgba(var(--primary),0.15)]" 
+          : "hover:border-border/60 hover:shadow-sm"
       )}
     >
-      <AccordionTrigger className="px-3 py-1.5 hover:bg-muted/50 h-9">
-        <div className="flex items-center text-left space-x-2">
-          <span className="font-medium text-sm">{strategy.name}</span>
-          {strategy.isDefault && (
-            <Badge variant="outline" className="font-normal text-xs h-5 px-1.5">
-              Default
-            </Badge>
-          )}
+      <AccordionTrigger className="px-4 py-4 hover:bg-muted/30 transition-colors">
+        <div className="flex items-center justify-between w-full gap-2">
+          <div className="flex items-center text-left gap-3">
+            <div className={cn(
+              "flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0",
+              strategy.isDefault 
+                ? "bg-primary/15 text-primary/90 border border-primary/20" 
+                : "bg-muted/40 text-muted-foreground/80 border border-border/50"
+            )}>
+              <BookCopy className="h-5 w-5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-semibold text-sm">{strategy.name}</span>
+              {strategy.description && (
+                <span className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{strategy.description}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {strategy.isDefault && (
+              <Badge variant="outline" className="font-normal text-xs h-7 border-primary/30 bg-primary/10 text-primary">
+                <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                Default Strategy
+              </Badge>
+            )}
+            {strategy.timeframes && strategy.timeframes.length > 0 && (
+              <Badge variant="secondary" className="text-xs h-7 px-2.5 bg-secondary/50">
+                <Clock className="h-3.5 w-3.5 mr-1.5 opacity-70" />
+                {strategy.timeframes.length} Timeframes
+              </Badge>
+            )}
+          </div>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="px-3 pb-3 pt-1.5">
+      <AccordionContent className="px-5 pb-5 pt-2">
         {isEditMode ? (
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor={`name-${strategy.id}`}>Strategy Name</Label>
-              <Input
-                id={`name-${strategy.id}`}
-                value={strategy.name}
-                onChange={(e) => handleFieldChange('name', e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor={`description-${strategy.id}`}>Description</Label>
-              <Textarea
-                id={`description-${strategy.id}`}
-                value={strategy.description}
-                onChange={(e) => handleFieldChange('description', e.target.value)}
-              />
+          <div className="space-y-5">
+            <div className="space-y-4 bg-muted/10 p-4 rounded-lg border border-border/40">
+              <div className="space-y-2">
+                <Label htmlFor={`name-${strategy.id}`} className="text-sm flex items-center">
+                  <BookCopy className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                  Strategy Name
+                </Label>
+                <Input
+                  id={`name-${strategy.id}`}
+                  value={strategy.name}
+                  onChange={(e) => handleFieldChange('name', e.target.value)}
+                  className="h-9"
+                  placeholder="Give your strategy a clear name"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor={`description-${strategy.id}`} className="text-sm flex items-center">
+                  <LineChart className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                  Description
+                </Label>
+                <Textarea
+                  id={`description-${strategy.id}`}
+                  value={strategy.description || ''}
+                  onChange={(e) => handleFieldChange('description', e.target.value)}
+                  placeholder="Describe this strategy in a few sentences"
+                  className="min-h-[70px] text-sm resize-none"
+                />
+              </div>
             </div>
             
             {/* Trading Rules */}
@@ -489,74 +428,110 @@ const StrategyItem = React.memo(function StrategyItem({
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
-            {strategy.description && (
-              <div>
-                <h3 className="text-sm font-medium mb-1">Description</h3>
-                <p className="text-sm text-muted-foreground">{strategy.description}</p>
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                {strategy.description && (
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
+                    <h3 className="text-sm font-semibold mb-2 flex items-center text-primary/90">
+                      <LineChart className="h-4 w-4 mr-1.5 text-primary/70" />
+                      Strategy Overview
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{strategy.description}</p>
+                  </div>
+                )}
+                
+                {strategy.rules && strategy.rules.length > 0 && (
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
+                    <h3 className="text-sm font-semibold mb-2 flex items-center text-primary/90">
+                      <ListChecks className="h-4 w-4 mr-1.5 text-primary/70" />
+                      Trading Rules
+                    </h3>
+                    <ul className="space-y-2">
+                      {strategy.rules.map((rule) => (
+                        <li key={rule.id} className="flex gap-2 group">
+                          <div className="mt-0.5 flex-shrink-0">
+                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-primary/20 bg-primary/5">
+                              <Check className="h-3 w-3 text-primary" />
+                            </Badge>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{rule.label}</span>
+                            {rule.description && (
+                              <p className="text-xs text-muted-foreground mt-0.5">{rule.description}</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-            
-            {strategy.rules && strategy.rules.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-1.5 flex items-center">
-                  <ListChecks className="h-4 w-4 mr-1.5" />
-                  Trading Rules
-                </h3>
-                <ul className="space-y-1">
-                  {strategy.rules.map((rule) => (
-                    <li key={rule.id} className="text-sm flex items-baseline gap-1.5">
-                      <span className="text-primary">•</span>
-                      <span>{rule.label}</span>
-                    </li>
-                  ))}
-                </ul>
+              
+              <div className="space-y-4">
+                {strategy.entryConditions && strategy.entryConditions.length > 0 && (
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
+                    <h3 className="text-sm font-semibold mb-2 flex items-center text-success/90">
+                      <DoorOpen className="h-4 w-4 mr-1.5 text-success/70" />
+                      Entry Conditions
+                    </h3>
+                    <ul className="space-y-2">
+                      {strategy.entryConditions.map((condition) => (
+                        <li key={condition.id} className="flex gap-2 group">
+                          <div className="mt-0.5 flex-shrink-0">
+                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-success/20 bg-success/5">
+                              <ArrowDown className="h-3 w-3 text-success" />
+                            </Badge>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{condition.label}</span>
+                            {condition.description && (
+                              <p className="text-xs text-muted-foreground mt-0.5">{condition.description}</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {strategy.exitConditions && strategy.exitConditions.length > 0 && (
+                  <div className="bg-card/30 p-4 rounded-lg border border-border/30">
+                    <h3 className="text-sm font-semibold mb-2 flex items-center text-destructive/90">
+                      <LogOut className="h-4 w-4 mr-1.5 text-destructive/70" />
+                      Exit Conditions
+                    </h3>
+                    <ul className="space-y-2">
+                      {strategy.exitConditions.map((condition) => (
+                        <li key={condition.id} className="flex gap-2 group">
+                          <div className="mt-0.5 flex-shrink-0">
+                            <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-destructive/20 bg-destructive/5">
+                              <ArrowUp className="h-3 w-3 text-destructive" />
+                            </Badge>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{condition.label}</span>
+                            {condition.description && (
+                              <p className="text-xs text-muted-foreground mt-0.5">{condition.description}</p>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
-            
-            {strategy.entryConditions && strategy.entryConditions.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-1.5 flex items-center">
-                  <DoorOpen className="h-4 w-4 mr-1.5" />
-                  Entry Conditions
-                </h3>
-                <ul className="space-y-1">
-                  {strategy.entryConditions.map((condition) => (
-                    <li key={condition.id} className="text-sm flex items-baseline gap-1.5">
-                      <span className="text-primary">•</span>
-                      <span>{condition.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {strategy.exitConditions && strategy.exitConditions.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-1.5 flex items-center">
-                  <LogOut className="h-4 w-4 mr-1.5" />
-                  Exit Conditions
-                </h3>
-                <ul className="space-y-1">
-                  {strategy.exitConditions.map((condition) => (
-                    <li key={condition.id} className="text-sm flex items-baseline gap-1.5">
-                      <span className="text-primary">•</span>
-                      <span>{condition.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            </div>
             
             {strategy.timeframes && strategy.timeframes.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium mb-1.5 flex items-center">
-                  <Clock className="h-4 w-4 mr-1.5" />
+              <div className="bg-card/30 p-4 rounded-lg border border-border/30">
+                <h3 className="text-sm font-semibold mb-2 flex items-center">
+                  <Clock className="h-4 w-4 mr-1.5 text-muted-foreground" />
                   Timeframes
                 </h3>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {strategy.timeframes.sort().map(tf => (
-                    <Badge key={tf} variant="secondary" className="text-xs">
+                    <Badge key={tf} variant="secondary" className="px-2 py-1 text-xs bg-secondary/50 hover:bg-secondary/70 transition-colors">
                       {tf}
                     </Badge>
                   ))}
@@ -564,13 +539,14 @@ const StrategyItem = React.memo(function StrategyItem({
               </div>
             )}
             
-            <div className="flex justify-end gap-2 pt-1">
+            <div className="flex justify-end gap-2 pt-1 border-t border-border/20 mt-4 pt-4">
               {!strategy.isDefault && (
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={onSetAsDefault}
                   disabled={isSaving}
+                  className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary"
                 >
                   <Bookmark className="h-3.5 w-3.5 mr-1.5" />
                   Set as Default
@@ -580,6 +556,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 variant="outline" 
                 size="sm" 
                 onClick={onEdit}
+                className="bg-secondary/30 hover:bg-secondary/50"
               >
                 <Edit className="h-3.5 w-3.5 mr-1.5" />
                 Edit
@@ -587,7 +564,7 @@ const StrategyItem = React.memo(function StrategyItem({
               <Button 
                 variant="outline" 
                 size="sm"
-                className="text-destructive hover:text-destructive"
+                className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10"
                 onClick={onDelete}
                 disabled={isSaving}
               >
@@ -603,14 +580,6 @@ const StrategyItem = React.memo(function StrategyItem({
 });
 
 export function StrategiesManagement() {
-  // Define local interfaces for rule and condition checks
-  interface ConditionCheck {
-    conditionId: string;
-    checked: boolean;
-    passed: boolean;
-    notes?: string;
-  }
-  
   // State for the list of strategies
   const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -618,22 +587,15 @@ export function StrategiesManagement() {
   const [isSaving, setIsSaving] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   
-  // Alert messages
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  
   // State for tracking which strategy is being edited
   const [editStrategyId, setEditStrategyId] = useState<string | null>(null);
-  const [editedStrategy, setEditedStrategy] = useState<TradingStrategy | null>(null);
+  const [editedStrategy, setEditedStrategy] = useState<Partial<TradingStrategy> | null>(null);
   
   // State for tracking new rule inputs
-  const [newRule, setNewRule] = useState("");
-  const [newEntryCondition, setNewEntryCondition] = useState("");
-  const [newExitCondition, setNewExitCondition] = useState("");
   const [newTimeframe, setNewTimeframe] = useState("");
   
   // State for new strategy creation
-  const [newStrategy, setNewStrategy] = useState<TradingStrategy>({
+  const [newStrategy, setNewStrategy] = useState<Partial<TradingStrategy>>({
     id: uuidv4(),
     name: "",
     description: "",
@@ -650,9 +612,6 @@ export function StrategiesManagement() {
   const resetFormFields = useCallback(() => {
     setEditStrategyId(null);
     setEditedStrategy(null);
-    setNewRule("");
-    setNewEntryCondition("");
-    setNewExitCondition("");
     setNewTimeframe("");
   }, []);
   
@@ -840,7 +799,7 @@ export function StrategiesManagement() {
       setIsCreating(true);
       
       // Validate required fields
-      if (!newStrategy.name.trim()) {
+      if (!newStrategy.name?.trim()) {
         toast({
           title: "Missing information",
           description: "Please enter a strategy name",
@@ -854,6 +813,7 @@ export function StrategiesManagement() {
       // Add creation timestamp
       const strategyWithTimestamp = {
         ...newStrategy,
+        userId,
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       };
@@ -868,7 +828,7 @@ export function StrategiesManagement() {
       }
       
       // Create the new strategy
-      const newStrategyId = await addStrategy(userId, strategyWithTimestamp);
+      const newStrategyId = await addStrategy(userId, strategyWithTimestamp as TradingStrategy);
       
       // Update the strategy with its new ID from Firestore
       const completeStrategy = {
@@ -882,7 +842,7 @@ export function StrategiesManagement() {
           ? prev.map(s => ({ ...s, isDefault: false }))
           : [...prev];
         
-        return [...updatedStrategies, completeStrategy];
+        return [...updatedStrategies, completeStrategy as TradingStrategy];
       });
       
       // Reset form and close dialog
@@ -931,11 +891,17 @@ export function StrategiesManagement() {
     if (strategies.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <BookCopy className="h-12 w-12 text-muted-foreground/20 mb-4" />
+          <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+            <BookCopy className="h-8 w-8 text-muted-foreground/30" />
+          </div>
           <h3 className="text-lg font-semibold mb-2">No Trading Strategies Yet</h3>
           <p className="text-muted-foreground max-w-md mb-6">
             Create your first trading strategy to define rules and conditions for your trades.
           </p>
+          <Button onClick={() => setIsDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-1.5" />
+            Add Your First Strategy
+          </Button>
         </div>
       );
     }
@@ -945,7 +911,7 @@ export function StrategiesManagement() {
         {strategies.map((strategy) => (
           <StrategyItem
             key={strategy.id}
-            strategy={editStrategyId === strategy.id ? { ...strategy, ...editedStrategy } : strategy}
+            strategy={editStrategyId === strategy.id && editedStrategy ? { ...strategy, ...editedStrategy as TradingStrategy } : strategy}
             isEditMode={editStrategyId === strategy.id}
             onEdit={() => {
               setEditStrategyId(strategy.id);
@@ -955,14 +921,9 @@ export function StrategiesManagement() {
             onDelete={() => handleDeleteStrategy(strategy)}
             onSetAsDefault={() => handleSetDefaultStrategy(strategy)}
             isSaving={isSaving}
-            // Pass props to avoid issues with closures
-            editFieldValues={editedStrategy || {}}
             onEditFieldChange={(fieldName, value) => {
-              setEditedStrategy(prev => ({ ...prev, [fieldName]: value }));
+              setEditedStrategy(prev => prev ? ({ ...prev, [fieldName]: value }) : null);
             }}
-            newRule={newRule}
-            newEntryCondition={newEntryCondition}
-            newExitCondition={newExitCondition}
             newTimeframe={newTimeframe}
             resetFormFields={resetFormFields}
           />
@@ -975,9 +936,6 @@ export function StrategiesManagement() {
     editStrategyId, 
     editedStrategy,
     isSaving,
-    newRule,
-    newEntryCondition,
-    newExitCondition,
     newTimeframe,
     handleUpdateStrategy,
     handleDeleteStrategy,
@@ -987,7 +945,14 @@ export function StrategiesManagement() {
   
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-end mb-4">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 via-primary to-primary/80 bg-clip-text text-transparent">Trading Strategies</h2>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+            Create and manage your trading strategies for consistent trading performance
+          </p>
+        </div>
+        
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="default" size="sm">
@@ -995,7 +960,7 @@ export function StrategiesManagement() {
               Add Strategy
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[700px] md:max-w-[800px] lg:max-w-[900px] overflow-y-auto max-h-[85vh]" variant="form">
+          <DialogContent className="sm:max-w-[700px] overflow-y-auto max-h-[85vh]">
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
               <DialogDescription className="text-sm">
@@ -1011,7 +976,6 @@ export function StrategiesManagement() {
                   placeholder="e.g., Breakout Trading"
                   value={newStrategy.name}
                   onChange={(e) => {
-                    // Tạo bản sao mới để tránh tham chiếu đối tượng gốc
                     const value = e.target.value;
                     setNewStrategy({...newStrategy, name: value});
                   }}
@@ -1055,58 +1019,6 @@ export function StrategiesManagement() {
                     setNewStrategy({
                       ...newStrategy,
                       rules: (newStrategy.rules || []).filter(rule => rule.id !== id)
-                    });
-                  }}
-                />
-              </div>
-              
-              {/* Entry Conditions */}
-              <div className="mt-6">
-                <StrategyConditionList
-                  title="Entry Conditions"
-                  icon={<DoorOpen className="h-4 w-4 mr-1" />}
-                  emptyMessage="No entry conditions defined yet. Click 'Add' to create your first entry condition."
-                  conditions={newStrategy.entryConditions || []}
-                  onAdd={(condition) => setNewStrategy({
-                    ...newStrategy,
-                    entryConditions: addConditionToArray(newStrategy.entryConditions || [], condition)
-                  })}
-                  onUpdate={(id, updates) => {
-                    const updatedConditions = (newStrategy.entryConditions || []).map(condition => 
-                      condition.id === id ? { ...condition, ...updates } : condition
-                    );
-                    setNewStrategy({ ...newStrategy, entryConditions: updatedConditions });
-                  }}
-                  onDelete={(id) => {
-                    setNewStrategy({
-                      ...newStrategy,
-                      entryConditions: (newStrategy.entryConditions || []).filter(condition => condition.id !== id)
-                    });
-                  }}
-                />
-              </div>
-              
-              {/* Exit Conditions */}
-              <div className="mt-6">
-                <StrategyConditionList
-                  title="Exit Conditions"
-                  icon={<LogOut className="h-4 w-4 mr-1" />}
-                  emptyMessage="No exit conditions defined yet. Click 'Add' to create your first exit condition."
-                  conditions={newStrategy.exitConditions || []}
-                  onAdd={(condition) => setNewStrategy({
-                    ...newStrategy,
-                    exitConditions: addConditionToArray(newStrategy.exitConditions || [], condition)
-                  })}
-                  onUpdate={(id, updates) => {
-                    const updatedConditions = (newStrategy.exitConditions || []).map(condition => 
-                      condition.id === id ? { ...condition, ...updates } : condition
-                    );
-                    setNewStrategy({ ...newStrategy, exitConditions: updatedConditions });
-                  }}
-                  onDelete={(id) => {
-                    setNewStrategy({
-                      ...newStrategy,
-                      exitConditions: (newStrategy.exitConditions || []).filter(condition => condition.id !== id)
                     });
                   }}
                 />
