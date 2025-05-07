@@ -187,7 +187,7 @@
     <!-- Script này PHẢI tồn tại trong môi trường production để tránh lỗi Firebase auth/api-key-not-valid -->
     <script src="/config.js"></script>
 
-    <!-- Script vô hiệu hóa cử chỉ vuốt mặc định của Safari -->
+    <!-- Script vô hiệu hóa cử chỉ vuốt mặc định của Safari và bổ sung vuốt từ cạnh trái -->
     <script>
       // Vô hiệu hóa cử chỉ vuốt quay lại/tiến tới Safari (swipe back/forward)
       document.addEventListener('DOMContentLoaded', function() {
@@ -204,8 +204,25 @@
             position: relative;
             width: 100%;
           }
+          
+          /* Tạo vùng vuốt đặc biệt ở cạnh trái của màn hình */
+          .swipe-zone-visible {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px; 
+            height: 100vh;
+            background: rgba(0,0,0,0.02);
+            z-index: 10;
+            pointer-events: auto;
+          }
         `;
         document.head.appendChild(style);
+        
+        // Tạo phần tử vuốt ở cạnh trái màn hình
+        const swipeZone = document.createElement('div');
+        swipeZone.className = 'swipe-zone-visible';
+        document.body.appendChild(swipeZone);
       });
 
       // Sử dụng history.pushState để ngăn Safari quay lại trang trước
@@ -219,6 +236,14 @@
           window.history.pushState({page: 'blocked'}, document.title, window.location.href);
         });
       });
+      
+      // Thêm thông báo cho người dùng khi họ lần đầu vào ứng dụng
+      setTimeout(function() {
+        if (!localStorage.getItem('swipe-hint-shown')) {
+          // Có thể thêm hint chỉ dẫn vuốt từ cạnh trái để mở menu ở đây
+          localStorage.setItem('swipe-hint-shown', 'true');
+        }
+      }, 2000);
     </script>
 
     <script type="module" src="/src/main.tsx"></script>

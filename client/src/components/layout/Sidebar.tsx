@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useUserActivity } from "@/hooks/use-user-activity";
+import { setupEdgeSwipeDetector } from "@/lib/edge-swipe-detector";
 
 // Define navigation items internal to this component
 const SIDEBAR_LINKS = [
@@ -185,54 +186,6 @@ export function Sidebar({ className }: { className?: string }) {
     return () => clearTimeout(debounceTimeout);
   }, [direction, isScrolling, isActive]);
 
-  // Các biến để xử lý vuốt từ cạnh trái để hiện sidebar
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const touchStartY = useRef(0);
-  const touchEndY = useRef(0);
-  const edgeSwipeZone = 20; // Vùng nhận diện vuốt từ cạnh trái (px)
-  
-  // Xử lý sự kiện vuốt (swipe) cho mobile
-  const handleTouchStart = (e: React.TouchEvent | TouchEvent) => {
-    if ('touches' in e) {
-      touchStartX.current = e.touches[0].clientX;
-      touchStartY.current = e.touches[0].clientY;
-    }
-  };
-  
-  const handleTouchMove = (e: React.TouchEvent | TouchEvent) => {
-    if ('touches' in e) {
-      touchEndX.current = e.touches[0].clientX;
-      touchEndY.current = e.touches[0].clientY;
-    }
-  };
-  
-  const handleTouchEnd = () => {
-    // Tính toán khoảng cách và hướng vuốt
-    const swipeDistanceX = touchEndX.current - touchStartX.current;
-    const swipeDistanceY = Math.abs(touchEndY.current - touchStartY.current);
-    
-    // Chỉ xử lý vuốt từ trái qua phải, từ cạnh trái màn hình
-    if (
-      touchStartX.current < edgeSwipeZone && // Bắt đầu từ cạnh trái
-      swipeDistanceX > 70 && // Vuốt đủ xa
-      swipeDistanceY < 100 && // Không vuốt quá chếch theo chiều dọc
-      !isOpen // Chỉ mở sidebar khi nó đang đóng
-    ) {
-      setIsOpen(true);
-      setMenuVisible(true);
-    }
-    
-    // Nếu vuốt từ phải qua trái khi sidebar đang mở
-    if (
-      swipeDistanceX < -70 && // Vuốt từ phải sang trái
-      swipeDistanceY < 100 && // Không vuốt quá chếch theo chiều dọc
-      isOpen // Chỉ đóng sidebar khi nó đang mở
-    ) {
-      setIsOpen(false);
-    }
-  };
-  
   // Khu vực "hot zone" ở góc trái dưới để hiện nút menu
   const handleBodyClick = (e: MouseEvent) => {
     const windowWidth = window.innerWidth;
@@ -247,22 +200,34 @@ export function Sidebar({ className }: { className?: string }) {
     }
   };
 
-  // Đăng ký các event listeners
+  // Đăng ký các event listeners và cấu hình swipe detection
   useEffect(() => {
-    // Đăng ký sự kiện cho touch events để hỗ trợ vuốt từ cạnh trái
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd);
-    
     // Đăng ký sự kiện click để hỗ trợ hot zone
     document.body.addEventListener('click', handleBodyClick);
     
+    // Cấu hình trình phát hiện vuốt từ cạnh trái
+    const edgeSwipeDetector = setupEdgeSwipeDetector({
+      edgeSize: 30, // Vùng nhận diện vuốt rộng hơn (30px từ cạnh trái)
+      minSwipeDistance: 60, // Khoảng cách vuốt nhỏ hơn để dễ trigger
+      onEdgeSwipe: () => {
+        setIsOpen(true);
+        setMenuVisible(true);
+      },
+      onReverseSwipe: () => {
+        setIsOpen(false);
+      }
+    });
+    
+    // Cập nhật trạng thái sidebar khi thay đổi
+    if (edgeSwipeDetector) {
+      edgeSwipeDetector.updateSidebarState(isOpen);
+    }
+    
     return () => {
-      // Hủy đăng ký tất cả event listeners khi component unmount
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
       document.body.removeEventListener('click', handleBodyClick);
+      if (edgeSwipeDetector) {
+        edgeSwipeDetector.removeEventListeners();
+      }
     };
   }, [isOpen]);
 
