@@ -13,7 +13,7 @@ import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PWAContainer } from "@/components/pwa/PWAContainer";
-import { preloadRoute } from "@/lib/preload";
+import { preloadRoute, preloadCommonRoutes } from "@/lib/preload";
 import AchievementNotificationContainer from "@/components/achievements/AchievementNotificationContainer";
 import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -217,38 +217,35 @@ function MainContent() {
         </div>
       )}
       
-            {/* Import và sử dụng Error Boundary */}
-      <ErrorBoundary>
-        <Suspense fallback={
-          <div className="flex items-center justify-center h-[70vh]">
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="h-7 w-7 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Đang tải...</p>
-            </div>
+      <Suspense fallback={
+        <div className="flex items-center justify-center h-[70vh]">
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Đang tải...</p>
           </div>
-        }>
-          <Switch>
-            {/* Auth routes */}
-            <Route path="/auth/login" component={Login} />
-            <Route path="/auth/register" component={Register} />
-            
-            {/* Protected routes */}
-            <Route path="/" component={Dashboard} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/trade/new" component={NewTrade} />
-            <Route path="/trade/edit/:tradeId" component={ViewTrade} />
-            <Route path="/trade/view/:tradeId" component={ViewTrade} />
-            <Route path="/trade/history" component={TradeHistory} />
-            <Route path="/history" component={TradeHistory} />
-            <Route path="/analytics" component={Analytics} />
-            {/* Settings page render */}
-            <Route path="/settings" component={Settings} />
-            
-            {/* Fallback to 404 */}
-            <Route path="/:rest*" component={NotFound} />
-          </Switch>
-        </Suspense>
-      </ErrorBoundary>
+        </div>
+      }>
+        <Switch>
+          {/* Auth routes */}
+          <Route path="/auth/login" component={Login} />
+          <Route path="/auth/register" component={Register} />
+          
+          {/* Protected routes */}
+          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/trade/new" component={NewTrade} />
+          <Route path="/trade/edit/:tradeId" component={ViewTrade} />
+          <Route path="/trade/view/:tradeId" component={ViewTrade} />
+          <Route path="/trade/history" component={TradeHistory} />
+          <Route path="/history" component={TradeHistory} />
+          <Route path="/analytics" component={Analytics} />
+          {/* Settings page render */}
+          <Route path="/settings" component={Settings} />
+          
+          {/* Fallback to 404 */}
+          <Route path="/:rest*" component={NotFound} />
+        </Switch>
+      </Suspense>
     </div>
   );
   

@@ -1,13 +1,7 @@
 /**
  * Utility module để quản lý preloading tài nguyên
  * Cải thiện hiệu suất bằng cách prefetch modules và tài nguyên quan trọng
- * 
- * Cải tiến:
- * - Thêm Safe loading với Error Boundaries
- * - Tối ưu preloading để tránh blocking main thread
- * - Kiểm soát lỗi được cải thiện để tránh crash ứng dụng
  */
-import type { ComponentType } from 'react';
 
 // Các route phổ biến được sử dụng trong ứng dụng
 const COMMON_ROUTES = [
@@ -156,91 +150,8 @@ export const preloadCriticalResources = (): void => {
   });
 };
 
-/**
- * Tạo React component tương thích với Error Boundary từ lazy component
- * 
- * @param importFn Hàm import dynamic dùng với React.lazy
- * @returns Promise chứa component đã được bọc trong error boundary
- */
-export const createSafeComponent = async (
-  importFn: () => Promise<any>
-): Promise<{ default: ComponentType<any> }> => {
-  try {
-    // Bắt lỗi ngay trong quá trình import
-    const module = await importFn();
-    
-    if (!module || !module.default) {
-      throw new Error('Module không đúng định dạng - thiếu default export');
-    }
-    
-    // Return module với component được wrap bằng withErrorBoundary
-    // Chú ý: withErrorBoundary sẽ được import bởi component sử dụng lazy load,
-    // không import trực tiếp ở đây để tránh circular dependencies
-    return module;
-  } catch (error) {
-    console.error('Error loading component:', error);
-    
-    // Tạo một fallback component show error message
-    const errorMessage = error instanceof Error ? error.message : 'Lỗi không xác định khi tải component';
-    
-    // Return simple component that just shows error
-    const FallbackComponent = () => {
-      console.error('Rendering error fallback component with message:', errorMessage);
-      return null; // Render nothing, error boundary will handle display
-    };
-    
-    // Return fallback component
-    return {
-      default: FallbackComponent
-    };
-  }
-};
-
-/**
- * Tải trước một component nhưng với cơ chế error handling
- * Sử dụng khi cần đảm bảo thành phần sẽ không crash app khi tải
- * 
- * @param route Route để lazy load
- */
-export const preloadSafeRoute = (route: string): void => {
-  const moduleLoader = ROUTE_TO_MODULE_MAP[route];
-  if (!moduleLoader) return;
-  
-  // Sử dụng requestIdleCallback khi có thể
-  const scheduleLoad = (fn: () => void, delay: number) => {
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(fn, { timeout: delay + 1000 });
-    } else {
-      setTimeout(fn, delay);
-    }
-  };
-  
-  // Tải main module với cơ chế error handling
-  scheduleLoad(() => {
-    createSafeComponent(() => moduleLoader() as Promise<{default: ComponentType<any>}>)
-      .catch(err => {
-        console.debug(`Safe preload for ${route} failed:`, err);
-      });
-  }, 200);
-  
-  // Tải dependencies cùng cơ chế
-  const dependencies = ROUTE_DEPENDENCIES[route];
-  if (dependencies?.length) {
-    scheduleLoad(() => {
-      dependencies.forEach(dep => {
-        createSafeComponent(() => dep() as Promise<{default: ComponentType<any>}>)
-          .catch(err => {
-            console.debug(`Safe dependency preload failed:`, err);
-          });
-      });
-    }, 500);
-  }
-};
-
 export default {
   preloadRoute,
-  preloadSafeRoute,
   preloadCommonRoutes,
   preloadCriticalResources,
-  createSafeComponent
 };

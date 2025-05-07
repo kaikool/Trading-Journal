@@ -20,7 +20,7 @@ interface ErrorBoundaryState {
  * Được thiết kế để phát hiện lỗi trong quá trình tải lazy-loaded components
  * và các lỗi rendering khác, hiển thị UI thân thiện thay vì crash ứng dụng.
  */
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -92,21 +92,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     // Nếu không có lỗi, render children bình thường
     return children;
   }
-}
-
-/**
- * Wrap a lazy-loaded component with ErrorBoundary.
- * This is a convenience function to use with lazy-loaded components.
- */
-export function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  fallback?: ReactNode
-): React.FC<P> {
-  return (props: P) => (
-    <ErrorBoundary fallback={fallback}>
-      <Component {...props} />
-    </ErrorBoundary>
-  );
 }
 
 export default ErrorBoundary;
