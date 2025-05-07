@@ -170,7 +170,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </div>
 
       {/* Right side - Form area */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-b from-background to-muted/20">
+      <div className="flex-1 flex items-center justify-center p-6 pt-safe pb-6 bg-gradient-to-b from-background to-muted/20">
         <div className="w-full max-w-md">{children}</div>
       </div>
     </div>
