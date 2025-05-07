@@ -1007,17 +1007,21 @@ export default function Settings() {
         {/* Strategies tab */}
         <TabsContent value="strategies" className="mt-6 space-y-6">
           <div className="grid gap-6">
-            <StrategiesManagement />
+            <Suspense fallback={<LoadingFallback height={300} />}>
+              <StrategiesManagement />
+            </Suspense>
           </div>
         </TabsContent>
         
         {/* Achievements tab */}
         <TabsContent value="achievements" className="mt-6 space-y-6">
           <div className="grid gap-6">
-            <AchievementsTab
-              showNotifications={Boolean(settings.showAchievements)}
-              onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
-            />
+            <Suspense fallback={<LoadingFallback height={300} />}>
+              <AchievementsTab
+                showNotifications={Boolean(settings.showAchievements)}
+                onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
+              />
+            </Suspense>
           </div>
         </TabsContent>
         
