@@ -1048,7 +1048,20 @@ export function StrategiesManagement() {
         <div>
           <h3 className="text-lg font-medium">Trading Strategies</h3>
         </div>
-        
+      </div>
+      
+      {/* Render strategies list using memoized function */}
+      {renderStrategyList}
+      
+      {/* Add New Strategy Button at the bottom */}
+      <div className="flex justify-center mt-6">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Strategy
+            </Button>
+          </DialogTrigger>
           <DialogContent className="sm:max-w-[700px] md:max-w-[800px] lg:max-w-[900px] overflow-y-auto max-h-[85vh]" variant="form">
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
@@ -1229,9 +1242,6 @@ export function StrategiesManagement() {
           </DialogContent>
         </Dialog>
       </div>
-      
-      {/* Render strategies list using memoized function */}
-      {renderStrategyList}
     </div>
   );
 }
