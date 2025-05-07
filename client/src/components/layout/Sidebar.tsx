@@ -12,7 +12,9 @@ import {
   Menu,
   X,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  BookOpen,
+  Trophy
 } from "lucide-react";
 import { AppLogo } from "@/components/AppLogo";
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,8 @@ const SIDEBAR_LINKS = [
   { icon: <TrendingUp className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
   { icon: <History className="h-5 w-5" />, label: "History", href: "/trade/history" },
   { icon: <BarChart2 className="h-5 w-5" />, label: "Analytics", href: "/analytics" },
+  { icon: <BookOpen className="h-5 w-5" />, label: "Strategies", href: "/strategies" },
+  { icon: <Trophy className="h-5 w-5" />, label: "Achievements", href: "/achievements" },
   { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
 
@@ -310,6 +314,8 @@ export function Sidebar({ className }: { className?: string }) {
                         location.includes("/trade/edit")
                       )) ||
                       (item.href === "/analytics" && location === "/analytics") ||
+                      (item.href === "/strategies" && location === "/strategies") ||
+                      (item.href === "/achievements" && location === "/achievements") ||
                       (item.href === "/settings" && location === "/settings")
                     }
                     onClick={closeSidebar}
@@ -393,6 +399,8 @@ export function Sidebar({ className }: { className?: string }) {
                   location.includes("/trade/edit")
                 )) ||
                 (item.href === "/analytics" && location === "/analytics") ||
+                (item.href === "/strategies" && location === "/strategies") ||
+                (item.href === "/achievements" && location === "/achievements") ||
                 (item.href === "/settings" && location === "/settings")
               }
             />

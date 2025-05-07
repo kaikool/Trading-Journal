@@ -32,6 +32,8 @@ const NewTrade = lazy(() => import(/* webpackChunkName: "trade-operations" */ "@
 const ViewTrade = lazy(() => import(/* webpackChunkName: "trade-view" */ "@/pages/ViewTradeOptimized"));
 const Analytics = lazy(() => import(/* webpackChunkName: "analytics" */ "@/pages/Analytics"));
 const Settings = lazy(() => import(/* webpackChunkName: "settings" */ "@/pages/Settings"));
+const Strategies = lazy(() => import(/* webpackChunkName: "strategies" */ "@/pages/Strategies"));
+const Achievements = lazy(() => import(/* webpackChunkName: "achievements" */ "@/pages/Achievements"));
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 // Tạo layout component được bọc bởi ErrorBoundary
@@ -245,6 +247,10 @@ function MainContent() {
             <Route path="/analytics" component={Analytics} />
             {/* Settings page render */}
             <Route path="/settings" component={Settings} />
+            {/* Strategies page */}
+            <Route path="/strategies" component={Strategies} />
+            {/* Achievements page */}
+            <Route path="/achievements" component={Achievements} />
             
             {/* Fallback to 404 */}
             <Route path="/:rest*" component={NotFound} />

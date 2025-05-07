@@ -1,29 +1,36 @@
-import React from 'react';
+import { Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface LoadingFallbackProps {
   height?: number;
-  showSpinner?: boolean;
-  text?: string | null;
+  className?: string;
+  simple?: boolean;
 }
 
-export function LoadingFallback({ 
-  height, 
-  showSpinner = false, 
-  text = null
-}: LoadingFallbackProps) {
+export function LoadingFallback({ height = 200, className = '', simple = false }: LoadingFallbackProps) {
+  if (simple) {
+    return (
+      <div className={`flex items-center justify-center ${className}`} style={{ height: `${height}px` }}>
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center justify-center p-4" 
-         style={height ? { height: `${height}px` } : undefined}>
-      {showSpinner ? (
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-          {text && <div className="text-sm text-muted-foreground">{text}</div>}
+    <div className={`space-y-4 ${className}`} style={{ minHeight: `${height}px` }}>
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-[250px]" />
+          <Skeleton className="h-4 w-[200px]" />
         </div>
-      ) : (
-        <div className="h-full w-full rounded-lg bg-card/30"></div>
-      )}
+      </div>
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-3/4" />
+      <div className="pt-4">
+        <Skeleton className="h-10 w-[180px]" />
+      </div>
     </div>
   );
 }
-
-export default LoadingFallback;

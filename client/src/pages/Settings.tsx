@@ -622,20 +622,6 @@ export default function Settings() {
                 <BarChart3 className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
               </TabsTrigger>
-              <TabsTrigger 
-                value="strategies" 
-                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
-              >
-                <BookOpen className="h-4 w-4 flex-shrink-0" />
-                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Strategies</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="achievements" 
-                className="flex-1 flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
-              >
-                <Trophy className="h-4 w-4 flex-shrink-0" />
-                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Achievements</span>
-              </TabsTrigger>
             </TabsList>
           </div>
         </div>
@@ -1309,26 +1295,7 @@ export default function Settings() {
           </SettingsSection>
         </TabsContent>
 
-        {/* Strategies tab */}
-        <TabsContent value="strategies" className="mt-6 space-y-6">
-          <div className="grid gap-6">
-            <Suspense fallback={<LoadingFallback height={300} />}>
-              <StrategiesManagement />
-            </Suspense>
-          </div>
-        </TabsContent>
-        
-        {/* Achievements tab */}
-        <TabsContent value="achievements" className="mt-6 space-y-6">
-          <div className="grid gap-6">
-            <Suspense fallback={<LoadingFallback height={300} />}>
-              <AchievementsTab
-                showNotifications={Boolean(settings.showAchievements)}
-                onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
-              />
-            </Suspense>
-          </div>
-        </TabsContent>
+
         
         {/* Security settings tab */}
         <TabsContent value="security" className="mt-6 space-y-6">
