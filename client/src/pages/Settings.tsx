@@ -199,6 +199,13 @@ export default function Settings() {
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
   const [isUnlinking, setIsUnlinking] = useState(false);
   
+  // API Settings state
+  const [apiSettings, setApiSettings] = useState({
+    twelvedataApiKey: localStorage.getItem('twelvedata_api_key') || ''
+  });
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [isSavingApi, setIsSavingApi] = useState(false);
+  
   // Check device performance
   useEffect(() => {
     evaluateDevicePerformance().then(performance => {
@@ -452,6 +459,33 @@ export default function Settings() {
       });
     } finally {
       setIsUnlinking(false);
+    }
+  };
+  
+  // Save API settings to localStorage
+  const saveApiSettings = async () => {
+    setIsSavingApi(true);
+    
+    try {
+      // Store API key in localStorage
+      if (apiSettings.twelvedataApiKey) {
+        localStorage.setItem('twelvedata_api_key', apiSettings.twelvedataApiKey);
+      } else {
+        localStorage.removeItem('twelvedata_api_key');
+      }
+      
+      toast({
+        title: "API settings saved",
+        description: "Your API settings have been updated successfully.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error saving API settings",
+        description: error instanceof Error ? error.message : "An error occurred",
+      });
+    } finally {
+      setIsSavingApi(false);
     }
   };
   
