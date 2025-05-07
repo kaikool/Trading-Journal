@@ -35,13 +35,13 @@ export function AppLayout({ children }: AppLayoutProps) {
       // Only change state if we're actively scrolling (prevents end-of-page jitter)
       if (!isScrolling) return;
       
-      // When near bottom of page, always keep safe areas to prevent bounce effect
-      const isNearBottom = 
+      // Handle "end bounce" differently with a small threshold
+      const isVeryNearBottom = 
         window.innerHeight + window.scrollY >= 
-        document.documentElement.scrollHeight - 100;
+        document.documentElement.scrollHeight - 20;
         
-      if (isNearBottom) {
-        setRespectSafeArea(true);
+      if (isVeryNearBottom) {
+        // Apply a smaller transition to reduce jitter at bottom
         return;
       }
       
@@ -80,7 +80,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       >
         <div 
           className={cn(
-            "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right pb-24",
+            "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
             // Apply safe area padding conditionally for top and bottom only with extra bottom space to prevent bounce
             respectSafeArea 
               ? "pt-4 safe-area-top safe-area-bottom" 

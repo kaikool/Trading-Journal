@@ -24,8 +24,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useUserActivity } from "@/hooks/use-user-activity";
 
-// Navigation items shared across all sidebar modes
-export const navItems = [
+// Navigation items shared across all sidebar modes - keep as component internal constant
+const NAVIGATION_ITEMS = [
   { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", href: "/" },
   { icon: <TrendingUp className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
   { icon: <History className="h-5 w-5" />, label: "History", href: "/trade/history" },
@@ -265,7 +265,7 @@ export function Sidebar({ className }: SidebarProps) {
           {/* Navigation Items */}
           <nav className="p-4">
             <ul className="space-y-1">
-              {navItems.map(item => (
+              {NAVIGATION_ITEMS.map(item => (
                 <SidebarItem
                   key={item.href}
                   icon={item.icon}
@@ -345,7 +345,7 @@ export function Sidebar({ className }: SidebarProps) {
       {/* Navigation Items */}
       <nav className="flex-1 overflow-y-auto p-3">
         <ul className="space-y-1">
-          {navItems.map(item => (
+          {NAVIGATION_ITEMS.map(item => (
             <SidebarItem
               key={item.href}
               icon={item.icon}
