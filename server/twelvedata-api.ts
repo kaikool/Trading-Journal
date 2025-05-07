@@ -7,9 +7,13 @@ import { rateLimit } from 'express-rate-limit';
 import { log } from './vite';
 
 // Cấu hình API client cho TwelveData
+// Theo tài liệu: https://support.twelvedata.com/en/articles/5609168-introduction-to-twelve-data
 const twelveDataClient = axios.create({
   baseURL: 'https://api.twelvedata.com',
-  timeout: 10000
+  timeout: 10000,
+  headers: {
+    'Accept': 'application/json'
+  }
 });
 
 // Rate limiting để tránh vượt quá giới hạn API
@@ -36,19 +40,22 @@ async function proxyTwelveDataRequest(req: Request, res: Response) {
       return res.status(500).json({ error: 'API key not configured' });
     }
 
-    // Chuẩn bị các tham số cho API call
+    // Chuẩn bị các tham số cho API call theo hướng dẫn TwelveData
+    // Theo tài liệu: https://support.twelvedata.com/en/articles/5609168-introduction-to-twelve-data
     const params = {
       ...req.query, // Bao gồm các tham số gốc từ client
-      apikey: apiKey // Thêm API key từ server
+      apikey: apiKey, // Thêm API key từ server - lưu ý dùng apikey (lowercase) theo tài liệu
+      dp: 4 // Độ chính xác mặc định 4 chữ số thập phân cho giá Forex
     };
 
-    // Lấy đường dẫn endpoint từ URL gốc
-    const endpoint = req.path.replace('/twelvedata/', '');
+    // Xây dựng đường dẫn endpoint đúng với API TwelveData
+    // Đảm bảo loại bỏ tiền tố '/twelvedata/' và đường dẫn bắt đầu bằng '/'
+    const endpoint = req.path.replace('/api/twelvedata/', '');
     
     log(`Proxying TwelveData API request: ${endpoint} for symbol ${symbol}`, 'api');
     
-    // Gọi API TwelveData
-    const response = await twelveDataClient.get(`/${endpoint}`, { params });
+    // Gọi API TwelveData - đảm bảo rằng endpoint không bắt đầu bằng '/' vì baseURL đã có
+    const response = await twelveDataClient.get(endpoint, { params });
     
     // Trả về dữ liệu cho client
     return res.json(response.data);
