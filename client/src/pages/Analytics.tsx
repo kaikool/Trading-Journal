@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, BarChart2, LineChart, PieChart, TrendingUp, BarChart4 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -9,12 +9,12 @@ import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính 
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { debug, logError } from "@/lib/debug";
 
-// Import tabs directly instead of using lazy loading
-import OverviewTab from "@/components/analytics/OverviewTab";
-import StrategyTab from "@/components/analytics/StrategyTab";
-import DisciplineTab from "@/components/analytics/DisciplineTab";
-import EmotionTab from "@/components/analytics/EmotionTab";
-import AdvancedTab from "@/components/analytics/AdvancedTab";
+// Áp dụng lazy loading cho các tab components
+const OverviewTab = lazy(() => import("@/components/analytics/OverviewTab"));
+const StrategyTab = lazy(() => import("@/components/analytics/StrategyTab"));
+const DisciplineTab = lazy(() => import("@/components/analytics/DisciplineTab"));
+const EmotionTab = lazy(() => import("@/components/analytics/EmotionTab"));
+const AdvancedTab = lazy(() => import("@/components/analytics/AdvancedTab"));
 
 // Thêm khai báo cho window
 declare global {
@@ -417,25 +417,35 @@ export default function Analytics() {
             </div>
           </div>
           
-          {/* Tabs content without Suspense for simplicity */}
+          {/* Tabs content với Suspense cho dynamic import */}
             <TabsContent value="overview">
-              <OverviewTab data={analyticsData} />
+              <Suspense fallback={<LoadingFallback height={300} />}>
+                <OverviewTab data={analyticsData} />
+              </Suspense>
             </TabsContent>
             
             <TabsContent value="strategy">
-              <StrategyTab data={analyticsData} />
+              <Suspense fallback={<LoadingFallback height={300} />}>
+                <StrategyTab data={analyticsData} />
+              </Suspense>
             </TabsContent>
             
             <TabsContent value="discipline">
-              <DisciplineTab data={analyticsData} />
+              <Suspense fallback={<LoadingFallback height={300} />}>
+                <DisciplineTab data={analyticsData} />
+              </Suspense>
             </TabsContent>
             
             <TabsContent value="emotion">
-              <EmotionTab data={analyticsData} />
+              <Suspense fallback={<LoadingFallback height={300} />}>
+                <EmotionTab data={analyticsData} />
+              </Suspense>
             </TabsContent>
             
             <TabsContent value="advanced">
-              <AdvancedTab data={analyticsData} />
+              <Suspense fallback={<LoadingFallback height={300} />}>
+                <AdvancedTab data={analyticsData} />
+              </Suspense>
             </TabsContent>
             
 

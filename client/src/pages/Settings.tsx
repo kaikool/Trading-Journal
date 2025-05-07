@@ -38,8 +38,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { StrategiesManagement } from "@/components/settings/StrategiesManagement";
-import { AchievementsTab } from "@/components/settings/AchievementsTab";
+import { lazy, Suspense } from "react";
+import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
+
+// Áp dụng lazy loading cho các tab components
+const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
+const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
 import {
   User,
   CreditCard,
