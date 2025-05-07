@@ -888,11 +888,26 @@
     width: 100%;
     position: relative;
     max-width: 100vw;
+    -webkit-overflow-scrolling: touch; /* Cải thiện trải nghiệm cuộn trên iOS */
+    scroll-behavior: smooth; /* Cải thiện hiệu ứng cuộn mượt */
+    overscroll-behavior-y: contain; /* Ngăn chặn hiệu ứng bounce */
   }
   
   body {
     @apply bg-background text-foreground font-sans overflow-x-hidden;
     max-width: 100vw;
+    /* Cải thiện hiệu suất cuộn cho PWA */
+    will-change: scroll-position; /* Gợi ý trình duyệt tối ưu hiệu năng cuộn */
+    text-rendering: optimizeSpeed; /* Tối ưu hiển thị văn bản khi cuộn */
+    backface-visibility: hidden; /* Giảm hiện tượng flickering */
+  }
+  
+  /* Tối ưu cho trình duyệt WebKit trên iOS */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      -webkit-text-size-adjust: none; /* Tránh thay đổi kích thước chữ tự động */
+      -webkit-font-smoothing: antialiased; /* Làm mượt font */
+    }
   }
   
   /* Root element - basic container */

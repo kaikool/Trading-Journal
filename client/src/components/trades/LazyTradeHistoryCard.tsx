@@ -29,8 +29,11 @@ import {
   Maximize2,
   CircleDot,
   Loader2,
-  BarChart2
+  BarChart2,
+  Image,
+  ZoomIn
 } from "lucide-react";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatCurrency, cn } from "@/lib/utils";
@@ -246,66 +249,34 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
               >
                 {displayUrl ? (
                   <div className="trade-card-image-container">
-                    {/* Placeholder image (always shown initially) */}
-                    <div className={`trade-card-placeholder bg-gray-100 dark:bg-gray-800 ${imageLoaded && !isImageLoading ? 'trade-card-placeholder-hidden' : 'trade-card-placeholder-visible'}`}>
-                      {isImageLoading && (
-                        <div className="flex flex-col items-center justify-center">
-                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/50" />
-                        </div>
-                      )}
+                    <OptimizedImage 
+                      src={displayUrl}
+                      alt={`${pair} ${direction} trade chart`}
+                      tradeId={id}
+                      imageType={imageType as any}
+                      aspectRatio="1/1"
+                      className="trade-card-image"
+                      containerClassName="w-full h-full"
+                      placeholder="/icons/blank-chart.svg"
+                      fallbackSrc="/icons/image-not-supported.svg"
+                      loading="lazy"
+                      priority={false}
+                    />
+                    
+                    {/* Timeframe badge */}
+                    <div className="trade-card-timeframe-badge">
+                      {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
                     </div>
                     
-                    {/* Actual image (hidden until loaded) */}
-                    <div className={`trade-card-image ${imageLoaded && !isImageLoading ? 'loaded' : ''}`}>
-                      <img 
-                        ref={imageRef}
-                        src={cachedImageUrl || '/icons/blank-chart.svg'}
-                        alt={`${pair} ${direction} trade chart`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                        onLoad={() => {
-                          // Only set as loaded if it's not an error image
-                          if (cachedImageUrl && !cachedImageUrl.includes('image-not-supported')) {
-                            setImageLoaded(true);
-                          }
-                        }}
-                        onError={(e) => {
-                          console.error(`Error displaying image for trade ${id}: ${displayUrl}`);
-                          const imgElement = e.currentTarget as HTMLImageElement;
-                          
-                          // Không hiển thị lỗi tạm thời - giữ nguyên trạng thái loading
-                          // Thử tải lại một lần nữa với URL gốc nếu có
-                          if (displayUrl && imgElement.src !== displayUrl) {
-                            console.log(`Retrying with original URL: ${displayUrl}`);
-                            imgElement.src = displayUrl;
-                            return;
-                          }
-                          
-                          // Sử dụng state để quản lý ẩn/hiện thay vì thêm class
-                          setImageLoaded(false);
-                        }}
-                      />
+                    {/* Zoom overlay icon that appears on hover */}
+                    <div className="trade-card-zoom-overlay">
+                      <ZoomIn className="h-8 w-8 text-white" />
                     </div>
-                    
-                    {/* Zoom icon and timeframe badge - Only show when image is successfully loaded */}
-                    {imageLoaded && !isImageLoading && !imageError && (
-                      <>
-                        {/* Zoom overlay icon that appears on hover */}
-                        <div className="trade-card-zoom-overlay">
-                          <Maximize2 className="h-8 w-8 text-white" />
-                        </div>
-                        
-                        {/* Badge showing which timeframe is displayed */}
-                        <div className="trade-card-timeframe-badge">
-                          {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
-                        </div>
-                      </>
-                    )}
                   </div>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <span>No Chart</span>
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-muted/10">
+                    <Image className="h-10 w-10 opacity-30 mb-2" />
+                    <span className="text-xs text-muted-foreground">No Chart</span>
                   </div>
                 )}
                 
