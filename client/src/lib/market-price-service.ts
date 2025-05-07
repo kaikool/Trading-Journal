@@ -132,12 +132,17 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
     
     debug(`[MarketPrice] Using formatted symbols: ${formattedSymbolsStr}`);
     
+    // Kiểm tra xem có API key từ localStorage không
+    const userApiKey = getApiKey();
+    const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
+    
     // Gọi API thông qua proxy server
     const response = await apiClient.get('/price', {
       params: {
         symbol: formattedSymbolsStr,
         format: 'JSON'
-      }
+      },
+      headers
     });
     
     // Kết quả có thể là object duy nhất hoặc mảng objects tùy vào số lượng symbols
