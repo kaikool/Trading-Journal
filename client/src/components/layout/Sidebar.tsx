@@ -245,10 +245,11 @@ export function Sidebar({ className }: { className?: string }) {
           aria-hidden="true"
         />
         
-        {/* Mobile Sidebar Drawer */}
+        {/* Mobile Sidebar Drawer - luôn tôn trọng safe area top và bottom */}
         <aside 
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
+            "fixed left-0 z-50 w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
+            "top-0 bottom-0 safe-area-top safe-area-bottom flex flex-col",
             isOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
@@ -269,7 +270,9 @@ export function Sidebar({ className }: { className?: string }) {
             </Button>
           </div>
           
-          {/* User Profile Section */}
+
+          
+          {/* Phần User Profile */}
           <div className="p-4 border-b border-border">
             <div className="flex items-center space-x-3">
               <Avatar className="h-10 w-10">
@@ -287,35 +290,37 @@ export function Sidebar({ className }: { className?: string }) {
             </div>
           </div>
           
-          {/* Navigation Items */}
-          <nav className="p-4">
-            <ul className="space-y-1">
-              {SIDEBAR_LINKS.map(item => (
-                <SidebarItem
-                  key={item.href}
-                  icon={item.icon}
-                  label={item.label}
-                  href={item.href}
-                  isActive={
-                    (item.href === "/" && (location === "/" || location === "/dashboard")) ||
-                    (item.href === "/trade/new" && (location === "/trade/new")) ||
-                    (item.href === "/trade/history" && (
-                      location === "/trade/history" ||
-                      location === "/history" ||
-                      location.includes("/trade/view") ||
-                      location.includes("/trade/edit")
-                    )) ||
-                    (item.href === "/analytics" && location === "/analytics") ||
-                    (item.href === "/settings" && location === "/settings")
-                  }
-                  onClick={closeSidebar}
-                />
-              ))}
-            </ul>
-          </nav>
+          {/* Phần còn lại của sidebar có thể scroll */}
+          <div className="flex-1 overflow-y-auto">
+            <nav className="p-4">
+              <ul className="space-y-1">
+                {SIDEBAR_LINKS.map(item => (
+                  <SidebarItem
+                    key={item.href}
+                    icon={item.icon}
+                    label={item.label}
+                    href={item.href}
+                    isActive={
+                      (item.href === "/" && (location === "/" || location === "/dashboard")) ||
+                      (item.href === "/trade/new" && (location === "/trade/new")) ||
+                      (item.href === "/trade/history" && (
+                        location === "/trade/history" ||
+                        location === "/history" ||
+                        location.includes("/trade/view") ||
+                        location.includes("/trade/edit")
+                      )) ||
+                      (item.href === "/analytics" && location === "/analytics") ||
+                      (item.href === "/settings" && location === "/settings")
+                    }
+                    onClick={closeSidebar}
+                  />
+                ))}
+              </ul>
+            </nav>
+          </div>
           
-          {/* Logout Button */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+          {/* Logout Button - fixed to bottom with safe area */}
+          <div className="border-t border-border p-4">
             <Button
               onClick={handleLogout}
               variant="outline"
@@ -330,11 +335,12 @@ export function Sidebar({ className }: { className?: string }) {
     );
   }
   
-  // Desktop sidebar version (collapsible sidebar)
+  // Desktop sidebar version (collapsible sidebar) - luôn tôn trọng safe area
   return (
     <aside
       className={cn(
-        "hidden md:flex md:flex-col h-screen fixed left-0 top-0 z-30 bg-background border-r border-border transition-all duration-300 ease-in-out",
+        "hidden md:flex md:flex-col h-screen fixed left-0 z-30 bg-background border-r border-border transition-all duration-300 ease-in-out",
+        "top-0 bottom-0 safe-area-top safe-area-bottom",
         sidebarCollapsed ? "w-[72px]" : "w-[256px]",
         className
       )}
