@@ -81,9 +81,11 @@ function isNavigationRequest(request) {
  */
 function isVersionedAsset(url) {
   // Vite adds hash to versioned assets like /assets/index-a1b2c3d4.js
-  return url.includes('/assets/') && 
-         (url.includes('.js') || url.includes('.css') || url.includes('.woff2') || 
-          url.includes('.png') || url.includes('.svg') || url.includes('.jpg'));
+  // Make sure url is a string before using includes
+  const urlStr = typeof url === 'string' ? url : (url?.pathname || '');
+  return urlStr.includes('/assets/') && 
+         (urlStr.includes('.js') || urlStr.includes('.css') || urlStr.includes('.woff2') || 
+          urlStr.includes('.png') || urlStr.includes('.svg') || urlStr.includes('.jpg'));
 }
 
 /**
@@ -134,10 +136,12 @@ self.addEventListener('activate', (event) => {
  * as they involve authentication and real-time data
  */
 function isFirebaseRequest(url) {
-  return url.includes('firebasestorage.googleapis.com') || 
-         url.includes('firebaseio.com') || 
-         url.includes('firebase') || 
-         url.includes('googleapis.com');
+  // Make sure url is a string before using includes
+  const urlStr = typeof url === 'string' ? url : (url?.href || '');
+  return urlStr.includes('firebasestorage.googleapis.com') || 
+         urlStr.includes('firebaseio.com') || 
+         urlStr.includes('firebase') || 
+         urlStr.includes('googleapis.com');
 }
 
 /**
@@ -161,9 +165,12 @@ function isCacheableRequest(url) {
  * Generate appropriate fallback responses for different types of requests
  */
 async function generateFallbackResponse(request) {
-  if (request.destination === 'image' || request.url.includes('.png') || request.url.includes('.jpg')) {
+  // Make sure url is available before using includes
+  const requestUrl = request?.url || '';
+  
+  if (request.destination === 'image' || requestUrl.includes('.png') || requestUrl.includes('.jpg')) {
     // For charts, use blank canvas background
-    if (request.url.includes('chart')) {
+    if (requestUrl.includes('chart')) {
       const cachedCanvas = await caches.match(OFFLINE_CANVAS_URL);
       if (cachedCanvas) return cachedCanvas;
     }
@@ -185,8 +192,9 @@ async function generateFallbackResponse(request) {
   
   if (request.destination === 'script') {
     // Check if it's an ES module
-    const isModule = request.url.includes('type=module') || 
-                     request.url.includes('/assets/') || 
+    const requestUrl = request?.url || '';
+    const isModule = requestUrl.includes('type=module') || 
+                     requestUrl.includes('/assets/') || 
                      request.headers.get('Accept')?.includes('text/javascript');
                      
     return new Response('console.log("Offline script fallback");', {
@@ -207,10 +215,11 @@ async function generateFallbackResponse(request) {
   }
   
   // Handle React lazy-loaded chunks specifically
-  if (request.url.includes('/assets/') && 
-      (request.url.includes('chunk-') || 
-       request.url.includes('analytics-') || 
-       request.url.includes('settings-'))) {
+  const requestUrl = request?.url || '';
+  if (requestUrl.includes('/assets/') && 
+      (requestUrl.includes('chunk-') || 
+       requestUrl.includes('analytics-') || 
+       requestUrl.includes('settings-'))) {
     return new Response('export default {};', {
       headers: { 
         'Content-Type': 'text/javascript',

@@ -1,0 +1,144 @@
+[DEBUG] TradeHistory sortBy changed: newest
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:71 [DEBUG] Sorting by newest first
+debug.ts:69 [DEBUG] Filtered trades count: 4
+debug.ts:69 [DEBUG] Filtered trades count: 4
+debug.ts:69 [DEBUG] Dynamic filter options updated: {pairs: Array(1), directions: Array(2), results: Array(1), strategies: Array(1), emotions: Array(3), …}
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:71 [DEBUG] Sorting by newest first
+debug.ts:69 [DEBUG] Filtered trades count: 4
+debug.ts:69 [DEBUG] Filtered trades count: 4
+trade/history:1 [Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
+debug.ts:69 [DEBUG] Realtime trades update received: 4
+debug.ts:71 [DEBUG] Fetching all trades with sortBy=newest
+debug.ts:71 [DEBUG] Using 4 trades from cache
+debug.ts:71 [DEBUG] Total trades fetched: 4
+debug.ts:71 [DEBUG] Sorting all 4 trades by newest
+debug.ts:71 [DEBUG] Fetching all trades with sortBy=newest
+debug.ts:71 [DEBUG] Using 4 trades from cache
+debug.ts:71 [DEBUG] Total trades fetched: 4
+debug.ts:71 [DEBUG] Sorting all 4 trades by newest
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:71 [DEBUG] Sorting by newest first
+debug.ts:69 [DEBUG] Filtered trades count: 4
+debug.ts:69 [DEBUG] Filtered trades count: 4
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:69 [DEBUG] Applying sort: newest on 4 trades
+debug.ts:71 [DEBUG] Sorting by newest first
+debug.ts:69 [DEBUG] Filtered trades count: 4
+debug.ts:69 [DEBUG] Filtered trades count: 4
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746512091774gdo0mt4arv6%2Fexit-m15-1746512099766-knfotr2o-IMG_7289.jpeg?alt=media&token=f534903d-9fdb-49c1-a3b0-0bc912a8634d' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: Request header field cache-control is not allowed by Access-Control-Allow-Headers in preflight response.
+service-worker.js:248 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746512091774gdo0mt4arv6%2Fexit-m15-1746512099766-knfotr2o-IMG_7289.jpeg?alt=media&token=f534903d-9fdb-49c1-a3b0-0bc912a8634d
+image-cache-service.ts:402 
+            
+            
+            GET https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746512091774gdo0mt4arv6%2Fexit-m15-1746512099766-knfotr2o-IMG_7289.jpeg?alt=media&token=f534903d-9fdb-49c1-a3b0-0bc912a8634d 503 (Service Unavailable)
+getOrFetchImage @ image-cache-service.ts:402
+await in getOrFetchImage
+loadImage @ use-cached-image.ts:124
+setTimeout
+(anonymous) @ use-cached-image.ts:160
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+setTimeout
+scheduleFn @ notifyManager.ts:22
+flush @ notifyManager.ts:37
+batch @ notifyManager.ts:56
+dispatch_fn @ query.ts:617
+setData @ query.ts:218
+onSuccess @ query.ts:507
+resolve @ retryer.ts:107
+Promise.then
+run @ retryer.ts:159
+start @ retryer.ts:218
+fetch @ query.ts:540
+executeFetch_fn @ queryObserver.ts:346
+onSubscribe @ queryObserver.ts:108
+subscribe @ subscribable.ts:11
+(anonymous) @ useBaseQuery.ts:92
+subscribeToStore @ react-dom.development.js:16139
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+performSyncWorkOnRoot @ react-dom.development.js:26115
+flushSyncCallbacks @ react-dom.development.js:12042
+commitRootImpl @ react-dom.development.js:26998
+commitRoot @ react-dom.development.js:26721
+finishConcurrentRender @ react-dom.development.js:26020
+performConcurrentWorkOnRoot @ react-dom.development.js:25848
+workLoop @ scheduler.development.js:266
+flushWork @ scheduler.development.js:239
+performWorkUntilDeadline @ scheduler.development.js:533
+image-cache-service.ts:435  Fetch error: Error: Failed to fetch image: 503 Service Unavailable
+    at ImageCacheService.getOrFetchImage (image-cache-service.ts:415:17)
+    at async loadImage (use-cached-image.ts:124:27)
+getOrFetchImage @ image-cache-service.ts:435
+await in getOrFetchImage
+loadImage @ use-cached-image.ts:124
+setTimeout
+(anonymous) @ use-cached-image.ts:160
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+commitRootImpl @ react-dom.development.js:26974
+commitRoot @ react-dom.development.js:26721
+performSyncWorkOnRoot @ react-dom.development.js:26156
+flushSyncCallbacks @ react-dom.development.js:12042
+(anonymous) @ react-dom.development.js:25690
+setTimeout
+scheduleFn @ notifyManager.ts:22
+flush @ notifyManager.ts:37
+batch @ notifyManager.ts:56
+dispatch_fn @ query.ts:617
+setData @ query.ts:218
+onSuccess @ query.ts:507
+resolve @ retryer.ts:107
+Promise.then
+run @ retryer.ts:159
+start @ retryer.ts:218
+fetch @ query.ts:540
+executeFetch_fn @ queryObserver.ts:346
+onSubscribe @ queryObserver.ts:108
+subscribe @ subscribable.ts:11
+(anonymous) @ useBaseQuery.ts:92
+subscribeToStore @ react-dom.development.js:16139
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+performSyncWorkOnRoot @ react-dom.development.js:26115
+flushSyncCallbacks @ react-dom.development.js:12042
+commitRootImpl @ react-dom.development.js:26998
+commitRoot @ react-dom.development.js:26721
+finishConcurrentRender @ react-dom.development.js:26020
+performConcurrentWorkOnRoot @ react-dom.development.js:25848
+workLoop @ scheduler.development.js:266
+flushWork @ scheduler.development.js:239
+performWorkUntilDeadline @ scheduler.development.js:533
+image-cache-service.ts:439  Lỗi khi tải ảnh: Error: Failed to fetch image: 503 Service Unavailable
+    at ImageCacheService.getOrFetchImage (image-cache-service.ts:415:17)
+    at async loadImage (use-cached-image.ts:124:27)
