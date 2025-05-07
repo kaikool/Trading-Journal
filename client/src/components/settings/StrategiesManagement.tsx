@@ -590,9 +590,9 @@ export function StrategiesManagement() {
     id: uuidv4(),
     name: "",
     description: "",
-    rules: [] as StrategyCondition[],
-    entryConditions: [] as StrategyCondition[],
-    exitConditions: [] as StrategyCondition[],
+    rules: Array<StrategyCondition>(),
+    entryConditions: Array<StrategyCondition>(),
+    exitConditions: Array<StrategyCondition>(),
     timeframes: [],
     isDefault: false,
   });
@@ -821,15 +821,15 @@ export function StrategiesManagement() {
       // Create the new strategy
       const result = await addStrategy(userId, strategyWithTimestamp as TradingStrategy);
       
-      // Extract proper ID from result - addStrategy returns {id: string} object
+      // Extract proper ID from result - addStrategy returns {id: string} object or string
       const newStrategyId = typeof result === 'object' && result !== null && 'id' in result 
-        ? result.id 
-        : result;
+        ? String(result.id) 
+        : String(result);
       
       // Create a properly typed strategy object with the correct ID structure
       const completeStrategy: TradingStrategy = {
-        ...strategyWithTimestamp as any, // Force type conversion
-        id: newStrategyId as string // Ensure id is a string, not an object
+        ...strategyWithTimestamp as TradingStrategy, 
+        id: newStrategyId
       };
       
       // Update local state
@@ -846,9 +846,9 @@ export function StrategiesManagement() {
         id: uuidv4(),
         name: "",
         description: "",
-        rules: [] as StrategyCondition[],
-        entryConditions: [] as StrategyCondition[],
-        exitConditions: [] as StrategyCondition[],
+        rules: Array<StrategyCondition>(),
+        entryConditions: Array<StrategyCondition>(),
+        exitConditions: Array<StrategyCondition>(),
         timeframes: [],
         isDefault: false,
       });
@@ -1056,9 +1056,9 @@ export function StrategiesManagement() {
                       id: uuidv4(),
                       name: "",
                       description: "",
-                      rules: [] as StrategyCondition[],
-                      entryConditions: [] as StrategyCondition[],
-                      exitConditions: [] as StrategyCondition[],
+                      rules: Array<StrategyCondition>(),
+                      entryConditions: Array<StrategyCondition>(),
+                      exitConditions: Array<StrategyCondition>(),
                       timeframes: [],
                       isDefault: false,
                     });
