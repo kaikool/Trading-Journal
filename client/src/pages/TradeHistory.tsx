@@ -137,25 +137,41 @@ export default function TradeHistory() {
     }
   }, [sortBy, hookSortBy, hookSetSortBy]);
   
-  // Log khi filters thay đổi để debug
-  useEffect(() => {
-    debug("TradeHistory filters changed:", filters);
-  }, [filters]);
+  // Cải thiện logging và cập nhật tổng số trades
+  // Sử dụng 1 effect thay vì nhiều effect để tránh render nhiều lần
+  const prevFiltersRef = useRef<typeof filters>({});
+  const prevSortByRef = useRef<typeof sortBy>(sortBy);
+  const prevTradesLengthRef = useRef<number>(0);
   
-  // Log khi trades thay đổi để debug và lưu tổng số trades
   useEffect(() => {
-    debug("Filtered trades count:", trades.length);
+    // Giảm thiểu số lượng log - chỉ log khi có thay đổi thực sự
+    const filtersChanged = JSON.stringify(filters) !== JSON.stringify(prevFiltersRef.current);
+    const sortByChanged = sortBy !== prevSortByRef.current;
+    const tradesLengthChanged = trades.length !== prevTradesLengthRef.current;
+    
+    // Cập nhật ref để so sánh lần sau
+    prevFiltersRef.current = {...filters};
+    prevSortByRef.current = sortBy;
+    prevTradesLengthRef.current = trades.length;
+    
+    // Ghi log có điều kiện
+    if (filtersChanged) {
+      debug("TradeHistory filters changed:", filters);
+    }
+    
+    if (sortByChanged) {
+      debug("TradeHistory sortBy changed:", sortBy);
+    }
+    
+    if (tradesLengthChanged || filtersChanged) {
+      debug("Filtered trades count:", trades.length);
+    }
     
     // Chỉ cập nhật tổng số trades khi không có filter nào được áp dụng
-    if (Object.keys(filters).length === 0) {
+    if (Object.keys(filters).length === 0 && tradesLengthChanged) {
       totalTradesCountRef.current = trades.length;
     }
-  }, [trades, filters]);
-  
-  // Log khi sortBy thay đổi
-  useEffect(() => {
-    debug("TradeHistory sortBy changed:", sortBy);
-  }, [sortBy]);
+  }, [trades, filters, sortBy]);
 
   const clearFilters = () => {
     setFilters({});
