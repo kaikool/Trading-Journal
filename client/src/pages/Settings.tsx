@@ -458,7 +458,7 @@ export default function Settings() {
   // Loading state with skeleton UI
   if (isLoading) {
     return (
-      <div className="container max-w-7xl mx-auto pb-6 md:pb-10 px-4 sm:px-6">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <Skeleton className="h-9 w-48 mb-2" />
@@ -535,7 +535,7 @@ export default function Settings() {
       
       {/* Tabs navigation */}
       <Tabs defaultValue="general" className="mb-4 w-full">
-        <div className="overflow-x-auto pb-1 mb-4 sm:mb-6 touch-pan-x">
+        <div className="overflow-x-auto mb-4 sm:mb-6 touch-pan-x">
           <div className="min-w-max mx-auto px-1">
             <TabsList className="w-fit sm:w-auto flex flex-nowrap h-auto justify-start p-1 space-x-1 rounded-xl bg-muted/80">
               <TabsTrigger 

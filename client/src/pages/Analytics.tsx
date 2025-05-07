@@ -389,7 +389,7 @@ export default function Analytics() {
         <EmptyState />
       ) : (
         <Tabs defaultValue="overview" className="w-full">
-          <div className="overflow-x-auto pb-1 mb-4 sm:mb-6 touch-pan-x">
+          <div className="overflow-x-auto mb-4 sm:mb-6 touch-pan-x">
             <div className="min-w-max mx-auto px-1">
               <TabsList className="w-fit sm:w-auto flex flex-nowrap h-auto justify-start p-1 space-x-1 rounded-xl bg-muted/80">
                 <TabsTrigger value="overview" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">

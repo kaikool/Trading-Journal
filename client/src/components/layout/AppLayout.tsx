@@ -22,58 +22,17 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
-  const { direction, isScrolling } = useScrollDirection();
   const [respectSafeArea, setRespectSafeArea] = useState(true);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Logic điều chỉnh safe area khi cuộn - luôn tôn trọng safe area ở đầu trang
+  // Logic đơn giản hóa cho safe area - luôn tôn trọng safe area không phụ thuộc cuộn
   useEffect(() => {
-    const handleSafeAreaTransition = () => {
-      // Ở đầu trang (dưới 100px): luôn tôn trọng safe area
-      // Đây là mức cơ bản để đảm bảo UI nhất quán khi bắt đầu cuộn
-      const isNearPageTop = window.scrollY < 100;
-      
-      // Khi ở đầu trang hoặc gần đầu trang, luôn tôn trọng safe area
-      if (isNearPageTop) {
-        setRespectSafeArea(true);
-        return;
-      }
-      
-      // Trường hợp đặc biệt cho cuối trang để tránh giật
-      const isNearPageBottom = 
-        window.innerHeight + window.scrollY >= 
-        document.documentElement.scrollHeight - 20;
-        
-      if (isNearPageBottom) {
-        return;
-      }
-      
-      // Chỉ thay đổi khi đang cuộn thực sự
-      if (!isScrolling) return;
-      
-      // Khi cuộn xuống và đã vượt qua ngưỡng 100px, cho phép hiển thị đầy đủ
-      if (direction === 'down' && window.scrollY > 100) {
-        setRespectSafeArea(false);
-      } 
-      // Khi cuộn lên và gần đến đầu trang, khôi phục safe area
-      else if (direction === 'up' && window.scrollY < 150) {
-        setRespectSafeArea(true);
-      }
-    };
-    
-    // Đăng ký sự kiện scroll để kiểm tra ngay khi trang tải xong
-    window.addEventListener('scroll', handleSafeAreaTransition, { passive: true });
-    
-    // Gọi ngay lập tức để đảm bảo trạng thái ban đầu chính xác
-    handleSafeAreaTransition();
-    
-    return () => {
-      window.removeEventListener('scroll', handleSafeAreaTransition);
-    };
-  }, [direction, isScrolling]);
+    // Luôn tôn trọng safe area để tránh hiệu ứng giật khi cuộn
+    setRespectSafeArea(true);
+  }, []);
 
   // Prevent hydration mismatch by not rendering until mounted
   if (!mounted) return null;
@@ -104,7 +63,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           className={cn(
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
             // Luôn tôn trọng safe area, top safe area xử lý theo scroll position
-            // Sử dụng 2rem (pb-8) cho padding bottom nhất quán
+            // Sử dụng 2rem (pb-8) cho padding bottom nhất quán cho tất cả trang
             respectSafeArea 
               ? "pt-4 pb-8 safe-area-bottom" 
               : "pt-0 pb-8 safe-area-bottom"
