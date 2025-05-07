@@ -5,7 +5,15 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { RefreshCw, Clock, CheckCircle } from 'lucide-react';
+import { 
+  RefreshCw, 
+  Clock, 
+  CheckCircle, 
+  BarChart3, 
+  Coins,
+  DollarSign,
+  CandlestickChart
+} from 'lucide-react';
 import { useMarketPrice } from '@/hooks/use-market-price';
 import { debug } from '@/lib/debug';
 import { toast } from '@/hooks/use-toast';
@@ -14,12 +22,18 @@ interface GetPriceButtonProps {
   symbol: string;
   onPriceFetched: (price: number) => void;
   tooltipText?: string;
+  size?: 'default' | 'sm' | 'xs'; // Kích thước của nút
+  variant?: 'outline' | 'ghost' | 'link'; // Kiểu dáng của nút
+  className?: string; // CSS tùy chỉnh
 }
 
 export function GetPriceButton({ 
   symbol, 
   onPriceFetched,
-  tooltipText = "Get Current Market Price" 
+  tooltipText = "Get Current Market Price",
+  size = 'default',
+  variant = 'outline',
+  className = ''
 }: GetPriceButtonProps) {
   const [lastFetchTime, setLastFetchTime] = useState<Date | null>(null);
   
@@ -74,28 +88,61 @@ export function GetPriceButton({
     return `${hours}h ago`;
   };
   
+  // Lựa chọn biểu tượng phù hợp cho loại tài sản
+  const getAssetIcon = () => {
+    const upperSymbol = symbol.toUpperCase();
+    
+    // Xác định cỡ biểu tượng theo kích thước nút
+    const iconClass = iconSize;
+    
+    if (upperSymbol.includes('XAU') || upperSymbol.includes('GOLD')) {
+      return <Coins className={iconClass} />;
+    }
+    
+    if (upperSymbol.includes('JPY')) {
+      return <CandlestickChart className={iconClass} />;
+    }
+    
+    if (upperSymbol.includes('EUR') || upperSymbol.includes('GBP')) {
+      return <BarChart3 className={iconClass} />;
+    }
+    
+    // Mặc định cho các cặp tiền tệ
+    return <DollarSign className={iconClass} />;
+  };
+  
+  // Xác định kích thước nút dựa trên props
+  const buttonSize = size === 'xs' ? 'w-6 h-6' : 
+                     size === 'sm' ? 'w-7 h-7' : 
+                     'w-8 h-8';
+  
+  // Xác định kích thước biểu tượng tương ứng
+  const iconSize = size === 'xs' ? 'h-3 w-3' : 
+                    size === 'sm' ? 'h-3.5 w-3.5' : 
+                    'h-4 w-4';
+
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
             type="button"
-            variant="outline"
+            variant={variant}
             size="icon"
-            className="w-8 h-8"
+            className={`${buttonSize} ${className}`}
             onClick={() => fetchPrice()}
             disabled={isLoading}
           >
             {isLoading ? (
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+              <RefreshCw className={`${iconSize} animate-spin`} />
             ) : lastFetchTime ? (
-              <CheckCircle className="h-3.5 w-3.5 text-green-500" />
+              <CheckCircle className={`${iconSize} text-green-500`} />
             ) : (
-              <RefreshCw className="h-3.5 w-3.5" />
+              getAssetIcon()
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side="top">
           <p className="text-sm">{tooltipText}</p>
           {lastFetchTime && (
             <div className="flex items-center mt-1 text-xs text-muted-foreground">

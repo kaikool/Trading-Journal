@@ -1857,7 +1857,10 @@ export default function TradeFormNew(props: TradeFormProps) {
                                   setRiskRewardRatio(ratio);
                                 }
                               }}
-                              tooltipText="Get current market price from TwelveData API"
+                              tooltipText="Get current market price for this asset"
+                              size="sm"
+                              variant="ghost"
+                              className="text-muted-foreground hover:text-primary hover:bg-muted"
                             />
                           )}
                         </div>
