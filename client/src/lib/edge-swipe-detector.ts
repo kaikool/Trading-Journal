@@ -124,9 +124,15 @@ export function setupEdgeSwipeDetector(options: SwipeDetectorOptions) {
   // Tự động kích hoạt khi gọi hàm
   addEventListeners();
   
-  // Trả về các hàm tiện ích
+  // Trả về đối tượng không có cấu trúc vòng tròn
   return {
-    updateSidebarState,
-    removeEventListeners
+    updateSidebarState: (isOpen: boolean) => {
+      sidebarIsOpen = isOpen;
+    },
+    removeEventListeners: () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    }
   };
 }

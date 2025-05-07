@@ -206,7 +206,7 @@ export function Sidebar({ className }: { className?: string }) {
     document.body.addEventListener('click', handleBodyClick);
     
     // Cấu hình trình phát hiện vuốt từ cạnh trái
-    const edgeSwipeDetector = setupEdgeSwipeDetector({
+    const swipeDetector = setupEdgeSwipeDetector({
       edgeSize: 30, // Vùng nhận diện vuốt rộng hơn (30px từ cạnh trái)
       minSwipeDistance: 60, // Khoảng cách vuốt nhỏ hơn để dễ trigger
       onEdgeSwipe: () => {
@@ -218,15 +218,10 @@ export function Sidebar({ className }: { className?: string }) {
       }
     });
     
-    // Cập nhật trạng thái sidebar khi thay đổi
-    if (edgeSwipeDetector) {
-      edgeSwipeDetector.updateSidebarState(isOpen);
-    }
-    
     return () => {
       document.body.removeEventListener('click', handleBodyClick);
-      if (edgeSwipeDetector) {
-        edgeSwipeDetector.removeEventListeners();
+      if (swipeDetector) {
+        swipeDetector.removeEventListeners();
       }
     };
   }, [isOpen]);
