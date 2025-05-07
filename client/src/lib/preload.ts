@@ -113,41 +113,65 @@ export const preloadFonts = (): void => {
 /**
  * Preload các resources quan trọng
  * Sử dụng resource hints để cải thiện loading speed
+ * PERFORMANCE OPTIMIZATION: Delayed preloading to improve startup time
  */
 export const preloadCriticalResources = (): void => {
-  // Chỉ chạy preload đầy đủ trên production để tránh chậm trong quá trình dev
-  const isProduction = import.meta.env.PROD;
+  // PERFORMANCE: Trì hoãn mọi hoạt động preload không cần thiết
+  // cho việc hiển thị ban đầu để cải thiện thời gian khởi động
   
-  // Preload fonts luôn được thực hiện
-  preloadFonts();
+  // Theo dõi thời gian bắt đầu để đo lường hiệu suất
+  const startTime = performance.now();
+  
+  // Sử dụng queueMicrotask thay vì chạy ngay lập tức
+  queueMicrotask(() => {
+    // Preload fonts sau khi các tác vụ khác quan trọng hơn hoàn tất
+    setTimeout(preloadFonts, 500);
+  });
 
-  // Preload CSS 
+  // Tạo hàm preload CSS với độ ưu tiên thấp
   const preloadCSS = (href: string) => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.href = href;
-    link.as = 'style';
-    document.head.appendChild(link);
+    // Trì hoãn việc preload CSS với setTimeout
+    setTimeout(() => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = href;
+      link.as = 'style';
+      document.head.appendChild(link);
+    }, 800); // Delay cao hơn để ưu tiên cho việc hiển thị UI
   };
 
   // Preload main CSS
-  preloadCSS('/src/index.css');
+  if (import.meta.env.PROD) {
+    preloadCSS('/src/index.css');
+  }
 
-  // Preload các route phổ biến chỉ khi trang đã load xong
+  // Preload các route phổ biến chỉ khi trang đã load xong và người dùng không tương tác
   // Sử dụng requestIdleCallback nếu có để không ảnh hưởng hiệu suất ban đầu
-  window.addEventListener('load', () => {
-    // Sử dụng requestIdleCallback khi có thể để chạy trong thời gian rảnh của browser
+  const scheduleRoutePreload = () => {
+    // Log thời gian khởi động cho development
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`App startup took: ${(performance.now() - startTime).toFixed(1)}ms before preloading routes`);
+    }
+    
+    // Sử dụng requestIdleCallback với thời gian timeout lớn hơn
     if ('requestIdleCallback' in window) {
       (window as any).requestIdleCallback(() => {
         preloadCommonRoutes();
-      }, { timeout: 5000 }); // Timeout 5s để đảm bảo preload được thực hiện
+      }, { timeout: 8000 }); // Timeout lớn hơn để đảm bảo không ảnh hưởng hiệu suất
     } else {
-      // Fallback cho các trình duyệt không hỗ trợ requestIdleCallback
+      // Fallback với setTimeout dài hơn
       setTimeout(() => {
         preloadCommonRoutes();
-      }, 3000);
+      }, 5000);
     }
-  });
+  };
+  
+  // Chỉ thực hiện preload sau khi trang đã tải xong hoàn toàn
+  if (document.readyState === 'complete') {
+    scheduleRoutePreload();
+  } else {
+    window.addEventListener('load', scheduleRoutePreload);
+  }
 };
 
 export default {

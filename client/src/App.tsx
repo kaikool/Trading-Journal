@@ -20,20 +20,20 @@ import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DataCacheProvider } from "@/contexts/DataCacheContext";
 
-// Improved dynamic imports with chunking comments for better code splitting
+// Improved dynamic imports with proper code splitting
 // Core/frequently used pages - higher priority
-const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "@/pages/Dashboard"));
-const TradeHistory = lazy(() => import(/* webpackChunkName: "trade-history" */ "@/pages/TradeHistory"));
-const Login = lazy(() => import(/* webpackChunkName: "auth" */ "@/pages/auth/Login"));
-const Register = lazy(() => import(/* webpackChunkName: "auth" */ "@/pages/auth/Register"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const TradeHistory = lazy(() => import("@/pages/TradeHistory"));
+const Login = lazy(() => import("@/pages/auth/Login"));
+const Register = lazy(() => import("@/pages/auth/Register"));
 
 // Less frequently used pages - can be in separate chunks
-const NewTrade = lazy(() => import(/* webpackChunkName: "trade-operations" */ "@/pages/NewTrade"));
-const ViewTrade = lazy(() => import(/* webpackChunkName: "trade-view" */ "@/pages/ViewTradeOptimized"));
-const Analytics = lazy(() => import(/* webpackChunkName: "analytics" */ "@/pages/Analytics"));
-const Settings = lazy(() => import(/* webpackChunkName: "settings" */ "@/pages/Settings"));
-const Strategies = lazy(() => import(/* webpackChunkName: "strategies" */ "@/pages/Strategies"));
-const Achievements = lazy(() => import(/* webpackChunkName: "achievements" */ "@/pages/Achievements"));
+const NewTrade = lazy(() => import("@/pages/NewTrade"));
+const ViewTrade = lazy(() => import("@/pages/ViewTradeOptimized"));
+const Analytics = lazy(() => import("@/pages/Analytics"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const Strategies = lazy(() => import("@/pages/Strategies"));
+const Achievements = lazy(() => import("@/pages/Achievements"));
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 // Tạo layout component được bọc bởi ErrorBoundary

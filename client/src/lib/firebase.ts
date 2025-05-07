@@ -147,22 +147,16 @@ async function loginUser(email: string, password: string) {
  * Đăng nhập với Google và tự động tạo tài khoản hoặc liên kết tài khoản nếu cần
  * 
  * Trả về kết quả đăng nhập và thông tin bổ sung
+ * PERFORMANCE OPTIMIZATION: Lazy loading của auth providers
  */
 async function loginWithGoogle() {
   try {
+    // Tối ưu hoá: Chỉ import các thành phần cần thiết
     const { 
       GoogleAuthProvider, 
       signInWithPopup, 
       getAdditionalUserInfo,
-      fetchSignInMethodsForEmail,
-      signInWithEmailLink,
-      OAuthProvider,
-      linkWithPopup,
-      sendSignInLinkToEmail,
-      isSignInWithEmailLink,
-      signInWithCredential,
-      linkWithCredential,
-      EmailAuthProvider
+      fetchSignInMethodsForEmail
     } = await import("firebase/auth");
     
     const provider = new GoogleAuthProvider();
