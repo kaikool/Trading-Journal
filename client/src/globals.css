@@ -1894,7 +1894,12 @@
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-bottom: 0; /* Loại bỏ padding-bottom mặc định */
+    padding-bottom: 2.5rem; /* Padding-bottom cố định và nhất quán */
+  }
+  
+  /* Đảm bảo chiều cao tối thiểu cho tất cả các nội dung trang để tránh giật khi chuyển tab */
+  .page-content {
+    min-height: calc(100vh - 4rem - 2.5rem); /* 100vh - header - padding-bottom */
   }
   
   /* Chart legend styling */

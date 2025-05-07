@@ -497,7 +497,7 @@ export default function Settings() {
 
   // Main content
   return (
-    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 pb-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6 page-content">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <div className="mb-4 md:mb-0">
