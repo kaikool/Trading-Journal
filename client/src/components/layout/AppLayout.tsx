@@ -104,10 +104,9 @@ export function AppLayout({ children }: AppLayoutProps) {
           className={cn(
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
             // Luôn tôn trọng safe area, top safe area xử lý theo scroll position
-            // Đã loại bỏ padding bottom inline để sử dụng CSS tập trung
             respectSafeArea 
-              ? "pt-4 safe-area-bottom" 
-              : "pt-0 safe-area-bottom"
+              ? "pt-4 pb-8 safe-area-bottom" 
+              : "pt-0 pb-8 safe-area-bottom"
           )}
         >
           {children}
