@@ -419,19 +419,19 @@ export default function Analytics() {
           
           {/* Tabs content với Suspense cho dynamic import */}
             <TabsContent value="overview">
-              <Suspense fallback={<LoadingFallback height={300} />}>
+              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
                 <OverviewTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="strategy">
-              <Suspense fallback={<LoadingFallback height={300} />}>
+              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
                 <StrategyTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="discipline">
-              <Suspense fallback={<LoadingFallback height={300} />}>
+              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
                 <DisciplineTab data={analyticsData} />
               </Suspense>
             </TabsContent>
