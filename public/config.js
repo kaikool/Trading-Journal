@@ -14,7 +14,7 @@ window.ENV = {
   VITE_FIREBASE_APP_ID: "1:721483185057:web:0744342c3a2a506c9e29e0",
   VITE_FIREBASE_MEASUREMENT_ID: "G-FJDLZ1NF69",
   VITE_FIREBASE_MESSAGING_SENDER_ID: "721483185057",
-  VITE_FIREBASE_STORAGE_BUCKET: "trading-journal-b83e9.firebasestorage.app",
+  VITE_FIREBASE_STORAGE_BUCKET: "trading-journal-b83e9.appspot.com",
   VITE_FIREBASE_DATABASE_URL: "https://trading-journal-b83e9-default-rtdb.asia-southeast1.firebasedatabase.app",
   VITE_FIREBASE_AUTH_DOMAIN: "trading-journal-b83e9.firebaseapp.com"
 };
