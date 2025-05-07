@@ -1,0 +1,401 @@
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746512091774gdo0mt4arv6%2Fexit-m15-1746512099766-knfotr2o-IMG_7289.jpeg?alt=media&token=f534903d-9fdb-49c1-a3b0-0bc912a8634d' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746512091774gdo0mt4arv6%2Fexit-m15-1746512099766-knfotr2o-IMG_7289.jpeg?alt=media&token=f534903d-9fdb-49c1-a3b0-0bc912a8634d TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523288489zz15hyb2g9s%2Fentry-h4-1746523394827-4ighbqro-IMG_7291.png?alt=media&token=90782532-95e1-4749-a2ae-edc05ab3333b
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8 TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2FXAorwCEUgqX29rev3NAg%2Fentry-h4-1746531936561-5uo3n7cn-IMG_7295.png?alt=media&token=d557a760-db5c-4070-bbb9-e82f10e827f8
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at 'https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed' from origin 'https://978bf927-3ecc-4828-acd4-4a783d79b7ab-00-3cjog2yrgkhb.pike.replit.dev' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+service-worker.js:360 Firebase request failed https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed TypeError: Failed to fetch
+    at service-worker.js:358:24
+    at service-worker.js:363:9
+optimized-image.tsx:101  Lỗi khi tải ảnh: https://firebasestorage.googleapis.com/v0/b/trading-journal-b83e9.firebasestorage.app/o/images%2FitqG9fPxUEZV9uT14dcp7cEW2Mi1%2F1746523231936bv9gfxyytnt%2Fexit-m15-1746523247420-04evjvjj-IMG_7292.png?alt=media&token=f01955aa-0b57-4380-ac76-dce4b24b9eed
+handleError @ optimized-image.tsx:101
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+Access to fetch at '

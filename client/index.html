@@ -153,18 +153,68 @@
       href="/apple-splash-2048x2732.png"
     />
 
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration with forced update on each load -->
     <script>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/service-worker.js", { scope: "/" })
-            .then((registration) => {
-              console.log("SW registered with scope:", registration.scope);
-            })
-            .catch((error) => {
-              console.error("SW registration failed:", error);
+        // Cập nhật phiên bản Service Worker khả dụng trong localStorage
+        const SW_VERSION_KEY = 'forex_journal_sw_version';
+        const CURRENT_SW_VERSION = 'v3.0.0'; // Phải khớp với APP_VERSION trong service-worker.js
+        
+        window.addEventListener("load", async () => {
+          try {
+            // Đầu tiên, unregister tất cả service workers để đảm bảo sạch
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (let registration of registrations) {
+              await registration.unregister();
+              console.log('Unregistered old service worker');
+            }
+            
+            // Đăng ký service worker mới với phiên bản được cập nhật
+            const swRegistration = await navigator.serviceWorker.register("/service-worker.js?v=" + CURRENT_SW_VERSION, { 
+              scope: "/",
+              updateViaCache: 'none' // Không sử dụng bản cache
             });
+            
+            console.log("SW registered with scope:", swRegistration.scope);
+            
+            // Force update ngay lập tức
+            swRegistration.update();
+            
+            // Nếu service worker đã active nhưng phiên bản khác với hiện tại
+            if (swRegistration.active && localStorage.getItem(SW_VERSION_KEY) !== CURRENT_SW_VERSION) {
+              // Lưu phiên bản mới
+              localStorage.setItem(SW_VERSION_KEY, CURRENT_SW_VERSION);
+              
+              // Đảm bảo service worker mới được kích hoạt ngay lập tức
+              if (swRegistration.waiting) {
+                swRegistration.waiting.postMessage({type: 'SKIP_WAITING'});
+              }
+            }
+            
+            // Theo dõi cập nhật
+            swRegistration.addEventListener('updatefound', () => {
+              const newWorker = swRegistration.installing;
+              
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('New service worker installed and ready to take over');
+                  newWorker.postMessage({type: 'SKIP_WAITING'});
+                }
+              });
+            });
+            
+            // Reload trang khi service worker được cập nhật
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+              if (!refreshing) {
+                refreshing = true;
+                console.log('Service Worker updated, reloading page...');
+                window.location.reload();
+              }
+            });
+          } catch (error) {
+            console.error("SW registration/update failed:", error);
+          }
         });
       }
     </script>
