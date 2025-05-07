@@ -150,13 +150,16 @@ function isFirebaseRequest(url) {
 function isCacheableRequest(url) {
   const fileExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.json', '.map'];
   
-  // Detect React lazy-loaded chunks which might not have file extensions
-  const isReactChunk = url.pathname.includes('/assets/') && 
-                    (url.pathname.includes('chunk-') || 
-                     url.pathname.includes('analytics-') || 
-                     url.pathname.includes('settings-'));
+  // Ensure url has pathname property or use empty string
+  const pathname = url?.pathname || '';
   
-  return fileExtensions.some(ext => url.pathname.endsWith(ext)) || 
+  // Detect React lazy-loaded chunks which might not have file extensions
+  const isReactChunk = pathname.includes('/assets/') && 
+                    (pathname.includes('chunk-') || 
+                     pathname.includes('analytics-') || 
+                     pathname.includes('settings-'));
+  
+  return fileExtensions.some(ext => pathname.endsWith(ext)) || 
          isVersionedAsset(url) || 
          isReactChunk;
 }
@@ -267,10 +270,14 @@ self.addEventListener('fetch', (event) => {
       fetch(event.request)
         .then(response => {
           // Cache the latest navigation response
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
+          try {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+          } catch (error) {
+            console.error('Failed to clone navigation response:', error);
+          }
           return response;
         })
         .catch(async () => {
@@ -302,10 +309,14 @@ self.addEventListener('fetch', (event) => {
         return fetch(event.request)
           .then(networkResponse => {
             // Cache the fresh version
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, responseToCache);
-            });
+            try {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+            } catch (error) {
+              console.error('Failed to clone versioned asset response:', error);
+            }
             return networkResponse;
           })
           .catch(() => generateFallbackResponse(event.request));
@@ -322,9 +333,14 @@ self.addEventListener('fetch', (event) => {
         const fetchPromise = fetch(event.request)
           .then(networkResponse => {
             // Update the cache with newer version
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, networkResponse.clone());
-            });
+            try {
+              const clonedResponse = networkResponse.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, clonedResponse);
+              });
+            } catch (error) {
+              console.error('Failed to clone response:', error);
+            }
             return networkResponse;
           })
           .catch(() => {
