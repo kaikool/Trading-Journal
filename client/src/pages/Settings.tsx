@@ -907,77 +907,7 @@ export default function Settings() {
             </div>
           </SettingsSection>
           
-          <SettingsSection 
-            title="Login Methods"
-          >
-            <div className="space-y-4 sm:space-y-6">
-              {/* Current login methods list */}
-              <div className="space-y-3">
-                <h4 className="text-sm font-medium border-b pb-2 mb-3">Current Login Methods</h4>
-                
-                {linkedProviders.length === 0 ? (
-                  <div className="text-sm text-muted-foreground italic">Loading...</div>
-                ) : (
-                  <div className="space-y-3">
-                    {linkedProviders.map((providerId) => (
-                      <div key={providerId} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          {providerId === 'password' ? (
-                            <Mail className="h-4 w-4 text-orange-500" />
-                          ) : providerId === 'google.com' ? (
-                            <Github className="h-4 w-4 text-blue-500" />
-                          ) : (
-                            <User className="h-4 w-4" />
-                          )}
-                          <span className="text-sm font-medium">
-                            {getProviderName(providerId)}
-                          </span>
-                        </div>
-                        
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleUnlinkProvider(providerId)}
-                          disabled={isUnlinking || linkedProviders.length <= 1}
-                          className="h-7 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        >
-                          <Link2Off className="h-3.5 w-3.5 mr-1" />
-                          <span className="text-xs">Unlink</span>
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              {/* Add login method */}
-              <div className="pt-2">
-                <h4 className="text-sm font-medium border-b pb-2 mb-3">Add Login Method</h4>
-                
-                <div className="space-y-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleLinkGoogle}
-                    disabled={isLinkingGoogle || linkedProviders.includes('google.com')}
-                    className="w-full sm:w-auto"
-                  >
-                    {isLinkingGoogle ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <Link className="mr-2 h-4 w-4" />
-                    )}
-                    Link with Google
-                  </Button>
-                  
-                  {linkedProviders.includes('google.com') && (
-                    <div className="text-xs text-muted-foreground italic">
-                      Google account already linked
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </SettingsSection>
+
           
           <SettingsSection 
             title="API Settings"
