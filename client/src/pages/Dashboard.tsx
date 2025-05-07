@@ -390,9 +390,9 @@ export default function Dashboard() {
   }, [trades]);
   
   return (
-    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 pt-safe pb-6 space-y-6">
       {/* Header */}
-      <div className="flex flex-col mb-6">
+      <div className="flex flex-col mb-6 mt-4">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
           Trading Dashboard
         </h1>
