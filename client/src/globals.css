@@ -1894,7 +1894,14 @@
     margin-right: auto;
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-bottom: 0; /* Loại bỏ padding-bottom mặc định */
+    padding-bottom: 2rem; /* Thêm padding-bottom nhất quán cho tất cả trang */
+  }
+  
+  /* Đảm bảo tất cả các trang đều có khoảng cách phía dưới nhất quán */
+  main > div {
+    min-height: calc(100vh - 4rem);
+    margin-bottom: 0;
+    padding-bottom: 2rem; /* Nhất quán với app-content-container */
   }
   
   /* Chart legend styling */
