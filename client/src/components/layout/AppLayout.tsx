@@ -29,26 +29,36 @@ export function AppLayout({ children }: AppLayoutProps) {
     setMounted(true);
   }, []);
 
-  // Smooth transition for safe area behavior with debounce
+  // Logic điều chỉnh safe area khi cuộn
   useEffect(() => {
     const handleSafeAreaTransition = () => {
-      // Only change state if we're actively scrolling (prevents end-of-page jitter)
-      if (!isScrolling) return;
+      // Trường hợp đặc biệt khi đầu trang luôn tôn trọng top safe area
+      const isAtPageTop = window.scrollY < 10;
       
-      // Handle "end bounce" differently with a small threshold
-      const isVeryNearBottom = 
-        window.innerHeight + window.scrollY >= 
-        document.documentElement.scrollHeight - 20;
-        
-      if (isVeryNearBottom) {
-        // Apply a smaller transition to reduce jitter at bottom
+      // Khi ở đầu trang, luôn tôn trọng safe area
+      if (isAtPageTop) {
+        setRespectSafeArea(true);
         return;
       }
       
-      // Normal scrolling behavior
+      // Trường hợp đặc biệt cho cuối trang để tránh giật
+      const isNearPageBottom = 
+        window.innerHeight + window.scrollY >= 
+        document.documentElement.scrollHeight - 20;
+        
+      if (isNearPageBottom) {
+        return;
+      }
+      
+      // Chỉ thay đổi khi đang cuộn thực sự
+      if (!isScrolling) return;
+      
+      // Khi cuộn xuống, cho phép nội dung chiếm diện tích safe area
       if (direction === 'down') {
         setRespectSafeArea(false);
-      } else if (direction === 'up') {
+      } 
+      // Khi cuộn lên, chỉ phục hồi safe area khi gần đầu trang
+      else if (direction === 'up' && window.scrollY < 100) {
         setRespectSafeArea(true);
       }
     };
@@ -78,13 +88,18 @@ export function AppLayout({ children }: AppLayoutProps) {
           isMobile && "pt-0"
         )}
       >
+        {/* Safe area vùng đầu trang */}
+        {respectSafeArea && (
+          <div className="safe-area-top w-full h-0" />
+        )}
+        
         <div 
           className={cn(
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto px-4 sm:px-6 safe-area-left safe-area-right",
-            // Apply safe area padding conditionally for top and bottom only with extra bottom space to prevent bounce
+            // Bottom safe area luôn được áp dụng, top safe area xử lý riêng ở trên
             respectSafeArea 
-              ? "pt-4 safe-area-top safe-area-bottom" 
-              : "pt-0"
+              ? "pt-4 pb-4 safe-area-bottom" 
+              : "pt-0 pb-0"
           )}
         >
           {children}
