@@ -6,9 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Loader2 } from "lucide-react";
 import NotFound from "@/pages/not-found";
 
-
 import MobileLayout from "@/components/layout/MobileLayout";
-import MenuBar from "@/components/layout/MenuBar";
 import { auth } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
@@ -262,17 +260,15 @@ function MainContent() {
     <>
       {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
       
-      {/* Nếu là mobile, sử dụng MobileLayout với thanh điều hướng dưới cùng */}
+      {/* Layout sẽ được cập nhật với Sidebar mới */}
       {isMobile ? (
         <MobileLayout>
           {renderPageContent()}
         </MobileLayout>
       ) : (
-        // Nếu là desktop, sử dụng MenuBar ở mode desktop và hiển thị nội dung bên dưới
-        // Sử dụng app-layout-container thống nhất cho cả mobile và desktop
+        // Temporary desktop layout without navigation - will be replaced with new Sidebar
         <div className="flex flex-col w-full app-layout-container">
-          <MenuBar mode="desktop" />
-          <div className="mt-16 app-content-container max-w-7xl mx-auto"> {/* Tạo khoảng cách bằng chiều cao của MenuBar (h-16) */}
+          <div className="app-content-container max-w-7xl mx-auto">
             {renderPageContent()}
           </div>
         </div>

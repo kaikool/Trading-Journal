@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import MobileNavigator from "./MobileNavigator";
 import { cn } from "@/lib/utils";
 
 interface MobileLayoutProps {
@@ -10,12 +9,12 @@ interface MobileLayoutProps {
 const MobileLayoutContent = ({ children }: MobileLayoutProps) => {
   return (
     <div className="mobile-layout app-layout-container">
-      <main className="app-content-container mobile-content-with-navigation">
+      <main className="app-content-container">
         <div className="flex-1 flex flex-col w-full max-w-md mx-auto">
           {children}
         </div>
       </main>
-      <MobileNavigator />
+      {/* Navigation will be implemented in the new Sidebar component */}
     </div>
   );
 };
