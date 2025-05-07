@@ -23,15 +23,15 @@ interface DebugConfig {
 // Default configuration
 const DEBUG_CONFIG: DebugConfig = {
   enabled: isDevelopment,
-  level: isDevelopment ? 'normal' : 'minimal',
+  level: isDevelopment ? 'minimal' : 'minimal',  // Reducing default level to minimal
   categories: {
-    data: true,      // Data loading/processing
+    data: false,     // Data loading/processing - disabled for performance
     navigation: true, // Navigation/routing
     render: false,   // Component rendering (verbose)
-    auth: true,      // Authentication
-    api: true,       // API calls
-    cache: true,     // Caching operations
-    performance: true, // Performance metrics
+    auth: false,     // Authentication - disabled for performance
+    api: false,      // API calls - disabled for performance
+    cache: false,    // Caching operations - disabled for performance
+    performance: true, // Keep performance metrics enabled
   }
 };
 

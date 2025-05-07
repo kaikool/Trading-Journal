@@ -41,13 +41,12 @@ import {
 // Import Firebase configuration from separate file
 import firebaseConfig from './firebase-config';
 
-// Get projectId and storageBucket from configuration
-const { projectId: PROJECT_ID, storageBucket: STORAGE_BUCKET } = firebaseConfig;
-
-debug("Firebase config:", { 
-  projectId: firebaseConfig.projectId,
-  storageBucket: firebaseConfig.storageBucket
-});
+// PERFORMANCE OPTIMIZATION: Lazy and non-blocking initialization
+// Get projectId and storageBucket from configuration for logs (only if debug enabled)
+if (process.env.NODE_ENV === 'development') {
+  const { projectId, storageBucket } = firebaseConfig;
+  debug("Firebase config:", { projectId, storageBucket });
+}
 
 // Initialize Firebase - lazy loaded to avoid loading Firebase on first render
 let app: ReturnType<typeof initializeApp>;
@@ -55,26 +54,34 @@ let auth: ReturnType<typeof getAuth>;
 let db: ReturnType<typeof getFirestore>;
 let storage: ReturnType<typeof getStorage>;
 
-// Function to initialize Firebase once when needed
+// Performance optimized initialization flag
+let isInitialized = false;
+
+// Function to initialize Firebase once when needed - performance optimized
 function initFirebase() {
-  if (!app) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-    
-    // Initialize Storage with bucket from configuration
-    storage = getStorage(app);
-    
-    // Log in development only - debug() already checks NODE_ENV
+  if (isInitialized) return { app, auth, db, storage };
+  
+  // Mark as initialized immediately to prevent duplicate init calls
+  isInitialized = true;
+  
+  // Actual initialization
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  storage = getStorage(app);
+  
+  // Minimal logging in development
+  if (process.env.NODE_ENV === 'development') {
     debug("Firebase has been initialized:");
     debug("- Auth Domain:", firebaseConfig.authDomain);
     debug("- Project ID:", firebaseConfig.projectId);
     debug("- Storage Bucket:", firebaseConfig.storageBucket);
   }
+  
   return { app, auth, db, storage };
 }
 
-// Ensure Firebase is initialized
+// Ensure Firebase is initialized, but don't wait for it
 initFirebase();
 
 // Ensure auth, db, storage and helper functions are accessible

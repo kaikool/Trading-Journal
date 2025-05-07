@@ -199,17 +199,46 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
           debug(`[DataCache] Received ${fetchedTrades.length} trades from snapshot`);
           
           setDataState(prevState => {
-            const tradesChanged = JSON.stringify(fetchedTrades) !== JSON.stringify(prevState.trades);
+            // PERFORMANCE OPTIMIZATION: Avoid expensive JSON.stringify for deep comparison
+            // Instead use a simpler length check with sample validation
+            let tradesChanged = fetchedTrades.length !== prevState.trades.length;
+            
+            // If lengths are the same, only check a few key trades
+            if (!tradesChanged && fetchedTrades.length > 0) {
+              // Check the first trade which is usually the most recent
+              if (fetchedTrades[0]?.id !== prevState.trades[0]?.id) {
+                tradesChanged = true;
+              }
+              // Check another random trade if we have at least 3
+              else if (fetchedTrades.length >= 3) {
+                const randomIndex = Math.floor(Math.random() * fetchedTrades.length);
+                const newTrade = fetchedTrades[randomIndex];
+                const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
+                
+                // If we can't find the trade or its timestamp changed
+                // Safely check for Firestore Timestamp objects vs serialized dates
+                if (!oldTrade || 
+                    // Handle both Firestore Timestamp and serialized dates
+                    (typeof newTrade.updatedAt?.toDate === 'function' && 
+                     typeof oldTrade.updatedAt?.toDate !== 'function') ||
+                    // Handle string comparison for cache objects
+                    (typeof newTrade.updatedAt === 'string' && 
+                     newTrade.updatedAt !== oldTrade.updatedAt)) {
+                  tradesChanged = true;
+                }
+              }
+            }
             
             if (tradesChanged) {
               debug('[DataCache] Trades changed, updating cache');
-              setTimeout(() => {
+              // Use queueMicrotask instead of setTimeout for better performance
+              queueMicrotask(() => {
                 updateCache({ 
                   trades: fetchedTrades, 
                   userData: prevState.userData, 
                   lastUpdated: Date.now()
                 });
-              }, 0);
+              });
             } else {
               debug('[DataCache] Trades unchanged, avoiding cache update');
             }
