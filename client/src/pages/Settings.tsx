@@ -38,8 +38,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AchievementsTab } from "@/components/settings/AchievementsTab";
 import { StrategiesManagement } from "@/components/settings/StrategiesManagement";
+import { AchievementsTab } from "@/components/settings/AchievementsTab";
 import {
   User,
   CreditCard,
@@ -1008,7 +1008,7 @@ export default function Settings() {
         {/* Achievements tab */}
         <TabsContent value="achievements" className="mt-6 space-y-6">
           <div className="grid gap-6">
-            <AchievementsTab 
+            <AchievementsTab
               showNotifications={Boolean(settings.showAchievements)}
               onToggleNotifications={(show: boolean) => setSettings({ ...settings, showAchievements: show })}
             />

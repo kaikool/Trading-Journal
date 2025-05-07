@@ -8,7 +8,13 @@ import { UI_CONFIG, DASHBOARD_CONFIG } from "@/lib/config";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { debug, logError } from "@/lib/debug";
-import { createSafeLazyComponent } from "@/components/dynamic/SafeLazyLoad";
+
+// Import tabs directly instead of using lazy loading
+import OverviewTab from "@/components/analytics/OverviewTab";
+import StrategyTab from "@/components/analytics/StrategyTab";
+import DisciplineTab from "@/components/analytics/DisciplineTab";
+import EmotionTab from "@/components/analytics/EmotionTab";
+import AdvancedTab from "@/components/analytics/AdvancedTab";
 
 // Thêm khai báo cho window
 declare global {
@@ -16,24 +22,6 @@ declare global {
     balanceLogged: boolean;
   }
 }
-
-// Use the createSafeLazyComponent helper for better error handling
-// This fixes MIME type issues in PWA mode and provides better error recovery
-const OverviewTab = createSafeLazyComponent(() => 
-  import(/* webpackChunkName: "analytics-overview" */ "@/components/analytics/OverviewTab")
-);
-const StrategyTab = createSafeLazyComponent(() => 
-  import(/* webpackChunkName: "analytics-strategy" */ "@/components/analytics/StrategyTab")
-);
-const DisciplineTab = createSafeLazyComponent(() => 
-  import(/* webpackChunkName: "analytics-discipline" */ "@/components/analytics/DisciplineTab")
-);
-const EmotionTab = createSafeLazyComponent(() => 
-  import(/* webpackChunkName: "analytics-emotion" */ "@/components/analytics/EmotionTab")
-);
-const AdvancedTab = createSafeLazyComponent(() => 
-  import(/* webpackChunkName: "analytics-advanced" */ "@/components/analytics/AdvancedTab")
-);
 
 
 
