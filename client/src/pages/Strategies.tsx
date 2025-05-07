@@ -29,6 +29,9 @@ export default function StrategiesPage() {
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 via-primary to-primary/80 bg-clip-text text-transparent">
           Trading Strategies
         </h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          Create and manage your trading strategies for consistent results
+        </p>
       </div>
       
       {/* Main content */}
