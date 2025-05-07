@@ -16,5 +16,8 @@ window.ENV = {
   VITE_FIREBASE_MESSAGING_SENDER_ID: "721483185057",
   VITE_FIREBASE_STORAGE_BUCKET: "trading-journal-b83e9.appspot.com",
   VITE_FIREBASE_DATABASE_URL: "https://trading-journal-b83e9-default-rtdb.asia-southeast1.firebasedatabase.app",
-  VITE_FIREBASE_AUTH_DOMAIN: "trading-journal-b83e9.firebaseapp.com"
+  VITE_FIREBASE_AUTH_DOMAIN: "trading-journal-b83e9.firebaseapp.com",
+  
+  // Twelvedata API key for production environment
+  TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%"
 };
