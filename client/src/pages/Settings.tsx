@@ -498,7 +498,7 @@ export default function Settings() {
   return (
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 pt-safe pb-6 space-y-6">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 mt-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div className="mb-4 md:mb-0">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
             Settings
