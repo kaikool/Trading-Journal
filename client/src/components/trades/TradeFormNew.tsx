@@ -1839,41 +1839,43 @@ export default function TradeFormNew(props: TradeFormProps) {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Entry Price */}
                       <div>
-                        <div className="flex items-center justify-between">
+                        <div>
                           <Label htmlFor="entryPrice" className="font-medium text-sm mb-1.5 inline-block">Entry Price</Label>
-                          {canFetchPrice && (
-                            <GetPriceButton 
-                              symbol={pair} 
-                              onPriceFetched={(price) => {
-                                form.setValue("entryPrice", price);
-                                // Tính lại Risk-to-Reward ratio sau khi cập nhật giá
-                                if (stopLoss && takeProfit) {
-                                  const ratio = calculateRiskRewardRatio(
-                                    price, 
-                                    stopLoss, 
-                                    takeProfit, 
-                                    direction as Direction
-                                  );
-                                  setRiskRewardRatio(ratio);
-                                }
-                              }}
-                              tooltipText="Get current market price for this asset"
-                              size="sm"
-                              variant="ghost"
-                              className="text-muted-foreground hover:text-primary hover:bg-muted"
-                            />
-                          )}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="relative">
                           <NumberInput
                             id="entryPrice"
                             placeholder="0.0000"
-                            className="font-mono h-10 text-sm"
+                            className="font-mono h-10 text-sm pr-9"
                             value={form.getValues("entryPrice")}
                             onChange={(value) => form.setValue("entryPrice", value || 0)}
                             decimalPlaces={4}
                             inputMode="decimal"
                           />
+                          {canFetchPrice && (
+                            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                              <GetPriceButton 
+                                symbol={pair} 
+                                onPriceFetched={(price) => {
+                                  form.setValue("entryPrice", price);
+                                  // Tính lại Risk-to-Reward ratio sau khi cập nhật giá
+                                  if (stopLoss && takeProfit) {
+                                    const ratio = calculateRiskRewardRatio(
+                                      price, 
+                                      stopLoss, 
+                                      takeProfit, 
+                                      direction as Direction
+                                    );
+                                    setRiskRewardRatio(ratio);
+                                  }
+                                }}
+                                tooltipText="Get current market price for this asset"
+                                size="xs"
+                                variant="ghost"
+                                className="text-muted-foreground hover:text-primary"
+                              />
+                            </div>
+                          )}
                         </div>
                         {form.formState.errors.entryPrice && (
                           <p className="text-xs text-destructive mt-1">
