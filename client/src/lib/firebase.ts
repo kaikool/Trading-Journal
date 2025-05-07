@@ -940,6 +940,8 @@ async function getStorageDownloadUrl(path: string): Promise<string> {
 }
 
 // PHIÊN BẢN ĐƠN GIẢN HÓA để khắc phục vấn đề upload ảnh
+import { optimizeImage } from './image-optimizer';
+
 async function uploadTradeImage(
   userId: string, 
   tradeId: string, 
@@ -977,13 +979,37 @@ async function uploadTradeImage(
     if (!userId) throw new Error("ID người dùng là bắt buộc");
     if (!tradeId) tradeId = "temp-" + Date.now();
     
-    // Log thông tin tải lên
-    debug(`File: ${file.name} (${(file.size/1024).toFixed(2)}KB), type: ${file.type}`);
+    // Log thông tin tải lên - trước khi tối ưu hóa
+    debug(`File gốc: ${file.name} (${(file.size/1024).toFixed(2)}KB), type: ${file.type}`);
     debug(`User ID: ${userId}, Trade ID: ${tradeId}, Image type: ${type}`);
     
-    // Giới hạn kích thước 5MB
+    // Tối ưu hóa file ảnh trước khi upload - Cải tiến performance
+    if (progressCallback) progressCallback(5);
+    debug('Bắt đầu tối ưu hóa ảnh trước khi upload...');
+    
+    try {
+      // Tối ưu hóa ảnh với cấu hình phù hợp cho forex chart
+      const optimizedFile = await optimizeImage(file, {
+        maxWidth: 1600,                 // Đủ lớn cho chart chi tiết
+        maxHeight: 1200,                // Tỷ lệ khung hình phù hợp
+        quality: 0.85,                  // Chất lượng ban đầu cao
+        maxSizeKB: 1024,                // Giới hạn 1MB 
+        outputFormat: 'original'        // Giữ nguyên định dạng
+      });
+      
+      // Log kết quả tối ưu hóa
+      debug(`Kết quả tối ưu hóa: ${(file.size/1024).toFixed(2)}KB -> ${(optimizedFile.size/1024).toFixed(2)}KB (${Math.round(optimizedFile.size/file.size*100)}%)`);
+      
+      // Cập nhật file với phiên bản đã tối ưu
+      file = optimizedFile;
+    } catch (optimizeError) {
+      // Log lỗi nhưng vẫn tiếp tục với file gốc
+      logError("Không thể tối ưu hóa ảnh, sẽ sử dụng file gốc:", optimizeError);
+    }
+    
+    // Giới hạn kích thước 5MB (kiểm tra lại sau khi tối ưu)
     if (file.size > 5 * 1024 * 1024) {
-      throw new Error(`Kích thước file quá lớn (${(file.size/1024/1024).toFixed(2)}MB). Tối đa là 5MB.`);
+      throw new Error(`Kích thước file quá lớn (${(file.size/1024/1024).toFixed(2)}MB) ngay cả sau khi tối ưu. Tối đa là 5MB.`);
     }
     
     // Tạo tên file an toàn
