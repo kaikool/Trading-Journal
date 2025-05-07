@@ -21,6 +21,8 @@ import { auth } from "@/lib/firebase";
 import { logoutUser } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useScrollDirection } from "@/hooks/use-scroll-direction";
+import { useUserActivity } from "@/hooks/use-user-activity";
 
 // Navigation items shared across all sidebar modes
 export const navItems = [
@@ -93,6 +95,9 @@ export function Sidebar({ className }: SidebarProps) {
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
   const user = auth.currentUser;
+  const { direction, isScrolling } = useScrollDirection();
+  const { isActive } = useUserActivity(2000);
+  const [menuVisible, setMenuVisible] = useState(true);
   
   useEffect(() => {
     setMounted(true);
@@ -148,6 +153,42 @@ export function Sidebar({ className }: SidebarProps) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
   
+  // Smart menu visibility management
+  useEffect(() => {
+    // Show menu on:
+    // 1. User is active but not scrolling (reading/viewing content)
+    // 2. User scrolls up (looking for navigation)
+    // Hide menu on:
+    // 1. User is scrolling down (reading content)
+    // 2. User has been inactive for a while (not engaged)
+
+    if (direction === 'up' || (isActive && !isScrolling)) {
+      setMenuVisible(true);
+    } else if (direction === 'down' && isScrolling) {
+      setMenuVisible(false);
+    }
+  }, [direction, isScrolling, isActive]);
+
+  // Force menu to appear when user taps bottom right corner
+  const handleBodyClick = (e: MouseEvent) => {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    // If click is in the bottom right quadrant of the screen
+    if (e.clientX > windowWidth * 0.7 && e.clientY > windowHeight * 0.7) {
+      setMenuVisible(true);
+    }
+  };
+
+  useEffect(() => {
+    // Add click listener to entire document
+    document.body.addEventListener('click', handleBodyClick);
+    
+    return () => {
+      document.body.removeEventListener('click', handleBodyClick);
+    };
+  }, []);
+
   // Prevent hydration mismatch
   if (!mounted) return null;
 
@@ -160,7 +201,10 @@ export function Sidebar({ className }: SidebarProps) {
           onClick={toggleSidebar}
           variant="default"
           size="icon"
-          className="fixed left-4 top-4 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90"
+          className={cn(
+            "fixed right-4 bottom-6 h-12 w-12 rounded-full shadow-lg z-40 bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300",
+            menuVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-16"
+          )}
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6" />
