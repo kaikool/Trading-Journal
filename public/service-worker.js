@@ -6,7 +6,7 @@
  * CẬP NHẬT: Chuyển từ Firebase Functions sang Firebase Storage Web SDK trực tiếp
  */
 
-const APP_VERSION = 'v2.1.0';
+const APP_VERSION = 'v2.1.1'; // Updated with improved error handling
 const CACHE_NAME = 'forex-journal-cache-' + APP_VERSION;
 const OFFLINE_URL = '/offline.html';
 const FALLBACK_IMAGE = '/icons/offline.png';
@@ -80,12 +80,33 @@ function isNavigationRequest(request) {
  * Detect if we should apply a long-lived caching strategy to this request
  */
 function isVersionedAsset(url) {
-  // Vite adds hash to versioned assets like /assets/index-a1b2c3d4.js
-  // Make sure url is a string before using includes
-  const urlStr = typeof url === 'string' ? url : (url?.pathname || '');
-  return urlStr.includes('/assets/') && 
-         (urlStr.includes('.js') || urlStr.includes('.css') || urlStr.includes('.woff2') || 
-          urlStr.includes('.png') || urlStr.includes('.svg') || urlStr.includes('.jpg'));
+  try {
+    // Vite adds hash to versioned assets like /assets/index-a1b2c3d4.js
+    // Fallback logic to handle all potential url formats
+    let urlStr = '';
+    
+    if (typeof url === 'string') {
+      urlStr = url;
+    } else if (url && typeof url === 'object') {
+      // Try different properties that might contain the URL
+      urlStr = url.pathname || url.href || url.toString() || '';
+    } else {
+      return false; // If url is null, undefined or not usable
+    }
+    
+    // Make sure it's a string and has a string method 'includes'
+    if (typeof urlStr !== 'string' || typeof urlStr.includes !== 'function') {
+      console.warn('url.includes is not a function in isVersionedAsset', typeof urlStr, urlStr);
+      return false;
+    }
+    
+    return urlStr.includes('/assets/') && 
+           (urlStr.includes('.js') || urlStr.includes('.css') || urlStr.includes('.woff2') || 
+            urlStr.includes('.png') || urlStr.includes('.svg') || urlStr.includes('.jpg'));
+  } catch (error) {
+    console.error('Error in isVersionedAsset:', error);
+    return false;
+  }
 }
 
 /**
@@ -136,32 +157,90 @@ self.addEventListener('activate', (event) => {
  * as they involve authentication and real-time data
  */
 function isFirebaseRequest(url) {
-  // Make sure url is a string before using includes
-  const urlStr = typeof url === 'string' ? url : (url?.href || '');
-  return urlStr.includes('firebasestorage.googleapis.com') || 
-         urlStr.includes('firebaseio.com') || 
-         urlStr.includes('firebase') || 
-         urlStr.includes('googleapis.com');
+  try {
+    // Make sure url is a string before using includes
+    let urlStr = '';
+    
+    if (typeof url === 'string') {
+      urlStr = url;
+    } else if (url && typeof url === 'object') {
+      // Try different properties that might contain the URL
+      urlStr = url.href || url.pathname || url.toString() || '';
+    } else {
+      return false; // If url is null, undefined or not usable
+    }
+    
+    // Make sure it's a string and has a string method 'includes'
+    if (typeof urlStr !== 'string' || typeof urlStr.includes !== 'function') {
+      console.warn('url.includes is not a function in isFirebaseRequest', typeof urlStr, urlStr);
+      return false;
+    }
+    
+    return urlStr.includes('firebasestorage.googleapis.com') || 
+           urlStr.includes('firebaseio.com') || 
+           urlStr.includes('firebase') || 
+           urlStr.includes('googleapis.com');
+  } catch (error) {
+    console.error('Error in isFirebaseRequest:', error);
+    return false;
+  }
 }
 
 /**
  * Check if a request is for a static asset we can cache
  */
 function isCacheableRequest(url) {
-  const fileExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.json', '.map'];
-  
-  // Ensure url has pathname property or use empty string
-  const pathname = url?.pathname || '';
-  
-  // Detect React lazy-loaded chunks which might not have file extensions
-  const isReactChunk = pathname.includes('/assets/') && 
-                    (pathname.includes('chunk-') || 
-                     pathname.includes('analytics-') || 
-                     pathname.includes('settings-'));
-  
-  return fileExtensions.some(ext => pathname.endsWith(ext)) || 
-         isVersionedAsset(url) || 
-         isReactChunk;
+  try {
+    const fileExtensions = ['.js', '.css', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.json', '.map'];
+    
+    // Safety check for url
+    if (!url) return false;
+    
+    // Ensure url has pathname property or use empty string
+    let pathname = '';
+    
+    try {
+      pathname = url.pathname || '';
+      
+      // Make sure pathname is a string and has string methods
+      if (typeof pathname !== 'string' || typeof pathname.includes !== 'function') {
+        console.warn('pathname.includes is not a function in isCacheableRequest', typeof pathname, pathname);
+        pathname = String(pathname || '');
+      }
+    } catch (error) {
+      console.error('Error accessing pathname in isCacheableRequest:', error);
+      return false;
+    }
+    
+    // Additional safety check
+    if (!pathname) return false;
+    
+    // Detect React lazy-loaded chunks which might not have file extensions
+    let isReactChunk = false;
+    try {
+      isReactChunk = pathname.includes('/assets/') && 
+                     (pathname.includes('chunk-') || 
+                      pathname.includes('analytics-') || 
+                      pathname.includes('settings-'));
+    } catch (error) {
+      console.error('Error checking for React chunks in isCacheableRequest:', error);
+      isReactChunk = false;
+    }
+    
+    // Check file extensions
+    let hasExtension = false;
+    try {
+      hasExtension = fileExtensions.some(ext => pathname.endsWith(ext));
+    } catch (error) {
+      console.error('Error checking for file extensions in isCacheableRequest:', error);
+      hasExtension = false;
+    }
+    
+    return hasExtension || isVersionedAsset(url) || isReactChunk;
+  } catch (error) {
+    console.error('Error in isCacheableRequest:', error);
+    return false;
+  }
 }
 
 /**
