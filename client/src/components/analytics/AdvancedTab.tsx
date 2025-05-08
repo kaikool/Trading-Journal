@@ -233,7 +233,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       if (worstDay && worstDay.winRate <= 40 && worstDay.count >= 5) {
         insights.push({
           type: 'warning',
-          icon: <AlertTriangle className="h-4 w-4" />,
+          icon: <Icons.ui.warning className="h-4 w-4" />,
           title: 'Least Profitable Trading Day',
           description: `Your performance on ${worstDay.day} is significantly below average with ${worstDay.winRate.toFixed(1)}% win rate. Consider reducing position sizes or avoiding trading on this day.`
         });
@@ -248,7 +248,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         const weekendTrades = weekendData.reduce((sum, day) => sum + day.count, 0);
         insights.push({
           type: 'suggestion',
-          icon: <Calendar className="h-4 w-4" />,
+          icon: <Icons.general.calendar className="h-4 w-4" />,
           title: 'Weekend Trading',
           description: `You've placed ${weekendTrades} trades on weekends when forex liquidity is typically lower. Consider limiting weekend trading to reduce spread and slippage risks.`
         });
@@ -279,7 +279,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       if (riskRewardData.averageRatio < 1) {
         insights.push({
           type: 'warning',
-          icon: <AlertTriangle className="h-4 w-4" />,
+          icon: <Icons.ui.warning className="h-4 w-4" />,
           title: 'Low Risk:Reward Ratio',
           description: `Your average risk:reward ratio of 1:${riskRewardData.averageRatio} is below the recommended 1:1.5 minimum. Focus on finding setups with higher reward potential relative to risk.`
         });
@@ -345,7 +345,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       } else if (recentLosses >= 4) {
         insights.push({
           type: 'warning',
-          icon: <AlertTriangle className="h-4 w-4" />,
+          icon: <Icons.ui.warning className="h-4 w-4" />,
           title: 'Recent Performance Dip',
           description: `You've experienced ${recentLosses} losing trades in your last 5. Consider taking a short break or reducing position sizes until your performance stabilizes.`
         });
@@ -587,7 +587,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Calendar className="h-5 w-5 mr-2 text-primary" />
+              <Icons.general.calendar className="h-5 w-5 mr-2 text-primary" />
               Trading Performance by Day
             </CardTitle>
             <CardDescription>
