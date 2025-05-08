@@ -22,7 +22,7 @@ import {
   ComposedChart,
   Line,
 } from "recharts";
-import { BrainCircuit, Lightbulb, PieChart as PieChartIcon, BarChart2, Award } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { CHART_CONFIG } from "@/lib/config";
@@ -99,7 +99,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
       if (bestStrategy.winRate > 60) {
         insights.push({
           type: 'positive',
-          icon: <Award className="h-4 w-4" />,
+          icon: <Icons.analytics.award className="h-4 w-4" />,
           title: 'Best Performing Strategy',
           description: `"${bestStrategy.strategy}" has your highest win rate at ${bestStrategy.winRate.toFixed(1)}% over ${bestStrategy.trades} trades.`
         });
@@ -112,7 +112,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
       if (mostProfitable.netProfit > 0) {
         insights.push({
           type: 'positive',
-          icon: <Award className="h-4 w-4" />,
+          icon: <Icons.analytics.award className="h-4 w-4" />,
           title: 'Most Profitable Strategy',
           description: `"${mostProfitable.strategy}" has generated ${formatCurrency(mostProfitable.netProfit)} in profit across ${mostProfitable.trades} trades.`
         });

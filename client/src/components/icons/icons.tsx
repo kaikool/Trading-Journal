@@ -3,6 +3,24 @@ import * as LucideIcons from 'lucide-react';
 
 // Định nghĩa các nhóm icon theo chức năng
 export const Icons = {
+  // Nhóm Analytics (phân tích dữ liệu)
+  analytics: {
+    barChart: LucideIcons.BarChart2,
+    lineChart: LucideIcons.LineChart,
+    pieChart: LucideIcons.PieChart,
+    areaChart: LucideIcons.Activity,
+    brain: LucideIcons.Brain,
+    brainCircuit: LucideIcons.BrainCircuit,
+    award: LucideIcons.Award,
+    lightbulb: LucideIcons.Lightbulb,
+    activity: LucideIcons.Activity,
+    trending: LucideIcons.TrendingUp,
+    dollar: LucideIcons.DollarSign,
+    percent: LucideIcons.Percent,
+    stats: LucideIcons.BarChart4,
+    compare: LucideIcons.GitCompare,
+  },
+  
   // Nhóm User Interface (giao diện người dùng)
   ui: {
     spinner: LucideIcons.Loader2,
@@ -156,6 +174,7 @@ export const Spinner = Icons.ui.spinner;
 export const UIIcons = Icons.ui;
 export const NavIcons = Icons.nav;
 export const TradeIcons = Icons.trade;
+export const AnalyticsIcons = Icons.analytics;
 
 // Export default cho trường hợp import toàn bộ
 export default Icons;
