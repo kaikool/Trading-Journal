@@ -4,13 +4,13 @@ import "./index.css";
 import { registerServiceWorker } from "./lib/pwa-helper";
 import { preloadCriticalResources } from "./lib/preload";
 import { DataCacheProvider } from './contexts/DataCacheContext';
-import { initPreventRadixScroll } from './lib/preventScrollReset';
+import { applyRadixSelectFix } from './lib/radix-select-fix';
 
 // Preload critical resources
 preloadCriticalResources();
 
-// Khởi tạo giải pháp ngăn chặn Radix UI tự cuộn trang
-initPreventRadixScroll();
+// Áp dụng giải pháp CSS để khắc phục vấn đề cuộn trong Radix UI Select
+applyRadixSelectFix();
 
 // Render the application
 createRoot(document.getElementById("root")!).render(<App />);
