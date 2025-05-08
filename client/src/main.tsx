@@ -4,9 +4,13 @@ import "./index.css";
 import { registerServiceWorker } from "./lib/pwa-helper";
 import { preloadCriticalResources } from "./lib/preload";
 import { DataCacheProvider } from './contexts/DataCacheContext';
+import { initPreventRadixScroll } from './lib/preventScrollReset';
 
 // Preload critical resources
 preloadCriticalResources();
+
+// Khởi tạo giải pháp ngăn chặn Radix UI tự cuộn trang
+initPreventRadixScroll();
 
 // Render the application
 createRoot(document.getElementById("root")!).render(<App />);
