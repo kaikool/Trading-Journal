@@ -1,16 +1,6 @@
 import { ReactNode, useState, useEffect } from "react";
 import { AppLogo } from "@/components/AppLogo";
-import { 
-  Brain, 
-  TrendingUp, 
-  LineChart, 
-  Rocket, 
-  Smartphone, 
-  CloudOff,
-  BarChart4,
-  Badge,
-  ChevronRight
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Badge as UIBadge } from "@/components/ui/badge";
 
 interface AuthLayoutProps {
@@ -34,42 +24,42 @@ export function AuthLayout({ children }: AuthLayoutProps) {
     {
       title: "Advanced Pattern Analysis",
       description: "Comprehensive trade analysis to identify patterns in your trading behavior",
-      icon: <TrendingUp className="h-5 w-5" />,
+      icon: <Icons.trade.profit className="h-5 w-5" />,
       highlight: "patterns",
       color: "bg-blue-500/20 text-blue-500"
     },
     {
       title: "Detailed Performance Tracking",
       description: "Comprehensive metrics on win rates, profit factors, and performance by pair/strategy",
-      icon: <BarChart4 className="h-5 w-5" />,
+      icon: <Icons.nav.analytics className="h-5 w-5" />,
       highlight: "metrics",
       color: "bg-green-500/20 text-green-500"
     },
     {
       title: "Chart Image Analysis",
       description: "Upload entry/exit chart images and get technical analysis and detailed feedback",
-      icon: <LineChart className="h-5 w-5" />,
+      icon: <Icons.general.image className="h-5 w-5" />,
       highlight: "feedback",
       color: "bg-purple-500/20 text-purple-500"
     },
     {
       title: "Psychology Tracking",
       description: "Identify how emotions affect your trading performance with psychological insights",
-      icon: <Brain className="h-5 w-5" />,
+      icon: <Icons.ui.info className="h-5 w-5" />,
       highlight: "emotions",
       color: "bg-amber-500/20 text-amber-500"
     },
     {
       title: "Works Offline",
       description: "Full Progressive Web App support for using the journal even without internet connection",
-      icon: <CloudOff className="h-5 w-5" />,
+      icon: <Icons.pwa.wifiOff className="h-5 w-5" />,
       highlight: "offline",
       color: "bg-indigo-500/20 text-indigo-500"
     },
     {
       title: "Achievement System",
       description: "Gamified trading experience with badges and achievements to keep you motivated",
-      icon: <Badge className="h-5 w-5" />,
+      icon: <Icons.achievement.trophy className="h-5 w-5" />,
       highlight: "gamified",
       color: "bg-rose-500/20 text-rose-500"
     }
@@ -135,7 +125,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
                 
                 <div className="flex items-center gap-1 text-white/60 text-sm font-medium group cursor-pointer">
                   <span>Learn more</span>
-                  <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                  <Icons.ui.chevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
                 </div>
               </div>
             ))}
@@ -159,7 +149,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
         {/* Mobile and trusted section */}
         <div className="mt-6 relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <Smartphone className="h-5 w-5 text-white/70" />
+            <Icons.pwa.smartphone className="h-5 w-5 text-white/70" />
             <span className="text-sm text-white/80">Available on all devices - iOS, Android & Desktop</span>
           </div>
           
