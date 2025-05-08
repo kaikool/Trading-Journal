@@ -771,7 +771,7 @@ export default function Settings() {
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
+                <Icons.ui.alertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{passwordError}</AlertDescription>
               </Alert>
@@ -1200,7 +1200,7 @@ export default function Settings() {
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
+                <Icons.ui.alertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{passwordError}</AlertDescription>
               </Alert>
@@ -1290,12 +1290,12 @@ export default function Settings() {
                 >
                   {isChangingPassword ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
                       Updating...
                     </>
                   ) : (
                     <>
-                      <Lock className="mr-2 h-4 w-4" />
+                      <Icons.ui.lock className="mr-2 h-4 w-4" />
                       Update Password
                     </>
                   )}
