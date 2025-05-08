@@ -385,7 +385,10 @@ export function Sidebar({ className }: { className?: string }) {
           
           {!sidebarCollapsed && (
             <Button
-              onClick={toggleSidebar}
+              onClick={(e) => {
+                e.stopPropagation(); // Ngăn chặn sự kiện truyền xuống dưới
+                toggleSidebar();
+              }}
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full"
@@ -457,7 +460,10 @@ export function Sidebar({ className }: { className?: string }) {
         {sidebarCollapsed && (
           <div className="border-t border-border p-3 flex justify-center">
             <Button
-              onClick={toggleSidebar}
+              onClick={(e) => {
+                e.stopPropagation(); // Ngăn chặn sự kiện truyền xuống dưới
+                toggleSidebar();
+              }}
               variant="ghost"
               size="icon"
               className="h-8 w-8 rounded-full"
@@ -472,9 +478,12 @@ export function Sidebar({ className }: { className?: string }) {
         {!sidebarCollapsed && (
           <div className="border-t border-border p-3">
             <Button
-              onClick={handleLogout}
+              onClick={(e) => {
+                e.stopPropagation(); // Ngăn chặn sự kiện truyền xuống dưới
+                handleLogout();
+              }}
               variant="outline"
-              className="w-full justify-start text-sm font-normal"
+              className="w-full justify-start text-sm font-normal relative"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
