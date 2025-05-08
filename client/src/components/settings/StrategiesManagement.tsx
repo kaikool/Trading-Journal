@@ -422,7 +422,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 {strategy.rules && strategy.rules.length > 0 && (
                   <div className="app-accordion-content-section p-3">
                     <h3 className="app-accordion-heading text-sm flex items-center">
-                      <ListChecks className="h-3.5 w-3.5 mr-1 text-primary/80" />
+                      <Icons.trade.listChecks className="h-3.5 w-3.5 mr-1 text-primary/80" />
                       Trading Rules
                     </h3>
                     <ul className="space-y-2">
@@ -430,7 +430,7 @@ const StrategyItem = React.memo(function StrategyItem({
                         <li key={rule.id} className="flex gap-2 group">
                           <div className="mt-0.5 flex-shrink-0">
                             <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-primary/20 bg-primary/5 rounded-full">
-                              <Check className="h-3 w-3 text-primary" />
+                              <Icons.ui.check className="h-3 w-3 text-primary" />
                             </Badge>
                           </div>
                           <div>
@@ -450,7 +450,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 {strategy.entryConditions && strategy.entryConditions.length > 0 && (
                   <div className="app-accordion-content-section p-3">
                     <h3 className="app-accordion-heading text-sm flex items-center bg-gradient-to-r from-success/90 to-success/70">
-                      <DoorOpen className="h-3.5 w-3.5 mr-1 text-success/80" />
+                      <Icons.trade.doorOpen className="h-3.5 w-3.5 mr-1 text-success/80" />
                       Entry Conditions
                     </h3>
                     <ul className="space-y-2">
@@ -458,7 +458,7 @@ const StrategyItem = React.memo(function StrategyItem({
                         <li key={condition.id} className="flex gap-2 group">
                           <div className="mt-0.5 flex-shrink-0">
                             <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-success/20 bg-success/5 rounded-full">
-                              <ArrowDown className="h-3 w-3 text-success" />
+                              <Icons.trade.arrowDown className="h-3 w-3 text-success" />
                             </Badge>
                           </div>
                           <div>
@@ -476,7 +476,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 {strategy.exitConditions && strategy.exitConditions.length > 0 && (
                   <div className="app-accordion-content-section p-3">
                     <h3 className="app-accordion-heading text-sm flex items-center bg-gradient-to-r from-destructive/90 to-destructive/70">
-                      <LogOut className="h-3.5 w-3.5 mr-1 text-destructive/80" />
+                      <Icons.trade.logOut className="h-3.5 w-3.5 mr-1 text-destructive/80" />
                       Exit Conditions
                     </h3>
                     <ul className="space-y-2">
@@ -526,7 +526,7 @@ const StrategyItem = React.memo(function StrategyItem({
                   disabled={isSaving}
                   className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary h-8 px-2 text-xs"
                 >
-                  <Bookmark className="h-3 w-3 mr-1" />
+                  <Icons.trade.bookmark className="h-3 w-3 mr-1" />
                   Default
                 </Button>
               )}
@@ -536,7 +536,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 onClick={onEdit}
                 className="bg-secondary/30 hover:bg-secondary/50 h-8 px-2 text-xs"
               >
-                <Icons.ui.edit className="h-3 w-3 mr-1" />
+                <Icons.general.edit className="h-3 w-3 mr-1" />
                 Edit
               </Button>
               <Button 
@@ -546,7 +546,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 onClick={onDelete}
                 disabled={isSaving}
               >
-                <Icons.ui.trash className="h-3 w-3 mr-1" />
+                <Icons.trade.trash className="h-3 w-3 mr-1" />
                 Delete
               </Button>
             </div>
