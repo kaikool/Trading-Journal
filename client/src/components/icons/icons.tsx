@@ -45,6 +45,7 @@ export const Icons = {
     circle: LucideIcons.CircleDot,
     circleCheck: LucideIcons.CircleCheck,
     circleX: LucideIcons.CircleX,
+    xCircle: LucideIcons.XCircle,
     circleDashed: LucideIcons.CircleDashed,
     circleDot: LucideIcons.CircleDot,
     lock: LucideIcons.Lock,

@@ -24,7 +24,7 @@ import {
 } from "recharts";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Heart, Lightbulb, XCircle, AlertTriangle, Database } from "lucide-react";
+import Icons from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
 import { format, parseISO } from "date-fns";
 import { formatCurrency } from "@/lib/utils";
@@ -161,7 +161,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     if (!hasEnoughData) {
       insights.push({
         type: 'suggestion',
-        icon: <Database className="h-4 w-4" />,
+        icon: <Icons.general.database className="h-4 w-4" />,
         title: 'More Trading Data Needed',
         description: `Record at least 5-10 more trades with emotional states to get meaningful insights. The current sample size is too small for reliable analysis.`
       });
@@ -387,7 +387,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     <Card className="border-primary/20 bg-primary/5">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold flex items-center">
-          <Database className="h-5 w-5 mr-2 text-primary" />
+          <Icons.general.database className="h-5 w-5 mr-2 text-primary" />
           More Trading Data Needed
         </CardTitle>
         <CardDescription>
@@ -397,7 +397,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
       <CardContent className="px-4 sm:px-6 pb-4">
         <div className="flex items-start gap-3">
           <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
-            <Lightbulb className="h-4 w-4" />
+            <Icons.general.lightbulb className="h-4 w-4" />
           </div>
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
