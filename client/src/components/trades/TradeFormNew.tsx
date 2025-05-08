@@ -2317,8 +2317,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("revenge", !revenge)}
                   >
                     {!revenge
-                      ? <CheckCircle2 className="h-4 w-4 mr-2 flex-shrink-0" /> 
-                      : <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">No Revenge Trade</span>
                   </div>
                   
@@ -2332,8 +2332,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("overLeveraged", !overLeveraged)}
                   >
                     {!overLeveraged
-                      ? <CheckCircle2 className="h-4 w-4 mr-2 flex-shrink-0" /> 
-                      : <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Proper Leverage</span>
                   </div>
                   
@@ -2347,8 +2347,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("movedStopLoss", !movedStopLoss)}
                   >
                     {!movedStopLoss
-                      ? <CheckCircle2 className="h-4 w-4 mr-2 flex-shrink-0" /> 
-                      : <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Respected SL</span>
                   </div>
                 </div>
