@@ -19,6 +19,8 @@
  * - Hỗ trợ triển khai tự động qua GitHub Actions
  * - Thêm hỗ trợ TwelveData API trong môi trường production với placeholder %TWELVEDATA_API_KEY%
  *   (placeholder này sẽ được tự động thay thế trong quá trình build)
+ * - Cải thiện xử lý lỗi MIME type trong PWA mode với service worker nâng cao
+ * - Tối ưu hóa quản lý icon với hệ thống icon tập trung
  */
 
 window.ENV = {

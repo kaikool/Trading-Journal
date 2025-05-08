@@ -123,7 +123,7 @@ export function SafeLazyLoad({
                   variant="outline" 
                   className="gap-2"
                 >
-                  <RefreshCw className="h-4 w-4" />
+                  <Icons.ui.refresh className="h-4 w-4" />
                   Refresh Page
                 </Button>
               )}
@@ -192,7 +192,7 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
                 
                 <div className="flex justify-center mt-4 gap-2">
                   <Button onClick={resetErrorBoundary} className="gap-2">
-                    <RefreshCw className="h-4 w-4" />
+                    <Icons.ui.refresh className="h-4 w-4" />
                     Retry
                   </Button>
                   
@@ -202,7 +202,7 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
                       variant="outline" 
                       className="gap-2"
                     >
-                      <RefreshCw className="h-4 w-4" />
+                      <Icons.ui.refresh className="h-4 w-4" />
                       Refresh Page
                     </Button>
                   )}
