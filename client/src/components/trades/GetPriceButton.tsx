@@ -5,18 +5,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { 
-  RefreshCw, 
-  Clock, 
-  CheckCircle, 
-  BarChart3, 
-  Coins,
-  DollarSign,
-  CandlestickChart,
-  Cable,
-  Webhook,
-  Plug
-} from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { useMarketPrice } from '@/hooks/use-market-price';
 import { debug } from '@/lib/debug';
 import { toast } from '@/hooks/use-toast';
@@ -97,7 +86,7 @@ export function GetPriceButton({
     const iconClass = iconSize;
     
     // Sử dụng biểu tượng Webhook (API) cho tất cả các cặp tiền tệ
-    return <Webhook className={iconClass} />;
+    return <Icons.trade.api className={iconClass} />;
   };
   
   // Xác định kích thước nút dựa trên props
@@ -123,9 +112,9 @@ export function GetPriceButton({
             disabled={isLoading}
           >
             {isLoading ? (
-              <RefreshCw className={`${iconSize} animate-spin`} />
+              <Icons.ui.refresh className={`${iconSize} animate-spin`} />
             ) : lastFetchTime ? (
-              <CheckCircle className={`${iconSize} text-green-500`} />
+              <Icons.ui.circleCheck className={`${iconSize} text-green-500`} />
             ) : (
               getApiIcon()
             )}

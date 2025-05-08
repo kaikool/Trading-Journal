@@ -73,6 +73,20 @@ export const Icons = {
     check: LucideIcons.Check,
     star: LucideIcons.Star,
     crown: LucideIcons.Crown,
+    medal: LucideIcons.Medal,
+    award: LucideIcons.Award,
+    target: LucideIcons.Target,
+    brain: LucideIcons.Brain,
+    shield: LucideIcons.Shield,
+    clock: LucideIcons.Clock,
+    globe: LucideIcons.Globe,
+    sun: LucideIcons.Sun,
+    coffee: LucideIcons.Coffee,
+    book: LucideIcons.BookOpen,
+    swords: LucideIcons.Swords,
+    heartHandshake: LucideIcons.HeartHandshake,
+    lightbulb: LucideIcons.Lightbulb,
+    hourglass: LucideIcons.Hourglass,
   },
 
   // Nhóm PWA (Progressive Web App) - các icon liên quan đến PWA
@@ -93,6 +107,9 @@ export const Icons = {
     bullish: LucideIcons.ArrowUp,
     bearish: LucideIcons.ArrowDown,
     price: LucideIcons.DollarSign,
+    api: LucideIcons.Webhook,
+    candlestick: LucideIcons.CandlestickChart,
+    coins: LucideIcons.Coins,
   },
 
   // Các icon khác không thuộc nhóm cụ thể

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Check, Star, Crown } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { cn } from '@/lib/utils';
 import { Achievement } from '@/types';
 import { achievementLevelColors, achievementLevelLabel, getIconByName } from '@/lib/achievements-data';
@@ -134,13 +134,13 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                   
                   <div className="mt-4 flex items-center justify-between">
                     <div className="flex items-center space-x-1 text-amber-500">
-                      <Trophy className="w-4 h-4" />
+                      <Icons.achievement.trophy className="w-4 h-4" />
                       <span className="font-medium text-sm">{achievement.points} points</span>
                     </div>
                     
                     <div className="animate-scale-in">
                       <div className="bg-green-500/10 text-green-500 rounded-full px-2 py-0.5 flex items-center space-x-1">
-                        <Check className="w-3 h-3" />
+                        <Icons.achievement.check className="w-3 h-3" />
                         <span className="text-xs font-medium">Completed</span>
                       </div>
                     </div>
@@ -158,7 +158,7 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                   <div className="flex items-center">
                     <div className="relative">
                       <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30">
-                        <Crown className="w-8 h-8 text-indigo-500" />
+                        <Icons.achievement.crown className="w-8 h-8 text-indigo-500" />
                       </div>
                       <div className="absolute inset-0 rounded-full animate-pulse">
                         <div className="w-full h-full rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10"></div>
@@ -200,7 +200,7 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                           className="animate-spin-in"
                           style={{ animationDelay: `${i * 0.1}s` }}
                         >
-                          <Star className="w-5 h-5 text-yellow-500" fill="#eab308" />
+                          <Icons.achievement.star className="w-5 h-5 text-yellow-500" fill="#eab308" />
                         </div>
                       ))}
                     </div>

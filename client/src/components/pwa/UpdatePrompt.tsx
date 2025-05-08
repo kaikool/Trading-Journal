@@ -75,7 +75,7 @@ export function UpdatePrompt() {
             Để sau
           </Button>
           <Button onClick={handleUpdate}>
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <Icons.ui.refresh className="mr-2 h-4 w-4" />
             Cập nhật ngay
           </Button>
         </CardFooter>
