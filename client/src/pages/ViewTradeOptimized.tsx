@@ -4,7 +4,7 @@ import { auth, getTradeById, deleteTrade } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Trade } from "@/types";
 import { useLocation } from "wouter";
 import { LazyTradeViewEdit } from "@/components/trades/LazyTradeViewEdit";

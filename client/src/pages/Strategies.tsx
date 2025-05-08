@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
-import { BookCopy } from "lucide-react";
 import { useDataCache } from "@/contexts/DataCacheContext";
+import { Icons } from "@/components/icons/icons";
 
 // Lazy load the component
 const StrategiesManagement = lazy(() => 
@@ -14,7 +14,7 @@ export default function StrategiesPage() {
   // Empty state component
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center h-[400px] text-center">
-      <BookCopy className="h-16 w-16 text-muted-foreground/20 mb-4" />
+      <Icons.general.book className="h-16 w-16 text-muted-foreground/20 mb-4" />
       <h3 className="text-lg font-semibold mb-2">No Strategies Created Yet</h3>
       <p className="text-muted-foreground max-w-md mb-4">
         Create your first trading strategy to define your trading rules.

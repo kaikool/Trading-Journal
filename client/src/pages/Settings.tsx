@@ -47,12 +47,12 @@ import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
 const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
 import { Icons } from "@/components/icons/icons";
-import type { LucideIcon } from "@/components/icons/types";
+import type { ComponentType } from "react";
 
 interface SettingsSectionProps {
   title: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: ComponentType<{ className?: string }>;
   children: React.ReactNode;
   rightElement?: React.ReactNode;
 }
