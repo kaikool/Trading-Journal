@@ -1,10 +1,10 @@
 import { Achievement } from "@/types";
 import { Icons } from "@/components/icons/icons";
-import { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 // Hàm trợ giúp chuyển đổi tên icon thành component
-export const getIconByName = (iconName: string): LucideIcon => {
-  const icons: Record<string, LucideIcon> = {
+export const getIconByName = (iconName: string): ComponentType<{ className?: string }> => {
+  const icons: Record<string, ComponentType<{ className?: string }>> = {
     // Achievement icons
     "Target": Icons.general.target,
     "Trophy": Icons.achievement.trophy,

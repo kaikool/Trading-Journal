@@ -3,7 +3,7 @@ import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { Loader2 } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
 
@@ -226,7 +226,7 @@ function MainContent() {
         <Suspense fallback={
           <div className="flex items-center justify-center h-[70vh]">
             <div className="flex flex-col items-center gap-2">
-              <Loader2 className="h-7 w-7 animate-spin text-primary" />
+              <Icons.ui.spinner className="h-7 w-7 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">Đang tải...</p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import { TradeResult } from "./forex-calculator";
 import { Icons } from "@/components/icons/icons";
-import { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 export type TradeStatus = TradeResult | "OPEN";
 
@@ -8,7 +8,7 @@ export interface TradeStatusConfig {
   id: TradeStatus;
   label: string;
   description: string;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   color: string;
   bgColor: string;
   lightBgColor: string;

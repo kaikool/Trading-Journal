@@ -14,7 +14,7 @@ export default function StrategiesPage() {
   // Empty state component
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center h-[400px] text-center">
-      <Icons.general.book className="h-16 w-16 text-muted-foreground/20 mb-4" />
+      <Icons.nav.strategies className="h-16 w-16 text-muted-foreground/20 mb-4" />
       <h3 className="text-lg font-semibold mb-2">No Strategies Created Yet</h3>
       <p className="text-muted-foreground max-w-md mb-4">
         Create your first trading strategy to define your trading rules.

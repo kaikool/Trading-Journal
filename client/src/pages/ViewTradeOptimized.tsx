@@ -115,14 +115,14 @@ export default function ViewTradeOptimized() {
     <div className="container max-w-5xl px-0 sm:px-4">
       <div className="mt-4">
         <Button variant="ghost" onClick={handleBack} className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <Icons.trade.arrowLeft className="mr-2 h-4 w-4" />
           Back to Trade History
         </Button>
       </div>
       
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : error ? (
         <Card className="mb-4 overflow-hidden">
