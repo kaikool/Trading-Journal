@@ -15,6 +15,8 @@ export const Icons = {
     lightbulb: LucideIcons.Lightbulb,
     activity: LucideIcons.Activity,
     trending: LucideIcons.TrendingUp,
+    trendingUp: LucideIcons.TrendingUp,
+    trendingDown: LucideIcons.TrendingDown,
     dollar: LucideIcons.DollarSign,
     percent: LucideIcons.Percent,
     stats: LucideIcons.BarChart4,
