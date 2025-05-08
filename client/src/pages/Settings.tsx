@@ -855,12 +855,12 @@ export default function Settings() {
                 >
                   {isChangingPassword ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
                       Updating...
                     </>
                   ) : (
                     <>
-                      <Lock className="h-4 w-4 mr-2" />
+                      <Icons.ui.lock className="h-4 w-4 mr-2" />
                       Change Password
                     </>
                   )}
@@ -880,7 +880,7 @@ export default function Settings() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <Mail className="h-5 w-5 text-primary" />
+                        <Icons.ui.mail className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <p className="text-sm font-medium">Email & Password</p>
@@ -939,9 +939,9 @@ export default function Settings() {
                       disabled={isUnlinking || linkedProviders.length <= 1}
                     >
                       {isUnlinking ? (
-                        <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                        <Icons.ui.spinner className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                       ) : (
-                        <Link2Off className="h-3.5 w-3.5 mr-1.5" />
+                        <Icons.ui.linkOff className="h-3.5 w-3.5 mr-1.5" />
                       )}
                       Disconnect
                     </Button>
@@ -984,9 +984,9 @@ export default function Settings() {
                       disabled={isLinkingGoogle}
                     >
                       {isLinkingGoogle ? (
-                        <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                        <Icons.ui.spinner className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                       ) : (
-                        <Link className="h-3.5 w-3.5 mr-1.5" />
+                        <Icons.ui.link className="h-3.5 w-3.5 mr-1.5" />
                       )}
                       Connect
                     </Button>
@@ -997,7 +997,7 @@ export default function Settings() {
                 <div className="flex items-center justify-between opacity-60">
                   <div className="flex items-center space-x-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-900">
-                      <Github className="h-5 w-5" />
+                      <Icons.ui.github className="h-5 w-5" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">GitHub</p>
@@ -1012,7 +1012,7 @@ export default function Settings() {
                     className="text-xs h-8"
                     disabled={true}
                   >
-                    <Link className="h-3.5 w-3.5 mr-1.5" />
+                    <Icons.ui.link className="h-3.5 w-3.5 mr-1.5" />
                     Connect
                   </Button>
                 </div>
