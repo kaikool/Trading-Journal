@@ -1368,9 +1368,9 @@ export default function Settings() {
                         className="h-8 px-2 text-xs text-muted-foreground hover:text-destructive"
                       >
                         {isUnlinking ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
                         ) : (
-                          <Link2Off className="h-3.5 w-3.5" />
+                          <Icons.ui.linkOff className="h-3.5 w-3.5" />
                         )}
                         <span className="ml-1.5">Unlink</span>
                       </Button>
@@ -1408,12 +1408,12 @@ export default function Settings() {
                       >
                         {isLinkingGoogle ? (
                           <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                            <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin mr-1.5" />
                             <span>Linking...</span>
                           </>
                         ) : (
                           <>
-                            <Link className="h-3.5 w-3.5 mr-1.5" />
+                            <Icons.ui.link className="h-3.5 w-3.5 mr-1.5" />
                             <span>Link</span>
                           </>
                         )}
@@ -1424,7 +1424,7 @@ export default function Settings() {
                   {/* Note message */}
                   <div className="p-3 rounded-lg bg-muted/30 text-xs text-muted-foreground">
                     <p className="flex items-start">
-                      <AlertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                      <Icons.ui.alertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                       <span>
                         Keep at least one login method active.
                       </span>
