@@ -20,21 +20,7 @@ import {
   TabsList,
   TabsTrigger
 } from "@/components/ui/tabs";
-import { 
-  CircleDot, 
-  Loader2,
-  ArrowUpRight,
-  ArrowDownRight,
-  Target,
-  BadgeInfo,
-  Upload,
-  ImageIcon,
-  X,
-  Lock,
-  Unlock,
-  TrendingUp,
-  DollarSign
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { updateTrade } from "@/lib/firebase";
 import { calculateProfit, calculatePips, formatPrice } from "@/lib/forex-calculator";
 import { uploadTradeImage } from "@/lib/api-service";
@@ -379,7 +365,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
           headerBgClass
         )}>
           <DialogTitle className="text-base font-medium flex items-center">
-            <Unlock className="mr-2 h-4 w-4 text-primary/80" />
+            <Icons.ui.unlock className="mr-2 h-4 w-4 text-primary/80" />
             Close {trade.pair} Trade
           </DialogTitle>
           <DialogDescription id="close-trade-form-description" className="text-xs opacity-90">
@@ -391,15 +377,15 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
           <Tabs defaultValue="main" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="w-full grid grid-cols-3 h-10 rounded-none border-b bg-muted/30">
               <TabsTrigger value="main" className="rounded-none">
-                <Target className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.general.target className="h-3.5 w-3.5 mr-1.5" />
                 <span className="text-xs">Close Position</span>
               </TabsTrigger>
               <TabsTrigger value="images" className="rounded-none">
-                <ImageIcon className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.general.image className="h-3.5 w-3.5 mr-1.5" />
                 <span className="text-xs">Charts</span>
               </TabsTrigger>
               <TabsTrigger value="note" className="rounded-none">
-                <BadgeInfo className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.ui.info className="h-3.5 w-3.5 mr-1.5" />
                 <span className="text-xs">Notes</span>
               </TabsTrigger>
             </TabsList>
@@ -534,11 +520,11 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                       <div className="flex items-center gap-2 justify-between">
                         <div className="flex items-center gap-1.5">
                           {previewResult.profitLoss > 0 ? (
-                            <ArrowUpRight className="w-4 h-4 text-success" />
+                            <Icons.trade.profit className="w-4 h-4 text-success" />
                           ) : previewResult.profitLoss < 0 ? (
-                            <ArrowDownRight className="w-4 h-4 text-destructive" />
+                            <Icons.trade.loss className="w-4 h-4 text-destructive" />
                           ) : (
-                            <CircleDot className="w-4 h-4 text-warning" />
+                            <Icons.ui.circleDot className="w-4 h-4 text-warning" />
                           )}
                           <span className="text-sm font-medium">
                             {previewResult.profitLoss > 0 ? "Profit" : 
@@ -556,7 +542,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-background/80 p-2 rounded">
                           <div className="text-xs text-muted-foreground flex items-center">
-                            <DollarSign className="w-3 h-3 mr-1" />
+                            <Icons.ui.dollarSign className="w-3 h-3 mr-1" />
                             PNL
                           </div>
                           <div className={cn(
@@ -587,7 +573,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center py-2 text-muted-foreground">
-                      <BadgeInfo className="h-9 w-9 mb-1 opacity-20" />
+                      <Icons.ui.info className="h-9 w-9 mb-1 opacity-20" />
                       <span className="text-xs">
                         Select or enter an exit price to preview results
                       </span>
