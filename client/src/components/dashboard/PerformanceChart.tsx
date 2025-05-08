@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AreaChart, Area, XAxis, YAxis, ReferenceArea, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
-import { ArrowUp, ArrowDown, LineChart as LineChartIcon, Info } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
@@ -107,14 +107,14 @@ export function PerformanceChart({
               size="sm"
               variant="soft"
             >
-              <LineChartIcon className="h-4 w-4" />
+              <Icons.analytics.lineChart className="h-4 w-4" />
             </CardIcon>
             Balance History
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center text-center min-h-[200px] py-10">
           <div className="rounded-full bg-muted/10 p-3 mb-3">
-            <Info className="h-8 w-8 text-muted-foreground/40" />
+            <Icons.ui.info className="h-8 w-8 text-muted-foreground/40" />
           </div>
           <p className="font-medium text-muted-foreground">No performance data available</p>
           <p className="text-sm text-muted-foreground/70 mt-1 max-w-xs">
@@ -192,7 +192,7 @@ export function PerformanceChart({
             size="sm"
             variant="soft"
           >
-            <LineChartIcon className="h-4 w-4" />
+            <Icons.analytics.lineChart className="h-4 w-4" />
           </CardIcon>
           Balance History
         </CardTitle>
@@ -202,8 +202,8 @@ export function PerformanceChart({
           chartColors.bg, chartColors.text
         )}>
           {isPositiveTrend ? 
-            <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
-            <ArrowDown className="h-3.5 w-3.5 mr-1" />}
+            <Icons.trade.arrowUp className="h-3.5 w-3.5 mr-1" /> : 
+            <Icons.trade.arrowDown className="h-3.5 w-3.5 mr-1" />}
           {formattedPercentChange}
         </div>
       </CardHeader>

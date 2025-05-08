@@ -4,20 +4,8 @@ import { cn } from "@/lib/utils";
 import { TradeFilterOptions } from "@/types";
 
 import { Badge } from "@/components/ui/badge";
+import { Icons } from "@/components/icons/icons";
 import {
-  Calendar,
-  DollarSign,
-  ArrowUp,
-  ArrowDown,
-  CircleCheck,
-  CircleX,
-  CircleDashed,
-  CircleDot,
-  Lightbulb,
-  Heart,
-  Check,
-  X,
-  Clock,
   Newspaper as NewspaperIcon,
 } from "lucide-react";
 
@@ -39,7 +27,7 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <Calendar className="h-3 w-3" /> 
+          <Icons.general.calendar className="h-3 w-3" /> 
           {format(filters.startDate, "dd/MM/yy")} - {format(filters.endDate, "dd/MM/yy")}
           <X
             className="h-3 w-3 ml-1 cursor-pointer" 
