@@ -474,12 +474,3 @@ export function cleanupImageCache(): void {
 
 // Tự động dọn dẹp cache mỗi giờ
 setInterval(cleanupImageCache, 60 * 60 * 1000);
-
-// Cửa sổ của dịch vụ cache ảnh
-export default {
-  getCachedImageUrl,
-  invalidateImageCache,
-  preloadImagesToCache,
-  clearAllImageCache,
-  cleanupImageCache
-};

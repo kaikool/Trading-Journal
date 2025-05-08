@@ -122,13 +122,14 @@ export function ChartImageDialog({
   
   // Use cached image hook for performance optimization
   const { 
-    imageUrl, 
+    url: imageUrl, 
     isLoading, 
-    error 
+    error,
+    refetch 
   } = useCachedImage(currentImage.originalSrc, {
-    tradeId,
-    imageType: currentImage.imageType,
     placeholder: '/icons/blank-chart.svg',
+    retry: true,
+    retryCount: 2
   });
 
   // Zoom in function with maximum limit
@@ -286,12 +287,17 @@ export function ChartImageDialog({
                 onError={(e) => {
                   console.error(`Error loading image: ${currentImage.originalSrc}`);
                   const imgElement = e.currentTarget as HTMLImageElement;
-                  if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
-                    console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
-                    imgElement.src = currentImage.originalSrc;
-                    return;
-                  }
-                  imgElement.classList.add('hidden');
+                  
+                  // Nếu lỗi, thử tải lại bằng hook refetch
+                  refetch().catch(() => {
+                    // Nếu vẫn lỗi, thử trực tiếp URL
+                    if (currentImage.originalSrc && imgElement.src !== currentImage.originalSrc) {
+                      console.log(`Retrying with original URL: ${currentImage.originalSrc}`);
+                      imgElement.src = currentImage.originalSrc;
+                      return;
+                    }
+                    imgElement.classList.add('hidden');
+                  });
                 }}
               />
             </div>
