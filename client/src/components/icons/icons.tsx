@@ -57,6 +57,8 @@ export const Icons = {
     externalLink: LucideIcons.ExternalLink,
     clipboardList: LucideIcons.ClipboardList,
     moreHorizontal: LucideIcons.MoreHorizontal,
+    gripVertical: LucideIcons.GripVertical,
+    panelLeft: LucideIcons.PanelLeft,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
