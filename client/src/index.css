@@ -4,6 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent auto-scrolling when SelectContent opens */
+.no-scroll-when-open {
+  transform: none !important;
+}
+
 /* 
  * Chỉ sử dụng một phương pháp tiếp cận nhất quán cho toàn bộ safe area handling.
  * Đã di chuyển toàn bộ safe area utilities vào globals.css trong phần utilities.
