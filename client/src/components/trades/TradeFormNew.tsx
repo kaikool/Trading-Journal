@@ -66,6 +66,7 @@ import {
 
 // Import IconSystem - sử dụng hệ thống icon tập trung
 import { Icons } from "@/components/icons/icons";
+import { Upload, X, AlertCircle, ImageIcon } from "lucide-react";
 // Hàm để xử lý đường dẫn ảnh từ database để hiển thị đúng
 function fixImagePath(path: string | null | undefined): string | null {
   if (!path) return null;
