@@ -188,6 +188,14 @@ export const Icons = {
   },
 };
 
+// Add missing icons we need for StrategyConditionInput.tsx
+// Add Settings2, Pencil to UI group
+Icons.ui.settings2 = LucideIcons.Settings2;
+Icons.ui.pencil = LucideIcons.Pencil;
+
+// Add Target, Info icons
+Icons.general.info = LucideIcons.Info;
+
 // Helper để lấy icon trực tiếp từ lucide-react
 // Chỉ sử dụng trong trường hợp bất đắc dĩ, ưu tiên sử dụng icon từ các nhóm đã định nghĩa
 export function getIcon(name: keyof typeof LucideIcons) {

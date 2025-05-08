@@ -38,10 +38,7 @@ import {
 } from "@/components/ui/select";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
-import { 
-  BookCopy, Bookmark, ListChecks, X, Clock, DoorOpen, LogOut, 
-  Edit, Trash2, Check, ArrowDown, ArrowUp, Loader2, Save, Plus 
-} from "lucide-react";
+// All icons are now imported from the centralized Icons component
 
 // Common timeframes for forex
 const COMMON_TIMEFRAMES = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MN"];
@@ -882,7 +879,7 @@ export function StrategiesManagement() {
             Create your first trading strategy to define rules and conditions for your trades.
           </p>
           <Button onClick={() => setIsDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-1.5" />
+            <Icons.ui.plus className="h-4 w-4 mr-1.5" />
             Add Your First Strategy
           </Button>
         </div>
@@ -945,7 +942,7 @@ export function StrategiesManagement() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="default" size="sm" className="w-full max-w-sm">
-              <Plus className="h-4 w-4 mr-1.5" />
+              <Icons.ui.plus className="h-4 w-4 mr-1.5" />
               Add Strategy
             </Button>
           </DialogTrigger>

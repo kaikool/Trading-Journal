@@ -12,23 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  Plus, 
-  Trash2, 
-  Edit,
-  Save,
-  X,
-  LineChart,
-  Clock,
-  Target,
-  Activity,
-  Info,
-  Pencil,
-  Check,
-  ChevronRight,
-  ArrowDown,
-  Settings2
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
