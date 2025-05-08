@@ -190,9 +190,9 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
             </div>
           );
         }}
-        onReset={async () => {
+        onReset={async (errorState: Error) => {
           // Khi gặp lỗi MIME type trong PWA mode, xóa cache và update service worker
-          if (isMIMETypeError(error) && isPwaMode()) {
+          if (isMIMETypeError(errorState) && isPwaMode()) {
             try {
               // Xóa cache tài nguyên JavaScript
               await clearAssetsCache();
