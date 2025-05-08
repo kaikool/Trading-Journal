@@ -60,11 +60,9 @@ jobs:
           // API Base URL (không còn sử dụng Firebase Functions)
           VITE_API_BASE_URL: "",
           
-          // TwelveData API key cho production
-          TWELVEDATA_API_KEY: "${{ secrets.TWELVEDATA_API_KEY }}",
-          
-          // Firebase Functions config hỗ trợ định dạng 2-part key
-          FIREBASE_CONFIG: '{"twelvedata":{"apikey":"${{ secrets.TWELVEDATA_API_KEY }}"}}'
+          // TwelveData API key cho môi trường production - không còn sử dụng
+          // Thay đổi giá trị HARDCODED_API_KEY trong market-price-service.ts
+          TWELVEDATA_API_KEY: "${{ secrets.TWELVEDATA_API_KEY }}"
         };
         EOL
         
@@ -149,11 +147,9 @@ jobs:
           // API Base URL (không còn sử dụng Firebase Functions)
           VITE_API_BASE_URL: "",
           
-          // TwelveData API key cho production
-          TWELVEDATA_API_KEY: "${{ secrets.TWELVEDATA_API_KEY }}",
-          
-          // Firebase Functions config hỗ trợ định dạng 2-part key
-          FIREBASE_CONFIG: '{"twelvedata":{"apikey":"${{ secrets.TWELVEDATA_API_KEY }}"}}'
+          // TwelveData API key cho môi trường production - không còn sử dụng
+          // Thay đổi giá trị HARDCODED_API_KEY trong market-price-service.ts
+          TWELVEDATA_API_KEY: "${{ secrets.TWELVEDATA_API_KEY }}"
         };
         EOL
         
@@ -170,11 +166,6 @@ jobs:
         echo "Dist folder structure prepared for Firebase deployment"
         ls -la dist
         ls -la dist/public
-        
-    - name: Configure Firebase Functions Config
-      run: |
-        echo "Setting up Firebase Functions config with TwelveData API key..."
-        npx firebase functions:config:set twelvedata.apikey="${{ secrets.TWELVEDATA_API_KEY }}" --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
         
     - name: Deploy to Firebase
       run: firebase deploy --only hosting --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }}

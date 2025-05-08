@@ -171,10 +171,8 @@ jobs:
         ls -la dist
         ls -la dist/public
         
-    - name: Configure Firebase Functions Config
-      run: |
-        echo "Setting up Firebase Functions config with TwelveData API key..."
-        npx firebase functions:config:set twelvedata.apikey="${{ secrets.TWELVEDATA_API_KEY }}" --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_TOKEN }}
+    # TwelveData API key được hardcoded trong market-price-service.ts
+    # Không cần cấu hình Firebase Functions config nữa
         
     - name: Deploy to Firebase
       run: firebase deploy --only hosting --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
