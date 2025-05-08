@@ -569,7 +569,7 @@ export default function Settings() {
         </div>
         
         {/* General settings tab */}
-        <TabsContent value="general" className="mt-6">
+        <TabsContent value="general" className="mt-6 space-y-6 pb-0">
           <SettingsSection 
             title="Appearance" 
           >
