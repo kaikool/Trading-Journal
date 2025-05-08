@@ -262,14 +262,14 @@ export default function EmotionTab({ data }: EmotionTabProps) {
       if (volatilityRate > 0.7 && emotionTimelineData.length >= 15) {
         insights.push({
           type: 'warning',
-          icon: <AlertTriangle className="h-4 w-4" />,
+          icon: <Icons.ui.alertTriangle className="h-4 w-4" />,
           title: 'High Emotional Volatility',
           description: 'Your emotions change frequently between trades. Consider practices that promote emotional stability, such as meditation or longer breaks between sessions.'
         });
       } else if (volatilityRate < 0.2 && emotionTimelineData.length >= 15) {
         insights.push({
           type: 'positive',
-          icon: <CheckCircle className="h-4 w-4" />,
+          icon: <Icons.ui.circleCheck className="h-4 w-4" />,
           title: 'Emotional Consistency',
           description: 'You maintain consistent emotional states across trading sessions, which can lead to more predictable performance patterns.'
         });
@@ -297,7 +297,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
       
       insights.push({
         type: 'suggestion',
-        icon: <Lightbulb className="h-4 w-4" />,
+        icon: <Icons.general.lightbulb className="h-4 w-4" />,
         title: 'Emotional Management Strategy',
         description: emotionAdvice
       });
