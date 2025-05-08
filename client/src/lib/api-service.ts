@@ -12,7 +12,7 @@ import {
   getDownloadURL,
   deleteObject
 } from "firebase/storage";
-import { initFirebase } from './firebase';
+import { functions } from './firebase';
 import { debug } from './debug';
 
 /**
@@ -65,7 +65,7 @@ export async function uploadTradeImage(
   debug(`Đã chuyển đổi từ UI type "${imageType}" sang storage type "${storageType}"`);
   
   // Khởi tạo Firebase nếu chưa
-  const { storage, auth } = initFirebase();
+  const { storage, auth } = functions();
   
   // Nếu chưa đăng nhập trong môi trường dev, tạo một UID giả để sử dụng
   if (!auth.currentUser) {
@@ -189,7 +189,7 @@ export async function deleteTradeImage(
   debug(`API Service: Xóa ảnh cho ${fileOrType.substring(0, 30)}...`);
   
   // Khởi tạo Firebase
-  const { storage } = initFirebase();
+  const { storage } = functions();
   
   // Xác định đường dẫn tới file trong Storage
   let storagePath: string | null = null;
