@@ -1,8 +1,8 @@
 import React from "react";
-import { ArrowUpRight, ArrowDownRight, Wallet } from "lucide-react";
 import { formatCurrency, formatPercentage } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { UI_CONFIG } from "@/lib/config";
+import { Icons } from "@/components/icons/icons";
 
 interface BalanceCardProps {
   currentBalance: number;
@@ -51,7 +51,7 @@ const BalanceCard = React.memo(function BalanceCard({
       <div className="flex justify-between mb-2 relative z-10">
         <span className="text-sm font-medium text-white/90">{UI_CONFIG.TEXT.CURRENT_BALANCE}</span>
         <div className="bg-white/20 p-1.5 rounded-full">
-          <Wallet className="h-4 w-4 text-white" />
+          <Icons.general.clipboard className="h-4 w-4 text-white" />
         </div>
       </div>
       
@@ -62,12 +62,12 @@ const BalanceCard = React.memo(function BalanceCard({
       <div className="flex items-center text-sm relative z-10">
         {percentageChange > 0 ? (
           <span className="inline-flex items-center text-green-200 mr-2 bg-green-500/20 px-2 py-0.5 rounded-full text-xs">
-            <ArrowUpRight className="h-3 w-3 mr-1" />
+            <Icons.trade.exit className="h-3 w-3 mr-1" />
             <span>{formatPercentage(percentageChange)}</span>
           </span>
         ) : percentageChange < 0 ? (
           <span className="inline-flex items-center text-red-200 mr-2 bg-red-500/20 px-2 py-0.5 rounded-full text-xs">
-            <ArrowDownRight className="h-3 w-3 mr-1" />
+            <Icons.trade.entry className="h-3 w-3 mr-1" />
             <span>{formatPercentage(Math.abs(percentageChange))}</span>
           </span>
         ) : (
