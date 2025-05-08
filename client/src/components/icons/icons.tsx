@@ -148,6 +148,8 @@ export const Icons = {
     checklist: LucideIcons.BookOpenCheck,
     trash: LucideIcons.Trash2,
     arrowLeft: LucideIcons.ArrowLeft,
+    bookCopy: LucideIcons.BookCopy,
+    bookmark: LucideIcons.Bookmark,
     loader: LucideIcons.Loader2,
   },
 

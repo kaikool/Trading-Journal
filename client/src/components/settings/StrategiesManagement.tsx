@@ -183,7 +183,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 ? "bg-primary/15 text-primary/90 border border-primary/20" 
                 : "bg-muted/40 text-muted-foreground/80 border border-border/50"
             )}>
-              <Icons.ui.book className="h-3.5 w-3.5" />
+              <Icons.trade.bookCopy className="h-3.5 w-3.5" />
             </div>
             <div className="flex flex-col">
               <span className="font-medium text-sm">{strategy.name}</span>
