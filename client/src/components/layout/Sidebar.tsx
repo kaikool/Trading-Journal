@@ -2,20 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
-import { 
-  LayoutDashboard, 
-  TrendingUp, 
-  History, 
-  BarChart2,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  ChevronRight,
-  ChevronLeft,
-  BookOpen,
-  Trophy
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { AppLogo } from "@/components/AppLogo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -29,13 +16,13 @@ import { SidebarHint } from "./SidebarHint";
 
 // Define navigation items internal to this component
 const SIDEBAR_LINKS = [
-  { icon: <LayoutDashboard className="h-5 w-5" />, label: "Dashboard", href: "/" },
-  { icon: <TrendingUp className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
-  { icon: <History className="h-5 w-5" />, label: "History", href: "/trade/history" },
-  { icon: <BarChart2 className="h-5 w-5" />, label: "Analytics", href: "/analytics" },
-  { icon: <BookOpen className="h-5 w-5" />, label: "Strategies", href: "/strategies" },
-  { icon: <Trophy className="h-5 w-5" />, label: "Achievements", href: "/achievements" },
-  { icon: <Settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
+  { icon: <Icons.nav.dashboard className="h-5 w-5" />, label: "Dashboard", href: "/" },
+  { icon: <Icons.nav.newTrade className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
+  { icon: <Icons.nav.history className="h-5 w-5" />, label: "History", href: "/trade/history" },
+  { icon: <Icons.nav.analytics className="h-5 w-5" />, label: "Analytics", href: "/analytics" },
+  { icon: <Icons.nav.strategies className="h-5 w-5" />, label: "Strategies", href: "/strategies" },
+  { icon: <Icons.nav.achievements className="h-5 w-5" />, label: "Achievements", href: "/achievements" },
+  { icon: <Icons.nav.settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
 
 // Individual sidebar navigation item
@@ -280,7 +267,7 @@ export function Sidebar({ className }: { className?: string }) {
               className="h-8 w-8 rounded-full"
               aria-label="Close menu"
             >
-              <X className="h-5 w-5" />
+              <Icons.ui.close className="h-5 w-5" />
             </Button>
           </div>
           
