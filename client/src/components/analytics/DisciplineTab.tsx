@@ -205,7 +205,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
     if (followPlanImpact > 10 && disciplineMetrics.followedPlan.yes > 5) {
       insights.push({
         type: 'positive',
-        icon: <Award className="h-4 w-4" />,
+        icon: <Icons.achievement.award className="h-4 w-4" />,
         title: 'Plan Adherence Success',
         description: `Following your trading plan improves win rate by ${followPlanImpact.toFixed(1)}%. Continue this disciplined approach for consistent results.`
       });
@@ -215,7 +215,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
     if (followPlanImpact > 10 && disciplineMetrics.followedPlan.yes < disciplineMetrics.followedPlan.no) {
       insights.push({
         type: 'warning',
-        icon: <Target className="h-4 w-4" />,
+        icon: <Icons.achievement.target className="h-4 w-4" />,
         title: 'Improve Plan Adherence',
         description: `You win ${followPlanImpact.toFixed(1)}% more often when following your plan, but only do so ${((disciplineMetrics.followedPlan.yes / totalTradesCount) * 100).toFixed(1)}% of the time. Focus on discipline.`
       });
@@ -225,7 +225,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
     if (enterEarlyImpact > 15 && disciplineMetrics.enteredEarly.yes > 3) {
       insights.push({
         type: 'warning',
-        icon: <AlertTriangle className="h-4 w-4" />,
+        icon: <Icons.ui.alertTriangle className="h-4 w-4" />,
         title: 'Early Entry Warning',
         description: `Entering trades prematurely reduces your win rate by ${enterEarlyImpact.toFixed(1)}%. Wait for proper confirmation signals before executing.`
       });
@@ -256,7 +256,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
     if (totalTradesCount < 15 && totalTradesCount > 0) {
       insights.push({
         type: 'suggestion',
-        icon: <Lightbulb className="h-4 w-4" />,
+        icon: <Icons.general.lightbulb className="h-4 w-4" />,
         title: 'Gathering More Data',
         description: `With only ${totalTradesCount} trades analyzed, continue tracking discipline metrics to establish clearer patterns and more reliable insights.`
       });
@@ -283,7 +283,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
       
       insights.push({
         type: 'suggestion',
-        icon: <Lightbulb className="h-4 w-4" />,
+        icon: <Icons.general.lightbulb className="h-4 w-4" />,
         title: `Improve ${weakestFactor.name}`,
         description: tip
       });
@@ -299,7 +299,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Brain className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.brain className="h-5 w-5 mr-2 text-primary" />
               Trading Discipline Insights
             </CardTitle>
             <CardDescription>
@@ -332,7 +332,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-semibold flex items-center">
-            <Brain className="h-5 w-5 mr-2 text-primary" />
+            <Icons.analytics.brain className="h-5 w-5 mr-2 text-primary" />
             Discipline Impact on Win Rate
           </CardTitle>
           <CardDescription>
@@ -475,7 +475,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-semibold flex items-center">
-            <Brain className="h-5 w-5 mr-2 text-primary" />
+            <Icons.analytics.brain className="h-5 w-5 mr-2 text-primary" />
             Discipline Factor Analysis
           </CardTitle>
           <CardDescription>
