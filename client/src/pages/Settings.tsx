@@ -87,7 +87,7 @@ interface SettingsSectionProps {
 
 function SettingsSection({ title, description, icon: Icon, children, rightElement }: SettingsSectionProps) {
   return (
-    <Card className="mb-6 border border-border/40 shadow-sm overflow-hidden">
+    <Card className="border border-border/40 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
