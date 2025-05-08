@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { LoadingFallback } from './LoadingFallback';
 import ErrorBoundary from '@/components/ui/error-boundary';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { debug } from '@/lib/debug';
 import { isPwaMode, clearAssetsCache, updateServiceWorker } from '@/lib/serviceWorkerHelper';
@@ -93,7 +93,7 @@ export function SafeLazyLoad({
       <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: typeof height === 'number' ? height : 300 }}>
         <div className="w-full max-w-md mx-auto p-4">
           <Alert variant="destructive" className="mb-4">
-            <AlertTriangle className="h-5 w-5 mr-2" />
+            <Icons.ui.warning className="h-5 w-5 mr-2" />
             <AlertTitle>Error Loading Content</AlertTitle>
             <AlertDescription>
               {isMIMEError ? (
@@ -113,7 +113,7 @@ export function SafeLazyLoad({
           {retryOnError && (
             <div className="flex justify-center mt-4 gap-2">
               <Button onClick={handleRetry} className="gap-2">
-                <RefreshCw className="h-4 w-4" />
+                <Icons.ui.refresh className="h-4 w-4" />
                 Retry
               </Button>
               
@@ -173,7 +173,7 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
             <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: height || 300 }}>
               <div className="w-full max-w-md mx-auto p-4">
                 <Alert variant="destructive" className="mb-4">
-                  <AlertTriangle className="h-5 w-5 mr-2" />
+                  <Icons.ui.warning className="h-5 w-5 mr-2" />
                   <AlertTitle>Error Loading Content</AlertTitle>
                   <AlertDescription>
                     {isMIMEError ? (
