@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState, useEffect } from "react";
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
-import { Trophy } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { Icons } from "@/components/icons/icons";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { AppSettings } from "@/types";
@@ -48,7 +48,7 @@ export default function AchievementsPage() {
   // Empty state component
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center h-[400px] text-center">
-      <Trophy className="h-16 w-16 text-muted-foreground/20 mb-4" />
+      <Icons.achievement.trophy className="h-16 w-16 text-muted-foreground/20 mb-4" />
       <h3 className="text-lg font-semibold mb-2">No Achievements Unlocked Yet</h3>
       <p className="text-muted-foreground max-w-md mb-4">
         Complete trades and meet performance targets to unlock achievements.

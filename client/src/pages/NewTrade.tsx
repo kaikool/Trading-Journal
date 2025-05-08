@@ -11,7 +11,7 @@ import {
   CardTitle, 
   CardIcon 
 } from "@/components/ui/card";
-import { Loader2, LineChart } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 
 export default function NewTrade() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,7 +52,7 @@ export default function NewTrade() {
           />
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <div className="rounded-full bg-primary/10 p-6 mb-5">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              <Icons.ui.spinner className="h-10 w-10 animate-spin text-primary" />
             </div>
             <h3 className="text-lg font-semibold">Saving your trade...</h3>
             <p className="text-muted-foreground mt-2 max-w-md">

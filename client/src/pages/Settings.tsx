@@ -46,8 +46,8 @@ import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 // Áp dụng lazy loading cho các tab components
 const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
 const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
-import { LucideIcon } from "lucide-react";
 import { Icons } from "@/components/icons/icons";
+import type { LucideIcon } from "@/components/icons/types";
 
 interface SettingsSectionProps {
   title: string;
