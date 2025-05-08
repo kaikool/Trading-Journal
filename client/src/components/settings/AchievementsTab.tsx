@@ -39,24 +39,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
-import {
-  Trophy,
-  Award,
-  Medal,
-  Star,
-  RefreshCcw,
-  Filter,
-  ChevronRight,
-  Check,
-  FilterX,
-  Loader2,
-  Clock,
-  Lock,
-  Sparkles,
-  AlertCircle,
-  BookOpen,
-  TrendingUp
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 
 interface AchievementCardProps {
   achievement: Achievement;
@@ -292,7 +275,7 @@ export const AchievementsTab: React.FC<{
   if (isLoading) {
     return (
       <div className="py-8 flex justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -300,7 +283,7 @@ export const AchievementsTab: React.FC<{
   if (error || !enhancedAchievementsData || !userAchievements) {
     return (
       <div className="p-6 text-center">
-        <AlertCircle className="h-8 w-8 mx-auto mb-3 text-destructive" />
+        <Icons.ui.alertCircle className="h-8 w-8 mx-auto mb-3 text-destructive" />
         <h3 className="font-medium text-lg mb-1">Unable to load achievements</h3>
         <p className="text-muted-foreground mb-4">
           An error occurred while loading your achievement data.
@@ -445,7 +428,7 @@ export const AchievementsTab: React.FC<{
               className="h-8 text-xs gap-1 ml-auto"
             >
               {isRefreshing ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
               ) : (
                 <RefreshCcw className="h-3.5 w-3.5" />
               )}
