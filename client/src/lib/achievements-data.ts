@@ -1,57 +1,36 @@
 import { Achievement } from "@/types";
-import { 
-  Target, 
-  Trophy, 
-  TrendingUp, 
-  Sword, 
-  Coffee, 
-  Brain, 
-  HeartHandshake, 
-  Lightbulb,
-  LineChart,
-  Hourglass,
-  BookOpen,
-  CheckCheck,
-  CircleDollarSign,
-  Medal,
-  Award,
-  Clock,
-  Shield,
-  BarChart3,
-  Calendar,
-  Globe,
-  Sun,
-  Crown
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
+import { LucideIcon } from "lucide-react";
 
 // Hàm trợ giúp chuyển đổi tên icon thành component
-export const getIconByName = (iconName: string) => {
-  const icons = {
-    "Target": Target,
-    "Trophy": Trophy,
-    "TrendingUp": TrendingUp,
-    "Sword": Sword,
-    "Coffee": Coffee,
-    "Brain": Brain,
-    "HeartHandshake": HeartHandshake,
-    "Lightbulb": Lightbulb,
-    "LineChart": LineChart,
-    "Hourglass": Hourglass,
-    "BookOpen": BookOpen,
-    "CheckCheck": CheckCheck,
-    "CircleDollarSign": CircleDollarSign,
-    "Medal": Medal,
-    "Award": Award,
-    "Clock": Clock,
-    "Shield": Shield,
-    "BarChart3": BarChart3,
-    "Calendar": Calendar,
-    "Globe": Globe,
-    "Sun": Sun,
-    "Crown": Crown
+export const getIconByName = (iconName: string): LucideIcon => {
+  const icons: Record<string, LucideIcon> = {
+    // Achievement icons
+    "Target": Icons.general.target || Icons.achievement.trophy,
+    "Trophy": Icons.achievement.trophy,
+    "TrendingUp": Icons.trade.profit,
+    "Sword": Icons.achievement.trophy, // Fallback until we add sword
+    "Coffee": Icons.achievement.trophy, // Fallback until we add coffee
+    "Brain": Icons.achievement.trophy, // Fallback until we add brain
+    "HeartHandshake": Icons.achievement.trophy, // Fallback until we add handshake
+    "Lightbulb": Icons.achievement.trophy, // Fallback until we add lightbulb
+    "LineChart": Icons.nav.analytics,
+    "Hourglass": Icons.achievement.trophy, // Fallback until we add hourglass
+    "BookOpen": Icons.nav.strategies,
+    "CheckCheck": Icons.ui.check,
+    "CircleDollarSign": Icons.trade.price,
+    "Medal": Icons.achievement.trophy,
+    "Award": Icons.achievement.trophy,
+    "Clock": Icons.achievement.trophy, // Fallback until we add clock
+    "Shield": Icons.achievement.trophy, // Fallback until we add shield
+    "BarChart3": Icons.nav.analytics,
+    "Calendar": Icons.general.calendar,
+    "Globe": Icons.achievement.trophy, // Fallback until we add globe
+    "Sun": Icons.achievement.trophy, // Fallback until we add sun
+    "Crown": Icons.achievement.crown
   };
   
-  return icons[iconName as keyof typeof icons] || Trophy;
+  return icons[iconName] || Icons.achievement.trophy;
 };
 
 // Achievement level colors with expanded range (from bronze to platinum)
