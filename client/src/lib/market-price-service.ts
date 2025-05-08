@@ -206,9 +206,16 @@ export async function saveApiKeyToFirebase(apiKey: string): Promise<boolean> {
   }
 }
 
-// Cấu hình cho axios - sử dụng proxy server local
+// Hardcoded API key cho production
+// Thay thế giá trị này bằng API key thực tế khi triển khai
+const HARDCODED_API_KEY = 'YOUR_TWELVEDATA_API_KEY_HERE';
+
+// Cấu hình cho axios - có thể sử dụng proxy server local hoặc gọi trực tiếp
+const IS_DIRECT_API = import.meta.env.PROD; // Sử dụng API trực tiếp trong môi trường production
+const DIRECT_API_BASE = 'https://api.twelvedata.com';
+
 const apiClient = axios.create({
-  baseURL: '/api/twelvedata',  // Sử dụng proxy server local
+  baseURL: IS_DIRECT_API ? DIRECT_API_BASE : '/api/twelvedata',
   timeout: 5000,
 });
 
@@ -258,16 +265,30 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
       logError('[MarketPrice] Error getting API key from Firebase:', error);
     }
     
-    const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
+    // Xử lý khác nhau cho API trực tiếp và proxy server
+    let response;
     
-    // Gọi API thông qua proxy server
-    const response = await apiClient.get('/price', {
-      params: {
-        symbol: formattedSymbol,
-        format: 'JSON'
-      },
-      headers
-    });
+    if (IS_DIRECT_API) {
+      // Khi gọi trực tiếp API, sử dụng apikey trong params
+      debug(`[MarketPrice] Calling TwelveData API directly with ${userApiKey ? 'user API key' : 'hardcoded API key'}`);
+      response = await apiClient.get('/price', {
+        params: {
+          symbol: formattedSymbol,
+          format: 'JSON',
+          apikey: userApiKey || HARDCODED_API_KEY // Dùng hardcoded key nếu không có user key
+        }
+      });
+    } else {
+      // Khi dùng proxy server, gửi API key qua header
+      const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
+      response = await apiClient.get('/price', {
+        params: {
+          symbol: formattedSymbol,
+          format: 'JSON'
+        },
+        headers
+      });
+    }
     
     // Xác thực response
     if (!response.data || !response.data.price) {
@@ -338,16 +359,30 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
       logError('[MarketPrice] Error getting API key from Firebase:', error);
     }
     
-    const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
+    // Xử lý khác nhau cho API trực tiếp và proxy server
+    let response;
     
-    // Gọi API thông qua proxy server
-    const response = await apiClient.get('/price', {
-      params: {
-        symbol: formattedSymbolsStr,
-        format: 'JSON'
-      },
-      headers
-    });
+    if (IS_DIRECT_API) {
+      // Khi gọi trực tiếp API, sử dụng apikey trong params
+      debug(`[MarketPrice] Calling TwelveData API directly for multiple symbols with ${userApiKey ? 'user API key' : 'hardcoded API key'}`);
+      response = await apiClient.get('/price', {
+        params: {
+          symbol: formattedSymbolsStr,
+          format: 'JSON',
+          apikey: userApiKey || HARDCODED_API_KEY // Dùng hardcoded key nếu không có user key
+        }
+      });
+    } else {
+      // Khi dùng proxy server, gửi API key qua header
+      const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
+      response = await apiClient.get('/price', {
+        params: {
+          symbol: formattedSymbolsStr,
+          format: 'JSON'
+        },
+        headers
+      });
+    }
     
     // Kết quả có thể là object duy nhất hoặc mảng objects tùy vào số lượng symbols
     const results: Record<string, number> = {};

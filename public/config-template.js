@@ -13,7 +13,8 @@
  *   "Firebase: Error (auth/api-key-not-valid.-please-pass-a-valid-api-key.)"
  * - Các giá trị Firebase phải chính xác: VITE_FIREBASE_API_KEY, VITE_FIREBASE_APP_ID, VITE_FIREBASE_PROJECT_ID
  * 
- * CẬP NHẬT 07/05/2025: 
+ * CẬP NHẬT 08/05/2025: 
+ * - Hỗ trợ gọi trực tiếp TwelveData API từ frontend trong môi trường production
  * - Chuyển từ Firebase Functions sang Firebase Storage Web SDK trực tiếp
  * - Hỗ trợ triển khai tự động qua GitHub Actions
  * - Thêm hỗ trợ TwelveData API trong môi trường production với placeholder %TWELVEDATA_API_KEY%
