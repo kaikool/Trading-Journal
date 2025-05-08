@@ -1,8 +1,42 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/**
+ * Hàm tiện ích để kết hợp các lớp CSS
+ */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Ngăn tính năng tự động cuộn màn hình khi dropdown mở ra
+ * Sử dụng cho các select menu để tránh nhảy trang
+ */
+export function preventSelectScrollJump() {
+  // Lưu vị trí cuộn hiện tại
+  const scrollPosition = window.scrollY;
+  
+  // Đặt vị trí cuộn lại sau khi dropdown mở - sử dụng nhiều timeout
+  // để đảm bảo hoạt động trên nhiều trình duyệt khác nhau
+  setTimeout(() => {
+    window.scrollTo(0, scrollPosition);
+    
+    // Phòng trường hợp cuộn trang xảy ra sau đó
+    setTimeout(() => {
+      window.scrollTo({
+        top: scrollPosition,
+        behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để tránh hiệu ứng
+      });
+      
+      // Thêm kiểm tra cuối cùng
+      const finalCheck = setTimeout(() => {
+        if (window.scrollY !== scrollPosition) {
+          window.scrollTo(0, scrollPosition);
+        }
+        clearTimeout(finalCheck);
+      }, 50);
+    }, 10);
+  }, 0);
 }
 
 export function formatCurrency(value: number, compact = false): string {
