@@ -150,6 +150,10 @@ export const Icons = {
     arrowLeft: LucideIcons.ArrowLeft,
     bookCopy: LucideIcons.BookCopy,
     bookmark: LucideIcons.Bookmark,
+    listChecks: LucideIcons.ListChecks,
+    doorOpen: LucideIcons.DoorOpen,
+    logOut: LucideIcons.LogOut,
+    clock: LucideIcons.Clock,
     loader: LucideIcons.Loader2,
   },
 

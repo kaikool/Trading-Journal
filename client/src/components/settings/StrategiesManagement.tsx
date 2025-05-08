@@ -192,7 +192,7 @@ const StrategyItem = React.memo(function StrategyItem({
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {strategy.isDefault && (
               <Badge variant="outline" className="font-normal text-xs h-5 px-1.5 py-0 border-primary/30 bg-primary/10 text-primary">
-                <Bookmark className="h-2.5 w-2.5 mr-0.5" />
+                <Icons.trade.bookmark className="h-2.5 w-2.5 mr-0.5" />
                 Default
               </Badge>
             )}
@@ -205,7 +205,7 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="space-y-4 bg-muted/10 p-4 rounded-lg border border-border/40">
               <div className="space-y-2">
                 <Label htmlFor={`name-${strategy.id}`} className="text-sm flex items-center">
-                  <Icons.ui.book className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                  <Icons.trade.bookCopy className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                   Strategy Name
                 </Label>
                 <Input
@@ -219,7 +219,7 @@ const StrategyItem = React.memo(function StrategyItem({
               
               <div className="space-y-2">
                 <Label htmlFor={`description-${strategy.id}`} className="text-sm flex items-center">
-                  <LineChart className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                  <Icons.analytics.lineChart className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                   Description
                 </Label>
                 <Textarea
@@ -236,7 +236,7 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="space-y-1.5 mb-2">
               <StrategyConditionList
                 title="Trading Rules"
-                icon={<ListChecks className="h-4 w-4 mr-1" />}
+                icon={<Icons.trade.listChecks className="h-4 w-4 mr-1" />}
                 emptyMessage="No rules defined yet. Add your first trading rule."
                 conditions={strategy.rules || []}
                 onAdd={(condition) => handleFieldChange('rules', 
@@ -258,7 +258,7 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="space-y-1.5 mb-2">
               <StrategyConditionList
                 title="Entry Conditions"
-                icon={<DoorOpen className="h-4 w-4 mr-1" />}
+                icon={<Icons.trade.doorOpen className="h-4 w-4 mr-1" />}
                 emptyMessage="No entry conditions defined yet. Add your first entry condition."
                 conditions={strategy.entryConditions || []}
                 onAdd={(condition) => handleFieldChange('entryConditions', 
@@ -368,7 +368,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 className="text-sm font-medium cursor-pointer"
               >
                 <div className="flex items-center">
-                  <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                  <Icons.trade.bookmark className="h-3.5 w-3.5 mr-1.5" />
                   Set as default strategy
                 </div>
               </Label>
@@ -408,7 +408,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 {strategy.description && (
                   <div className="app-accordion-content-section p-3">
                     <h3 className="app-accordion-heading text-sm flex items-center">
-                      <LineChart className="h-3.5 w-3.5 mr-1 text-primary/80" />
+                      <Icons.analytics.lineChart className="h-3.5 w-3.5 mr-1 text-primary/80" />
                       Strategy Overview
                     </h3>
                     <p className="text-xs text-muted-foreground leading-relaxed">{strategy.description}</p>
