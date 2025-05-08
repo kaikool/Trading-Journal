@@ -484,7 +484,7 @@ const StrategyItem = React.memo(function StrategyItem({
                         <li key={condition.id} className="flex gap-2 group">
                           <div className="mt-0.5 flex-shrink-0">
                             <Badge variant="outline" className="w-5 h-5 flex items-center justify-center p-0 border-destructive/20 bg-destructive/5 rounded-full">
-                              <ArrowUp className="h-3 w-3 text-destructive" />
+                              <Icons.trade.arrowUp className="h-3 w-3 text-destructive" />
                             </Badge>
                           </div>
                           <div>
@@ -864,7 +864,7 @@ export function StrategiesManagement() {
       return (
         <div className="flex justify-center py-8">
           <div className="flex flex-col items-center">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <Icons.ui.spinner className="w-8 h-8 animate-spin text-muted-foreground" />
             <p className="mt-2 text-sm text-muted-foreground">Loading strategies...</p>
           </div>
         </div>
@@ -991,7 +991,7 @@ export function StrategiesManagement() {
               <div className="mt-6">
                 <StrategyConditionList
                   title="Trading Rules"
-                  icon={<ListChecks className="h-4 w-4 mr-1" />}
+                  icon={<Icons.trade.listChecks className="h-4 w-4 mr-1" />}
                   emptyMessage="No rules defined yet. Click 'Add' to create your first trading rule."
                   conditions={newStrategy.rules || []}
                   onAdd={(condition) => setNewStrategy({
@@ -1022,7 +1022,7 @@ export function StrategiesManagement() {
                   />
                   <Label htmlFor="isDefault" className="text-sm font-medium cursor-pointer">
                     <div className="flex items-center">
-                      <Bookmark className="h-3.5 w-3.5 mr-1.5" />
+                      <Icons.trade.bookmark className="h-3.5 w-3.5 mr-1.5" />
                       Set as default strategy
                     </div>
                   </Label>
@@ -1062,12 +1062,12 @@ export function StrategiesManagement() {
               >
                 {isCreating ? (
                   <>
-                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                    <Icons.ui.spinner className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                     Creating...
                   </>
                 ) : (
                   <>
-                    <Plus className="mr-1.5 h-3.5 w-3.5" />
+                    <Icons.ui.plus className="mr-1.5 h-3.5 w-3.5" />
                     Create Strategy
                   </>
                 )}
