@@ -367,7 +367,7 @@ export default function TradeHistory() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
-                <ChevronsUpDown className="h-4 w-4 mr-2" />
+                <Icons.ui.chevronsUpDown className="h-4 w-4 mr-2" />
                 Sort: {sortBy === "newest" && "Newest first"}
                 {sortBy === "oldest" && "Oldest first"}
                 {sortBy === "profit" && "Highest profit"}
@@ -432,7 +432,7 @@ export default function TradeHistory() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold flex items-center">
-                <SlidersHorizontal className="h-5 w-5 mr-2" />
+                <Icons.ui.slidersHorizontal className="h-5 w-5 mr-2" />
                 Filter Trades
               </CardTitle>
               <Button 
