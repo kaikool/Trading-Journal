@@ -2,8 +2,7 @@ import { ReactNode } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import type { LucideIcon } from "lucide-react";
-import * as LucideIcons from "lucide-react";
+import { Icons, getIcon } from "@/components/icons/icons";
 
 interface FormInputProps {
   form: UseFormReturn<any, any>;
@@ -13,7 +12,7 @@ interface FormInputProps {
   type?: string;
   disabled?: boolean;
   autoComplete?: string;
-  icon?: LucideIcon;
+  icon?: React.ComponentType<{ className?: string }>;
   description?: string;
   className?: string;
 }

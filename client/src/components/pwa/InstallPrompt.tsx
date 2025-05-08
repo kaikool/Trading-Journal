@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { isAppInstalled } from "@/lib/pwa-helper";
 
 // Interface for BeforeInstallPromptEvent (not included in standard TypeScript types)
@@ -83,7 +83,7 @@ export function InstallPrompt() {
             Để sau
           </Button>
           <Button size="sm" onClick={handleInstallClick}>
-            <Download className="mr-2 h-4 w-4" />
+            <Icons.pwa.download className="mr-2 h-4 w-4" />
             Cài đặt
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -139,7 +139,7 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
               "transition-all duration-200",
               "hover:bg-card/10 hover:border-border/20 hover:shadow"
             )}>
-              <ChevronRight className="h-3 w-3 text-primary/60" />
+              <Icons.ui.chevronRight className="h-3 w-3 text-primary/60" />
             </div>
           </div>
         </motion.div>
