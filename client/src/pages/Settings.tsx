@@ -709,7 +709,7 @@ export default function Settings() {
         <TabsContent value="account" className="mt-6 space-y-6">
           <SettingsSection 
             title="Account Information" 
-            icon={User}
+            icon={Icons.ui.user}
           >
             <div className="grid gap-4 sm:gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -725,7 +725,7 @@ export default function Settings() {
                       variant="secondary" 
                       className="absolute right-3 top-1/2 -translate-y-1/2 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 border-0"
                     >
-                      <Check className="h-3 w-3 mr-1" />
+                      <Icons.ui.check className="h-3 w-3 mr-1" />
                       Verified
                     </Badge>
                   </div>
@@ -751,9 +751,9 @@ export default function Settings() {
                       className="px-3"
                     >
                       {isUpdatingDisplayName ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Icons.ui.spinner className="h-4 w-4 animate-spin" />
                       ) : (
-                        <Check className="h-4 w-4" />
+                        <Icons.ui.check className="h-4 w-4" />
                       )}
                     </Button>
                   </div>
@@ -767,7 +767,7 @@ export default function Settings() {
           
           <SettingsSection 
             title="Password & Authentication" 
-            icon={ShieldCheck}
+            icon={Icons.ui.shieldCheck}
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
@@ -872,7 +872,7 @@ export default function Settings() {
           <SettingsSection 
             title="Linked Accounts"
             description="Control how you sign in to your account"
-            icon={Link}
+            icon={Icons.ui.link}
           >
             <div className="space-y-6">
               <div className="flex flex-col space-y-4">
@@ -895,7 +895,7 @@ export default function Settings() {
                       className="text-xs h-8"
                       disabled={true}
                     >
-                      <Check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
+                      <Icons.ui.check className="h-3.5 w-3.5 mr-1.5 text-green-500" />
                       Connected
                     </Button>
                   </div>
