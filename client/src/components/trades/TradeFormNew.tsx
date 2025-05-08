@@ -2383,7 +2383,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Chart Images with preview and progress */}
               <div>
                 <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center flex-wrap">
-                  <ImageIcon className="h-5 w-5 text-primary/80 mr-2" />
+                  <Icons.general.image className="h-5 w-5 text-primary/80 mr-2" />
                   Chart Images
                   <span className="ml-2 text-xs text-muted-foreground">(Max 2 images, 5MB each)</span>
                 </h3>

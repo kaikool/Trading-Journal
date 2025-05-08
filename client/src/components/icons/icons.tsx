@@ -48,6 +48,7 @@ export const Icons = {
     circleDashed: LucideIcons.CircleDashed,
     circleDot: LucideIcons.CircleDot,
     lock: LucideIcons.Lock,
+    unlock: LucideIcons.Unlock,
     sun: LucideIcons.Sun,
     moon: LucideIcons.Moon,
     monitor: LucideIcons.Monitor,
@@ -79,6 +80,11 @@ export const Icons = {
     moreHorizontal: LucideIcons.MoreHorizontal,
     gripVertical: LucideIcons.GripVertical,
     panelLeft: LucideIcons.PanelLeft,
+    alertCircle: LucideIcons.AlertCircle,
+    simpleUpload: LucideIcons.Upload,
+    ban: LucideIcons.Ban,
+    percent: LucideIcons.Percent,
+    zap: LucideIcons.Zap,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
@@ -168,6 +174,8 @@ export const Icons = {
     repeat: LucideIcons.Repeat,
     moveRight: LucideIcons.MoveRight,
     fileX: LucideIcons.FileX,
+    trash: LucideIcons.Trash2,
+    download: LucideIcons.Download,
   },
 };
 
