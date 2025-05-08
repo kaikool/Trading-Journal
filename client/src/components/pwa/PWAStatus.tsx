@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Smartphone, Wifi, WifiOff, Download, CheckCircle2 } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { isAppInstalled } from '@/lib/pwa-helper';
 
 /**
@@ -54,12 +54,12 @@ export function PWAStatus() {
         <div className="flex items-center gap-2">
           {status.isOnline ? (
             <Badge variant="outline" className="bg-green-100 text-green-800 flex items-center gap-1">
-              <Wifi className="h-3 w-3" />
+              <Icons.pwa.wifi className="h-3 w-3" />
               <span>Online</span>
             </Badge>
           ) : (
             <Badge variant="outline" className="bg-amber-100 text-amber-800 flex items-center gap-1">
-              <WifiOff className="h-3 w-3" />
+              <Icons.pwa.wifiOff className="h-3 w-3" />
               <span>Offline</span>
             </Badge>
           )}
@@ -68,7 +68,7 @@ export function PWAStatus() {
         <div className="flex items-center gap-2">
           {status.serviceWorkerActive ? (
             <Badge variant="outline" className="bg-green-100 text-green-800 flex items-center gap-1">
-              <CheckCircle2 className="h-3 w-3" />
+              <Icons.pwa.checkCircle className="h-3 w-3" />
               <span>Service Worker</span>
             </Badge>
           ) : (
@@ -81,12 +81,12 @@ export function PWAStatus() {
         <div className="flex items-center gap-2">
           {status.isStandalone ? (
             <Badge variant="outline" className="bg-indigo-100 text-indigo-800 flex items-center gap-1">
-              <Smartphone className="h-3 w-3" />
+              <Icons.pwa.smartphone className="h-3 w-3" />
               <span>Installed</span>
             </Badge>
           ) : (
             <Badge variant="outline" className="bg-amber-100 text-amber-800 flex items-center gap-1">
-              <Download className="h-3 w-3" />
+              <Icons.pwa.download className="h-3 w-3" />
               <span>Not Installed</span>
             </Badge>
           )}

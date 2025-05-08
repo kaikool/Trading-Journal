@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PWA_UPDATE_EVENT, PWAUpdateEvent, applyUpdate } from '@/lib/pwa-helper';
@@ -61,7 +61,7 @@ export function UpdatePrompt() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <RefreshCw className="h-5 w-5" />
+            <Icons.ui.refresh className="h-5 w-5" />
             Có bản cập nhật mới
           </CardTitle>
         </CardHeader>

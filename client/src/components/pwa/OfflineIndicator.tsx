@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { WifiOff } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { PWA_NETWORK_STATUS_EVENT, PWANetworkStatusEvent } from '@/lib/pwa-helper';
 
@@ -44,7 +44,7 @@ export function OfflineIndicator() {
 
   return (
     <Alert variant="destructive" className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 max-w-md shadow-lg">
-      <WifiOff className="h-4 w-4" />
+      <Icons.pwa.wifiOff className="h-4 w-4" />
       <AlertTitle>Mất kết nối mạng</AlertTitle>
       <AlertDescription>
         Bạn đang sử dụng ứng dụng ở chế độ ngoại tuyến. Một số chức năng có thể không hoạt động cho đến khi kết nối mạng được khôi phục.
