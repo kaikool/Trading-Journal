@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { cn, formatCurrency, getRelativeTime } from "@/lib/utils";
-import { ArrowUp, ArrowDown, Activity, ScrollText, Clock } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { RecentActivity as RecentActivityType } from "@/types";
 
 interface RecentActivityProps {
@@ -57,7 +57,7 @@ export default function RecentActivity({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Activity className="h-5 w-5 mr-2 text-primary/80" />
+              <Icons.general.target className="h-5 w-5 mr-2 text-primary/80" />
               Recent Activity
             </CardTitle>
             <CardDescription className="text-xs mt-1">
@@ -69,7 +69,7 @@ export default function RecentActivity({
               onClick={onViewAll}
               className="text-primary text-xs px-3 py-1.5 hover:bg-primary/5 rounded-full flex items-center transition-colors"
             >
-              <ScrollText className="h-3.5 w-3.5 mr-1.5" />
+              <Icons.general.clipboard className="h-3.5 w-3.5 mr-1.5" />
               See all
             </button>
           )}

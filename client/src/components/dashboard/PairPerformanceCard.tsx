@@ -1,7 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChartPie, Info } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { CHART_CONFIG } from "@/lib/config";
 import { calculateWinRate } from "@/lib/forex-calculator";
@@ -86,13 +86,13 @@ export function PairPerformanceCard({
         <CardHeader className="pb-0 pt-3 px-4">
           <div className="flex justify-between items-center">
             <CardTitle className="text-md font-medium flex items-center">
-              <ChartPie className="h-4 w-4 mr-1.5 text-primary/80" />
+              <Icons.ui.barChart className="h-4 w-4 mr-1.5 text-primary/80" />
               Currency Pairs
             </CardTitle>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center h-[200px] text-center">
-          <Info className="h-6 w-6 text-muted-foreground/30 mb-2" />
+          <Icons.ui.info className="h-6 w-6 text-muted-foreground/30 mb-2" />
           <p className="font-medium text-muted-foreground text-sm">No data available</p>
         </CardContent>
       </Card>
@@ -104,7 +104,7 @@ export function PairPerformanceCard({
       <CardHeader className="pb-0 pt-3 px-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-md font-medium flex items-center">
-            <ChartPie className="h-4 w-4 mr-1.5 text-primary/80" />
+            <Icons.ui.barChart className="h-4 w-4 mr-1.5 text-primary/80" />
             Currency Pairs
           </CardTitle>
         </div>
