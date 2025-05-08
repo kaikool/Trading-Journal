@@ -1,6 +1,6 @@
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
@@ -59,7 +59,7 @@ export function DateRangePicker({
               !date && "text-muted-foreground"
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <Icons.ui.calendar className="mr-2 h-4 w-4" />
             {date?.from ? (
               date.to ? (
                 <>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Loader2, BarChart } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 
