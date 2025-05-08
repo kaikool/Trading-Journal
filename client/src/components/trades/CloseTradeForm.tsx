@@ -557,7 +557,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
 
                         <div className="bg-background/80 p-2 rounded">
                           <div className="text-xs text-muted-foreground flex items-center">
-                            <TrendingUp className="w-3 h-3 mr-1" /> 
+                            <Icons.analytics.trending className="w-3 h-3 mr-1" /> 
                             Pips
                           </div>
                           <div className={cn(
@@ -726,7 +726,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                 variant={previewResult?.profitLoss && previewResult.profitLoss > 0 ? "default" : "destructive"}
               >
                 {isSubmitting || isUploading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Icons.ui.spinner className="h-4 w-4 animate-spin" />
                 ) : (
                   <Lock className="h-4 w-4" />
                 )}
