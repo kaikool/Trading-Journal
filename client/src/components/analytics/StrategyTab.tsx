@@ -127,7 +127,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
       const worstStrategy = poorStrategies[0];
       insights.push({
         type: 'warning',
-        icon: <Lightbulb className="h-4 w-4" />,
+        icon: <Icons.analytics.lightbulb className="h-4 w-4" />,
         title: 'Strategy Optimization Needed',
         description: `"${worstStrategy.strategy}" has a low win rate of ${worstStrategy.winRate.toFixed(1)}% over ${worstStrategy.trades} trades. Consider reviewing or abandoning this approach.`
       });
@@ -141,7 +141,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
       if (topStrategy.winRate > 60 && secondStrategy.winRate > 55) {
         insights.push({
           type: 'suggestion',
-          icon: <Lightbulb className="h-4 w-4" />,
+          icon: <Icons.analytics.lightbulb className="h-4 w-4" />,
           title: 'Focus on Winning Strategies',
           description: `Your top strategies "${topStrategy.strategy}" and "${secondStrategy.strategy}" show consistently good results. Consider allocating more capital to these approaches.`
         });
@@ -155,7 +155,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
     if (lowSampleStrategies.length > 0) {
       insights.push({
         type: 'suggestion',
-        icon: <Lightbulb className="h-4 w-4" />,
+        icon: <Icons.analytics.lightbulb className="h-4 w-4" />,
         title: 'Expand Your Testing',
         description: `You have ${lowSampleStrategies.length} strategies with less than 5 trades each. Continue testing to gather more data for conclusive performance analysis.`
       });
@@ -250,7 +250,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <BrainCircuit className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.brainCircuit className="h-5 w-5 mr-2 text-primary" />
               Strategy Insights
             </CardTitle>
             <CardDescription>
@@ -283,7 +283,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-semibold flex items-center">
-            <BarChart2 className="h-5 w-5 mr-2 text-primary" />
+            <Icons.analytics.barChart className="h-5 w-5 mr-2 text-primary" />
             Strategy Win Rates
           </CardTitle>
           <CardDescription>
@@ -420,7 +420,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <BarChart2 className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.barChart className="h-5 w-5 mr-2 text-primary" />
               Profit by Strategy
             </CardTitle>
             <CardDescription>
@@ -554,7 +554,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <BrainCircuit className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.brainCircuit className="h-5 w-5 mr-2 text-primary" />
               Strategy Comparison
             </CardTitle>
             <CardDescription>
@@ -657,7 +657,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-semibold flex items-center">
-            <BrainCircuit className="h-5 w-5 mr-2 text-primary" />
+            <Icons.analytics.brainCircuit className="h-5 w-5 mr-2 text-primary" />
             Detailed Strategy Performance
           </CardTitle>
           <CardDescription>
