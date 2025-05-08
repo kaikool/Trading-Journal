@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { RefreshCw, AlertTriangle } from 'lucide-react';
+import { Icons } from "@/components/icons/icons";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -90,7 +90,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
         <div className="flex items-center justify-center min-h-[150px] w-full">
           <div className="w-full max-w-md mx-auto p-4">
             <Alert variant="destructive" className="mb-4">
-              <AlertTriangle className="h-5 w-5 mr-2" />
+              <Icons.ui.warning className="h-5 w-5 mr-2" />
               <AlertTitle>Đã xảy ra lỗi</AlertTitle>
               <AlertDescription>
                 {error?.message || 'Có lỗi xảy ra khi tải nội dung này.'}
@@ -99,7 +99,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             
             <div className="flex justify-center mt-4">
               <Button onClick={this.handleRetry} className="gap-2">
-                <RefreshCw className="h-4 w-4" />
+                <Icons.ui.refresh className="h-4 w-4" />
                 Thử lại
               </Button>
             </div>
