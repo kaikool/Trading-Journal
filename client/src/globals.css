@@ -1390,7 +1390,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--chart-spacing-md); /* Reduced padding for a more compact design */
+    padding: var(--chart-spacing-xs); /* Giảm xuống 8px (--chart-spacing-xs) thay vì 16px (--chart-spacing-md) để tối đa hóa không gian hiển thị ảnh */
     
     /* Dark mode adjustments */
     .dark & {
@@ -1464,6 +1464,8 @@
   .chart-image {
     max-width: 100%;
     max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
     user-select: none;
     -webkit-touch-callout: none;
@@ -1477,7 +1479,7 @@
     
     /* Mobile optimizations */
     @media (max-width: 640px) {
-      max-height: calc(100% - 72px); /* Increased space for pagination */
+      max-height: calc(100% - 56px); /* Giảm từ 72px xuống 56px để có thêm không gian cho ảnh */
     }
   }
   
@@ -1485,7 +1487,8 @@
   @media (max-width: 640px), (display-mode: standalone) {
     .chart-image {
       /* Ensure image isn't hidden by navigation bar and home indicator */
-      max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-md) - 16px);
+      /* Giảm xuống còn 8px (--chart-spacing-xs) từ 16px (--chart-spacing-md) để tăng không gian hiển thị */
+      max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-xs) - 8px);
     }
   }
   

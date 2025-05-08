@@ -24,8 +24,9 @@ const dialogVariants = {
   /**
    * Chart Dialog - Kích thước tối ưu cho dialog hiển thị biểu đồ
    * Rộng hơn để hiển thị tốt hơn cho nội dung đồ họa
+   * Đã tối ưu lại kích thước để hiển thị ảnh lớn hơn
    */
-  chart: `${dialogBase} p-0 max-w-[95vw] w-full sm:max-w-[90vw] md:max-w-[78vw] lg:max-w-[70vw] overflow-hidden min-h-[400px] flex flex-col`,
+  chart: `${dialogBase} p-0 max-w-[98vw] w-full sm:max-w-[96vw] md:max-w-[85vw] lg:max-w-[80vw] xl:max-w-[75vw] overflow-hidden min-h-[400px] flex flex-col`,
   
   /**
    * Form Dialog - Cho phép dialog chứa form thu thập dữ liệu từ người dùng
