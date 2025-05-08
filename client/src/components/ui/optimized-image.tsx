@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { cn } from "@/lib/utils";
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 
 interface OptimizedImageProps {
   src: string;
@@ -124,7 +124,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
               className="w-full h-full object-cover opacity-50"
             />
           ) : (
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/70" />
+            <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground/70" />
           )}
         </div>
       )}
@@ -132,7 +132,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {/* Error state */}
       {isError && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/10">
-          <AlertCircle className="h-8 w-8 text-destructive/70 mb-2" />
+          <Icons.ui.error className="h-8 w-8 text-destructive/70 mb-2" />
           <p className="text-xs text-muted-foreground">Không thể tải hình ảnh</p>
         </div>
       )}
