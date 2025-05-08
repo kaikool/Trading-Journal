@@ -1691,7 +1691,7 @@ export default function TradeFormNew(props: TradeFormProps) {
       {/* Show draft notification if available */}
       {showDraftNotice && !isEditMode && (
         <Alert variant="default" className="mb-4 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
-          <Info className="h-4 w-4 text-blue-500" />
+          <Icons.ui.info className="h-4 w-4 text-blue-500" />
           <AlertTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">Draft Available</AlertTitle>
           <AlertDescription className="text-sm text-blue-600 dark:text-blue-300">
             You have an unsaved draft for this trade. Would you like to restore or delete it?
@@ -1707,12 +1707,12 @@ export default function TradeFormNew(props: TradeFormProps) {
             >
               {isDraftLoading ? (
                 <>
-                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  <Icons.ui.spinner className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                   Loading...
                 </>
               ) : (
                 <>
-                  <Download className="mr-1.5 h-3.5 w-3.5" />
+                  <Icons.general.download className="mr-1.5 h-3.5 w-3.5" />
                   Load Draft
                 </>
               )}
@@ -1725,7 +1725,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               onClick={discardDraft}
               disabled={isDraftLoading}
             >
-              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+              <Icons.general.trash className="mr-1.5 h-3.5 w-3.5" />
               Delete Draft
             </Button>
           </div>
@@ -1737,7 +1737,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Core Trade Information */}
               <div>
                 <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
-                  <LineChart className="h-5 w-5 text-primary/80 mr-2" />
+                  <Icons.analytics.lineChart className="h-5 w-5 text-primary/80 mr-2" />
                   Trade Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 overflow-hidden">
