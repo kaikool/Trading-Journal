@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { 
   auth, 
@@ -46,7 +46,7 @@ import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 // Áp dụng lazy loading cho các tab components
 const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
 const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
-import { Icons } from "@/components/icons/icons";
+import { Icons, getIcon } from "@/components/icons/icons";
 import type { ComponentType } from "react";
 
 interface SettingsSectionProps {
@@ -1046,7 +1046,7 @@ export default function Settings() {
                   </div>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      <Icons.analytics.dollar className="h-4 w-4" />
+                      <Icons.general.money className="h-4 w-4" />
                     </div>
                     <Input
                       id="initialBalance"
