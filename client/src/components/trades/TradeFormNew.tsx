@@ -2975,12 +2975,12 @@ export default function TradeFormNew(props: TradeFormProps) {
                     >
                       {isFormSubmitting ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
                           Saving...
                         </>
                       ) : isUploading ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
                           Uploading...
                         </>
                       ) : (
