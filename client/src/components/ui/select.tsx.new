@@ -4,32 +4,8 @@ import { Icons } from "@/components/icons/icons"
 
 import { cn } from "@/lib/utils"
 
-// Cần lưu lại vị trí scroll để ngăn việc cuộn trang khi mở dropdown
-let prevScrollPosition = 0
-
-// Nối ngánh các mã hàm sự kiện để ngăn focus và cuộn trang
-const usePreventScrollJump = () => {
-  const onOpenHandler = React.useCallback(() => {
-    // Lưu vị trí scroll hiện tại trước khi dropdown mở
-    prevScrollPosition = window.scrollY
-    
-    // Ngăn cuộn trang bằng cách định thời gian phục hồi vị trí scroll
-    setTimeout(() => {
-      window.scrollTo(0, prevScrollPosition)
-    }, 0)
-  }, [])
-
-  const onCloseHandler = React.useCallback((event: Event) => {
-    event.preventDefault()
-    
-    // Phục hồi lại vị trí scroll sau khi dropdown đóng
-    setTimeout(() => {
-      window.scrollTo(0, prevScrollPosition)
-    }, 0)
-  }, [])
-
-  return { onOpenHandler, onCloseHandler }
-}
+// Biến lưu vị trí scroll ban đầu để ngăn cuộn
+let prevScrollPosition = 0;
 
 const Select = SelectPrimitive.Root
 
@@ -61,13 +37,26 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", ...props }, ref) => {
-  const { onOpenHandler, onCloseHandler } = usePreventScrollJump()
-  
-  // Sử dụng useEffect để bắt sự kiện mở của dropdown
-  React.useEffect(() => {
-    // Lưu vị trí scroll hiện tại khi component mount
+  // Lưu lại vị trí scroll hiện tại khi component mount
+  const handleOpen = React.useCallback(() => {
+    // Lưu vị trí scroll hiện tại
     prevScrollPosition = window.scrollY
+    // Phục hồi ngay lập tức để ngăn cuộn
+    setTimeout(() => window.scrollTo(0, prevScrollPosition), 0)
   }, [])
+
+  // Sử dụng useEffect để tracking vị trí scroll
+  React.useEffect(() => {
+    // Save scroll position when component mounts
+    prevScrollPosition = window.scrollY
+    
+    // Theo dõi sự kiện mở dropdown
+    document.addEventListener('mousedown', handleOpen)
+    
+    return () => {
+      document.removeEventListener('mousedown', handleOpen)
+    }
+  }, [handleOpen])
   
   return (
     <SelectPrimitive.Portal>
@@ -81,33 +70,32 @@ const SelectContent = React.forwardRef<
         align="center"
         sideOffset={4}
         avoidCollisions={false}
-        onCloseAutoFocus={onCloseHandler}
-        onPointerDownOutside={(e) => {
-          // Ngăn cuộn trang khi click ra ngoài dropdown
-          window.setTimeout(() => {
-            window.scrollTo(0, prevScrollPosition)
-          }, 0)
+        onCloseAutoFocus={(e) => {
+          e.preventDefault()
+          // Phục hồi vị trí scroll khi đóng
+          setTimeout(() => window.scrollTo(0, prevScrollPosition), 0)
         }}
-        {...props}>
-    >
-      <SelectPrimitive.ScrollUpButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground">
-        <Icons.ui.chevronUp />
-      </SelectPrimitive.ScrollUpButton>
-      <SelectPrimitive.Viewport
-        className={cn(
-          "p-1",
-          position === "popper" &&
-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
-        )}
+        {...props}
       >
-        {children}
-      </SelectPrimitive.Viewport>
-      <SelectPrimitive.ScrollDownButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground">
-        <Icons.ui.chevronDown />
-      </SelectPrimitive.ScrollDownButton>
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-))
+        <SelectPrimitive.ScrollUpButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground">
+          <Icons.ui.chevronUp />
+        </SelectPrimitive.ScrollUpButton>
+        <SelectPrimitive.Viewport
+          className={cn(
+            "p-1",
+            position === "popper" &&
+              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
+          )}
+        >
+          {children}
+        </SelectPrimitive.Viewport>
+        <SelectPrimitive.ScrollDownButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground">
+          <Icons.ui.chevronDown />
+        </SelectPrimitive.ScrollDownButton>
+      </SelectPrimitive.Content>
+    </SelectPrimitive.Portal>
+  )
+})
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
 const SelectLabel = React.forwardRef<
