@@ -1,4 +1,4 @@
-import { Clock, ExternalLink, DollarSign, ArrowRight, ClipboardList } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { useState, useMemo, useCallback } from "react";
 import { 
   Card, 
@@ -127,7 +127,7 @@ export function RecentTradesCard({
               <span className="font-medium">{trade.pair}</span>
             </div>
             <div className="text-xs text-muted-foreground flex items-center">
-              <Clock className="h-3 w-3 mr-1" />
+              <Icons.general.clock className="h-3 w-3 mr-1" />
               {formatTimestamp(trade.createdAt)}
             </div>
           </div>
@@ -174,7 +174,7 @@ export function RecentTradesCard({
               className="h-8 w-8" 
               onClick={() => handleViewTrade(trade.id)}
             >
-              <ArrowRight className="h-4 w-4" />
+              <Icons.general.moveRight className="h-4 w-4" />
             </Button>
           </div>
         </div>

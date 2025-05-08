@@ -152,10 +152,10 @@ export function AccountSummaryCard({
             statusColorClasses.bg, statusColorClasses.text
           )}>
             {isPositive === null ? 
-              <Minus className="h-3.5 w-3.5 mr-1" /> : 
+              <Icons.ui.minus className="h-3.5 w-3.5 mr-1" /> : 
               isPositive ? 
-                <ArrowUp className="h-3.5 w-3.5 mr-1" /> : 
-                <ArrowDown className="h-3.5 w-3.5 mr-1" />
+                <Icons.ui.arrowUp className="h-3.5 w-3.5 mr-1" /> : 
+                <Icons.ui.arrowDown className="h-3.5 w-3.5 mr-1" />
             }
             {isPositive === true ? "+" : ""}{profitLossPercentage.toFixed(1)}%
           </div>
@@ -186,7 +186,7 @@ export function AccountSummaryCard({
           </div>
           
           <div className="flex items-center text-xs bg-background/50 border border-border/30 px-3 py-1.5 rounded-md shadow-sm">
-            <DollarSign className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
+            <Icons.ui.dollarSign className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
             {formatNumber(initialBalance)} initial
           </div>
         </div>

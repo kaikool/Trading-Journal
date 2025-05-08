@@ -48,11 +48,14 @@ export const Icons = {
     palette: LucideIcons.Palette,
     barChart: LucideIcons.BarChart3,
     plus: LucideIcons.Plus,
+    minus: LucideIcons.Minus,
     chevronsUpDown: LucideIcons.ChevronsUpDown,
     slidersHorizontal: LucideIcons.SlidersHorizontal,
     alertTriangle: LucideIcons.AlertTriangle,
     arrowUp: LucideIcons.ArrowUp,
     arrowDown: LucideIcons.ArrowDown,
+    externalLink: LucideIcons.ExternalLink,
+    clipboardList: LucideIcons.ClipboardList,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
