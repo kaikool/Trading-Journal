@@ -1795,7 +1795,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                             }`}
                             onClick={() => setValue("direction", "BUY")}
                           >
-                            <ArrowUp className="mr-1.5 h-4 w-4" />
+                            <Icons.trade.arrowUp className="mr-1.5 h-4 w-4" />
                             <span className="text-sm font-medium">Buy</span>
                           </Button>
                           <Button
@@ -1807,7 +1807,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                             }`}
                             onClick={() => setValue("direction", "SELL")}
                           >
-                            <ArrowDown className="mr-1.5 h-4 w-4" />
+                            <Icons.trade.arrowDown className="mr-1.5 h-4 w-4" />
                             <span className="text-sm font-medium">Sell</span>
                           </Button>
                         </div>
@@ -1878,7 +1878,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               ) : (
                                 <span className="text-muted-foreground">DD/MM/YYYY</span>
                               )}
-                              <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                              <Icons.ui.calendar className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -2026,11 +2026,11 @@ export default function TradeFormNew(props: TradeFormProps) {
                               title={isLoadingUserData ? "Loading account balance..." : `Calculate lot size using ${riskPercentage}% risk`}
                             >
                               {isCalculatingLotSize ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
                               ) : isLoadingUserData ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                                <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
                               ) : (
-                                <Zap className="h-3.5 w-3.5" />
+                                <Icons.ui.zap className="h-3.5 w-3.5" />
                               )}
                             </Button>
                           </div>
@@ -2091,7 +2091,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Trading Strategy & Pattern */}
               <div>
                 <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
-                  <LineChart className="h-5 w-5 text-primary/80 mr-2" />
+                  <Icons.analytics.lineChart className="h-5 w-5 text-primary/80 mr-2" />
                   Strategy & Conditions
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 overflow-hidden">
@@ -2148,7 +2148,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           <SelectContent>
                             {isLoadingStrategies ? (
                               <div className="flex items-center justify-center p-2">
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
                                 <span>Loading strategies...</span>
                               </div>
                             ) : strategies.length > 0 ? (
@@ -2272,7 +2272,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Discipline Factors - Optimized Grid Layout with 2-3 Columns */}
               <div>
                 <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-primary/80 mr-2" />
+                  <Icons.ui.checkCircle className="h-5 w-5 text-primary/80 mr-2" />
                   Trade Discipline
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-2">
