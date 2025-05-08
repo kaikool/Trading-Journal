@@ -45,10 +45,7 @@ const SelectContent = React.forwardRef<
       align="center"
       sideOffset={4}
       avoidCollisions={false}
-      onOpenAutoFocus={(event) => {
-        event.preventDefault();
-      }}
-      onCloseAutoFocus={(event) => {
+      onCloseAutoFocus={(event: Event) => {
         event.preventDefault();
       }}
       {...props}
