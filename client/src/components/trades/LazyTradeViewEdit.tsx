@@ -193,7 +193,7 @@ export function LazyTradeViewEdit({
                 variant="soft"
                 className="mr-1.5"
               >
-                <BookOpenCheck className="h-3 w-3" />
+                <Icons.trade.checklist className="h-3 w-3" />
               </CardIcon>
               Trade Discipline
             </h4>

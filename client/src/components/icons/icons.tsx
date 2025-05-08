@@ -134,6 +134,12 @@ export const Icons = {
     api: LucideIcons.Webhook,
     candlestick: LucideIcons.CandlestickChart,
     coins: LucideIcons.Coins,
+    arrowUp: LucideIcons.ArrowUp,
+    arrowDown: LucideIcons.ArrowDown,
+    checklist: LucideIcons.BookOpenCheck,
+    trash: LucideIcons.Trash2,
+    arrowLeft: LucideIcons.ArrowLeft,
+    loader: LucideIcons.Loader2,
   },
 
   // Các icon khác không thuộc nhóm cụ thể
