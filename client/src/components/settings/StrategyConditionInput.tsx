@@ -286,7 +286,7 @@ export function StrategyConditionItem({
                 
                 {condition.expectedValue && (
                   <Badge variant="outline" className="px-1 h-3.5 text-[9px] bg-green-500/5 border-green-500/20 text-green-600 dark:text-green-400 font-normal">
-                    <Target className="h-2 w-2 mr-0.5 text-green-500/80" />
+                    <Icons.analytics.target className="h-2 w-2 mr-0.5 text-green-500/80" />
                     {condition.expectedValue}
                   </Badge>
                 )}
@@ -311,7 +311,7 @@ export function StrategyConditionItem({
             onClick={() => onEdit(condition.id)}
             title="Edit"
           >
-            <Pencil className="h-2.5 w-2.5 text-muted-foreground hover:text-primary" />
+            <Icons.ui.pencil className="h-2.5 w-2.5 text-muted-foreground hover:text-primary" />
           </Button>
           <Button 
             variant="ghost" 
@@ -320,7 +320,7 @@ export function StrategyConditionItem({
             onClick={() => onDelete(condition.id)}
             title="Delete"
           >
-            <Trash2 className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
+            <Icons.trade.trash className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive" />
           </Button>
         </div>
       </div>
