@@ -23,33 +23,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
-import { 
-  Filter, 
-  Plus, 
-  ChevronsUpDown, 
-  SlidersHorizontal,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  ArrowUp,
-  ArrowDown,
-  Calendar,
-  DollarSign,
-  CircleCheck,
-  CircleX,
-  CircleDashed,
-  CircleDot,
-  Lightbulb,
-  Heart,
-  Check,
-  Clock,
-  Newspaper as NewspaperIcon,
-  TimerOff,
-  Repeat,
-  MoveRight,
-  AlertTriangle,
-  FileX
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import {
   Tabs,
   TabsContent,
@@ -381,7 +355,7 @@ export default function TradeHistory() {
             variant="outline" 
             onClick={() => setShowFilters(!showFilters)}
           >
-            <Filter className="h-4 w-4 mr-2" />
+            <Icons.general.filter className="h-4 w-4 mr-2" />
             Filters
             {countActiveFilters() > 0 && (
               <Badge className="ml-2" variant="secondary">
