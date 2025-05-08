@@ -45,37 +45,8 @@ import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 // Áp dụng lazy loading cho các tab components
 const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
 const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
-import {
-  User,
-  CreditCard,
-  Save,
-  Moon,
-  Sun,
-  Monitor,
-  Languages,
-  Lock,
-  LucideIcon,
-  Loader2,
-  Bell,
-  DollarSign,
-  Eye,
-  EyeOff,
-  ShieldCheck,
-  BarChart3,
-  AlertCircle,
-
-  LogOut,
-  Check,
-  Palette,
-  CalendarDays,
-  Trophy,
-  AlertTriangle,
-  BookOpen,
-  Link,
-  Link2Off,
-  Github,
-  Mail,
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 
 interface SettingsSectionProps {
   title: string;
@@ -593,19 +564,19 @@ export default function Settings() {
                     <SelectContent>
                       <SelectItem value="light">
                         <div className="flex items-center">
-                          <Sun className="h-4 w-4 mr-2" />
+                          <Icons.ui.sun className="h-4 w-4 mr-2" />
                           Light
                         </div>
                       </SelectItem>
                       <SelectItem value="dark">
                         <div className="flex items-center">
-                          <Moon className="h-4 w-4 mr-2" />
+                          <Icons.ui.moon className="h-4 w-4 mr-2" />
                           Dark
                         </div>
                       </SelectItem>
                       <SelectItem value="system">
                         <div className="flex items-center">
-                          <Monitor className="h-4 w-4 mr-2" />
+                          <Icons.ui.monitor className="h-4 w-4 mr-2" />
                           System
                         </div>
                       </SelectItem>
@@ -626,31 +597,31 @@ export default function Settings() {
                     <SelectContent>
                       <SelectItem value="en">
                         <div className="flex items-center">
-                          <Languages className="h-4 w-4 mr-2" />
+                          <Icons.ui.languages className="h-4 w-4 mr-2" />
                           English
                         </div>
                       </SelectItem>
                       <SelectItem value="fr">
                         <div className="flex items-center">
-                          <Languages className="h-4 w-4 mr-2" />
+                          <Icons.ui.languages className="h-4 w-4 mr-2" />
                           Français
                         </div>
                       </SelectItem>
                       <SelectItem value="de">
                         <div className="flex items-center">
-                          <Languages className="h-4 w-4 mr-2" />
+                          <Icons.ui.languages className="h-4 w-4 mr-2" />
                           Deutsch
                         </div>
                       </SelectItem>
                       <SelectItem value="es">
                         <div className="flex items-center">
-                          <Languages className="h-4 w-4 mr-2" />
+                          <Icons.ui.languages className="h-4 w-4 mr-2" />
                           Español
                         </div>
                       </SelectItem>
                       <SelectItem value="ja">
                         <div className="flex items-center">
-                          <Languages className="h-4 w-4 mr-2" />
+                          <Icons.ui.languages className="h-4 w-4 mr-2" />
                           日本語
                         </div>
                       </SelectItem>
@@ -694,19 +665,19 @@ export default function Settings() {
                     <SelectContent>
                       <SelectItem value="MM/DD/YYYY">
                         <div className="flex items-center">
-                          <CalendarDays className="h-4 w-4 mr-2" />
+                          <Icons.ui.calendar className="h-4 w-4 mr-2" />
                           MM/DD/YYYY
                         </div>
                       </SelectItem>
                       <SelectItem value="DD/MM/YYYY">
                         <div className="flex items-center">
-                          <CalendarDays className="h-4 w-4 mr-2" />
+                          <Icons.ui.calendar className="h-4 w-4 mr-2" />
                           DD/MM/YYYY
                         </div>
                       </SelectItem>
                       <SelectItem value="YYYY-MM-DD">
                         <div className="flex items-center">
-                          <CalendarDays className="h-4 w-4 mr-2" />
+                          <Icons.ui.calendar className="h-4 w-4 mr-2" />
                           YYYY-MM-DD
                         </div>
                       </SelectItem>

@@ -24,6 +24,14 @@ export const Icons = {
     check: LucideIcons.Check,
     circle: LucideIcons.CircleDot,
     lock: LucideIcons.Lock,
+    sun: LucideIcons.Sun,
+    moon: LucideIcons.Moon,
+    monitor: LucideIcons.Monitor,
+    languages: LucideIcons.Languages,
+    eye: LucideIcons.Eye,
+    eyeOff: LucideIcons.EyeOff,
+    calendar: LucideIcons.CalendarDays,
+    save: LucideIcons.Save,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
