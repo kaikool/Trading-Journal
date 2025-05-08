@@ -25,11 +25,7 @@ import {
   Scatter as RechartsScatter,
   ZAxis,
 } from "recharts";
-import { 
-  LineChart, BarChart2, BarChart as BarChartIcon, TrendingUp, 
-  CircleDollarSign, Calendar, Lightbulb, AlertTriangle, 
-  CheckCircle, Shield, Database, ArrowDownRight
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { format, subDays, parseISO, differenceInDays } from "date-fns";
 import { formatCurrency } from "@/lib/utils";
 import { CHART_CONFIG, UI_CONFIG } from "@/lib/config";
@@ -228,7 +224,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       if (bestDay && bestDay.winRate >= 60) {
         insights.push({
           type: 'positive',
-          icon: <CheckCircle className="h-4 w-4" />,
+          icon: <Icons.ui.checkCircle className="h-4 w-4" />,
           title: 'Most Profitable Trading Day',
           description: `${bestDay.day} shows your highest win rate at ${bestDay.winRate.toFixed(1)}%. Consider allocating more capital or taking more setups on this day.`
         });
@@ -290,7 +286,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       } else if (riskRewardData.averageRatio >= 2) {
         insights.push({
           type: 'positive',
-          icon: <CheckCircle className="h-4 w-4" />,
+          icon: <Icons.ui.checkCircle className="h-4 w-4" />,
           title: 'Excellent Risk:Reward Ratio',
           description: `Your average risk:reward ratio of 1:${riskRewardData.averageRatio} exceeds the recommended minimum of 1:1.5. This positive expectancy means you can be profitable even with a lower win rate.`
         });
