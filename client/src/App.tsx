@@ -8,7 +8,7 @@ import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
 
 import { AppLayout } from "@/components/layout/AppLayout";
-import { auth, functions } from "@/lib/firebase";
+import { auth, functions as initFirebase } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -281,7 +281,7 @@ function App() {
   // Configure performance optimization when application starts
   useEffect(() => {
     // Đầu tiên, khởi tạo Firebase để tránh lỗi auth
-    functions();
+    initFirebase();
     
     // Sau đó cấu hình queryClient
     import('./lib/queryClient').then(({ updateQueryClientConfig }) => {
