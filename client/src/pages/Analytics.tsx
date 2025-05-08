@@ -1,6 +1,6 @@
 import { useMemo, lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, BarChart2, LineChart, PieChart, TrendingUp, BarChart4 } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { hasClosedTrades, getClosedTrades, calculateCurrentBalance, calculatePnL } from "@/lib/balance-calculation-rules";
@@ -362,7 +362,7 @@ export default function Analytics() {
   // Empty state component
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center h-[400px] text-center">
-      <BarChart2 className="h-16 w-16 text-muted-foreground/20 mb-4" />
+      <Icons.analytics.barChart className="h-16 w-16 text-muted-foreground/20 mb-4" />
       <h3 className="text-lg font-semibold mb-2">No Trade Data Available</h3>
       <p className="text-muted-foreground max-w-md mb-4">
         Complete some trades to see your analytics dashboard. Performance metrics will appear here when you have closed trades.
