@@ -2395,7 +2395,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     {entryImage1Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
                         <div className="image-placeholder">
-                          <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+                          <Icons.general.image className="h-8 w-8 text-muted-foreground/30" />
                         </div>
                         <img 
                           src={entryImage1Preview} 
@@ -2460,7 +2460,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               document.addEventListener('keydown', handleEsc);
                             }}
                           >
-                            <ImageIcon className="h-5 w-5" />
+                            <Icons.general.image className="h-5 w-5" />
                           </Button>
                           <Button 
                             type="button" 
