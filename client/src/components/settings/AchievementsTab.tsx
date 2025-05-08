@@ -345,7 +345,7 @@ export const AchievementsTab: React.FC<{
                 <p className="text-xs text-muted-foreground">Completed</p>
                 <h4 className="text-lg sm:text-xl font-bold">{completedCount}</h4>
               </div>
-              <Check className="h-5 w-5 sm:h-6 sm:w-6 text-green-500/70" />
+              <Icons.ui.check className="h-5 w-5 sm:h-6 sm:w-6 text-green-500/70" />
             </div>
           </CardContent>
         </Card>
@@ -357,7 +357,7 @@ export const AchievementsTab: React.FC<{
                 <p className="text-xs text-muted-foreground">In Progress</p>
                 <h4 className="text-lg sm:text-xl font-bold">{inProgressCount}</h4>
               </div>
-              <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500/70" />
+              <Icons.achievement.clock className="h-5 w-5 sm:h-6 sm:w-6 text-amber-500/70" />
             </div>
           </CardContent>
         </Card>
