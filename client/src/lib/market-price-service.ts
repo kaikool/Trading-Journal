@@ -29,8 +29,8 @@ const priceCache: PriceCache = {};
 // Thời gian cache (15 giây)
 const CACHE_DURATION = 15 * 1000;
 
-// Hardcoded API key - thay thế bằng API key thực tế khi triển khai
-const HARDCODED_API_KEY = 'YOUR_TWELVEDATA_API_KEY_HERE';
+// Hardcoded API key - được sử dụng trực tiếp trong code (không lấy từ env hay config)
+const HARDCODED_API_KEY = '1b89f469e4fa408d8700380d216f0864';
 
 // API base URL của TwelveData
 const API_BASE_URL = 'https://api.twelvedata.com';
@@ -75,7 +75,7 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
       params: {
         symbol: formattedSymbol,
         format: 'JSON',
-        apikey: "1b89f469e4fa408d8700380d216f0864"
+        apikey: HARDCODED_API_KEY
       }
     });
     
