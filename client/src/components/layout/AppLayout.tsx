@@ -4,6 +4,7 @@ import { Sidebar } from "./Sidebar";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
+import { usePreventScrollJump } from "@/hooks/use-prevent-scroll-jump";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,23 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [respectSafeArea, setRespectSafeArea] = useState(true);
   // Tính toán chiều cao của viewport 
   const [viewportHeight, setViewportHeight] = useState(0);
+  
+  // Prevent unwanted scrolling when Radix UI components open dropdowns/popups
+  usePreventScrollJump({
+    // Enable for all environments (web, mobile, PWA)
+    enabled: true,
+    // Target common Radix UI components that could cause scroll jumps
+    selector: [
+      '[data-radix-select-content]',       // Select component
+      '[data-radix-dropdown-menu-content]', // DropdownMenu component
+      '[data-radix-popover-content]',      // Popover component
+      '[data-radix-dialog-content]',       // Dialog component
+      '[role="dialog"]',                   // General dialogs
+      '[role="listbox"]'                   // Listbox components
+    ].join(', '),
+    // Adjust timing based on app's animations (slightly longer for larger components)
+    preventDuration: 450,
+  });
 
   useEffect(() => {
     setMounted(true);
