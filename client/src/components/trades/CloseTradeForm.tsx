@@ -609,7 +609,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                           }}
                           className="absolute top-1 right-1 bg-black/70 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <X className="h-3 w-3 text-white" />
+                          <Icons.ui.close className="h-3 w-3 text-white" />
                         </button>
                       </div>
                     ) : (
@@ -633,7 +633,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                           htmlFor="exitImage"
                           className="flex flex-col items-center justify-center aspect-video cursor-pointer rounded-md border border-dashed border-border bg-muted/20 hover:bg-muted/40"
                         >
-                          <Upload className="h-5 w-5 mb-1 text-muted-foreground/70" />
+                          <Icons.ui.simpleUpload className="h-5 w-5 mb-1 text-muted-foreground/70" />
                           <span className="text-xs text-muted-foreground">Upload</span>
                         </label>
                       </div>
@@ -658,7 +658,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                           }}
                           className="absolute top-1 right-1 bg-black/70 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <X className="h-3 w-3 text-white" />
+                          <Icons.ui.close className="h-3 w-3 text-white" />
                         </button>
                       </div>
                     ) : (
@@ -682,7 +682,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                           htmlFor="exitImageM15"
                           className="flex flex-col items-center justify-center aspect-video cursor-pointer rounded-md border border-dashed border-border bg-muted/20 hover:bg-muted/40"
                         >
-                          <Upload className="h-5 w-5 mb-1 text-muted-foreground/70" />
+                          <Icons.ui.simpleUpload className="h-5 w-5 mb-1 text-muted-foreground/70" />
                           <span className="text-xs text-muted-foreground">Upload</span>
                         </label>
                       </div>
@@ -728,7 +728,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                 {isSubmitting || isUploading ? (
                   <Icons.ui.spinner className="h-4 w-4 animate-spin" />
                 ) : (
-                  <Lock className="h-4 w-4" />
+                  <Icons.ui.lock className="h-4 w-4" />
                 )}
                 {isSubmitting 
                   ? "Processing..." 
