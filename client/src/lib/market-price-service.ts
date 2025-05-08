@@ -84,9 +84,25 @@ export async function getApiKeyFromFirebase(): Promise<string | null> {
     }
     
     // Kiểm tra window.ENV (môi trường production)
-    if (typeof window !== 'undefined' && window.ENV?.TWELVEDATA_API_KEY) {
-      debug('[MarketPrice] Using API key from window.ENV');
-      return window.ENV.TWELVEDATA_API_KEY;
+    if (typeof window !== 'undefined') {
+      // Ưu tiên kiểm tra theo định dạng Firebase Functions config
+      if (window.ENV?.FIREBASE_CONFIG) {
+        try {
+          const config = JSON.parse(window.ENV.FIREBASE_CONFIG);
+          if (config.twelvedata?.apikey) {
+            debug('[MarketPrice] Using API key from Firebase Functions config');
+            return config.twelvedata.apikey;
+          }
+        } catch (e) {
+          // Bỏ qua lỗi JSON parse
+        }
+      }
+      
+      // Kiểm tra định dạng cũ
+      if (window.ENV?.TWELVEDATA_API_KEY) {
+        debug('[MarketPrice] Using API key from window.ENV');
+        return window.ENV.TWELVEDATA_API_KEY;
+      }
     }
     
     return null;
@@ -100,9 +116,25 @@ export async function getApiKeyFromFirebase(): Promise<string | null> {
     }
     
     // Kiểm tra window.ENV (môi trường production)
-    if (typeof window !== 'undefined' && window.ENV?.TWELVEDATA_API_KEY) {
-      debug('[MarketPrice] Using API key from window.ENV');
-      return window.ENV.TWELVEDATA_API_KEY;
+    if (typeof window !== 'undefined') {
+      // Ưu tiên kiểm tra theo định dạng Firebase Functions config
+      if (window.ENV?.FIREBASE_CONFIG) {
+        try {
+          const config = JSON.parse(window.ENV.FIREBASE_CONFIG);
+          if (config.twelvedata?.apikey) {
+            debug('[MarketPrice] Using API key from Firebase Functions config');
+            return config.twelvedata.apikey;
+          }
+        } catch (e) {
+          // Bỏ qua lỗi JSON parse
+        }
+      }
+      
+      // Kiểm tra định dạng cũ
+      if (window.ENV?.TWELVEDATA_API_KEY) {
+        debug('[MarketPrice] Using API key from window.ENV');
+        return window.ENV.TWELVEDATA_API_KEY;
+      }
     }
     
     return null;
