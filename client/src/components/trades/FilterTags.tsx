@@ -5,9 +5,6 @@ import { TradeFilterOptions } from "@/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/icons/icons";
-import {
-  Newspaper as NewspaperIcon,
-} from "lucide-react";
 
 interface FilterTagsProps {
   filters: TradeFilterOptions;
@@ -193,9 +190,9 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <CircleX className="h-3 w-3" /> 
+          <Icons.ui.circleX className="h-3 w-3" /> 
           Moved Stop Loss
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('movedSL')}
           />
@@ -207,9 +204,9 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <CircleX className="h-3 w-3" /> 
+          <Icons.ui.circleX className="h-3 w-3" /> 
           Over Leveraged
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('overLeveraged')}
           />
@@ -221,9 +218,9 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <CircleX className="h-3 w-3" /> 
+          <Icons.ui.circleX className="h-3 w-3" /> 
           Revenge Trading
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('revenge')}
           />

@@ -64,29 +64,8 @@ import {
   formatPrice
 } from "@/lib/forex-calculator";
 
-// Icons - Chỉ import các icon thực sự cần thiết
-import { 
-  ArrowUp, 
-  ArrowDown, 
-  Percent, 
-  Upload, 
-  Calendar, 
-  AlertCircle,
-  Loader2,
-  CheckCircle2,
-  X,
-  Image as ImageIcon,
-  Info,
-  Clock,
-  Lightbulb,
-  Ban,
-  LineChart,
-  Plus,
-  Zap,
-  Unlock,
-  Download,
-  Trash2
-} from "lucide-react";
+// Import IconSystem - sử dụng hệ thống icon tập trung
+import { Icons } from "@/components/icons/icons";
 // Hàm để xử lý đường dẫn ảnh từ database để hiển thị đúng
 function fixImagePath(path: string | null | undefined): string | null {
   if (!path) return null;
