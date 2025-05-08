@@ -2661,7 +2661,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                 <>
                   <div>
                     <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
-                      <Unlock className="h-5 w-5 text-primary/80 mr-2" />
+                      <Icons.ui.unlock className="h-5 w-5 text-primary/80 mr-2" />
                       Trade Exit Information
                     </h3>
                     
@@ -2721,7 +2721,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     {/* Chart Images for Trade Exit */}
                     <div className="mt-6 space-y-2">
                       <h4 className="font-medium mb-4 flex items-center">
-                        <ImageIcon className="h-4 w-4 text-primary/80 mr-2" />
+                        <Icons.general.image className="h-4 w-4 text-primary/80 mr-2" />
                         Exit Chart Images
                         <span className="ml-2 text-xs text-muted-foreground">(Optional)</span>
                       </h4>
@@ -2961,7 +2961,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                       className="min-w-[120px] bg-green-500 hover:bg-green-600 text-white transition-all"
                       disabled
                     >
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      <Icons.ui.success className="mr-2 h-4 w-4" />
                       {isEditMode ? "Updated!" : "Saved!"}
                     </Button>
                     <div className="absolute inset-0 bg-green-400 rounded-md animate-pulse opacity-30"></div>
