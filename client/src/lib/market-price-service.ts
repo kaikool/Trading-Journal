@@ -2,13 +2,11 @@
  * Market Price Service
  * 
  * Module này cung cấp các hàm để lấy giá thị trường real-time từ TwelveData API
- * Sử dụng debounce và cache để tránh gọi API quá nhiều
+ * Sử dụng thẳng API key hardcoded và gọi trực tiếp tới TwelveData API
  */
 
 import { debug, logError, logWarning } from './debug';
 import axios from 'axios';
-import { auth, db } from './firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 // Kiểu dữ liệu trả về từ TwelveData API
 interface TwelveDataPrice {
@@ -31,196 +29,20 @@ const priceCache: PriceCache = {};
 // Thời gian cache (15 giây)
 const CACHE_DURATION = 15 * 1000;
 
-// Lấy API key từ Firestore, fallback về localStorage hoặc window.ENV nếu chưa đăng nhập
-export async function getApiKeyFromFirebase(): Promise<string | null> {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      debug('[MarketPrice] No authenticated user, using fallback sources');
-      // Ưu tiên sử dụng localStorage trước
-      const localKey = localStorage.getItem('twelvedata_api_key');
-      if (localKey) {
-        return localKey;
-      }
-      
-      // Nếu không có trong localStorage, kiểm tra window.ENV (môi trường production)
-      if (typeof window !== 'undefined') {
-        // Ưu tiên kiểm tra theo định dạng Firebase Functions config
-        if (window.ENV?.FIREBASE_CONFIG) {
-          try {
-            const config = JSON.parse(window.ENV.FIREBASE_CONFIG);
-            if (config.twelvedata?.apikey) {
-              debug('[MarketPrice] Using API key from Firebase Functions config');
-              return config.twelvedata.apikey;
-            }
-          } catch (e) {
-            // Bỏ qua lỗi JSON parse
-          }
-        }
-        
-        // Kiểm tra định dạng cũ 
-        if (window.ENV?.TWELVEDATA_API_KEY) {
-          debug('[MarketPrice] Using API key from window.ENV');
-          return window.ENV.TWELVEDATA_API_KEY;
-        }
-      }
-      
-      return null;
-    }
-    
-    const userDocRef = doc(db, "users", user.uid);
-    const userDoc = await getDoc(userDocRef);
-    
-    if (userDoc.exists() && userDoc.data().apiSettings?.twelvedataApiKey) {
-      debug('[MarketPrice] Using API key from Firebase');
-      return userDoc.data().apiSettings.twelvedataApiKey;
-    }
-    
-    // Fallback to localStorage if key not found in Firebase
-    debug('[MarketPrice] API key not found in Firebase, using fallback sources');
-    const localKey = localStorage.getItem('twelvedata_api_key');
-    if (localKey) {
-      return localKey;
-    }
-    
-    // Kiểm tra window.ENV (môi trường production)
-    if (typeof window !== 'undefined') {
-      // Ưu tiên kiểm tra theo định dạng Firebase Functions config
-      if (window.ENV?.FIREBASE_CONFIG) {
-        try {
-          const config = JSON.parse(window.ENV.FIREBASE_CONFIG);
-          if (config.twelvedata?.apikey) {
-            debug('[MarketPrice] Using API key from Firebase Functions config');
-            return config.twelvedata.apikey;
-          }
-        } catch (e) {
-          // Bỏ qua lỗi JSON parse
-        }
-      }
-      
-      // Kiểm tra định dạng cũ
-      if (window.ENV?.TWELVEDATA_API_KEY) {
-        debug('[MarketPrice] Using API key from window.ENV');
-        return window.ENV.TWELVEDATA_API_KEY;
-      }
-    }
-    
-    return null;
-  } catch (error) {
-    logError('[MarketPrice] Error getting API key from Firebase:', error);
-    
-    // Trong trường hợp lỗi, thử các nguồn dự phòng
-    const localKey = localStorage.getItem('twelvedata_api_key');
-    if (localKey) {
-      return localKey;
-    }
-    
-    // Kiểm tra window.ENV (môi trường production)
-    if (typeof window !== 'undefined') {
-      // Ưu tiên kiểm tra theo định dạng Firebase Functions config
-      if (window.ENV?.FIREBASE_CONFIG) {
-        try {
-          const config = JSON.parse(window.ENV.FIREBASE_CONFIG);
-          if (config.twelvedata?.apikey) {
-            debug('[MarketPrice] Using API key from Firebase Functions config');
-            return config.twelvedata.apikey;
-          }
-        } catch (e) {
-          // Bỏ qua lỗi JSON parse
-        }
-      }
-      
-      // Kiểm tra định dạng cũ
-      if (window.ENV?.TWELVEDATA_API_KEY) {
-        debug('[MarketPrice] Using API key from window.ENV');
-        return window.ENV.TWELVEDATA_API_KEY;
-      }
-    }
-    
-    return null;
-  }
-}
-
-// Lấy API key từ tất cả các nguồn có thể
-// Sử dụng cho trường hợp đồng bộ, không đợi Promise
-export function getApiKey(): string | null {
-  // Ưu tiên sử dụng localStorage trước
-  const localKey = localStorage.getItem('twelvedata_api_key');
-  if (localKey) {
-    return localKey;
-  }
-  
-  // Kiểm tra window.ENV (môi trường production)
-  if (typeof window !== 'undefined') {
-    // Ưu tiên kiểm tra theo định dạng Firebase Functions config
-    if (window.ENV?.FIREBASE_CONFIG) {
-      try {
-        const config = JSON.parse(window.ENV.FIREBASE_CONFIG);
-        if (config.twelvedata?.apikey) {
-          debug('[MarketPrice] Using API key from Firebase Functions config');
-          return config.twelvedata.apikey;
-        }
-      } catch (e) {
-        // Bỏ qua lỗi JSON parse
-      }
-    }
-    
-    // Kiểm tra định dạng cũ
-    if (window.ENV?.TWELVEDATA_API_KEY) {
-      debug('[MarketPrice] Using API key from window.ENV');
-      return window.ENV.TWELVEDATA_API_KEY;
-    }
-  }
-  
-  return null;
-}
-
-// Lưu API key vào Firestore
-export async function saveApiKeyToFirebase(apiKey: string): Promise<boolean> {
-  try {
-    const user = auth.currentUser;
-    if (!user) {
-      debug('[MarketPrice] No authenticated user, saving to localStorage only');
-      localStorage.setItem('twelvedata_api_key', apiKey);
-      return false;
-    }
-    
-    const userDocRef = doc(db, "users", user.uid);
-    
-    // Cập nhật document người dùng với API key
-    await updateDoc(userDocRef, {
-      "apiSettings.twelvedataApiKey": apiKey,
-      "apiSettings.updatedAt": new Date()
-    });
-    
-    // Vẫn lưu vào localStorage để sử dụng trong trường hợp chưa đăng nhập
-    localStorage.setItem('twelvedata_api_key', apiKey);
-    debug('[MarketPrice] API key saved to Firebase and localStorage');
-    
-    return true;
-  } catch (error) {
-    logError('[MarketPrice] Error saving API key to Firebase:', error);
-    // Fallback to localStorage
-    localStorage.setItem('twelvedata_api_key', apiKey);
-    return false;
-  }
-}
-
-// Hardcoded API key cho production
-// Thay thế giá trị này bằng API key thực tế khi triển khai
+// Hardcoded API key - thay thế bằng API key thực tế khi triển khai
 const HARDCODED_API_KEY = 'YOUR_TWELVEDATA_API_KEY_HERE';
 
-// Cấu hình cho axios - có thể sử dụng proxy server local hoặc gọi trực tiếp
-const IS_DIRECT_API = import.meta.env.PROD; // Sử dụng API trực tiếp trong môi trường production
-const DIRECT_API_BASE = 'https://api.twelvedata.com';
+// API base URL của TwelveData
+const API_BASE_URL = 'https://api.twelvedata.com';
 
+// Khởi tạo axios client
 const apiClient = axios.create({
-  baseURL: IS_DIRECT_API ? DIRECT_API_BASE : '/api/twelvedata',
-  timeout: 5000,
+  baseURL: API_BASE_URL,
+  timeout: 5000
 });
 
 /**
- * Lấy giá real-time từ TwelveData API qua proxy server
+ * Lấy giá real-time từ TwelveData API
  * 
  * @param symbol Cặp tiền tệ (vd: "EURUSD")
  * @returns Promise với giá hiện tại
@@ -246,49 +68,16 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
     const formattedSymbol = formatSymbolForAPI(normalizedSymbol);
     
     debug(`[MarketPrice] Using formatted symbol: ${formattedSymbol}`);
+    debug(`[MarketPrice] Calling TwelveData API directly with hardcoded API key`);
     
-    // Ưu tiên lấy API key từ Firebase nếu đã đăng nhập
-    let userApiKey = getApiKey(); // Lấy từ localStorage để phản hồi nhanh
-    
-    try {
-      // Thử lấy API key từ Firebase nếu đã đăng nhập 
-      if (auth.currentUser) {
-        const firebaseApiKey = await getApiKeyFromFirebase();
-        if (firebaseApiKey) {
-          userApiKey = firebaseApiKey;
-          // Cập nhật localStorage để lần sau không cần truy vấn Firebase
-          localStorage.setItem('twelvedata_api_key', firebaseApiKey);
-        }
+    // Thực hiện API call với hardcoded key
+    const response = await apiClient.get('/price', {
+      params: {
+        symbol: formattedSymbol,
+        format: 'JSON',
+        apikey: HARDCODED_API_KEY
       }
-    } catch (error) {
-      // Lỗi khi lấy từ Firebase, tiếp tục sử dụng key từ localStorage
-      logError('[MarketPrice] Error getting API key from Firebase:', error);
-    }
-    
-    // Xử lý khác nhau cho API trực tiếp và proxy server
-    let response;
-    
-    if (IS_DIRECT_API) {
-      // Khi gọi trực tiếp API, sử dụng apikey trong params
-      debug(`[MarketPrice] Calling TwelveData API directly with ${userApiKey ? 'user API key' : 'hardcoded API key'}`);
-      response = await apiClient.get('/price', {
-        params: {
-          symbol: formattedSymbol,
-          format: 'JSON',
-          apikey: userApiKey || HARDCODED_API_KEY // Dùng hardcoded key nếu không có user key
-        }
-      });
-    } else {
-      // Khi dùng proxy server, gửi API key qua header
-      const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
-      response = await apiClient.get('/price', {
-        params: {
-          symbol: formattedSymbol,
-          format: 'JSON'
-        },
-        headers
-      });
-    }
+    });
     
     // Xác thực response
     if (!response.data || !response.data.price) {
@@ -340,49 +129,16 @@ export async function fetchMultiplePrices(symbols: string[]): Promise<Record<str
     const formattedSymbolsStr = formattedSymbols.join(',');
     
     debug(`[MarketPrice] Using formatted symbols: ${formattedSymbolsStr}`);
+    debug(`[MarketPrice] Calling TwelveData API directly for multiple symbols with hardcoded API key`);
     
-    // Ưu tiên lấy API key từ Firebase nếu đã đăng nhập
-    let userApiKey = getApiKey(); // Lấy từ localStorage để phản hồi nhanh
-    
-    try {
-      // Thử lấy API key từ Firebase nếu đã đăng nhập 
-      if (auth.currentUser) {
-        const firebaseApiKey = await getApiKeyFromFirebase();
-        if (firebaseApiKey) {
-          userApiKey = firebaseApiKey;
-          // Cập nhật localStorage để lần sau không cần truy vấn Firebase
-          localStorage.setItem('twelvedata_api_key', firebaseApiKey);
-        }
+    // Thực hiện API call với hardcoded key
+    const response = await apiClient.get('/price', {
+      params: {
+        symbol: formattedSymbolsStr,
+        format: 'JSON',
+        apikey: HARDCODED_API_KEY
       }
-    } catch (error) {
-      // Lỗi khi lấy từ Firebase, tiếp tục sử dụng key từ localStorage
-      logError('[MarketPrice] Error getting API key from Firebase:', error);
-    }
-    
-    // Xử lý khác nhau cho API trực tiếp và proxy server
-    let response;
-    
-    if (IS_DIRECT_API) {
-      // Khi gọi trực tiếp API, sử dụng apikey trong params
-      debug(`[MarketPrice] Calling TwelveData API directly for multiple symbols with ${userApiKey ? 'user API key' : 'hardcoded API key'}`);
-      response = await apiClient.get('/price', {
-        params: {
-          symbol: formattedSymbolsStr,
-          format: 'JSON',
-          apikey: userApiKey || HARDCODED_API_KEY // Dùng hardcoded key nếu không có user key
-        }
-      });
-    } else {
-      // Khi dùng proxy server, gửi API key qua header
-      const headers = userApiKey ? { 'X-API-KEY': userApiKey } : undefined;
-      response = await apiClient.get('/price', {
-        params: {
-          symbol: formattedSymbolsStr,
-          format: 'JSON'
-        },
-        headers
-      });
-    }
+    });
     
     // Kết quả có thể là object duy nhất hoặc mảng objects tùy vào số lượng symbols
     const results: Record<string, number> = {};
