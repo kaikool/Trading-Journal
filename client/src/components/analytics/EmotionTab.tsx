@@ -422,7 +422,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Heart className="h-5 w-5 mr-2 text-primary" />
+              <Icons.general.heart className="h-5 w-5 mr-2 text-primary" />
               Emotion Insights
             </CardTitle>
             <CardDescription>
@@ -457,7 +457,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Heart className="h-5 w-5 mr-2 text-primary" />
+              <Icons.general.heart className="h-5 w-5 mr-2 text-primary" />
               Win Rate by Emotion
             </CardTitle>
             <CardDescription>
@@ -584,7 +584,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               </div>
             ) : (
               <div className="h-[260px] flex items-center justify-center flex-col">
-                <Heart className="h-12 w-12 text-muted-foreground/20 mb-4" />
+                <Icons.general.heart className="h-12 w-12 text-muted-foreground/20 mb-4" />
                 <p className="text-sm text-muted-foreground">Not enough emotion data yet</p>
                 <p className="text-xs text-muted-foreground mt-1">Record more trades with emotions to see win rates</p>
               </div>
@@ -596,7 +596,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Heart className="h-5 w-5 mr-2 text-primary" />
+              <Icons.general.heart className="h-5 w-5 mr-2 text-primary" />
               Emotion Distribution
             </CardTitle>
             <CardDescription>
@@ -642,7 +642,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
               </div>
             ) : (
               <div className="h-[260px] flex items-center justify-center flex-col">
-                <Heart className="h-12 w-12 text-muted-foreground/20 mb-4" />
+                <Icons.general.heart className="h-12 w-12 text-muted-foreground/20 mb-4" />
                 <p className="text-sm text-muted-foreground">No emotion data recorded yet</p>
                 <p className="text-xs text-muted-foreground mt-1">Record emotions with your trades to see distribution</p>
               </div>
@@ -655,7 +655,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-lg font-semibold flex items-center">
-            <Heart className="h-5 w-5 mr-2 text-primary" />
+            <Icons.general.heart className="h-5 w-5 mr-2 text-primary" />
             Emotion Timeline
           </CardTitle>
           <CardDescription>
@@ -713,7 +713,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
             </div>
           ) : (
             <div className="h-[260px] flex items-center justify-center flex-col">
-              <Heart className="h-12 w-12 text-muted-foreground/20 mb-4" />
+              <Icons.general.heart className="h-12 w-12 text-muted-foreground/20 mb-4" />
               <p className="text-sm text-muted-foreground">Not enough data for timeline</p>
               <p className="text-xs text-muted-foreground mt-1">Complete more trades with emotional data to see patterns over time</p>
             </div>
@@ -726,7 +726,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Heart className="h-5 w-5 mr-2 text-primary" />
+              <Icons.general.heart className="h-5 w-5 mr-2 text-primary" />
               Emotion Performance Table
             </CardTitle>
             <CardDescription>
