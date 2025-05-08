@@ -40,6 +40,8 @@ export const Icons = {
     logOut: LucideIcons.LogOut,
     link: LucideIcons.Link,
     linkOff: LucideIcons.Link2Off,
+    palette: LucideIcons.Palette,
+    barChart: LucideIcons.BarChart3,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính

@@ -11,6 +11,7 @@ import {
   unlinkProvider,
   getProviderName
 } from "@/lib/firebase";
+// Removed direct Lucide imports in favor of centralized icon system
 // Removed import for API key management
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
@@ -497,12 +498,12 @@ export default function Settings() {
         >
           {isSaving ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
               Saving...
             </>
           ) : (
             <>
-              <Save className="mr-2 h-4 w-4" />
+              <Icons.ui.save className="mr-2 h-4 w-4" />
               Save Changes
             </>
           )}
@@ -518,21 +519,21 @@ export default function Settings() {
                 value="general" 
                 className="flex-1 flex items-center justify-center h-9 px-2 sm:px-3 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
-                <Palette className="h-4 w-4 flex-shrink-0" />
+                <Icons.ui.palette className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">General</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="account" 
                 className="flex-1 flex items-center justify-center h-9 px-2 sm:px-3 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
-                <User className="h-4 w-4 flex-shrink-0" />
+                <Icons.ui.user className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Account</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="trading" 
                 className="flex-1 flex items-center justify-center h-9 px-2 sm:px-3 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
-                <BarChart3 className="h-4 w-4 flex-shrink-0" />
+                <Icons.ui.barChart className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Trading</span>
               </TabsTrigger>
             </TabsList>
