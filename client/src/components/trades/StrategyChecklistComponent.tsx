@@ -5,13 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 
-import {
-  Activity,
-  Clock,
-  Target,
-  LineChart,
-  ArrowRightLeft
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 
 interface StrategyCheckItemProps {
   condition: StrategyCondition;
@@ -57,7 +51,7 @@ export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckI
           {/* Indicator */}
           {condition.indicator && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Activity className="h-3 w-3 mr-1" />
+              <Icons.analytics.activity className="h-3 w-3 mr-1" />
               {condition.indicator}
             </Badge>
           )}
@@ -65,7 +59,7 @@ export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckI
           {/* Timeframe */}
           {condition.timeframe && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Clock className="h-3 w-3 mr-1" />
+              <Icons.general.clock className="h-3 w-3 mr-1" />
               {condition.timeframe}
             </Badge>
           )}
@@ -73,7 +67,7 @@ export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckI
           {/* Expected value */}
           {condition.expectedValue && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Target className="h-3 w-3 mr-1" />
+              <Icons.general.target className="h-3 w-3 mr-1" />
               {condition.expectedValue}
             </Badge>
           )}
@@ -243,7 +237,7 @@ export function StrategyChecklist({
           <AccordionItem value="rules" className="border-b border-border/50">
             <AccordionTrigger className="py-1.5 h-9 text-sm hover:bg-muted/20 px-2 rounded-md">
               <div className="flex items-center">
-                <LineChart className="h-4 w-4 mr-1.5" />
+                <Icons.nav.analytics className="h-4 w-4 mr-1.5" />
                 <span className="font-medium">Strategy Rules</span>
                 <Badge variant="outline" className="ml-2 h-5 px-1.5 bg-background">
                   {rulesWithChecks.filter(r => r.check.checked && r.check.passed).length}/{rulesWithChecks.length}
@@ -269,7 +263,7 @@ export function StrategyChecklist({
           <AccordionItem value="entry" className="border-b border-border/50">
             <AccordionTrigger className="py-1.5 h-9 text-sm hover:bg-muted/20 px-2 rounded-md">
               <div className="flex items-center">
-                <ArrowRightLeft className="h-4 w-4 mr-1.5" />
+                <Icons.trade.entry className="h-4 w-4 mr-1.5" />
                 <span className="font-medium">Entry Conditions</span>
                 <Badge variant="outline" className="ml-2 h-5 px-1.5 bg-background">
                   {entryConditionsWithChecks.filter(r => r.check.checked && r.check.passed).length}/{entryConditionsWithChecks.length}
