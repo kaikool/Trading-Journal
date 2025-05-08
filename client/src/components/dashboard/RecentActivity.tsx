@@ -78,7 +78,7 @@ export default function RecentActivity({
       <CardContent className="pt-4">
         {activities.length === 0 ? (
           <div className="p-6 flex flex-col items-center justify-center bg-muted/5 rounded-md border border-dashed border-border/50 h-[230px]">
-            <Activity className="h-12 w-12 text-muted-foreground/20 mb-3" />
+            <Icons.general.target className="h-12 w-12 text-muted-foreground/20 mb-3" />
             <p className="text-muted-foreground font-medium">No recent activity</p>
             <p className="text-xs text-muted-foreground mt-1">Complete a trade to see activity here</p>
           </div>
@@ -104,9 +104,9 @@ export default function RecentActivity({
                       : "bg-destructive/15"
                   )}>
                     {isProfit ? (
-                      <ArrowUp className={cn("h-4 w-4 text-success")} />
+                      <Icons.ui.arrowUp className={cn("h-4 w-4 text-success")} />
                     ) : (
-                      <ArrowDown className={cn("h-4 w-4 text-destructive")} />
+                      <Icons.ui.arrowDown className={cn("h-4 w-4 text-destructive")} />
                     )}
                   </div>
                   <div className="ml-3 flex-1">
@@ -130,7 +130,7 @@ export default function RecentActivity({
                         )}
                       </span>
                       <span className="flex items-center">
-                        <Clock className="h-3 w-3 mr-1 opacity-70" />
+                        <Icons.general.clock className="h-3 w-3 mr-1 opacity-70" />
                         {getRelativeTime(activity.date?.toDate())}
                       </span>
                     </div>

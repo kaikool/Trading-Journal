@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, DollarSign, Wallet, Minus, TrendingUp, TrendingDown } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { 
   Card, 
   CardContent, 
@@ -112,10 +112,10 @@ export function AccountSummaryCard({
       
   // Xác định biểu tượng trend
   const trendIcon = isPositive === null 
-    ? <Minus className="h-4 w-4" /> 
+    ? <Icons.ui.minus className="h-4 w-4" /> 
     : isPositive 
-      ? <TrendingUp className="h-4 w-4" /> 
-      : <TrendingDown className="h-4 w-4" />;
+      ? <Icons.trade.profit className="h-4 w-4" /> 
+      : <Icons.trade.loss className="h-4 w-4" />;
   
   // Xác định status cho CardValue
   const valueStatus = isPositive === null 
@@ -140,7 +140,7 @@ export function AccountSummaryCard({
             size="sm"
             variant="soft"
           >
-            <Wallet className="h-4 w-4" />
+            <Icons.general.clipboard className="h-4 w-4" />
           </CardIcon>
           Account Balance
         </CardTitle>
