@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Loader2, Mail, KeyRound } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { FcGoogle } from "react-icons/fc";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
@@ -95,7 +95,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               disabled={isLoading}
-              icon={Mail}
+              icon={Icons.ui.mail}
             />
             
             <FormInput
@@ -106,7 +106,7 @@ export default function Login() {
               type="password"
               autoComplete="current-password"
               disabled={isLoading}
-              icon={KeyRound}
+              icon={Icons.ui.lock}
             />
             
             <div className="flex justify-end">
@@ -127,7 +127,7 @@ export default function Login() {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
                   Signing in...
                 </>
               ) : (

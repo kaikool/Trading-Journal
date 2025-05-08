@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, UploadCloud, Loader2 } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { deleteTradeImage } from '@/lib/api-service';
@@ -193,9 +193,9 @@ export function TradeImageManager({
             disabled={isDeleting}
           >
             {isDeleting ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
             ) : (
-              <X className="h-3.5 w-3.5" />
+              <Icons.ui.close className="h-3.5 w-3.5" />
             )}
           </Button>
           
@@ -205,7 +205,7 @@ export function TradeImageManager({
             className="h-7 w-7 bg-blue-600/90 hover:bg-blue-700 shadow-md" 
             onClick={onReplaceClick}
           >
-            <UploadCloud className="h-3.5 w-3.5" />
+            <Icons.ui.upload className="h-3.5 w-3.5" />
           </Button>
         </>
       )}
