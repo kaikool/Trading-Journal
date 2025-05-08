@@ -32,6 +32,14 @@ export const Icons = {
     eyeOff: LucideIcons.EyeOff,
     calendar: LucideIcons.CalendarDays,
     save: LucideIcons.Save,
+    mail: LucideIcons.Mail,
+    github: LucideIcons.Github,
+    user: LucideIcons.User,
+    shieldCheck: LucideIcons.ShieldCheck,
+    dollarSign: LucideIcons.DollarSign,
+    logOut: LucideIcons.LogOut,
+    link: LucideIcons.Link,
+    linkOff: LucideIcons.Link2Off,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính

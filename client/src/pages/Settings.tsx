@@ -792,9 +792,9 @@ export default function Settings() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showCurrentPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icons.ui.eyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icons.ui.eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
@@ -815,9 +815,9 @@ export default function Settings() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showNewPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icons.ui.eyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icons.ui.eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
@@ -838,9 +838,9 @@ export default function Settings() {
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icons.ui.eyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icons.ui.eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
@@ -1045,7 +1045,7 @@ export default function Settings() {
                   </div>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      <DollarSign className="h-4 w-4" />
+                      <Icons.ui.dollarSign className="h-4 w-4" />
                     </div>
                     <Input
                       id="initialBalance"
@@ -1222,9 +1222,9 @@ export default function Settings() {
                     aria-label={showCurrentPassword ? "Hide password" : "Show password"}
                   >
                     {showCurrentPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icons.ui.eyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icons.ui.eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
@@ -1246,9 +1246,9 @@ export default function Settings() {
                     aria-label={showNewPassword ? "Hide password" : "Show password"}
                   >
                     {showNewPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icons.ui.eyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icons.ui.eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
@@ -1273,9 +1273,9 @@ export default function Settings() {
                     aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
+                      <Icons.ui.eyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4" />
+                      <Icons.ui.eye className="h-4 w-4" />
                     )}
                   </button>
                 </div>
