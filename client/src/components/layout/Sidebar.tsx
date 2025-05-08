@@ -54,11 +54,19 @@ function SidebarItem({
   collapsed?: boolean;
   onClick?: () => void;
 }) {
+  // Handle click with stopPropagation để ngăn chặn sự kiện click từ việc truyền xuống phần tử bên dưới
+  const handleClick = (e: React.MouseEvent) => {
+    // Ngăn sự kiện click lan truyền xuyên qua sidebar
+    e.stopPropagation();
+    // Thực hiện callback onClick nếu được cung cấp
+    if (onClick) onClick();
+  };
+
   return (
     <li>
       <Link
         to={href}
-        onClick={onClick}
+        onClick={handleClick}
         className={cn(
           "flex items-center px-4 py-3 text-sm rounded-md transition-all",
           collapsed ? "justify-center" : "",
@@ -254,7 +262,9 @@ export function Sidebar({ className }: { className?: string }) {
           className={cn(
             "fixed left-0 z-50 w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
             "top-0 bottom-0 safe-area-top safe-area-bottom flex flex-col",
-            isOpen ? "translate-x-0" : "-translate-x-full"
+            isOpen ? "translate-x-0" : "-translate-x-full",
+            // Đảm bảo mobile sidebar được ưu tiên cao hơn và nhận tất cả sự kiện khi mở
+            isOpen ? "pointer-events-auto" : "pointer-events-none"
           )}
         >
           {/* Sidebar Header */}
@@ -326,9 +336,12 @@ export function Sidebar({ className }: { className?: string }) {
           {/* Logout Button - fixed to bottom with safe area */}
           <div className="border-t border-border p-4">
             <Button
-              onClick={handleLogout}
+              onClick={(e) => {
+                e.stopPropagation(); // Ngăn chặn sự kiện truyền xuống dưới
+                handleLogout();
+              }}
               variant="outline"
-              className="w-full justify-start text-sm font-normal"
+              className="w-full justify-start text-sm font-normal relative"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Logout
