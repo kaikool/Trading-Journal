@@ -6,7 +6,6 @@ import { z } from "zod";
 import { insertUserSchema, insertTradeSchema } from "@shared/schema";
 import { setupUploadRoutes } from "./upload-service";
 import { registerBatchEndpoints } from "./batch-api";
-import { registerTwelveDataRoutes } from "./twelvedata-api";
 import { log } from "./vite";
 
 import { admin, db } from "./firebase-admin";
@@ -221,9 +220,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Thiết lập service upload ảnh
   setupUploadRoutes(app);
-  
-  // Đăng ký TwelveData API endpoints
-  registerTwelveDataRoutes(app);
   
   const httpServer = createServer(app);
   return httpServer;

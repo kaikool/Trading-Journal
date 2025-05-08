@@ -35,11 +35,9 @@ window.ENV = {
   // API Base URL (không còn sử dụng Firebase Functions)
   VITE_API_BASE_URL: "",
   
-  // TwelveData API key cho môi trường production
-  TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%",
-  
-  // Firebase Functions config data (hỗ trợ định dạng 2-part key)
-  FIREBASE_CONFIG: '{"twelvedata":{"apikey":"%TWELVEDATA_API_KEY%"}}'
+  // TwelveData API key cho môi trường production - không sử dụng
+  // Thay đổi giá trị HARDCODED_API_KEY trong market-price-service.ts
+  TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%"
 };
 
 // Khi triển khai với GitHub Actions, các giá trị sẽ được thay thế bằng các biến môi trường từ CI/CD
