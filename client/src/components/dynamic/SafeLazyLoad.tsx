@@ -81,6 +81,14 @@ export function SafeLazyLoad({
     // Check for MIME type error
     const isMIMEError = isMIMETypeError(error);
     
+    // Xử lý lỗi MIME trong PWA mode
+    if (isMIMEError && isPwaMode()) {
+      // Thực hiện các hành động khắc phục
+      clearAssetsCache().catch((err) => {
+        console.error('Failed to clear cache:', err);
+      });
+    }
+    
     return (
       <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: typeof height === 'number' ? height : 300 }}>
         <div className="w-full max-w-md mx-auto p-4">
@@ -141,12 +149,25 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
   
   return function SafeLazyComponent(props: T & { fallback?: React.ReactNode; height?: number | string }) {
     const { fallback, height, ...componentProps } = props as any;
+    // Lưu trữ lỗi để có thể sử dụng trong onReset
+    const errorRef = React.useRef<Error | null>(null);
     
     return (
       <ErrorBoundary
         fallback={({ error, resetErrorBoundary }) => {
+          // Lưu lỗi để sử dụng trong onReset
+          errorRef.current = error;
+          
           // Check for MIME type error
           const isMIMEError = isMIMETypeError(error);
+          
+          // Xử lý lỗi MIME trong PWA mode ngay tại thời điểm render
+          if (isMIMEError && isPwaMode()) {
+            // Thực hiện các hành động khắc phục
+            clearAssetsCache().catch((cacheErr) => {
+              console.error('Failed to clear cache:', cacheErr);
+            });
+          }
           
           return (
             <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: height || 300 }}>
@@ -190,18 +211,9 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
             </div>
           );
         }}
-        onReset={async (errorState: Error) => {
-          // Khi gặp lỗi MIME type trong PWA mode, xóa cache và update service worker
-          if (isMIMETypeError(errorState) && isPwaMode()) {
-            try {
-              // Xóa cache tài nguyên JavaScript
-              await clearAssetsCache();
-              // Cập nhật service worker nếu có bản mới
-              await updateServiceWorker();
-            } catch (err) {
-              console.error('Failed to clear cache:', err);
-            }
-          }
+        onReset={() => {
+          // onReset chỉ cần là một hàm đơn giản, không cần async và không cần tham số
+          // Chúng ta đã xử lý lỗi MIME type ngay trong fallback
         }}
       >
         <Suspense fallback={fallback || <LoadingFallback height={height || 300} showSpinner={true} />}>
