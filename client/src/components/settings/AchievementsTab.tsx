@@ -95,7 +95,7 @@ const AchievementCard = React.memo(function AchievementCard({ achievement, userP
           <div>
             <CardTitle className="text-sm sm:text-base flex items-center">
               {name}
-              {isComplete && <Check className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2 text-green-500" />}
+              {isComplete && <Icons.ui.check className="h-3 w-3 sm:h-4 sm:w-4 ml-1 sm:ml-2 text-green-500" />}
             </CardTitle>
             <CardDescription className="text-[10px] sm:text-xs mt-0.5 line-clamp-2">
               {description}
@@ -107,7 +107,7 @@ const AchievementCard = React.memo(function AchievementCard({ achievement, userP
       <CardContent className="pb-2">
         <div className="flex justify-between items-center text-xs mt-1 mb-1.5">
           <div className="flex items-center font-medium">
-            <Trophy className="h-3.5 w-3.5 mr-1 text-amber-500" />
+            <Icons.achievement.trophy className="h-3.5 w-3.5 mr-1 text-amber-500" />
             <span>{points} points</span>
           </div>
           <div className={cn(
@@ -134,7 +134,7 @@ const AchievementCard = React.memo(function AchievementCard({ achievement, userP
       {isComplete && dateEarned && (
         <CardFooter className="p-3 pb-3 pt-0">
           <div className="w-full flex items-center justify-end text-xs text-muted-foreground">
-            <Clock className="h-3 w-3 mr-1" />
+            <Icons.achievement.clock className="h-3 w-3 mr-1" />
             <span>Earned: {format(new Date(dateEarned), "dd/MM/yyyy")}</span>
           </div>
         </CardFooter>
@@ -152,7 +152,7 @@ const LevelProgress = React.memo(function LevelProgress({ level, totalPoints }: 
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
-            <Sparkles className="h-5 w-5 text-indigo-500" />
+            <Icons.ui.zap className="h-5 w-5 text-indigo-500" />
           </div>
           <div className="ml-3">
             <h4 className="font-semibold">Level {level}</h4>
@@ -333,7 +333,7 @@ export const AchievementsTab: React.FC<{
                 <p className="text-xs text-muted-foreground">Total Achievements</p>
                 <h4 className="text-lg sm:text-xl font-bold">{achievementsList.length}</h4>
               </div>
-              <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-primary/70" />
+              <Icons.achievement.trophy className="h-5 w-5 sm:h-6 sm:w-6 text-primary/70" />
             </div>
           </CardContent>
         </Card>
@@ -404,7 +404,7 @@ export const AchievementsTab: React.FC<{
               )}
               className="h-8 text-xs"
             >
-              <Check className="h-3.5 w-3.5 mr-1.5" />
+              <Icons.ui.check className="h-3.5 w-3.5 mr-1.5" />
               Completed
             </Button>
             
@@ -416,7 +416,7 @@ export const AchievementsTab: React.FC<{
               )}
               className="h-8 text-xs"
             >
-              <Clock className="h-3.5 w-3.5 mr-1.5" />
+              <Icons.achievement.clock className="h-3.5 w-3.5 mr-1.5" />
               In Progress
             </Button>
             
@@ -505,7 +505,7 @@ export const AchievementsTab: React.FC<{
                 }}
                 className="h-8 text-xs"
               >
-                <Trophy className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.achievement.trophy className="h-3.5 w-3.5 mr-1.5" />
                 Random Achievement
               </Button>
               
@@ -522,7 +522,7 @@ export const AchievementsTab: React.FC<{
                 }}
                 className="h-8 text-xs"
               >
-                <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.ui.zap className="h-3.5 w-3.5 mr-1.5" />
                 Level Up
               </Button>
               
