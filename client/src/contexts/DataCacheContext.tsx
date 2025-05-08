@@ -121,6 +121,22 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid);
+        // Để test cho demo, tự động truyền dữ liệu người dùng giả lập
+        if (process.env.NODE_ENV === 'development') {
+          debug('[DataCache] Development mode: setting sample user data for demo');
+          const sampleUserData = {
+            displayName: "Demo User",
+            initialBalance: 10000,
+            currentBalance: 10500,
+            email: "demo@example.com"
+          };
+          
+          setDataState(prevState => ({
+            ...prevState,
+            userData: sampleUserData,
+            isUserDataLoaded: true
+          }));
+        }
       } else {
         setUserId(null);
         setDataState({
@@ -171,6 +187,40 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
             return prevState; // No change needed
           }
           
+          // Để demo, thêm dữ liệu người dùng giả lập
+          if (process.env.NODE_ENV === 'development') {
+            debug('[DataCache] Development mode: setting sample user data for demo');
+            const sampleUserData = {
+              displayName: "Demo User",
+              initialBalance: 10000,
+              currentBalance: 10500,
+              email: "demo@example.com"
+            };
+            
+            // Update the state with sample data
+            setDataState(currState => {
+              const updatedState = {
+                ...currState,
+                userData: sampleUserData,
+                isUserDataLoaded: true
+              };
+              
+              // Also update the cache
+              updateCache({ 
+                trades: updatedState.trades, 
+                userData: sampleUserData, 
+                lastUpdated: Date.now()
+              });
+              
+              return updatedState;
+            });
+            
+            // Mark as not loading
+            setIsLoading(false);
+            
+            return prevState;
+          }
+          
           // Otherwise, fetch the new data
           getUserData(userId).then(data => {
             if (data) {
@@ -210,6 +260,118 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
     
     try {
       debug('[DataCache] Setting up trades snapshot listener');
+      
+      // Thêm một số trade mẫu cho demo trong môi trường development
+      if (process.env.NODE_ENV === 'development') {
+        debug('[DataCache] Development mode: adding sample trades for demo');
+        
+        // Tạo dữ liệu mẫu cho 5 giao dịch với kết quả và thời gian khác nhau
+        const sampleTrades = [
+          {
+            id: "trade1",
+            pair: "EURUSD",
+            direction: "BUY",
+            entryPrice: 1.09,
+            exitPrice: 1.10,
+            pips: 100,
+            profitLoss: 100,
+            lotSize: 1,
+            entryDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+            closeDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+            status: "CLOSED",
+            strategy: "Breakout",
+            result: "WIN"
+          },
+          {
+            id: "trade2",
+            pair: "USDJPY",
+            direction: "SELL",
+            entryPrice: 144.5,
+            exitPrice: 143.2,
+            pips: 130,
+            profitLoss: 130,
+            lotSize: 1,
+            entryDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+            closeDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+            status: "CLOSED",
+            strategy: "Trend Following",
+            result: "WIN"
+          },
+          {
+            id: "trade3",
+            pair: "GBPUSD",
+            direction: "BUY",
+            entryPrice: 1.26,
+            exitPrice: 1.258,
+            pips: -20,
+            profitLoss: -20,
+            lotSize: 1,
+            entryDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+            closeDate: new Date(Date.now() - 12 * 60 * 60 * 1000),
+            status: "CLOSED",
+            strategy: "Range Trading",
+            result: "LOSS"
+          },
+          {
+            id: "trade4",
+            pair: "AUDUSD",
+            direction: "SELL",
+            entryPrice: 0.67,
+            exitPrice: 0.675,
+            pips: -50,
+            profitLoss: -50,
+            lotSize: 1,
+            entryDate: new Date(Date.now() - 6 * 60 * 60 * 1000),
+            closeDate: new Date(Date.now() - 3 * 60 * 60 * 1000),
+            status: "CLOSED",
+            strategy: "Support/Resistance",
+            result: "LOSS"
+          },
+          {
+            id: "trade5",
+            pair: "EURGBP",
+            direction: "BUY",
+            entryPrice: 0.85,
+            exitPrice: 0.856,
+            pips: 60,
+            profitLoss: 60,
+            lotSize: 1,
+            entryDate: new Date(Date.now() - 2 * 60 * 60 * 1000),
+            closeDate: new Date(Date.now() - 30 * 60 * 1000),
+            status: "CLOSED",
+            strategy: "Breakout",
+            result: "WIN"
+          }
+        ];
+        
+        // Cập nhật state với dữ liệu mẫu
+        setDataState(prevState => {
+          const updatedState = {
+            ...prevState,
+            trades: sampleTrades,
+            isTradesLoaded: true
+          };
+          
+          // Cập nhật cache
+          updateCache({
+            trades: sampleTrades,
+            userData: prevState.userData,
+            lastUpdated: Date.now()
+          });
+          
+          return updatedState;
+        });
+        
+        // Đánh dấu đã tải xong
+        setIsLoading(false);
+        
+        // Trả về hàm noop để đóng giả unsubscribe
+        return () => {
+          debug('[DataCache] Development mode: cleaning up mock trades');
+        };
+      }
+      
+      // Trong production, kết nối thật với Firebase
       const unsubscribe = onTradesSnapshot(
         userId,
         (fetchedTrades) => {
