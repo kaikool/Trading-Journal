@@ -176,7 +176,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     if (bestEmotion && bestEmotion.trades >= 5 && bestEmotion.winRate > 60) {
       insights.push({
         type: 'positive',
-        icon: <CheckCircle className="h-4 w-4" />,
+        icon: <Icons.ui.checkCircle className="h-4 w-4" />,
         title: 'Best Emotional State',
         description: `Trading while feeling "${bestEmotion.emotion}" yields your highest win rate at ${bestEmotion.winRate.toFixed(1)}%. Consider journaling what conditions help you achieve this state.`
       });
@@ -186,7 +186,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     if (worstEmotion && worstEmotion.trades >= 5 && worstEmotion.winRate < 40) {
       insights.push({
         type: 'warning',
-        icon: <XCircle className="h-4 w-4" />,
+        icon: <Icons.ui.xCircle className="h-4 w-4" />,
         title: 'Worst Emotional State',
         description: `Trading while feeling "${worstEmotion.emotion}" produces your lowest win rate at ${worstEmotion.winRate.toFixed(1)}%. Consider taking a break when experiencing this emotion.`
       });
@@ -196,7 +196,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     if (emotionPerformance.length <= 2 && trades.length > 10) {
       insights.push({
         type: 'suggestion',
-        icon: <Lightbulb className="h-4 w-4" />,
+        icon: <Icons.general.lightbulb className="h-4 w-4" />,
         title: 'Emotional Awareness',
         description: 'Consider recording more detailed emotions to better understand their impact on your trading decisions. Try using a broader emotional vocabulary.'
       });
@@ -212,7 +212,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
       if (difference > 20) {
         insights.push({
           type: 'suggestion',
-          icon: <Heart className="h-4 w-4" />,
+          icon: <Icons.general.heart className="h-4 w-4" />,
           title: 'Significant Emotional Impact',
           description: `There's a ${difference.toFixed(1)}% win rate difference between your best and worst emotional states. Focus on trading in optimal emotional conditions.`
         });
@@ -243,7 +243,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         const mostConsecutive = consecutiveEmotions.sort((a, b) => b.count - a.count)[0];
         insights.push({
           type: 'suggestion',
-          icon: <Lightbulb className="h-4 w-4" />,
+          icon: <Icons.general.lightbulb className="h-4 w-4" />,
           title: 'Emotional Pattern Detected',
           description: `You had ${mostConsecutive.count} consecutive trades with "${mostConsecutive.emotion}" emotion. Be aware of how emotional streaks affect your decision-making.`
         });
