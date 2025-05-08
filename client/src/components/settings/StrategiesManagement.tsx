@@ -36,24 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  Trash2, 
-  Plus, 
-  Edit, 
-  Save, 
-  Check,
-  X,
-  Loader2,
-  BookCopy,
-  Bookmark,
-  ListChecks,
-  ArrowDown,
-  ArrowUp,
-  DoorOpen,
-  LogOut,
-  LineChart,
-  Clock
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 
 // Common timeframes for forex
@@ -200,7 +183,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 ? "bg-primary/15 text-primary/90 border border-primary/20" 
                 : "bg-muted/40 text-muted-foreground/80 border border-border/50"
             )}>
-              <BookCopy className="h-3.5 w-3.5" />
+              <Icons.ui.book className="h-3.5 w-3.5" />
             </div>
             <div className="flex flex-col">
               <span className="font-medium text-sm">{strategy.name}</span>
@@ -222,7 +205,7 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="space-y-4 bg-muted/10 p-4 rounded-lg border border-border/40">
               <div className="space-y-2">
                 <Label htmlFor={`name-${strategy.id}`} className="text-sm flex items-center">
-                  <BookCopy className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                  <Icons.ui.book className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                   Strategy Name
                 </Label>
                 <Input
