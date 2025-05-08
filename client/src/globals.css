@@ -1390,7 +1390,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: var(--chart-spacing-xs); /* Giảm xuống 8px (--chart-spacing-xs) thay vì 16px (--chart-spacing-md) để tối đa hóa không gian hiển thị ảnh */
+    padding: 0.375rem; /* 6px - Giảm từ 8px xuống 6px (0.375rem) theo yêu cầu để tối đa hóa không gian hiển thị */
     
     /* Dark mode adjustments */
     .dark & {
@@ -1487,8 +1487,8 @@
   @media (max-width: 640px), (display-mode: standalone) {
     .chart-image {
       /* Ensure image isn't hidden by navigation bar and home indicator */
-      /* Giảm xuống còn 8px (--chart-spacing-xs) từ 16px (--chart-spacing-md) để tăng không gian hiển thị */
-      max-height: calc(100% - var(--safe-bottom) - var(--chart-spacing-xs) - 8px);
+      /* Sử dụng 6px (0.375rem) theo yêu cầu để tối đa hóa không gian hiển thị ảnh */
+      max-height: calc(100% - var(--safe-bottom) - 0.375rem - 6px);
     }
   }
   
