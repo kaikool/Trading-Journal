@@ -260,14 +260,14 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       if (cumulativePnLData.maxDrawdownPercent > 25) {
         insights.push({
           type: 'warning',
-          icon: <ArrowDownRight className="h-4 w-4" />,
+          icon: <Icons.trade.entry className="h-4 w-4" />,
           title: 'Significant Drawdown Risk',
           description: `Your maximum drawdown of ${cumulativePnLData.maxDrawdownPercent.toFixed(1)}% exceeds recommended limits. Consider reducing position sizes and implementing stricter stop-loss discipline.`
         });
       } else if (cumulativePnLData.maxDrawdownPercent < 10 && trades.length >= 15) {
         insights.push({
           type: 'positive',
-          icon: <Shield className="h-4 w-4" />,
+          icon: <Icons.ui.shieldCheck className="h-4 w-4" />,
           title: 'Effective Risk Management',
           description: `You've maintained a reasonable maximum drawdown of ${cumulativePnLData.maxDrawdownPercent.toFixed(1)}%, indicating good risk management practices. Continue your disciplined approach.`
         });
@@ -452,7 +452,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
     <Card className="border-primary/20 bg-primary/5">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-semibold flex items-center">
-          <Database className="h-5 w-5 mr-2 text-primary" />
+          <Icons.general.database className="h-5 w-5 mr-2 text-primary" />
           More Trading Data Needed
         </CardTitle>
         <CardDescription>
