@@ -9,6 +9,5 @@ interface Window {
     VITE_FIREBASE_MEASUREMENT_ID?: string;
     VITE_FIREBASE_DATABASE_URL?: string;
     VITE_API_BASE_URL?: string;
-    TWELVEDATA_API_KEY?: string; // Không còn được sử dụng, thay thế bằng hardcoded key
   };
 }
