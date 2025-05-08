@@ -1,179 +1,206 @@
 /**
- * Hook để tải và hiển thị ảnh từ cache hoặc từ nguồn
+ * use-cached-image.ts
  * 
- * Hook này cho phép:
- * - Tự động tải ảnh từ cache nếu có
- * - Tự động tải từ nguồn và lưu cache nếu chưa có
- * - Hiển thị placeholder trong khi đang tải
- * - Xử lý lỗi khi tải ảnh
+ * React hook tối ưu hiệu suất cho việc sử dụng image-cache-service với React components
+ * 
+ * Mục tiêu:
+ * - Cung cấp cách dễ dàng để tải và hiển thị hình ảnh từ Firebase Storage
+ * - Tự động quản lý trạng thái tải, lỗi và caching
+ * - Giảm tải lượng dữ liệu và thời gian tải bằng cách sử dụng bộ nhớ đệm
+ * - Hỗ trợ advanced features như prefetching, retry logic
+ * 
+ * Sử dụng:
+ * ```tsx
+ * const { url, isLoading, error } = useCachedImage('path/to/image.jpg');
+ * 
+ * return (
+ *   <div>
+ *     {isLoading && <Spinner />}
+ *     {error && <ErrorMessage error={error} />}
+ *     {url && <img src={url} alt="Cached image" />}
+ *   </div>
+ * );
+ * ```
  */
 
-import { useState, useEffect } from 'react';
-import { imageCacheService } from '@/lib/image-cache-service';
+import { useState, useEffect, useCallback } from 'react';
+import { getCachedImageUrl, invalidateImageCache } from '@/lib/image-cache-service';
+import { debug, logError } from '@/lib/debug';
 
-export interface UseCachedImageOptions {
-  tradeId: string;
-  imageType: string;
-  expiry?: number;
-  forceRefresh?: boolean;
-  placeholder?: string;
+interface UseCachedImageOptions {
+  bypassCache?: boolean;     // Bỏ qua cache và tải trực tiếp từ Firebase
+  forceRefresh?: boolean;    // Làm mới cache cho hình ảnh này
+  retry?: boolean;           // Thử lại nếu gặp lỗi
+  retryCount?: number;       // Số lần thử lại tối đa (mặc định: 2)
+  retryDelay?: number;       // Thời gian chờ giữa các lần thử lại (ms) (mặc định: 1000)
+  placeholder?: string;      // URL ảnh giữ chỗ khi đang tải
+  fetchOnMount?: boolean;    // Tự động tải khi component được mount (mặc định: true)
 }
 
-export interface UseCachedImageResult {
-  imageUrl: string | null;
-  isLoading: boolean;
-  error: Error | null;
-  reload: () => void;
+interface UseCachedImageResult {
+  url: string | null;           // URL hình ảnh sau khi tải thành công
+  isLoading: boolean;          // Trạng thái tải
+  error: Error | null;         // Lỗi nếu có
+  invalidate: () => void;      // Hàm để làm mới cache cho hình ảnh này
+  refetch: () => Promise<void>;// Hàm để tải lại hình ảnh
 }
 
 /**
- * Hook để lấy và quản lý ảnh từ cache
+ * Hook để tải và quản lý hình ảnh sử dụng cache hai lớp
+ * 
+ * @param path Đường dẫn Firebase Storage hoặc URL của hình ảnh
+ * @param options Tùy chọn cấu hình
+ * @returns Kết quả bao gồm URL, trạng thái tải và các hàm tiện ích
  */
 export function useCachedImage(
-  originalUrl: string | null | undefined,
-  options: UseCachedImageOptions
+  path: string | null | undefined,
+  options: UseCachedImageOptions = {}
 ): UseCachedImageResult {
-  const [imageUrl, setImageUrl] = useState<string | null>(null); // Không hiển thị placeholder ngay lập tức
-  const [isLoading, setIsLoading] = useState(true); // Bắt đầu với trạng thái loading
+  // Giá trị mặc định cho các tùy chọn
+  const {
+    bypassCache = false,
+    forceRefresh = false,
+    retry = true,
+    retryCount = 2,
+    retryDelay = 1000,
+    placeholder = '',
+    fetchOnMount = true
+  } = options;
+
+  // State
+  const [url, setUrl] = useState<string | null>(placeholder || null);
+  const [isLoading, setIsLoading] = useState<boolean>(!!path && fetchOnMount);
   const [error, setError] = useState<Error | null>(null);
-  const [reloadCounter, setReloadCounter] = useState(0);
-  const [hasAttempted, setHasAttempted] = useState(false);
-  const [hasPreloadedImage, setHasPreloadedImage] = useState(false);
+  const [retries, setRetries] = useState<number>(0);
 
-  useEffect(() => {
-    // Kiểm tra XSS trong URL - bảo mật
-    const isSafeUrl = (url: string) => {
-      return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:');
-    };
-    
-    // Reset state khi URL thay đổi
-    setError(null);
-    setHasAttempted(false);
-    setHasPreloadedImage(false);
+  // Hàm để làm mới cache cho hình ảnh này
+  const invalidate = useCallback(() => {
+    if (path) {
+      invalidateImageCache(path);
+      setUrl(placeholder || null);
+    }
+  }, [path, placeholder]);
 
-    // Nếu không có URL, sử dụng placeholder và dừng loading ngay lập tức
-    if (!originalUrl) {
-      setImageUrl(options.placeholder || null);
+  // Hàm để tải hình ảnh
+  const fetchImage = useCallback(async (): Promise<void> => {
+    // Nếu không có path, không thực hiện gì cả
+    if (!path) {
       setIsLoading(false);
+      setUrl(null);
+      setError(null);
       return;
     }
-    
-    // Không set loading state ngay lập tức, chờ kiểm tra cache trước
-    setIsLoading(true);
-    
-    // Kiểm tra nếu chúng ta đã có URL này trong bộ nhớ cache trình duyệt
-    const checkInBrowserCache = async (url: string) => {
-      // Kiểm tra caches API
-      if ('caches' in window) {
-        try {
-          const cache = await window.caches.open('image-cache');
-          const response = await cache.match(url);
-          return response !== undefined;
-        } catch (e) {
-          // Ignore cache API errors, just continue loading
-          return false;
-        }
-      }
-      return false;
-    };
-    
-    // Hàm preload ảnh trước khi hiển thị
-    const preloadImage = (url: string): Promise<boolean> => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          setHasPreloadedImage(true);
-          resolve(true);
-        };
-        img.onerror = () => resolve(false);
-        img.src = url;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Tải URL từ cache hoặc Firebase
+      const imageUrl = await getCachedImageUrl(path, {
+        bypassCache,
+        forceRefresh
       });
-    };
-    
-    async function loadImage() {
-      try {
-        setError(null);
 
-        if (typeof originalUrl !== 'string') {
-          throw new Error('Invalid URL');
-        }
-        
-        // Kiểm tra bảo mật URL
-        if (!isSafeUrl(originalUrl)) {
-          throw new Error('Unsafe URL scheme detected');
-        }
+      // Cập nhật state với URL mới
+      setUrl(imageUrl);
+      setIsLoading(false);
+      // Reset retries nếu thành công
+      setRetries(0);
+    } catch (err) {
+      setIsLoading(false);
+      
+      const typedError = err instanceof Error ? err : new Error(String(err));
+      setError(typedError);
+      logError(`Error loading image from path ${path}:`, typedError);
 
-        // Kiểm tra cache trước tiên - đây là phần quan trọng nhất
-        const isInBrowserCache = await checkInBrowserCache(originalUrl);
+      // Xử lý thử lại nếu được bật
+      if (retry && retries < retryCount) {
+        debug(`Retrying image load (${retries + 1}/${retryCount}) after delay...`);
         
-        // Nếu đã có trong cache, sử dụng ngay lập tức
-        if (isInBrowserCache && !options.forceRefresh) {
-          setImageUrl(originalUrl);
-          // Chờ preload ảnh trước khi tắt loading
-          const preloaded = await preloadImage(originalUrl);
-          if (preloaded) {
-            setIsLoading(false);
-            return;
-          }
-        }
-        
-        // Bắt đầu tải ảnh từ cache hoặc từ nguồn
-        // Không thực hiện kiểm tra trực tiếp để tránh hiển thị lỗi tạm thời
-        
-        // Sử dụng service để lấy ảnh từ cache hoặc tải từ nguồn
-        const cachedUrl = await imageCacheService.getOrFetchImage(originalUrl, {
-          tradeId: options.tradeId,
-          imageType: options.imageType,
-          expiry: options.expiry,
-          forceRefresh: options.forceRefresh
-        });
-
-        if (cachedUrl) {
-          // Preload ảnh trước khi hiển thị
-          await preloadImage(cachedUrl);
-          setImageUrl(cachedUrl);
-          setIsLoading(false);
-        } else if (options.placeholder) {
-          // Nếu không thể tải từ cache và có placeholder, sử dụng placeholder
-          setImageUrl(options.placeholder);
-          setIsLoading(false);
-        } else {
-          // Trường hợp không có cả hai, thử URL gốc
-          setImageUrl(originalUrl);
-          setIsLoading(false);
-        }
-      } catch (err) {
-        // Log lỗi trong development
-        if (process.env.NODE_ENV !== 'production') {
-          console.error('Lỗi khi tải ảnh:', err);
-        }
-        
-        setError(err instanceof Error ? err : new Error(String(err)));
-        setIsLoading(false);
-        
-        // Luôn sử dụng placeholder trong trường hợp lỗi để tránh hiển thị lỗi tạm thời
-        setImageUrl(options.placeholder || null);
+        // Thử lại sau một khoảng thời gian
+        setTimeout(() => {
+          setRetries(prev => prev + 1);
+          fetchImage();
+        }, retryDelay);
       }
     }
+  }, [path, bypassCache, forceRefresh, retry, retryCount, retryDelay, retries]);
 
-    // Sử dụng setTimeout để tránh blocking UI, nhưng đặt độ ưu tiên cao hơn
-    const timeoutId = setTimeout(loadImage, 5);
+  // Effect để tải hình ảnh khi path thay đổi hoặc component mount
+  useEffect(() => {
+    // Reset state khi path thay đổi
+    setRetries(0);
+    
+    // Chỉ tải nếu có path và fetchOnMount được bật
+    if (path && fetchOnMount) {
+      fetchImage();
+    } else if (!path) {
+      // Nếu không có path, đặt lại state
+      setUrl(placeholder || null);
+      setIsLoading(false);
+      setError(null);
+    }
+  }, [path, fetchOnMount, placeholder]);
 
-    // Cleanup function để revoke objectURL khi component unmount hoặc URL thay đổi
-    return () => {
-      clearTimeout(timeoutId);
-      if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(imageUrl);
-      }
-    };
-  }, [originalUrl, options.forceRefresh, reloadCounter, options.tradeId, options.imageType, options.expiry, options.placeholder]);
-
-  // Function để tải lại ảnh
-  const reload = () => {
-    setReloadCounter(prev => prev + 1);
+  return {
+    url,
+    isLoading,
+    error,
+    invalidate,
+    refetch: fetchImage
   };
+}
 
-  return { imageUrl, isLoading, error, reload };
+/**
+ * Hook để prefetch một mảng hình ảnh vào cache
+ * Hữu ích khi bạn biết người dùng sẽ cần một số hình ảnh trong tương lai
+ * 
+ * @param paths Mảng các đường dẫn đến hình ảnh cần prefetch
+ */
+export function usePrefetchImages(paths: string[]) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Hàm để thực hiện prefetch
+  const prefetch = useCallback(async () => {
+    if (!paths.length || isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+    setIsDone(false);
+
+    try {
+      // Prefetch từng hình ảnh một cách song song
+      const prefetchPromises = paths.map(path => 
+        getCachedImageUrl(path, { forceRefresh: false })
+          .catch(err => {
+            debug(`Error prefetching image ${path}:`, err);
+            return null; // Không làm dừng prefetch nếu một ảnh gặp lỗi
+          })
+      );
+
+      await Promise.all(prefetchPromises);
+      setIsDone(true);
+    } catch (err) {
+      const typedError = err instanceof Error ? err : new Error(String(err));
+      setError(typedError);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [paths, isLoading]);
+
+  // Effect để thực hiện prefetch khi paths thay đổi
+  useEffect(() => {
+    prefetch();
+  }, [prefetch]);
+
+  return {
+    isLoading,
+    isDone,
+    error,
+    prefetch
+  };
 }
 
 export default useCachedImage;

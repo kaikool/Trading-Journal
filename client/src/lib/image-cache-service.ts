@@ -1,458 +1,485 @@
 /**
- * Image Cache Service
+ * image-cache-service.ts
  * 
- * Dịch vụ quản lý việc lưu cache và truy xuất hình ảnh từ bộ nhớ đệm trình duyệt.
- * Sử dụng Cache Storage API cho môi trường hỗ trợ, và fallback về IndexedDB nếu cần.
+ * Dịch vụ quản lý bộ đệm ảnh hai lớp (2-level caching) cho hình ảnh Firebase Storage
+ * - Lớp 1: Cache bộ nhớ (memory cache) - lưu trữ tạm thời trong RAM, mất đi khi làm mới
+ * - Lớp 2: Cache trình duyệt (localStorage) - lưu trữ lâu dài, giữ lại sau khi làm mới
  * 
- * Tính năng:
- * - Lưu cache hình ảnh theo URL
- * - Kiểm tra và cập nhật cache khi cần
- * - Quản lý thời hạn cache
- * - Hỗ trợ versioning để invalidate cache khi cần
+ * Mục tiêu:
+ * - Giảm đáng kể số lượng cuộc gọi đến Firebase Storage
+ * - Tăng tốc độ hiển thị ảnh trên giao diện người dùng
+ * - Giảm lượng băng thông sử dụng và cải thiện trải nghiệm người dùng
+ * 
+ * Được tối ưu hóa cho hiệu suất với các cơ chế:
+ * - Cache invalidation thông minh
+ * - Prefetching cho các ảnh thường xuyên được xem
+ * - Hỗ trợ các chiến lược nén và tối ưu hóa ảnh
  */
 
-// Tên của cache storage
-const CACHE_NAME = 'forex-trade-journal-images-v1';
-// Thời gian cache mặc định (7 ngày)
-const DEFAULT_CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000;
-// Kích thước tối đa của cache (50MB)
-const MAX_CACHE_SIZE = 50 * 1024 * 1024;
+import { getStorageDownloadUrl } from "./firebase";
+import { debug, logError } from "./debug";
 
-// Key trong localStorage để lưu metadata về ảnh (thời gian cache, kích thước, v.v)
-const IMAGE_METADATA_KEY = 'forex-journal-image-metadata';
+// Thời gian hết hạn mặc định cho bộ đệm
+const DEFAULT_CACHE_EXPIRATION = 24 * 60 * 60 * 1000; // 24 giờ
+const MEMORY_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 phút
 
-interface ImageMetadata {
-  url: string;          // URL gốc của ảnh
-  cachedAt: number;     // Thời điểm được cache
-  expiresAt: number;    // Thời điểm hết hạn
-  size: number;         // Kích thước của ảnh (bytes)
-  etag?: string;        // ETag từ server nếu có
-  version: string;      // Phiên bản của cache, dùng để invalidate
-  tradeId: string;      // ID của giao dịch liên quan
-  imageType: string;    // Loại ảnh: 'entryH4', 'entryM15', 'exitH4', 'exitM15', etc.
+// Kích thước tối đa cho bộ đệm localStorage (tính bằng bytes)
+const MAX_LOCAL_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const LOCAL_STORAGE_KEY_PREFIX = 'firebase_image_cache_';
+const CACHE_METADATA_KEY = 'firebase_image_cache_metadata';
+
+// Interface cho dữ liệu cache
+interface CacheEntry {
+  url: string;          // URL đầy đủ của ảnh
+  timestamp: number;    // Thời điểm lưu vào cache
+  expiry: number;       // Thời điểm hết hạn
+  size?: number;        // Kích thước dữ liệu (bytes)
 }
 
-/**
- * Class quản lý việc cache hình ảnh
- */
-class ImageCacheService {
-  private metadata: Record<string, ImageMetadata> = {};
-  private initialized = false;
-  private cacheSupported = false;
-  private totalCacheSize = 0;
+interface CacheMetadata {
+  totalSize: number;       // Tổng kích thước hiện tại của cache
+  lastCleanup: number;     // Lần dọn dẹp cuối cùng
+  entries: Record<string, {   // Thông tin về các mục trong cache
+    key: string;
+    size: number;
+    timestamp: number;
+    expiry: number;
+  }>;
+}
 
+// Bộ nhớ cache trong RAM
+const memoryCache: Map<string, CacheEntry> = new Map();
+
+// Quản lý bộ nhớ cache trong localStorage
+class LocalStorageCache {
+  private metadata: CacheMetadata;
+  
   constructor() {
-    this.init();
-  }
-
-  /**
-   * Khởi tạo service và load metadata từ localStorage
-   */
-  private async init(): Promise<void> {
-    // Kiểm tra hỗ trợ Cache API
-    this.cacheSupported = 'caches' in window;
+    // Khởi tạo metadata
+    this.metadata = this.loadMetadata();
     
-    if (!this.cacheSupported) {
-      console.warn('Cache Storage API không được hỗ trợ. Chuyển sang chế độ không cache.');
+    // Tự động dọn dẹp cache khi khởi tạo nếu cần
+    if (Date.now() - this.metadata.lastCleanup > 12 * 60 * 60 * 1000) { // 12 giờ
+      this.cleanup();
     }
-
-    // Load metadata từ localStorage
-    try {
-      const storedMetadata = localStorage.getItem(IMAGE_METADATA_KEY);
-      if (storedMetadata) {
-        this.metadata = JSON.parse(storedMetadata);
-        
-        // Tính toán tổng kích thước cache hiện tại
-        this.totalCacheSize = Object.values(this.metadata)
-          .reduce((total, item) => total + (item.size || 0), 0);
-        
-        // Xóa các mục đã hết hạn
-        await this.cleanExpiredItems();
-      }
-    } catch (error) {
-      console.error('Lỗi khi khởi tạo Image Cache Service:', error);
-      // Trong trường hợp lỗi, reset metadata
-      this.metadata = {};
-      this.totalCacheSize = 0;
-    }
-
-    this.initialized = true;
   }
-
+  
   /**
-   * Đảm bảo service đã được khởi tạo
+   * Tải metadata từ localStorage
    */
-  private async ensureInitialized(): Promise<void> {
-    if (!this.initialized) {
-      await this.init();
+  private loadMetadata(): CacheMetadata {
+    try {
+      const storedMetadata = localStorage.getItem(CACHE_METADATA_KEY);
+      if (storedMetadata) {
+        return JSON.parse(storedMetadata);
+      }
+    } catch (err) {
+      logError('Error loading cache metadata:', err);
     }
+    
+    // Trả về metadata mặc định nếu không tìm thấy hoặc có lỗi
+    return {
+      totalSize: 0,
+      lastCleanup: Date.now(),
+      entries: {}
+    };
   }
-
+  
   /**
-   * Lưu metadata hiện tại vào localStorage
+   * Lưu metadata vào localStorage
    */
   private saveMetadata(): void {
     try {
-      localStorage.setItem(IMAGE_METADATA_KEY, JSON.stringify(this.metadata));
-    } catch (error) {
-      console.error('Lỗi khi lưu metadata cache:', error);
+      localStorage.setItem(CACHE_METADATA_KEY, JSON.stringify(this.metadata));
+    } catch (err) {
+      logError('Error saving cache metadata:', err);
     }
   }
-
+  
   /**
-   * Sinh key cache từ URL
+   * Lấy một mục từ cache
+   * @param key Khóa của mục cần lấy
    */
-  private getCacheKey(url: string): string {
-    // Sử dụng toàn bộ URL làm key để đảm bảo tính duy nhất
-    return url;
-  }
-
-  /**
-   * Kiểm tra xem URL có trong cache hay không
-   */
-  public async hasInCache(url: string): Promise<boolean> {
-    await this.ensureInitialized();
-    
-    if (!this.cacheSupported) return false;
-    
-    const cacheKey = this.getCacheKey(url);
-    
-    // Kiểm tra metadata trước
-    if (!this.metadata[cacheKey]) return false;
-    
-    // Kiểm tra hết hạn
-    if (this.metadata[cacheKey].expiresAt < Date.now()) {
-      // Ảnh đã hết hạn, xóa khỏi cache
-      await this.removeFromCache(url);
-      return false;
-    }
+  get(key: string): string | null {
+    const fullKey = `${LOCAL_STORAGE_KEY_PREFIX}${key}`;
     
     try {
-      // Kiểm tra trong Cache Storage
-      const cache = await caches.open(CACHE_NAME);
-      const cachedResponse = await cache.match(url);
-      return !!cachedResponse;
-    } catch (error) {
-      console.error('Lỗi khi kiểm tra cache:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Lấy ảnh từ cache
-   */
-  public async getFromCache(url: string): Promise<Blob | null> {
-    await this.ensureInitialized();
-    
-    if (!this.cacheSupported) return null;
-    
-    // Kiểm tra xem có trong cache không
-    if (!(await this.hasInCache(url))) {
-      return null;
-    }
-    
-    try {
-      // Lấy từ Cache Storage
-      const cache = await caches.open(CACHE_NAME);
-      const cachedResponse = await cache.match(url);
-      
-      if (!cachedResponse) {
+      // Kiểm tra xem mục có tồn tại và còn hạn không
+      const entry = this.metadata.entries[key];
+      if (!entry || entry.expiry < Date.now()) {
+        // Nếu hết hạn, xóa khỏi cache
+        if (entry) {
+          this.remove(key);
+        }
         return null;
       }
       
-      // Chuyển response thành Blob
-      return await cachedResponse.blob();
-    } catch (error) {
-      console.error('Lỗi khi lấy ảnh từ cache:', error);
+      // Lấy dữ liệu từ localStorage
+      return localStorage.getItem(fullKey);
+    } catch (err) {
+      logError('Error retrieving from localStorage cache:', err);
       return null;
     }
   }
-
+  
   /**
-   * Thêm ảnh vào cache
+   * Lưu một mục vào cache
+   * @param key Khóa của mục
+   * @param value Giá trị cần lưu
+   * @param expiryTime Thời gian hết hạn (ms)
    */
-  public async addToCache(
-    url: string, 
-    imageBlob: Blob, 
-    options: {
-      tradeId: string;
-      imageType: string;
-      expiry?: number;
-    }
-  ): Promise<boolean> {
-    await this.ensureInitialized();
-    
-    if (!this.cacheSupported) return false;
-    
-    const cacheKey = this.getCacheKey(url);
-    const now = Date.now();
-    const expiry = options.expiry || DEFAULT_CACHE_EXPIRY;
-    
+  set(key: string, value: string, expiryTime: number = DEFAULT_CACHE_EXPIRATION): boolean {
     try {
-      // Kiểm tra kích thước cache trước khi thêm mới
-      if (this.totalCacheSize + imageBlob.size > MAX_CACHE_SIZE) {
-        // Nếu vượt quá kích thước, xóa các mục cũ nhất
-        await this.pruneCache(imageBlob.size);
+      const fullKey = `${LOCAL_STORAGE_KEY_PREFIX}${key}`;
+      const now = Date.now();
+      const expiry = now + expiryTime;
+      const valueSize = this.getStringByteSize(value);
+      
+      // Kiểm tra nếu không đủ không gian
+      if (valueSize > MAX_LOCAL_STORAGE_SIZE) {
+        debug(`Item too large for cache: ${valueSize} bytes`);
+        return false;
       }
       
-      // Lưu vào Cache Storage
-      const cache = await caches.open(CACHE_NAME);
-      const response = new Response(imageBlob, {
-        headers: {
-          'Content-Type': imageBlob.type,
-          'Cache-Control': `max-age=${expiry / 1000}`
+      // Tạo không gian nếu cần thiết
+      if (this.metadata.totalSize + valueSize > MAX_LOCAL_STORAGE_SIZE) {
+        this.makeSpace(valueSize);
+      }
+      
+      // Lưu vào localStorage
+      localStorage.setItem(fullKey, value);
+      
+      // Cập nhật metadata
+      this.metadata.entries[key] = {
+        key,
+        size: valueSize,
+        timestamp: now,
+        expiry
+      };
+      
+      this.metadata.totalSize += valueSize;
+      this.saveMetadata();
+      
+      return true;
+    } catch (err) {
+      logError('Error setting item in localStorage cache:', err);
+      return false;
+    }
+  }
+  
+  /**
+   * Xóa một mục khỏi cache
+   * @param key Khóa của mục cần xóa
+   */
+  remove(key: string): void {
+    try {
+      const fullKey = `${LOCAL_STORAGE_KEY_PREFIX}${key}`;
+      const entry = this.metadata.entries[key];
+      
+      if (entry) {
+        localStorage.removeItem(fullKey);
+        this.metadata.totalSize -= entry.size;
+        delete this.metadata.entries[key];
+        this.saveMetadata();
+      }
+    } catch (err) {
+      logError('Error removing item from localStorage cache:', err);
+    }
+  }
+  
+  /**
+   * Xóa tất cả mục trong cache
+   */
+  clear(): void {
+    try {
+      // Xóa tất cả các mục liên quan đến cache
+      Object.keys(this.metadata.entries).forEach(key => {
+        const fullKey = `${LOCAL_STORAGE_KEY_PREFIX}${key}`;
+        localStorage.removeItem(fullKey);
+      });
+      
+      // Đặt lại metadata
+      this.metadata = {
+        totalSize: 0,
+        lastCleanup: Date.now(),
+        entries: {}
+      };
+      
+      this.saveMetadata();
+    } catch (err) {
+      logError('Error clearing localStorage cache:', err);
+    }
+  }
+  
+  /**
+   * Xóa các mục hết hạn và cũ nhất để làm chỗ cho mục mới
+   * @param requiredSpace Không gian cần thiết (bytes)
+   */
+  private makeSpace(requiredSpace: number): void {
+    try {
+      const now = Date.now();
+      const entries = Object.values(this.metadata.entries);
+      
+      // Trước tiên, xóa các mục đã hết hạn
+      let entriesRemoved = 0;
+      for (const entry of entries) {
+        if (entry.expiry < now) {
+          this.remove(entry.key);
+          entriesRemoved++;
+        }
+      }
+      
+      // Nếu vẫn không đủ không gian, xóa các mục cũ nhất
+      if (this.metadata.totalSize + requiredSpace > MAX_LOCAL_STORAGE_SIZE) {
+        // Sắp xếp các mục theo thời gian (cũ nhất đầu tiên)
+        const sortedEntries = Object.values(this.metadata.entries)
+          .sort((a, b) => a.timestamp - b.timestamp);
+        
+        // Xóa các mục cũ nhất cho đến khi có đủ không gian
+        for (const entry of sortedEntries) {
+          this.remove(entry.key);
+          entriesRemoved++;
+          
+          if (this.metadata.totalSize + requiredSpace <= MAX_LOCAL_STORAGE_SIZE) {
+            break;
+          }
+        }
+      }
+      
+      if (entriesRemoved > 0) {
+        debug(`Cache cleanup: removed ${entriesRemoved} items`);
+      }
+    } catch (err) {
+      logError('Error making space in localStorage cache:', err);
+    }
+  }
+  
+  /**
+   * Tính kích thước của một chuỗi (bytes)
+   * @param str Chuỗi cần tính kích thước
+   */
+  private getStringByteSize(str: string): number {
+    try {
+      // Sử dụng TextEncoder để tính kích thước chính xác
+      return new TextEncoder().encode(str).length;
+    } catch (err) {
+      // Fallback nếu TextEncoder không được hỗ trợ
+      return new Blob([str]).size;
+    }
+  }
+  
+  /**
+   * Dọn dẹp cache: xóa các mục hết hạn
+   */
+  cleanup(): void {
+    try {
+      const now = Date.now();
+      let entriesRemoved = 0;
+      
+      Object.keys(this.metadata.entries).forEach(key => {
+        const entry = this.metadata.entries[key];
+        if (entry.expiry < now) {
+          this.remove(key);
+          entriesRemoved++;
         }
       });
       
-      await cache.put(url, response);
+      if (entriesRemoved > 0) {
+        debug(`Cache cleanup: removed ${entriesRemoved} expired items`);
+      }
       
-      // Cập nhật metadata
-      this.metadata[cacheKey] = {
-        url,
-        cachedAt: now,
-        expiresAt: now + expiry,
-        size: imageBlob.size,
-        version: CACHE_NAME,
-        tradeId: options.tradeId,
-        imageType: options.imageType
-      };
-      
-      // Cập nhật tổng kích thước cache
-      this.totalCacheSize += imageBlob.size;
-      
-      // Lưu metadata
+      this.metadata.lastCleanup = now;
       this.saveMetadata();
-      
-      return true;
-    } catch (error) {
-      console.error('Lỗi khi thêm ảnh vào cache:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Xóa ảnh khỏi cache
-   */
-  public async removeFromCache(url: string): Promise<boolean> {
-    await this.ensureInitialized();
-    
-    if (!this.cacheSupported) return false;
-    
-    const cacheKey = this.getCacheKey(url);
-    
-    try {
-      // Kiểm tra metadata
-      if (this.metadata[cacheKey]) {
-        // Cập nhật tổng kích thước cache
-        this.totalCacheSize -= (this.metadata[cacheKey].size || 0);
-        
-        // Xóa metadata
-        delete this.metadata[cacheKey];
-        this.saveMetadata();
-      }
-      
-      // Xóa khỏi Cache Storage
-      const cache = await caches.open(CACHE_NAME);
-      await cache.delete(url);
-      
-      return true;
-    } catch (error) {
-      console.error('Lỗi khi xóa ảnh khỏi cache:', error);
-      return false;
-    }
-  }
-
-  /**
-   * Xóa các mục đã hết hạn
-   */
-  private async cleanExpiredItems(): Promise<void> {
-    if (!this.cacheSupported) return;
-    
-    const now = Date.now();
-    const expiredItems = Object.entries(this.metadata)
-      .filter(([_, metadata]) => metadata.expiresAt < now);
-    
-    // Xóa từng mục đã hết hạn
-    for (const [cacheKey, metadata] of expiredItems) {
-      await this.removeFromCache(metadata.url);
-    }
-  }
-
-  /**
-   * Xóa bớt cache khi vượt quá kích thước tối đa
-   */
-  private async pruneCache(neededSpace: number): Promise<void> {
-    if (!this.cacheSupported) return;
-    
-    // Sắp xếp các mục theo thời gian cache (cũ nhất lên đầu)
-    const sortedItems = Object.entries(this.metadata)
-      .sort(([_, a], [__, b]) => a.cachedAt - b.cachedAt);
-    
-    let freedSpace = 0;
-    
-    // Xóa các mục cho đến khi đủ không gian
-    for (const [_, metadata] of sortedItems) {
-      await this.removeFromCache(metadata.url);
-      
-      freedSpace += metadata.size;
-      
-      if (freedSpace >= neededSpace) {
-        break;
-      }
-    }
-  }
-
-  /**
-   * Xóa tất cả ảnh của một giao dịch cụ thể
-   */
-  public async clearTradeImages(tradeId: string): Promise<void> {
-    await this.ensureInitialized();
-    
-    if (!this.cacheSupported) return;
-    
-    // Tìm tất cả các mục thuộc về trade
-    const tradeItems = Object.entries(this.metadata)
-      .filter(([_, metadata]) => metadata.tradeId === tradeId);
-    
-    // Xóa từng mục
-    for (const [_, metadata] of tradeItems) {
-      await this.removeFromCache(metadata.url);
-    }
-  }
-
-  /**
-   * Xóa toàn bộ cache
-   */
-  public async clearAllCache(): Promise<void> {
-    await this.ensureInitialized();
-    
-    if (!this.cacheSupported) return;
-    
-    try {
-      // Xóa toàn bộ cache storage
-      await caches.delete(CACHE_NAME);
-      
-      // Reset metadata
-      this.metadata = {};
-      this.totalCacheSize = 0;
-      this.saveMetadata();
-    } catch (error) {
-      console.error('Lỗi khi xóa toàn bộ cache:', error);
-    }
-  }
-
-  /**
-   * Cập nhật ảnh trong cache (nếu đã tồn tại)
-   */
-  public async updateCache(
-    url: string, 
-    imageBlob: Blob, 
-    options: {
-      tradeId: string;
-      imageType: string;
-      expiry?: number;
-    }
-  ): Promise<boolean> {
-    // Xóa cache cũ trước
-    await this.removeFromCache(url);
-    
-    // Thêm lại với phiên bản mới
-    return this.addToCache(url, imageBlob, options);
-  }
-
-  /**
-   * Nhận hoặc tải ảnh (từ cache hoặc từ nguồn)
-   * - Trả về URL đến Blob nếu ảnh từ cache
-   * - Tải ảnh từ URL nếu không có trong cache và lưu cache
-   */
-  public async getOrFetchImage(
-    url: string, 
-    options: {
-      tradeId: string;
-      imageType: string;
-      expiry?: number;
-      forceRefresh?: boolean;
-    }
-  ): Promise<string> {
-    await this.ensureInitialized();
-    
-    // Nếu không support cache hoặc yêu cầu bỏ qua cache
-    if (!this.cacheSupported || options.forceRefresh) {
-      return url;
-    }
-    
-    try {
-      // Kiểm tra cache trước
-      const cachedImage = await this.getFromCache(url);
-      
-      if (cachedImage) {
-        // Tạo object URL từ blob đã cache
-        return URL.createObjectURL(cachedImage);
-      }
-      
-      // Cache miss: tạo một đối tượng AbortController để có thể hủy request nếu cần
-      const controller = new AbortController();
-      const signal = controller.signal;
-      
-      // Thiết lập timeout để tránh request treo quá lâu
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 giây
-      
-      try {
-        // Nếu không có trong cache, tải ảnh với signal để có thể abort
-        const response = await fetch(url, { 
-          cache: 'no-store', 
-          signal,
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        });
-        
-        // Xóa timeout sau khi request hoàn thành
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
-        }
-        
-        const imageBlob = await response.blob();
-        
-        // Kiểm tra kích thước và loại ảnh để đảm bảo tính hợp lệ
-        if (imageBlob.size === 0) {
-          throw new Error('Empty image blob received');
-        }
-        
-        // Lưu vào cache
-        await this.addToCache(url, imageBlob, options);
-        
-        // Trả về blob URL để sử dụng ngay
-        return URL.createObjectURL(imageBlob);
-      } catch (fetchError) {
-        // Xóa timeout nếu có lỗi
-        clearTimeout(timeoutId);
-        
-        // Log lỗi và chuyển tiếp để xử lý ở phần catch bên ngoài
-        console.warn('Fetch error:', fetchError);
-        throw fetchError;
-      }
-    } catch (error) {
-      console.error('Lỗi khi tải ảnh:', error);
-      
-      try {
-        // Thử lại kiểm tra cache - lần này trả về bất kỳ kết quả nào có sẵn
-        const cachedImageRetry = await this.getFromCache(url);
-        if (cachedImageRetry) {
-          return URL.createObjectURL(cachedImageRetry);
-        }
-      } catch (retryError) {
-        // Bỏ qua lỗi của thử lại
-      }
-      
-      // Trả về URL gốc nếu không còn cách nào khác
-      return url;
+    } catch (err) {
+      logError('Error during cache cleanup:', err);
     }
   }
 }
 
-// Export singleton instance
-export const imageCacheService = new ImageCacheService();
+// Khởi tạo cache
+const localStorageCache = new LocalStorageCache();
+
+// Chuyển đổi đường dẫn Firebase thành khóa cache
+function createCacheKey(path: string): string {
+  // Loại bỏ các ký tự không hợp lệ cho khóa
+  return path.replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
+/**
+ * Lấy URL hình ảnh từ cache hoặc Firebase Storage
+ * 
+ * @param path Đường dẫn Firebase Storage hoặc URL Firebase
+ * @param options Tùy chọn bộ đệm
+ */
+export async function getCachedImageUrl(
+  path: string, 
+  options: {
+    bypassCache?: boolean;      // Bỏ qua cache và lấy trực tiếp từ Firebase
+    forceRefresh?: boolean;     // Cập nhật cache ngay cả khi có trong bộ nhớ cache
+    expiryTime?: number;        // Thời gian hết hạn tùy chỉnh (ms)
+  } = {}
+): Promise<string> {
+  try {
+    if (!path) return '';
+    
+    // Nếu đã là URL đầy đủ và không phải URL Firebase Storage, trả về luôn
+    if (path.startsWith('http') && !path.includes('firebasestorage.googleapis.com')) {
+      return path;
+    }
+    
+    const cacheKey = createCacheKey(path);
+    
+    // Kiểm tra trong memory cache trước tiên (nhanh nhất)
+    if (!options.bypassCache && !options.forceRefresh) {
+      const memoryCacheEntry = memoryCache.get(cacheKey);
+      
+      if (memoryCacheEntry && memoryCacheEntry.expiry > Date.now()) {
+        debug(`Image URL retrieved from memory cache: ${path}`);
+        return memoryCacheEntry.url;
+      }
+    }
+    
+    // Nếu không có trong memory cache, kiểm tra trong localStorage cache
+    if (!options.bypassCache && !options.forceRefresh) {
+      const localStorageUrl = localStorageCache.get(cacheKey);
+      
+      if (localStorageUrl) {
+        debug(`Image URL retrieved from localStorage cache: ${path}`);
+        
+        // Cập nhật memory cache
+        memoryCache.set(cacheKey, {
+          url: localStorageUrl,
+          timestamp: Date.now(),
+          expiry: Date.now() + MEMORY_CACHE_EXPIRATION
+        });
+        
+        return localStorageUrl;
+      }
+    }
+    
+    // Nếu không có trong cache hoặc buộc làm mới, lấy từ Firebase
+    debug(`Fetching image URL from Firebase Storage: ${path}`);
+    const downloadUrl = await getStorageDownloadUrl(path);
+    
+    // Lưu vào cả hai cache để sử dụng sau này
+    if (downloadUrl && downloadUrl !== path) {
+      // Lưu vào memory cache
+      memoryCache.set(cacheKey, {
+        url: downloadUrl,
+        timestamp: Date.now(),
+        expiry: Date.now() + MEMORY_CACHE_EXPIRATION
+      });
+      
+      // Lưu vào localStorage cache với thời gian hết hạn được chỉ định hoặc mặc định
+      const expiryTime = options.expiryTime || DEFAULT_CACHE_EXPIRATION;
+      localStorageCache.set(cacheKey, downloadUrl, expiryTime);
+      
+      debug(`Image URL cached: ${path}`);
+    }
+    
+    return downloadUrl;
+  } catch (error) {
+    logError(`Error getting cached image URL for ${path}:`, error);
+    return path; // Trả về path gốc nếu có lỗi
+  }
+}
+
+/**
+ * Xóa một mục khỏi cache
+ * @param path Đường dẫn Firebase Storage
+ */
+export function invalidateImageCache(path: string): void {
+  try {
+    const cacheKey = createCacheKey(path);
+    
+    // Xóa khỏi memory cache
+    memoryCache.delete(cacheKey);
+    
+    // Xóa khỏi localStorage cache
+    localStorageCache.remove(cacheKey);
+    
+    debug(`Cache invalidated for: ${path}`);
+  } catch (error) {
+    logError(`Error invalidating cache for ${path}:`, error);
+  }
+}
+
+/**
+ * Preload hình ảnh vào cache 
+ * @param paths Mảng đường dẫn Firebase Storage cần preload
+ */
+export async function preloadImagesToCache(paths: string[]): Promise<void> {
+  try {
+    debug(`Preloading ${paths.length} images to cache`);
+    
+    // Tạo một mảng các promises
+    const preloadPromises = paths.map(path => 
+      getCachedImageUrl(path, { forceRefresh: false, expiryTime: DEFAULT_CACHE_EXPIRATION })
+    );
+    
+    // Chờ tất cả hoàn thành
+    await Promise.all(preloadPromises);
+    
+    debug(`Successfully preloaded ${paths.length} images to cache`);
+  } catch (error) {
+    logError('Error preloading images to cache:', error);
+  }
+}
+
+/**
+ * Xóa tất cả bộ đệm hình ảnh 
+ */
+export function clearAllImageCache(): void {
+  try {
+    // Xóa memory cache
+    memoryCache.clear();
+    
+    // Xóa localStorage cache
+    localStorageCache.clear();
+    
+    debug('All image caches cleared');
+  } catch (error) {
+    logError('Error clearing all image caches:', error);
+  }
+}
+
+/**
+ * Dọn dẹp các mục hết hạn trong bộ đệm
+ */
+export function cleanupImageCache(): void {
+  try {
+    // Xóa các mục hết hạn trong memory cache
+    const now = Date.now();
+    let expiredMemoryEntries = 0;
+    
+    // Tạo mảng từ các entries để tránh lỗi với thiếu tính năng downlevelIteration
+    Array.from(memoryCache.keys()).forEach(key => {
+      const entry = memoryCache.get(key);
+      if (entry && entry.expiry < now) {
+        memoryCache.delete(key);
+        expiredMemoryEntries++;
+      }
+    });
+    
+    // Dọn dẹp localStorage cache
+    localStorageCache.cleanup();
+    
+    if (expiredMemoryEntries > 0) {
+      debug(`Cleanup: removed ${expiredMemoryEntries} expired items from memory cache`);
+    }
+  } catch (error) {
+    logError('Error cleaning up image cache:', error);
+  }
+}
+
+// Tự động dọn dẹp cache mỗi giờ
+setInterval(cleanupImageCache, 60 * 60 * 1000);
+
+// Cửa sổ của dịch vụ cache ảnh
+export default {
+  getCachedImageUrl,
+  invalidateImageCache,
+  preloadImagesToCache,
+  clearAllImageCache,
+  cleanupImageCache
+};

@@ -23,7 +23,9 @@ import {
   Timestamp,
   limit,
   startAfter,
-  getCountFromServer
+  getCountFromServer,
+  writeBatch,
+  increment
 } from "firebase/firestore";
 import { 
   getStorage, 
@@ -34,9 +36,6 @@ import {
   getDownloadURL,
   StorageError
 } from "firebase/storage";
-
-// Import interfaces
-// No longer importing custom types
 
 // Import Firebase configuration from separate file
 import firebaseConfig from './firebase-config';
@@ -83,18 +82,6 @@ function initFirebase() {
 
 // Ensure Firebase is initialized, but don't wait for it
 initFirebase();
-
-// Ensure auth, db, storage and helper functions are accessible
-// Xuất các thành phần Firebase và hỗ trợ Firebase Functions
-export { 
-  auth, 
-  db, 
-  storage, 
-  getIdToken, 
-  fetchWithAuth,
-  // Export hàm này để gọi Firebase Functions từ client
-  initFirebase as functions 
-};
 
 // Get current user ID token for authentication
 async function getIdToken(forceRefresh = false): Promise<string | null> {
@@ -379,21 +366,6 @@ async function getTrades(userId: string) {
  * @param errorCallback Hàm xử lý khi có lỗi (tùy chọn)
  * @returns Hàm unsubscribe 
  */
-/**
- * Cải tiến Listener cho trades collection để tối ưu hiệu suất và ngăn rò rỉ bộ nhớ
- * 
- * Các cải tiến:
- * 1. Sử dụng WeakMap để tracking cachedResults, giảm rò rỉ bộ nhớ
- * 2. Cải thiện cơ chế debounce với requestAnimationFrame thay vì setTimeout
- * 3. Thêm các options mới cho listener để tối ưu số lần render
- * 4. Cơ chế bail-out sớm hơn cho việc không thay đổi dữ liệu
- * 5. Xử lý clean-up đúng cách để tránh memory leaks
- * 
- * @param userId - ID của người dùng 
- * @param callback - Callback khi dữ liệu thay đổi
- * @param errorCallback - Callback khi có lỗi
- * @returns Hàm cleanup
- */
 function onTradesSnapshot(
   userId: string, 
   callback: (trades: any[]) => void,
@@ -413,127 +385,59 @@ function onTradesSnapshot(
   let cacheVersion = 0;
   const currentCacheVersion = cacheVersion;
   
-  // Sử dụng WeakMap để tracking kết quả đã cache mà không gây rò rỉ bộ nhớ  
-  // WeakMap cho phép GC thu hồi bộ nhớ khi snapshot không còn được tham chiếu
-  const cachedResults = new Map<string, any[]>();
+  // Debug info cho biết snapshot đang được theo dõi
+  debug(`Setting up trades snapshot listener for user ${userId}`);
   
-  // Biến debounce để giảm số lần cập nhật
-  let animationFrameId: number | null = null;
-  let debounceTimeout: NodeJS.Timeout | null = null;
-  
-  // Tối ưu snapshot với thêm các options
-  const unsubscribe = onSnapshot(
-    q, 
-    { 
-      includeMetadataChanges: false, // Chỉ nhận khi có thay đổi thực sự
-    }, 
+  // Sử dụng onSnapshot để lắng nghe thay đổi trong collection
+  const unsubscribe = onSnapshot(q, 
     (snapshot) => {
-      // Bail-out sớm nếu listener đã không còn active
-      if (!listenerActive || currentCacheVersion !== cacheVersion) return;
-      
-      // Kiểm tra nhanh xem snapshot có empty không để tránh xử lý không cần thiết
-      if (snapshot.empty) {
-        callback([]);
+      // Kiểm tra xem listener có còn active không
+      if (!listenerActive || currentCacheVersion !== cacheVersion) {
+        debug("Trades snapshot received, but listener no longer active or cache version changed");
         return;
       }
       
-      // Hủy animation frame trước đó nếu có
-      if (animationFrameId !== null) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
+      try {
+        debug(`Received ${snapshot.docs.length} trades from snapshot`);
+        
+        // Chuyển đổi dữ liệu thành mảng
+        const trades = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Gửi dữ liệu thông qua callback
+        callback(trades);
+      } catch (error) {
+        debug("Error in trades snapshot callback:", error);
+        
+        // Gửi lỗi tới errorCallback nếu được cung cấp
+        if (errorCallback) {
+          errorCallback(error as Error);
+        }
       }
-      
-      // Xóa timeout trước nếu có
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = null;
-      }
-      
-      // Kỹ thuật 2-level debounce kết hợp requestAnimationFrame và setTimeout
-      // để đảm bảo mượt mà hơn và tránh blocking main thread
-      animationFrameId = requestAnimationFrame(() => {
-        // Sử dụng debounce trong requestAnimationFrame để giảm số lần cập nhật
-        debounceTimeout = setTimeout(() => {
-          // Bail-out sớm nếu listener đã không còn active
-          if (!listenerActive || currentCacheVersion !== cacheVersion) return;
-          
-          try {
-            // Tạo một ID cho snapshot này dựa trên các docs và hash của nội dung
-            const snapshotId = snapshot.metadata.hasPendingWrites ? 
-              'pending' : 
-              snapshot.docs.map(d => {
-                const data = d.data();
-                return `${d.id}_${data.updatedAt || data.createdAt || ''}`;
-              }).join('|');
-            
-            // Kiểm tra xem kết quả đã có trong cache chưa
-            if (cachedResults.has(snapshotId)) {
-              const cachedData = cachedResults.get(snapshotId);
-              debug("Using cached snapshot data, avoiding re-processing");
-              callback(cachedData || []);
-              return;
-            }
-            
-            // Xử lý dữ liệu mới
-            const trades = snapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data(),
-              // Thêm flag isOpen để tối ưu filter
-              isOpen: !doc.data().closeDate
-            }));
-            
-            // Lưu vào cache với WeakMap để tránh rò rỉ bộ nhớ
-            cachedResults.set(snapshotId, trades);
-            
-            // Giới hạn kích thước cache
-            if (cachedResults.size > 5) {
-              const oldestKey = cachedResults.keys().next().value;
-              if (oldestKey) cachedResults.delete(oldestKey);
-            }
-            
-            // Gọi callback với dữ liệu
-            callback(trades);
-          } catch (err) {
-            logError("Error processing snapshot:", err);
-            if (errorCallback) errorCallback(err as Error);
-          }
-        }, 100); // Debounce 100ms
-      });
-    }, 
+    },
     (error) => {
-      logError("Error listening to trades:", error);
+      // Xử lý lỗi từ Firebase
+      logError("Error in trades snapshot listener:", error);
+      
+      // Gửi lỗi tới errorCallback nếu được cung cấp
       if (errorCallback) {
         errorCallback(error);
       }
     }
   );
   
-  // Cải thiện cleanup function để ngăn rò rỉ bộ nhớ
+  // Trả về hàm unsubscribe cải tiến đóng cả listener và đặt flag
   return () => {
-    listenerActive = false;
+    debug("Trades snapshot listener unsubscribed and cleaned up");
     
-    // Tăng version để bỏ qua các callback trễ
+    // Đặt flag không active trước khi unsubscribe để tránh race condition
+    listenerActive = false;
     cacheVersion++;
     
-    // Xóa animationFrame nếu đang có
-    if (animationFrameId !== null) {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = null;
-    }
-    
-    // Xóa timeout nếu đang có
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-      debounceTimeout = null;
-    }
-    
-    // Xóa cache để giải phóng bộ nhớ
-    cachedResults.clear();
-    
-    // Hủy đăng ký listener
+    // Gọi hàm unsubscribe thực tế của Firebase
     unsubscribe();
-    
-    debug("Trades snapshot listener unsubscribed and cleaned up");
   };
 }
 
@@ -544,34 +448,15 @@ function onTradesSnapshot(
  * @returns Mảng tất cả giao dịch
  */
 async function getAllTrades(userId: string) {
-  try {
-    // Tham chiếu đến bộ sưu tập trades của user
-    const tradesRef = collection(db, "users", userId, "trades");
-    
-    // Tạo truy vấn với orderBy
-    const q = query(tradesRef, orderBy("createdAt", "desc"));
-    
-    // Thực hiện truy vấn
-    const querySnapshot = await getDocs(q);
-    
-    // Chuyển đổi dữ liệu
-    const trades = querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        // Đánh dấu các giao dịch đang mở ngay trong map
-        isOpen: !data.closeDate
-      };
-    });
-    
-    debug(`Fetched ${trades.length} total trades for user ${userId}`);
-    
-    return trades;
-  } catch (error) {
-    logError("Error getting all trades:", error);
-    throw error;
-  }
+  debug(`Getting all trades for user ${userId}`);
+  const tradesRef = collection(db, "users", userId, "trades");
+  const q = query(tradesRef);
+  const querySnapshot = await getDocs(q);
+  
+  return querySnapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 }
 
 /**
@@ -587,93 +472,94 @@ async function getPaginatedTrades(
   userId: string, 
   pageSize: number = 10, 
   lastDoc: any = null,
-  sortOption: string = 'newest'
+  sortOption: string = 'newest',
+  filters: Record<string, any> = {}
 ) {
   try {
-    debug(`Getting paginated trades with sort option: ${sortOption}`);
-    
-    // Tham chiếu đến bộ sưu tập trades
+    debug(`Getting paginated trades for user ${userId}, sort: ${sortOption}`);
     const tradesRef = collection(db, "users", userId, "trades");
     
-    // Đếm tổng số giao dịch trước khi truy vấn phân trang (hiệu suất tốt hơn)
-    const countSnapshot = await getCountFromServer(query(tradesRef));
-    const totalCount = countSnapshot.data().count;
+    // Bắt đầu xây dựng truy vấn với bộ lọc nếu có
+    let queryFilters: any[] = [];
     
-    debug(`Total trades count for ${userId}: ${totalCount}`);
+    // Thêm các bộ lọc nếu được cung cấp
+    if (filters.isOpen !== undefined) {
+      queryFilters.push(where("isOpen", "==", filters.isOpen));
+    }
     
-    // Cấu hình query dựa trên sortOption
-    let queryField: string;
-    let queryDirection: 'asc' | 'desc';
+    if (filters.pair) {
+      queryFilters.push(where("pair", "==", filters.pair));
+    }
     
-    // Xác định sortOption
-    switch(sortOption) {
+    if (filters.direction) {
+      queryFilters.push(where("direction", "==", filters.direction));
+    }
+    
+    if (filters.result) {
+      queryFilters.push(where("result", "==", filters.result));
+    }
+    
+    // Xác định thứ tự sắp xếp
+    let sortField = "createdAt";
+    let sortDirection: "asc" | "desc" = "desc";
+    
+    switch (sortOption) {
       case 'oldest':
-        queryField = 'createdAt';
-        queryDirection = 'asc';
+        sortField = "createdAt";
+        sortDirection = "asc";
         break;
       case 'profit':
-        queryField = 'profitLoss';
-        queryDirection = 'desc';
+        sortField = "profitLoss";
+        sortDirection = "desc";
         break;
       case 'loss':
-        queryField = 'profitLoss';
-        queryDirection = 'asc';
+        sortField = "profitLoss";
+        sortDirection = "asc";
         break;
       case 'newest':
       default:
-        queryField = 'createdAt';
-        queryDirection = 'desc';
+        sortField = "createdAt";
+        sortDirection = "desc";
         break;
     }
     
-    // Tạo base query với orderBy
-    let q = query(tradesRef, orderBy(queryField, queryDirection), limit(pageSize));
+    // Đếm tổng số tài liệu cho truy vấn này (áp dụng các bộ lọc nhưng không phân trang)
+    const countQuery = query(tradesRef, ...queryFilters);
+    const countSnapshot = await getCountFromServer(countQuery);
+    const totalCount = countSnapshot.data().count;
     
-    // Nếu có lastDoc, thêm startAfter
+    // Xây dựng truy vấn để lấy dữ liệu với phân trang và sắp xếp
+    let dataQuery;
     if (lastDoc) {
-      try {
-        // Nếu lastDoc chỉ là ID, lấy reference đầy đủ
-        if (typeof lastDoc === 'string' || (lastDoc && lastDoc.id && !lastDoc.exists)) {
-          const docId = typeof lastDoc === 'string' ? lastDoc : lastDoc.id;
-          debug(`Converting ID to document reference: ${docId}`);
-          const docRef = doc(db, "users", userId, "trades", docId);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists()) {
-            q = query(q, startAfter(docSnap));
-          } else {
-            logWarning(`Document reference not found for ID: ${docId}`);
-          }
-        } else if (lastDoc.exists) {
-          // Nếu đã là document reference đầy đủ
-          q = query(q, startAfter(lastDoc));
-        }
-      } catch (err) {
-        logError("Error creating pagination query with lastDoc:", err);
-      }
+      dataQuery = query(
+        tradesRef,
+        ...queryFilters,
+        orderBy(sortField, sortDirection),
+        startAfter(lastDoc),
+        limit(pageSize)
+      );
+    } else {
+      dataQuery = query(
+        tradesRef,
+        ...queryFilters,
+        orderBy(sortField, sortDirection),
+        limit(pageSize)
+      );
     }
     
-    // Thực hiện truy vấn phân trang
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(dataQuery);
     
-    // Xử lý kết quả
-    const trades = querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        isOpen: !data.closeDate
-      };
-    });
+    // Lấy tài liệu cuối cùng cho phân trang tiếp theo
+    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
     
-    // Lấy document cuối cùng cho lần truy vấn tiếp theo
-    const lastVisible = querySnapshot.docs.length > 0 
-      ? querySnapshot.docs[querySnapshot.docs.length - 1]
-      : null;
+    // Chuyển đổi dữ liệu
+    const trades = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
     
-    debug(`Retrieved ${trades.length} trades for page (server-side pagination)`);
+    debug(`Got ${trades.length} trades for page, total count: ${totalCount}`);
     
-    // Trả về kết quả
     return {
       trades,
       lastDoc: lastVisible,
@@ -686,8 +572,8 @@ async function getPaginatedTrades(
 }
 
 async function getTradeById(userId: string, tradeId: string) {
-  const tradeRef = doc(db, "users", userId, "trades", tradeId);
-  const docSnap = await getDoc(tradeRef);
+  const docRef = doc(db, "users", userId, "trades", tradeId);
+  const docSnap = await getDoc(docRef);
   
   if (docSnap.exists()) {
     return {
@@ -699,7 +585,190 @@ async function getTradeById(userId: string, tradeId: string) {
   }
 }
 
-async function updateTrade(userId: string, tradeId: string, tradeData: any) {
+/**
+ * Tối ưu hiệu năng: Cập nhật giao dịch sử dụng batch operations
+ * Đặc biệt hiệu quả khi đóng giao dịch và cần cập nhật số dư tài khoản
+ */
+async function updateTradeWithBatch(userId: string, tradeId: string, tradeData: any) {
+  try {
+    debug(`Using batch update for trade ${tradeId}`);
+    
+    // Khởi tạo batch
+    const batch = writeBatch(db);
+    
+    // Reference đến trade cần cập nhật
+    const tradeRef = doc(db, `users/${userId}/trades/${tradeId}`);
+    
+    // Thêm update vào batch
+    batch.update(tradeRef, tradeData);
+    
+    // Nếu có P/L và đang đóng giao dịch, cập nhật balance trong cùng transaction
+    if ('profitLoss' in tradeData && tradeData.isOpen === false) {
+      debug(`Batch update: Adding balance update for P/L ${tradeData.profitLoss}`);
+      const userRef = doc(db, `users/${userId}`);
+      
+      // Cập nhật balance trong batch sử dụng increment để tránh race condition
+      batch.update(userRef, {
+        currentBalance: increment(tradeData.profitLoss),
+        updatedAt: serverTimestamp()
+      });
+    }
+    
+    // Commit batch - thực hiện tất cả các thay đổi trong một transaction
+    await batch.commit();
+    debug(`Batch commit completed successfully for trade ${tradeId}`);
+    
+    return tradeData;
+  } catch (error) {
+    logError(`Error in batch update for trade ${tradeId}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Xử lý ảnh khi cập nhật giao dịch (tách logic ra function riêng)
+ * Tối ưu hiệu suất bằng cách xử lý ảnh riêng biệt
+ */
+async function processTradeImages(userId: string, tradeId: string, currentTrade: any, tradeData: any) {
+  // Check and delete old images if images are updated or deleted
+  const imageFields = [
+    'entryImage', 
+    'entryImageM15', 
+    'exitImage', 
+    'exitImageM15'
+  ];
+  
+  // Khởi tạo mảng promise để xử lý ảnh song song
+  const imageProcessPromises = [];
+  
+  // Process each image field
+  for (const field of imageFields) {
+    // If the field exists in the updated trade data
+    if (field in tradeData) {
+      const oldImagePath = currentTrade[field];
+      const newImagePath = tradeData[field];
+      
+      // IMPORTANT: Only delete the old image if a new one is actually uploaded
+      // Conditions: old image exists, new image is different, and new image exists (not null)
+      if (oldImagePath && newImagePath && oldImagePath !== newImagePath) {
+        debug(`Field ${field} changed - scheduling deletion of old image`);
+        
+        // Sử dụng setTimeout để tránh blocking main thread
+        const deletePromise = new Promise<void>(resolve => {
+          setTimeout(() => {
+            try {
+              // Process images based on their path type
+              if (oldImagePath.startsWith('/uploads/') || oldImagePath.startsWith('uploads/')) {
+                // Local uploads - used fetch with DELETE
+                fetch(`/api/uploads/delete?path=${encodeURIComponent(oldImagePath)}`, { 
+                  method: 'DELETE' 
+                }).catch(err => {
+                  console.warn(`Could not delete old upload: ${oldImagePath}`, err);
+                });
+              } else if (
+                oldImagePath.includes('firebasestorage.googleapis.com') || 
+                oldImagePath.includes('test-uploads/')
+              ) {
+                // Firebase Storage image - extract path and delete
+                try {
+                  let storagePath = '';
+                  
+                  if (oldImagePath.includes('firebasestorage.googleapis.com')) {
+                    const filename = oldImagePath.split('/').pop()?.split('?')[0];
+                    if (filename) {
+                      storagePath = `test-uploads/${userId}_${tradeId}_${filename}`;
+                    }
+                  } else if (oldImagePath.includes('test-uploads/')) {
+                    storagePath = oldImagePath;
+                  }
+                  
+                  if (storagePath) {
+                    const imageRef = ref(storage, storagePath);
+                    deleteObject(imageRef).catch(err => {
+                      console.warn(`Could not delete old Firebase image at ${storagePath}:`, err);
+                    });
+                  }
+                } catch (firebaseError) {
+                  console.warn(`Error processing old Firebase Storage image: ${oldImagePath}`, firebaseError);
+                }
+              }
+            } catch (imageError) {
+              console.warn(`Error processing old image ${field}:`, imageError);
+            }
+            resolve();
+          }, 100); // Slight delay to prioritize UI updates
+        });
+        
+        imageProcessPromises.push(deletePromise);
+      }
+    }
+  }
+  
+  // Không đợi quá trình xóa ảnh cũ hoàn thành để không làm chậm UI
+  // Quá trình xóa ảnh sẽ diễn ra độc lập trong background
+  return true;
+}
+
+/**
+ * Kiểm tra và tính toán lại P/L và pips nếu cần
+ * Tách thành function riêng để tối ưu code
+ */
+function recalculateTradeResults(currentTrade: any, tradeData: any) {
+  // Check cases that require recalculation of pip and profit/loss
+  const needToRecalculate = (
+    // Case 1: Closing a trade with exit price
+    (tradeData.isOpen === false && tradeData.exitPrice && !currentTrade.exitPrice) ||
+    
+    // Case 2: Changes to exitPrice when editing a closed trade
+    (currentTrade.exitPrice && tradeData.exitPrice && currentTrade.exitPrice !== tradeData.exitPrice) ||
+    
+    // Case 3: Changes to entryPrice
+    (tradeData.entryPrice && currentTrade.entryPrice !== tradeData.entryPrice) ||
+    
+    // Case 4: Changes to lotSize
+    (tradeData.lotSize && currentTrade.lotSize !== tradeData.lotSize)
+  );
+  
+  if (needToRecalculate && tradeData.exitPrice) {
+    debug("Recalculating pips and profit/loss due to price or lotSize changes");
+    
+    // Get necessary parameters, prioritizing new values from tradeData
+    const direction = tradeData.direction || currentTrade.direction;
+    const entryPrice = tradeData.entryPrice || currentTrade.entryPrice;
+    const exitPrice = tradeData.exitPrice;
+    const lotSize = tradeData.lotSize || currentTrade.lotSize;
+    const pair = tradeData.pair || currentTrade.pair;
+    
+    // Tính pip difference và profit/loss
+    const pips = calculatePips(pair, direction, entryPrice, exitPrice);
+    const profitLoss = calculateProfit({
+      pair, direction, entryPrice, exitPrice, lotSize,
+      accountCurrency: "USD" // Mặc định USD
+    });
+    
+    // Round to 2 decimal places and update tradeData 
+    tradeData.pips = parseFloat(pips.toFixed(1));
+    tradeData.profitLoss = parseFloat(profitLoss.toFixed(2));
+    
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Cập nhật giao dịch và tự động tính toán P/L nếu cần
+ * @param userId ID người dùng
+ * @param tradeId ID giao dịch
+ * @param tradeData Dữ liệu cập nhật
+ * @param options Tùy chọn cập nhật
+ */
+async function updateTrade(userId: string, tradeId: string, tradeData: any, options: {
+  skipImageProcessing?: boolean;
+  skipRecalculation?: boolean;
+  skipAchievements?: boolean;
+  useBatch?: boolean;
+} = {}) {
   try {
     const tradeRef = doc(db, "users", userId, "trades", tradeId);
     
@@ -710,182 +779,42 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any) {
     }
     
     const currentTrade = tradeSnapshot.data();
-    debug(`Updating trade ${tradeId}, current data:`, currentTrade);
+    debug(`Updating trade ${tradeId}`);
     
-    // Check and delete old images if images are updated or deleted
-    const imageFields = [
-      'entryImage', 
-      'entryImageM15', 
-      'exitImage', 
-      'exitImageM15'
-    ];
-    
-    // Process each image field
-    for (const field of imageFields) {
-      // If the field exists in the updated trade data
-      if (field in tradeData) {
-        const oldImagePath = currentTrade[field];
-        const newImagePath = tradeData[field];
-        
-        // IMPORTANT: Only delete the old image if a new one is actually uploaded
-        // Conditions: old image exists, new image is different, and new image exists (not null)
-        if (oldImagePath && newImagePath && oldImagePath !== newImagePath) {
-          debug(`Field ${field} changed from "${oldImagePath}" to "${newImagePath}" - will delete old image`);
-          
-          try {
-            // Process images from local upload service
-            if (oldImagePath.startsWith('/uploads/') || oldImagePath.startsWith('uploads/')) {
-              debug(`Deleting old local uploaded image: ${oldImagePath}`);
-              
-              try {
-                // API call to delete image from server
-                const deleteUrl = `/api/uploads/delete?path=${encodeURIComponent(oldImagePath)}`;
-                fetch(deleteUrl, { method: 'DELETE' })
-                  .then(response => {
-                    if (response.ok) {
-                      console.log(`Successfully deleted old server image: ${oldImagePath}`);
-                    } else {
-                      console.warn(`Server returned ${response.status} when deleting old image: ${oldImagePath}`);
-                    }
-                  })
-                  .catch(err => {
-                    console.error(`Error deleting old server image: ${oldImagePath}`, err);
-                  });
-              } catch (serverError) {
-                console.error(`Error making delete request for old server image: ${oldImagePath}`, serverError);
-              }
-            }
-            
-            // Process images from Firebase Storage
-            if (oldImagePath.includes('firebasestorage.googleapis.com') || oldImagePath.includes('test-uploads/')) {
-              console.log(`Deleting old Firebase Storage image: ${oldImagePath}`);
-              
-              try {
-                // If it's a Firebase Storage URL
-                if (oldImagePath.includes('firebasestorage.googleapis.com')) {
-                  // Extract filename from URL
-                  const filename = oldImagePath.split('/').pop()?.split('?')[0];
-                  if (filename) {
-                    console.log(`Extracted filename from Firebase URL: ${filename}`);
-                    
-                    // Delete file from Firebase Storage
-                    try {
-                      // If path can be determined from URL, create a reference and delete
-                      // test-uploads path is commonly used
-                      const storagePath = `test-uploads/${userId}_${tradeId}_${filename}`;
-                      const imageRef = ref(storage, storagePath);
-                      
-                      console.log(`Attempting to delete old image at path: ${storagePath}`);
-                      deleteObject(imageRef)
-                        .then(() => console.log(`Successfully deleted old Firebase image: ${filename}`))
-                        .catch(err => console.warn(`Could not delete old Firebase image at ${storagePath}:`, err));
-                    } catch (deleteStorageError) {
-                      console.error(`Error deleting old Firebase Storage image:`, deleteStorageError);
-                    }
-                  }
-                } 
-                // If it's a direct path to test-uploads
-                else if (oldImagePath.includes('test-uploads/')) {
-                  console.log(`Direct storage path found: ${oldImagePath}`);
-                  const imageRef = ref(storage, oldImagePath);
-                  
-                  try {
-                    await deleteObject(imageRef);
-                    console.log(`Successfully deleted old Firebase image at path: ${oldImagePath}`);
-                  } catch (deleteError) {
-                    console.warn(`Could not delete old Firebase image at ${oldImagePath}:`, deleteError);
-                  }
-                }
-              } catch (firebaseError) {
-                console.error(`Error processing old Firebase Storage image: ${oldImagePath}`, firebaseError);
-              }
-            }
-          } catch (imageError) {
-            console.error(`General error processing old image ${field}:`, imageError);
-            // Continue processing despite error
-          }
-        } else if (field in tradeData) {
-          console.log(`Field ${field} presence but not replacing existing image (oldImage: ${oldImagePath}, newImage: ${newImagePath})`);
-        }
-      }
+    // Xử lý ảnh - có thể bỏ qua để tối ưu hiệu suất
+    if (!options.skipImageProcessing) {
+      // Sử dụng hàm tối ưu đã tách ra
+      processTradeImages(userId, tradeId, currentTrade, tradeData);
     }
     
-    // Check cases that require recalculation of pip and profit/loss
-    const needToRecalculate = (
-      // Case 1: Closing a trade with exit price
-      (tradeData.isOpen === false && tradeData.exitPrice && !currentTrade.exitPrice) ||
-      
-      // Case 2: Changes to exitPrice when editing a closed trade
-      (currentTrade.exitPrice && tradeData.exitPrice && currentTrade.exitPrice !== tradeData.exitPrice) ||
-      
-      // Case 3: Changes to entryPrice
-      (tradeData.entryPrice && currentTrade.entryPrice !== tradeData.entryPrice) ||
-      
-      // Case 4: Changes to lotSize
-      (tradeData.lotSize && currentTrade.lotSize !== tradeData.lotSize)
-    );
-    
-    if (needToRecalculate && tradeData.exitPrice) {
-      console.log("Recalculating pips and profit/loss due to price or lotSize changes");
-      
-      // Get necessary parameters, prioritizing new values from tradeData
-      const direction = tradeData.direction || currentTrade.direction;
-      const entryPrice = tradeData.entryPrice || currentTrade.entryPrice;
-      const exitPrice = tradeData.exitPrice;
-      const lotSize = tradeData.lotSize || currentTrade.lotSize;
-      const pair = tradeData.pair || currentTrade.pair;
-      
-      console.log(`Calculation parameters: direction=${direction}, entry=${entryPrice}, exit=${exitPrice}, lot=${lotSize}, pair=${pair}`);
-      
-      // Sử dụng hàm từ forex-calculator.ts đã import ở đầu file để tính toán pips và profitLoss
-      
-      // Tính pip difference
-      const pips = calculatePips(
-        pair, 
-        direction, 
-        entryPrice, 
-        exitPrice
-      );
-      
-      // Tính profit/loss
-      const profitLoss = calculateProfit({
-        pair,
-        direction,
-        entryPrice,
-        exitPrice,
-        lotSize,
-        accountCurrency: "USD" // Mặc định USD
-      });
-      
-      // Không cần fixExistingTradeValues vì tính toán đã chính xác
-      
-      // Round to 2 decimal places
-      tradeData.pips = parseFloat(pips.toFixed(1));
-      tradeData.profitLoss = parseFloat(profitLoss.toFixed(2));
-      
-      console.log(`Trade recalculated original: pips=${pips.toFixed(1)}, P/L=${profitLoss.toFixed(2)}`);
-      console.log(`Trade recalculated fixed: pips=${tradeData.pips}, P/L=${tradeData.profitLoss}`);
+    // Tính toán lại P/L nếu cần
+    if (!options.skipRecalculation) {
+      recalculateTradeResults(currentTrade, tradeData);
     }
     
     // Thêm updatedAt timestamp
     tradeData.updatedAt = serverTimestamp();
     
-    // Cập nhật lệnh trong Firestore
-    debug(`Updating trade document with data:`, tradeData);
-    await updateDoc(tradeRef, tradeData);
+    // Kiểm tra nếu đây là thao tác đóng giao dịch hoặc yêu cầu dùng batch
+    const isClosingTrade = tradeData.isOpen === false && (currentTrade.isOpen === true || currentTrade.isOpen === undefined);
     
-    // Nếu đóng lệnh, cập nhật số dư tài khoản
-    if (tradeData.isOpen === false) {
-      await updateAccountBalance(userId);
+    if (isClosingTrade || options.useBatch) {
+      // Sử dụng batch cho các hoạt động quan trọng (đóng giao dịch, cập nhật balance)
+      await updateTradeWithBatch(userId, tradeId, tradeData);
+    } else {
+      // Cập nhật thông thường
+      await updateDoc(tradeRef, tradeData);
     }
     
-    // Trigger achievement processing for trade update
-    try {
-      await processTradeTrigger(userId, 'update');
-      debug("Achievement processing triggered for trade update");
-    } catch (achievementError) {
-      // Log but don't fail if achievement processing fails
-      logError("Error processing achievements for trade update:", achievementError);
+    // Cập nhật thành tích nếu không bị bỏ qua 
+    if (!options.skipAchievements) {
+      try {
+        await processTradeTrigger(userId, 'update');
+        debug("Achievement processing triggered for trade update");
+      } catch (achievementError) {
+        // Log but don't fail if achievement processing fails
+        logError("Error processing achievements for trade update:", achievementError);
+      }
     }
     
     return tradeData;
@@ -921,87 +850,51 @@ async function deleteTrade(userId: string, tradeId: string) {
     for (const field of imageFields) {
       if (tradeData[field] && typeof tradeData[field] === 'string') {
         const imagePath = tradeData[field];
-        console.log(`Checking image in field ${field}: ${imagePath}`);
         
         try {
           // Xử lý ảnh từ local upload service
           if (imagePath.startsWith('/uploads/') || imagePath.startsWith('uploads/')) {
-            console.log(`Deleting local uploaded image: ${imagePath}`);
-            
-            try {
-              // API call để xóa ảnh từ server
-              const deleteUrl = `/api/uploads/delete?path=${encodeURIComponent(imagePath)}`;
-              fetch(deleteUrl, { method: 'DELETE' })
-                .then(response => {
-                  if (response.ok) {
-                    console.log(`Successfully deleted server image: ${imagePath}`);
-                  } else {
-                    console.warn(`Server returned ${response.status} when deleting image: ${imagePath}`);
-                  }
-                })
-                .catch(err => {
-                  console.error(`Error deleting server image: ${imagePath}`, err);
-                });
-            } catch (serverError) {
-              console.error(`Error making delete request for server image: ${imagePath}`, serverError);
-            }
+            // API call để xóa ảnh từ server
+            const deleteUrl = `/api/uploads/delete?path=${encodeURIComponent(imagePath)}`;
+            fetch(deleteUrl, { method: 'DELETE' })
+              .catch(err => {
+                console.warn(`Could not delete server image: ${imagePath}`, err);
+              });
           }
           
           // Xử lý ảnh từ Firebase Storage
           if (imagePath.includes('firebasestorage.googleapis.com') || imagePath.includes('test-uploads/')) {
-            console.log(`Deleting Firebase Storage image: ${imagePath}`);
-            
-            try {
-              // Nếu là URL Firebase Storage
-              if (imagePath.includes('firebasestorage.googleapis.com')) {
-                // Lấy tên file từ URL
-                const filename = imagePath.split('/').pop()?.split('?')[0];
-                if (filename) {
-                  console.log(`Extracted filename from Firebase URL: ${filename}`);
-                  
-                  // Xóa file từ Firebase Storage
-                  try {
-                    // Nếu có thể xác định đường dẫn từ URL, tạo một reference và xóa
-                    // Đường dẫn test-uploads thường được sử dụng
-                    const storagePath = `test-uploads/${userId}_${tradeId}_${filename}`;
-                    const imageRef = ref(storage, storagePath);
-                    
-                    console.log(`Attempting to delete image at path: ${storagePath}`);
-                    deleteObject(imageRef)
-                      .then(() => console.log(`Successfully deleted Firebase image: ${filename}`))
-                      .catch(err => console.warn(`Could not delete Firebase image at ${storagePath}:`, err));
-                  } catch (deleteStorageError) {
-                    console.error(`Error deleting Firebase Storage image:`, deleteStorageError);
-                  }
-                }
-              } 
-              // Nếu là đường dẫn trực tiếp đến test-uploads
-              else if (imagePath.includes('test-uploads/')) {
-                console.log(`Direct storage path found: ${imagePath}`);
-                const imageRef = ref(storage, imagePath);
+            // Nếu là URL Firebase Storage
+            if (imagePath.includes('firebasestorage.googleapis.com')) {
+              // Lấy tên file từ URL
+              const filename = imagePath.split('/').pop()?.split('?')[0];
+              if (filename) {
+                // Xóa file từ Firebase Storage
+                const storagePath = `test-uploads/${userId}_${tradeId}_${filename}`;
+                const imageRef = ref(storage, storagePath);
                 
-                try {
-                  await deleteObject(imageRef);
-                  console.log(`Successfully deleted Firebase image at path: ${imagePath}`);
-                } catch (deleteError) {
-                  console.warn(`Could not delete Firebase image at ${imagePath}:`, deleteError);
-                }
+                deleteObject(imageRef).catch(err => {
+                  console.warn(`Could not delete Firebase image at ${storagePath}:`, err);
+                });
               }
-            } catch (firebaseError) {
-              console.error(`Error processing Firebase Storage image: ${imagePath}`, firebaseError);
+            } 
+            // Nếu là đường dẫn trực tiếp đến test-uploads
+            else if (imagePath.includes('test-uploads/')) {
+              const imageRef = ref(storage, imagePath);
+              
+              deleteObject(imageRef).catch(err => {
+                console.warn(`Could not delete Firebase image at ${imagePath}:`, err);
+              });
             }
           }
         } catch (imageError) {
-          console.error(`General error processing image ${field}:`, imageError);
+          console.warn(`Error processing image ${field}:`, imageError);
         }
       }
     }
     
     // Xóa document giao dịch - thực hiện ngay cả khi có lỗi xóa ảnh
-    debug(`Deleting trade document: ${tradeId}`);
     await deleteDoc(tradeRef);
-    
-    debug(`Trade ${tradeId} successfully deleted`);
     
     // Cập nhật số dư tài khoản sau khi xóa giao dịch
     await updateAccountBalance(userId);
@@ -1126,403 +1019,161 @@ async function uploadTradeImage(
       // Cập nhật file với phiên bản đã tối ưu
       file = optimizedFile;
     } catch (optimizeError) {
-      // Log lỗi nhưng vẫn tiếp tục với file gốc
-      logError("Không thể tối ưu hóa ảnh, sẽ sử dụng file gốc:", optimizeError);
+      // Nếu tối ưu hóa thất bại, tiếp tục với file gốc
+      logWarning("Không thể tối ưu hóa ảnh:", optimizeError);
+      debug("Tiếp tục tải lên với file gốc");
     }
     
-    // Giới hạn kích thước 5MB (kiểm tra lại sau khi tối ưu)
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error(`Kích thước file quá lớn (${(file.size/1024/1024).toFixed(2)}MB) ngay cả sau khi tối ưu. Tối đa là 5MB.`);
-    }
-    
-    // Tạo tên file an toàn
+    // Tạo timestamp cho tên file để tránh trùng lặp
     const timestamp = Date.now();
+    // Xử lý tên file để tránh các ký tự không hợp lệ
     const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
     const fileName = `${type}_${timestamp}_${safeFileName}`;
     
     // Tạo đường dẫn lưu trữ tuân theo quy tắc bảo mật Firebase
-    // Sử dụng đường dẫn phân cấp users/{userId}/trades/{tradeId}/{fileName}
-    const storagePath = `users/${userId}/trades/${tradeId}/${fileName}`;
-    debug(`Đường dẫn lưu trữ: ${storagePath}`);
-    
-    // Báo cáo tiến độ ban đầu
-    if (progressCallback) progressCallback(10);
-    
-    // Tạo reference và metadata đơn giản
-    const storageRef = ref(storage, storagePath);
-    const metadata = { 
-      contentType: file.type,
-      customMetadata: {
-        'uploadDate': new Date().toISOString(),
-        'userId': userId,
-        'tradeId': tradeId,
-        'imageType': type
-      }
-    };
-    
-    // Log các thông tin quan trọng
-    debug(`Firebase storage bucket: ${storage.app.options.storageBucket}`);
-    debug(`Bắt đầu upload...`);
-    
-    // Sử dụng uploadBytes thay vì uploadBytesResumable để tránh vấn đề với iframe
-    // Tăng giá trị tiến độ giả lập
-    if (progressCallback) progressCallback(30);
-    
-    try {
-      debug("Đang tải lên với uploadBytes...");
-      if (progressCallback) progressCallback(50);
-      
-      // Kiểm tra đường dẫn theo đúng quy tắc trong storage.rules
-      if (!storagePath.startsWith('users/')) {
-        throw new Error('Đường dẫn không khớp với quy tắc Firebase Storage. Phải bắt đầu với "users/"');
-      }
-      
-      // Kiểm tra format của path theo mẫu users/{userId}/trades/{tradeId}/{fileName}
-      const pathRegex = /^users\/[^\/]+\/trades\/[^\/]+\/.+$/;
-      if (!pathRegex.test(storagePath)) {
-        throw new Error(`Đường dẫn "${storagePath}" không khớp với mẫu yêu cầu "users/{userId}/trades/{tradeId}/{fileName}"`);
-      }
-      
-      // Tải lên với phương thức đơn giản hơn, không có theo dõi tiến trình
-      debug(`Đang tải file lên đường dẫn: ${storagePath}`);
-      const snapshot = await uploadBytes(storageRef, file, metadata);
-      debug(`Upload thành công với snapshot: ${snapshot.metadata.name}`);
-      
-      if (progressCallback) progressCallback(80);
-      
-      // Lấy URL tải xuống
-      const url = await getDownloadURL(snapshot.ref);
-      debug(`Đã lấy được URL: ${url}`);
-      if (progressCallback) progressCallback(100);
-      debug('===== UPLOAD IMAGE: SUCCESS =====');
-      
-      return url;
-    } catch (error: any) {
-      logError(`Lỗi upload:`, error);
-      
-      // Thông tin lỗi chi tiết hơn cho người dùng
-      let errorMessage = "Lỗi không xác định khi tải lên";
-      
-      // Kiểm tra các loại lỗi phổ biến
-      if (error.code) {
-        // Firebase error với code cụ thể
-        switch (error.code) {
-          case 'storage/unauthorized':
-            errorMessage = "Không có quyền truy cập. Kiểm tra đăng nhập và quy tắc Firebase Storage.";
-            logError("Lỗi quyền truy cập Firebase Storage. Check storage.rules và trạng thái đăng nhập.");
-            break;
-          case 'storage/canceled':
-            errorMessage = "Việc tải lên đã bị hủy";
-            break;
-          case 'storage/unknown':
-            errorMessage = "Lỗi Firebase không xác định. Đường dẫn có thể không khớp với rules.";
-            logError("Path đang dùng:", storagePath);
-            logError("Firebase Storage Rules cần được cấu hình cho pattern: users/{userId}/trades/{tradeId}/{fileName}");
-            break;
-          default:
-            errorMessage = `Lỗi Firebase: ${error.message}`;
-        }
-      } else if (error instanceof Error) {
-        // Standard Error object
-        errorMessage = `Lỗi: ${error.message}`;
-      }
-      
-      logError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  } catch (error) {
-    logError(`LỖI UPLOAD ẢNH: `, error);
-    
-    // Đảm bảo luôn trả về Error thay vì một giá trị không xác định
-    if (error instanceof Error) {
-      throw error;
-    } else {
-      throw new Error("Lỗi không xác định khi tải ảnh lên");
-    }
-  }
-}
-
-// PHIÊN BẢN GỐC với uploadBytesResumable - giữ lại để tham khảo
-async function uploadTradeImage_original(
-  userId: string, 
-  tradeId: string, 
-  file: File, 
-  type: 'h4before' | 'm15before' | 'h4after' | 'm15after',
-  progressCallback?: (progress: number) => void
-): Promise<string> {
-  try {
-    // Validate inputs
-    if (!file) throw new Error("File is required");
-    if (!userId) throw new Error("User ID is required");
-    if (!tradeId) tradeId = "temp-" + Date.now(); // ID tạm cho giao dịch mới
-    
-    console.log(`File: ${file.name} (${(file.size/1024).toFixed(2)}KB)`);
-    console.log(`User ID: ${userId}, Trade ID: ${tradeId}`);
-    
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error(`File size too large: ${(file.size/1024/1024).toFixed(2)}MB. Maximum is 5MB.`);
-    }
-    
-    // Create safe filename
-    const timestamp = Date.now();
-    const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-    const fileName = `${type}_${timestamp}_${safeFileName}`;
-    
-    // Firebase storage path (theo định dạng test-uploads để phù hợp với rules)
     const storagePath = `test-uploads/${userId}_${tradeId}_${fileName}`;
-    console.log(`Storage path: ${storagePath}`);
+    debug(`Upload path: ${storagePath}`);
     
-    // Set metadata
-    const metadata = {
-      contentType: file.type,
-      customMetadata: {
-        'userId': userId,
-        'tradeId': tradeId,
-        'uploadDate': new Date().toISOString(),
-        'imageType': type
-      }
-    };
+    // Tạo tham chiếu đến Firebase Storage
+    const storageReference = ref(storage, storagePath);
     
-    // Create storage reference
-    const storageRef = ref(storage, storagePath);
+    if (progressCallback) progressCallback(20); // Đã tối ưu và chuẩn bị xong
     
-    // Upload with progress monitoring
-    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+    // Sử dụng uploadBytesResumable để theo dõi tiến trình
+    const uploadTask = uploadBytesResumable(storageReference, file);
     
-    // Return promise with url
+    // Trả về Promise để chờ upload kết thúc
     return new Promise((resolve, reject) => {
-      uploadTask.on('state_changed',
+      uploadTask.on(
+        'state_changed',
         (snapshot) => {
-          // Progress updates
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log(`Upload progress: ${progress.toFixed(1)}%`);
-          if (progressCallback) progressCallback(progress);
-        },
-        (error: StorageError) => {
-          // Chi tiết lỗi để gỡ lỗi tốt hơn
-          console.error("Upload failed:", error.code, error.message);
+          // Cập nhật tiến trình
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 80) + 20;
           
-          let errorMsg = "Upload failed";
-          
-          // Phân loại các lỗi Firebase Storage phổ biến
-          switch (error.code) {
-            case 'storage/unauthorized':
-              errorMsg = "Không có quyền upload - kiểm tra rules và xác thực";
-              break;
-            case 'storage/canceled':
-              errorMsg = "Upload bị hủy";
-              break;
-            case 'storage/unknown':
-              errorMsg = "Lỗi không xác định - kiểm tra đường dẫn lưu trữ có đúng định dạng và phù hợp với rules không";
-              console.warn("Storage path không hợp lệ hoặc không có quyền cho storage path:", storagePath);
-              break;
-            default:
-              errorMsg = `Lỗi upload: ${error.message}`;
+          if (progressCallback) {
+            progressCallback(progress);
           }
           
-          reject(new Error(errorMsg));
+          // Log trạng thái, nhưng không quá thường xuyên
+          if (progress % 20 === 0 || progress === 100) {
+            debug(`Upload progress: ${progress}%`);
+          }
+        },
+        (error) => {
+          logError("Error uploading file:", error);
+          reject(error); 
         },
         async () => {
-          // Complete handler
           try {
+            // Lấy download URL khi đã upload xong
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            console.log(`Upload complete. URL: ${downloadURL.substring(0, 50)}...`);
+            debug(`Upload complete, download URL available: ${downloadURL.slice(0, 50)}...`);
+            
+            if (progressCallback) progressCallback(100);
             resolve(downloadURL);
           } catch (urlError) {
-            console.error("Failed to get download URL:", urlError);
-            reject(new Error("Upload succeeded but failed to get download URL"));
+            logError("Error getting download URL:", urlError);
+            reject(urlError);
           }
         }
       );
     });
   } catch (error) {
-    console.error("Image upload error:", error);
+    logError("Error in uploadTradeImage:", error);
     throw error;
   }
 }
 
-// Function to delete a trade image
-async function deleteTradeImage(
-  userId: string,
-  tradeId: string,
-  fileOrType: string
-): Promise<boolean> {
+// Function to delete image from storage
+async function deleteTradeImage(path: string): Promise<boolean> {
   try {
-    // Khai báo biến storagePath
-    let storagePath = '';
-
-    // Kiểm tra xem URL có phải là loại không được hỗ trợ không
-    if (fileOrType.includes('cloudinary.com')) {
-      debug(`URL không được hỗ trợ (legacy): ${fileOrType}`);
-      debug('Bỏ qua lệnh xóa cho loại URL không hỗ trợ');
-      // Trả về false vì không thể xử lý đối với loại URL này
-      return false;
+    if (!path) return false;
+    
+    // If the path is a URL, extract the file path
+    let storagePath = path;
+    
+    // Handle firebase storage URLs
+    if (path.includes('firebasestorage.googleapis.com')) {
+      // Extract file name from the URL
+      const fileName = path.split('/').pop()?.split('?')[0];
+      if (!fileName) return false;
+      
+      // Assume storage path based on file name
+      storagePath = `test-uploads/${fileName}`;
     }
     
-    // Trường hợp là URL đầy đủ từ Firebase Storage
-    if (fileOrType.startsWith('https://firebasestorage.googleapis.com')) {
-      debug(`Đang xử lý URL Firebase: ${fileOrType}`);
-      
-      // Lấy tên file từ URL
-      const fileNameWithQuery = fileOrType.split('/').pop() || '';
-      const fileName = fileNameWithQuery.split('?')[0];
-      
-      if (!fileName) {
-        throw new Error("Không thể trích xuất tên file từ URL");
-      }
-      
-      // Tạo đường dẫn đầy đủ dựa trên quy ước
-      storagePath = `users/${userId}/trades/${tradeId}/${fileName}`;
-    }
-    // Trường hợp đường dẫn thư mục của Firebase Storage
-    else if (fileOrType.startsWith('users/')) {
-      storagePath = fileOrType;
-    }
-    // Trường hợp loại ảnh UI (h4chart, m15chart, ...)
-    else if (['h4chart', 'm15chart', 'h4exit', 'm15exit'].includes(fileOrType)) {
-      // Ánh xạ từ loại UI sang loại Firebase
-      const typeMap: Record<string, string> = {
-        'h4chart': 'h4before',
-        'm15chart': 'm15before',
-        'h4exit': 'h4after',
-        'm15exit': 'm15after'
-      };
-      
-      const firebaseType = typeMap[fileOrType];
-      if (!firebaseType) {
-        throw new Error(`Loại ảnh không hợp lệ: ${fileOrType}`);
-      }
-      
-      // Đường dẫn đầy đủ theo mẫu
-      storagePath = `users/${userId}/trades/${tradeId}/${firebaseType}_*`;
-      
-      // CẢNH BÁO: Đây là quá trình không hiệu quả, vì không thể dùng wildcard
-      // Trong thực tế, nên lưu trữ đường dẫn đầy đủ của ảnh trong document giao dịch
-      
-      debug(`Đang tìm ảnh với đường dẫn: ${storagePath}`);
-      
-      // QUAN TRỌNG: Không thể tìm kiếm với wildcard trong Firebase Storage
-      // Khuyến nghị lưu URL ảnh trong document giao dịch
-      
-      logWarning("Phương thức xóa theo loại ảnh chưa được triển khai. Cần lưu URL ảnh trong document giao dịch.");
-      throw new Error("Phương thức xóa theo loại ảnh chưa được triển khai. Cần lưu URL ảnh trong document giao dịch.");
-    }
-    // Trường hợp tên file trực tiếp
-    else {
-      storagePath = `users/${userId}/trades/${tradeId}/${fileOrType}`;
-    }
-    
-    debug(`Đang xóa file: ${storagePath}`);
-    
-    // Tạo reference và xóa file
+    // Create reference to storage object
     const imageRef = ref(storage, storagePath);
+    
+    // Delete the file
     await deleteObject(imageRef);
-    
     return true;
-  } catch (storageError: any) {
-    logError(`Lỗi xóa file: ${storageError.code} - ${storageError.message}`);
-    
-    // Trả về false nếu xóa thất bại, nhưng không throw lỗi
-    // Điều này giúp quá trình xóa giao dịch vẫn tiếp tục ngay cả khi không xóa được ảnh
+  } catch (error) {
+    logError("Error deleting image:", error);
     return false;
   }
 }
 
-// Cập nhật số dư tài khoản dựa trên tất cả giao dịch đã đóng
 async function updateAccountBalance(userId: string) {
   try {
-    // Lấy thông tin người dùng để biết số dư ban đầu
+    debug(`Updating account balance for user ${userId}`);
+    
+    // Get the user's data for initial balance
     const userDoc = await getDoc(doc(db, "users", userId));
     if (!userDoc.exists()) {
-      logError(`User document not found for ID: ${userId}`);
-      return;
+      throw new Error("User not found");
     }
     
-    // Lấy số dư ban đầu từ document người dùng
     const userData = userDoc.data();
-    const initialBalance = userData.initialBalance || DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE; // Mặc định nếu không có
+    const initialBalance = userData.initialBalance || DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE;
     
-    // Lấy tất cả giao dịch đã đóng
+    // Get all trades to calculate current balance
     const tradesRef = collection(db, "users", userId, "trades");
-    const q = query(tradesRef, where("isOpen", "==", false));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(tradesRef);
     
-    // Kiểm tra xem có giao dịch đã đóng nào không
-    const closedTrades = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-    
-    // Nếu không có giao dịch đã đóng, giữ nguyên số dư ban đầu
-    if (closedTrades.length === 0) {
-      // Nếu không có giao dịch, cập nhật currentBalance = initialBalance
-      await updateDoc(doc(db, "users", userId), {
-        currentBalance: initialBalance,
-        updatedAt: serverTimestamp()
-      });
-      
-      debug(`No closed trades found. Set balance to initial: ${initialBalance}`);
-      return initialBalance;
-    }
-    
-    // Tính tổng lợi nhuận/lỗ từ tất cả giao dịch đã đóng
-    let totalProfitLoss = 0;
-    
-    for (const trade of closedTrades) {
-      // Kiểm tra kỹ lưỡng giá trị profitLoss
-      if (!trade || typeof trade !== 'object') continue;
-      
-      // Đảm bảo trade có trường profitLoss
-      if (!('profitLoss' in trade)) continue;
-      
-      const profitLoss = trade.profitLoss;
-      
-      if (profitLoss !== undefined && profitLoss !== null) {
-        // Chuyển đổi sang số nếu là chuỗi
-        const profitLossNumber = typeof profitLoss === 'string' 
-          ? parseFloat(profitLoss) 
-          : Number(profitLoss);
-          
-        // Chỉ cộng dồn nếu là số hợp lệ
-        if (!isNaN(profitLossNumber) && isFinite(profitLossNumber)) {
-          totalProfitLoss += profitLossNumber;
-        } else {
-          logWarning(`Invalid profitLoss value in trade ${trade.id}: ${profitLoss}`);
-        }
+    // Calculate total profit/loss from closed trades
+    let totalPL = 0;
+    querySnapshot.forEach((doc) => {
+      const trade = doc.data();
+      // Only count closed trades with profitLoss field
+      if (trade.isOpen === false && trade.profitLoss !== undefined) {
+        totalPL += trade.profitLoss;
       }
-    }
+    });
     
-    // Áp dụng quy tắc từ balance-calculation-rules.ts
-    // Current Balance = Initial Balance + Tổng P&L của tất cả giao dịch đã đóng
-    const newBalance = initialBalance + totalProfitLoss;
+    // Calculate current balance
+    const currentBalance = initialBalance + totalPL;
     
-    // Cập nhật document người dùng với số dư mới
+    // Update user document with new balance
     await updateDoc(doc(db, "users", userId), {
-      currentBalance: newBalance,
+      currentBalance,
       updatedAt: serverTimestamp()
     });
     
-    debug(`Updated account balance: ${initialBalance} + ${totalProfitLoss} = ${newBalance}`);
+    debug(`Account balance updated: initial=${initialBalance}, totalPL=${totalPL}, current=${currentBalance}`);
     
-    return newBalance;
+    return {
+      initialBalance,
+      totalPL,
+      currentBalance
+    };
   } catch (error) {
     logError("Error updating account balance:", error);
     throw error;
   }
 }
 
-// Trading Strategy functions
+// Strategy functions
 async function getStrategies(userId: string): Promise<Array<TradingStrategy & { id: string }>> {
   try {
+    debug(`Getting strategies for user ${userId}`);
     const strategiesRef = collection(db, "users", userId, "strategies");
-    const q = query(strategiesRef, orderBy("createdAt", "desc"));
-    const querySnapshot = await getDocs(q);
+    const querySnapshot = await getDocs(strategiesRef);
     
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
-    } as TradingStrategy & { id: string }));
+      ...doc.data() as TradingStrategy
+    }));
   } catch (error) {
     logError("Error getting strategies:", error);
     throw error;
@@ -1543,156 +1194,77 @@ async function getStrategies(userId: string): Promise<Array<TradingStrategy & { 
  * @returns Hàm unsubscribe
  */
 function onStrategiesSnapshot(userId: string, callback: (strategies: any[]) => void) {
-  if (!userId) return () => {}; // Return noop function if userId is not provided
+  if (!userId) return () => {};
   
-  // Sử dụng tham chiếu bộ sưu tập
+  // Tham chiếu đến collection strategies
   const strategiesRef = collection(db, "users", userId, "strategies");
-  const q = query(strategiesRef, orderBy("createdAt", "desc"));
   
-  // Biến version theo dõi trạng thái listener
-  let cacheVersion = 0;
-  const currentCacheVersion = cacheVersion;
+  // Flag để theo dõi trạng thái snapshot
+  let isActive = true;
   
-  // Biến debounce để giảm số lần cập nhật
-  let debounceTimeout: NodeJS.Timeout | null = null;
-  
-  // Đăng ký listener với optimization options
+  // Đăng ký lắng nghe các thay đổi trên collection strategies
   const unsubscribe = onSnapshot(
-    q, 
-    { includeMetadataChanges: false }, // Chỉ nhận khi có thay đổi thực sự
+    strategiesRef,
     (snapshot) => {
-      // Nếu phiên bản cache đã thay đổi, bỏ qua callback này
-      if (currentCacheVersion !== cacheVersion) return;
+      // Nếu listener không còn active, bỏ qua
+      if (!isActive) return;
       
-      // Xóa timeout trước nếu có
-      if (debounceTimeout) clearTimeout(debounceTimeout);
-      
-      // Kỹ thuật debounce để giảm thiểu re-render
-      debounceTimeout = setTimeout(() => {
+      try {
+        // Map data và gọi callback
         const strategies = snapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
         
-        // Gọi callback với dữ liệu
         callback(strategies);
-      }, 100); // Debounce 100ms
-    }, 
+      } catch (error) {
+        logError("Error in strategies snapshot callback:", error);
+      }
+    },
     (error) => {
-      logError("Error listening to strategies:", error);
+      logError("Error in strategies snapshot:", error);
     }
   );
   
-  // Cải thiện cleanup function
+  // Trả về hàm để ngừng lắng nghe
   return () => {
-    // Tăng version để bỏ qua các callback trễ
-    cacheVersion++;
-    
-    // Xóa timeout nếu đang có
-    if (debounceTimeout) {
-      clearTimeout(debounceTimeout);
-    }
-    
-    // Hủy đăng ký listener
+    isActive = false;
     unsubscribe();
   };
 }
 
 async function getStrategyById(userId: string, strategyId: string) {
   try {
-    const strategyRef = doc(db, "users", userId, "strategies", strategyId);
-    const docSnap = await getDoc(strategyRef);
+    const docRef = doc(db, "users", userId, "strategies", strategyId);
+    const docSnap = await getDoc(docRef);
     
-    if (docSnap.exists()) {
-      return {
-        id: docSnap.id,
-        ...docSnap.data()
-      };
-    } else {
+    if (!docSnap.exists()) {
       throw new Error("Strategy not found");
     }
+    
+    return {
+      id: docSnap.id,
+      ...docSnap.data()
+    };
   } catch (error) {
-    logError("Error getting strategy:", error);
+    logError("Error getting strategy by ID:", error);
     throw error;
   }
 }
 
 async function addStrategy(userId: string, strategyData: any) {
   try {
-    debug("Adding new strategy to Firestore", { userId, strategyData });
     const strategiesRef = collection(db, "users", userId, "strategies");
     
-    // Xử lý dữ liệu để đảm bảo tính hợp lệ cho Firestore
-    // Chỉ giữ lại các trường cần thiết và đưa về định dạng đúng
-    const processCondition = (condition: any) => {
-      if (!condition || typeof condition !== 'object') return null;
-      
-      return {
-        id: condition.id || "",
-        label: condition.label || "",
-        order: typeof condition.order === 'number' ? condition.order : 0,
-        indicator: condition.indicator || null,
-        timeframe: condition.timeframe || null,
-        expectedValue: condition.expectedValue || null,
-        description: condition.description || null
-      };
-    };
-    
-    // Xử lý mảng các điều kiện, loại bỏ giá trị undefined
-    const processConditionsArray = (conditionsArray: any[]) => {
-      if (!Array.isArray(conditionsArray)) return [];
-      
-      return conditionsArray
-        .filter(item => item && typeof item === 'object')
-        .map(processCondition)
-        .filter(Boolean); // Loại bỏ các giá trị null
-    };
-    
-    // Tạo dữ liệu sạch cho Firestore
-    const cleanedStrategyData = {
-      name: strategyData.name || "",
-      description: strategyData.description || "",
-      
-      // Xử lý mảng các điều kiện
-      rules: processConditionsArray(strategyData.rules),
-      entryConditions: processConditionsArray(strategyData.entryConditions),
-      exitConditions: processConditionsArray(strategyData.exitConditions),
-      
-      // Các trường còn lại
-      timeframes: Array.isArray(strategyData.timeframes) ? 
-        strategyData.timeframes.filter(Boolean).map(String) : [],
-      riskRewardRatio: typeof strategyData.riskRewardRatio === 'number' ? 
-        strategyData.riskRewardRatio : 2,
-      notes: strategyData.notes || "",
-      isDefault: strategyData.isDefault === true,
-      
-      // Xử lý các trường cũ, tương thích ngược
-      rulesText: Array.isArray(strategyData.rulesText) ? 
-        strategyData.rulesText.filter(String) : [],
-      entryConditionsText: Array.isArray(strategyData.entryConditionsText) ? 
-        strategyData.entryConditionsText.filter(String) : [],
-      exitConditionsText: Array.isArray(strategyData.exitConditionsText) ? 
-        strategyData.exitConditionsText.filter(String) : []
-    };
-    
-    // Thêm các trường mặc định
-    const strategyWithDefaults = {
-      ...cleanedStrategyData,
-      userId,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    };
-    
-    debug("Prepared data for Firestore:", strategyWithDefaults);
-    
     // Add document to Firestore
-    const docRef = await addDoc(strategiesRef, strategyWithDefaults);
+    const docRef = await addDoc(strategiesRef, {
+      ...strategyData,
+      createdAt: serverTimestamp(),
+    });
     
-    debug("Strategy added successfully with ID:", docRef.id);
-    
-    // Return an object with id for easier access
     return {
-      id: docRef.id
+      id: docRef.id,
+      ...strategyData
     };
   } catch (error) {
     logError("Error adding strategy:", error);
@@ -1702,76 +1274,16 @@ async function addStrategy(userId: string, strategyData: any) {
 
 async function updateStrategy(userId: string, strategyId: string, strategyData: any) {
   try {
-    debug("Updating strategy with ID:", strategyId);
     const strategyRef = doc(db, "users", userId, "strategies", strategyId);
     
-    // Xử lý dữ liệu để đảm bảo tính hợp lệ cho Firestore - sử dụng cùng logic như addStrategy
-    const processCondition = (condition: any) => {
-      if (!condition || typeof condition !== 'object') return null;
-      
-      return {
-        id: condition.id || "",
-        label: condition.label || "",
-        order: typeof condition.order === 'number' ? condition.order : 0,
-        indicator: condition.indicator || null,
-        timeframe: condition.timeframe || null,
-        expectedValue: condition.expectedValue || null,
-        description: condition.description || null
-      };
-    };
+    // Add last updated timestamp
+    strategyData.updatedAt = serverTimestamp();
     
-    // Xử lý mảng các điều kiện, loại bỏ giá trị undefined
-    const processConditionsArray = (conditionsArray: any[]) => {
-      if (!Array.isArray(conditionsArray)) return [];
-      
-      return conditionsArray
-        .filter(item => item && typeof item === 'object')
-        .map(processCondition)
-        .filter(Boolean); // Loại bỏ các giá trị null
-    };
-    
-    // Tạo dữ liệu sạch cho Firestore
-    const cleanedStrategyData = {
-      name: strategyData.name || "",
-      description: strategyData.description || "",
-      
-      // Xử lý mảng các điều kiện
-      rules: processConditionsArray(strategyData.rules),
-      entryConditions: processConditionsArray(strategyData.entryConditions),
-      exitConditions: processConditionsArray(strategyData.exitConditions),
-      
-      // Các trường còn lại
-      timeframes: Array.isArray(strategyData.timeframes) ? 
-        strategyData.timeframes.filter(Boolean).map(String) : [],
-      riskRewardRatio: typeof strategyData.riskRewardRatio === 'number' ? 
-        strategyData.riskRewardRatio : 2,
-      notes: strategyData.notes || "",
-      isDefault: strategyData.isDefault === true,
-      
-      // Xử lý các trường cũ, tương thích ngược
-      rulesText: Array.isArray(strategyData.rulesText) ? 
-        strategyData.rulesText.filter(String) : [],
-      entryConditionsText: Array.isArray(strategyData.entryConditionsText) ? 
-        strategyData.entryConditionsText.filter(String) : [],
-      exitConditionsText: Array.isArray(strategyData.exitConditionsText) ? 
-        strategyData.exitConditionsText.filter(String) : []
-    };
-    
-    // Add updatedAt timestamp
-    const updatedData = {
-      ...cleanedStrategyData,
-      updatedAt: serverTimestamp()
-    };
-    
-    debug("Prepared data for Firestore update:", updatedData);
-    
-    await updateDoc(strategyRef, updatedData);
-    
-    debug(`Strategy ${strategyId} updated successfully`);
+    await updateDoc(strategyRef, strategyData);
     
     return {
       id: strategyId,
-      ...updatedData
+      ...strategyData
     };
   } catch (error) {
     logError("Error updating strategy:", error);
@@ -1782,18 +1294,7 @@ async function updateStrategy(userId: string, strategyId: string, strategyData: 
 async function deleteStrategy(userId: string, strategyId: string) {
   try {
     const strategyRef = doc(db, "users", userId, "strategies", strategyId);
-    
-    // Check if strategy exists
-    const strategySnap = await getDoc(strategyRef);
-    if (!strategySnap.exists()) {
-      throw new Error("Strategy not found");
-    }
-    
-    // Delete the strategy
     await deleteDoc(strategyRef);
-    
-    debug(`Strategy ${strategyId} deleted successfully`);
-    
     return true;
   } catch (error) {
     logError("Error deleting strategy:", error);
@@ -1803,261 +1304,60 @@ async function deleteStrategy(userId: string, strategyId: string) {
 
 async function createDefaultStrategiesIfNeeded(userId: string) {
   try {
-    // Check if user already has strategies
-    const existingStrategies = await getStrategies(userId);
+    const strategiesRef = collection(db, "users", userId, "strategies");
+    const snapshot = await getDocs(strategiesRef);
     
-    if (existingStrategies.length === 0) {
-      debug("No strategies found, creating default strategies for user:", userId);
+    // Only create default strategies if user has none
+    if (snapshot.empty) {
+      debug("Creating default strategies for new user");
       
-      // Default strategies
       const defaultStrategies = [
         {
-          name: "Breakout",
-          description: "Trading price breakouts from significant levels",
-          // Add structured rules with proper format
-          rules: [
-            {
-              id: "breakout-rule-1",
-              label: "Wait for price to approach a key level",
-              order: 0
-            },
-            {
-              id: "breakout-rule-2",
-              label: "Confirm breakout with increased volume",
-              order: 1
-            },
-            {
-              id: "breakout-rule-3",
-              label: "Enter after a retest of the level",
-              order: 2
-            }
-          ],
-          // Add structured entry conditions
-          entryConditions: [
-            {
-              id: "breakout-entry-1",
-              label: "Price closes beyond key level",
-              order: 0
-            },
-            {
-              id: "breakout-entry-2",
-              label: "Volume increases on breakout",
-              order: 1
-            },
-            {
-              id: "breakout-entry-3",
-              label: "Momentum in breakout direction",
-              order: 2
-            }
-          ],
-          // Add structured exit conditions
-          exitConditions: [
-            {
-              id: "breakout-exit-1",
-              label: "Price reaches next significant level",
-              order: 0
-            },
-            {
-              id: "breakout-exit-2",
-              label: "Price action shows reversal signs",
-              order: 1
-            },
-            {
-              id: "breakout-exit-3",
-              label: "Stop loss at the opposite side of the breakout level",
-              order: 2
-            }
-          ],
-          // Legacy fields for backward compatibility
-          rulesText: [
-            "Wait for price to approach a key level",
-            "Confirm breakout with increased volume",
-            "Enter after a retest of the level"
-          ],
-          entryConditionsText: [
-            "Price closes beyond key level",
-            "Volume increases on breakout",
-            "Momentum in breakout direction"
-          ],
-          exitConditionsText: [
-            "Price reaches next significant level",
-            "Price action shows reversal signs",
-            "Stop loss at the opposite side of the breakout level"
-          ],
-          timeframes: ["H4", "D1"],
-          riskRewardRatio: 2,
-          isDefault: true
-        },
-        {
-          name: "Support/Resistance",
-          description: "Trading bounces from key support and resistance levels",
-          // Add structured rules
-          rules: [
-            {
-              id: "sr-rule-1",
-              label: "Identify significant levels on higher timeframes",
-              order: 0
-            },
-            {
-              id: "sr-rule-2",
-              label: "Wait for price reaction at the level",
-              order: 1
-            },
-            {
-              id: "sr-rule-3",
-              label: "Look for confirmation patterns",
-              order: 2
-            }
-          ],
-          // Add structured entry conditions
-          entryConditions: [
-            {
-              id: "sr-entry-1",
-              label: "Price approaches level with decreasing momentum",
-              order: 0
-            },
-            {
-              id: "sr-entry-2",
-              label: "Confirmation candle pattern forms at the level",
-              order: 1
-            },
-            {
-              id: "sr-entry-3",
-              label: "Entry after confirmation candle closes",
-              order: 2
-            }
-          ],
-          // Add structured exit conditions
-          exitConditions: [
-            {
-              id: "sr-exit-1",
-              label: "Price reaches the next level in the direction of the trade",
-              order: 0
-            },
-            {
-              id: "sr-exit-2",
-              label: "Price breaks through the entry level",
-              order: 1
-            },
-            {
-              id: "sr-exit-3",
-              label: "Stop loss beyond the level with some buffer",
-              order: 2
-            }
-          ],
-          // Legacy fields for backward compatibility
-          rulesText: [
-            "Identify significant levels on higher timeframes",
-            "Wait for price reaction at the level",
-            "Look for confirmation patterns"
-          ],
-          entryConditionsText: [
-            "Price approaches level with decreasing momentum",
-            "Confirmation candle pattern forms at the level",
-            "Entry after confirmation candle closes"
-          ],
-          exitConditionsText: [
-            "Price reaches the next level in the direction of the trade",
-            "Price breaks through the entry level",
-            "Stop loss beyond the level with some buffer"
-          ],
-          timeframes: ["H1", "H4"],
-          riskRewardRatio: 1.5,
-          isDefault: true
-        },
-        {
           name: "Trend Following",
-          description: "Trading in the direction of established trends",
-          // Add structured rules
-          rules: [
-            {
-              id: "trend-rule-1",
-              label: "Identify trend direction on higher timeframes",
-              order: 0
-            },
-            {
-              id: "trend-rule-2",
-              label: "Look for pullbacks to value areas",
-              order: 1
-            },
-            {
-              id: "trend-rule-3",
-              label: "Enter in trend direction after pullback ends",
-              order: 2
-            }
-          ],
-          // Add structured entry conditions
-          entryConditions: [
-            {
-              id: "trend-entry-1",
-              label: "Price pulls back to moving average or trend line",
-              order: 0
-            },
-            {
-              id: "trend-entry-2",
-              label: "Lower timeframe shows reversal in trend direction",
-              order: 1
-            },
-            {
-              id: "trend-entry-3",
-              label: "Momentum indicators show oversold/overbought condition ending",
-              order: 2
-            }
-          ],
-          // Add structured exit conditions
-          exitConditions: [
-            {
-              id: "trend-exit-1",
-              label: "Price shows signs of trend exhaustion",
-              order: 0
-            },
-            {
-              id: "trend-exit-2",
-              label: "Target reached based on previous swing points",
-              order: 1
-            },
-            {
-              id: "trend-exit-3",
-              label: "Stop loss below/above recent swing low/high",
-              order: 2
-            }
-          ],
-          // Legacy fields for backward compatibility
-          rulesText: [
-            "Identify trend direction on higher timeframes",
-            "Look for pullbacks to value areas",
-            "Enter in trend direction after pullback ends"
-          ],
-          entryConditionsText: [
-            "Price pulls back to moving average or trend line",
-            "Lower timeframe shows reversal in trend direction",
-            "Momentum indicators show oversold/overbought condition ending"
-          ],
-          exitConditionsText: [
-            "Price shows signs of trend exhaustion",
-            "Target reached based on previous swing points",
-            "Stop loss below/above recent swing low/high"
-          ],
-          timeframes: ["H1", "H4", "D1"],
-          riskRewardRatio: 2.5,
-          isDefault: true
+          description: "Following the trend with confirmation from multiple timeframes.",
+          rules: "Wait for a clear trend, confirm with indicators, enter on pullbacks.",
+          indicators: ["Moving Average", "RSI", "MACD"],
+          pairs: ["EURUSD", "GBPUSD", "USDJPY"],
+          timeframes: ["H4", "D1"]
+        },
+        {
+          name: "Breakout",
+          description: "Trading breakouts from key levels or patterns.",
+          rules: "Identify strong support/resistance, wait for breakout with increased volume.",
+          indicators: ["Support/Resistance", "Volume"],
+          pairs: ["XAUUSD", "GBPJPY", "USDCAD"],
+          timeframes: ["H1", "H4"]
+        },
+        {
+          name: "Price Action",
+          description: "Pure price action without indicators.",
+          rules: "Look for candlestick patterns, pin bars, engulfing patterns at key levels.",
+          indicators: ["None"],
+          pairs: ["All major pairs"],
+          timeframes: ["Any"]
         }
       ];
       
-      // Add default strategies to user's account
-      for (const strategy of defaultStrategies) {
-        await addStrategy(userId, strategy);
-      }
+      // Create a batch to add all strategies at once
+      const batch = writeBatch(db);
       
+      defaultStrategies.forEach(strategy => {
+        const strategyRef = doc(collection(db, "users", userId, "strategies"));
+        batch.set(strategyRef, {
+          ...strategy,
+          createdAt: serverTimestamp(),
+          isDefault: true
+        });
+      });
+      
+      await batch.commit();
       debug("Default strategies created successfully");
-      return true;
-    } else {
-      debug("User already has strategies, skipping default creation");
-      return false;
     }
+    
+    return true;
   } catch (error) {
     logError("Error creating default strategies:", error);
-    throw error;
+    return false;
   }
 }
 
@@ -2068,31 +1368,42 @@ async function createDefaultStrategiesIfNeeded(userId: string) {
  */
 async function linkAccountWithGoogle() {
   try {
-    // Kiểm tra xem đã đăng nhập chưa
-    if (!auth.currentUser) {
-      throw new Error("Bạn phải đăng nhập để liên kết tài khoản");
+    // Lazy loading - Chỉ load GoogleAuthProvider khi cần
+    const { GoogleAuthProvider, linkWithPopup } = await import("firebase/auth");
+    
+    // Đảm bảo người dùng đã đăng nhập
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("Bạn cần đăng nhập trước khi liên kết tài khoản");
     }
     
-    const { GoogleAuthProvider, linkWithPopup } = await import("firebase/auth");
+    // Tạo provider Google
     const provider = new GoogleAuthProvider();
     
-    // Thực hiện liên kết
-    const result = await linkWithPopup(auth.currentUser, provider);
-    debug(`Đã liên kết tài khoản với Google thành công: ${result.user.email}`);
+    // Liên kết với Google
+    const result = await linkWithPopup(user, provider);
     
-    // Cập nhật thông tin người dùng trong Firestore nếu cần
-    const userRef = doc(db, "users", auth.currentUser.uid);
+    // Cập nhật thông tin trong Firestore nếu cần
+    const userRef = doc(db, "users", user.uid);
     await updateDoc(userRef, {
-      linkedProviders: [
-        "google",
-        ...(await getLinkedProviders())
-      ],
-      lastUpdated: serverTimestamp()
+      updatedAt: serverTimestamp(),
+      linkedProviders: {
+        google: true
+      }
     });
     
     return result;
-  } catch (error) {
-    logError("Lỗi khi liên kết tài khoản với Google:", error);
+  } catch (error: any) {
+    // Xử lý trường hợp tài khoản đã tồn tại
+    if (error.code === "auth/credential-already-in-use" || 
+        error.code === "auth/email-already-in-use") {
+      throw new Error(
+        "Tài khoản Google này đã được liên kết với một tài khoản khác. Vui lòng sử dụng tài khoản Google khác."
+      );
+    }
+    
+    // Xử lý lỗi chung
+    logError("Error linking account with Google:", error);
     throw error;
   }
 }
@@ -2103,13 +1414,26 @@ async function linkAccountWithGoogle() {
  * @returns Tên hiển thị của nhà cung cấp (e.g., 'Google')
  */
 function getProviderName(providerId: string): string {
-  if (providerId === 'google.com') return 'Google';
-  if (providerId === 'facebook.com') return 'Facebook';
-  if (providerId === 'github.com') return 'GitHub';
-  if (providerId === 'twitter.com') return 'Twitter';
-  if (providerId === 'apple.com') return 'Apple';
-  if (providerId === 'password') return 'Email/Mật khẩu';
-  return providerId;
+  switch (providerId) {
+    case 'google.com':
+      return 'Google';
+    case 'facebook.com':
+      return 'Facebook';
+    case 'twitter.com':
+      return 'Twitter';
+    case 'github.com':
+      return 'GitHub';
+    case 'microsoft.com':
+      return 'Microsoft';
+    case 'apple.com':
+      return 'Apple';
+    case 'password':
+      return 'Email/Mật khẩu';
+    case 'phone':
+      return 'Số điện thoại';
+    default:
+      return providerId;
+  }
 }
 
 /**
@@ -2117,18 +1441,17 @@ function getProviderName(providerId: string): string {
  */
 async function getLinkedProviders(): Promise<string[]> {
   try {
-    if (!auth.currentUser) return [];
+    const user = auth.currentUser;
+    if (!user) {
+      return [];
+    }
     
-    // Danh sách providers được lấy từ providerId trong providerData
-    const providers = auth.currentUser.providerData.map(
-      provider => provider.providerId.replace('.com', '')
-    );
+    // Lấy danh sách các provider từ user
+    const providerData = user.providerData.map(provider => provider.providerId);
     
-    // Chuyển đổi Set thành mảng để tránh lỗi TypeScript
-    const uniqueProviders = Array.from(new Set(providers));
-    return uniqueProviders;
+    return providerData;
   } catch (error) {
-    logError("Lỗi khi lấy danh sách nhà cung cấp đã liên kết:", error);
+    logError("Error getting linked providers:", error);
     return [];
   }
 }
@@ -2140,66 +1463,87 @@ async function getLinkedProviders(): Promise<string[]> {
  */
 async function unlinkProvider(providerId: string) {
   try {
-    if (!auth.currentUser) {
-      throw new Error("Bạn phải đăng nhập để hủy liên kết tài khoản");
-    }
-    
-    // Kiểm tra xem có nhiều hơn 1 phương thức không - đảm bảo luôn có ít nhất một cách đăng nhập
-    const providers = auth.currentUser.providerData;
-    if (providers.length <= 1) {
-      throw new Error("Không thể hủy liên kết phương thức đăng nhập duy nhất. Hãy thêm phương thức khác trước.");
-    }
-    
     const { unlink } = await import("firebase/auth");
     
-    // Thực hiện hủy liên kết
-    await unlink(auth.currentUser, providerId);
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("Không có người dùng đang đăng nhập");
+    }
     
-    // Cập nhật thông tin trong Firestore
-    const userRef = doc(db, "users", auth.currentUser.uid);
+    // Kiểm tra số lượng phương thức đăng nhập
+    const providers = await getLinkedProviders();
+    if (providers.length <= 1) {
+      throw new Error("Bạn không thể xóa phương thức đăng nhập duy nhất. Hãy thêm phương thức khác trước.");
+    }
+    
+    // Thực hiện unlink
+    await unlink(user, providerId);
+    
+    // Cập nhật trong Firestore
+    const userRef = doc(db, "users", user.uid);
     await updateDoc(userRef, {
-      linkedProviders: await getLinkedProviders(),
-      lastUpdated: serverTimestamp()
+      updatedAt: serverTimestamp(),
+      [`linkedProviders.${providerId.replace('.', '_')}`]: false
     });
     
     return true;
   } catch (error) {
-    logError("Lỗi khi hủy liên kết nhà cung cấp:", error);
+    logError("Error unlinking provider:", error);
     throw error;
   }
 }
 
-// Export all functions
-export {
-  initFirebase,
+// Ensure auth, db, storage and helper functions are accessible
+// Xuất các thành phần Firebase và tất cả các hàm cần thiết để sử dụng ở các module khác
+export { 
+  auth, 
+  db, 
+  storage, 
+  getIdToken, 
+  fetchWithAuth,
+  // Export hàm này để gọi Firebase Functions từ client
+  initFirebase as functions,
+
+  // Auth functions
   loginUser,
   loginWithGoogle,
   registerUser,
   logoutUser,
+  
+  // User functions
   getUserData,
+  updateDisplayName,
   updateUserData,
-  updateDisplayName, // Thêm mới: function cập nhật Display Name
+  
+  // Trade CRUD functions
   addTrade,
   getTrades,
-  onTradesSnapshot,
-  getAllTrades, // Thêm mới: function lấy tất cả giao dịch để sắp xếp trên frontend
-  getPaginatedTrades, // Thêm function phân trang
+  getAllTrades,
+  getPaginatedTrades,
   getTradeById,
   updateTrade,
+  updateTradeWithBatch,
   deleteTrade,
+  
+  // Image functions
   getStorageDownloadUrl,
   uploadTradeImage,
   deleteTradeImage,
+  
+  // Helper functions
   updateAccountBalance,
+  onTradesSnapshot,
+  
   // Strategy functions
   getStrategies,
-  onStrategiesSnapshot,
   getStrategyById,
   addStrategy,
   updateStrategy,
   deleteStrategy,
+  onStrategiesSnapshot,
   createDefaultStrategiesIfNeeded,
-  // Auth linking functions
+  
+  // Account linking functions
   linkAccountWithGoogle,
   getLinkedProviders,
   unlinkProvider,
