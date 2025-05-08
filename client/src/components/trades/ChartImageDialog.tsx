@@ -6,7 +6,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
 import { useCachedImage } from '@/hooks/use-cached-image';

@@ -97,7 +97,7 @@ export default function Register() {
               type="email"
               autoComplete="email"
               disabled={isLoading}
-              icon={Mail}
+              icon={Icons.ui.mail}
             />
             
             <FormInput
@@ -107,7 +107,7 @@ export default function Register() {
               placeholder="John Doe"
               autoComplete="name"
               disabled={isLoading}
-              icon={User}
+              icon={Icons.ui.user}
               description="This is how you'll appear in the application"
             />
             
@@ -119,7 +119,7 @@ export default function Register() {
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
-              icon={KeyRound}
+              icon={Icons.ui.lock}
               description="Min. 6 characters with at least 1 uppercase letter & 1 number"
             />
             
@@ -131,7 +131,7 @@ export default function Register() {
               type="password"
               autoComplete="new-password"
               disabled={isLoading}
-              icon={ShieldCheck}
+              icon={Icons.ui.shieldCheck}
             />
             
             <div className="space-y-4 pt-2">
@@ -159,7 +159,7 @@ export default function Register() {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
                   Creating account...
                 </>
               ) : (

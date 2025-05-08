@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface LoadingFallbackProps {
@@ -12,7 +12,7 @@ export function LoadingFallback({ height = 200, className = '', simple = false, 
   if (simple) {
     return (
       <div className={`flex items-center justify-center ${className}`} style={{ height: `${height}px` }}>
-        {showSpinner && <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />}
+        {showSpinner && <Icons.ui.spinner className="h-6 w-6 animate-spin text-muted-foreground" />}
       </div>
     );
   }
