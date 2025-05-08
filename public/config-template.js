@@ -32,7 +32,10 @@ window.ENV = {
   VITE_FIREBASE_AUTH_DOMAIN: "YOUR_PROJECT_ID.firebaseapp.com",
   
   // API Base URL (không còn sử dụng Firebase Functions)
-  VITE_API_BASE_URL: ""
+  VITE_API_BASE_URL: "",
+  
+  // TwelveData API key cho môi trường production
+  TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%"
 };
 
 // Khi triển khai với GitHub Actions, các giá trị sẽ được thay thế bằng các biến môi trường từ CI/CD

@@ -18,6 +18,6 @@ window.ENV = {
   VITE_FIREBASE_DATABASE_URL: "https://trading-journal-b83e9-default-rtdb.asia-southeast1.firebasedatabase.app",
   VITE_FIREBASE_AUTH_DOMAIN: "trading-journal-b83e9.firebaseapp.com",
   
-  // Twelvedata API key for production environment
+  // TwelveData API key cho môi trường production
   TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%"
 };

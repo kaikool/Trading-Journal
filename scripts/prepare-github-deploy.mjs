@@ -31,12 +31,22 @@ function setupConfig() {
       VITE_FIREBASE_APP_ID,
       VITE_FIREBASE_PROJECT_ID,
       VITE_FIREBASE_MESSAGING_SENDER_ID,
-      VITE_FIREBASE_MEASUREMENT_ID
+      VITE_FIREBASE_MEASUREMENT_ID,
+      TWELVEDATA_API_KEY
     } = process.env;
     
     // Verify required variables
     if (!VITE_FIREBASE_API_KEY || !VITE_FIREBASE_APP_ID || !VITE_FIREBASE_PROJECT_ID) {
       throw new Error('Missing required environment variables for Firebase configuration');
+    }
+    
+    // Kiểm tra và cảnh báo nếu thiếu TwelveData API key
+    if (!TWELVEDATA_API_KEY) {
+      console.warn('\n⚠️ WARNING: TWELVEDATA_API_KEY is missing!');
+      console.warn('Real-time price fetching will not work in production without this key.');
+      console.warn('Please set this secret in your GitHub repository settings.\n');
+    } else {
+      console.log('✅ TwelveData API key found and will be included in the build.');
     }
     
     // Replace placeholder values in the template
@@ -46,7 +56,8 @@ function setupConfig() {
       .replace(/YOUR_PROJECT_ID/g, VITE_FIREBASE_PROJECT_ID)
       .replace(/YOUR_SENDER_ID/g, VITE_FIREBASE_MESSAGING_SENDER_ID || '')
       .replace(/YOUR_MEASUREMENT_ID/g, VITE_FIREBASE_MEASUREMENT_ID || '')
-      .replace(/YOUR_REGION/g, 'asia-southeast1'); // Default region
+      .replace(/YOUR_REGION/g, 'asia-southeast1') // Default region
+      .replace(/%TWELVEDATA_API_KEY%/g, TWELVEDATA_API_KEY || ''); // Thay thế placeholder TwelveData API key
     
     // Write the updated content to the output file
     writeFileSync(outputPath, configContent, 'utf8');
