@@ -42,6 +42,11 @@ body[data-offline-mode="true"] .suspense-boundary::after {
   z-index: 10;
 }
 
+/* Sửa vấn đề dropdown cuộn trang */
+body.select-open {
+  overflow: hidden;
+}
+
 /* Animation for Suspense loading state */
 @keyframes spin {
   from {
