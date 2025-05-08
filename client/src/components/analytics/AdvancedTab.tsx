@@ -320,7 +320,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         if (highRRWinRate < lowRRWinRate - 15) {
           insights.push({
             type: 'suggestion',
-            icon: <Lightbulb className="h-4 w-4" />,
+            icon: <Icons.analytics.lightbulb className="h-4 w-4" />,
             title: 'Higher R:R Trade Management',
             description: `Your win rate on trades with R:R above 1:2 is ${highRRWinRate.toFixed(1)}%, which is lower than on your smaller target trades. Consider using partial profit taking to secure more wins on these trades.`
           });
@@ -338,7 +338,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       if (recentProfits >= 4) {
         insights.push({
           type: 'positive',
-          icon: <TrendingUp className="h-4 w-4" />,
+          icon: <Icons.analytics.trendingUp className="h-4 w-4" />,
           title: 'Strong Recent Performance',
           description: `You're currently in a positive performance streak with ${recentProfits} profitable trades in your last 5. Focus on maintaining your current trading strategy and psychology.`
         });
@@ -462,7 +462,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       <CardContent>
         <div className="flex items-start gap-3">
           <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
-            <Lightbulb className="h-4 w-4" />
+            <Icons.analytics.lightbulb className="h-4 w-4" />
           </div>
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
@@ -489,7 +489,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold flex items-center">
-              <Lightbulb className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.lightbulb className="h-5 w-5 mr-2 text-primary" />
               Advanced Analytics Insights
             </CardTitle>
             <CardDescription>
@@ -523,7 +523,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         <CardHeader className="pb-2 pt-4 px-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="text-xl font-semibold flex items-center">
-              <LineChart className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.lineChart className="h-5 w-5 mr-2 text-primary" />
               Equity Curve with Drawdown
             </CardTitle>
             
@@ -639,7 +639,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
           <CardHeader className="pb-2 pt-4 px-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-xl font-semibold flex items-center">
-                <BarChartIcon className="h-5 w-5 mr-2 text-primary" />
+                <Icons.analytics.barChart className="h-5 w-5 mr-2 text-primary" />
                 Risk:Reward Analysis
               </CardTitle>
               
