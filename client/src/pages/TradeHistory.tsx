@@ -934,7 +934,7 @@ export default function TradeHistory() {
       {!isLoading && trades.length === 0 && (
         <Card className="mb-6">
           <CardContent className="flex flex-col items-center justify-center py-10">
-            <SlidersHorizontal className="h-12 w-12 text-muted-foreground/60 mb-4" />
+            <Icons.ui.slidersHorizontal className="h-12 w-12 text-muted-foreground/60 mb-4" />
             <h3 className="text-lg font-medium">No trades found</h3>
             <p className="text-sm text-muted-foreground mt-1 mb-4">
               {countActiveFilters() > 0 
@@ -942,7 +942,7 @@ export default function TradeHistory() {
                 : "Start adding trades to see them here"}
             </p>
             <Button onClick={() => setLocation("/trade/new")}>
-              <Plus className="h-4 w-4 mr-2" />
+              <Icons.ui.plus className="h-4 w-4 mr-2" />
               Add New Trade
             </Button>
           </CardContent>
