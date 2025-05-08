@@ -1,11 +1,5 @@
 import { TradeResult } from "./forex-calculator";
-import { 
-  CheckCircle2, 
-  Ban, 
-  CircleDot, 
-  Hand, 
-  Lock
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { LucideIcon } from "lucide-react";
 
 export type TradeStatus = TradeResult | "OPEN";
@@ -26,7 +20,7 @@ export const TRADE_STATUS_CONFIG: Record<TradeStatus, TradeStatusConfig> = {
     id: "TP",
     label: "TP HIT",
     description: "Take Profit Hit",
-    icon: CheckCircle2,
+    icon: Icons.ui.success,
     color: "text-success",
     bgColor: "bg-success",
     lightBgColor: "bg-success/10",
