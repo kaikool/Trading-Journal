@@ -4,13 +4,9 @@ import "./index.css";
 import { registerServiceWorker } from "./lib/pwa-helper";
 import { preloadCriticalResources } from "./lib/preload";
 import { DataCacheProvider } from './contexts/DataCacheContext';
-import { applyRadixSelectFix } from './lib/radix-select-fix';
 
 // Preload critical resources
 preloadCriticalResources();
-
-// Áp dụng giải pháp CSS để khắc phục vấn đề cuộn trong Radix UI Select
-applyRadixSelectFix();
 
 // Render the application
 createRoot(document.getElementById("root")!).render(<App />);
