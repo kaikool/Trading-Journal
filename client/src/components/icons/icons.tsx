@@ -15,10 +15,14 @@ export const Icons = {
     menu: LucideIcons.Menu,
     chevronRight: LucideIcons.ChevronRight,
     chevronLeft: LucideIcons.ChevronLeft,
+    chevronDown: LucideIcons.ChevronDown,
+    chevronUp: LucideIcons.ChevronUp,
     maximize: LucideIcons.Maximize2,
     zoomIn: LucideIcons.ZoomIn,
     zoomOut: LucideIcons.ZoomOut,
     upload: LucideIcons.UploadCloud,
+    check: LucideIcons.Check,
+    circle: LucideIcons.Circle,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
