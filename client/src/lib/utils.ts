@@ -1,14 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-/**
- * Hàm tiện ích để kết hợp các lớp CSS
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-
 
 export function formatCurrency(value: number, compact = false): string {
   // Sửa lỗi currency không đúng format bằng cách chỉ dùng USD cố định
@@ -133,5 +128,3 @@ export function navigateToSettingsTab(tab: string) {
   // Lưu tab cần mở vào sessionStorage
   sessionStorage.setItem('settings_active_tab', tab);
 }
-
-

@@ -4,8 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 /* 
  * Chỉ sử dụng một phương pháp tiếp cận nhất quán cho toàn bộ safe area handling.
  * Đã di chuyển toàn bộ safe area utilities vào globals.css trong phần utilities.
@@ -41,8 +39,6 @@ body[data-offline-mode="true"] .suspense-boundary::after {
   font-size: 12px; /* Typography value nên giữ nguyên */
   z-index: 10;
 }
-
-
 
 /* Animation for Suspense loading state */
 @keyframes spin {
