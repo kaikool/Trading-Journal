@@ -704,7 +704,7 @@ export default function TradeHistory() {
                         }}
                         size="sm"
                       >
-                        <Check className="h-4 w-4 mr-1 text-green-500" />
+                        <Icons.ui.check className="h-4 w-4 mr-1 text-green-500" />
                         Yes
                       </Button>
                       <Button
@@ -715,7 +715,7 @@ export default function TradeHistory() {
                         }}
                         size="sm"
                       >
-                        <X className="h-4 w-4 mr-1 text-red-500" />
+                        <Icons.ui.close className="h-4 w-4 mr-1 text-red-500" />
                         No
                       </Button>
                     </div>
@@ -913,7 +913,7 @@ export default function TradeHistory() {
                     setShowFilters(false);
                   }}
                 >
-                  <X className="h-4 w-4 mr-1" />
+                  <Icons.ui.close className="h-4 w-4 mr-1" />
                   Cancel
                 </Button>
                 <Button 
@@ -921,7 +921,7 @@ export default function TradeHistory() {
                     setShowFilters(false);
                   }}
                 >
-                  <Check className="h-4 w-4 mr-1" />
+                  <Icons.ui.check className="h-4 w-4 mr-1" />
                   Apply
                 </Button>
               </div>
