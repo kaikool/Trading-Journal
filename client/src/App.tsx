@@ -184,9 +184,9 @@ function MainContent() {
   // If not on auth/public page and user is not logged in, redirect to login page
   useEffect(() => {
     if (!loading && !hasUser && !isPublicPage) {
-      window.location.href = "/auth/login";
+      setLocation("/auth/login");
     }
-  }, [loading, hasUser, isPublicPage]);
+  }, [loading, hasUser, isPublicPage, setLocation]);
 
   if (loading) {
     return (
