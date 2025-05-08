@@ -1,15 +1,5 @@
 import { lazy, Suspense, useState } from "react";
-import { 
-  Loader2, 
-  ArrowUp, 
-  ArrowDown, 
-  PencilIcon, 
-  ArrowLeft, 
-  Trash2Icon, 
-  BookOpenCheck, 
-  Maximize2,
-  BarChart2
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Trade } from "@/types";
 
 // Define TradeDiscipline interface for better type safety
@@ -80,12 +70,12 @@ export function LazyTradeViewEdit({
             />
             {/* Add zoom overlay icon */}
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-              <Maximize2 className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-6 w-6" />
+              <Icons.ui.maximize className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-6 w-6" />
             </div>
           </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
-            <Maximize2 className="h-8 w-8 mb-2 opacity-40" />
+            <Icons.ui.maximize className="h-8 w-8 mb-2 opacity-40" />
             <span>No Chart Image</span>
           </div>
         )}
@@ -121,7 +111,7 @@ export function LazyTradeViewEdit({
               size="sm"
               variant="soft"
             >
-              {trade.direction === "BUY" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
+              {trade.direction === "BUY" ? <Icons.trade.arrowUp className="h-3.5 w-3.5" /> : <Icons.trade.arrowDown className="h-3.5 w-3.5" />}
             </CardIcon>
             <h3 className="text-lg font-semibold">
               {trade.pair}
@@ -135,7 +125,7 @@ export function LazyTradeViewEdit({
               variant="soft"
               className="mr-1.5"
             >
-              <BarChart2 className="h-3.5 w-3.5" />
+              <Icons.analytics.barChart className="h-3.5 w-3.5" />
             </CardIcon>
             <span className="text-sm text-muted-foreground font-medium">
               {trade.strategy}

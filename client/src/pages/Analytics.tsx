@@ -344,7 +344,7 @@ export default function Analytics() {
           <div className="h-5 w-36 bg-muted rounded mb-2"></div>
           <div className="h-3 w-48 bg-muted/50 rounded mb-6"></div>
           <div className="h-[220px] bg-muted/30 rounded-lg flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/40" />
+            <Icons.ui.spinner className="h-6 w-6 animate-spin text-muted-foreground/40" />
           </div>
         </div>
         
@@ -352,7 +352,7 @@ export default function Analytics() {
           <div className="h-5 w-36 bg-muted rounded mb-2"></div>
           <div className="h-3 w-48 bg-muted/50 rounded mb-6"></div>
           <div className="h-[220px] bg-muted/30 rounded-lg flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/40" />
+            <Icons.ui.spinner className="h-6 w-6 animate-spin text-muted-foreground/40" />
           </div>
         </div>
       </div>
@@ -393,23 +393,23 @@ export default function Analytics() {
             <div className="min-w-max mx-auto px-1">
               <TabsList className="w-fit sm:w-auto flex flex-nowrap h-auto justify-start p-1 space-x-1 rounded-xl bg-muted/80">
                 <TabsTrigger value="overview" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <BarChart2 className="h-4 w-4 flex-shrink-0" />
+                  <Icons.analytics.barChart className="h-4 w-4 flex-shrink-0" />
                   <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Overview</span>
                 </TabsTrigger>
                 <TabsTrigger value="strategy" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <LineChart className="h-4 w-4 flex-shrink-0" />
+                  <Icons.analytics.lineChart className="h-4 w-4 flex-shrink-0" />
                   <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Strategy</span>
                 </TabsTrigger>
                 <TabsTrigger value="discipline" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <TrendingUp className="h-4 w-4 flex-shrink-0" />
+                  <Icons.analytics.trending className="h-4 w-4 flex-shrink-0" />
                   <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Discipline</span>
                 </TabsTrigger>
                 <TabsTrigger value="emotion" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <PieChart className="h-4 w-4 flex-shrink-0" />
+                  <Icons.analytics.pieChart className="h-4 w-4 flex-shrink-0" />
                   <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Emotion</span>
                 </TabsTrigger>
                 <TabsTrigger value="advanced" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <BarChart4 className="h-4 w-4 flex-shrink-0" />
+                  <Icons.analytics.stats className="h-4 w-4 flex-shrink-0" />
                   <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Advanced</span>
                 </TabsTrigger>
 
