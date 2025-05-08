@@ -538,7 +538,7 @@ export default function TradeHistory() {
                         }}
                         size="sm"
                       >
-                        <ArrowUp className="h-4 w-4 mr-1 text-green-500" />
+                        <Icons.ui.arrowUp className="h-4 w-4 mr-1 text-green-500" />
                         Buy
                       </Button>
                       
@@ -559,7 +559,7 @@ export default function TradeHistory() {
                         }}
                         size="sm"
                       >
-                        <ArrowDown className="h-4 w-4 mr-1 text-red-500" />
+                        <Icons.ui.arrowDown className="h-4 w-4 mr-1 text-red-500" />
                         Sell
                       </Button>
                     </div>
@@ -627,7 +627,7 @@ export default function TradeHistory() {
                           updateFilter('result', newResults.length ? newResults : undefined);
                         }}
                       >
-                        <CircleDashed className="h-4 w-4 mr-1 text-orange-500" />
+                        <Icons.ui.circleDashed className="h-4 w-4 mr-1 text-orange-500" />
                         Break Even
                       </Button>
                       
@@ -647,7 +647,7 @@ export default function TradeHistory() {
                           updateFilter('result', newResults.length ? newResults : undefined);
                         }}
                       >
-                        <CircleDot className="h-4 w-4 mr-1 text-blue-500" />
+                        <Icons.ui.circleDot className="h-4 w-4 mr-1 text-blue-500" />
                         Manual
                       </Button>
                     </div>
