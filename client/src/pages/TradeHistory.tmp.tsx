@@ -587,7 +587,7 @@ export default function TradeHistory() {
                           updateFilter('result', newResults.length ? newResults : undefined);
                         }}
                       >
-                        <Icons.ui.circleCheck className="h-4 w-4 mr-1 text-green-500" />
+                        <CircleCheck className="h-4 w-4 mr-1 text-green-500" />
                         Take Profit
                       </Button>
                       
@@ -607,7 +607,7 @@ export default function TradeHistory() {
                           updateFilter('result', newResults.length ? newResults : undefined);
                         }}
                       >
-                        <Icons.ui.circleX className="h-4 w-4 mr-1 text-red-500" />
+                        <CircleX className="h-4 w-4 mr-1 text-red-500" />
                         Stop Loss
                       </Button>
                       
