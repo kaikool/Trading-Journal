@@ -2,7 +2,20 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
-import { Icon } from "@/components/icons";
+import { 
+  LayoutDashboard, 
+  TrendingUp, 
+  History, 
+  BarChart2,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  ChevronRight,
+  ChevronLeft,
+  BookOpen,
+  Trophy
+} from "lucide-react";
 import { AppLogo } from "@/components/AppLogo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
