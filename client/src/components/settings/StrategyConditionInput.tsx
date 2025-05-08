@@ -200,7 +200,7 @@ export function StrategyConditionForm({
               onClick={onCancel}
               className="h-6 px-2 text-xs"
             >
-              <X className="h-3 w-3 mr-1" />
+              <Icons.ui.close className="h-3 w-3 mr-1" />
               Cancel
             </Button>
           )}
@@ -213,7 +213,7 @@ export function StrategyConditionForm({
               disabled={!condition.label.trim()}
               className="h-6 px-2.5 text-xs bg-primary/90 hover:bg-primary"
             >
-              <Plus className="h-3 w-3 mr-1" />
+              <Icons.ui.plus className="h-3 w-3 mr-1" />
               Add
             </Button>
           ) : (
@@ -232,7 +232,7 @@ export function StrategyConditionForm({
               disabled={!condition.label.trim()}
               className="h-6 px-2.5 text-xs bg-primary/90 hover:bg-primary"
             >
-              <Check className="h-3 w-3 mr-1" />
+              <Icons.ui.check className="h-3 w-3 mr-1" />
               Save
             </Button>
           )}
@@ -272,14 +272,14 @@ export function StrategyConditionItem({
               <div className="flex items-center flex-wrap gap-0.5">
                 {condition.indicator && (
                   <Badge variant="outline" className="px-1 h-3.5 text-[9px] bg-primary/5 border-primary/20 font-normal">
-                    <Activity className="h-2 w-2 mr-0.5 text-primary/80" />
+                    <Icons.analytics.activity className="h-2 w-2 mr-0.5 text-primary/80" />
                     {condition.indicator}
                   </Badge>
                 )}
                 
                 {condition.timeframe && (
                   <Badge variant="outline" className="px-1 h-3.5 text-[9px] bg-blue-500/5 border-blue-500/20 text-blue-600 dark:text-blue-400 font-normal">
-                    <Clock className="h-2 w-2 mr-0.5 text-blue-500/80" />
+                    <Icons.trade.clock className="h-2 w-2 mr-0.5 text-blue-500/80" />
                     {condition.timeframe}
                   </Badge>
                 )}
@@ -442,7 +442,7 @@ export function StrategyConditionList({
               onClick={() => setIsAdding(true)}
               className="h-6 px-2 text-[10px] border-dashed border-border/50 hover:border-primary/30 hover:bg-primary/5"
             >
-              <Plus className="h-3 w-3 mr-1" />
+              <Icons.ui.plus className="h-3 w-3 mr-1" />
               Add
             </Button>
           )}
