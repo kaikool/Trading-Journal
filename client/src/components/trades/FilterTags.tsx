@@ -29,7 +29,7 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
         >
           <Icons.general.calendar className="h-3 w-3" /> 
           {format(filters.startDate, "dd/MM/yy")} - {format(filters.endDate, "dd/MM/yy")}
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('date')}
           />
@@ -42,8 +42,8 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <DollarSign className="h-3 w-3" /> {pair}
-          <X
+          <Icons.trade.price className="h-3 w-3" /> {pair}
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('pair', pair)}
           />
@@ -60,11 +60,11 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           )}
         >
           {dir === "BUY" ? 
-            <ArrowUp className="h-3 w-3" /> : 
-            <ArrowDown className="h-3 w-3" />
+            <Icons.trade.arrowUp className="h-3 w-3" /> : 
+            <Icons.trade.arrowDown className="h-3 w-3" />
           } 
           {dir === "BUY" ? "Buy (Long)" : "Sell (Short)"}
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('direction', dir)}
           />
@@ -82,14 +82,14 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
             "bg-primary/5 hover:bg-primary/10"
           )}
         >
-          {result === "TP" ? <CircleCheck className="h-3 w-3" /> : 
-           result === "SL" ? <CircleX className="h-3 w-3" /> : 
-           result === "BE" ? <CircleDashed className="h-3 w-3" /> : 
-           <CircleDot className="h-3 w-3" />} 
+          {result === "TP" ? <Icons.ui.circleCheck className="h-3 w-3" /> : 
+           result === "SL" ? <Icons.ui.circleX className="h-3 w-3" /> : 
+           result === "BE" ? <Icons.ui.circleDashed className="h-3 w-3" /> : 
+           <Icons.ui.circleDot className="h-3 w-3" />} 
           {result === "TP" ? "Take Profit" : 
            result === "SL" ? "Stop Loss" : 
            result === "BE" ? "Break Even" : "Manual Close"}
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('result', result)}
           />
@@ -102,8 +102,8 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <Lightbulb className="h-3 w-3" /> {strategy}
-          <X
+          <Icons.general.lightbulb className="h-3 w-3" /> {strategy}
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('strategy', strategy)}
           />
@@ -116,8 +116,8 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <Heart className="h-3 w-3" /> {emotion}
-          <X
+          <Icons.general.heart className="h-3 w-3" /> {emotion}
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('emotion', emotion)}
           />
@@ -135,11 +135,11 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           )}
         >
           {filters.hasFollowedPlan 
-            ? <Check className="h-3 w-3" /> 
-            : <X className="h-3 w-3" />
+            ? <Icons.ui.check className="h-3 w-3" /> 
+            : <Icons.ui.close className="h-3 w-3" />
           } 
           {filters.hasFollowedPlan ? "Followed Plan" : "Didn't Follow Plan"}
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('followedPlan')}
           />
@@ -152,8 +152,8 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <Clock className="h-3 w-3" /> {session}
-          <X
+          <Icons.general.clock className="h-3 w-3" /> {session}
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('sessionType', session)}
           />
@@ -165,9 +165,9 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <NewspaperIcon className="h-3 w-3" /> 
+          <Icons.general.newspaper className="h-3 w-3" /> 
           {filters.hasNews ? "With News" : "Without News"}
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('news')}
           />
@@ -179,9 +179,9 @@ export function FilterTags({ filters, onRemoveFilter }: FilterTagsProps) {
           variant="outline" 
           className="flex items-center gap-1 bg-primary/5 hover:bg-primary/10"
         >
-          <CircleX className="h-3 w-3" /> 
+          <Icons.ui.circleX className="h-3 w-3" /> 
           Entered Early
-          <X
+          <Icons.ui.close
             className="h-3 w-3 ml-1 cursor-pointer" 
             onClick={() => onRemoveFilter('enteredEarly')}
           />
