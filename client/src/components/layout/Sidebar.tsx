@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useUserActivity } from "@/hooks/use-user-activity";
+import { SidebarHint } from "./SidebarHint";
 
 // Define navigation items internal to this component
 const SIDEBAR_LINKS = [
@@ -97,7 +98,6 @@ export function Sidebar({ className }: { className?: string }) {
   const user = auth.currentUser;
   const { direction, isScrolling } = useScrollDirection();
   const { isActive } = useUserActivity(2000);
-  // Không cần state hiển thị menu nữa, chỉ cần isOpen để quản lý drawer
   
   useEffect(() => {
     setMounted(true);
@@ -153,8 +153,6 @@ export function Sidebar({ className }: { className?: string }) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
   
-  // Đã xóa phần logic hiện/ẩn menu vì bây giờ dùng vuốt từ cạnh trái thay thế
-
   // Các biến để xử lý vuốt từ cạnh trái để hiện sidebar
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -198,7 +196,7 @@ export function Sidebar({ className }: { className?: string }) {
     }
   };
   
-  // Khu vực "hot zone" ở góc trái dưới để hiện sidebar (không còn cần thiết nhưng vẫn giữ để bổ sung tính năng)
+  // Khu vực "hot zone" ở góc trái dưới để hiện sidebar 
   const handleBodyClick = (e: MouseEvent) => {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
@@ -238,6 +236,8 @@ export function Sidebar({ className }: { className?: string }) {
   if (isMobile) {
     return (
       <>
+        {/* Sidebar Hint - subtle indicator at the edge of screen */}
+        <SidebarHint onClick={() => setIsOpen(true)} />
         
         {/* Mobile Sidebar Overlay */}
         <div 
@@ -273,8 +273,6 @@ export function Sidebar({ className }: { className?: string }) {
               <X className="h-5 w-5" />
             </Button>
           </div>
-          
-
           
           {/* Phần User Profile */}
           <div className="p-4 border-b border-border">
@@ -343,127 +341,134 @@ export function Sidebar({ className }: { className?: string }) {
   
   // Desktop sidebar version (collapsible sidebar) - luôn tôn trọng safe area
   return (
-    <aside
-      className={cn(
-        "hidden md:flex md:flex-col h-screen fixed left-0 z-30 bg-background border-r border-border transition-all duration-300 ease-in-out",
-        "top-0 bottom-0 safe-area-top safe-area-bottom",
-        sidebarCollapsed ? "w-[72px]" : "w-[256px]",
-        className
+    <>
+      {/* Sidebar hint for collapsed desktop sidebar */}
+      {sidebarCollapsed && (
+        <SidebarHint onClick={toggleSidebar} />
       )}
-    >
-      {/* Sidebar Header */}
-      <div className={cn(
-        "flex items-center h-16 px-4 border-b border-border",
-        sidebarCollapsed ? "justify-center" : "justify-between"
-      )}>
-        {!sidebarCollapsed && (
-          <div className="font-semibold text-lg flex items-center">
-            <AppLogo className="mr-2" size="sm" variant="dark" />
-            <span className="truncate">FX Trade Journal</span>
-          </div>
+      
+      <aside
+        className={cn(
+          "hidden md:flex md:flex-col h-screen fixed left-0 z-30 bg-background border-r border-border transition-all duration-300 ease-in-out",
+          "top-0 bottom-0 safe-area-top safe-area-bottom",
+          sidebarCollapsed ? "w-[72px]" : "w-[256px]",
+          className
         )}
-        {sidebarCollapsed && (
-          <AppLogo size="sm" variant="dark" />
-        )}
+      >
+        {/* Sidebar Header */}
+        <div className={cn(
+          "flex items-center h-16 px-4 border-b border-border",
+          sidebarCollapsed ? "justify-center" : "justify-between"
+        )}>
+          {!sidebarCollapsed && (
+            <div className="font-semibold text-lg flex items-center">
+              <AppLogo className="mr-2" size="sm" variant="dark" />
+              <span className="truncate">FX Trade Journal</span>
+            </div>
+          )}
+          {sidebarCollapsed && (
+            <AppLogo size="sm" variant="dark" />
+          )}
+          
+          {!sidebarCollapsed && (
+            <Button
+              onClick={toggleSidebar}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
         
-        {!sidebarCollapsed && (
-          <Button
-            onClick={toggleSidebar}
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-            aria-label="Collapse sidebar"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-        )}
-      </div>
-      
-      {/* Navigation Items */}
-      <nav className="flex-1 overflow-y-auto p-3">
-        <ul className="space-y-1">
-          {SIDEBAR_LINKS.map(item => (
-            <SidebarItem
-              key={item.href}
-              icon={item.icon}
-              label={item.label}
-              href={item.href}
-              collapsed={sidebarCollapsed}
-              isActive={
-                (item.href === "/" && (location === "/" || location === "/dashboard")) ||
-                (item.href === "/trade/new" && (location === "/trade/new")) ||
-                (item.href === "/trade/history" && (
-                  location === "/trade/history" ||
-                  location === "/history" ||
-                  location.includes("/trade/view") ||
-                  location.includes("/trade/edit")
-                )) ||
-                (item.href === "/analytics" && location === "/analytics") ||
-                (item.href === "/strategies" && location === "/strategies") ||
-                (item.href === "/achievements" && location === "/achievements") ||
-                (item.href === "/settings" && location === "/settings")
-              }
-            />
-          ))}
-        </ul>
-      </nav>
-      
-      {/* User Profile Section */}
-      <div className={cn(
-        "border-t border-border p-3",
-        sidebarCollapsed ? "flex justify-center py-3" : "block"
-      )}>
-        {!sidebarCollapsed ? (
-          <div className="flex items-center space-x-3 px-2 py-2">
+        {/* Navigation Items */}
+        <nav className="flex-1 overflow-y-auto p-3">
+          <ul className="space-y-1">
+            {SIDEBAR_LINKS.map(item => (
+              <SidebarItem
+                key={item.href}
+                icon={item.icon}
+                label={item.label}
+                href={item.href}
+                collapsed={sidebarCollapsed}
+                isActive={
+                  (item.href === "/" && (location === "/" || location === "/dashboard")) ||
+                  (item.href === "/trade/new" && (location === "/trade/new")) ||
+                  (item.href === "/trade/history" && (
+                    location === "/trade/history" ||
+                    location === "/history" ||
+                    location.includes("/trade/view") ||
+                    location.includes("/trade/edit")
+                  )) ||
+                  (item.href === "/analytics" && location === "/analytics") ||
+                  (item.href === "/strategies" && location === "/strategies") ||
+                  (item.href === "/achievements" && location === "/achievements") ||
+                  (item.href === "/settings" && location === "/settings")
+                }
+              />
+            ))}
+          </ul>
+        </nav>
+        
+        {/* User Profile Section */}
+        <div className={cn(
+          "border-t border-border p-3",
+          sidebarCollapsed ? "flex justify-center py-3" : "block"
+        )}>
+          {!sidebarCollapsed ? (
+            <div className="flex items-center space-x-3 px-2 py-2">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">{user?.displayName || 'User'}</p>
+                <p className="text-xs text-muted-foreground truncate">{user?.email || ''}</p>
+              </div>
+            </div>
+          ) : (
             <Avatar className="h-9 w-9">
               <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
               <AvatarFallback className="bg-primary text-primary-foreground">
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.displayName || 'User'}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email || ''}</p>
-            </div>
+          )}
+        </div>
+        
+        {/* Collapse Button (in expanded mode) */}
+        {sidebarCollapsed && (
+          <div className="border-t border-border p-3 flex justify-center">
+            <Button
+              onClick={toggleSidebar}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-full"
+              aria-label="Expand sidebar"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
           </div>
-        ) : (
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
         )}
-      </div>
-      
-      {/* Collapse Button (in expanded mode) */}
-      {sidebarCollapsed && (
-        <div className="border-t border-border p-3 flex justify-center">
-          <Button
-            onClick={toggleSidebar}
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full"
-            aria-label="Expand sidebar"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
-      )}
-      
-      {/* Logout Button */}
-      {!sidebarCollapsed && (
-        <div className="border-t border-border p-3">
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            className="w-full justify-start text-sm font-normal"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
-        </div>
-      )}
-    </aside>
+        
+        {/* Logout Button */}
+        {!sidebarCollapsed && (
+          <div className="border-t border-border p-3">
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="w-full justify-start text-sm font-normal"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        )}
+      </aside>
+    </>
   );
 }
