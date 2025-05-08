@@ -1027,7 +1027,7 @@ export default function Settings() {
               size="sm"
               className="text-xs h-8"
             >
-              <LogOut className="h-3.5 w-3.5 mr-1.5" />
+              <Icons.ui.logOut className="h-3.5 w-3.5 mr-1.5" />
               Log Out
             </Button>
           </div>
@@ -1338,7 +1338,7 @@ export default function Settings() {
                         {provider === 'password' && (
                           <>
                             <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                              <Mail className="h-4 w-4" />
+                              <Icons.ui.mail className="h-4 w-4" />
                             </div>
                             <div>
                               <h4 className="text-sm font-medium">Email/Password</h4>
@@ -1350,7 +1350,7 @@ export default function Settings() {
                         {provider !== 'google' && provider !== 'password' && (
                           <>
                             <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
-                              <User className="h-4 w-4" />
+                              <Icons.ui.user className="h-4 w-4" />
                             </div>
                             <div>
                               <h4 className="text-sm font-medium">{getProviderName(provider)}</h4>
@@ -1457,7 +1457,7 @@ export default function Settings() {
                   onClick={handleLogout}
                   className="text-xs space-x-1"
                 >
-                  <LogOut className="h-3.5 w-3.5 mr-1" />
+                  <Icons.ui.logOut className="h-3.5 w-3.5 mr-1" />
                   <span>Logout</span>
                 </Button>
               </div>
