@@ -181,98 +181,103 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       // Calculate results
       const { pips, profitLoss } = calculateTradeResult(exitPrice);
       
-      // Upload images (if any) - tối ưu bằng cách tải song song
+      // Upload images (if any) với tối ưu hóa
       let exitImageUrl = "";
       let exitImageM15Url = "";
       
-      setIsUploading(true);
-      console.log("Starting image upload process...");
+      // Hàm upload tối ưu - giảm code trùng lặp và logging không cần thiết
+      const uploadImagesBatch = async () => {
+        try {
+          setIsUploading(true);
+          
+          // Tạo mảng promises để tải lên song song
+          const uploadPromises = [];
+          const uploadResults = {
+            exitImage: null as string | null,
+            exitImageM15: null as string | null
+          };
+          
+          // Chỉ thêm promise nếu có ảnh để tránh xử lý không cần thiết
+          if (exitImage) {
+            uploadPromises.push(
+              uploadTradeImage(
+                trade.userId,
+                trade.id,
+                exitImage,
+                "exit",
+                (progress) => {
+                  // Silent progress - có thể thêm state để cập nhật UI nếu cần
+                }
+              ).then(result => {
+                if (result.success) {
+                  uploadResults.exitImage = result.imageUrl;
+                }
+                return result;
+              }).catch(() => {
+                toast({
+                  variant: "destructive",
+                  title: "Image Upload Error",
+                  description: "Could not upload exit chart. You can continue closing the trade."
+                });
+                return null;
+              })
+            );
+          }
+          
+          if (exitImageM15) {
+            uploadPromises.push(
+              uploadTradeImage(
+                trade.userId,
+                trade.id,
+                exitImageM15,
+                "exitM15",
+                (progress) => {
+                  // Silent progress - có thể thêm state để cập nhật UI nếu cần
+                }
+              ).then(result => {
+                if (result.success) {
+                  uploadResults.exitImageM15 = result.imageUrl;
+                }
+                return result;
+              }).catch(() => {
+                toast({
+                  variant: "destructive",
+                  title: "Image Upload Error",
+                  description: "Could not upload M15 chart. You can continue closing the trade."
+                });
+                return null;
+              })
+            );
+          }
+          
+          // Chỉ chạy Promise.all nếu có ít nhất một ảnh cần upload
+          if (uploadPromises.length > 0) {
+            // Sử dụng Promise.allSettled để đảm bảo không fail nếu một trong các uploads lỗi
+            await Promise.allSettled(uploadPromises);
+            
+            // Lấy URLs đã upload
+            exitImageUrl = uploadResults.exitImage || "";
+            exitImageM15Url = uploadResults.exitImageM15 || "";
+          }
+          
+          return { exitImageUrl, exitImageM15Url };
+        } catch (error) {
+          // Chỉ toast khi có lỗi nghiêm trọng
+          toast({
+            variant: "destructive",
+            title: "Warning",
+            description: "Error uploading images. The trade will be closed without images."
+          });
+          return { exitImageUrl: "", exitImageM15Url: "" };
+        } finally {
+          setIsUploading(false);
+        }
+      };
       
-      try {
-        // Create array of promises to upload images in parallel
-        const uploadPromises = [];
-        const uploadResults = {
-          exitImage: null as string | null,
-          exitImageM15: null as string | null
-        };
-        
-        // Add promise to upload H4 image (if exists)
-        if (exitImage) {
-          console.log("Preparing to upload H4 exit image");
-          const exitImagePromise = uploadTradeImage(
-            trade.userId,
-            trade.id,
-            exitImage,
-            "exit",
-            (progress) => {
-              console.log(`Uploading H4 exit image: ${progress}%`);
-            }
-          ).then(result => {
-            console.log("H4 exit image upload completed");
-            uploadResults.exitImage = result.imageUrl;
-            return result;
-          }).catch(error => {
-            console.error("Error uploading H4 exit image:", error);
-            toast({
-              variant: "destructive",
-              title: "Image Upload Error",
-              description: "Could not upload H4 chart. You can continue closing the trade."
-            });
-            return null;
-          });
-          
-          uploadPromises.push(exitImagePromise);
-        }
-        
-        // Add promise to upload M15 image (if exists)
-        if (exitImageM15) {
-          console.log("Preparing to upload M15 exit image");
-          const exitImageM15Promise = uploadTradeImage(
-            trade.userId,
-            trade.id,
-            exitImageM15,
-            "exitM15",
-            (progress) => {
-              console.log(`Uploading M15 exit image: ${progress}%`);
-            }
-          ).then(result => {
-            console.log("M15 exit image upload completed");
-            uploadResults.exitImageM15 = result.imageUrl;
-            return result;
-          }).catch(error => {
-            console.error("Error uploading M15 exit image:", error);
-            toast({
-              variant: "destructive",
-              title: "Image Upload Error",
-              description: "Could not upload M15 chart. You can continue closing the trade."
-            });
-            return null;
-          });
-          
-          uploadPromises.push(exitImageM15Promise);
-        }
-        
-        // Wait for all uploads to complete (if any)
-        if (uploadPromises.length > 0) {
-          console.log(`Processing ${uploadPromises.length} image files simultaneously...`);
-          await Promise.allSettled(uploadPromises);
-          console.log("All image uploads completed");
-          
-          // Get the uploaded URLs
-          exitImageUrl = uploadResults.exitImage || "";
-          exitImageM15Url = uploadResults.exitImageM15 || "";
-        }
-      } catch (uploadError) {
-        console.error("Error during image upload process:", uploadError);
-        // Continue closing the trade even with image upload errors
-        toast({
-          variant: "destructive",
-          title: "Warning",
-          description: "Error uploading images. The trade will be closed without images."
-        });
-      } finally {
-        setIsUploading(false);
-      }
+      // Thực hiện upload
+      const { exitImageUrl: exitImgUrl, exitImageM15Url: exitImgM15Url } = await uploadImagesBatch();
+      exitImageUrl = exitImgUrl;
+      exitImageM15Url = exitImgM15Url;
       
       // Update data
       console.log("Closing trade and calculating profit/loss");
