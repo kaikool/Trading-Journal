@@ -773,7 +773,7 @@ export default function TradeHistory() {
                           {filters.sessionType?.length 
                             ? `${filters.sessionType.length} selected`
                             : "Select sessions"}
-                          <ChevronsUpDown className="h-4 w-4 ml-2" />
+                          <Icons.ui.chevronsUpDown className="h-4 w-4 ml-2" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-[200px] max-h-[200px] overflow-y-auto">
@@ -813,7 +813,7 @@ export default function TradeHistory() {
                         }}
                         size="sm"
                       >
-                        <NewspaperIcon className="h-4 w-4 mr-1" />
+                        <Icons.general.newspaper className="h-4 w-4 mr-1" />
                         Has News
                       </Button>
                       <Button
@@ -824,7 +824,7 @@ export default function TradeHistory() {
                         }}
                         size="sm"
                       >
-                        <FileX className="h-4 w-4 mr-1" />
+                        <Icons.general.fileX className="h-4 w-4 mr-1" />
                         No News
                       </Button>
                     </div>
@@ -845,7 +845,7 @@ export default function TradeHistory() {
                           updateFilter('hasEnteredEarly', newValue ? true : undefined);
                         }}
                       >
-                        <TimerOff className="h-4 w-4 mr-1" />
+                        <Icons.general.timerOff className="h-4 w-4 mr-1" />
                         Entered Early
                       </Button>
                       
@@ -858,7 +858,7 @@ export default function TradeHistory() {
                           updateFilter('hasRevenge', newValue ? true : undefined);
                         }}
                       >
-                        <Repeat className="h-4 w-4 mr-1" />
+                        <Icons.general.repeat className="h-4 w-4 mr-1" />
                         Revenge Trading
                       </Button>
                       
@@ -871,7 +871,7 @@ export default function TradeHistory() {
                           updateFilter('hasMovedSL', newValue ? true : undefined);
                         }}
                       >
-                        <MoveRight className="h-4 w-4 mr-1" />
+                        <Icons.general.moveRight className="h-4 w-4 mr-1" />
                         Moved Stop Loss
                       </Button>
                       
@@ -884,7 +884,7 @@ export default function TradeHistory() {
                           updateFilter('hasOverLeveraged', newValue ? true : undefined);
                         }}
                       >
-                        <AlertTriangle className="h-4 w-4 mr-1" />
+                        <Icons.ui.alertTriangle className="h-4 w-4 mr-1" />
                         Over Leveraged
                       </Button>
                     </div>
