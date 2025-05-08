@@ -430,7 +430,7 @@ export const AchievementsTab: React.FC<{
               {isRefreshing ? (
                 <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <RefreshCcw className="h-3.5 w-3.5" />
+                <Icons.ui.refresh className="h-3.5 w-3.5" />
               )}
               <span className="hidden sm:inline">Refresh</span>
             </Button>
@@ -471,7 +471,7 @@ export const AchievementsTab: React.FC<{
             
             {filteredAchievements.length === 0 && (
               <div className="text-center py-8">
-                <FilterX className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
+                <Icons.general.filterX className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
                 <h4 className="text-lg font-medium mb-1">No achievements found</h4>
                 <p className="text-muted-foreground">
                   Try selecting a different category or removing filters to see all achievements.
@@ -546,9 +546,9 @@ export const AchievementsTab: React.FC<{
                 disabled={isRefreshing}
               >
                 {isRefreshing ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                  <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin mr-1.5" />
                 ) : (
-                  <RefreshCcw className="h-3.5 w-3.5 mr-1.5" />
+                  <Icons.ui.refresh className="h-3.5 w-3.5 mr-1.5" />
                 )}
                 Force Refresh
               </Button>
@@ -564,7 +564,7 @@ export const AchievementsTab: React.FC<{
                 }}
                 className="h-8 text-xs"
               >
-                <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.analytics.trending className="h-3.5 w-3.5 mr-1.5" />
                 Simulate Create Trade
               </Button>
               
@@ -579,13 +579,13 @@ export const AchievementsTab: React.FC<{
                 }}
                 className="h-8 text-xs"
               >
-                <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.achievement.book className="h-3.5 w-3.5 mr-1.5" />
                 Simulate Update Trade
               </Button>
             </div>
             
             <div className="mt-4 bg-yellow-100 dark:bg-yellow-950/20 p-2 rounded text-xs text-yellow-800 dark:text-yellow-300">
-              <AlertCircle className="h-3.5 w-3.5 inline-block mr-1" />
+              <Icons.ui.alertCircle className="h-3.5 w-3.5 inline-block mr-1" />
               For testing only. These actions will be logged in development.
             </div>
           </div>

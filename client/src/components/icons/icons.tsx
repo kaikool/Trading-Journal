@@ -158,6 +158,7 @@ export const Icons = {
     delete: LucideIcons.Trash2,
     view: LucideIcons.Eye,
     filter: LucideIcons.Filter,
+    filterX: LucideIcons.FilterX,
     sort: LucideIcons.ArrowUpDown,
     database: LucideIcons.Database,
     search: LucideIcons.Search,
