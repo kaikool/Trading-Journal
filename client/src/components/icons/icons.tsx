@@ -22,7 +22,8 @@ export const Icons = {
     zoomOut: LucideIcons.ZoomOut,
     upload: LucideIcons.UploadCloud,
     check: LucideIcons.Check,
-    circle: LucideIcons.Circle,
+    circle: LucideIcons.CircleDot,
+    lock: LucideIcons.Lock,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
@@ -79,6 +80,8 @@ export const Icons = {
     camera: LucideIcons.Camera,
     image: LucideIcons.Image,
     clipboard: LucideIcons.Clipboard,
+    hand: LucideIcons.Hand,
+    target: LucideIcons.Target,
   },
 };
 

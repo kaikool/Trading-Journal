@@ -6,7 +6,7 @@ import { LucideIcon } from "lucide-react";
 export const getIconByName = (iconName: string): LucideIcon => {
   const icons: Record<string, LucideIcon> = {
     // Achievement icons
-    "Target": Icons.general.target || Icons.achievement.trophy,
+    "Target": Icons.general.target,
     "Trophy": Icons.achievement.trophy,
     "TrendingUp": Icons.trade.profit,
     "Sword": Icons.achievement.trophy, // Fallback until we add sword
