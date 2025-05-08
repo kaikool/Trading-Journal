@@ -771,7 +771,7 @@ export default function Settings() {
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
-                <Icons.ui.alertCircle className="h-4 w-4" />
+                <Icons.ui.error className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{passwordError}</AlertDescription>
               </Alert>
@@ -1200,7 +1200,7 @@ export default function Settings() {
           >
             {passwordError && (
               <Alert variant="destructive" className="mb-6">
-                <Icons.ui.alertCircle className="h-4 w-4" />
+                <Icons.ui.error className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{passwordError}</AlertDescription>
               </Alert>
