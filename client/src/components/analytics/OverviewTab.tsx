@@ -27,7 +27,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { ArrowUpCircle, ArrowDownCircle, LineChart, PieChartIcon, TrendingUp, CircleDollarSign } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { formatCurrency, cn } from "@/lib/utils";
 import { subDays, isAfter } from "date-fns";
 import { CHART_CONFIG, UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
@@ -115,9 +115,9 @@ const KPICard = memo(function KPICard({ title, value, description, icon, trend }
         {trend && (
           <div className="flex items-center mt-1">
             {trend.direction === 'up' ? (
-              <ArrowUpCircle className="text-success h-4 w-4 mr-1.5" />
+              <Icons.analytics.trendingUp className="text-success h-4 w-4 mr-1.5" />
             ) : trend.direction === 'down' ? (
-              <ArrowDownCircle className="text-destructive h-4 w-4 mr-1.5" />
+              <Icons.analytics.trendingDown className="text-destructive h-4 w-4 mr-1.5" />
             ) : (
               <div className="w-4 mr-1.5" />
             )}
@@ -372,7 +372,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           title="Account Balance"
           value={formatCurrency(currentBalance)}
           description={`Initial: ${formatCurrency(initialBalance)}`}
-          icon={<CircleDollarSign className="h-5 w-5" />}
+          icon={<Icons.trade.currency className="h-5 w-5" />}
           trend={{
             direction: netProfit >= 0 ? 'up' as const : 'down' as const,
             value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${profitLossPercentage.toFixed(1)}%)`
