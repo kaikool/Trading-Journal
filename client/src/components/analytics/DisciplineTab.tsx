@@ -79,7 +79,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         winRateYes: disciplineMetrics.enteredEarly.winRateYes,
         winRateNo: disciplineMetrics.enteredEarly.winRateNo,
         total: disciplineMetrics.enteredEarly.yes + disciplineMetrics.enteredEarly.no,
-        icon: <AlertTriangle className="h-5 w-5" />,
+        icon: <Icons.ui.alertTriangle className="h-5 w-5" />,
         description: "Entering trades before confirmation signals",
         impact: disciplineMetrics.enteredEarly.winRateNo - disciplineMetrics.enteredEarly.winRateYes
       },
@@ -90,7 +90,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         winRateYes: disciplineMetrics.revenge.winRateYes,
         winRateNo: disciplineMetrics.revenge.winRateNo,
         total: disciplineMetrics.revenge.yes + disciplineMetrics.revenge.no,
-        icon: <Shield className="h-5 w-5" />,
+        icon: <Icons.achievement.shield className="h-5 w-5" />,
         description: "Trading to recover previous losses",
         impact: disciplineMetrics.revenge.winRateNo - disciplineMetrics.revenge.winRateYes
       }
