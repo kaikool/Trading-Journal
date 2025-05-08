@@ -372,7 +372,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           title="Account Balance"
           value={formatCurrency(currentBalance)}
           description={`Initial: ${formatCurrency(initialBalance)}`}
-          icon={<Icons.trade.currency className="h-5 w-5" />}
+          icon={<Icons.trade.price className="h-5 w-5" />}
           trend={{
             direction: netProfit >= 0 ? 'up' as const : 'down' as const,
             value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${profitLossPercentage.toFixed(1)}%)`
@@ -383,7 +383,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           title="Win Rate"
           value={`${winRate.toFixed(1)}%`}
           description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
-          icon={<TrendingUp className="h-5 w-5" />}
+          icon={<Icons.analytics.trendingUp className="h-5 w-5" />}
           trend={recentPerformanceTrend}
         />
         
@@ -391,7 +391,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           title="Total Trades"
           value={totalTrades}
           description="Completed trades"
-          icon={<LineChart className="h-5 w-5" />}
+          icon={<Icons.analytics.lineChart className="h-5 w-5" />}
         />
         
         <KPICard
@@ -411,7 +411,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             return profitFactor.toFixed(2);
           })()}
           description="Ratio of gross profit to gross loss"
-          icon={<TrendingUp className="h-5 w-5" />}
+          icon={<Icons.analytics.trendingUp className="h-5 w-5" />}
         />
       </div>
 
@@ -422,7 +422,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-xl font-semibold flex items-center">
-                <LineChart className="h-5 w-5 mr-2 text-primary" />
+                <Icons.analytics.lineChart className="h-5 w-5 mr-2 text-primary" />
                 Account Equity
               </CardTitle>
               
@@ -435,8 +435,8 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                       : "bg-destructive/10 dark:bg-destructive/15 text-destructive"
                   )}>
                     {netProfit >= 0 ? 
-                      <ArrowUpCircle className="h-3.5 w-3.5 mr-1.5" /> : 
-                      <ArrowDownCircle className="h-3.5 w-3.5 mr-1.5" />}
+                      <Icons.analytics.trendingUp className="h-3.5 w-3.5 mr-1.5" /> : 
+                      <Icons.analytics.trendingDown className="h-3.5 w-3.5 mr-1.5" />}
                     {netProfit >= 0 ? "+" : ""}{profitLossPercentage.toFixed(1)}%
                   </div>
                 )}
@@ -591,7 +591,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <CardTitle className="text-xl font-semibold flex items-center">
-                <PieChartIcon className="h-5 w-5 mr-2 text-primary" />
+                <Icons.analytics.pieChart className="h-5 w-5 mr-2 text-primary" />
                 Currency Pair Performance
               </CardTitle>
               
@@ -686,7 +686,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
         <CardHeader className="px-4 sm:px-6 pt-4 pb-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <CardTitle className="text-xl font-semibold flex items-center">
-              <BarChart className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.barChart className="h-5 w-5 mr-2 text-primary" />
               Monthly Trading Activity
             </CardTitle>
             
