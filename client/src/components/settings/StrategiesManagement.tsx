@@ -38,6 +38,10 @@ import {
 } from "@/components/ui/select";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
+import { 
+  BookCopy, Bookmark, ListChecks, X, Clock, DoorOpen, LogOut, 
+  Edit, Trash2, Check, ArrowDown, ArrowUp, Loader2, Save, Plus 
+} from "lucide-react";
 
 // Common timeframes for forex
 const COMMON_TIMEFRAMES = ["M1", "M5", "M15", "M30", "H1", "H4", "D1", "W1", "MN"];
@@ -280,7 +284,7 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="space-y-1.5 mb-2">
               <StrategyConditionList
                 title="Exit Conditions"
-                icon={<LogOut className="h-4 w-4 mr-1" />}
+                icon={<Icons.trade.logOut className="h-4 w-4 mr-1" />}
                 emptyMessage="No exit conditions defined yet. Add your first exit condition."
                 conditions={strategy.exitConditions || []}
                 onAdd={(condition) => handleFieldChange('exitConditions', 
@@ -302,7 +306,7 @@ const StrategyItem = React.memo(function StrategyItem({
             <div className="space-y-1.5 mt-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium flex items-center">
-                  <Clock className="h-4 w-4 mr-2" />
+                  <Icons.trade.clock className="h-4 w-4 mr-2" />
                   Timeframes
                 </h4>
                 <div className="flex items-center space-x-2">
@@ -342,7 +346,7 @@ const StrategyItem = React.memo(function StrategyItem({
                       className="px-1.5 py-0 text-xs h-6 flex items-center gap-1.5 hover:bg-secondary/70"
                     >
                       {tf}
-                      <X 
+                      <Icons.ui.close 
                         className="h-3 w-3 cursor-pointer hover:text-destructive"
                         onClick={() => {
                           handleFieldChange('timeframes', 
@@ -379,7 +383,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 size="sm" 
                 onClick={resetFormFields}
               >
-                <X className="h-3.5 w-3.5 mr-1.5" />
+                <Icons.ui.close className="h-3.5 w-3.5 mr-1.5" />
                 Cancel
               </Button>
               <Button 
@@ -389,12 +393,12 @@ const StrategyItem = React.memo(function StrategyItem({
               >
                 {isSaving ? (
                   <>
-                    <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                    <Icons.ui.spinner className="h-3.5 w-3.5 mr-1.5 animate-spin" />
                     Saving...
                   </>
                 ) : (
                   <>
-                    <Save className="h-3.5 w-3.5 mr-1.5" />
+                    <Icons.ui.save className="h-3.5 w-3.5 mr-1.5" />
                     Save Changes
                   </>
                 )}
@@ -500,7 +504,7 @@ const StrategyItem = React.memo(function StrategyItem({
             {strategy.timeframes && strategy.timeframes.length > 0 && (
               <div className="app-accordion-content-section p-3">
                 <h3 className="app-accordion-heading text-sm flex items-center bg-gradient-to-r from-primary/80 to-secondary/80">
-                  <Clock className="h-3.5 w-3.5 mr-1 text-primary/80" />
+                  <Icons.trade.clock className="h-3.5 w-3.5 mr-1 text-primary/80" />
                   Recommended Timeframes
                 </h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
@@ -532,7 +536,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 onClick={onEdit}
                 className="bg-secondary/30 hover:bg-secondary/50 h-8 px-2 text-xs"
               >
-                <Edit className="h-3 w-3 mr-1" />
+                <Icons.ui.edit className="h-3 w-3 mr-1" />
                 Edit
               </Button>
               <Button 
@@ -542,7 +546,7 @@ const StrategyItem = React.memo(function StrategyItem({
                 onClick={onDelete}
                 disabled={isSaving}
               >
-                <Trash2 className="h-3 w-3 mr-1" />
+                <Icons.ui.trash className="h-3 w-3 mr-1" />
                 Delete
               </Button>
             </div>
