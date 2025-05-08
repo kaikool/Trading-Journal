@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { RefreshCw, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { debug } from '@/lib/debug';
+import { isPwaMode, clearAssetsCache, updateServiceWorker } from '@/lib/serviceWorkerHelper';
 
 interface SafeLazyLoadProps {
   moduleLoader: () => Promise<any>;
@@ -12,6 +13,19 @@ interface SafeLazyLoadProps {
   height?: number | string;
   retryOnError?: boolean;
   children?: React.ReactNode;
+}
+
+/**
+ * Phát hiện lỗi MIME type để hiển thị thông báo phù hợp
+ */
+function isMIMETypeError(error: Error): boolean {
+  if (!error) return false;
+  
+  const errorMessage = error.message || '';
+  return errorMessage.includes('MIME type') || 
+         errorMessage.includes('Unexpected token') ||
+         errorMessage.includes('module') ||
+         errorMessage.includes('Failed to fetch dynamically imported module');
 }
 
 /**
@@ -64,6 +78,9 @@ export function SafeLazyLoad({
 
   // If there was an error loading
   if (error) {
+    // Check for MIME type error
+    const isMIMEError = isMIMETypeError(error);
+    
     return (
       <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: typeof height === 'number' ? height : 300 }}>
         <div className="w-full max-w-md mx-auto p-4">
@@ -71,17 +88,37 @@ export function SafeLazyLoad({
             <AlertTriangle className="h-5 w-5 mr-2" />
             <AlertTitle>Error Loading Content</AlertTitle>
             <AlertDescription>
-              {error?.message || 'There was a problem loading this component.'}
-              {navigator.onLine ? '' : ' (You appear to be offline)'}
+              {isMIMEError ? (
+                <>
+                  Could not load component due to a MIME type error. This typically happens in PWA mode. 
+                  {navigator.onLine ? ' Please try refreshing the page.' : ' You appear to be offline.'}
+                </>
+              ) : (
+                <>
+                  {error?.message || 'There was a problem loading this component.'}
+                  {navigator.onLine ? '' : ' (You appear to be offline)'}
+                </>
+              )}
             </AlertDescription>
           </Alert>
           
           {retryOnError && (
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-4 gap-2">
               <Button onClick={handleRetry} className="gap-2">
                 <RefreshCw className="h-4 w-4" />
                 Retry
               </Button>
+              
+              {isMIMEError && (
+                <Button 
+                  onClick={() => window.location.reload()} 
+                  variant="outline" 
+                  className="gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Refresh Page
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -107,27 +144,65 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
     
     return (
       <ErrorBoundary
-        fallback={({ error, resetErrorBoundary }) => (
-          <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: height || 300 }}>
-            <div className="w-full max-w-md mx-auto p-4">
-              <Alert variant="destructive" className="mb-4">
-                <AlertTriangle className="h-5 w-5 mr-2" />
-                <AlertTitle>Error Loading Content</AlertTitle>
-                <AlertDescription>
-                  {error?.message || 'There was a problem loading this component.'}
-                  {navigator.onLine ? '' : ' (You appear to be offline)'}
-                </AlertDescription>
-              </Alert>
-              
-              <div className="flex justify-center mt-4">
-                <Button onClick={resetErrorBoundary} className="gap-2">
-                  <RefreshCw className="h-4 w-4" />
-                  Retry
-                </Button>
+        fallback={({ error, resetErrorBoundary }) => {
+          // Check for MIME type error
+          const isMIMEError = isMIMETypeError(error);
+          
+          return (
+            <div className="flex items-center justify-center min-h-[150px] w-full" style={{ minHeight: height || 300 }}>
+              <div className="w-full max-w-md mx-auto p-4">
+                <Alert variant="destructive" className="mb-4">
+                  <AlertTriangle className="h-5 w-5 mr-2" />
+                  <AlertTitle>Error Loading Content</AlertTitle>
+                  <AlertDescription>
+                    {isMIMEError ? (
+                      <>
+                        Could not load component due to a MIME type error. This typically happens in PWA mode. 
+                        {navigator.onLine ? ' Please try refreshing the page.' : ' You appear to be offline.'}
+                      </>
+                    ) : (
+                      <>
+                        {error?.message || 'There was a problem loading this component.'}
+                        {navigator.onLine ? '' : ' (You appear to be offline)'}
+                      </>
+                    )}
+                  </AlertDescription>
+                </Alert>
+                
+                <div className="flex justify-center mt-4 gap-2">
+                  <Button onClick={resetErrorBoundary} className="gap-2">
+                    <RefreshCw className="h-4 w-4" />
+                    Retry
+                  </Button>
+                  
+                  {isMIMEError && (
+                    <Button 
+                      onClick={() => window.location.reload()} 
+                      variant="outline" 
+                      className="gap-2"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      Refresh Page
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        }}
+        onReset={async () => {
+          // Khi gặp lỗi MIME type trong PWA mode, xóa cache và update service worker
+          if (isMIMETypeError(error) && isPwaMode()) {
+            try {
+              // Xóa cache tài nguyên JavaScript
+              await clearAssetsCache();
+              // Cập nhật service worker nếu có bản mới
+              await updateServiceWorker();
+            } catch (err) {
+              console.error('Failed to clear cache:', err);
+            }
+          }
+        }}
       >
         <Suspense fallback={fallback || <LoadingFallback height={height || 300} showSpinner={true} />}>
           <LazyComponent {...componentProps} />

@@ -1,12 +1,15 @@
 /**
  * Forex Trade Journal PWA - Service Worker
  * Enhanced for better offline support, caching strategies and PWA experience
- * Last updated: 01/05/2025
+ * Last updated: 08/05/2025
  * 
- * CẬP NHẬT: Chuyển từ Firebase Functions sang Firebase Storage Web SDK trực tiếp
+ * CẬP NHẬT: 
+ * - Chuyển từ Firebase Functions sang Firebase Storage Web SDK trực tiếp
+ * - Sửa lỗi MIME type trong production mode
+ * - Cải thiện phản hồi offline cho các thành phần lazy-loaded
  */
 
-const APP_VERSION = 'v2.1.1'; // Updated with improved error handling
+const APP_VERSION = 'v2.1.2'; // Updated with MIME type fixes
 const CACHE_NAME = 'forex-journal-cache-' + APP_VERSION;
 const OFFLINE_URL = '/offline.html';
 const FALLBACK_IMAGE = '/icons/offline.png';
@@ -298,23 +301,44 @@ async function generateFallbackResponse(request) {
   
   // Handle React lazy-loaded chunks specifically
   const chunkUrl = request?.url || '';
-  if (chunkUrl.includes('/assets/') && 
-      (chunkUrl.includes('chunk-') || 
-       chunkUrl.includes('analytics-') || 
-       chunkUrl.includes('settings-'))) {
-    return new Response('export default {};', {
-      headers: { 
-        'Content-Type': 'text/javascript',
-        'Cache-Control': 'no-cache' 
+  if (chunkUrl.includes('/assets/')) {
+    // Handle different types of chunks with correct MIME types
+    if (chunkUrl.includes('chunk-') || 
+        chunkUrl.includes('analytics-') || 
+        chunkUrl.includes('settings-')) {
+      
+      // Check if it's a JS module or JSON
+      if (chunkUrl.endsWith('.js')) {
+        return new Response('export default {};', {
+          headers: { 
+            'Content-Type': 'application/javascript',
+            'Cache-Control': 'no-cache'
+          }
+        });
+      } else if (chunkUrl.endsWith('.json')) {
+        return new Response('{}', {
+          headers: { 
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+      } else {
+        // For any other chunks, use module type
+        return new Response('export default {};', {
+          headers: { 
+            'Content-Type': 'text/javascript; charset=utf-8',
+            'Cache-Control': 'no-cache'
+          }
+        });
       }
-    });
+    }
   }
   
   // Default fallback
   return new Response('Offline content unavailable', {
     status: 503,
     statusText: 'Service Unavailable',
-    headers: { 'Content-Type': 'text/plain' }
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
   });
 }
 
@@ -458,5 +482,37 @@ self.addEventListener('message', (event) => {
     event.ports[0].postMessage({
       version: APP_VERSION
     });
+  }
+  
+  // Xử lý yêu cầu xóa cache đối với tài nguyên JavaScript khi có lỗi MIME
+  if (event.data && event.data.type === 'CLEAR_ASSETS_CACHE') {
+    caches.open(CACHE_NAME).then(cache => {
+      // Tìm và xóa các tài nguyên .js và React chunks từ cache
+      cache.keys().then(keys => {
+        for (let request of keys) {
+          const url = request.url || '';
+          if (url.includes('/assets/') && 
+              (url.includes('.js') || 
+               url.includes('chunk-') || 
+               url.includes('analytics-') || 
+               url.includes('settings-'))) {
+            // Xóa tài nguyên này khỏi cache
+            cache.delete(request).then(() => {
+              console.log('Cleared cached asset:', url);
+            });
+          }
+        }
+      });
+    }).catch(err => {
+      console.error('Error clearing asset cache:', err);
+    });
+    
+    // Báo lại cho client
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage({
+        success: true,
+        timestamp: Date.now()
+      });
+    }
   }
 });
