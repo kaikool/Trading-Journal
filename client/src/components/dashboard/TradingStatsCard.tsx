@@ -7,17 +7,7 @@ import {
   CardGradient, 
   CardValue 
 } from "@/components/ui/card";
-import { 
-  BarChart2, 
-  TrendingUp, 
-  Scale, 
-  Percent, 
-  CheckCircle,
-  AlertCircle,
-  Medal,
-  DollarSign,
-  TrendingDown
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatProfitFactor } from "@/lib/balance-calculation-rules";
@@ -88,26 +78,26 @@ export function TradingStatsCard({
   const performanceConfig = {
     tag: "Insufficient Data",
     badgeClass: "bg-muted/20 text-muted-foreground",
-    icon: AlertCircle
+    icon: Icons.ui.error
   };
   
   if (totalTrades >= 10) {
     if (performancePoints === 3) {
       performanceConfig.tag = "Excellent";
       performanceConfig.badgeClass = "bg-success/10 text-success dark:bg-success/15 dark:text-success";
-      performanceConfig.icon = Medal;
+      performanceConfig.icon = Icons.achievement.medal;
     } else if (performancePoints === 2) {
       performanceConfig.tag = "Good";
       performanceConfig.badgeClass = "bg-primary/10 text-primary dark:bg-primary/15 dark:text-primary-foreground";
-      performanceConfig.icon = CheckCircle;
+      performanceConfig.icon = Icons.ui.circleCheck;
     } else if (performancePoints === 1) {
       performanceConfig.tag = "Needs Improvement";
       performanceConfig.badgeClass = "bg-warning/10 text-warning dark:bg-warning/15 dark:text-warning";
-      performanceConfig.icon = AlertCircle;
+      performanceConfig.icon = Icons.ui.warning;
     } else {
       performanceConfig.tag = "Underperforming";
       performanceConfig.badgeClass = "bg-destructive/10 text-destructive dark:bg-destructive/15 dark:text-destructive";
-      performanceConfig.icon = AlertCircle;
+      performanceConfig.icon = Icons.ui.error;
     }
   }
   
@@ -116,7 +106,7 @@ export function TradingStatsCard({
     { 
       label: "Total Trades", 
       value: totalTrades.toString(), 
-      icon: BarChart2,
+      icon: Icons.analytics.barChart,
       tooltip: "Total number of completed trades",
       color: "text-primary dark:text-primary-foreground/90",
       bgColor: "bg-primary/10 dark:bg-primary/20"
@@ -124,7 +114,7 @@ export function TradingStatsCard({
     { 
       label: "Win Rate", 
       value: `${winRate.toFixed(1)}%`, 
-      icon: isGoodWinRate !== null ? (isGoodWinRate ? CheckCircle : Percent) : Percent,
+      icon: isGoodWinRate !== null ? (isGoodWinRate ? Icons.ui.circleCheck : Icons.ui.percent) : Icons.ui.percent,
       tooltip: "Percentage of profitable trades",
       color: isGoodWinRate !== null 
         ? (isGoodWinRate ? "text-success" : "text-destructive")
@@ -136,7 +126,7 @@ export function TradingStatsCard({
     { 
       label: "Profit Factor", 
       value: formatProfitFactor(profitFactor), 
-      icon: TrendingUp,
+      icon: Icons.trade.profit,
       tooltip: "Ratio of gross profit to gross loss",
       color: isGoodProfitFactor !== null
         ? (isGoodProfitFactor ? "text-success" : "text-destructive")
@@ -148,7 +138,7 @@ export function TradingStatsCard({
     { 
       label: "R:R Ratio", 
       value: avgRiskRewardRatio.toFixed(2), 
-      icon: Scale,
+      icon: Icons.ui.slidersHorizontal,
       tooltip: "Average profit per trade to average loss per trade",
       color: isGoodRR !== null
         ? (isGoodRR ? "text-success" : "text-destructive")
@@ -165,7 +155,7 @@ export function TradingStatsCard({
       { 
         label: "Total Profit", 
         value: totalProfit.toFixed(2), 
-        icon: DollarSign,
+        icon: Icons.ui.dollarSign,
         tooltip: "Total profit from winning trades",
         color: "text-success",
         bgColor: "bg-success/10 dark:bg-success/15"
@@ -173,7 +163,7 @@ export function TradingStatsCard({
       { 
         label: "Total Loss", 
         value: totalLoss.toFixed(2), 
-        icon: TrendingDown,
+        icon: Icons.trade.loss,
         tooltip: "Total loss from losing trades",
         color: "text-destructive",
         bgColor: "bg-destructive/10 dark:bg-destructive/15"

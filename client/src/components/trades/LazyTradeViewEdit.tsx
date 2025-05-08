@@ -290,7 +290,7 @@ export function LazyTradeViewEdit({
                   onClick={() => onDelete(trade.id)}
                   className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
-                  <Trash2Icon className="h-4 w-4 mr-1" />
+                  <Icons.trade.trash className="h-4 w-4 mr-1" />
                   {!isMobile && <span>Delete</span>}
                 </Button>
                 
@@ -300,7 +300,7 @@ export function LazyTradeViewEdit({
                   onClick={onBack}
                   className="h-8"
                 >
-                  <ArrowLeft className="h-4 w-4 mr-1" />
+                  <Icons.trade.arrowLeft className="h-4 w-4 mr-1" />
                   {!isMobile && <span>Back</span>}
                 </Button>
               </div>
@@ -319,7 +319,7 @@ export function LazyTradeViewEdit({
                       variant="soft"
                       className="mr-1.5"
                     >
-                      <BookOpenCheck className="h-3 w-3" />
+                      <Icons.trade.checklist className="h-3 w-3" />
                     </CardIcon>
                     Trade Notes
                   </h4>
@@ -339,7 +339,7 @@ export function LazyTradeViewEdit({
                       variant="soft"
                       className="mr-1.5"
                     >
-                      <BookOpenCheck className="h-3 w-3" />
+                      <Icons.trade.checklist className="h-3 w-3" />
                     </CardIcon>
                     Closing Notes
                   </h4>
@@ -372,7 +372,7 @@ export function LazyTradeViewEdit({
                 fallback={
                   <div className="w-full py-8 flex items-center justify-center">
                     <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
                       <p className="text-sm text-muted-foreground">Loading form...</p>
                     </div>
                   </div>
