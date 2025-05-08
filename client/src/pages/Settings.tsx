@@ -1046,7 +1046,7 @@ export default function Settings() {
                   </div>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      <Icons.ui.dollarSign className="h-4 w-4" />
+                      <Icons.analytics.dollar className="h-4 w-4" />
                     </div>
                     <Input
                       id="initialBalance"
