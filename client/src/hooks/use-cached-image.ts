@@ -35,10 +35,13 @@ interface UseCachedImageOptions {
   retryDelay?: number;       // Thời gian chờ giữa các lần thử lại (ms) (mặc định: 1000)
   placeholder?: string;      // URL ảnh giữ chỗ khi đang tải
   fetchOnMount?: boolean;    // Tự động tải khi component được mount (mặc định: true)
+  tradeId?: string;          // ID của giao dịch (được sử dụng trong component LazyTradeHistoryCard)
+  imageType?: string;        // Loại hình ảnh (entryM15, exitM15, entryH4, exitH4, ...)
 }
 
 interface UseCachedImageResult {
   url: string | null;           // URL hình ảnh sau khi tải thành công
+  imageUrl: string | null;      // Alias của url để tương thích với các component cũ
   isLoading: boolean;          // Trạng thái tải
   error: Error | null;         // Lỗi nếu có
   invalidate: () => void;      // Hàm để làm mới cache cho hình ảnh này
@@ -144,6 +147,7 @@ export function useCachedImage(
 
   return {
     url,
+    imageUrl: url, // Thêm alias imageUrl để tương thích với component cũ
     isLoading,
     error,
     invalidate,
