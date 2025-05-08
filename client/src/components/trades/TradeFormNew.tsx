@@ -2272,7 +2272,7 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Discipline Factors - Optimized Grid Layout with 2-3 Columns */}
               <div>
                 <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <Icons.ui.checkCircle className="h-5 w-5 text-primary/80 mr-2" />
+                  <Icons.ui.success className="h-5 w-5 text-primary/80 mr-2" />
                   Trade Discipline
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-2">
@@ -2287,8 +2287,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("followedPlan", !followedPlan)}
                   >
                     {followedPlan 
-                      ? <CheckCircle2 className="h-4 w-4 mr-2 flex-shrink-0" /> 
-                      : <X className="h-4 w-4 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.close className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Followed Plan</span>
                   </div>
                   
@@ -2302,8 +2302,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("enteredEarly", !enteredEarly)}
                   >
                     {!enteredEarly
-                      ? <CheckCircle2 className="h-4 w-4 mr-2 flex-shrink-0" /> 
-                      : <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Waited for Signal</span>
                   </div>
                   
@@ -2360,7 +2360,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                   {/* Strategy Verification Checklist */}
                   <div className="mb-4">
                     <div className="flex items-center mb-2">
-                      <CheckCircle2 className="h-5 w-5 text-primary/80 mr-2" />
+                      <Icons.ui.success className="h-5 w-5 text-primary/80 mr-2" />
                       <h3 className="text-base font-semibold">Strategy Compliance Check</h3>
                     </div>
                     
