@@ -487,7 +487,7 @@ export default function TradeHistory() {
                           {filters.pair?.length 
                             ? `${filters.pair.length} selected`
                             : "Select pairs"}
-                          <ChevronsUpDown className="h-4 w-4 ml-2" />
+                          <Icons.ui.chevronsUpDown className="h-4 w-4 ml-2" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-[200px] max-h-[300px] overflow-y-auto">
@@ -664,7 +664,7 @@ export default function TradeHistory() {
                           {filters.strategy?.length 
                             ? `${filters.strategy.length} selected`
                             : "Select strategies"}
-                          <ChevronsUpDown className="h-4 w-4 ml-2" />
+                          <Icons.ui.chevronsUpDown className="h-4 w-4 ml-2" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-[200px] max-h-[200px] overflow-y-auto">
@@ -736,7 +736,7 @@ export default function TradeHistory() {
                           {filters.emotion?.length 
                             ? `${filters.emotion.length} selected`
                             : "Select emotions"}
-                          <ChevronsUpDown className="h-4 w-4 ml-2" />
+                          <Icons.ui.chevronsUpDown className="h-4 w-4 ml-2" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-[200px] max-h-[200px] overflow-y-auto">
