@@ -45,6 +45,9 @@ const SelectContent = React.forwardRef<
       align="center"
       sideOffset={4}
       avoidCollisions={false}
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+      }}
       {...props}
     >
       <SelectPrimitive.ScrollUpButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground">
