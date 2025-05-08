@@ -75,7 +75,7 @@ export async function fetchRealTimePrice(symbol: string): Promise<number> {
       params: {
         symbol: formattedSymbol,
         format: 'JSON',
-        apikey: 1b89f469e4fa408d8700380d216f0864
+        apikey: "1b89f469e4fa408d8700380d216f0864"
       }
     });
     
