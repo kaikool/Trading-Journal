@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trade } from '@/types';
 import { lazy, Suspense } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Icons } from '@/components/icons/icons';
 import { Button } from "@/components/ui/button";
 
 // Lazy load the main form component
