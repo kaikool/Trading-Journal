@@ -12,6 +12,7 @@ import {
   getDownloadURL,
   deleteObject
 } from "firebase/storage";
+// Import functions which is an alias for initFirebase() from firebase.ts
 import { functions } from './firebase';
 import { debug } from './debug';
 
