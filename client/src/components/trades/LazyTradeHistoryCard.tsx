@@ -291,7 +291,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       size="sm"
                       variant="soft"
                     >
-                      {direction === "BUY" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
+                      {direction === "BUY" ? <Icons.trade.arrowUp className="h-3.5 w-3.5" /> : <Icons.trade.arrowDown className="h-3.5 w-3.5" />}
                     </CardIcon>
                     <h3 className="text-lg font-semibold">
                       {pair}
@@ -304,7 +304,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       size="sm"
                       variant="soft"
                     >
-                      <BarChart2 className="h-3.5 w-3.5" />
+                      <Icons.analytics.barChart className="h-3.5 w-3.5" />
                     </CardIcon>
                     <span className="text-sm ml-1.5 text-muted-foreground font-medium">
                       {strategy}
@@ -353,7 +353,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       onClick={() => handleViewTrade()}
                       title="View Details"
                     >
-                      <EyeIcon className="h-3.5 w-3.5" />
+                      <Icons.ui.eye className="h-3.5 w-3.5" />
                     </CardIcon>
                     
                     <CardIcon
@@ -364,7 +364,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       onClick={() => onEdit()}
                       title="Edit Trade"
                     >
-                      <PencilIcon className="h-3.5 w-3.5" />
+                      <Icons.general.edit className="h-3.5 w-3.5" />
                     </CardIcon>
                     
                     {isTradeOpen && (
@@ -376,7 +376,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                         onClick={() => setShowCloseForm(true)}
                         title="Close Trade"
                       >
-                        <Lock className="h-3.5 w-3.5" />
+                        <Icons.ui.lock className="h-3.5 w-3.5" />
                       </CardIcon>
                     )}
                     
@@ -388,7 +388,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       onClick={() => onDelete(id)}
                       title="Delete Trade"
                     >
-                      <Trash2Icon className="h-3.5 w-3.5" />
+                      <Icons.general.trash className="h-3.5 w-3.5" />
                     </CardIcon>
                   </div>
                   
@@ -412,13 +412,13 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                         }
                         className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/80"
                       >
-                        {result === 'BE' ? <CircleDot className="h-3.5 w-3.5" /> :
+                        {result === 'BE' ? <Icons.ui.circleDot className="h-3.5 w-3.5" /> :
                          result === 'MANUAL' ? 
-                          (profitLoss > 0 ? <TrendingUpIcon className="h-3.5 w-3.5" /> :
-                           profitLoss < 0 ? <TrendingDownIcon className="h-3.5 w-3.5" /> :
-                           <CircleDot className="h-3.5 w-3.5" />) :
-                          (profitLoss > 0 ? <TrendingUpIcon className="h-3.5 w-3.5" /> :
-                           <TrendingDownIcon className="h-3.5 w-3.5" />)
+                          (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> :
+                           profitLoss < 0 ? <Icons.analytics.trendingDown className="h-3.5 w-3.5" /> :
+                           <Icons.ui.circleDot className="h-3.5 w-3.5" />) :
+                          (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> :
+                           <Icons.analytics.trendingDown className="h-3.5 w-3.5" />)
                         }
                         {formatCurrency(profitLoss)}
                       </CardValue>
