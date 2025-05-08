@@ -80,9 +80,8 @@
         <div class="form-group">
             <label for="endpoint">Endpoint:</label>
             <select id="endpoint" name="endpoint" required>
-                <option value="local">Local Server</option>
-                <option value="emulator">Firebase Emulator</option>
-                <option value="firebase-v2" selected>Firebase Function V2</option>
+                <option value="local" selected>Local Server</option>
+                <option value="firebase-storage">Firebase Storage Direct</option>
             </select>
         </div>
         <button type="submit">Upload</button>
@@ -126,11 +125,10 @@
                     case 'local':
                         url = '/api/trades/upload';
                         break;
-                    case 'emulator':
-                        url = 'http://localhost:5001/trading-journal-b83e9/us-central1/uploadMediaV2';
-                        break;
-                    case 'firebase-v2':
-                        url = 'https://us-central1-trading-journal-b83e9.cloudfunctions.net/uploadMediaV2';
+                    case 'firebase-storage':
+                        // Sử dụng API local, vì đây chỉ là endpoint demo và Firebase Storage được 
+                        // xử lý trực tiếp trong frontend ứng dụng chính
+                        url = '/api/trades/upload';
                         break;
                     default:
                         url = '/api/trades/upload';
