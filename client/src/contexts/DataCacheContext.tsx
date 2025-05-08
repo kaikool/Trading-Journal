@@ -121,22 +121,6 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         setUserId(user.uid);
-        // Để test cho demo, tự động truyền dữ liệu người dùng giả lập
-        if (process.env.NODE_ENV === 'development') {
-          debug('[DataCache] Development mode: setting sample user data for demo');
-          const sampleUserData = {
-            displayName: "Demo User",
-            initialBalance: 10000,
-            currentBalance: 10500,
-            email: "demo@example.com"
-          };
-          
-          setDataState(prevState => ({
-            ...prevState,
-            userData: sampleUserData,
-            isUserDataLoaded: true
-          }));
-        }
       } else {
         setUserId(null);
         setDataState({

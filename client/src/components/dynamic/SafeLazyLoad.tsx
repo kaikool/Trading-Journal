@@ -212,8 +212,21 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
           );
         }}
         onReset={() => {
-          // onReset chỉ cần là một hàm đơn giản, không cần async và không cần tham số
-          // Chúng ta đã xử lý lỗi MIME type ngay trong fallback
+          // onReset cần xử lý việc xóa cache khi có lỗi MIME type
+          const error = errorRef.current;
+          if (error && isMIMETypeError(error) && isPwaMode()) {
+            clearAssetsCache().catch((err) => {
+              console.error('Failed to clear cache:', err);
+            });
+            
+            // Thử cập nhật service worker nếu có
+            updateServiceWorker().catch((err) => {
+              console.error('Failed to update service worker:', err);
+            });
+          }
+          
+          // Đặt lại tham chiếu lỗi
+          errorRef.current = null;
         }}
       >
         <Suspense fallback={fallback || <LoadingFallback height={height || 300} showSpinner={true} />}>
