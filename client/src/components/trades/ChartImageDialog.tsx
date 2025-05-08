@@ -249,7 +249,7 @@ export function ChartImageDialog({
             {/* Loading indicator */}
             {isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
                 <span className="mt-2 text-xs font-medium">Đang tải...</span>
               </div>
             )}
@@ -322,14 +322,14 @@ export function ChartImageDialog({
           {/* Zoom controls */}
           <div className="chart-zoom-controls">
             <button className="chart-zoom-button" onClick={zoomIn} aria-label="Zoom in" disabled={scale >= 3}>
-              <ZoomIn size={isMobile ? 16 : 20} />
+              <Icons.ui.zoomIn size={isMobile ? 16 : 20} />
             </button>
             <button className="chart-zoom-button" onClick={zoomOut} aria-label="Zoom out" disabled={scale <= 1}>
-              <ZoomOut size={isMobile ? 16 : 20} />
+              <Icons.ui.zoomOut size={isMobile ? 16 : 20} />
             </button>
             <button className="chart-zoom-button" onClick={resetZoom} aria-label="Reset zoom" 
               disabled={scale === 1 && translate.x === 0 && translate.y === 0}>
-              <Maximize2 size={isMobile ? 16 : 20} />
+              <Icons.ui.maximize size={isMobile ? 16 : 20} />
             </button>
           </div>
           
