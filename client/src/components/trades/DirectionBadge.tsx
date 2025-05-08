@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type Direction = "BUY" | "SELL";
@@ -30,8 +30,8 @@ const DirectionBadge = React.forwardRef<HTMLDivElement, DirectionBadgeProps>(
       variant, // Tham số này không còn được sử dụng, nhưng giữ để tương thích ngược
     } = props;
 
-    // Chỉ sử dụng một loại icon duy nhất cho toàn bộ ứng dụng
-    const Icon = direction === "BUY" ? TrendingUp : TrendingDown;
+    // Chỉ sử dụng một loại icon duy nhất cho toàn bộ ứng dụng từ hệ thống icon tập trung
+    const Icon = direction === "BUY" ? Icons.trade.profit : Icons.trade.loss;
     
     // Cấu hình dựa trên hướng giao dịch
     const description = direction === "BUY" ? "Buy/Long Position" : "Sell/Short Position";

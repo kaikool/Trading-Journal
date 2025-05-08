@@ -248,7 +248,7 @@ export function RecentTradesCard({
               size="sm"
               variant="soft"
             >
-              <ClipboardList className="h-4 w-4" />
+              <Icons.ui.clipboardList className="h-4 w-4" />
             </CardIcon>
             Recent Trades
           </CardTitle>
@@ -266,7 +266,7 @@ export function RecentTradesCard({
         ) : (
           <div className="flex flex-col items-center justify-center h-full py-10 text-center">
             <div className="rounded-full bg-muted/10 p-3 mb-3">
-              <ClipboardList className="h-10 w-10 text-muted-foreground/40" />
+              <Icons.ui.clipboardList className="h-10 w-10 text-muted-foreground/40" />
             </div>
             <p className="font-medium text-muted-foreground">No recent activity</p>
             <p className="text-sm text-muted-foreground/70 mt-1 max-w-xs">
@@ -292,7 +292,7 @@ export function RecentTradesCard({
             onClick={handleViewAllTrades}
           >
             View All Trades
-            <ExternalLink className="h-3.5 w-3.5 ml-1" />
+            <Icons.ui.externalLink className="h-3.5 w-3.5 ml-1" />
           </Button>
         </CardFooter>
       )}

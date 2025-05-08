@@ -1424,7 +1424,7 @@ export default function Settings() {
                   {/* Note message */}
                   <div className="p-3 rounded-lg bg-muted/30 text-xs text-muted-foreground">
                     <p className="flex items-start">
-                      <Icons.ui.alertCircle className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                      <Icons.ui.error className="h-3.5 w-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
                       <span>
                         Keep at least one login method active.
                       </span>
