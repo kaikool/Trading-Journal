@@ -45,7 +45,7 @@ export function ChartWrapper({
           style={{ height: typeof height === 'number' ? `${height}px` : height }}
           className="flex flex-col items-center justify-center p-6"
         >
-          <Loader2 className="h-8 w-8 text-muted-foreground/50 animate-spin mb-4" />
+          <Icons.ui.spinner className="h-8 w-8 text-muted-foreground/50 animate-spin mb-4" />
           <div className="text-sm font-medium text-muted-foreground">
             Loading chart data...
           </div>
@@ -65,7 +65,7 @@ export function ChartWrapper({
           style={{ height: typeof height === 'number' ? `${height}px` : height }}
           className="flex flex-col items-center justify-center p-6 bg-muted/5 rounded-md border border-dashed border-border/50 m-4"
         >
-          <BarChart className="h-10 w-10 text-muted-foreground/20 mb-3" />
+          <Icons.ui.barChart className="h-10 w-10 text-muted-foreground/20 mb-3" />
           <div className="text-base font-medium text-center">
             {emptyMessage}
           </div>
