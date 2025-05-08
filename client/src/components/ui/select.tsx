@@ -79,6 +79,8 @@ const SelectContent = React.forwardRef<
         className
       )}
       position={position}
+      avoidCollisions={false}
+      onOpenAutoFocus={(e) => e.preventDefault()}
       {...props}
     >
       <SelectScrollUpButton />
