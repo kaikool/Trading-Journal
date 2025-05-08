@@ -2145,7 +2145,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           <SelectTrigger className="h-10 text-sm text-left">
                             <SelectValue placeholder={isLoadingStrategies ? "Loading strategies..." : "Select strategy"} className="text-left" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent position="item-aligned">
                             {isLoadingStrategies ? (
                               <div className="flex items-center justify-center p-2">
                                 <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
