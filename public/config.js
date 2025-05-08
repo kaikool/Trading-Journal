@@ -19,5 +19,8 @@ window.ENV = {
   VITE_FIREBASE_AUTH_DOMAIN: "trading-journal-b83e9.firebaseapp.com",
   
   // TwelveData API key cho môi trường production
-  TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%"
+  TWELVEDATA_API_KEY: "%TWELVEDATA_API_KEY%",
+  
+  // Firebase Functions config data (hỗ trợ định dạng 2-part key)
+  FIREBASE_CONFIG: '{"twelvedata":{"apikey":"%TWELVEDATA_API_KEY%"}}'
 };
