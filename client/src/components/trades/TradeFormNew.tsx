@@ -66,7 +66,6 @@ import {
 
 // Import IconSystem - sử dụng hệ thống icon tập trung
 import { Icons } from "@/components/icons/icons";
-import { Upload, X, AlertCircle, ImageIcon } from "lucide-react";
 // Hàm để xử lý đường dẫn ảnh từ database để hiển thị đúng
 function fixImagePath(path: string | null | undefined): string | null {
   if (!path) return null;
@@ -2470,7 +2469,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                             className="h-10 w-10 rounded-full bg-black/50 hover:bg-red-500/90 shadow-md"
                             onClick={deleteEntryImage1}
                           >
-                            <X className="h-5 w-5" />
+                            <Icons.ui.close className="h-5 w-5" />
                           </Button>
                         </div>
                         
@@ -2495,7 +2494,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           htmlFor="entryImage1" 
                           className="absolute inset-0 cursor-pointer flex flex-col items-center justify-center p-4"
                         >
-                          <Upload className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                          <Icons.ui.simpleUpload className="h-10 w-10 text-muted-foreground/50 mb-3" />
                           <span className="text-primary font-medium text-sm sm:text-base text-center">
                             Select H4 timeframe image
                           </span>
@@ -2515,7 +2514,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     
                     {entryImage1Error && (
                       <div className="text-sm text-destructive flex items-center gap-2 bg-destructive/5 px-3 py-2 rounded-md">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                        <Icons.ui.alertCircle className="h-4 w-4 flex-shrink-0" />
                         <span>{entryImage1Error}</span>
                       </div>
                     )}
@@ -2528,7 +2527,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     {entryImage2Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
                         <div className="image-placeholder">
-                          <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+                          <Icons.general.image className="h-8 w-8 text-muted-foreground/30" />
                         </div>
                         <img 
                           src={entryImage2Preview} 
@@ -2593,7 +2592,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               document.addEventListener('keydown', handleEsc);
                             }}
                           >
-                            <ImageIcon className="h-5 w-5" />
+                            <Icons.general.image className="h-5 w-5" />
                           </Button>
                           <Button 
                             type="button" 
@@ -2602,7 +2601,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                             className="h-10 w-10 rounded-full bg-black/50 hover:bg-red-500/90 shadow-md"
                             onClick={deleteEntryImage2}
                           >
-                            <X className="h-5 w-5" />
+                            <Icons.ui.close className="h-5 w-5" />
                           </Button>
                         </div>
                         
@@ -2627,7 +2626,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           htmlFor="entryImage2" 
                           className="absolute inset-0 cursor-pointer flex flex-col items-center justify-center p-4"
                         >
-                          <Upload className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                          <Icons.ui.simpleUpload className="h-10 w-10 text-muted-foreground/50 mb-3" />
                           <span className="text-primary font-medium text-sm sm:text-base text-center">
                             Select M15 timeframe image
                           </span>
@@ -2647,7 +2646,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     
                     {entryImage2Error && (
                       <div className="text-sm text-destructive flex items-center gap-2 bg-destructive/5 px-3 py-2 rounded-md">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                        <Icons.ui.alertCircle className="h-4 w-4 flex-shrink-0" />
                         <span>{entryImage2Error}</span>
                       </div>
                     )}
@@ -2735,7 +2734,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           {exitImage1Preview ? (
                             <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
                               <div className="image-placeholder">
-                                <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+                                <Icons.general.image className="h-8 w-8 text-muted-foreground/30" />
                               </div>
                               <img 
                                 src={exitImage1Preview} 
@@ -2759,7 +2758,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                                   className="h-8 w-8 rounded-full bg-black/60 hover:bg-red-600 border-0" 
                                   onClick={deleteExitImage1}
                                 >
-                                  <X className="h-4 w-4" />
+                                  <Icons.ui.close className="h-4 w-4" />
                                 </Button>
                               </div>
                               
@@ -2784,7 +2783,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                                 htmlFor="exitImage1" 
                                 className="absolute inset-0 cursor-pointer flex flex-col items-center justify-center p-4"
                               >
-                                <Upload className="h-8 w-8 text-muted-foreground/50 mb-2" />
+                                <Icons.ui.simpleUpload className="h-8 w-8 text-muted-foreground/50 mb-2" />
                                 <span className="text-primary font-medium text-sm text-center">
                                   Select H4 exit image
                                 </span>
@@ -2804,7 +2803,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           
                           {exitImage1Error && (
                             <div className="text-sm text-destructive flex items-center gap-2 bg-destructive/5 px-3 py-2 rounded-md">
-                              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                              <Icons.ui.alertCircle className="h-4 w-4 flex-shrink-0" />
                               <span>{exitImage1Error}</span>
                             </div>
                           )}
@@ -2817,7 +2816,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           {exitImage2Preview ? (
                             <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
                               <div className="image-placeholder">
-                                <ImageIcon className="h-8 w-8 text-muted-foreground/30" />
+                                <Icons.general.image className="h-8 w-8 text-muted-foreground/30" />
                               </div>
                               <img 
                                 src={exitImage2Preview} 
@@ -2841,7 +2840,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                                   className="h-8 w-8 rounded-full bg-black/60 hover:bg-red-600 border-0" 
                                   onClick={deleteExitImage2}
                                 >
-                                  <X className="h-4 w-4" />
+                                  <Icons.ui.close className="h-4 w-4" />
                                 </Button>
                               </div>
                               
@@ -2866,7 +2865,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                                 htmlFor="exitImage2" 
                                 className="absolute inset-0 cursor-pointer flex flex-col items-center justify-center p-4"
                               >
-                                <Upload className="h-8 w-8 text-muted-foreground/50 mb-2" />
+                                <Icons.ui.simpleUpload className="h-8 w-8 text-muted-foreground/50 mb-2" />
                                 <span className="text-primary font-medium text-sm text-center">
                                   Select M15 exit image
                                 </span>
@@ -2886,7 +2885,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           
                           {exitImage2Error && (
                             <div className="text-sm text-destructive flex items-center gap-2 bg-destructive/5 px-3 py-2 rounded-md">
-                              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                              <Icons.ui.alertCircle className="h-4 w-4 flex-shrink-0" />
                               <span>{exitImage2Error}</span>
                             </div>
                           )}
