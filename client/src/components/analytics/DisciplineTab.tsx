@@ -20,18 +20,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import { 
-  Check, 
-  X, 
-  Brain, 
-  Target, 
-  Shield, 
-  AlertTriangle, 
-  Lightbulb, 
-  Award,
-  CheckCircle, 
-  XCircle 
-} from "lucide-react";
+import Icons from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
 import { formatCurrency } from "@/lib/utils";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -79,7 +68,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         winRateYes: disciplineMetrics.followedPlan.winRateYes,
         winRateNo: disciplineMetrics.followedPlan.winRateNo,
         total: disciplineMetrics.followedPlan.yes + disciplineMetrics.followedPlan.no,
-        icon: <Target className="h-5 w-5" />,
+        icon: <Icons.achievement.target className="h-5 w-5" />,
         description: "Trading according to your predefined plan",
         impact: disciplineMetrics.followedPlan.winRateYes - disciplineMetrics.followedPlan.winRateNo
       },

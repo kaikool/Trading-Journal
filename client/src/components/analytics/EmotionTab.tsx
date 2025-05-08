@@ -176,7 +176,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     if (bestEmotion && bestEmotion.trades >= 5 && bestEmotion.winRate > 60) {
       insights.push({
         type: 'positive',
-        icon: <Icons.ui.checkCircle className="h-4 w-4" />,
+        icon: <Icons.ui.circleCheck className="h-4 w-4" />,
         title: 'Best Emotional State',
         description: `Trading while feeling "${bestEmotion.emotion}" yields your highest win rate at ${bestEmotion.winRate.toFixed(1)}%. Consider journaling what conditions help you achieve this state.`
       });
