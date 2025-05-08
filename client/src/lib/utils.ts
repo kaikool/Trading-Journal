@@ -134,12 +134,4 @@ export function navigateToSettingsTab(tab: string) {
   sessionStorage.setItem('settings_active_tab', tab);
 }
 
-export function preventDropdownScroll() {
-  // Lưu vị trí cuộn hiện tại khi dropdown mở
-  const scrollPos = window.scrollY;
-  
-  // Sử dụng setTimeout để bắt việc cuộn sau khi dropdown render
-  setTimeout(() => {
-    window.scrollTo(0, scrollPos);
-  }, 0);
-}
+
