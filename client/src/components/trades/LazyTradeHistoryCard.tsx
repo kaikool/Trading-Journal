@@ -12,27 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  PencilIcon,
-  Trash2Icon,
-  TrendingUpIcon,
-  TrendingDownIcon,
-  EyeIcon,
-  CheckCircleIcon,
-  XCircleIcon,
-  LockOpenIcon,
-  ArrowUp,
-  ArrowDown,
-  Lock,
-  CheckCircle2,
-  Ban,
-  Maximize2,
-  CircleDot,
-  Loader2,
-  BarChart2,
-  Image,
-  ZoomIn
-} from "lucide-react";
+import { Icons } from "@/components/icons/icons";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -270,12 +250,12 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     
                     {/* Zoom overlay icon that appears on hover */}
                     <div className="trade-card-zoom-overlay">
-                      <ZoomIn className="h-8 w-8 text-white" />
+                      <Icons.ui.zoomIn className="h-8 w-8 text-white" />
                     </div>
                   </div>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-muted/10">
-                    <Image className="h-10 w-10 opacity-30 mb-2" />
+                    <Icons.general.image className="h-10 w-10 opacity-30 mb-2" />
                     <span className="text-xs text-muted-foreground">No Chart</span>
                   </div>
                 )}

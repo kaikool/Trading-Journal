@@ -114,7 +114,7 @@ export function TradingStatsCard({
     { 
       label: "Win Rate", 
       value: `${winRate.toFixed(1)}%`, 
-      icon: isGoodWinRate !== null ? (isGoodWinRate ? Icons.ui.circleCheck : Icons.ui.percent) : Icons.ui.percent,
+      icon: isGoodWinRate !== null ? (isGoodWinRate ? Icons.ui.circleCheck : Icons.analytics.percent) : Icons.analytics.percent,
       tooltip: "Percentage of profitable trades",
       color: isGoodWinRate !== null 
         ? (isGoodWinRate ? "text-success" : "text-destructive")
@@ -194,7 +194,7 @@ export function TradingStatsCard({
             size="sm"
             variant="soft"
           >
-            <BarChart2 className="h-4 w-4" />
+            <Icons.analytics.barChart className="h-4 w-4" />
           </CardIcon>
           Trading Statistics
         </CardTitle>
