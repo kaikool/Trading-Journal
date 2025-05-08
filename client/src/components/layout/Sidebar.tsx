@@ -330,7 +330,7 @@ export function Sidebar({ className }: { className?: string }) {
               variant="outline"
               className="w-full justify-start text-sm font-normal relative"
             >
-              <LogOut className="h-4 w-4 mr-2" />
+              <Icons.nav.logout className="h-4 w-4 mr-2" />
               Logout
             </Button>
           </div>
@@ -381,7 +381,7 @@ export function Sidebar({ className }: { className?: string }) {
               className="h-8 w-8 rounded-full"
               aria-label="Collapse sidebar"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <Icons.ui.chevronLeft className="h-5 w-5" />
             </Button>
           )}
         </div>
@@ -430,7 +430,9 @@ export function Sidebar({ className }: { className?: string }) {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{user?.displayName || 'User'}</p>
-                <p className="text-xs text-muted-foreground truncate">{user?.email || ''}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.email || ''}
+                </p>
               </div>
             </div>
           ) : (
@@ -456,7 +458,7 @@ export function Sidebar({ className }: { className?: string }) {
               className="h-8 w-8 rounded-full"
               aria-label="Expand sidebar"
             >
-              <ChevronRight className="h-5 w-5" />
+              <Icons.ui.chevronRight className="h-5 w-5" />
             </Button>
           </div>
         )}
@@ -472,7 +474,7 @@ export function Sidebar({ className }: { className?: string }) {
               variant="outline"
               className="w-full justify-start text-sm font-normal relative"
             >
-              <LogOut className="h-4 w-4 mr-2" />
+              <Icons.nav.logout className="h-4 w-4 mr-2" />
               Logout
             </Button>
           </div>
