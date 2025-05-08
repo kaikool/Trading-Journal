@@ -1170,10 +1170,13 @@ async function getStrategies(userId: string): Promise<Array<TradingStrategy & { 
     const strategiesRef = collection(db, "users", userId, "strategies");
     const querySnapshot = await getDocs(strategiesRef);
     
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data() as TradingStrategy
-    }));
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data() as TradingStrategy;
+      return {
+        ...data,
+        id: doc.id
+      };
+    });
   } catch (error) {
     logError("Error getting strategies:", error);
     throw error;
@@ -1211,10 +1214,13 @@ function onStrategiesSnapshot(userId: string, callback: (strategies: any[]) => v
       
       try {
         // Map data và gọi callback
-        const strategies = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const strategies = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id
+          };
+        });
         
         callback(strategies);
       } catch (error) {
@@ -1242,9 +1248,10 @@ async function getStrategyById(userId: string, strategyId: string) {
       throw new Error("Strategy not found");
     }
     
+    const data = docSnap.data();
     return {
-      id: docSnap.id,
-      ...docSnap.data()
+      ...data,
+      id: docSnap.id
     };
   } catch (error) {
     logError("Error getting strategy by ID:", error);
@@ -1263,8 +1270,8 @@ async function addStrategy(userId: string, strategyData: any) {
     });
     
     return {
-      id: docRef.id,
-      ...strategyData
+      ...strategyData,
+      id: docRef.id
     };
   } catch (error) {
     logError("Error adding strategy:", error);
@@ -1282,8 +1289,8 @@ async function updateStrategy(userId: string, strategyId: string, strategyData: 
     await updateDoc(strategyRef, strategyData);
     
     return {
-      id: strategyId,
-      ...strategyData
+      ...strategyData,
+      id: strategyId
     };
   } catch (error) {
     logError("Error updating strategy:", error);
