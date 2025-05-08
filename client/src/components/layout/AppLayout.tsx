@@ -61,12 +61,12 @@ export function AppLayout({ children }: AppLayoutProps) {
       <main 
         className={cn(
           "flex-1 transition-all duration-300 ease-in-out min-h-screen flex flex-col",
-          // On desktop, add left margin equal to the sidebar width
-          !isMobile && "md:ml-[72px]",
-          // If sidebar is expanded, increase margin
-          !isMobile && !sidebarCollapsed && "md:ml-[256px]",
-          // On mobile, no need for header padding anymore
-          isMobile && "pt-0"
+          // On desktop, explicitly apply margins at md and above breakpoints
+          "ml-0 md:ml-[72px]",
+          // If sidebar is expanded, increase margin at md and above
+          !sidebarCollapsed ? "md:ml-[256px]" : "md:ml-[72px]",
+          // Padding top adjustments
+          isMobile ? "pt-0" : "pt-2"
         )}
         style={{ 
           minHeight: viewportHeight > 0 ? `${viewportHeight}px` : '100vh',
@@ -82,11 +82,13 @@ export function AppLayout({ children }: AppLayoutProps) {
         
         <div 
           className={cn(
-            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow",
+            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 safe-area-left safe-area-right flex-grow",
             // Luôn tôn trọng safe area, top safe area xử lý theo scroll position
             respectSafeArea 
               ? "pt-4 pb-8 safe-area-bottom" 
-              : "pt-0 pb-8 safe-area-bottom"
+              : "pt-0 pb-8 safe-area-bottom",
+            // Thêm padding riêng cho desktop để nội dung không bị chen chúc
+            "md:px-6 lg:px-8" 
           )}
         >
           {children}
