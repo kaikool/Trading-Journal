@@ -39,7 +39,16 @@ async function proxyTwelveDataRequest(req: Request, res: Response) {
     
     // Nếu không có API key trong header, sử dụng API key từ môi trường
     if (!apiKey) {
-      const envApiKey = process.env.TWELVEDATA_API_KEY;
+      // Thử lấy từ Firebase Functions config (2-part key format)
+      let envApiKey = process.env.FIREBASE_CONFIG 
+        ? JSON.parse(process.env.FIREBASE_CONFIG).twelvedata?.apikey 
+        : null;
+      
+      // Nếu không tìm thấy trong Firebase config, thử biến môi trường thông thường
+      if (!envApiKey) {
+        envApiKey = process.env.TWELVEDATA_API_KEY;
+      }
+      
       if (!envApiKey) {
         log('TwelveData API key not found in request or environment variables', 'error');
         return res.status(500).json({ error: 'API key not configured' });
