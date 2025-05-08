@@ -21,6 +21,7 @@ export const Icons = {
     percent: LucideIcons.Percent,
     stats: LucideIcons.BarChart4,
     compare: LucideIcons.GitCompare,
+    target: LucideIcons.Target, // Added for StrategyConditionInput.tsx
   },
   
   // Nhóm User Interface (giao diện người dùng)
@@ -86,6 +87,10 @@ export const Icons = {
     ban: LucideIcons.Ban,
     percent: LucideIcons.Percent,
     zap: LucideIcons.Zap,
+    // Added for StrategyConditionInput.tsx
+    settings2: LucideIcons.Settings2,
+    pencil: LucideIcons.Pencil,
+    x: LucideIcons.X,
   },
 
   // Nhóm Navigation (điều hướng) - cho sidebar và menu chính
@@ -185,16 +190,11 @@ export const Icons = {
     fileX: LucideIcons.FileX,
     trash: LucideIcons.Trash2,
     download: LucideIcons.Download,
+    info: LucideIcons.Info, // Added for StrategyConditionInput.tsx
   },
 };
 
-// Add missing icons we need for StrategyConditionInput.tsx
-// Add Settings2, Pencil to UI group
-Icons.ui.settings2 = LucideIcons.Settings2;
-Icons.ui.pencil = LucideIcons.Pencil;
-
-// Add Target, Info icons
-Icons.general.info = LucideIcons.Info;
+// The icons were directly added to the UI, analytics, and general groups above
 
 // Helper để lấy icon trực tiếp từ lucide-react
 // Chỉ sử dụng trong trường hợp bất đắc dĩ, ưu tiên sử dụng icon từ các nhóm đã định nghĩa

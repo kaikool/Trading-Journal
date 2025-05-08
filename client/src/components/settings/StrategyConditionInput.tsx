@@ -90,7 +90,7 @@ export function StrategyConditionForm({
             className="h-7 w-7 p-0 text-muted-foreground"
             title={advancedMode ? "Hide details" : "Show details"}
           >
-            <Settings2 className="h-3.5 w-3.5" />
+            <Icons.ui.settings2 className="h-3.5 w-3.5" />
           </Button>
         </div>
         
@@ -99,7 +99,7 @@ export function StrategyConditionForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-1.5 bg-muted/10 p-2 rounded-md border border-border/30">
             <div>
               <Label className="text-[10px] font-medium text-primary/80 mb-1 flex items-center">
-                <Activity className="h-3 w-3 mr-1" />
+                <Icons.analytics.activity className="h-3 w-3 mr-1" />
                 Indicator
               </Label>
               <Select
@@ -125,7 +125,7 @@ export function StrategyConditionForm({
 
             <div>
               <Label className="text-[10px] font-medium text-blue-500/80 mb-1 flex items-center">
-                <Clock className="h-3 w-3 mr-1" />
+                <Icons.trade.clock className="h-3 w-3 mr-1" />
                 Timeframe
               </Label>
               <Select
@@ -151,7 +151,7 @@ export function StrategyConditionForm({
             
             <div>
               <Label className="text-[10px] font-medium text-green-500/80 mb-1 flex items-center">
-                <Target className="h-3 w-3 mr-1" />
+                <Icons.analytics.target className="h-3 w-3 mr-1" />
                 Expected Value
               </Label>
               <Select
@@ -177,7 +177,7 @@ export function StrategyConditionForm({
             
             <div className="md:col-span-3">
               <Label className="text-[10px] font-medium text-muted-foreground/90 mb-1 flex items-center">
-                <Info className="h-3 w-3 mr-1" />
+                <Icons.general.info className="h-3 w-3 mr-1" />
                 Description (optional)
               </Label>
               <Textarea
