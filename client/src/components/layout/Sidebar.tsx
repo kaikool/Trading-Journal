@@ -140,8 +140,6 @@ export function Sidebar({ className }: { className?: string }) {
 
   const closeSidebar = () => setIsOpen(false);
 
-  const [_, setLocation] = useLocation();
-  
   const handleLogout = async () => {
     try {
       await logoutUser();
@@ -149,8 +147,7 @@ export function Sidebar({ className }: { className?: string }) {
         title: "Logged out",
         description: "You have been successfully logged out",
       });
-      // Dùng setLocation thay vì window.location.href để tránh tải lại trang hoàn toàn
-      setLocation("/auth/login");
+      window.location.href = "/auth/login";
     } catch (error) {
       toast({
         variant: "destructive",

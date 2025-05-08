@@ -8,7 +8,7 @@ import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
 
 import { AppLayout } from "@/components/layout/AppLayout";
-import { auth, functions as initFirebase } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -184,9 +184,9 @@ function MainContent() {
   // If not on auth/public page and user is not logged in, redirect to login page
   useEffect(() => {
     if (!loading && !hasUser && !isPublicPage) {
-      setLocation("/auth/login");
+      window.location.href = "/auth/login";
     }
-  }, [loading, hasUser, isPublicPage, setLocation]);
+  }, [loading, hasUser, isPublicPage]);
 
   if (loading) {
     return (
@@ -280,10 +280,6 @@ function MainContent() {
 function App() {
   // Configure performance optimization when application starts
   useEffect(() => {
-    // Đầu tiên, khởi tạo Firebase để tránh lỗi auth
-    initFirebase();
-    
-    // Sau đó cấu hình queryClient
     import('./lib/queryClient').then(({ updateQueryClientConfig }) => {
       updateQueryClientConfig().catch(console.error);
     });
