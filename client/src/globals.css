@@ -1534,7 +1534,7 @@
   /* Chart pagination - dots and buttons navigation */
   .chart-pagination {
     position: absolute;
-    bottom: max(var(--chart-spacing-md), calc(var(--safe-bottom) + var(--chart-spacing-xs)));
+    bottom: max(0.375rem, calc(var(--safe-bottom) + 0.25rem)); /* 6px or safe area + 4px */
     left: 50%;
     transform: translateX(-50%);
     z-index: 20;
@@ -1545,9 +1545,9 @@
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     
-    /* Use CSS variables for conditional spacing */
+    /* Use consistent spacing on all devices */
     @media (max-width: 640px) {
-      bottom: max(var(--chart-spacing-md), calc(var(--safe-bottom) + var(--chart-spacing-sm)));
+      bottom: max(0.375rem, calc(var(--safe-bottom) + 0.375rem)); /* 6px or safe area + 6px */
     }
   }
   
@@ -1601,23 +1601,23 @@
     transform: translateY(-50%);
     z-index: 20;
     
-    /* Position the prev/next buttons */
+    /* Position the prev/next buttons using 6px (0.375rem) padding standard */
     &.chart-nav-button-prev {
-      left: var(--chart-spacing-sm);
+      left: 0.375rem; /* 6px standard padding */
     }
     
     &.chart-nav-button-next {
-      right: var(--chart-spacing-sm);
+      right: 0.375rem; /* 6px standard padding */
     }
     
-    /* Better position on mobile */
+    /* Consistent positioning on all devices */
     @media (max-width: 640px) {
       &.chart-nav-button-prev {
-        left: var(--chart-spacing-xs);
+        left: 0.375rem; /* 6px standard padding */
       }
       
       &.chart-nav-button-next {
-        right: var(--chart-spacing-xs);
+        right: 0.375rem; /* 6px standard padding */
       }
     }
     
