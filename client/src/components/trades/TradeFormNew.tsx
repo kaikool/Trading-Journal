@@ -2001,7 +2001,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                         <div className="flex items-center justify-between mb-1.5">
                           <Label htmlFor="takeProfit" className="font-medium text-sm">Take Profit</Label>
                           <div className="flex items-center space-x-1 text-sm">
-                            <Badge variant="outline" className="px-1.5 py-0 text-xs font-mono">Auto 1:{defaultRiskRewardRatio.toFixed(1)}</Badge>
+                            <Badge variant="outline" className="px-1.5 py-0 text-xs font-mono">1:{defaultRiskRewardRatio.toFixed(1)}</Badge>
                             {isCalculatingTakeProfit && <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin ml-1" />}
                           </div>
                         </div>
