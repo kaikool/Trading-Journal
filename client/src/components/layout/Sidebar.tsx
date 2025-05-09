@@ -50,18 +50,18 @@ function SidebarItem({
     // Thực hiện callback onClick nếu được cung cấp
     if (onClick) onClick();
     
-    // Kiểm tra nếu đang chạy trong PWA mode
-    const isPwa = window.matchMedia('(display-mode: standalone)').matches || 
-                  (window.navigator as any).standalone === true;
+    // Sử dụng hàm isPWA được import từ hook
+    const inPWAMode = isPWA();
     
     // Thực hiện điều hướng theo cách thủ công để tránh vấn đề với PWA
-    if (isPwa) {
+    if (inPWAMode) {
       // Thêm timeout nhỏ để đảm bảo các hiệu ứng UI được hiển thị trước khi điều hướng
       setTimeout(() => {
-        window.location.href = href;
-      }, 10);
+        // Sửa lỗi điều hướng trong PWA mode bằng cách thay thế toàn bộ location
+        window.location.replace(href);
+      }, 50); // Tăng thời gian chờ để đảm bảo hiệu ứng UI hoàn tất
     } else {
-      // Sử dụng history API trực tiếp cho điều hướng nhanh hơn
+      // Sử dụng history API trực tiếp cho điều hướng nhanh hơn trong môi trường web
       window.history.pushState({}, '', href);
       // Kích hoạt sự kiện popstate để wouter phát hiện thay đổi URL
       window.dispatchEvent(new PopStateEvent('popstate'));
