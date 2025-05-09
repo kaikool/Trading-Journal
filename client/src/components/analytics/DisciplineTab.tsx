@@ -25,6 +25,7 @@ import { CHART_CONFIG } from "@/lib/config";
 import { formatCurrency } from "@/lib/utils";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { XCircle, CheckCircle } from "lucide-react";
 
 interface DisciplineTabProps {
   data: {
