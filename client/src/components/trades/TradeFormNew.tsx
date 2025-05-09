@@ -292,8 +292,10 @@ export default function TradeFormNew(props: TradeFormProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isCalculatingLotSize, setIsCalculatingLotSize] = useState(false);
+  const [isCalculatingTakeProfit, setIsCalculatingTakeProfit] = useState(false);
   const [riskPercentage, setRiskPercentage] = useState<number>(1);
   const [riskRewardRatio, setRiskRewardRatio] = useState<number>(0);
+  const [defaultRiskRewardRatio, setDefaultRiskRewardRatio] = useState<number>(1.5); // Giá trị mặc định
   const [accountBalance, setAccountBalance] = useState<number>(DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE);
   const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
   
@@ -539,6 +541,14 @@ export default function TradeFormNew(props: TradeFormProps) {
             if (!isNaN(defaultRisk)) {
               setRiskPercentage(defaultRisk);
               // Đã loại bỏ console log ở đây để cải thiện hiệu suất
+            }
+          }
+          
+          // Set default risk:reward ratio from user settings
+          if (userData && userData.settings && userData.settings.defaultRiskRewardRatio) {
+            const defaultRR = parseFloat(userData.settings.defaultRiskRewardRatio);
+            if (!isNaN(defaultRR)) {
+              setDefaultRiskRewardRatio(defaultRR);
             }
           }
         })
@@ -1313,6 +1323,57 @@ export default function TradeFormNew(props: TradeFormProps) {
     if (input) input.value = '';
   };
 
+  // Calculate take profit based on default risk:reward ratio
+  const calculateTakeProfitByRR = () => {
+    if (isCalculatingTakeProfit) return;
+    
+    setIsCalculatingTakeProfit(true);
+    
+    try {
+      const entryPrice = getValues("entryPrice");
+      const stopLoss = getValues("stopLoss");
+      const directionValue = getValues("direction") as Direction;
+      
+      if (!entryPrice || !stopLoss || entryPrice <= 0 || stopLoss <= 0) {
+        toast({
+          title: "Missing Information",
+          description: "Please enter entry price and stop loss to calculate take profit.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Tính toán take profit dựa trên R:R ratio mặc định
+      const calculatedTakeProfit = calculateTakeProfitPrice(
+        entryPrice,
+        stopLoss,
+        defaultRiskRewardRatio,
+        directionValue
+      );
+      
+      // Làm tròn đến 4 chữ số thập phân
+      const roundedTakeProfit = parseFloat(calculatedTakeProfit.toFixed(4));
+      
+      // Cập nhật take profit trong form
+      setValue("takeProfit", roundedTakeProfit);
+      
+      toast({
+        title: "Take Profit Updated",
+        description: `Calculated take profit based on 1:${defaultRiskRewardRatio.toFixed(1)} risk:reward ratio.`,
+        variant: "default"
+      });
+    } catch (error) {
+      toast({
+        title: "Calculation Error",
+        description: "Could not calculate take profit. Please check your values.",
+        variant: "destructive"
+      });
+      logError("Error calculating take profit:", error);
+    } finally {
+      setIsCalculatingTakeProfit(false);
+    }
+  };
+  
   // Calculate lot size based on risk percentage
   const calculateLotSizeByRisk = async () => {
     setIsCalculatingLotSize(true);
