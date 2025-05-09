@@ -58,29 +58,29 @@ export function LazyTradeViewEdit({
   // Trade Details Display - used in both tabs
   const TradeDetailsDisplay = () => (
     <div className="flex flex-col md:flex-row gap-4 px-4 py-3">
-      {/* Image container */}
-      <div className="relative w-full md:w-48 h-48 bg-background/50 flex-shrink-0 cursor-pointer group overflow-hidden rounded-md border border-border/30 shadow-sm" 
+      {/* Image container - using trade-card-image-container class from global CSS */}
+      <div className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden rounded-md border border-border/30 shadow-sm bg-card/40" 
            onClick={() => setShowChartDialog(true)}>
         {trade.entryImage ? (
-          <>
+          <div className="trade-card-image-container">
             <img 
               src={trade.entryImage}
               alt={`${trade.pair} ${trade.direction} trade chart`}
-              className="w-full h-full object-cover"
+              className="trade-card-image loaded"
             />
-            {/* Add zoom overlay icon */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-              <Icons.ui.maximize className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-6 w-6" />
+            {/* Add zoom overlay icon using trade-card-zoom-overlay from global CSS */}
+            <div className="trade-card-zoom-overlay">
+              <Icons.ui.maximize className="h-6 w-6 text-white" />
             </div>
-          </>
+          </div>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/20">
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/10">
             <Icons.ui.maximize className="h-8 w-8 mb-2 opacity-40" />
             <span>No Chart Image</span>
           </div>
         )}
         
-        {/* Direction badge */}
+        {/* Direction badge using global trade-direction-badge class */}
         <div className="trade-direction-badge">
           <DirectionBadge
             direction={trade.direction as Direction}
@@ -90,7 +90,7 @@ export function LazyTradeViewEdit({
           />
         </div>
         
-        {/* Result badge */}
+        {/* Result badge using global trade-result-badge class */}
         {trade.result && (
           <div className="trade-result-badge">
             <TradeStatusBadge
@@ -133,36 +133,36 @@ export function LazyTradeViewEdit({
           </div>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm app-accordion-content-section">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Entry</span>
+            <span className="text-xs text-muted-foreground card-label">Entry</span>
             <span className="font-medium">{trade.entryPrice}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Exit</span>
+            <span className="text-xs text-muted-foreground card-label">Exit</span>
             <span className="font-medium">{trade.exitPrice || 'Open'}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Entry Date</span>
+            <span className="text-xs text-muted-foreground card-label">Entry Date</span>
             <span className="font-medium">{formatTimestamp(trade.entryDate)}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Exit Date</span>
+            <span className="text-xs text-muted-foreground card-label">Exit Date</span>
             <span className="font-medium">{trade.closeDate ? formatTimestamp(trade.closeDate) : 'Open'}</span>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm app-accordion-content-section">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Stop Loss</span>
+            <span className="text-xs text-muted-foreground card-label">Stop Loss</span>
             <span className="font-medium">{trade.stopLoss}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Take Profit</span>
+            <span className="text-xs text-muted-foreground card-label">Take Profit</span>
             <span className="font-medium">{trade.takeProfit}</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Pips</span>
+            <span className="text-xs text-muted-foreground card-label">Pips</span>
             <CardValue
               size="sm"
               status={Number(trade.pips) > 0 ? 'success' : Number(trade.pips) < 0 ? 'danger' : 'neutral'}
@@ -172,7 +172,7 @@ export function LazyTradeViewEdit({
             </CardValue>
           </div>
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">P/L</span>
+            <span className="text-xs text-muted-foreground card-label">P/L</span>
             <CardValue
               size="sm"
               status={Number(trade.profitLoss) > 0 ? 'success' : Number(trade.profitLoss) < 0 ? 'danger' : 'neutral'}
@@ -185,8 +185,8 @@ export function LazyTradeViewEdit({
         
         {/* Discipline Factors */}
         {trade.discipline && (
-          <div className="mt-3 bg-background/50 p-3 rounded-md border border-border/30 shadow-sm">
-            <h4 className="text-sm font-medium mb-2 flex items-center">
+          <div className="mt-3 app-accordion-content-section">
+            <h4 className="text-sm font-medium mb-2 flex items-center card-label">
               <CardIcon
                 color="primary"
                 size="sm"
@@ -259,7 +259,7 @@ export function LazyTradeViewEdit({
         tradePair={trade.pair}
       />
       
-      <Card className="mb-4 overflow-hidden relative border-[1.5px]">
+      <Card className="mb-4 overflow-hidden relative border-border/50 card-spotlight">
         <CardGradient 
           variant={
             !trade.result ? 'default' :
@@ -271,14 +271,16 @@ export function LazyTradeViewEdit({
           direction="top-right"
         />
         <CardContent className="p-0">
-          <div className="border-b border-slate-200 dark:border-slate-800">
+          <div className="border-b border-border/40">
             <Tabs defaultValue="view" value={activeTab} onValueChange={setActiveTab}>
             <div className="flex justify-between items-center px-4 py-2">
-              <TabsList>
+              <TabsList className="h-9">
                 <TabsTrigger value="view" className="text-sm">
+                  <Icons.ui.eye className="h-4 w-4 mr-1.5" />
                   View
                 </TabsTrigger>
                 <TabsTrigger value="edit" className="text-sm">
+                  <Icons.ui.pencil className="h-3.5 w-3.5 mr-1.5" />
                   Edit
                 </TabsTrigger>
               </TabsList>
@@ -288,7 +290,7 @@ export function LazyTradeViewEdit({
                   variant="ghost"
                   size="sm"
                   onClick={() => onDelete(trade.id)}
-                  className="h-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="h-8 action-button-delete"
                 >
                   <Icons.trade.trash className="h-4 w-4 mr-1" />
                   {!isMobile && <span>Delete</span>}
@@ -309,10 +311,10 @@ export function LazyTradeViewEdit({
             <TabsContent value="view" className="mt-0">
               <TradeDetailsDisplay />
               
-              {/* Notes Section */}
+              {/* Notes Section - Using app-accordion-content-section style from globals.css */}
               {trade.notes && (
-                <div className="px-6 py-4 mt-4 mx-4 mb-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
-                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                <div className="px-6 py-4 mt-4 mx-4 mb-4 app-accordion-content-section">
+                  <h4 className="text-sm font-medium mb-2 flex items-center card-label">
                     <CardIcon
                       color="primary"
                       size="sm"
@@ -329,10 +331,10 @@ export function LazyTradeViewEdit({
                 </div>
               )}
               
-              {/* Closing Notes Section */}
+              {/* Closing Notes Section - Using app-accordion-content-section style from globals.css */}
               {trade.closingNote && (
-                <div className="px-6 py-4 mt-4 mx-4 mb-4 bg-background/50 rounded-md border border-border/30 shadow-sm">
-                  <h4 className="text-sm font-medium mb-2 flex items-center">
+                <div className="px-6 py-4 mt-4 mx-4 mb-4 app-accordion-content-section">
+                  <h4 className="text-sm font-medium mb-2 flex items-center card-label">
                     <CardIcon
                       color={Number(trade.profitLoss) > 0 ? "success" : Number(trade.profitLoss) < 0 ? "destructive" : "warning"}
                       size="sm"
@@ -356,14 +358,25 @@ export function LazyTradeViewEdit({
             </TabsContent>
             
             <TabsContent value="edit" className="mt-0">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-4 py-2">
-                <h3 className="text-sm font-medium">Edit Trade</h3>
+              <div className="flex items-center justify-between border-b border-border/40 px-4 py-2">
+                <h3 className="text-sm font-medium flex items-center card-label">
+                  <CardIcon 
+                    color="primary" 
+                    size="sm" 
+                    variant="soft" 
+                    className="mr-1.5"
+                  >
+                    <Icons.ui.pencil className="h-3 w-3" />
+                  </CardIcon>
+                  Edit Trade
+                </h3>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setActiveTab("view")}
                   className="h-8 text-muted-foreground hover:text-foreground"
                 >
+                  <Icons.ui.x className="h-4 w-4 mr-1" />
                   Cancel
                 </Button>
               </div>
