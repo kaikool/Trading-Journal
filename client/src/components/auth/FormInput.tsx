@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { Icons, getIcon } from "@/components/icons/icons";
+import Icons, { getIcon } from "@/components/icons/icons";
 
 interface FormInputProps {
   form: UseFormReturn<any, any>;
