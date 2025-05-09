@@ -1,35 +1,29 @@
-// Firebase Storage interfaces 
-export interface StorageMetadata {
-  bucket: string;
-  contentType?: string;
-  fullPath: string;
-  generation: string;
-  md5Hash?: string;
-  metageneration: string;
-  name: string;
-  size: number;
-  timeCreated: string;
-  updated: string;
+// Cloudinary interfaces for image management
+export interface CloudinaryUploadResponse {
+  publicId: string;
+  url: string;
+  secureUrl: string;
+  format: string;
+  width: number;
+  height: number;
+  resourceType: string;
 }
 
-export interface StorageReference {
-  bucket: string;
-  fullPath: string;
-  name: string;
+export interface ImageUploadResult {
+  success: boolean;
+  url: string;
+  publicId?: string;
+  error?: string;
 }
 
-export interface UploadTaskSnapshot {
+export interface ImageUploadProgress {
   bytesTransferred: number;
-  metadata: StorageMetadata;
-  ref: StorageReference;
-  state: string; 
-  task: any;
   totalBytes: number;
+  percentage: number;
 }
 
-export interface FirebaseStorageError {
-  code: string;
-  message: string;
-  name: string;
-  serverResponse?: string;
+export interface ImageDeleteResult {
+  success: boolean;
+  message?: string;
+  error?: string;
 }

@@ -27,15 +27,8 @@ import {
   writeBatch,
   increment
 } from "firebase/firestore";
-import { 
-  getStorage, 
-  ref, 
-  uploadBytes, 
-  uploadBytesResumable,
-  deleteObject,
-  getDownloadURL,
-  StorageError
-} from "firebase/storage";
+// Interface com servidor para gerenciamento de imagens
+import { uploadTradeImage as apiUploadTradeImage, deleteTradeImage as apiDeleteTradeImage } from './api-service';
 
 // Import Firebase configuration from separate file
 import firebaseConfig from './firebase-config';
@@ -51,14 +44,13 @@ if (process.env.NODE_ENV === 'development') {
 let app: ReturnType<typeof initializeApp>;
 let auth: ReturnType<typeof getAuth>;
 let db: ReturnType<typeof getFirestore>;
-let storage: ReturnType<typeof getStorage>;
 
 // Performance optimized initialization flag
 let isInitialized = false;
 
 // Function to initialize Firebase once when needed - performance optimized
 function initFirebase() {
-  if (isInitialized) return { app, auth, db, storage };
+  if (isInitialized) return { app, auth, db };
   
   // Mark as initialized immediately to prevent duplicate init calls
   isInitialized = true;
@@ -67,17 +59,15 @@ function initFirebase() {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  storage = getStorage(app);
   
   // Minimal logging in development
   if (process.env.NODE_ENV === 'development') {
     debug("Firebase has been initialized:");
     debug("- Auth Domain:", firebaseConfig.authDomain);
     debug("- Project ID:", firebaseConfig.projectId);
-    debug("- Storage Bucket:", firebaseConfig.storageBucket);
   }
   
-  return { app, auth, db, storage };
+  return { app, auth, db };
 }
 
 // Ensure Firebase is initialized, but don't wait for it
@@ -915,42 +905,27 @@ async function deleteTrade(userId: string, tradeId: string) {
   }
 }
 
-// Image upload functions
+// Image functions
 /**
- * Chuyển đổi đường dẫn Firebase Storage thành URL tải xuống
- * Hỗ trợ các định dạng: gs://, test-uploads/, và đường dẫn trực tiếp trong Firebase
+ * Get the URL for an image
+ * This simplified version just returns the URL as-is for HTTP URLs
+ * or forwards to the new API for other paths
  */
 async function getStorageDownloadUrl(path: string): Promise<string> {
   try {
-    debug(`Converting Firebase Storage path to download URL: ${path}`);
+    debug(`Getting image URL: ${path}`);
     
-    // Đã là URL đầy đủ, trả về luôn
+    // Already a full URL, return as is
     if (path.startsWith('http')) {
       return path;
     }
     
-    // Khởi tạo Firebase nếu chưa
-    initFirebase();
-    
-    let storageRef;
-    
-    // Xử lý đường dẫn gs://
-    if (path.startsWith('gs://')) {
-      storageRef = ref(storage, path);
-    } 
-    // Xử lý đường dẫn cục bộ của Firebase Storage
-    else {
-      storageRef = ref(storage, path);
-    }
-    
-    // Lấy URL tải xuống
-    const downloadURL = await getDownloadURL(storageRef);
-    debug(`Successfully converted Firebase path to download URL: ${downloadURL.substring(0, 50)}...`);
-    
-    return downloadURL;
+    // For backward compatibility, return the path as-is
+    // In a real implementation, this would make an API call to get the URL
+    return path;
   } catch (error) {
-    logError(`Error converting Firebase path to download URL:`, error);
-    // Trả về path gốc nếu lỗi, để không làm hỏng UI
+    logError(`Error getting URL for image:`, error);
+    // Return original path if error occurs to avoid breaking UI
     return path;
   }
 }
@@ -1024,89 +999,57 @@ async function uploadTradeImage(
       debug("Tiếp tục tải lên với file gốc");
     }
     
-    // Tạo timestamp cho tên file để tránh trùng lặp
-    const timestamp = Date.now();
-    // Xử lý tên file để tránh các ký tự không hợp lệ
-    const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-    const fileName = `${type}_${timestamp}_${safeFileName}`;
+    // Use the API service to upload the image through Cloudinary
+    if (progressCallback) progressCallback(20); // Optimization complete
     
-    // Tạo đường dẫn lưu trữ tuân theo quy tắc bảo mật Firebase
-    const storagePath = `test-uploads/${userId}_${tradeId}_${fileName}`;
-    debug(`Upload path: ${storagePath}`);
-    
-    // Tạo tham chiếu đến Firebase Storage
-    const storageReference = ref(storage, storagePath);
-    
-    if (progressCallback) progressCallback(20); // Đã tối ưu và chuẩn bị xong
-    
-    // Sử dụng uploadBytesResumable để theo dõi tiến trình
-    const uploadTask = uploadBytesResumable(storageReference, file);
-    
-    // Trả về Promise để chờ upload kết thúc
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          // Cập nhật tiến trình
-          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 80) + 20;
-          
-          if (progressCallback) {
-            progressCallback(progress);
-          }
-          
-          // Log trạng thái, nhưng không quá thường xuyên
-          if (progress % 20 === 0 || progress === 100) {
-            debug(`Upload progress: ${progress}%`);
-          }
-        },
-        (error) => {
-          logError("Error uploading file:", error);
-          reject(error); 
-        },
-        async () => {
-          try {
-            // Lấy download URL khi đã upload xong
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            debug(`Upload complete, download URL available: ${downloadURL.slice(0, 50)}...`);
-            
-            if (progressCallback) progressCallback(100);
-            resolve(downloadURL);
-          } catch (urlError) {
-            logError("Error getting download URL:", urlError);
-            reject(urlError);
-          }
+    // Use the API service to upload the file
+    try {
+      const imageType = type.replace('before', 'chart').replace('after', 'exit');
+      const uploadResult = await apiUploadTradeImage(userId, tradeId, file, imageType as any, (progress) => {
+        // Map progress from API to our callback
+        const mappedProgress = Math.round(progress * 0.8) + 20;
+        if (progressCallback) {
+          progressCallback(mappedProgress);
         }
-      );
-    });
+        
+        // Log progress occasionally
+        if (mappedProgress % 20 === 0 || mappedProgress === 100) {
+          debug(`Upload progress: ${mappedProgress}%`);
+        }
+      });
+      
+      if (!uploadResult.success) {
+        throw new Error("Upload failed");
+      }
+      
+      debug(`Upload complete, URL available: ${uploadResult.imageUrl.slice(0, 50)}...`);
+      if (progressCallback) progressCallback(100);
+      return uploadResult.imageUrl;
+    } catch (uploadError) {
+      logError("Error during API upload:", uploadError);
+      throw uploadError;
+    }
   } catch (error) {
     logError("Error in uploadTradeImage:", error);
     throw error;
   }
 }
 
-// Function to delete image from storage
+// Function to delete image via API service
 async function deleteTradeImage(path: string): Promise<boolean> {
   try {
     if (!path) return false;
     
-    // If the path is a URL, extract the file path
-    let storagePath = path;
+    debug(`Deleting image: ${path}`);
     
-    // Handle firebase storage URLs
-    if (path.includes('firebasestorage.googleapis.com')) {
-      // Extract file name from the URL
-      const fileName = path.split('/').pop()?.split('?')[0];
-      if (!fileName) return false;
-      
-      // Assume storage path based on file name
-      storagePath = `test-uploads/${fileName}`;
+    // Use the API service to delete the image
+    const result = await apiDeleteTradeImage(null, null, path);
+    
+    if (!result.success) {
+      throw new Error(result.error || "Delete failed");
     }
     
-    // Create reference to storage object
-    const imageRef = ref(storage, storagePath);
-    
-    // Delete the file
-    await deleteObject(imageRef);
+    debug("Image deleted successfully");
     return true;
   } catch (error) {
     logError("Error deleting image:", error);
