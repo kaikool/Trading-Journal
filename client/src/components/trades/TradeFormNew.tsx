@@ -2637,7 +2637,10 @@ export default function TradeFormNew(props: TradeFormProps) {
                   
                   {/* Image 2 */}
                   <div className="space-y-3 overflow-hidden">
-                    <Label className="font-medium text-sm sm:text-base mb-1 inline-block">M15 Chart Image</Label>
+                    <Label className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
+                      <span className="text-xs text-muted-foreground mr-1.5">•</span>
+                      M15 Chart Image
+                    </Label>
                     
                     {entryImage2Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
@@ -2774,9 +2777,11 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Trade Exit Information - Chỉ hiển thị khi chỉnh sửa giao dịch đã đóng */}
               {isEditMode && initialValues && initialValues.isOpen === false && (
                 <>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
-                      <Icons.ui.unlock className="h-5 w-5 text-primary/80 mr-2" />
+                  <div className="app-accordion-content-section p-5">
+                    <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center card-label">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
+                        <Icons.ui.unlock className="h-4 w-4 text-primary" />
+                      </div>
                       Trade Exit Information
                     </h3>
                     
@@ -2835,8 +2840,10 @@ export default function TradeFormNew(props: TradeFormProps) {
                     
                     {/* Chart Images for Trade Exit */}
                     <div className="mt-6 space-y-2">
-                      <h4 className="font-medium mb-4 flex items-center">
-                        <Icons.general.image className="h-4 w-4 text-primary/80 mr-2" />
+                      <h4 className="font-medium mb-4 flex items-center card-label">
+                        <div className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 mr-2">
+                          <Icons.general.image className="h-3 w-3 text-primary" />
+                        </div>
                         Exit Chart Images
                         <span className="ml-2 text-xs text-muted-foreground">(Optional)</span>
                       </h4>
