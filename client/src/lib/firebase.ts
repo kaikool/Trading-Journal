@@ -643,44 +643,26 @@ async function processTradeImages(userId: string, tradeId: string, currentTrade:
       if (oldImagePath && newImagePath && oldImagePath !== newImagePath) {
         debug(`Field ${field} changed - scheduling deletion of old image`);
         
-        // Sử dụng setTimeout để tránh blocking main thread
+        // Use setTimeout to avoid blocking the main thread
         const deletePromise = new Promise<void>(resolve => {
           setTimeout(() => {
             try {
               // Process images based on their path type
               if (oldImagePath.startsWith('/uploads/') || oldImagePath.startsWith('uploads/')) {
-                // Local uploads - used fetch with DELETE
+                // Local uploads - use fetch with DELETE
                 fetch(`/api/uploads/delete?path=${encodeURIComponent(oldImagePath)}`, { 
                   method: 'DELETE' 
                 }).catch(err => {
                   console.warn(`Could not delete old upload: ${oldImagePath}`, err);
                 });
-              } else if (
-                oldImagePath.includes('firebasestorage.googleapis.com') || 
-                oldImagePath.includes('test-uploads/')
-              ) {
-                // Firebase Storage image - extract path and delete
-                try {
-                  let storagePath = '';
-                  
-                  if (oldImagePath.includes('firebasestorage.googleapis.com')) {
-                    const filename = oldImagePath.split('/').pop()?.split('?')[0];
-                    if (filename) {
-                      storagePath = `test-uploads/${userId}_${tradeId}_${filename}`;
-                    }
-                  } else if (oldImagePath.includes('test-uploads/')) {
-                    storagePath = oldImagePath;
-                  }
-                  
-                  if (storagePath) {
-                    const imageRef = ref(storage, storagePath);
-                    deleteObject(imageRef).catch(err => {
-                      console.warn(`Could not delete old Firebase image at ${storagePath}:`, err);
-                    });
-                  }
-                } catch (firebaseError) {
-                  console.warn(`Error processing old Firebase Storage image: ${oldImagePath}`, firebaseError);
-                }
+              } else if (oldImagePath.includes('cloudinary.com') || 
+                        !oldImagePath.startsWith('http') || 
+                        oldImagePath.startsWith('data:')) {
+                // For Cloudinary or any non-HTTP path, use our API service
+                apiDeleteTradeImage(userId, tradeId, oldImagePath)
+                  .catch(err => {
+                    console.warn(`Could not delete image: ${oldImagePath}`, err);
+                  });
               }
             } catch (imageError) {
               console.warn(`Error processing old image ${field}:`, imageError);
@@ -852,30 +834,13 @@ async function deleteTrade(userId: string, tradeId: string) {
               });
           }
           
-          // Xử lý ảnh từ Firebase Storage
-          if (imagePath.includes('firebasestorage.googleapis.com') || imagePath.includes('test-uploads/')) {
-            // Nếu là URL Firebase Storage
-            if (imagePath.includes('firebasestorage.googleapis.com')) {
-              // Lấy tên file từ URL
-              const filename = imagePath.split('/').pop()?.split('?')[0];
-              if (filename) {
-                // Xóa file từ Firebase Storage
-                const storagePath = `test-uploads/${userId}_${tradeId}_${filename}`;
-                const imageRef = ref(storage, storagePath);
-                
-                deleteObject(imageRef).catch(err => {
-                  console.warn(`Could not delete Firebase image at ${storagePath}:`, err);
-                });
-              }
-            } 
-            // Nếu là đường dẫn trực tiếp đến test-uploads
-            else if (imagePath.includes('test-uploads/')) {
-              const imageRef = ref(storage, imagePath);
-              
-              deleteObject(imageRef).catch(err => {
-                console.warn(`Could not delete Firebase image at ${imagePath}:`, err);
+          // Xử lý ảnh từ Cloudinary hoặc URL ngoài
+          if (imagePath.includes('cloudinary.com') || !imagePath.startsWith('/uploads/')) {
+            // Dùng API service để xóa ảnh
+            apiDeleteTradeImage(userId, tradeId, imagePath)
+              .catch(err => {
+                console.warn(`Could not delete image at ${imagePath}:`, err);
               });
-            }
           }
         } catch (imageError) {
           console.warn(`Error processing image ${field}:`, imageError);
@@ -1440,12 +1405,11 @@ async function unlinkProvider(providerId: string) {
   }
 }
 
-// Ensure auth, db, storage and helper functions are accessible
+// Ensure auth, db and helper functions are accessible
 // Xuất các thành phần Firebase và tất cả các hàm cần thiết để sử dụng ở các module khác
 export { 
   auth, 
   db, 
-  storage, 
   getIdToken, 
   fetchWithAuth,
   // Export hàm này để gọi Firebase Functions từ client
