@@ -50,7 +50,7 @@ import { DASHBOARD_CONFIG } from "@/lib/config";
 import { StrategyChecklist } from "./StrategyChecklistComponent";
 
 // Firebase & Services
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { addTrade, updateTrade, getUserData, getStrategies, onTradesSnapshot } from "@/lib/firebase";
 import { uploadTradeImage } from "@/lib/api-service";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
