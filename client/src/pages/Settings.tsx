@@ -42,12 +42,12 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { lazy, Suspense } from "react";
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
+import { Icons } from "@/components/icons/icons";
+import type { ComponentType } from "react";
 
 // Áp dụng lazy loading cho các tab components
 const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
 const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
-import { Icons } from "@/components/icons/icons";
-import type { ComponentType } from "react";
 
 interface SettingsSectionProps {
   title: string;
