@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import Icons from "@/components/icons/icons";
+import { Icons } from "@/components/icons/icons";
 import { FcGoogle } from "react-icons/fc";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
