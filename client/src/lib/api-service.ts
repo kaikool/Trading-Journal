@@ -2,7 +2,6 @@
  * API Service for image upload and management
  * 
  * This service handles image uploads and deletions through Cloudinary using our server API.
- * It maintains backward compatibility for older Firebase Storage images still in use.
  */
 
 import { debug } from './debug';
@@ -170,8 +169,6 @@ export async function deleteTradeImage(
       // Xác định loại URL
       if (imageData.includes('cloudinary.com')) {
         debug('URL Cloudinary được phát hiện');
-      } else if (imageData.includes('firebasestorage.googleapis.com')) {
-        debug('URL Firebase Storage được phát hiện (hỗ trợ ngược)');
       } else {
         debug('URL không được hỗ trợ');
         return false;

@@ -318,15 +318,15 @@ export function setupUploadRoutes(app: express.Express) {
           thumbnailUrl: thumbnailUrl
         });
       }
-      // Xử lý URL Firebase Storage (hỗ trợ ngược với các hình ảnh cũ)
-      else if (url && typeof url === 'string' && url.includes('firebasestorage.googleapis.com')) {
-        // Thumbnail đơn giản: trả về URL gốc vì Firebase Storage không hỗ trợ resize qua URL trực tiếp
-        log(`Firebase Storage URL detected (legacy support), using original as thumbnail: ${url}`, 'upload-service');
+      // URLs não suportadas
+      else if (url && typeof url === 'string' && !url.includes('cloudinary.com')) {
+        // Qualquer URL que não seja do Cloudinary não é suportada para thumbnails
+        log(`Unsupported URL for thumbnail: ${url}`, 'upload-service');
         return res.status(200).json({
           success: true,
           originalUrl: url,
-          thumbnailUrl: url, // Trả về URL gốc làm thumbnail
-          provider: 'firebase'
+          thumbnailUrl: url, // Retorna URL original como thumbnail
+          provider: 'external'
         });
       }
       // Xử lý local uploads
@@ -386,15 +386,13 @@ export function setupUploadRoutes(app: express.Express) {
       if (url && typeof url === 'string') {
         if (url.includes('cloudinary.com')) {
           storageType = 'cloudinary';
-        } else if (url.includes('firebasestorage.googleapis.com')) {
-          storageType = 'firebase';
         } else if (url.startsWith('/uploads/')) {
           storageType = 'local';
+        } else {
+          storageType = 'external';
         }
       } else if (publicId && typeof publicId === 'string') {
         storageType = 'cloudinary';
-      } else if (storagePath && typeof storagePath === 'string') {
-        storageType = 'firebase';
       } else if (filename && typeof filename === 'string') {
         storageType = 'local';
       }
@@ -446,11 +444,10 @@ export function setupUploadRoutes(app: express.Express) {
           });
         }
       }
-      // Hỗ trợ ngược cho Firebase Storage (di sản)
-      else if (storageType === 'firebase') {
-        // Xóa ảnh từ Firebase Storage - Giữ lại hàm này chỉ để hỗ trợ ảnh cũ
-        log('Legacy Firebase Storage deletion not fully supported anymore', 'upload-service');
-        deleteMessage = 'Firebase Storage images are now read-only legacy content';
+      // URL externas não suportadas
+      else if (storageType === 'external') {
+        log('External URL deletion not supported', 'upload-service');
+        deleteMessage = 'Cannot delete images from external sources';
         success = false;
       }
       // Hỗ trợ xóa file địa phương
