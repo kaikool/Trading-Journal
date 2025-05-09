@@ -136,18 +136,16 @@ export default function Register() {
             
             <div className="space-y-4 pt-2">
               <div className="flex items-center space-x-2 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <polyline points="9 11 12 14 22 4"></polyline>
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                </svg>
-                <span className="text-muted-foreground">Free access to basic features</span>
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <Icons.ui.check className="h-4 w-4 text-primary" />
+                </div>
+                <span className="text-foreground/80">Free access to basic features</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <polyline points="9 11 12 14 22 4"></polyline>
-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                </svg>
-                <span className="text-muted-foreground">No credit card required</span>
+                <div className="w-5 h-5 flex items-center justify-center">
+                  <Icons.ui.check className="h-4 w-4 text-primary" />
+                </div>
+                <span className="text-foreground/80">No credit card required</span>
               </div>
             </div>
             
@@ -214,7 +212,9 @@ export default function Register() {
           }}
           disabled={isLoading}
         >
-          <FcGoogle className="h-5 w-5" />
+          <div className="w-5 h-5 flex items-center justify-center mr-1">
+            <FcGoogle className="h-4 w-4" />
+          </div>
           <span>Sign up with Google</span>
         </Button>
         

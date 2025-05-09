@@ -182,7 +182,9 @@ export default function Login() {
           }}
           disabled={isLoading}
         >
-          <FcGoogle className="h-5 w-5" />
+          <div className="w-5 h-5 flex items-center justify-center mr-1">
+            <FcGoogle className="h-4 w-4" />
+          </div>
           <span>Sign in with Google</span>
         </Button>
       </AuthCard>
