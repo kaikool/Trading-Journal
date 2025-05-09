@@ -4,7 +4,7 @@ import { Sidebar } from "./Sidebar";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
-
+import { usePreventScrollJump } from "@/hooks/use-prevent-scroll-jump";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,6 +25,22 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [mounted, setMounted] = useState(false);
   const [respectSafeArea, setRespectSafeArea] = useState(true);
   const [viewportHeight, setViewportHeight] = useState(0);
+  
+  // Chỉ sử dụng hook ngăn cuộn khi component đã mount
+  usePreventScrollJump({
+    enabled: mounted,
+    selector: [
+      '[data-radix-select-content]',
+      '[data-radix-dropdown-menu-content]',
+      '[data-radix-popover-content]',
+      '[data-radix-dialog-content]',
+      '[role="dialog"]',
+      '[role="listbox"]'
+    ].join(', '),
+    preventDuration: 450,
+    disableScrollIntoView: true,
+    maintainFocus: true
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -70,8 +86,10 @@ export function AppLayout({ children }: AppLayoutProps) {
         )}
         style={{ 
           minHeight: viewportHeight > 0 ? `${viewportHeight}px` : '100vh',
+          // Vấn đề focus trong Select dropdown, thay đổi scroll behavior
           overflowY: 'auto',
           overscrollBehavior: 'none',
+          // Tắt hoàn toàn automatic scrolling và scroll anchoring
           scrollBehavior: 'auto'
         }}
       >
