@@ -1889,9 +1889,17 @@
   }
   
   /* Spotlight effect - tạo hiệu ứng focus vào card khi hover */
+  /* Card spotlight and shadow effects */
   .card-spotlight {
     position: relative;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: var(--shadow-card);
+  }
+  
+  .card-spotlight:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
   }
   
   .card-spotlight::before {
@@ -1911,6 +1919,50 @@
   
   .card-spotlight:hover::before {
     opacity: 1;
+  }
+  
+  /* Enhanced card shadow effects */
+  .card-shadow-sm {
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .card-shadow-md {
+    box-shadow: var(--shadow-md);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .card-shadow-lg {
+    box-shadow: var(--shadow-lg);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .card-shadow-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  /* Card with special glow effect */
+  .card-glow {
+    position: relative;
+    box-shadow: var(--shadow-card);
+    transition: all 0.3s ease;
+  }
+  
+  .card-glow:hover {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  .card-glow-success:hover {
+    box-shadow: 0 0 20px hsl(var(--success) / 0.3);
+  }
+  
+  .card-glow-warning:hover {
+    box-shadow: 0 0 20px hsl(var(--warning) / 0.3);
+  }
+  
+  .card-glow-destructive:hover {
+    box-shadow: 0 0 20px hsl(var(--destructive) / 0.3);
   }
 
   /* Fix scrolling issues - both horizontal and vertical for desktop */
