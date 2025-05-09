@@ -1390,7 +1390,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.375rem; /* 6px - Giảm từ 8px xuống 6px (0.375rem) theo yêu cầu để tối đa hóa không gian hiển thị */
+    padding: 0.375rem; /* 6px - Standard padding for all devices to maximize image display area */
     
     /* Dark mode adjustments */
     .dark & {
@@ -1399,15 +1399,18 @@
     
     /* Mobile adjustments */
     @media (max-width: 640px) {
-      padding: var(--chart-spacing-sm); /* Reduced from md to sm */
+      padding: 0.375rem; /* 6px - Consistently using 0.375rem across all devices */
     }
   }
   
   /* Safe area padding adjustments for charts on mobile and PWA */
   @media (max-width: 640px), (display-mode: standalone) {
     .chart-content {
-      /* Use max() to ensure sufficient padding for devices with or without notches */
-      padding-bottom: max(var(--chart-spacing-lg), calc(var(--safe-bottom) + var(--chart-spacing-md)));
+      /* Use max() to ensure sufficient padding at bottom for devices with notches/safe areas */
+      padding-top: 0.375rem; /* 6px */
+      padding-right: 0.375rem; /* 6px */
+      padding-left: 0.375rem; /* 6px */
+      padding-bottom: max(0.375rem, calc(var(--safe-bottom) + 0.375rem)); /* Ensure safe area is respected while maintaining 6px minimum */
     }
   }
   
@@ -1477,9 +1480,9 @@
     /* Enable pan gestures only (pinch is handled by JS) */
     touch-action: pan-x pan-y;
     
-    /* Mobile optimizations */
+    /* Mobile optimizations - using 0.375rem (6px) padding standard */
     @media (max-width: 640px) {
-      max-height: calc(100% - 56px); /* Giảm từ 72px xuống 56px để có thêm không gian cho ảnh */
+      max-height: calc(100% - 48px); /* Reduced padding to maximize image display area */
     }
   }
   
@@ -1487,19 +1490,19 @@
   @media (max-width: 640px), (display-mode: standalone) {
     .chart-image {
       /* Ensure image isn't hidden by navigation bar and home indicator */
-      /* Sử dụng 6px (0.375rem) theo yêu cầu để tối đa hóa không gian hiển thị ảnh */
-      max-height: calc(100% - var(--safe-bottom) - 0.375rem - 6px);
+      /* Using 6px (0.375rem) padding standard to maximize image display area */
+      max-height: calc(100% - var(--safe-bottom) - 0.375rem);
     }
   }
   
   /* Zoom controls UI */
   .chart-zoom-controls {
     position: absolute;
-    right: var(--chart-spacing-sm);
-    bottom: calc(var(--chart-spacing-md) + var(--safe-bottom));
+    right: 0.375rem; /* 6px - Standard padding */
+    bottom: calc(0.375rem + var(--safe-bottom)); /* 6px + safe area */
     display: flex;
     flex-direction: column;
-    gap: var(--chart-spacing-xs);
+    gap: 0.25rem; /* 4px */
     z-index: 30;
   }
   
