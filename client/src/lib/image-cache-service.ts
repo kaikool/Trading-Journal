@@ -1,32 +1,31 @@
 /**
  * image-cache-service.ts
  * 
- * Dịch vụ quản lý bộ đệm ảnh hai lớp (2-level caching) cho hình ảnh Firebase Storage
- * - Lớp 1: Cache bộ nhớ (memory cache) - lưu trữ tạm thời trong RAM, mất đi khi làm mới
- * - Lớp 2: Cache trình duyệt (localStorage) - lưu trữ lâu dài, giữ lại sau khi làm mới
+ * Serviço de cache de imagens em duas camadas (2-level caching)
+ * - Camada 1: Cache de memória (memory cache) - armazenamento temporário na RAM, perdido ao atualizar
+ * - Camada 2: Cache do navegador (localStorage) - armazenamento de longo prazo, mantido após atualização
  * 
- * Mục tiêu:
- * - Giảm đáng kể số lượng cuộc gọi đến Firebase Storage
- * - Tăng tốc độ hiển thị ảnh trên giao diện người dùng
- * - Giảm lượng băng thông sử dụng và cải thiện trải nghiệm người dùng
+ * Objetivos:
+ * - Reduzir significativamente o número de chamadas ao Cloudinary
+ * - Aumentar a velocidade de exibição de imagens na interface
+ * - Reduzir o uso de largura de banda e melhorar a experiência do usuário
  * 
- * Được tối ưu hóa cho hiệu suất với các cơ chế:
- * - Cache invalidation thông minh
- * - Prefetching cho các ảnh thường xuyên được xem
- * - Hỗ trợ các chiến lược nén và tối ưu hóa ảnh
+ * Otimizado para desempenho com mecanismos de:
+ * - Invalidação inteligente de cache
+ * - Pré-carregamento para imagens frequentemente visualizadas
+ * - Suporte a estratégias de compressão e otimização de imagens
  */
 
-import { getStorageDownloadUrl } from "./firebase";
 import { debug, logError } from "./debug";
 
-// Thời gian hết hạn mặc định cho bộ đệm
-const DEFAULT_CACHE_EXPIRATION = 24 * 60 * 60 * 1000; // 24 giờ
-const MEMORY_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 phút
+// Tempos de expiração padrão para cache
+const DEFAULT_CACHE_EXPIRATION = 24 * 60 * 60 * 1000; // 24 horas
+const MEMORY_CACHE_EXPIRATION = 5 * 60 * 1000; // 5 minutos
 
-// Kích thước tối đa cho bộ đệm localStorage (tính bằng bytes)
+// Tamanho máximo para cache localStorage (em bytes)
 const MAX_LOCAL_STORAGE_SIZE = 5 * 1024 * 1024; // 5MB
-const LOCAL_STORAGE_KEY_PREFIX = 'firebase_image_cache_';
-const CACHE_METADATA_KEY = 'firebase_image_cache_metadata';
+const LOCAL_STORAGE_KEY_PREFIX = 'image_cache_';
+const CACHE_METADATA_KEY = 'image_cache_metadata';
 
 // Interface cho dữ liệu cache
 interface CacheEntry {
@@ -299,16 +298,16 @@ class LocalStorageCache {
 // Khởi tạo cache
 const localStorageCache = new LocalStorageCache();
 
-// Chuyển đổi đường dẫn Firebase thành khóa cache
+// Tạo khóa cache từ đường dẫn
 function createCacheKey(path: string): string {
   // Loại bỏ các ký tự không hợp lệ cho khóa
   return path.replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
 /**
- * Lấy URL hình ảnh từ cache hoặc Firebase Storage
+ * Lấy URL hình ảnh từ cache hoặc gọi API trực tiếp
  * 
- * @param path Đường dẫn Firebase Storage hoặc URL Firebase
+ * @param path Đường dẫn hình ảnh hoặc URL
  * @param options Tùy chọn bộ đệm
  */
 export async function getCachedImageUrl(
@@ -322,8 +321,8 @@ export async function getCachedImageUrl(
   try {
     if (!path) return '';
     
-    // Nếu đã là URL đầy đủ và không phải URL Firebase Storage, trả về luôn
-    if (path.startsWith('http') && !path.includes('firebasestorage.googleapis.com')) {
+    // Se já for uma URL completa, retorna imediatamente
+    if (path.startsWith('http')) {
       return path;
     }
     
@@ -357,27 +356,28 @@ export async function getCachedImageUrl(
       }
     }
     
-    // Nếu không có trong cache hoặc buộc làm mới, lấy từ Firebase
-    debug(`Fetching image URL from Firebase Storage: ${path}`);
-    const downloadUrl = await getStorageDownloadUrl(path);
+    // Se não estiver no cache ou forçar atualização, obtém do servidor
+    debug(`Acessando a imagem diretamente: ${path}`);
     
-    // Lưu vào cả hai cache để sử dụng sau này
-    if (downloadUrl && downloadUrl !== path) {
-      // Lưu vào memory cache
+    // Para URLs do Cloudinary, retorna diretamente
+    if (path.includes('cloudinary.com')) {
+      // Salva no memory cache
       memoryCache.set(cacheKey, {
-        url: downloadUrl,
+        url: path,
         timestamp: Date.now(),
         expiry: Date.now() + MEMORY_CACHE_EXPIRATION
       });
       
-      // Lưu vào localStorage cache với thời gian hết hạn được chỉ định hoặc mặc định
+      // Salva no localStorage cache
       const expiryTime = options.expiryTime || DEFAULT_CACHE_EXPIRATION;
-      localStorageCache.set(cacheKey, downloadUrl, expiryTime);
+      localStorageCache.set(cacheKey, path, expiryTime);
       
-      debug(`Image URL cached: ${path}`);
+      debug(`URL do Cloudinary cacheada: ${path}`);
+      return path;
     }
     
-    return downloadUrl;
+    // Para outras imagens, apenas retorna o caminho original
+    return path;
   } catch (error) {
     logError(`Error getting cached image URL for ${path}:`, error);
     return path; // Trả về path gốc nếu có lỗi
@@ -386,7 +386,7 @@ export async function getCachedImageUrl(
 
 /**
  * Xóa một mục khỏi cache
- * @param path Đường dẫn Firebase Storage
+ * @param path Đường dẫn ảnh
  */
 export function invalidateImageCache(path: string): void {
   try {
@@ -406,7 +406,7 @@ export function invalidateImageCache(path: string): void {
 
 /**
  * Preload hình ảnh vào cache 
- * @param paths Mảng đường dẫn Firebase Storage cần preload
+ * @param paths Mảng đường dẫn ảnh cần preload
  */
 export async function preloadImagesToCache(paths: string[]): Promise<void> {
   try {
