@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth } from "@/lib/firebase";
 import { logoutUser } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, isPWA } from "@/hooks/use-mobile";
 import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useUserActivity } from "@/hooks/use-user-activity";
 import { SidebarHint } from "./SidebarHint";
@@ -41,12 +41,31 @@ function SidebarItem({
   collapsed?: boolean;
   onClick?: () => void;
 }) {
-  // Handle click with stopPropagation để ngăn chặn sự kiện click từ việc truyền xuống phần tử bên dưới
+  // Xử lý sự kiện click với cải tiến cho PWA
   const handleClick = (e: React.MouseEvent) => {
     // Ngăn sự kiện click lan truyền xuyên qua sidebar
     e.stopPropagation();
+    e.preventDefault(); // Ngăn chặn hành vi mặc định của link
+    
     // Thực hiện callback onClick nếu được cung cấp
     if (onClick) onClick();
+    
+    // Kiểm tra nếu đang chạy trong PWA mode
+    const isPwa = window.matchMedia('(display-mode: standalone)').matches || 
+                  (window.navigator as any).standalone === true;
+    
+    // Thực hiện điều hướng theo cách thủ công để tránh vấn đề với PWA
+    if (isPwa) {
+      // Thêm timeout nhỏ để đảm bảo các hiệu ứng UI được hiển thị trước khi điều hướng
+      setTimeout(() => {
+        window.location.href = href;
+      }, 10);
+    } else {
+      // Sử dụng history API trực tiếp cho điều hướng nhanh hơn
+      window.history.pushState({}, '', href);
+      // Kích hoạt sự kiện popstate để wouter phát hiện thay đổi URL
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
   };
 
   return (
