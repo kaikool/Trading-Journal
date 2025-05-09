@@ -50,6 +50,7 @@
     "busboy": "^1.6.0",
     "caniuse-lite": "^1.0.30001715",
     "class-variance-authority": "^0.7.0",
+    "cloudinary": "^2.6.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "connect-pg-simple": "^10.0.0",

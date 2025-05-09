@@ -6,7 +6,7 @@ import os from 'os';
 import { log } from './vite';
 import admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
-import { getStorage } from 'firebase-admin/storage';
+import { uploadImage, generateThumbnailUrl, deleteImage, getPublicIdFromUrl } from './cloudinary-service';
 
 // Đảm bảo thư mục upload tạm tồn tại để lưu trữ tạm thời
 const uploadTempDir = path.join(os.tmpdir(), 'uploads_temp');
@@ -126,8 +126,7 @@ function getFirebaseStorage() {
 }
 
 export function setupUploadRoutes(app: express.Express) {
-  // Khởi tạo Firebase Storage khi thiết lập routes
-  const { bucket } = getFirebaseStorage();
+  // Khởi tạo Cloudinary sẽ được thực hiện trong cloudinary-service.ts
   
   // API endpoint để upload ảnh biểu đồ cho phân tích AI
   app.post('/api/upload/chart', verifyFirebaseToken, upload.single('file'), async (req, res) => {
