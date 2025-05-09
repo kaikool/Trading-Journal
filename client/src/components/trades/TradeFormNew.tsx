@@ -1801,13 +1801,11 @@ export default function TradeFormNew(props: TradeFormProps) {
       )}
     
       {/* Main content section - two columns on desktop, one on mobile */}
-      <div className="space-y-6 sm:space-y-8 overflow-x-hidden max-w-full px-1.5">
+      <div className="space-y-6 sm:space-y-8 overflow-x-hidden max-w-full px-1">
               {/* Core Trade Information */}
-              <div className="app-accordion-content-section p-5">
-                <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center card-label">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
-                    <Icons.analytics.lineChart className="h-4 w-4 text-primary" />
-                  </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
+                  <Icons.analytics.lineChart className="h-5 w-5 text-primary/80 mr-2" />
                   Trade Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 overflow-hidden">
@@ -1817,14 +1815,11 @@ export default function TradeFormNew(props: TradeFormProps) {
                     <div className="space-y-5 overflow-hidden">
                       {/* Currency Pair Selection - Simple Badge Style */}
                       <div>
-                        <Label htmlFor="pair" className="font-medium text-sm card-label mb-2 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Currency Pair
-                        </Label>
+                        <Label htmlFor="pair" className="font-medium text-sm sm:text-base mb-2 inline-block">Currency Pair</Label>
                         <div className="flex gap-2">
                           <Badge 
                             onClick={() => setValue("pair", "XAUUSD")}
-                            className={`px-4 py-1.5 cursor-pointer transition-colors flex-1 text-center justify-center font-mono text-sm ${
+                            className={`px-4 py-2 cursor-pointer transition-colors flex-1 text-center justify-center font-mono text-sm ${
                               form.getValues("pair") === "XAUUSD"
                                 ? "bg-amber-500/90 hover:bg-amber-500 text-white font-medium"
                                 : "bg-muted/60 hover:bg-muted/80 text-muted-foreground"
@@ -1834,7 +1829,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           </Badge>
                           <Badge 
                             onClick={() => setValue("pair", "EURUSD")}
-                            className={`px-4 py-1.5 cursor-pointer transition-colors flex-1 text-center justify-center font-mono text-sm ${
+                            className={`px-4 py-2 cursor-pointer transition-colors flex-1 text-center justify-center font-mono text-sm ${
                               form.getValues("pair") === "EURUSD"
                                 ? "bg-primary/90 hover:bg-primary text-white font-medium"
                                 : "bg-muted/60 hover:bg-muted/80 text-muted-foreground"
@@ -1844,7 +1839,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                           </Badge>
                           <Badge 
                             onClick={() => setValue("pair", "USDJPY")}
-                            className={`px-4 py-1.5 cursor-pointer transition-colors flex-1 text-center justify-center font-mono text-sm ${
+                            className={`px-4 py-2 cursor-pointer transition-colors flex-1 text-center justify-center font-mono text-sm ${
                               form.getValues("pair") === "USDJPY"
                                 ? "bg-indigo-500/90 hover:bg-indigo-500 text-white font-medium"
                                 : "bg-muted/60 hover:bg-muted/80 text-muted-foreground"
@@ -1857,33 +1852,30 @@ export default function TradeFormNew(props: TradeFormProps) {
                       
                       {/* Direction */}
                       <div>
-                        <Label className="font-medium text-sm card-label mb-2 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Direction
-                        </Label>
+                        <Label className="font-medium text-sm sm:text-base mb-2 inline-block">Direction</Label>
                         <div className="grid grid-cols-2 gap-3">
                           <Button
                             type="button"
-                            className={`rounded-md flex items-center justify-center h-9 transition-colors ${
+                            className={`rounded-md flex items-center justify-center h-10 transition-colors ${
                               form.getValues("direction") === "BUY"
                                 ? "bg-green-500 hover:bg-green-600 text-white"
                                 : "bg-muted/60 text-muted-foreground hover:bg-muted"
                             }`}
                             onClick={() => setValue("direction", "BUY")}
                           >
-                            <Icons.trade.arrowUp className="mr-1.5 h-3.5 w-3.5" />
+                            <Icons.trade.arrowUp className="mr-1.5 h-4 w-4" />
                             <span className="text-sm font-medium">Buy</span>
                           </Button>
                           <Button
                             type="button"
-                            className={`rounded-md flex items-center justify-center h-9 transition-colors ${
+                            className={`rounded-md flex items-center justify-center h-10 transition-colors ${
                               form.getValues("direction") === "SELL"
                                 ? "bg-red-500 hover:bg-red-600 text-white"
                                 : "bg-muted/60 text-muted-foreground hover:bg-muted"
                             }`}
                             onClick={() => setValue("direction", "SELL")}
                           >
-                            <Icons.trade.arrowDown className="mr-1.5 h-3.5 w-3.5" />
+                            <Icons.trade.arrowDown className="mr-1.5 h-4 w-4" />
                             <span className="text-sm font-medium">Sell</span>
                           </Button>
                         </div>
@@ -1895,16 +1887,13 @@ export default function TradeFormNew(props: TradeFormProps) {
                       {/* Entry Price */}
                       <div>
                         <div>
-                          <Label htmlFor="entryPrice" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                            <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                            Entry Price
-                          </Label>
+                          <Label htmlFor="entryPrice" className="font-medium text-sm mb-1.5 inline-block">Entry Price</Label>
                         </div>
                         <div className="relative">
                           <NumberInput
                             id="entryPrice"
                             placeholder="0.0000"
-                            className="font-mono h-9 text-sm pr-9"
+                            className="font-mono h-10 text-sm pr-9"
                             value={form.getValues("entryPrice")}
                             onChange={(value) => form.setValue("entryPrice", value || 0)}
                             decimalPlaces={4}
@@ -1944,23 +1933,20 @@ export default function TradeFormNew(props: TradeFormProps) {
 
                       {/* Entry Date */}
                       <div>
-                        <Label htmlFor="entryDate" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Entry Date
-                        </Label>
+                        <Label htmlFor="entryDate" className="font-medium text-sm mb-1.5 inline-block">Entry Date</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
                               id="entryDate"
                               variant="outline"
-                              className="w-full h-9 px-3 justify-start text-left font-normal"
+                              className="w-full h-10 px-3 justify-start text-left font-normal"
                             >
                               {form.getValues("entryDate") ? (
                                 format(new Date(form.getValues("entryDate")), "dd/MM/yyyy")
                               ) : (
                                 <span className="text-muted-foreground">DD/MM/YYYY</span>
                               )}
-                              <Icons.ui.calendar className="ml-auto h-3.5 w-3.5 opacity-50" />
+                              <Icons.ui.calendar className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -1989,10 +1975,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                       {/* Stop Loss */}
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <Label htmlFor="stopLoss" className="font-medium text-sm card-label flex items-center">
-                            <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                            Stop Loss
-                          </Label>
+                          <Label htmlFor="stopLoss" className="font-medium text-sm">Stop Loss</Label>
                           <div className="opacity-0 flex items-center space-x-1 text-sm">
                             <span>&nbsp;</span>
                           </div>
@@ -2000,7 +1983,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                         <NumberInput
                           id="stopLoss"
                           placeholder="0.0000"
-                          className="font-mono h-9 text-sm"
+                          className="font-mono h-10 text-sm"
                           value={form.getValues("stopLoss")}
                           onChange={(value) => form.setValue("stopLoss", value || 0)}
                           decimalPlaces={4}
@@ -2016,10 +1999,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                       {/* Take Profit */}
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <Label htmlFor="takeProfit" className="font-medium text-sm card-label flex items-center">
-                            <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                            Take Profit
-                          </Label>
+                          <Label htmlFor="takeProfit" className="font-medium text-sm">Take Profit</Label>
                           <div className="flex items-center space-x-1 text-sm">
                             <Badge variant="outline" className="px-1.5 py-0 text-xs font-mono">1:{defaultRiskRewardRatio.toFixed(1)}</Badge>
                             {isCalculatingTakeProfit && <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin ml-1" />}
@@ -2028,7 +2008,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                         <NumberInput
                           id="takeProfit"
                           placeholder="0.0000"
-                          className="font-mono h-9 text-sm"
+                          className="font-mono h-10 text-sm"
                           value={form.getValues("takeProfit")}
                           onChange={(value) => form.setValue("takeProfit", value || 0)}
                           decimalPlaces={4}
@@ -2050,10 +2030,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                       {/* Lot Size */}
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <Label htmlFor="lotSize" className="font-medium text-sm card-label flex items-center">
-                            <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                            Lot Size
-                          </Label>
+                          <Label htmlFor="lotSize" className="font-medium text-sm">Lot Size</Label>
                           <div className="opacity-0 flex items-center space-x-1 text-sm">
                             <span>&nbsp;</span>
                           </div>
@@ -2061,7 +2038,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                         <NumberInput
                           id="lotSize"
                           placeholder="0.01"
-                          className="font-mono h-9 text-sm"
+                          className="font-mono h-10 text-sm"
                           value={form.getValues("lotSize")}
                           onChange={(value) => form.setValue("lotSize", value || 0.01)}
                           decimalPlaces={2}
@@ -2079,10 +2056,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                       {/* Risk Calculator */}
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <Label htmlFor="riskPercentage" className="font-medium text-sm card-label flex items-center">
-                            <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                            Risk %
-                          </Label>
+                          <Label htmlFor="riskPercentage" className="font-medium text-sm">Risk %</Label>
                           <div className="flex items-center space-x-1 text-sm font-medium">
                             <div 
                               className={cn(
@@ -2130,7 +2104,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                             </Button>
                           </div>
                         </div>
-                        <div className="w-full h-9 px-3 border rounded-md bg-background flex items-center relative touch-none overflow-hidden">
+                        <div className="w-full h-10 px-3 border rounded-md bg-background flex items-center relative touch-none overflow-hidden">
                           <input
                             id="riskSlider"
                             type="range"
@@ -2144,7 +2118,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               // Log the current risk amount in USD for debugging
                               devLog(`Risk amount: $${Math.round(accountBalance * (newValue / 100))}`);
                             }}
-                            className="w-full h-9 opacity-0 absolute cursor-pointer z-10 touch-none"
+                            className="w-full h-10 opacity-0 absolute cursor-pointer z-10 touch-none"
                             onWheel={(e) => e.preventDefault()}
                           />
                           <div className="w-full flex items-center px-1">
@@ -2157,9 +2131,9 @@ export default function TradeFormNew(props: TradeFormProps) {
                               />
                             </div>
                             <div 
-                              className="absolute h-3.5 w-3.5 rounded-full shadow-md border border-white/70 transition-all bg-primary" 
+                              className="absolute h-4 w-4 rounded-full shadow-md border border-white/70 transition-all bg-primary" 
                               style={{ 
-                                left: `calc(${(riskPercentage / 3) * 100 * 0.85}% + 10px)`,
+                                left: `calc(${(riskPercentage / 3) * 100 * 0.85}% + 12px)`,
                                 top: '50%',
                                 transform: 'translateY(-50%)'
                               }}
@@ -2177,11 +2151,9 @@ export default function TradeFormNew(props: TradeFormProps) {
               <Separator />
 
               {/* Trading Strategy & Pattern */}
-              <div className="app-accordion-content-section p-5">
-                <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center card-label">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
-                    <Icons.analytics.pieChart className="h-4 w-4 text-primary" />
-                  </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
+                  <Icons.analytics.lineChart className="h-5 w-5 text-primary/80 mr-2" />
                   Strategy & Conditions
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 overflow-hidden">
@@ -2191,10 +2163,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Trading Strategy */}
                       <div>
-                        <Label htmlFor="strategy" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Trading Strategy
-                        </Label>
+                        <Label htmlFor="strategy" className="font-medium text-sm mb-1.5 inline-block">Trading Strategy</Label>
                         <Select
                           onValueChange={(value) => {
                             devLog("Strategy changed to:", value);
@@ -2267,15 +2236,12 @@ export default function TradeFormNew(props: TradeFormProps) {
 
                       {/* Market Condition */}
                       <div>
-                        <Label htmlFor="marketCondition" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Market Condition
-                        </Label>
+                        <Label htmlFor="marketCondition" className="font-medium text-sm mb-1.5 inline-block">Market Condition</Label>
                         <Select
                           onValueChange={(value) => setValue("marketCondition", value)}
                           defaultValue={form.getValues("marketCondition")}
                         >
-                          <SelectTrigger className="h-9 text-sm text-left">
+                          <SelectTrigger className="h-10 text-sm text-left">
                             <SelectValue placeholder="Select condition" className="text-left" />
                           </SelectTrigger>
                           <SelectContent>
@@ -2293,29 +2259,23 @@ export default function TradeFormNew(props: TradeFormProps) {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Technical Pattern */}
                       <div>
-                        <Label htmlFor="techPattern" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Technical Pattern
-                        </Label>
+                        <Label htmlFor="techPattern" className="font-medium text-sm mb-1.5 inline-block">Technical Pattern</Label>
                         <Input
                           id="techPattern"
                           placeholder="E.g., Double Top"
-                          className="h-9 text-sm"
+                          className="h-10 text-sm"
                           {...form.register("techPattern")}
                         />
                       </div>
 
                       {/* Emotion */}
                       <div>
-                        <Label htmlFor="emotion" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Emotional State
-                        </Label>
+                        <Label htmlFor="emotion" className="font-medium text-sm mb-1.5 inline-block">Emotional State</Label>
                         <Select
                           onValueChange={(value) => setValue("emotion", value)}
                           defaultValue={form.getValues("emotion")}
                         >
-                          <SelectTrigger className="h-9 text-sm text-left">
+                          <SelectTrigger className="h-10 text-sm text-left">
                             <SelectValue placeholder="Select emotion" className="text-left" />
                           </SelectTrigger>
                           <SelectContent>
@@ -2335,15 +2295,12 @@ export default function TradeFormNew(props: TradeFormProps) {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Session Type */}
                       <div>
-                        <Label htmlFor="sessionType" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          Trading Session
-                        </Label>
+                        <Label htmlFor="sessionType" className="font-medium text-sm mb-1.5 inline-block">Trading Session</Label>
                         <Select
                           onValueChange={(value) => setValue("sessionType", value)}
                           defaultValue={form.getValues("sessionType")}
                         >
-                          <SelectTrigger className="h-9 text-sm text-left">
+                          <SelectTrigger className="h-10 text-sm text-left">
                             <SelectValue placeholder="Select session" className="text-left" />
                           </SelectTrigger>
                           <SelectContent>
@@ -2357,11 +2314,8 @@ export default function TradeFormNew(props: TradeFormProps) {
 
                       {/* News Toggle - Extremely Simplified */}
                       <div>
-                        <Label htmlFor="hasNews" className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                          <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                          News
-                        </Label>
-                        <div className="flex items-center justify-between h-9 px-3 border rounded-md bg-background">
+                        <Label htmlFor="hasNews" className="font-medium text-sm mb-1.5 inline-block">News</Label>
+                        <div className="flex items-center justify-between h-10 px-3 border rounded-md bg-background">
                           <span className="text-sm font-medium">News</span>
                           <Switch
                             id="hasNews"
@@ -2378,18 +2332,16 @@ export default function TradeFormNew(props: TradeFormProps) {
               <Separator />
 
               {/* Discipline Factors - Optimized Grid Layout with 2-3 Columns */}
-              <div className="app-accordion-content-section p-5">
-                <h3 className="text-lg font-semibold mb-4 flex items-center card-label">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
-                    <Icons.ui.check className="h-4 w-4 text-primary" />
-                  </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <Icons.ui.success className="h-5 w-5 text-primary/80 mr-2" />
                   Trade Discipline
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-2">
                   {/* Discipline Toggle Cards - Optimized Grid Layout */}
                   <div 
                     className={cn(
-                      "cursor-pointer rounded-md border transition-colors flex items-center h-9 px-3",
+                      "cursor-pointer rounded-md border transition-colors flex items-center h-10 px-3",
                       followedPlan
                         ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" 
                         : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
@@ -2397,14 +2349,14 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("followedPlan", !followedPlan)}
                   >
                     {followedPlan 
-                      ? <Icons.ui.success className="h-3.5 w-3.5 mr-2 flex-shrink-0" /> 
-                      : <Icons.ui.close className="h-3.5 w-3.5 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.close className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Followed Plan</span>
                   </div>
                   
                   <div 
                     className={cn(
-                      "cursor-pointer rounded-md border transition-colors flex items-center h-9 px-3",
+                      "cursor-pointer rounded-md border transition-colors flex items-center h-10 px-3",
                       !enteredEarly
                         ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" 
                         : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
@@ -2412,14 +2364,14 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("enteredEarly", !enteredEarly)}
                   >
                     {!enteredEarly
-                      ? <Icons.ui.success className="h-3.5 w-3.5 mr-2 flex-shrink-0" /> 
-                      : <Icons.ui.alertCircle className="h-3.5 w-3.5 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Waited for Signal</span>
                   </div>
                   
                   <div 
                     className={cn(
-                      "cursor-pointer rounded-md border transition-colors flex items-center h-9 px-3",
+                      "cursor-pointer rounded-md border transition-colors flex items-center h-10 px-3",
                       !revenge
                         ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" 
                         : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
@@ -2427,14 +2379,14 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("revenge", !revenge)}
                   >
                     {!revenge
-                      ? <Icons.ui.success className="h-3.5 w-3.5 mr-2 flex-shrink-0" /> 
-                      : <Icons.ui.alertCircle className="h-3.5 w-3.5 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">No Revenge Trade</span>
                   </div>
                   
                   <div 
                     className={cn(
-                      "cursor-pointer rounded-md border transition-colors flex items-center h-9 px-3",
+                      "cursor-pointer rounded-md border transition-colors flex items-center h-10 px-3",
                       !overLeveraged
                         ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" 
                         : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
@@ -2442,14 +2394,14 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("overLeveraged", !overLeveraged)}
                   >
                     {!overLeveraged
-                      ? <Icons.ui.success className="h-3.5 w-3.5 mr-2 flex-shrink-0" /> 
-                      : <Icons.ui.alertCircle className="h-3.5 w-3.5 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Proper Leverage</span>
                   </div>
                   
                   <div 
                     className={cn(
-                      "cursor-pointer rounded-md border transition-colors flex items-center h-9 px-3",
+                      "cursor-pointer rounded-md border transition-colors flex items-center h-10 px-3",
                       !movedStopLoss
                         ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" 
                         : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
@@ -2457,8 +2409,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     onClick={() => setValue("movedStopLoss", !movedStopLoss)}
                   >
                     {!movedStopLoss
-                      ? <Icons.ui.success className="h-3.5 w-3.5 mr-2 flex-shrink-0" /> 
-                      : <Icons.ui.alertCircle className="h-3.5 w-3.5 mr-2 flex-shrink-0" />}
+                      ? <Icons.ui.success className="h-4 w-4 mr-2 flex-shrink-0" /> 
+                      : <Icons.ui.alertCircle className="h-4 w-4 mr-2 flex-shrink-0" />}
                     <span className="text-sm truncate font-medium">Respected SL</span>
                   </div>
                 </div>
@@ -2466,17 +2418,15 @@ export default function TradeFormNew(props: TradeFormProps) {
               
               {/* Strategy Compliance Section */}
               {selectedStrategy && (
-                <div className="app-accordion-content-section mt-5 p-5">
+                <div className="mt-4">
                   {/* Strategy Verification Checklist */}
                   <div className="mb-4">
-                    <div className="flex items-center mb-3">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
-                        <Icons.ui.check className="h-4 w-4 text-primary" />
-                      </div>
-                      <h3 className="text-base font-semibold card-label">Strategy Compliance Check</h3>
+                    <div className="flex items-center mb-2">
+                      <Icons.ui.success className="h-5 w-5 text-primary/80 mr-2" />
+                      <h3 className="text-base font-semibold">Strategy Compliance Check</h3>
                     </div>
                     
-                    <div className="bg-card/30 shadow-sm rounded-md p-3">
+                    <div className="bg-card/50 shadow-sm rounded-md p-3">
                       <StrategyChecklist 
                         strategy={selectedStrategy}
                         value={strategyChecks}
@@ -2485,27 +2435,24 @@ export default function TradeFormNew(props: TradeFormProps) {
                       />
                     </div>
                   </div>
+                  
+
                 </div>
               )}
 
               <Separator />
 
               {/* Chart Images with preview and progress */}
-              <div className="app-accordion-content-section p-5">
-                <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center flex-wrap card-label">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
-                    <Icons.general.image className="h-4 w-4 text-primary" />
-                  </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center flex-wrap">
+                  <Icons.general.image className="h-5 w-5 text-primary/80 mr-2" />
                   Chart Images
                   <span className="ml-2 text-xs text-muted-foreground">(Max 2 images, 5MB each)</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 overflow-hidden">
                   {/* Image 1 */}
                   <div className="space-y-3 overflow-hidden">
-                    <Label className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                      <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                      H4 Chart Image
-                    </Label>
+                    <Label className="font-medium text-sm sm:text-base mb-1 inline-block">H4 Chart Image</Label>
                     
                     {entryImage1Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
@@ -2637,10 +2584,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                   
                   {/* Image 2 */}
                   <div className="space-y-3 overflow-hidden">
-                    <Label className="font-medium text-sm card-label mb-1.5 inline-block flex items-center">
-                      <span className="text-xs text-muted-foreground mr-1.5">•</span>
-                      M15 Chart Image
-                    </Label>
+                    <Label className="font-medium text-sm sm:text-base mb-1 inline-block">M15 Chart Image</Label>
                     
                     {entryImage2Preview ? (
                       <div className="relative rounded-lg overflow-hidden border border-border/50 bg-muted/30 shadow-sm">
@@ -2777,11 +2721,9 @@ export default function TradeFormNew(props: TradeFormProps) {
               {/* Trade Exit Information - Chỉ hiển thị khi chỉnh sửa giao dịch đã đóng */}
               {isEditMode && initialValues && initialValues.isOpen === false && (
                 <>
-                  <div className="app-accordion-content-section p-5">
-                    <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center card-label">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 mr-2">
-                        <Icons.ui.unlock className="h-4 w-4 text-primary" />
-                      </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 md:mb-5 flex items-center">
+                      <Icons.ui.unlock className="h-5 w-5 text-primary/80 mr-2" />
                       Trade Exit Information
                     </h3>
                     
@@ -2840,10 +2782,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                     
                     {/* Chart Images for Trade Exit */}
                     <div className="mt-6 space-y-2">
-                      <h4 className="font-medium mb-4 flex items-center card-label">
-                        <div className="flex h-5 w-5 items-center justify-center rounded-md bg-primary/10 mr-2">
-                          <Icons.general.image className="h-3 w-3 text-primary" />
-                        </div>
+                      <h4 className="font-medium mb-4 flex items-center">
+                        <Icons.general.image className="h-4 w-4 text-primary/80 mr-2" />
                         Exit Chart Images
                         <span className="ml-2 text-xs text-muted-foreground">(Optional)</span>
                       </h4>
