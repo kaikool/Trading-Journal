@@ -22,11 +22,10 @@ const IMAGE_TYPE_MAP = {
 // Cloudinary direct upload configuration
 const CLOUDINARY_CONFIG = {
   cloud_name: 'dxi9ensjq',
-  api_key: '784331526282828',
-  upload_preset: 'ml_default' // Default preset name
+  upload_preset: 'ml_default' // Preset name được cấu hình trong Cloudinary dashboard
 };
 
-// Cloudinary API URL
+// Cloudinary API URL cho unsigned upload (không yêu cầu chữ ký)
 const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloud_name}/image/upload`;
 
 // Type definitions to ensure type safety
@@ -34,14 +33,16 @@ type UiImageType = keyof typeof IMAGE_TYPE_MAP;
 type StorageImageType = typeof IMAGE_TYPE_MAP[UiImageType];
 
 /**
- * Upload an image for a trade directly to Cloudinary
+ * Upload an image for a trade directly to Cloudinary using unsigned upload
  * 
- * @param userId - User ID
- * @param tradeId - Trade ID
- * @param file - Image file to upload
- * @param imageType - Image type (h4chart, m15chart, h4exit, m15exit)
- * @param progressCallback - Callback to update progress
- * @returns Promise with result as {success, imageUrl}
+ * Sử dụng API Cloudinary trực tiếp với upload preset không cần chữ ký
+ * 
+ * @param userId - User ID (sử dụng làm một phần của folder path và tags)
+ * @param tradeId - Trade ID (sử dụng làm một phần của folder path và tags)
+ * @param file - File ảnh cần upload
+ * @param imageType - Loại ảnh (h4chart, m15chart, h4exit, m15exit)
+ * @param progressCallback - Callback để cập nhật tiến độ upload
+ * @returns Promise với kết quả {success, imageUrl, publicId}
  */
 export async function uploadTradeImage(
   userId: string,
@@ -89,13 +90,13 @@ export async function uploadTradeImage(
     // Xác định folder dựa vào context
     const folder = `trades/${userId}/${tradeId}`;
     
-    // Tạo form data để gửi lên Cloudinary
+    // Tạo form data để gửi lên Cloudinary theo chuẩn unsigned upload
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('api_key', CLOUDINARY_CONFIG.api_key);
-    formData.append('upload_preset', CLOUDINARY_CONFIG.upload_preset);
-    formData.append('folder', folder);
-    formData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`);
+    formData.append('upload_preset', CLOUDINARY_CONFIG.upload_preset); // Upload preset cho phép unsigned upload
+    formData.append('cloud_name', CLOUDINARY_CONFIG.cloud_name); // Tên cloud - quan trọng cho unsigned upload
+    formData.append('folder', folder); // Folder trong Cloudinary để lưu trữ ảnh
+    formData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`); // Tags để phân loại ảnh
     
     // Gửi request trực tiếp đến Cloudinary
     const response = await fetch(CLOUDINARY_UPLOAD_URL, {
