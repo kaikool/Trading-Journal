@@ -1,7 +1,7 @@
 /**
  * API Service for image upload and management
  * 
- * This service handles image uploads and deletions through Cloudinary using our server API.
+ * This service handles image uploads directly to Cloudinary API
  */
 
 import { debug } from './debug';
@@ -19,20 +19,22 @@ const IMAGE_TYPE_MAP = {
   'm15exit': 'exit-m15'
 } as const;
 
-// Cloudinary direct upload configuration for production
+// Cloudinary direct upload configuration
 const CLOUDINARY_CONFIG = {
   cloud_name: 'dxi9ensjq',
   api_key: '784331526282828',
-  upload_preset: 'ml_default',
-  api_url: 'https://api.cloudinary.com/v1_1/dxi9ensjq/image/upload'
+  upload_preset: 'ml_default' // Default preset name
 };
+
+// Cloudinary API URL
+const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloud_name}/image/upload`;
 
 // Type definitions to ensure type safety
 type UiImageType = keyof typeof IMAGE_TYPE_MAP;
 type StorageImageType = typeof IMAGE_TYPE_MAP[UiImageType];
 
 /**
- * Upload an image for a trade through the server API (Cloudinary)
+ * Upload an image for a trade directly to Cloudinary
  * 
  * @param userId - User ID
  * @param tradeId - Trade ID
@@ -82,71 +84,24 @@ export async function uploadTradeImage(
       }, 200);
     }
     
-    let data;
+    debug('Tải lên trực tiếp đến Cloudinary...');
     
-    // Thử tải lên trực tiếp đến Cloudinary trong môi trường production
-    try {
-      debug('Đang thử tải lên trực tiếp đến Cloudinary...');
-      
-      // Xác định folder dựa vào context
-      const folder = `trades/${userId}/${tradeId}`;
-      
-      // Tạo form data để gửi lên Cloudinary
-      const cloudinaryFormData = new FormData();
-      cloudinaryFormData.append('file', file);
-      cloudinaryFormData.append('api_key', CLOUDINARY_CONFIG.api_key);
-      cloudinaryFormData.append('upload_preset', CLOUDINARY_CONFIG.upload_preset);
-      cloudinaryFormData.append('folder', folder);
-      cloudinaryFormData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`);
-      
-      // Gửi request trực tiếp đến Cloudinary
-      const cloudinaryResponse = await fetch(CLOUDINARY_CONFIG.api_url, {
-        method: 'POST',
-        body: cloudinaryFormData
-      });
-      
-      // Nếu thành công, sử dụng kết quả từ Cloudinary
-      if (cloudinaryResponse.ok) {
-        const cloudinaryData = await cloudinaryResponse.json();
-        debug('Tải lên Cloudinary trực tiếp thành công!');
-        
-        data = {
-          imageUrl: cloudinaryData.secure_url,
-          publicId: cloudinaryData.public_id
-        };
-      } else {
-        // Nếu tải trực tiếp thất bại, thử phương pháp qua server
-        throw new Error('Tải lên trực tiếp thất bại, thử phương pháp thay thế');
-      }
-    } catch (cloudinaryError) {
-      debug(`Lỗi tải lên trực tiếp: ${cloudinaryError instanceof Error ? cloudinaryError.message : String(cloudinaryError)}`);
-      debug('Chuyển sang tải lên qua server...');
-      
-      // Tạo form data để gửi lên server
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('userId', userId);
-      formData.append('tradeId', tradeId);
-      formData.append('imageType', storageType);
-      formData.append('context', 'trade'); // Xác định context cho API thống nhất
-      
-      // Gửi API request đến endpoint thống nhất mới
-      debug('Gửi request tải lên ảnh đến endpoint /api/images/upload');
-      const response = await fetch('/api/images/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      // Handle response
-      if (!response.ok) {
-        const errorText = await response.text();
-        debug(`Upload failed with status ${response.status}: ${errorText}`);
-        throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
-      }
-      
-      // Parse JSON response
-      data = await response.json();
-    }
+    // Xác định folder dựa vào context
+    const folder = `trades/${userId}/${tradeId}`;
+    
+    // Tạo form data để gửi lên Cloudinary
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('api_key', CLOUDINARY_CONFIG.api_key);
+    formData.append('upload_preset', CLOUDINARY_CONFIG.upload_preset);
+    formData.append('folder', folder);
+    formData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`);
+    
+    // Gửi request trực tiếp đến Cloudinary
+    const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+      method: 'POST',
+      body: formData
+    });
     
     // Clear progress interval if it exists
     if (progressInterval) {
@@ -154,18 +109,28 @@ export async function uploadTradeImage(
       progressInterval = null;
     }
     
+    // Handle response
+    if (!response.ok) {
+      const errorText = await response.text();
+      debug(`Upload failed: ${errorText}`);
+      throw new Error(`Tải lên Cloudinary thất bại: ${response.statusText}`);
+    }
+    
+    // Parse response from Cloudinary
+    const cloudinaryData = await response.json();
+    
     // Đảm bảo tiến trình hoàn thành là 100%
     if (progressCallback) progressCallback(100);
     
-    debug('Ảnh đã được tải lên thành công: ' + data.imageUrl);
+    debug('Tải lên Cloudinary thành công: ' + cloudinaryData.secure_url);
     
     return {
       success: true, 
-      imageUrl: data.imageUrl,
-      publicId: data.publicId || undefined
+      imageUrl: cloudinaryData.secure_url,
+      publicId: cloudinaryData.public_id
     };
   } catch (error) {
-    console.error("Lỗi tải ảnh lên:", error);
+    console.error("Lỗi tải ảnh lên Cloudinary:", error);
     
     // Đặt tiến trình về 0 để thể hiện lỗi
     if (progressCallback) progressCallback(0);
@@ -188,12 +153,48 @@ export async function uploadTradeImage(
 }
 
 /**
- * Delete a trade image through the server API
+ * Trích xuất Public ID từ URL Cloudinary
+ * 
+ * @param url - URL Cloudinary của ảnh
+ * @returns Public ID của ảnh hoặc null nếu không thể trích xuất
+ */
+function extractPublicIdFromCloudinaryUrl(url: string): string | null {
+  if (!url || !url.includes('cloudinary.com')) {
+    return null;
+  }
+
+  try {
+    // URL Cloudinary có dạng: https://res.cloudinary.com/cloud-name/image/upload/[transformations]/public-id
+    const urlParts = url.split('/upload/');
+    if (urlParts.length !== 2) {
+      return null;
+    }
+
+    // Phần sau upload/ có thể có transformations, nên cần tách từ sau dấu /
+    let parts = urlParts[1].split('/');
+    // Phần cuối cùng chứa public_id
+    const publicIdWithExt = parts[parts.length - 1];
+    
+    // Loại bỏ phần extension để lấy public_id gốc
+    const extIndex = publicIdWithExt.lastIndexOf('.');
+    if (extIndex !== -1) {
+      return publicIdWithExt.substring(0, extIndex);
+    }
+
+    return publicIdWithExt;
+  } catch (e) {
+    debug(`Lỗi khi trích xuất publicId từ URL: ${e}`);
+    return null;
+  }
+}
+
+/**
+ * Delete a trade image directly from Cloudinary
  * 
  * @param userId - User ID
  * @param tradeId - Trade ID
  * @param imageData - Can be:
- *   1. Full URL of the image (Cloudinary URL or Firebase URL)
+ *   1. Full URL of the image (Cloudinary URL)
  *   2. Public ID of the Cloudinary image
  * @returns Promise with result as boolean
  */
@@ -202,21 +203,17 @@ export async function deleteTradeImage(
   tradeId: string,
   imageData: string
 ): Promise<boolean> {
-  debug(`API Service: Xóa ảnh cho ${imageData.substring(0, 30)}...`);
+  debug(`API Service: Xóa ảnh ${imageData.substring(0, 30)}...`);
   
   try {
-    let url = null;
-    let publicId = null;
+    let publicId: string | null = null;
     
     // Xác định loại dữ liệu được truyền vào
     if (imageData.startsWith('http') || imageData.startsWith('https')) {
-      url = imageData;
-      
-      debug('Đã nhận diện URL, sẽ xóa ảnh qua API');
-      
-      // Xác định loại URL
+      // Là một URL
       if (imageData.includes('cloudinary.com')) {
-        debug('URL Cloudinary được phát hiện');
+        debug('URL Cloudinary được phát hiện, trích xuất public_id...');
+        publicId = extractPublicIdFromCloudinaryUrl(imageData);
       } else {
         debug('URL không được hỗ trợ');
         return false;
@@ -233,10 +230,20 @@ export async function deleteTradeImage(
       return false;
     }
     
+    if (!publicId) {
+      debug('Không thể trích xuất public_id, không thể xóa ảnh');
+      return false;
+    }
+    
+    debug(`Đã xác định public_id: ${publicId}`);
+    
+    // Không thể xóa ảnh trực tiếp từ client vì cần phải ký chữ ký bảo mật
+    // và chúng ta không muốn chia sẻ secret key với client. 
+    // Vì vậy chúng ta vẫn phải gọi API server để xóa.
+    
     // Tạo query params
     const params = new URLSearchParams();
-    if (url) params.append('url', url);
-    if (publicId) params.append('publicId', publicId);
+    params.append('publicId', publicId);
     
     // Gọi API để xóa ảnh
     debug('Gửi request xóa ảnh đến server');
