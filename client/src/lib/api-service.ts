@@ -19,6 +19,14 @@ const IMAGE_TYPE_MAP = {
   'm15exit': 'exit-m15'
 } as const;
 
+// Cloudinary direct upload configuration for production
+const CLOUDINARY_CONFIG = {
+  cloud_name: 'dxi9ensjq',
+  api_key: '784331526282828',
+  upload_preset: 'ml_default',
+  api_url: 'https://api.cloudinary.com/v1_1/dxi9ensjq/image/upload'
+};
+
 // Type definitions to ensure type safety
 type UiImageType = keyof typeof IMAGE_TYPE_MAP;
 type StorageImageType = typeof IMAGE_TYPE_MAP[UiImageType];
@@ -59,14 +67,6 @@ export async function uploadTradeImage(
     // Cập nhật tiến trình ban đầu
     if (progressCallback) progressCallback(5);
     
-    // Tạo form data để gửi lên server
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('userId', userId);
-    formData.append('tradeId', tradeId);
-    formData.append('imageType', storageType);
-    formData.append('context', 'trade'); // Xác định context cho API thống nhất
-    
     // Simulate progress since we can't track it directly through fetch
     let progressInterval: NodeJS.Timeout | null = null;
     let currentProgress = 5;
@@ -82,29 +82,77 @@ export async function uploadTradeImage(
       }, 200);
     }
     
-    // Gửi API request đến endpoint thống nhất mới
-    debug('Gửi request tải lên ảnh đến endpoint /api/images/upload');
-    const response = await fetch('/api/images/upload', {
-      method: 'POST',
-      body: formData,
-      // No need to set Content-Type header, browser will do that with correct boundary for FormData
-    });
+    let data;
+    
+    // Thử tải lên trực tiếp đến Cloudinary trong môi trường production
+    try {
+      debug('Đang thử tải lên trực tiếp đến Cloudinary...');
+      
+      // Xác định folder dựa vào context
+      const folder = `trades/${userId}/${tradeId}`;
+      
+      // Tạo form data để gửi lên Cloudinary
+      const cloudinaryFormData = new FormData();
+      cloudinaryFormData.append('file', file);
+      cloudinaryFormData.append('api_key', CLOUDINARY_CONFIG.api_key);
+      cloudinaryFormData.append('upload_preset', CLOUDINARY_CONFIG.upload_preset);
+      cloudinaryFormData.append('folder', folder);
+      cloudinaryFormData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`);
+      
+      // Gửi request trực tiếp đến Cloudinary
+      const cloudinaryResponse = await fetch(CLOUDINARY_CONFIG.api_url, {
+        method: 'POST',
+        body: cloudinaryFormData
+      });
+      
+      // Nếu thành công, sử dụng kết quả từ Cloudinary
+      if (cloudinaryResponse.ok) {
+        const cloudinaryData = await cloudinaryResponse.json();
+        debug('Tải lên Cloudinary trực tiếp thành công!');
+        
+        data = {
+          imageUrl: cloudinaryData.secure_url,
+          publicId: cloudinaryData.public_id
+        };
+      } else {
+        // Nếu tải trực tiếp thất bại, thử phương pháp qua server
+        throw new Error('Tải lên trực tiếp thất bại, thử phương pháp thay thế');
+      }
+    } catch (cloudinaryError) {
+      debug(`Lỗi tải lên trực tiếp: ${cloudinaryError instanceof Error ? cloudinaryError.message : String(cloudinaryError)}`);
+      debug('Chuyển sang tải lên qua server...');
+      
+      // Tạo form data để gửi lên server
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('userId', userId);
+      formData.append('tradeId', tradeId);
+      formData.append('imageType', storageType);
+      formData.append('context', 'trade'); // Xác định context cho API thống nhất
+      
+      // Gửi API request đến endpoint thống nhất mới
+      debug('Gửi request tải lên ảnh đến endpoint /api/images/upload');
+      const response = await fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      // Handle response
+      if (!response.ok) {
+        const errorText = await response.text();
+        debug(`Upload failed with status ${response.status}: ${errorText}`);
+        throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+      }
+      
+      // Parse JSON response
+      data = await response.json();
+    }
     
     // Clear progress interval if it exists
     if (progressInterval) {
       clearInterval(progressInterval);
       progressInterval = null;
     }
-    
-    // Handle response
-    if (!response.ok) {
-      const errorText = await response.text();
-      debug(`Upload failed with status ${response.status}: ${errorText}`);
-      throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
-    }
-    
-    // Parse JSON response
-    const data = await response.json();
     
     // Đảm bảo tiến trình hoàn thành là 100%
     if (progressCallback) progressCallback(100);
