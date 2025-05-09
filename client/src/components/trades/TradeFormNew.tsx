@@ -2143,14 +2143,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                       </div>
                     </div>
                     
-                    {/* Risk:Reward Display */}
-                    {riskRewardRatio > 0 && (
-                      <div className="flex items-center">
-                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200 px-2.5 py-1">
-                          Risk:Reward 1:{riskRewardRatio.toFixed(2)}
-                        </Badge>
-                      </div>
-                    )}
+                    {/* Risk:Reward Display đã được bỏ theo yêu cầu */}
                   </div>
                 </div>
               </div>
