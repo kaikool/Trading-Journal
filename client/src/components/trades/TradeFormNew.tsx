@@ -61,6 +61,7 @@ import {
   calculateRiskRewardRatio, 
   calculatePips, 
   calculateProfit, 
+  calculateTakeProfitPrice,
   formatPrice
 } from "@/lib/forex-calculator";
 
@@ -1993,8 +1994,23 @@ export default function TradeFormNew(props: TradeFormProps) {
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
                           <Label htmlFor="takeProfit" className="font-medium text-sm">Take Profit</Label>
-                          <div className="opacity-0 flex items-center space-x-1 text-sm">
-                            <span>&nbsp;</span>
+                          <div className="flex items-center space-x-1 text-sm">
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              onClick={calculateTakeProfitByRR}
+                              disabled={isCalculatingTakeProfit || !form.getValues("entryPrice") || !form.getValues("stopLoss")}
+                              title={`Calculate take profit using default 1:${defaultRiskRewardRatio.toFixed(1)} risk:reward ratio`}
+                              className="h-5 w-5 p-0"
+                            >
+                              {isCalculatingTakeProfit ? (
+                                <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <Icons.analytics.pieChart className="h-3.5 w-3.5" />
+                              )}
+                            </Button>
+                            <Badge variant="outline" className="px-1.5 py-0 text-xs font-mono">1:{defaultRiskRewardRatio.toFixed(1)}</Badge>
                           </div>
                         </div>
                         <NumberInput
