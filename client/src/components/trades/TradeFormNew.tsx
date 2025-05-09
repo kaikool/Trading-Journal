@@ -1324,8 +1324,8 @@ export default function TradeFormNew(props: TradeFormProps) {
     if (input) input.value = '';
   };
 
-  // Calculate take profit based on default risk:reward ratio
-  const calculateTakeProfitByRR = () => {
+  // Automatic calculate take profit based on entry price, stop loss and default R:R ratio
+  const calculateTakeProfitByRR = useCallback(() => {
     if (isCalculatingTakeProfit) return;
     
     setIsCalculatingTakeProfit(true);
@@ -1336,11 +1336,8 @@ export default function TradeFormNew(props: TradeFormProps) {
       const directionValue = getValues("direction") as Direction;
       
       if (!entryPrice || !stopLoss || entryPrice <= 0 || stopLoss <= 0) {
-        toast({
-          title: "Missing Information",
-          description: "Please enter entry price and stop loss to calculate take profit.",
-          variant: "destructive"
-        });
+        // Không hiện toast lỗi khi tự động tính toán
+        setIsCalculatingTakeProfit(false);
         return;
       }
       
@@ -1358,22 +1355,31 @@ export default function TradeFormNew(props: TradeFormProps) {
       // Cập nhật take profit trong form
       setValue("takeProfit", roundedTakeProfit);
       
-      toast({
-        title: "Take Profit Updated",
-        description: `Calculated take profit based on 1:${defaultRiskRewardRatio.toFixed(1)} risk:reward ratio.`,
-        variant: "default"
-      });
+      // Không hiện toast khi tự động tính toán
     } catch (error) {
-      toast({
-        title: "Calculation Error",
-        description: "Could not calculate take profit. Please check your values.",
-        variant: "destructive"
-      });
       logError("Error calculating take profit:", error);
     } finally {
       setIsCalculatingTakeProfit(false);
     }
-  };
+  }, [getValues, setValue, defaultRiskRewardRatio, isCalculatingTakeProfit]);
+  
+  // Auto calculate take profit when entry price, stop loss or direction changes
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      // Chỉ tính toán khi entryPrice, stopLoss hoặc direction thay đổi
+      if (name === "entryPrice" || name === "stopLoss" || name === "direction") {
+        const entryPrice = value.entryPrice as number;
+        const stopLoss = value.stopLoss as number;
+        
+        // Chỉ tính toán khi có giá trị hợp lệ
+        if (entryPrice && stopLoss && entryPrice > 0 && stopLoss > 0) {
+          calculateTakeProfitByRR();
+        }
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [watch, calculateTakeProfitByRR]);
   
   // Calculate lot size based on risk percentage
   const calculateLotSizeByRisk = async () => {
@@ -1995,22 +2001,8 @@ export default function TradeFormNew(props: TradeFormProps) {
                         <div className="flex items-center justify-between mb-1.5">
                           <Label htmlFor="takeProfit" className="font-medium text-sm">Take Profit</Label>
                           <div className="flex items-center space-x-1 text-sm">
-                            <Button
-                              type="button"
-                              size="icon"
-                              variant="ghost"
-                              onClick={calculateTakeProfitByRR}
-                              disabled={isCalculatingTakeProfit || !form.getValues("entryPrice") || !form.getValues("stopLoss")}
-                              title={`Calculate take profit using default 1:${defaultRiskRewardRatio.toFixed(1)} risk:reward ratio`}
-                              className="h-5 w-5 p-0"
-                            >
-                              {isCalculatingTakeProfit ? (
-                                <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
-                              ) : (
-                                <Icons.analytics.pieChart className="h-3.5 w-3.5" />
-                              )}
-                            </Button>
-                            <Badge variant="outline" className="px-1.5 py-0 text-xs font-mono">1:{defaultRiskRewardRatio.toFixed(1)}</Badge>
+                            <Badge variant="outline" className="px-1.5 py-0 text-xs font-mono">Auto 1:{defaultRiskRewardRatio.toFixed(1)}</Badge>
+                            {isCalculatingTakeProfit && <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin ml-1" />}
                           </div>
                         </div>
                         <NumberInput
