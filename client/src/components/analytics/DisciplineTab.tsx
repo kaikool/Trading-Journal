@@ -25,7 +25,6 @@ import { CHART_CONFIG } from "@/lib/config";
 import { formatCurrency } from "@/lib/utils";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { XCircle, CheckCircle } from "lucide-react";
 
 interface DisciplineTabProps {
   data: {
@@ -236,7 +235,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
     if (revengeImpact > 15 && disciplineMetrics.revenge.yes > 3) {
       insights.push({
         type: 'warning',
-        icon: <XCircle className="h-4 w-4" />,
+        icon: <Icons.ui.xCircle className="h-4 w-4" />,
         title: 'Avoid Revenge Trading',
         description: `Revenge trading decreases your win rate by ${revengeImpact.toFixed(1)}%. Take breaks after losses to maintain emotional balance.`
       });
@@ -247,7 +246,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
     if (combinedDisciplineImpact > 30) {
       insights.push({
         type: 'positive',
-        icon: <CheckCircle className="h-4 w-4" />,
+        icon: <Icons.ui.circleCheck className="h-4 w-4" />,
         title: 'Strong Discipline Edge',
         description: `Your discipline factors collectively improve performance by ~${combinedDisciplineImpact.toFixed(1)}%. Trading psychology appears to be a significant strength in your strategy.`
       });
