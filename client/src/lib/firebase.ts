@@ -1043,11 +1043,8 @@ async function deleteTradeImage(path: string): Promise<boolean> {
     debug(`Deleting image: ${path}`);
     
     // Use the API service to delete the image
-    const result = await apiDeleteTradeImage(null, null, path);
-    
-    if (!result.success) {
-      throw new Error(result.error || "Delete failed");
-    }
+    // No need for userId and tradeId as the API service can identify the image from the path or URL
+    const result = await apiDeleteTradeImage("", "", path);
     
     debug("Image deleted successfully");
     return true;
