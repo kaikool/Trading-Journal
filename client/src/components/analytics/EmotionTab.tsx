@@ -24,7 +24,7 @@ import {
 } from "recharts";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import Icons from "@/components/icons/icons";
+import { Icons } from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
 import { format, parseISO } from "date-fns";
 import { formatCurrency } from "@/lib/utils";

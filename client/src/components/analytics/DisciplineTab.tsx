@@ -20,7 +20,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import Icons from "@/components/icons/icons";
+import { Icons } from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
 import { formatCurrency } from "@/lib/utils";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
