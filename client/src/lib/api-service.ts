@@ -19,13 +19,27 @@ const IMAGE_TYPE_MAP = {
   'm15exit': 'exit-m15'
 } as const;
 
-// Cloudinary direct upload configuration
+/**
+ * Cloudinary direct upload configuration
+ * 
+ * LƯU Ý QUAN TRỌNG:
+ * 1. upload_preset PHẢI được tạo và cấu hình trong Cloudinary dashboard
+ * 2. upload_preset PHẢI được đặt là "Unsigned" trong Cloudinary settings
+ * 3. cloud_name phải chính xác
+ * 
+ * Nếu gặp lỗi "Upload preset not found", bạn cần:
+ * 1. Đăng nhập vào Cloudinary dashboard
+ * 2. Vào Settings > Upload > Upload presets
+ * 3. Tạo mới hoặc kiểm tra preset đã tồn tại
+ * 4. Đảm bảo preset được đặt là "Unsigned"
+ */
 const CLOUDINARY_CONFIG = {
   cloud_name: 'dxi9ensjq',
-  upload_preset: 'ml_default' // Preset name được cấu hình trong Cloudinary dashboard
+  upload_preset: 'trading_journal_uploads' // Preset đặc biệt cho ứng dụng này (cần được tạo trong dashboard)
 };
 
 // Cloudinary API URL cho unsigned upload (không yêu cầu chữ ký)
+// Format chính xác: https://api.cloudinary.com/v1_1/cloud_name/image/upload
 const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloud_name}/image/upload`;
 
 // Type definitions to ensure type safety
@@ -90,6 +104,9 @@ export async function uploadTradeImage(
     // Xác định folder dựa vào context
     const folder = `trades/${userId}/${tradeId}`;
     
+    debug(`Chuẩn bị upload đến Cloudinary. Cloud name: ${CLOUDINARY_CONFIG.cloud_name}, Upload preset: ${CLOUDINARY_CONFIG.upload_preset}`);
+    debug(`File details: name=${file.name}, type=${file.type}, size=${file.size} bytes`);
+    
     // Tạo form data để gửi lên Cloudinary theo chuẩn unsigned upload
     const formData = new FormData();
     formData.append('file', file);
@@ -97,6 +114,13 @@ export async function uploadTradeImage(
     formData.append('cloud_name', CLOUDINARY_CONFIG.cloud_name); // Tên cloud - quan trọng cho unsigned upload
     formData.append('folder', folder); // Folder trong Cloudinary để lưu trữ ảnh
     formData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`); // Tags để phân loại ảnh
+    
+    // Thêm một số tùy chọn hữu ích
+    formData.append('resource_type', 'image'); // Xác định loại tài nguyên
+    formData.append('multiple', 'false'); // Không cho phép nhiều file
+    
+    // Log URL being used
+    debug(`Gửi POST request đến: ${CLOUDINARY_UPLOAD_URL}`);
     
     // Gửi request trực tiếp đến Cloudinary
     const response = await fetch(CLOUDINARY_UPLOAD_URL, {
@@ -110,11 +134,25 @@ export async function uploadTradeImage(
       progressInterval = null;
     }
     
-    // Handle response
+    // Handle response with detailed error information
     if (!response.ok) {
-      const errorText = await response.text();
-      debug(`Upload failed: ${errorText}`);
-      throw new Error(`Tải lên Cloudinary thất bại: ${response.statusText}`);
+      try {
+        // Thử phân tích JSON response để lấy thông tin lỗi chi tiết
+        const errorData = await response.json();
+        debug(`Upload failed with error: ${JSON.stringify(errorData)}`);
+        
+        // Trích xuất thông báo lỗi chi tiết từ Cloudinary
+        const errorMessage = errorData.error?.message || 
+                            errorData.message || 
+                            `Tải lên Cloudinary thất bại: ${response.statusText}`;
+        
+        throw new Error(errorMessage);
+      } catch (jsonError) {
+        // Nếu không phân tích được JSON, lấy text thô
+        const errorText = await response.text();
+        debug(`Upload failed with text: ${errorText}`);
+        throw new Error(`Tải lên Cloudinary thất bại: ${response.statusText} - ${errorText.substring(0, 100)}`);
+      }
     }
     
     // Parse response from Cloudinary
