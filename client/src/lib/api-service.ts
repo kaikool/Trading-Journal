@@ -1,20 +1,12 @@
 /**
- * API Service for communicating with Firebase Storage
+ * API Service for image upload and management
  * 
- * This service handles image uploads and deletions directly through Firebase Storage Web SDK
- * instead of going through server endpoints or Cloud Functions
+ * This service handles image uploads and deletions through Cloudinary using our server API.
+ * It maintains backward compatibility for older Firebase Storage images still in use.
  */
 
-import { 
-  getStorage, 
-  ref, 
-  uploadBytesResumable, 
-  getDownloadURL,
-  deleteObject
-} from "firebase/storage";
-// Import functions which is an alias for initFirebase() from firebase.ts
-import { functions } from './firebase';
 import { debug } from './debug';
+import { apiRequest } from './queryClient';
 
 /**
  * Mapping between image types in UI and image types in storage
@@ -34,7 +26,7 @@ type UiImageType = keyof typeof IMAGE_TYPE_MAP;
 type StorageImageType = typeof IMAGE_TYPE_MAP[UiImageType];
 
 /**
- * Upload an image for a trade directly to Firebase Storage
+ * Upload an image for a trade through the server API (Cloudinary)
  * 
  * @param userId - User ID
  * @param tradeId - Trade ID
@@ -49,7 +41,7 @@ export async function uploadTradeImage(
   file: File,
   imageType: string,
   progressCallback?: (progress: number) => void
-): Promise<{ success: boolean; imageUrl: string }> {
+): Promise<{ success: boolean; imageUrl: string; publicId?: string }> {
   debug(`API Service: Tải lên ảnh loại ${imageType}`);
   
   // Kiểm tra đầu vào
@@ -65,89 +57,66 @@ export async function uploadTradeImage(
   const storageType = (IMAGE_TYPE_MAP[imageType as UiImageType] || 'entry-h4') as StorageImageType;
   debug(`Đã chuyển đổi từ UI type "${imageType}" sang storage type "${storageType}"`);
   
-  // Khởi tạo Firebase nếu chưa
-  const { storage, auth } = functions();
-  
-  // Nếu chưa đăng nhập trong môi trường dev, tạo một UID giả để sử dụng
-  if (!auth.currentUser) {
-    debug('Không có người dùng đăng nhập, sử dụng userId được cung cấp:', userId);
-  }
-  
   try {
     // Cập nhật tiến trình ban đầu
-    if (progressCallback) progressCallback(2);
+    if (progressCallback) progressCallback(5);
     
-    // Tạo đường dẫn lưu trữ độc nhất
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 10);
-    const safeFileName = file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_');
+    // Tạo form data để gửi lên server
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('userId', userId);
+    formData.append('tradeId', tradeId);
+    formData.append('imageType', storageType);
     
-    // Đường dẫn trong Storage: images/{userId}/{tradeId}/{image-type}-{timestamp}-{random}-{filename}
-    const storagePath = `images/${userId}/${tradeId}/${storageType}-${timestamp}-${randomString}-${safeFileName}`;
+    // Simulate progress since we can't track it directly through fetch
+    let progressInterval: NodeJS.Timeout | null = null;
+    let currentProgress = 5;
     
-    // Tạo tham chiếu đến vị trí lưu trữ
-    const storageRef = ref(storage, storagePath);
-    
-    // Tạo metadata
-    const metadata = {
-      contentType: file.type,
-      customMetadata: {
-        userId,
-        tradeId,
-        imageType: storageType,
-        originalName: file.name,
-        uploadedAt: new Date().toISOString()
-      }
-    };
-    
-    // Tải lên với tiến trình
-    const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-    
-    // Theo dõi tiến trình upload
-    const urlPromise = new Promise<string>((resolve, reject) => {
-      uploadTask.on('state_changed', 
-        // Progress observer
-        (snapshot) => {
-          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          if (progress % 20 === 0 || progress === 100) { // Log only at 0%, 20%, 40%, 60%, 80%, 100%
-            debug(`Upload progress: ${progress}%`);
-          }
-          
-          if (progressCallback) progressCallback(progress);
-        },
-        // Error observer
-        (error) => {
-          console.error('Upload error:', error);
-          reject(error);
-        },
-        // Completion observer
-        async () => {
-          // Lấy download URL khi tải lên hoàn tất
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            debug('File uploaded successfully');
-            
-            resolve(downloadURL);
-          } catch (urlError) {
-            console.error('Error getting download URL:', urlError);
-            reject(urlError);
-          }
+    if (progressCallback) {
+      progressInterval = setInterval(() => {
+        currentProgress += 5;
+        if (currentProgress >= 90) {
+          clearInterval(progressInterval!);
+          progressInterval = null;
         }
-      );
+        progressCallback(currentProgress);
+      }, 200);
+    }
+    
+    // Gửi API request để tải lên ảnh
+    debug('Gửi request tải lên ảnh đến endpoint /api/trades/upload');
+    const response = await fetch('/api/trades/upload', {
+      method: 'POST',
+      body: formData,
+      // No need to set Content-Type header, browser will do that with correct boundary for FormData
     });
     
-    // Chờ URL từ promise
-    const imageUrl = await urlPromise;
+    // Clear progress interval if it exists
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
+    
+    // Handle response
+    if (!response.ok) {
+      const errorText = await response.text();
+      debug(`Upload failed with status ${response.status}: ${errorText}`);
+      throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+    }
+    
+    // Parse JSON response
+    const data = await response.json();
     
     // Đảm bảo tiến trình hoàn thành là 100%
     if (progressCallback) progressCallback(100);
     
+    debug('Ảnh đã được tải lên thành công: ' + data.imageUrl);
+    
     return {
-      success: true,
-      imageUrl,
-      // Lưu thêm thông tin về đường dẫn Storage để xóa sau này
-      storagePath
-    } as any;
+      success: true, 
+      imageUrl: data.imageUrl,
+      publicId: data.publicId || undefined
+    };
   } catch (error) {
     console.error("Lỗi tải ảnh lên:", error);
     
@@ -172,96 +141,85 @@ export async function uploadTradeImage(
 }
 
 /**
- * Delete a trade image directly from Firebase Storage
+ * Delete a trade image through the server API
  * 
  * @param userId - User ID
  * @param tradeId - Trade ID
- * @param fileOrType - Can be:
- *   1. Storage path (preferred: images/{userId}/{tradeId}/...)
- *   2. Full URL of the image (Firebase Storage URL)
- *   3. storagePath from upload result
+ * @param imageData - Can be:
+ *   1. Full URL of the image (Cloudinary URL or Firebase URL)
+ *   2. Public ID of the Cloudinary image
  * @returns Promise with result as boolean
  */
 export async function deleteTradeImage(
   userId: string,
   tradeId: string,
-  fileOrType: string
+  imageData: string
 ): Promise<boolean> {
-  debug(`API Service: Xóa ảnh cho ${fileOrType.substring(0, 30)}...`);
-  
-  // Khởi tạo Firebase
-  const { storage } = functions();
-  
-  // Xác định đường dẫn tới file trong Storage
-  let storagePath: string | null = null;
-  
-  // Nếu là đường dẫn đầy đủ trong Storage (images/userId/tradeId/...)
-  if (fileOrType.startsWith('images/') || fileOrType.startsWith('trades/') || fileOrType.startsWith('charts/')) {
-    storagePath = fileOrType;
-    debug(`Đã nhận dạng được Firebase Storage path`);
-  }
-  // Nếu là URL Firebase Storage
-  else if (fileOrType.includes('firebasestorage.googleapis.com')) {
-    try {
-      // Phân tích URL để tìm path
-      const urlObj = new URL(fileOrType);
-      const pathMatch = urlObj.pathname.match(/\/o\/(.+?)(?:\?|$)/);
-      
-      if (pathMatch && pathMatch[1]) {
-        // URL-decode đường dẫn vì trong URL nó được encode
-        storagePath = decodeURIComponent(pathMatch[1]);
-        debug(`Đã trích xuất path từ URL Firebase`);
-      } else {
-        throw new Error('Không thể trích xuất đường dẫn từ URL');
-      }
-    } catch (error) {
-      console.error('Lỗi khi phân tích URL Firebase Storage:', error);
-      return false;
-    }
-  }
-  // Nếu là URL không được hỗ trợ (legacy)
-  else if (fileOrType.includes('cloudinary.com')) {
-    debug(`URL Cloudinary không được hỗ trợ, không thể thực hiện xóa`);
-    return false;
-  }
-  // Nếu là local file path (legacy)
-  else if (fileOrType.startsWith('/uploads/')) {
-    debug(`Local uploads không còn được hỗ trợ, không thể xóa`);
-    return false;
-  }
-  // Nếu là loại ảnh từ UI, không có đủ thông tin để xóa
-  else if (fileOrType in IMAGE_TYPE_MAP) {
-    debug(`Loại ảnh UI không đủ thông tin để xóa, cần đường dẫn đầy đủ`);
-    return false;
-  }
-  
-  if (!storagePath) {
-    console.warn(`Không có đủ thông tin để xác định vị trí file trong Storage`);
-    return false;
-  }
+  debug(`API Service: Xóa ảnh cho ${imageData.substring(0, 30)}...`);
   
   try {
-    debug(`Bắt đầu xóa ảnh từ Firebase Storage`);
+    let url = null;
+    let publicId = null;
     
-    // Tạo reference đến file trong Storage
-    const fileRef = ref(storage, storagePath);
+    // Xác định loại dữ liệu được truyền vào
+    if (imageData.startsWith('http') || imageData.startsWith('https')) {
+      url = imageData;
+      
+      debug('Đã nhận diện URL, sẽ xóa ảnh qua API');
+      
+      // Xác định loại URL
+      if (imageData.includes('cloudinary.com')) {
+        debug('URL Cloudinary được phát hiện');
+      } else if (imageData.includes('firebasestorage.googleapis.com')) {
+        debug('URL Firebase Storage được phát hiện (hỗ trợ ngược)');
+      } else {
+        debug('URL không được hỗ trợ');
+        return false;
+      }
+    } 
+    // Nếu đây là public ID của Cloudinary
+    else if (!imageData.startsWith('http') && !imageData.includes('/')) {
+      publicId = imageData;
+      debug('Đã nhận diện Public ID Cloudinary');
+    }
+    // Nếu không xác định được loại
+    else {
+      debug('Không thể xác định loại dữ liệu ảnh, không thể xóa');
+      return false;
+    }
     
-    // Thực hiện xóa file
-    await deleteObject(fileRef);
+    // Tạo query params
+    const params = new URLSearchParams();
+    if (url) params.append('url', url);
+    if (publicId) params.append('publicId', publicId);
     
-    debug(`Xóa ảnh thành công`);
+    // Gọi API để xóa ảnh
+    debug('Gửi request xóa ảnh đến server');
     
-    return true;
+    const response = await fetch(`/api/images/delete?${params.toString()}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      debug(`Xóa ảnh thất bại: ${response.status} - ${errorText}`);
+      return false;
+    }
+    
+    const result = await response.json();
+    
+    debug(`Kết quả xóa ảnh: ${result.success ? 'Thành công' : 'Thất bại'}`);
+    
+    return result.success;
   } catch (error) {
     console.error(`Lỗi khi xóa ảnh:`, error);
     
     // Ghi log chi tiết hơn về lỗi
     if (error instanceof Error) {
-      // Nếu lỗi là object-not-found, đây có thể là điều bình thường và không nghiêm trọng
-      if (error.message.includes('object-not-found')) {
-        debug(`File không tồn tại, có thể đã bị xóa trước đó`);
-        return true; // Trả về true vì mục tiêu là file không còn tồn tại
-      }
+      debug(`Lỗi xóa ảnh: ${error.message}`);
     }
     
     // Không ném lỗi, trả về false để UI có thể xử lý một cách êm dịu

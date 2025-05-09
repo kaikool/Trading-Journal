@@ -95,33 +95,21 @@ const verifyFirebaseToken = async (req: express.Request, res: express.Response, 
   }
 };
 
-// Hàm khởi tạo Firebase Admin và cung cấp Bucket
-function getFirebaseStorage() {
-  // Kiểm tra xem Firebase Admin đã được khởi tạo chưa
+// Legacy Firebase Admin initialization - giữ lại để hỗ trợ Firebase Auth
+function initFirebaseAuth() {
   try {
     if (!admin.apps.length) {
       admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'trading-journal-b83e9.appspot.com',
+        credential: admin.credential.applicationDefault()
       });
-      log('Firebase Admin initialized for upload service', 'upload-service');
+      log('Firebase Admin initialized for authentication', 'upload-service');
     } else {
       log('Firebase Admin already initialized, reusing existing instance', 'upload-service');
     }
-
-    // Lấy Storage từ Firebase Admin
-    const storage = getStorage();
-    const bucketName = process.env.FIREBASE_STORAGE_BUCKET || 'trading-journal-b83e9.appspot.com';
-    
-    // Lấy bucket chính xác từ Storage
-    const bucket = storage.bucket(bucketName);
-    log(`Firebase Storage bucket initialized: ${bucketName}`, 'upload-service');
-    
-    return { storage, bucket };
+    return true;
   } catch (error) {
-    log(`ERROR: Firebase Storage initialization failed: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
-    log('Continuing with local storage fallback only', 'upload-service');
-    return { storage: null, bucket: null };
+    log(`ERROR: Firebase Admin initialization failed: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
+    return false;
   }
 }
 
@@ -142,79 +130,54 @@ export function setupUploadRoutes(app: express.Express) {
       // Lấy thông tin người dùng từ request hoặc Firebase
       const userId = (req as any).user?.uid || req.body.userId || 'anonymous';
       
-      // Tạo đường dẫn lưu trữ trong Firebase Storage
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      const safeFilename = file.originalname.replace(/[^a-zA-Z0-9-_\.]/g, '_');
-      const storagePath = `charts/${userId}/${timestamp}-${randomString}-${safeFilename}`;
-      
-      // Upload lên Firebase Storage nếu bucket đã được khởi tạo thành công
-      if (bucket) {
-        try {
-          // Đọc nội dung file từ đường dẫn local tạm thời
-          const fileBuffer = fs.readFileSync(file.path);
-          
-          // Tạo file object trong Firebase Storage
-          const fileRef = bucket.file(storagePath);
-          
-          // Thiết lập metadata
-          const metadata = {
-            contentType: file.mimetype,
-            metadata: {
-              userId: userId,
-              uploadedAt: new Date().toISOString(),
-              originalName: file.originalname,
-              type: 'chart'
-            }
-          };
-          
-          // Tải lên Firebase Storage
-          await fileRef.save(fileBuffer, {
-            metadata: metadata,
-            public: true,
-            validation: 'md5'
-          });
-          
-          // Tạo signed URL cho file
-          const [url] = await fileRef.getSignedUrl({
-            action: 'read',
-            expires: '03-01-2500', // Thời gian hết hạn dài
-          });
-          
-          // Xóa file tạm
-          fs.unlinkSync(file.path);
-          
-          log(`Chart image uploaded to Firebase Storage: ${storagePath}`, 'upload-service');
-          log(`Chart image URL: ${url}`, 'upload-service');
-          
-          // Trả về response với đường dẫn hình ảnh
-          return res.status(200).json({
-            success: true,
-            filename: storagePath,
-            originalName: file.originalname,
-            size: file.size,
-            mimetype: file.mimetype,
-            imageUrl: url,
-            storage: 'firebase'
-          });
-        } catch (storageError) {
-          log(`Firebase Storage upload error: ${storageError instanceof Error ? storageError.message : String(storageError)}`, 'upload-service');
-        }
+      try {
+        // Tạo thông tin metadata
+        const metadata = {
+          userId: userId,
+          uploadedAt: new Date().toISOString(),
+          originalName: file.originalname,
+          type: 'chart'
+        };
+        
+        // Tải lên Cloudinary
+        log(`Uploading chart image to Cloudinary for user ${userId}`, 'upload-service');
+        const folder = `charts/${userId}`;
+        const uploadResult = await uploadImage(file.path, folder, metadata);
+        
+        // Xóa file tạm thời
+        fs.unlinkSync(file.path);
+        
+        log(`Chart image uploaded to Cloudinary: ${uploadResult.publicId}`, 'upload-service');
+        log(`Chart image URL: ${uploadResult.imageUrl}`, 'upload-service');
+        
+        // Trả về response với đường dẫn hình ảnh
+        return res.status(200).json({
+          success: true,
+          publicId: uploadResult.publicId,
+          originalName: file.originalname,
+          size: uploadResult.bytes,
+          imageUrl: uploadResult.imageUrl,
+          storage: 'cloudinary',
+          width: uploadResult.width,
+          height: uploadResult.height
+        });
+      } catch (cloudinaryError) {
+        log(`Cloudinary upload error: ${cloudinaryError instanceof Error ? cloudinaryError.message : String(cloudinaryError)}`, 'upload-service');
+        
+        // Fallback to local URL if Cloudinary upload fails
+        const imageUrl = `/uploads/${file.filename}`;
+        log(`Using local storage fallback: ${imageUrl}`, 'upload-service');
+        
+        return res.status(200).json({
+          success: true,
+          filename: file.filename,
+          originalName: file.originalname,
+          size: file.size,
+          mimetype: file.mimetype,
+          imageUrl: imageUrl,
+          storage: 'local'
+        });
       }
-      
-      // Fallback to local URL if Firebase upload fails or bucket not available
-      const imageUrl = `/uploads/${file.filename}`;
-      log(`Using local storage: ${imageUrl}`, 'upload-service');
-      
-      return res.status(200).json({
-        success: true,
-        filename: file.filename,
-        originalName: file.originalname,
-        size: file.size,
-        mimetype: file.mimetype,
-        imageUrl: imageUrl,
-        storage: 'local'
-      });
     } catch (error) {
       // Ghi log chi tiết hơn về lỗi
       log(`Chart upload error: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
@@ -260,53 +223,32 @@ export function setupUploadRoutes(app: express.Express) {
       const tradeId = req.body.tradeId || 'temp';
       const imageType = req.body.imageType || 'trade-image';
       
-      // Tạo đường dẫn lưu trữ trong Firebase Storage
-      const timestamp = Date.now();
-      const randomString = Math.random().toString(36).substring(2, 15);
-      const safeFilename = file.originalname.replace(/[^a-zA-Z0-9-_\.]/g, '_');
-      
-      // Tạo đường dẫn theo cấu trúc: trades/userId/tradeId/imageType-timestamp-randomString-filename
-      const storagePath = `trades/${userId}/${tradeId}/${imageType}-${timestamp}-${randomString}-${safeFilename}`;
-      
-      // Upload lên Firebase Storage nếu bucket khả dụng
-      if (bucket) {
+      try {
+        // Tạo metadata
+        const metadata = {
+          userId: userId,
+          tradeId: tradeId,
+          imageType: imageType,
+          uploadedAt: new Date().toISOString(),
+          originalName: file.originalname
+        };
+        
         try {
-          // Đọc nội dung file từ đường dẫn local tạm thời
-          const fileBuffer = fs.readFileSync(file.path);
+          // Tải lên Cloudinary
+          log(`Uploading trade image to Cloudinary (type: ${imageType})`, 'upload-service');
+          const folder = `trades/${userId}/${tradeId}`;
           
-          // Tạo file object trong Firebase Storage
-          const fileRef = bucket.file(storagePath);
+          // Có thể thêm tags để dễ dàng quản lý trong Cloudinary
+          const tags = [`user:${userId}`, `trade:${tradeId}`, `type:${imageType}`];
           
-          // Thiết lập metadata
-          const metadata = {
-            contentType: file.mimetype,
-            metadata: {
-              userId: userId,
-              tradeId: tradeId,
-              imageType: imageType,
-              uploadedAt: new Date().toISOString(),
-              originalName: file.originalname
-            }
-          };
-          
-          // Tải lên Firebase Storage
-          await fileRef.save(fileBuffer, {
-            metadata: metadata,
-            public: true,
-            validation: 'md5'
-          });
-          
-          // Tạo signed URL cho file
-          const [url] = await fileRef.getSignedUrl({
-            action: 'read',
-            expires: '03-01-2500', // Thời gian hết hạn dài
-          });
+          // Upload lên Cloudinary
+          const uploadResult = await uploadImage(file.path, folder, metadata, undefined, tags);
           
           // Xóa file tạm
           fs.unlinkSync(file.path);
           
-          log(`Trade image uploaded to Firebase Storage: ${storagePath}`, 'upload-service');
-          log(`Trade image URL: ${url}`, 'upload-service');
+          log(`Trade image uploaded to Cloudinary: ${uploadResult.publicId}`, 'upload-service');
+          log(`Trade image URL: ${uploadResult.imageUrl}`, 'upload-service');
           
           // Xóa timeout vì đã hoàn thành
           clearTimeout(responseTimeout);
@@ -314,45 +256,48 @@ export function setupUploadRoutes(app: express.Express) {
           // Trả về response với đường dẫn hình ảnh
           return res.status(200).json({
             success: true,
-            filename: storagePath,
+            publicId: uploadResult.publicId,
             originalName: file.originalname,
             imageType: imageType,
-            size: file.size,
-            mimetype: file.mimetype,
-            imageUrl: url,
+            size: uploadResult.bytes,
+            imageUrl: uploadResult.imageUrl,
             storage: {
-              provider: 'firebase',
-              path: storagePath,
-              bucket: bucket.name
+              provider: 'cloudinary',
+              publicId: uploadResult.publicId,
+              format: uploadResult.format,
+              width: uploadResult.width,
+              height: uploadResult.height
             }
           });
-        } catch (storageError) {
-          // Ghi log lỗi
-          log(`Firebase Storage upload error: ${storageError instanceof Error ? storageError.message : String(storageError)}`, 'upload-service');
+        } catch (cloudinaryError) {
+          log(`Cloudinary upload error: ${cloudinaryError instanceof Error ? cloudinaryError.message : String(cloudinaryError)}`, 'upload-service');
+          throw cloudinaryError; // Re-throw error để được xử lý ở catch block bên ngoài
         }
+      } catch (cloudinaryError) {
+        log(`Cloudinary upload error: ${cloudinaryError instanceof Error ? cloudinaryError.message : String(cloudinaryError)}`, 'upload-service');
+        
+        // Fallback to local URL if Cloudinary upload fails
+        const imageUrl = `/uploads/${file.filename}`;
+        log(`Using local storage fallback: ${imageUrl}`, 'upload-service');
+        
+        // Xóa timeout vì đã hoàn thành
+        clearTimeout(responseTimeout);
+        
+        return res.status(200).json({
+          success: true,
+          filename: file.filename,
+          originalName: file.originalname,
+          imageType: imageType,
+          size: file.size,
+          mimetype: file.mimetype,
+          imageUrl: imageUrl,
+          storage: {
+            provider: 'local',
+            path: file.path,
+            filename: file.filename
+          }
+        });
       }
-      
-      // Fallback to local URL if Firebase upload fails or bucket not available
-      const imageUrl = `/uploads/${file.filename}`;
-      log(`Using local storage: ${imageUrl}`, 'upload-service');
-      
-      // Xóa timeout vì đã hoàn thành
-      clearTimeout(responseTimeout);
-      
-      return res.status(200).json({
-        success: true,
-        filename: file.filename,
-        originalName: file.originalname,
-        imageType: imageType,
-        size: file.size,
-        mimetype: file.mimetype,
-        imageUrl: imageUrl,
-        storage: {
-          provider: 'local',
-          path: file.path,
-          filename: file.filename
-        }
-      });
     } catch (error) {
       // Xóa timeout trong trường hợp lỗi
       clearTimeout(responseTimeout);
@@ -376,7 +321,11 @@ export function setupUploadRoutes(app: express.Express) {
   // API endpoint để lấy thumbnail cho một ảnh đã tồn tại
   app.get('/api/thumbnail', async (req, res) => {
     try {
-      const { url, path: storagePath } = req.query;
+      const { url, path: storagePath, width, height } = req.query;
+      
+      // Mặc định kích thước thumbnail là 200x200px nếu không được chỉ định
+      const thumbWidth = width ? parseInt(width as string) : 200;
+      const thumbHeight = height ? parseInt(height as string) : 200;
       
       if (!url && !storagePath) {
         return res.status(400).json({ 
@@ -385,53 +334,29 @@ export function setupUploadRoutes(app: express.Express) {
         });
       }
       
-      // Xử lý URL Firebase Storage
-      if (url && typeof url === 'string' && url.includes('firebasestorage.googleapis.com')) {
-        // Thumbnail đơn giản: trả về URL gốc vì Firebase Storage không hỗ trợ resize qua URL trực tiếp
-        log(`Firebase Storage URL detected, using original as thumbnail: ${url}`, 'upload-service');
+      // Xử lý URL Cloudinary
+      if (url && typeof url === 'string' && url.includes('cloudinary.com')) {
+        // Sử dụng các tính năng của Cloudinary để tạo thumbnail theo kích thước
+        log(`Cloudinary URL detected, generating thumbnail: ${url}`, 'upload-service');
+        const thumbnailUrl = generateThumbnailUrl(url, thumbWidth, thumbHeight);
+        
         return res.status(200).json({
           success: true,
           originalUrl: url,
-          thumbnailUrl: url // Trả về URL gốc làm thumbnail
+          thumbnailUrl: thumbnailUrl
         });
-      } 
-      // Xử lý Firebase Storage Path
-      else if (storagePath && typeof storagePath === 'string' && bucket) {
-        try {
-          // Lấy file reference từ storage path
-          const fileRef = bucket.file(storagePath as string);
-          
-          // Kiểm tra xem file có tồn tại không
-          const [exists] = await fileRef.exists();
-          if (!exists) {
-            return res.status(404).json({
-              success: false,
-              error: 'File not found in Firebase Storage'
-            });
-          }
-          
-          // Tạo signed URL
-          const [signedUrl] = await fileRef.getSignedUrl({
-            action: 'read',
-            expires: '03-01-2500',
-          });
-          
-          log(`Firebase Storage thumbnail (original) URL generated: ${signedUrl}`, 'upload-service');
-          return res.status(200).json({
-            success: true,
-            originalUrl: signedUrl,
-            thumbnailUrl: signedUrl // Không có resize, sử dụng URL gốc
-          });
-        } catch (error) {
-          log(`Error generating Firebase Storage thumbnail: ${error}`, 'upload-service');
-          return res.status(500).json({
-            success: false,
-            error: 'Error generating thumbnail',
-            message: error instanceof Error ? error.message : 'Unknown error'
-          });
-        }
       }
-
+      // Xử lý URL Firebase Storage (hỗ trợ ngược với các hình ảnh cũ)
+      else if (url && typeof url === 'string' && url.includes('firebasestorage.googleapis.com')) {
+        // Thumbnail đơn giản: trả về URL gốc vì Firebase Storage không hỗ trợ resize qua URL trực tiếp
+        log(`Firebase Storage URL detected (legacy support), using original as thumbnail: ${url}`, 'upload-service');
+        return res.status(200).json({
+          success: true,
+          originalUrl: url,
+          thumbnailUrl: url, // Trả về URL gốc làm thumbnail
+          provider: 'firebase'
+        });
+      }
       // Xử lý local uploads
       else if (url && typeof url === 'string' && url.startsWith('/uploads/')) {
         // Đường dẫn local (giữ lại cho tương thích ngược)
@@ -439,17 +364,19 @@ export function setupUploadRoutes(app: express.Express) {
         return res.status(200).json({
           success: true,
           originalUrl: url,
-          thumbnailUrl: url // Trả về URL gốc làm thumbnail
+          thumbnailUrl: url, // Trả về URL gốc làm thumbnail
+          provider: 'local'
         });
       }
       // Xử lý URL khác
       else if (url && typeof url === 'string' && url.startsWith('http')) {
-        // URL khác - không hỗ trợ tạo thumbnail
-        log(`Remote URL thumbnail not supported: ${url}`, 'upload-service');
+        // Thử xác định nếu đây là URL HTTP khác không phải Cloudinary hay Firebase
+        log(`Remote URL thumbnail: ${url}`, 'upload-service');
         return res.status(200).json({
           success: true,
           originalUrl: url,
-          thumbnailUrl: url // Trả về URL gốc làm thumbnail
+          thumbnailUrl: url, // Trả về URL gốc làm thumbnail
+          provider: 'remote'
         });
       } else {
         // URL không hợp lệ
@@ -470,26 +397,30 @@ export function setupUploadRoutes(app: express.Express) {
     }
   });
   
-  // API endpoint để xóa một ảnh (hỗ trợ Firebase Storage và local storage)
+  // API endpoint để xóa một ảnh (hỗ trợ Cloudinary, Firebase Storage và local storage)
   app.delete('/api/images/delete', verifyFirebaseToken, async (req, res) => {
     try {
-      const { url, path: storagePath, filename } = req.query;
+      const { url, publicId, path: storagePath, filename } = req.query;
       
-      if (!url && !storagePath && !filename) {
+      if (!url && !storagePath && !filename && !publicId) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Missing URL, path, or filename parameter' 
+          error: 'Missing URL, publicId, path, or filename parameter' 
         });
       }
       
       // Xác định loại lưu trữ
       let storageType = 'unknown';
       if (url && typeof url === 'string') {
-        if (url.includes('firebasestorage.googleapis.com')) {
+        if (url.includes('cloudinary.com')) {
+          storageType = 'cloudinary';
+        } else if (url.includes('firebasestorage.googleapis.com')) {
           storageType = 'firebase';
         } else if (url.startsWith('/uploads/')) {
           storageType = 'local';
         }
+      } else if (publicId && typeof publicId === 'string') {
+        storageType = 'cloudinary';
       } else if (storagePath && typeof storagePath === 'string') {
         storageType = 'firebase';
       } else if (filename && typeof filename === 'string') {
@@ -501,60 +432,57 @@ export function setupUploadRoutes(app: express.Express) {
       let success = false;
       let deleteMessage = '';
       
-      if (storageType === 'firebase' && bucket) {
-        // Xóa ảnh từ Firebase Storage
-        let filePathInStorage = '';
-        
-        if (storagePath && typeof storagePath === 'string') {
-          // Sử dụng path trực tiếp nếu được cung cấp
-          filePathInStorage = storagePath;
-        } else if (url && typeof url === 'string') {
-          // Cố gắng trích xuất storage path từ URL Firebase
-          try {
-            // URL Firebase có dạng: https://firebasestorage.googleapis.com/v0/b/[bucket]/o/[encodedPath]?token=...
-            const urlObj = new URL(url);
-            const encodedPath = urlObj.pathname.split('/o/')[1];
-            if (encodedPath) {
-              filePathInStorage = decodeURIComponent(encodedPath.split('?')[0]);
-              log(`Extracted storage path from URL: ${filePathInStorage}`, 'upload-service');
-            }
-          } catch (urlError) {
-            log(`Error extracting path from Firebase URL: ${urlError}`, 'upload-service');
-          }
-        }
-        
-        if (!filePathInStorage) {
-          return res.status(400).json({ 
-            success: false, 
-            error: 'Could not determine storage path from provided parameters' 
-          });
-        }
-        
-        // Xóa file từ Firebase Storage
+      // Xử lý Cloudinary
+      if (storageType === 'cloudinary') {
         try {
-          const fileRef = bucket.file(filePathInStorage);
-          const [exists] = await fileRef.exists();
+          let publicIdToDelete = publicId as string;
           
-          if (exists) {
-            await fileRef.delete();
-            success = true;
-            deleteMessage = 'Image deleted successfully from Firebase Storage';
-            log(`Firebase Storage image deleted: ${filePathInStorage}`, 'upload-service');
-          } else {
-            deleteMessage = 'Image file not found in Firebase Storage';
-            success = false;
-            log(`Firebase Storage file not found: ${filePathInStorage}`, 'upload-service');
+          // Nếu không có publicId nhưng có URL, trích xuất publicId từ URL
+          if (!publicIdToDelete && url && typeof url === 'string') {
+            const extractedId = getPublicIdFromUrl(url);
+            
+            if (!extractedId) {
+              return res.status(400).json({
+                success: false,
+                error: 'Could not extract public ID from Cloudinary URL'
+              });
+            }
+            
+            publicIdToDelete = extractedId;
+            log(`Extracted public ID from URL: ${publicIdToDelete}`, 'upload-service');
           }
-        } catch (storageError) {
-          log(`Firebase Storage deletion error: ${storageError}`, 'upload-service');
+          
+          // Xóa hình ảnh từ Cloudinary
+          log(`Deleting image from Cloudinary with public ID: ${publicIdToDelete}`, 'upload-service');
+          const deleteResult = await deleteImage(publicIdToDelete);
+          
+          if (deleteResult.success) {
+            success = true;
+            deleteMessage = 'Image deleted successfully from Cloudinary';
+            log(`Cloudinary image deleted: ${publicIdToDelete}`, 'upload-service');
+          } else {
+            deleteMessage = `Failed to delete image from Cloudinary: ${deleteResult.result}`;
+            success = false;
+            log(`Cloudinary deletion failed: ${deleteResult.result}`, 'upload-service');
+          }
+        } catch (cloudinaryError) {
+          log(`Cloudinary deletion error: ${cloudinaryError}`, 'upload-service');
           return res.status(500).json({
             success: false,
-            error: 'Error deleting image from Firebase Storage',
-            message: storageError instanceof Error ? storageError.message : 'Unknown error'
+            error: 'Error deleting image from Cloudinary',
+            message: cloudinaryError instanceof Error ? cloudinaryError.message : 'Unknown error'
           });
         }
-
-      } else if (storageType === 'local') {
+      }
+      // Hỗ trợ ngược cho Firebase Storage (di sản)
+      else if (storageType === 'firebase') {
+        // Xóa ảnh từ Firebase Storage - Giữ lại hàm này chỉ để hỗ trợ ảnh cũ
+        log('Legacy Firebase Storage deletion not fully supported anymore', 'upload-service');
+        deleteMessage = 'Firebase Storage images are now read-only legacy content';
+        success = false;
+      }
+      // Hỗ trợ xóa file địa phương
+      else if (storageType === 'local') {
         // Xóa ảnh từ lưu trữ local
         let filePath = '';
         
