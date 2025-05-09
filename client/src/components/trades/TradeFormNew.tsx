@@ -2104,7 +2104,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                             </Button>
                           </div>
                         </div>
-                        <div className="w-full h-10 px-3 border rounded-md bg-background flex items-center relative overflow-hidden">
+                        <div className="w-full h-10 px-3 border rounded-md bg-background flex items-center relative touch-none overflow-hidden">
                           <input
                             id="riskSlider"
                             type="range"
@@ -2118,8 +2118,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               // Log the current risk amount in USD for debugging
                               devLog(`Risk amount: $${Math.round(accountBalance * (newValue / 100))}`);
                             }}
-                            className="w-full h-10 opacity-0 absolute cursor-pointer z-20"
-                            style={{ touchAction: "none" }}
+                            className="w-full h-10 opacity-0 absolute cursor-pointer z-10 touch-none"
                             onWheel={(e) => e.preventDefault()}
                           />
                           <div className="w-full flex items-center px-1">
@@ -2132,7 +2131,7 @@ export default function TradeFormNew(props: TradeFormProps) {
                               />
                             </div>
                             <div 
-                              className="absolute h-5 w-5 rounded-full shadow-md border border-white/70 transition-all bg-primary z-10" 
+                              className="absolute h-4 w-4 rounded-full shadow-md border border-white/70 transition-all bg-primary" 
                               style={{ 
                                 left: `calc(${(riskPercentage / 3) * 100 * 0.85}% + 12px)`,
                                 top: '50%',
