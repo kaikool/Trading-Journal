@@ -136,13 +136,13 @@ export default function Register() {
             
             <div className="space-y-4 pt-2">
               <div className="flex items-center space-x-2 text-sm">
-                <div className="w-5 h-5 flex items-center justify-center">
+                <div className="w-5 h-5 flex items-center justify-center z-10">
                   <Icons.ui.check className="h-4 w-4 text-primary" />
                 </div>
                 <span className="text-foreground/80">Free access to basic features</span>
               </div>
               <div className="flex items-center space-x-2 text-sm">
-                <div className="w-5 h-5 flex items-center justify-center">
+                <div className="w-5 h-5 flex items-center justify-center z-10">
                   <Icons.ui.check className="h-4 w-4 text-primary" />
                 </div>
                 <span className="text-foreground/80">No credit card required</span>
@@ -212,7 +212,7 @@ export default function Register() {
           }}
           disabled={isLoading}
         >
-          <div className="w-5 h-5 flex items-center justify-center mr-1">
+          <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
             <FcGoogle className="h-4 w-4" />
           </div>
           <span>Sign up with Google</span>

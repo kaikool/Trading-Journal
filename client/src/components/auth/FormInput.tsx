@@ -40,7 +40,7 @@ export function FormInput({
           <FormControl>
             <div className="relative">
               {Icon && (
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
                   <div className="w-5 h-5 flex items-center justify-center">
                     <Icon className="w-4 h-4 text-primary/80" />
                   </div>
