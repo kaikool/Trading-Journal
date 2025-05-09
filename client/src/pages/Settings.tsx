@@ -1045,8 +1045,8 @@ export default function Settings() {
                     <Label htmlFor="initialBalance" className="text-sm font-medium">Initial Balance</Label>
                   </div>
                   <div className="relative">
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
-                      <Icons.analytics.dollar className="h-4 w-4 text-primary/80" />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+                      <Icons.analytics.dollar className="h-4 w-4 text-foreground" />
                     </div>
                     <Input
                       id="initialBalance"
