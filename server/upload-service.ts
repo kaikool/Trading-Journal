@@ -116,88 +116,9 @@ function initFirebaseAuth() {
 export function setupUploadRoutes(app: express.Express) {
   // Khởi tạo Cloudinary sẽ được thực hiện trong cloudinary-service.ts
   
-  // API endpoint để upload ảnh biểu đồ cho phân tích AI
-  app.post('/api/upload/chart', verifyFirebaseToken, upload.single('file'), async (req, res) => {
-    try {
-      if (!req.file) {
-        log('No file uploaded to /api/upload/chart', 'upload-service');
-        return res.status(400).json({ success: false, error: 'No file uploaded.' });
-      }
-      
-      // Lấy thông tin file sau khi upload
-      const file = req.file as any;
-      
-      // Lấy thông tin người dùng từ request hoặc Firebase
-      const userId = (req as any).user?.uid || req.body.userId || 'anonymous';
-      
-      try {
-        // Tạo thông tin metadata
-        const metadata = {
-          userId: userId,
-          uploadedAt: new Date().toISOString(),
-          originalName: file.originalname,
-          type: 'chart'
-        };
-        
-        // Tải lên Cloudinary
-        log(`Uploading chart image to Cloudinary for user ${userId}`, 'upload-service');
-        const folder = `charts/${userId}`;
-        const uploadResult = await uploadImage(file.path, folder, metadata);
-        
-        // Xóa file tạm thời
-        fs.unlinkSync(file.path);
-        
-        log(`Chart image uploaded to Cloudinary: ${uploadResult.publicId}`, 'upload-service');
-        log(`Chart image URL: ${uploadResult.imageUrl}`, 'upload-service');
-        
-        // Trả về response với đường dẫn hình ảnh
-        return res.status(200).json({
-          success: true,
-          publicId: uploadResult.publicId,
-          originalName: file.originalname,
-          size: uploadResult.bytes,
-          imageUrl: uploadResult.imageUrl,
-          storage: 'cloudinary',
-          width: uploadResult.width,
-          height: uploadResult.height
-        });
-      } catch (cloudinaryError) {
-        log(`Cloudinary upload error: ${cloudinaryError instanceof Error ? cloudinaryError.message : String(cloudinaryError)}`, 'upload-service');
-        
-        // Fallback to local URL if Cloudinary upload fails
-        const imageUrl = `/uploads/${file.filename}`;
-        log(`Using local storage fallback: ${imageUrl}`, 'upload-service');
-        
-        return res.status(200).json({
-          success: true,
-          filename: file.filename,
-          originalName: file.originalname,
-          size: file.size,
-          mimetype: file.mimetype,
-          imageUrl: imageUrl,
-          storage: 'local'
-        });
-      }
-    } catch (error) {
-      // Ghi log chi tiết hơn về lỗi
-      log(`Chart upload error: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
-      
-      if (error instanceof Error) {
-        log(`Error name: ${error.name}`, 'upload-service');
-        log(`Error stack: ${error.stack}`, 'upload-service');
-      }
-      
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Server error during upload',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  });
-
-  // API endpoint để upload ảnh giao dịch 
-  app.post('/api/trades/upload', verifyFirebaseToken, upload.single('image'), async (req, res) => {
-    // Set timeout ngắn hơn để tránh chờ đợi quá lâu
+  // API endpoint thống nhất cho việc upload ảnh
+  app.post('/api/images/upload', verifyFirebaseToken, upload.single('image'), async (req, res) => {
+    // Set timeout để tránh chờ đợi quá lâu
     const responseTimeout = setTimeout(() => {
       log('Upload timed out after 15s', 'upload-service');
       // Chỉ trả về lỗi nếu chưa có response nào được gửi đi
@@ -219,9 +140,11 @@ export function setupUploadRoutes(app: express.Express) {
       // Lấy thông tin file từ multer
       const file = req.file as any;
       
+      // Lấy thông tin từ request body
       const userId = req.body.userId || (req as any).user?.uid || 'anonymous';
       const tradeId = req.body.tradeId || 'temp';
-      const imageType = req.body.imageType || 'trade-image';
+      const imageType = req.body.imageType || 'image'; // Loại ảnh mặc định
+      const imageContext = req.body.context || 'trade'; // Ngữ cảnh: 'trade', 'chart', 'profile', v.v.
       
       try {
         // Tạo metadata
@@ -229,26 +152,42 @@ export function setupUploadRoutes(app: express.Express) {
           userId: userId,
           tradeId: tradeId,
           imageType: imageType,
+          context: imageContext,
           uploadedAt: new Date().toISOString(),
           originalName: file.originalname
         };
         
         try {
+          // Xác định folder dựa vào context
+          let folder = '';
+          if (imageContext === 'chart') {
+            folder = `charts/${userId}`;
+          } else if (imageContext === 'trade') {
+            folder = `trades/${userId}/${tradeId}`;
+          } else if (imageContext === 'profile') {
+            folder = `profiles/${userId}`;
+          } else {
+            folder = `images/${userId}/${imageContext}`;
+          }
+          
+          // Tạo tags để dễ dàng quản lý trong Cloudinary
+          const tags = [`user:${userId}`, `context:${imageContext}`];
+          if (tradeId !== 'temp') {
+            tags.push(`trade:${tradeId}`);
+          }
+          if (imageType) {
+            tags.push(`type:${imageType}`);
+          }
+          
           // Tải lên Cloudinary
-          log(`Uploading trade image to Cloudinary (type: ${imageType})`, 'upload-service');
-          const folder = `trades/${userId}/${tradeId}`;
-          
-          // Có thể thêm tags để dễ dàng quản lý trong Cloudinary
-          const tags = [`user:${userId}`, `trade:${tradeId}`, `type:${imageType}`];
-          
-          // Upload lên Cloudinary
+          log(`Uploading ${imageContext} image to Cloudinary (type: ${imageType})`, 'upload-service');
           const uploadResult = await uploadImage(file.path, folder, metadata, undefined, tags);
           
           // Xóa file tạm
           fs.unlinkSync(file.path);
           
-          log(`Trade image uploaded to Cloudinary: ${uploadResult.publicId}`, 'upload-service');
-          log(`Trade image URL: ${uploadResult.imageUrl}`, 'upload-service');
+          log(`Image uploaded to Cloudinary: ${uploadResult.publicId}`, 'upload-service');
+          log(`Image URL: ${uploadResult.imageUrl}`, 'upload-service');
           
           // Xóa timeout vì đã hoàn thành
           clearTimeout(responseTimeout);
@@ -259,6 +198,7 @@ export function setupUploadRoutes(app: express.Express) {
             publicId: uploadResult.publicId,
             originalName: file.originalname,
             imageType: imageType,
+            context: imageContext,
             size: uploadResult.bytes,
             imageUrl: uploadResult.imageUrl,
             storage: {
@@ -288,6 +228,7 @@ export function setupUploadRoutes(app: express.Express) {
           filename: file.filename,
           originalName: file.originalname,
           imageType: imageType,
+          context: imageContext,
           size: file.size,
           mimetype: file.mimetype,
           imageUrl: imageUrl,
@@ -303,7 +244,7 @@ export function setupUploadRoutes(app: express.Express) {
       clearTimeout(responseTimeout);
       
       // Ghi log chi tiết hơn về lỗi
-      log(`Trade upload error: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
+      log(`Image upload error: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
       
       if (error instanceof Error) {
         log(`Error name: ${error.name}`, 'upload-service');
@@ -316,6 +257,37 @@ export function setupUploadRoutes(app: express.Express) {
         message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
+  });
+  
+  // Giữ lại API cũ để tương thích ngược. Chuyển hướng tới API mới
+  app.post('/api/upload/chart', verifyFirebaseToken, upload.single('file'), async (req, res, next) => {
+    log('Deprecated API /api/upload/chart called, redirecting to /api/images/upload', 'upload-service');
+    
+    // Thay đổi tên file để khớp với API mới
+    if (req.file) {
+      (req as any).file.fieldname = 'image';
+    }
+    
+    // Thêm context vào body
+    req.body.context = 'chart';
+    
+    // Đổi URL và gọi lại middleware stack
+    req.url = '/api/images/upload';
+    next();
+  });
+  
+  // Giữ lại API cũ để tương thích ngược. Chuyển hướng tới API mới
+  app.post('/api/trades/upload', verifyFirebaseToken, upload.single('image'), async (req, res, next) => {
+    log('Deprecated API /api/trades/upload called, redirecting to /api/images/upload', 'upload-service');
+    
+    // Thêm context vào body nếu chưa có
+    if (!req.body.context) {
+      req.body.context = 'trade';
+    }
+    
+    // Đổi URL và gọi lại middleware stack
+    req.url = '/api/images/upload';
+    next();
   });
 
   // API endpoint để lấy thumbnail cho một ảnh đã tồn tại

@@ -6,7 +6,6 @@
  */
 
 import { debug } from './debug';
-import { apiRequest } from './queryClient';
 
 /**
  * Mapping between image types in UI and image types in storage
@@ -67,6 +66,7 @@ export async function uploadTradeImage(
     formData.append('userId', userId);
     formData.append('tradeId', tradeId);
     formData.append('imageType', storageType);
+    formData.append('context', 'trade'); // Xác định context cho API thống nhất
     
     // Simulate progress since we can't track it directly through fetch
     let progressInterval: NodeJS.Timeout | null = null;
@@ -83,9 +83,9 @@ export async function uploadTradeImage(
       }, 200);
     }
     
-    // Gửi API request để tải lên ảnh
-    debug('Gửi request tải lên ảnh đến endpoint /api/trades/upload');
-    const response = await fetch('/api/trades/upload', {
+    // Gửi API request đến endpoint thống nhất mới
+    debug('Gửi request tải lên ảnh đến endpoint /api/images/upload');
+    const response = await fetch('/api/images/upload', {
       method: 'POST',
       body: formData,
       // No need to set Content-Type header, browser will do that with correct boundary for FormData
