@@ -211,7 +211,7 @@ export function ChartImageDialog({
   return (
     <DialogWithContext 
       isOpen={isOpen} 
-      onOpenChange={(open) => !open && onClose()}
+      onOpenChange={(open: boolean) => !open && onClose()}
     >
       <DialogContent 
         variant="chart"
