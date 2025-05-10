@@ -59,7 +59,7 @@ export function LazyTradeViewEdit({
   const TradeDetailsDisplay = () => (
     <div className="flex flex-col md:flex-row gap-4 px-4 py-3">
       {/* Image container - using trade-card-image-container class from global CSS */}
-      <div className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden rounded-lg border border-border/30 shadow-sm bg-transparent" 
+      <div className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden rounded-md border border-border/30 shadow-sm bg-card/40" 
            onClick={() => setShowChartDialog(true)}>
         {trade.entryImage ? (
           <div className="trade-card-image-container">
@@ -67,7 +67,6 @@ export function LazyTradeViewEdit({
               src={trade.entryImage}
               alt={`${trade.pair} ${trade.direction} trade chart`}
               className="trade-card-image loaded"
-              style={{ borderRadius: 'inherit' }} /* Kế thừa bo góc từ container cha */
             />
             {/* Add zoom overlay icon using trade-card-zoom-overlay from global CSS */}
             <div className="trade-card-zoom-overlay">
@@ -75,7 +74,7 @@ export function LazyTradeViewEdit({
             </div>
           </div>
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-transparent">
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/10">
             <Icons.ui.maximize className="h-8 w-8 mb-2 opacity-40" />
             <span>No Chart Image</span>
           </div>

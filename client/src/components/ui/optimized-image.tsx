@@ -108,7 +108,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden bg-transparent", /* Nền trong suốt để tránh viền đen */
+        "relative overflow-hidden bg-muted/40", 
         containerClassName
       )}
       style={containerStyle}
@@ -116,13 +116,12 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     >
       {/* Placeholder và loading indicator */}
       {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-transparent">
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/10">
           {placeholder ? (
             <img 
               src={placeholder} 
               alt="Loading" 
               className="w-full h-full object-cover opacity-50"
-              style={{ borderRadius: 'inherit' }} /* Kế thừa bo góc từ container cha */
             />
           ) : (
             <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground/70" />
@@ -132,7 +131,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
       {/* Error state */}
       {isError && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-transparent">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/10">
           <Icons.ui.error className="h-8 w-8 text-destructive/70 mb-2" />
           <p className="text-xs text-muted-foreground">Không thể tải hình ảnh</p>
         </div>
@@ -151,7 +150,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           isLoaded ? "opacity-100" : "opacity-0",
           className
         )}
-        style={{ borderRadius: 'inherit' }} /* Kế thừa bo góc từ container cha */
         onLoad={handleLoad}
         onError={handleError}
         data-trade-id={tradeId}
