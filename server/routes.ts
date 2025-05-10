@@ -3,7 +3,12 @@ import { createServer, type Server } from "http";
 import path from "path";
 import { storage } from "./storage";
 import { z } from "zod";
-import { insertUserSchema, insertTradeSchema } from "@shared/schema";
+import { 
+  insertUserSchema, 
+  insertTradeSchema,
+  insertGoalSchema,
+  insertGoalMilestoneSchema
+} from "@shared/schema";
 import { registerBatchEndpoints } from "./batch-api";
 import { log } from "./vite";
 
