@@ -213,7 +213,7 @@ export function ChartImageDialog({
     >
       <DialogContent 
         variant="chart"
-        className="h-[85vh] sm:h-[85vh] md:h-[85vh] lg:h-[85vh] max-h-[800px] safe-area-p"
+        className="h-[85vh] sm:h-[85vh] md:h-[85vh] lg:h-[85vh] max-h-[800px] p-0 overflow-hidden"
       >
         {/* Title và Description theo chuẩn accessibility */}
         <DialogTitle className="sr-only">
@@ -225,7 +225,7 @@ export function ChartImageDialog({
         </DialogDescription>
         
         {/* Thanh tiêu đề nhỏ gọn hơn */}
-        <div className="flex flex-col py-2 px-3 border-b text-sm">
+        <div className="flex flex-col py-2 px-4 border-b text-sm">
           <span className="font-medium chart-title">
             {dialogTitle}
           </span>
@@ -305,12 +305,20 @@ export function ChartImageDialog({
             {/* Navigation buttons for desktop and tablets */}
             {availableImages.length > 1 && !isMobile && (
               <>
-                <button className="chart-nav-button chart-nav-button-prev" onClick={handlePrevious} aria-label="Previous image">
+                <button 
+                  className="chart-nav-button chart-nav-button-prev" 
+                  onClick={handlePrevious} 
+                  aria-label="Previous image"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
                 </button>
-                <button className="chart-nav-button chart-nav-button-next" onClick={handleNext} aria-label="Next image">
+                <button 
+                  className="chart-nav-button chart-nav-button-next" 
+                  onClick={handleNext} 
+                  aria-label="Next image"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="9 18 15 12 9 6"></polyline>
                   </svg>
@@ -320,34 +328,52 @@ export function ChartImageDialog({
           </div>
           
           {/* Zoom controls */}
-          <div className="chart-zoom-controls">
-            <button className="chart-zoom-button" onClick={zoomIn} aria-label="Zoom in" disabled={scale >= 3}>
-              <Icons.ui.zoomIn size={isMobile ? 16 : 20} />
+          <div className="chart-zoom-controls flex gap-2">
+            <button 
+              className="chart-zoom-button flex items-center justify-center rounded-full" 
+              onClick={zoomIn} 
+              aria-label="Zoom in" 
+              disabled={scale >= 3}
+            >
+              <Icons.ui.zoomIn size={isMobile ? 16 : 18} />
             </button>
-            <button className="chart-zoom-button" onClick={zoomOut} aria-label="Zoom out" disabled={scale <= 1}>
-              <Icons.ui.zoomOut size={isMobile ? 16 : 20} />
+            <button 
+              className="chart-zoom-button flex items-center justify-center rounded-full" 
+              onClick={zoomOut} 
+              aria-label="Zoom out" 
+              disabled={scale <= 1}
+            >
+              <Icons.ui.zoomOut size={isMobile ? 16 : 18} />
             </button>
-            <button className="chart-zoom-button" onClick={resetZoom} aria-label="Reset zoom" 
-              disabled={scale === 1 && translate.x === 0 && translate.y === 0}>
-              <Icons.ui.maximize size={isMobile ? 16 : 20} />
+            <button 
+              className="chart-zoom-button flex items-center justify-center rounded-full" 
+              onClick={resetZoom} 
+              aria-label="Reset zoom" 
+              disabled={scale === 1 && translate.x === 0 && translate.y === 0}
+            >
+              <Icons.ui.maximize size={isMobile ? 16 : 18} />
             </button>
           </div>
           
           {/* Image Pagination for mobile and desktop */}
           {availableImages.length > 1 && (
             <div className="chart-pagination">
-              <div className="chart-pagination-dots">
+              <div className="chart-pagination-dots flex items-center justify-center">
                 {isMobile && (
-                  <button className="w-5 h-5 flex items-center justify-center text-white/90"
-                    onClick={handlePrevious} aria-label="Previous image">
+                  <button 
+                    className="w-6 h-6 flex items-center justify-center text-white/90 mr-1"
+                    onClick={handlePrevious} 
+                    aria-label="Previous image"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
                   </button>
                 )}
                 {availableImages.map((_, index) => (
-                  <button key={index}
-                    className={cn("chart-pagination-dot",
+                  <button 
+                    key={index}
+                    className={cn("chart-pagination-dot mx-1",
                       index === currentImageIndex ? "chart-pagination-dot-active" : "chart-pagination-dot-inactive")}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -357,8 +383,11 @@ export function ChartImageDialog({
                   />
                 ))}
                 {isMobile && (
-                  <button className="w-5 h-5 flex items-center justify-center text-white/90"
-                    onClick={handleNext} aria-label="Next image">
+                  <button 
+                    className="w-6 h-6 flex items-center justify-center text-white/90 ml-1"
+                    onClick={handleNext} 
+                    aria-label="Next image"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="9 18 15 12 9 6"></polyline>
                     </svg>
