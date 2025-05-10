@@ -93,6 +93,9 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
+      // Cuộn lên đầu trang ngay khi chuyển route
+      // Chỉ còn ScrollToTop component sẽ xử lý vấn đề này, không cần code ở đây nữa
+      
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
       const readyTimer = setTimeout(() => {
         setIsPageReady(true);
