@@ -508,7 +508,7 @@ export function GoalList() {
             />
           )}
         </DialogContent>
-      </Dialog>
+      </DialogWithContext>
 
       {/* Dialog for adding milestone */}
       <DialogWithContext isOpen={openMilestoneDialog} onOpenChange={(open) => !open && setOpenMilestoneDialog(false)}>
@@ -533,10 +533,10 @@ export function GoalList() {
             />
           )}
         </DialogContent>
-      </Dialog>
+      </DialogWithContext>
 
       {/* Dialog to confirm goal deletion */}
-      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+      <AlertDialogWithContext isOpen={openDeleteDialog} onOpenChange={(open) => !open && setOpenDeleteDialog(false)}>
         <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>

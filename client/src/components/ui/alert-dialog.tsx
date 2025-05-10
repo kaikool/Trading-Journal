@@ -1,8 +1,10 @@
 import * as React from "react"
+import { useEffect } from "react"
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { useDialog } from "@/contexts/DialogContext"
 
 const AlertDialog = AlertDialogPrimitive.Root
 
@@ -133,6 +135,48 @@ const AlertDialogCancel = React.forwardRef<
 ))
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
 
+/**
+ * AlertDialogWithContext - AlertDialog component that automatically integrates with DialogContext
+ * for better scroll behavior management
+ */
+interface AlertDialogWithContextProps extends React.ComponentProps<typeof AlertDialog> {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const AlertDialogWithContext: React.FC<AlertDialogWithContextProps> = ({
+  isOpen,
+  onOpenChange,
+  children,
+  ...props
+}) => {
+  const { openDialog, closeDialog } = useDialog();
+  
+  // Notify DialogContext when dialog opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      openDialog();
+      // Add dispatch to ensure all components know dialog has opened
+      document.dispatchEvent(new CustomEvent('dialog:open'));
+    } 
+  }, [isOpen, openDialog]);
+  
+  // Handle onOpenChange callback
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      closeDialog();
+      document.dispatchEvent(new CustomEvent('dialog:close'));
+    }
+    onOpenChange(open);
+  };
+  
+  return (
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange} {...props}>
+      {children}
+    </AlertDialog>
+  );
+};
+
 export {
   AlertDialog,
   AlertDialogTrigger,
@@ -143,4 +187,5 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogWithContext,
 }
