@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Goal, GoalMilestone } from '@shared/schema';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
 import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, onGoalsSnapshot } from '@/lib/firebase'; 
@@ -181,7 +180,7 @@ export function useGoalData() {
 
   // Create a new goal
   const createGoalMutation = useMutation({
-    mutationFn: async (goalData: Partial<Goal>) => {
+    mutationFn: async (goalData: any) => {
       if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
       
       // Chuyển đổi dữ liệu mục tiêu

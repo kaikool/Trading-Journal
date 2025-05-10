@@ -16,36 +16,7 @@ export type User = {
   updatedAt: Date;
 };
 
-// Goal type
-export type Goal = {
-  id: number;
-  userId: number;
-  title: string;
-  description?: string | null;
-  targetType: "profit" | "winRate" | "profitFactor" | "riskRewardRatio" | "balance" | "trades";
-  targetValue: number;
-  currentValue: number;
-  startDate: Date;
-  endDate: Date;
-  isCompleted: boolean;
-  color?: string | null;
-  priority: "low" | "medium" | "high";
-  milestones?: GoalMilestone[] | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-// Goal Milestone type
-export type GoalMilestone = {
-  id: number;
-  goalId: number;
-  title: string;
-  targetValue: number;
-  isCompleted: boolean;
-  completedDate?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
+// Note: Goal types are now handled in Firebase
 
 // Trade type
 export type Trade = {
@@ -121,30 +92,8 @@ export const insertTradeSchema = z.object({
   exitImage: z.string().optional(),
 });
 
-// Goal insert schema
-export const insertGoalSchema = z.object({
-  userId: z.number(),
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  description: z.string().optional(),
-  targetType: z.enum(["profit", "winRate", "profitFactor", "riskRewardRatio", "balance", "trades"]),
-  targetValue: z.number().positive("Target value must be positive"),
-  startDate: z.date(),
-  endDate: z.date(),
-  isCompleted: z.boolean().default(false),
-  color: z.string().optional(),
-  priority: z.enum(["low", "medium", "high"]).default("medium"),
-});
-
-// GoalMilestone insert schema
-export const insertGoalMilestoneSchema = z.object({
-  goalId: z.number(),
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  targetValue: z.number().positive("Target value must be positive"),
-  isCompleted: z.boolean().default(false),
-});
+// Note: Goal schemas are now handled in Firebase
 
 // Export types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertTrade = z.infer<typeof insertTradeSchema>;
-export type InsertGoal = z.infer<typeof insertGoalSchema>;
-export type InsertGoalMilestone = z.infer<typeof insertGoalMilestoneSchema>;

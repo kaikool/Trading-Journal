@@ -89,8 +89,6 @@ interface PerformanceData {
   };
 }
 
-// No goal tracking data
-
 // Memory storage implementation
 export class MemStorage implements IStorage {
   private usersMap: Map<number, User>;
@@ -127,7 +125,6 @@ export class MemStorage implements IStorage {
       updatedAt: now,
       initialBalance: userData.initialBalance || 10000,
       currentBalance: userData.initialBalance || 10000,
-      settings: {},
     };
     
     this.usersMap.set(id, user);
@@ -161,19 +158,16 @@ export class MemStorage implements IStorage {
       ...tradeData,
       createdAt: now,
       updatedAt: now,
-      pips: null,
-      profitLoss: null,
     };
     
     this.tradesMap.set(id, trade);
     
-    // If trade is closed, update user balance
-    if (trade.closeDate && trade.profitLoss !== null) {
+    // Update user balance
+    if (trade.status === 'CLOSED' && trade.userId && trade.profitLoss !== undefined) {
       const user = await this.getUser(trade.userId);
-      
       if (user) {
         await this.updateUser(user.id, {
-          currentBalance: user.currentBalance + Number(trade.profitLoss),
+          currentBalance: user.currentBalance + trade.profitLoss,
         });
       }
     }
@@ -198,8 +192,8 @@ export class MemStorage implements IStorage {
       throw new Error("Trade not found");
     }
     
-    // Store old profit/loss value
-    const oldProfitLoss = trade.profitLoss;
+    const oldProfitLoss = trade.profitLoss || 0;
+    const oldStatus = trade.status;
     
     const updatedTrade = {
       ...trade,
@@ -209,22 +203,21 @@ export class MemStorage implements IStorage {
     
     this.tradesMap.set(id, updatedTrade);
     
-    // If profit/loss changed, update user balance
-    if (updatedTrade.profitLoss !== null && updatedTrade.profitLoss !== oldProfitLoss) {
-      const user = await this.getUser(updatedTrade.userId);
-      
+    // Update user balance if trade is now closed or profit/loss changed
+    if (
+      trade.userId && 
+      (
+        (updatedTrade.status === 'CLOSED' && oldStatus !== 'CLOSED') ||
+        (updatedTrade.status === 'CLOSED' && updatedTrade.profitLoss !== oldProfitLoss)
+      )
+    ) {
+      const user = await this.getUser(trade.userId);
       if (user) {
-        // Subtract old P/L and add new P/L
-        let newBalance = user.currentBalance;
-        
-        if (oldProfitLoss !== null) {
-          newBalance -= Number(oldProfitLoss);
-        }
-        
-        newBalance += Number(updatedTrade.profitLoss);
+        // Subtract old value and add new value
+        const balanceAdjustment = (updatedTrade.profitLoss || 0) - (oldStatus === 'CLOSED' ? oldProfitLoss : 0);
         
         await this.updateUser(user.id, {
-          currentBalance: newBalance,
+          currentBalance: user.currentBalance + balanceAdjustment,
         });
       }
     }
@@ -239,203 +232,200 @@ export class MemStorage implements IStorage {
       throw new Error("Trade not found");
     }
     
-    // If trade was closed and had P/L, update user balance
-    if (trade.closeDate && trade.profitLoss !== null) {
+    this.tradesMap.delete(id);
+    
+    // Update user balance if trade was closed and had profit/loss
+    if (trade.status === 'CLOSED' && trade.userId && trade.profitLoss !== undefined) {
       const user = await this.getUser(trade.userId);
-      
       if (user) {
         await this.updateUser(user.id, {
-          currentBalance: user.currentBalance - Number(trade.profitLoss),
+          currentBalance: user.currentBalance - trade.profitLoss,
         });
       }
     }
-    
-    this.tradesMap.delete(id);
   }
   
   // Analytics operations
   async getTradeStats(userId: number): Promise<TradeStats> {
     const trades = await this.getTradesByUserId(userId);
+    const closedTrades = trades.filter(trade => trade.status === 'CLOSED');
     
-    // Filter closed trades with P/L
-    const closedTrades = trades.filter(
-      (trade) => trade.closeDate && trade.profitLoss !== null
-    );
+    if (closedTrades.length === 0) {
+      return {
+        totalTrades: 0,
+        winningTrades: 0,
+        losingTrades: 0,
+        winRate: 0,
+        totalProfit: 0,
+        totalLoss: 0,
+        netProfit: 0,
+        avgProfit: 0,
+        avgLoss: 0,
+        profitFactor: 0,
+        largestWin: 0,
+        largestLoss: 0,
+        avgRiskRewardRatio: 0,
+      };
+    }
     
-    // Calculate stats
-    const winningTrades = closedTrades.filter((trade) => Number(trade.profitLoss) > 0);
-    const losingTrades = closedTrades.filter((trade) => Number(trade.profitLoss) < 0);
+    const winningTrades = closedTrades.filter(trade => (trade.profitLoss || 0) > 0);
+    const losingTrades = closedTrades.filter(trade => (trade.profitLoss || 0) < 0);
     
-    const totalProfit = winningTrades.reduce(
-      (sum, trade) => sum + Number(trade.profitLoss),
-      0
-    );
+    const totalProfit = winningTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0);
+    const totalLoss = Math.abs(losingTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0));
     
-    const totalLoss = losingTrades.reduce(
-      (sum, trade) => sum + Number(trade.profitLoss),
-      0
-    );
+    const avgProfit = winningTrades.length > 0 ? totalProfit / winningTrades.length : 0;
+    const avgLoss = losingTrades.length > 0 ? totalLoss / losingTrades.length : 0;
+    
+    const largestWin = winningTrades.length > 0 
+      ? Math.max(...winningTrades.map(trade => trade.profitLoss || 0)) 
+      : 0;
+    
+    const largestLoss = losingTrades.length > 0 
+      ? Math.abs(Math.min(...losingTrades.map(trade => trade.profitLoss || 0))) 
+      : 0;
+    
+    const tradesWithRR = closedTrades.filter(trade => trade.riskRewardRatio !== undefined);
+    const avgRiskRewardRatio = tradesWithRR.length > 0
+      ? tradesWithRR.reduce((sum, trade) => sum + (trade.riskRewardRatio || 0), 0) / tradesWithRR.length
+      : 0;
     
     return {
       totalTrades: closedTrades.length,
       winningTrades: winningTrades.length,
       losingTrades: losingTrades.length,
-      winRate: closedTrades.length > 0 
-        ? (winningTrades.length / closedTrades.length) * 100 
-        : 0,
+      winRate: closedTrades.length > 0 ? (winningTrades.length / closedTrades.length) * 100 : 0,
       totalProfit,
       totalLoss,
-      netProfit: totalProfit + totalLoss,
-      avgProfit: winningTrades.length > 0 
-        ? totalProfit / winningTrades.length 
-        : 0,
-      avgLoss: losingTrades.length > 0 
-        ? totalLoss / losingTrades.length 
-        : 0,
-      profitFactor: Math.abs(totalLoss) > 0 
-        ? Math.abs(totalProfit / totalLoss) 
-        : totalProfit > 0 ? Infinity : 0,
-      largestWin: winningTrades.length > 0 
-        ? Math.max(...winningTrades.map((trade) => Number(trade.profitLoss))) 
-        : 0,
-      largestLoss: losingTrades.length > 0 
-        ? Math.min(...losingTrades.map((trade) => Number(trade.profitLoss))) 
-        : 0,
-      avgRiskRewardRatio: closedTrades.length > 0
-        ? closedTrades.reduce((sum, trade) => {
-            const risk = Math.abs(Number(trade.entryPrice) - Number(trade.stopLoss));
-            const reward = Math.abs(Number(trade.takeProfit) - Number(trade.entryPrice));
-            return sum + (reward / risk);
-          }, 0) / closedTrades.length
-        : 0,
+      netProfit: totalProfit - totalLoss,
+      avgProfit,
+      avgLoss,
+      profitFactor: totalLoss > 0 ? totalProfit / totalLoss : totalProfit > 0 ? totalProfit : 0,
+      largestWin,
+      largestLoss,
+      avgRiskRewardRatio,
     };
   }
   
   async getPerformanceData(userId: number): Promise<PerformanceData> {
     const trades = await this.getTradesByUserId(userId);
+    const closedTrades = trades.filter(trade => trade.status === 'CLOSED');
     
-    // Filter closed trades
-    const closedTrades = trades.filter(
-      (trade) => trade.closeDate && trade.profitLoss !== null
-    );
+    // Performance by Pair
+    const pairMap = new Map<string, { trades: number; wins: number; profit: number }>();
     
-    // Calculate pair performance
-    const pairMap = new Map<string, { trades: Trade[] }>();
-    
-    closedTrades.forEach((trade) => {
-      const pair = trade.pair as string;
+    closedTrades.forEach(trade => {
+      const pair = trade.pair || 'Unknown';
+      const isWin = (trade.profitLoss || 0) > 0;
+      const profit = trade.profitLoss || 0;
       
       if (!pairMap.has(pair)) {
-        pairMap.set(pair, { trades: [] });
+        pairMap.set(pair, { trades: 0, wins: 0, profit: 0 });
       }
       
-      pairMap.get(pair)?.trades.push(trade);
+      const pairStats = pairMap.get(pair)!;
+      pairStats.trades++;
+      if (isWin) pairStats.wins++;
+      pairStats.profit += profit;
     });
     
-    const byPair = Array.from(pairMap.entries()).map(([pair, data]) => {
-      const winningTrades = data.trades.filter((trade) => Number(trade.profitLoss) > 0);
-      
-      return {
-        pair,
-        trades: data.trades.length,
-        winRate: data.trades.length > 0 
-          ? (winningTrades.length / data.trades.length) * 100 
-          : 0,
-        netProfit: data.trades.reduce(
-          (sum, trade) => sum + Number(trade.profitLoss),
-          0
-        ),
-      };
-    });
+    const byPair = Array.from(pairMap.entries()).map(([pair, stats]) => ({
+      pair,
+      trades: stats.trades,
+      winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
+      netProfit: stats.profit,
+    }));
     
-    // Calculate strategy performance
-    const strategyMap = new Map<string, { trades: Trade[] }>();
+    // Performance by Strategy
+    const strategyMap = new Map<string, { trades: number; wins: number; profit: number }>();
     
-    closedTrades.forEach((trade) => {
-      const strategy = trade.strategy;
+    closedTrades.forEach(trade => {
+      const strategy = trade.strategy || 'Unknown';
+      const isWin = (trade.profitLoss || 0) > 0;
+      const profit = trade.profitLoss || 0;
       
       if (!strategyMap.has(strategy)) {
-        strategyMap.set(strategy, { trades: [] });
+        strategyMap.set(strategy, { trades: 0, wins: 0, profit: 0 });
       }
       
-      strategyMap.get(strategy)?.trades.push(trade);
+      const strategyStats = strategyMap.get(strategy)!;
+      strategyStats.trades++;
+      if (isWin) strategyStats.wins++;
+      strategyStats.profit += profit;
     });
     
-    const byStrategy = Array.from(strategyMap.entries()).map(([strategy, data]) => {
-      const winningTrades = data.trades.filter((trade) => Number(trade.profitLoss) > 0);
-      
-      return {
-        strategy,
-        trades: data.trades.length,
-        winRate: data.trades.length > 0 
-          ? (winningTrades.length / data.trades.length) * 100 
-          : 0,
-        netProfit: data.trades.reduce(
-          (sum, trade) => sum + Number(trade.profitLoss),
-          0
-        ),
-      };
-    });
+    const byStrategy = Array.from(strategyMap.entries()).map(([strategy, stats]) => ({
+      strategy,
+      trades: stats.trades,
+      winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
+      netProfit: stats.profit,
+    }));
     
-    // Calculate emotion performance
-    const emotionMap = new Map<string, { trades: Trade[] }>();
+    // Performance by Emotion
+    const emotionMap = new Map<string, { trades: number; wins: number }>();
     
-    closedTrades.forEach((trade) => {
-      const emotion = trade.emotion || "Unknown";
+    closedTrades.forEach(trade => {
+      const emotion = trade.emotion || 'Unknown';
+      const isWin = (trade.profitLoss || 0) > 0;
       
       if (!emotionMap.has(emotion)) {
-        emotionMap.set(emotion, { trades: [] });
+        emotionMap.set(emotion, { trades: 0, wins: 0 });
       }
       
-      emotionMap.get(emotion)?.trades.push(trade);
+      const emotionStats = emotionMap.get(emotion)!;
+      emotionStats.trades++;
+      if (isWin) emotionStats.wins++;
     });
     
-    const byEmotion = Array.from(emotionMap.entries()).map(([emotion, data]) => {
-      const winningTrades = data.trades.filter((trade) => Number(trade.profitLoss) > 0);
-      
-      return {
-        emotion,
-        trades: data.trades.length,
-        winRate: data.trades.length > 0 
-          ? (winningTrades.length / data.trades.length) * 100 
-          : 0,
-      };
-    });
+    const byEmotion = Array.from(emotionMap.entries()).map(([emotion, stats]) => ({
+      emotion,
+      trades: stats.trades,
+      winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
+    }));
     
-    // Calculate session performance
-    const sessionMap = new Map<string, { trades: Trade[] }>();
+    // Performance by Session
+    const sessionMap = new Map<string, { trades: number; wins: number }>();
     
-    closedTrades.forEach((trade) => {
-      const session = trade.sessionType || "Unknown";
+    closedTrades.forEach(trade => {
+      const session = trade.session || 'Unknown';
+      const isWin = (trade.profitLoss || 0) > 0;
       
       if (!sessionMap.has(session)) {
-        sessionMap.set(session, { trades: [] });
+        sessionMap.set(session, { trades: 0, wins: 0 });
       }
       
-      sessionMap.get(session)?.trades.push(trade);
+      const sessionStats = sessionMap.get(session)!;
+      sessionStats.trades++;
+      if (isWin) sessionStats.wins++;
     });
     
-    const bySession = Array.from(sessionMap.entries()).map(([session, data]) => {
-      const winningTrades = data.trades.filter((trade) => Number(trade.profitLoss) > 0);
-      
-      return {
-        session,
-        trades: data.trades.length,
-        winRate: data.trades.length > 0 
-          ? (winningTrades.length / data.trades.length) * 100 
-          : 0,
-      };
-    });
+    const bySession = Array.from(sessionMap.entries()).map(([session, stats]) => ({
+      session,
+      trades: stats.trades,
+      winRate: stats.trades > 0 ? (stats.wins / stats.trades) * 100 : 0,
+    }));
     
-    // Calculate discipline performance
-    const followedPlanYes = closedTrades.filter((trade) => trade.followedPlan);
-    const followedPlanNo = closedTrades.filter((trade) => !trade.followedPlan);
+    // Performance by Discipline metrics
+    // 1. Followed plan
+    const followedPlanYes = closedTrades.filter(trade => trade.followedPlan === true);
+    const followedPlanNo = closedTrades.filter(trade => trade.followedPlan === false);
     
-    const enteredEarlyYes = closedTrades.filter((trade) => trade.enteredEarly);
-    const enteredEarlyNo = closedTrades.filter((trade) => !trade.enteredEarly);
+    const followedPlanYesWins = followedPlanYes.filter(trade => (trade.profitLoss || 0) > 0).length;
+    const followedPlanNoWins = followedPlanNo.filter(trade => (trade.profitLoss || 0) > 0).length;
     
-    const revengeYes = closedTrades.filter((trade) => trade.revenge);
-    const revengeNo = closedTrades.filter((trade) => !trade.revenge);
+    // 2. Entered early
+    const enteredEarlyYes = closedTrades.filter(trade => trade.enteredEarly === true);
+    const enteredEarlyNo = closedTrades.filter(trade => trade.enteredEarly === false);
+    
+    const enteredEarlyYesWins = enteredEarlyYes.filter(trade => (trade.profitLoss || 0) > 0).length;
+    const enteredEarlyNoWins = enteredEarlyNo.filter(trade => (trade.profitLoss || 0) > 0).length;
+    
+    // 3. Revenge trading
+    const revengeYes = closedTrades.filter(trade => trade.isRevenge === true);
+    const revengeNo = closedTrades.filter(trade => trade.isRevenge === false);
+    
+    const revengeYesWins = revengeYes.filter(trade => (trade.profitLoss || 0) > 0).length;
+    const revengeNoWins = revengeNo.filter(trade => (trade.profitLoss || 0) > 0).length;
     
     return {
       byPair,
@@ -446,318 +436,22 @@ export class MemStorage implements IStorage {
         followedPlan: {
           yes: followedPlanYes.length,
           no: followedPlanNo.length,
-          winRateYes: followedPlanYes.length > 0
-            ? (followedPlanYes.filter((trade) => Number(trade.profitLoss) > 0).length / followedPlanYes.length) * 100
-            : 0,
-          winRateNo: followedPlanNo.length > 0
-            ? (followedPlanNo.filter((trade) => Number(trade.profitLoss) > 0).length / followedPlanNo.length) * 100
-            : 0,
+          winRateYes: followedPlanYes.length > 0 ? (followedPlanYesWins / followedPlanYes.length) * 100 : 0,
+          winRateNo: followedPlanNo.length > 0 ? (followedPlanNoWins / followedPlanNo.length) * 100 : 0,
         },
         enteredEarly: {
           yes: enteredEarlyYes.length,
           no: enteredEarlyNo.length,
-          winRateYes: enteredEarlyYes.length > 0
-            ? (enteredEarlyYes.filter((trade) => Number(trade.profitLoss) > 0).length / enteredEarlyYes.length) * 100
-            : 0,
-          winRateNo: enteredEarlyNo.length > 0
-            ? (enteredEarlyNo.filter((trade) => Number(trade.profitLoss) > 0).length / enteredEarlyNo.length) * 100
-            : 0,
+          winRateYes: enteredEarlyYes.length > 0 ? (enteredEarlyYesWins / enteredEarlyYes.length) * 100 : 0,
+          winRateNo: enteredEarlyNo.length > 0 ? (enteredEarlyNoWins / enteredEarlyNo.length) * 100 : 0,
         },
         revenge: {
           yes: revengeYes.length,
           no: revengeNo.length,
-          winRateYes: revengeYes.length > 0
-            ? (revengeYes.filter((trade) => Number(trade.profitLoss) > 0).length / revengeYes.length) * 100
-            : 0,
-          winRateNo: revengeNo.length > 0
-            ? (revengeNo.filter((trade) => Number(trade.profitLoss) > 0).length / revengeNo.length) * 100
-            : 0,
+          winRateYes: revengeYes.length > 0 ? (revengeYesWins / revengeYes.length) * 100 : 0,
+          winRateNo: revengeNo.length > 0 ? (revengeNoWins / revengeNo.length) * 100 : 0,
         },
       },
-    };
-  }
-  
-  // Goal operations
-  async createGoal(goalData: InsertGoal): Promise<Goal> {
-    const id = this.goalIdCounter++;
-    const now = new Date();
-    
-    const goal: Goal = {
-      id,
-      ...goalData,
-      currentValue: 0,
-      isCompleted: false,
-      createdAt: now,
-      updatedAt: now,
-      milestones: [],
-    };
-    
-    this.goalsMap.set(id, goal);
-    return goal;
-  }
-  
-  async getGoalById(id: number): Promise<Goal | undefined> {
-    return this.goalsMap.get(id);
-  }
-  
-  async getGoalsByUserId(userId: number): Promise<Goal[]> {
-    return Array.from(this.goalsMap.values())
-      .filter((goal) => goal.userId === userId)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }
-  
-  async updateGoal(id: number, goalData: Partial<Goal>): Promise<Goal> {
-    const goal = await this.getGoalById(id);
-    
-    if (!goal) {
-      throw new Error("Goal not found");
-    }
-    
-    const updatedGoal = {
-      ...goal,
-      ...goalData,
-      updatedAt: new Date(),
-    };
-    
-    this.goalsMap.set(id, updatedGoal);
-    return updatedGoal;
-  }
-  
-  async deleteGoal(id: number): Promise<void> {
-    const goal = await this.getGoalById(id);
-    
-    if (!goal) {
-      throw new Error("Goal not found");
-    }
-    
-    // Delete all milestones for this goal
-    const milestones = await this.getGoalMilestonesByGoalId(id);
-    for (const milestone of milestones) {
-      await this.deleteGoalMilestone(milestone.id);
-    }
-    
-    this.goalsMap.delete(id);
-  }
-  
-  async calculateGoalProgress(goalId: number): Promise<number> {
-    const goal = await this.getGoalById(goalId);
-    
-    if (!goal) {
-      throw new Error("Goal not found");
-    }
-    
-    // Get current value based on goal target type
-    const currentValue = await this.getGoalCurrentValue(goal);
-    
-    // Update the goal with the current value
-    await this.updateGoal(goalId, { currentValue });
-    
-    // Calculate progress percentage
-    const progress = Math.min(100, (currentValue / goal.targetValue) * 100);
-    
-    // If progress is 100% or more, mark goal as completed
-    if (progress >= 100 && !goal.isCompleted) {
-      await this.updateGoal(goalId, { isCompleted: true });
-    }
-    
-    return progress;
-  }
-  
-  // Helper method to get current value based on goal type
-  private async getGoalCurrentValue(goal: Goal): Promise<number> {
-    const user = await this.getUser(goal.userId);
-    
-    if (!user) {
-      throw new Error("User not found");
-    }
-    
-    const stats = await this.getTradeStats(goal.userId);
-    
-    switch (goal.targetType) {
-      case "profit":
-        return stats.netProfit;
-      case "winRate":
-        return stats.winRate;
-      case "profitFactor":
-        return stats.profitFactor;
-      case "riskRewardRatio":
-        return stats.avgRiskRewardRatio;
-      case "balance":
-        return user.currentBalance;
-      case "trades":
-        return stats.totalTrades;
-      default:
-        return 0;
-    }
-  }
-  
-  // GoalMilestone operations
-  async createGoalMilestone(milestoneData: InsertGoalMilestone): Promise<GoalMilestone> {
-    const id = this.milestoneIdCounter++;
-    const now = new Date();
-    
-    const milestone: GoalMilestone = {
-      id,
-      ...milestoneData,
-      isCompleted: false,
-      completedDate: null,
-      createdAt: now,
-      updatedAt: now,
-    };
-    
-    this.milestonesMap.set(id, milestone);
-    
-    // Update the goal's milestones array
-    const goal = await this.getGoalById(milestone.goalId);
-    if (goal) {
-      const milestones = goal.milestones || [];
-      await this.updateGoal(goal.id, { 
-        milestones: [...milestones, milestone] 
-      });
-    }
-    
-    return milestone;
-  }
-  
-  async getGoalMilestonesByGoalId(goalId: number): Promise<GoalMilestone[]> {
-    return Array.from(this.milestonesMap.values())
-      .filter((milestone) => milestone.goalId === goalId)
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-  }
-  
-  async updateGoalMilestone(id: number, milestoneData: Partial<GoalMilestone>): Promise<GoalMilestone> {
-    const milestone = this.milestonesMap.get(id);
-    
-    if (!milestone) {
-      throw new Error("Milestone not found");
-    }
-    
-    const updatedMilestone = {
-      ...milestone,
-      ...milestoneData,
-      updatedAt: new Date(),
-    };
-    
-    // If milestone is completed and completedDate is not set, set it
-    if (updatedMilestone.isCompleted && !updatedMilestone.completedDate) {
-      updatedMilestone.completedDate = new Date();
-    }
-    
-    this.milestonesMap.set(id, updatedMilestone);
-    
-    // Update the milestone in the goal's milestones array
-    const goal = await this.getGoalById(milestone.goalId);
-    if (goal && goal.milestones) {
-      const updatedMilestones = goal.milestones.map(m => 
-        m.id === id ? updatedMilestone : m
-      );
-      await this.updateGoal(goal.id, { milestones: updatedMilestones });
-    }
-    
-    return updatedMilestone;
-  }
-  
-  async deleteGoalMilestone(id: number): Promise<void> {
-    const milestone = this.milestonesMap.get(id);
-    
-    if (!milestone) {
-      throw new Error("Milestone not found");
-    }
-    
-    this.milestonesMap.delete(id);
-    
-    // Remove the milestone from the goal's milestones array
-    const goal = await this.getGoalById(milestone.goalId);
-    if (goal && goal.milestones) {
-      const updatedMilestones = goal.milestones.filter(m => m.id !== id);
-      await this.updateGoal(goal.id, { milestones: updatedMilestones });
-    }
-  }
-  
-  // Goals progress analytics
-  async getGoalsProgress(userId: number): Promise<GoalsProgressData> {
-    const goals = await this.getGoalsByUserId(userId);
-    const now = new Date();
-    
-    // Calculate progress for each goal
-    const goalsWithProgress: GoalProgressItem[] = await Promise.all(
-      goals.map(async (goal) => {
-        const progress = await this.calculateGoalProgress(goal.id);
-        const milestones = await this.getGoalMilestonesByGoalId(goal.id);
-        
-        // Calculate days left
-        const endDate = new Date(goal.endDate);
-        const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-        
-        // Calculate milestone progress
-        const milestonesWithProgress = milestones.map(milestone => {
-          const progressPercentage = goal.currentValue >= milestone.targetValue ? 100 : 
-            Math.min(100, (goal.currentValue / milestone.targetValue) * 100);
-          
-          return {
-            id: milestone.id,
-            title: milestone.title,
-            targetValue: milestone.targetValue,
-            isCompleted: milestone.isCompleted,
-            progressPercentage
-          };
-        });
-        
-        return {
-          id: goal.id,
-          title: goal.title,
-          targetType: goal.targetType,
-          targetValue: goal.targetValue,
-          currentValue: goal.currentValue,
-          progressPercentage: progress,
-          isCompleted: goal.isCompleted,
-          startDate: goal.startDate,
-          endDate: goal.endDate,
-          daysLeft,
-          priority: goal.priority,
-          color: goal.color as string | null,
-          milestones: milestonesWithProgress
-        };
-      })
-    );
-    
-    // Split goals into active and completed
-    const activeGoals = goalsWithProgress.filter(goal => !goal.isCompleted);
-    const completedGoals = goalsWithProgress.filter(goal => goal.isCompleted);
-    
-    // Find upcoming milestones (not completed, sorted by progress)
-    const allMilestones = goalsWithProgress.flatMap(goal => 
-      (goal.milestones || []).map(milestone => ({
-        id: milestone.id,
-        goalId: goal.id,
-        goalTitle: goal.title,
-        title: milestone.title,
-        targetValue: milestone.targetValue,
-        progressPercentage: milestone.progressPercentage
-      }))
-    );
-    
-    const upcomingMilestones = allMilestones
-      .filter(milestone => milestone.progressPercentage < 100)
-      .sort((a, b) => b.progressPercentage - a.progressPercentage)
-      .slice(0, 5);
-    
-    // Calculate overall progress
-    const totalGoals = goals.length;
-    const completedGoalsCount = completedGoals.length;
-    const overallProgressPercentage = totalGoals > 0 
-      ? (completedGoalsCount / totalGoals) * 100 
-      : 0;
-    
-    return {
-      activeGoals,
-      completedGoals,
-      upcomingMilestones,
-      overallProgress: {
-        totalGoals,
-        completedGoals: completedGoalsCount,
-        progressPercentage: overallProgressPercentage
-      }
     };
   }
 }
