@@ -458,11 +458,8 @@ export function GoalList() {
 
       {/* Dialog for creating new goal */}
       <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
-        <DialogContent 
-          variant="form" 
-          className="sm:max-w-[600px] max-h-[80dvh] md:max-h-[90vh] overflow-y-auto py-3 px-3 has-safe-bottom"
-        >
-          <DialogHeader className="pb-3">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
+          <DialogHeader>
             <DialogTitle>Create New Goal</DialogTitle>
             <DialogDescription>
               Set up trading goals to track and improve your performance.
@@ -478,11 +475,8 @@ export function GoalList() {
 
       {/* Dialog for editing goal */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-        <DialogContent 
-          variant="form"
-          className="sm:max-w-[600px] max-h-[80dvh] md:max-h-[90vh] overflow-y-auto py-3 px-3 has-safe-bottom"
-        >
-          <DialogHeader className="pb-3">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
+          <DialogHeader>
             <DialogTitle>Edit Goal</DialogTitle>
             <DialogDescription>
               Update your goal information.
@@ -513,11 +507,8 @@ export function GoalList() {
 
       {/* Dialog for adding milestone */}
       <Dialog open={openMilestoneDialog} onOpenChange={setOpenMilestoneDialog}>
-        <DialogContent 
-          variant="form"
-          className="sm:max-w-[500px] max-h-[80dvh] md:max-h-[90vh] overflow-y-auto py-3 px-3 has-safe-bottom"
-        >
-          <DialogHeader className="pb-3">
+        <DialogContent className="sm:max-w-[500px] safe-area-p">
+          <DialogHeader>
             <DialogTitle>Add Milestone</DialogTitle>
             <DialogDescription>
               Create a new milestone for the goal "{currentGoal?.title}".
@@ -541,7 +532,7 @@ export function GoalList() {
 
       {/* Dialog to confirm goal deletion */}
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-        <AlertDialogContent className="has-safe-bottom py-3 px-3">
+        <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
             <AlertDialogDescription>
