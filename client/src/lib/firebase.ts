@@ -318,14 +318,10 @@ async function addTrade(userId: string, tradeData: any) {
     
     debug("Trade added successfully with ID:", docRef.id);
     
-    // Trigger achievement processing for trade creation
-    try {
-      await processTradeTrigger(userId, 'create');
-      debug("Achievement processing triggered for new trade");
-    } catch (achievementError) {
-      // Log but don't fail if achievement processing fails
-      logError("Error processing achievements for new trade:", achievementError);
-    }
+    // Cải tiến hiệu suất: Sử dụng debounce để xử lý thành tích
+    // Không cần await - việc xử lý diễn ra ở background
+    processTradeTrigger(userId, 'create');
+    debug("Achievement processing queued (debounced) for new trade");
     
     // Return an object with id for easier access
     return {
@@ -788,14 +784,12 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any, opti
     }
     
     // Cập nhật thành tích nếu không bị bỏ qua 
+    // Cải tiến hiệu suất: Sử dụng debounce để trì hoãn xử lý thành tích
+    // Đặc biệt quan trọng khi đóng giao dịch để tránh block UI
     if (!options.skipAchievements) {
-      try {
-        await processTradeTrigger(userId, 'update');
-        debug("Achievement processing triggered for trade update");
-      } catch (achievementError) {
-        // Log but don't fail if achievement processing fails
-        logError("Error processing achievements for trade update:", achievementError);
-      }
+      // Không cần await vì đã chuyển sang debounced
+      processTradeTrigger(userId, 'update');
+      debug("Achievement processing queued (debounced) for trade update");
     }
     
     return tradeData;
@@ -863,14 +857,10 @@ async function deleteTrade(userId: string, tradeId: string) {
     // Cập nhật số dư tài khoản sau khi xóa giao dịch
     await updateAccountBalance(userId);
     
-    // Trigger achievement processing for trade deletion
-    try {
-      await processTradeTrigger(userId, 'delete');
-      debug("Achievement processing triggered for trade deletion");
-    } catch (achievementError) {
-      // Log but don't fail if achievement processing fails
-      logError("Error processing achievements for trade deletion:", achievementError);
-    }
+    // Cải tiến hiệu suất: Sử dụng debounce cho xử lý thành tích khi xóa
+    // Không cần await, nâng cao trải nghiệm người dùng
+    processTradeTrigger(userId, 'delete');
+    debug("Achievement processing queued (debounced) for trade deletion");
     
     return true;
   } catch (error) {
