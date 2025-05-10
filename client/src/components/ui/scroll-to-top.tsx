@@ -5,6 +5,7 @@ import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
 import { useDialog } from "@/contexts/DialogContext";
+import { getScrollPosition, scrollToTop, isScrolling as isGlobalScrolling } from "@/lib/scroll-utils";
 
 interface ScrollToTopProps {
   threshold?: number;
@@ -14,19 +15,11 @@ interface ScrollToTopProps {
 }
 
 /**
- * Hàm tiện ích để lấy vị trí cuộn hiện tại
- * @returns Current scroll position in pixels
- */
-function getScrollPosition(): number {
-  return window.scrollY || document.documentElement.scrollTop;
-}
-
-/**
- * ScrollToTop component - Phiên bản tối ưu hóa
+ * ScrollToTop component - Phiên bản đơn giản hóa
  * 
  * Một nút đơn giản xuất hiện khi cuộn xuống và cho phép
- * quay trở lại đầu trang với một lần nhấp chuột. Có tích hợp
- * với DialogContext và cài đặt cơ chế chống lỗi.
+ * quay trở lại đầu trang với một lần nhấp chuột.
+ * Sử dụng utility functions từ scroll-utils.ts để giữ code đơn giản.
  */
 export function ScrollToTop({
   threshold = 400,
@@ -37,47 +30,29 @@ export function ScrollToTop({
   // State để kiểm soát hiển thị nút
   const [visible, setVisible] = useState(false);
   // State để theo dõi trạng thái scroll đang diễn ra
-  const [isScrolling, setIsScrolling] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [location] = useLocation();
   const { dialogOpen } = useDialog(); // Tích hợp với DialogContext
   
-  // Refs để quản lý timeouts và lưu trữ thông tin
-  const timeoutsRef = useRef<{
-    debounce: NodeJS.Timeout | null;
-    scroll: NodeJS.Timeout | null;
-    fallback: NodeJS.Timeout | null;
-    reset: NodeJS.Timeout | null;
-    safety: NodeJS.Timeout | null;
-  }>({
-    debounce: null,
-    scroll: null,
-    fallback: null,
-    reset: null,
-    safety: null
-  });
-  
-  // Ref cho vị trí cuộn ban đầu
-  const scrollInfoRef = useRef<{
-    lastClickTime: number;
-    startPosition: number;
-  }>({
-    lastClickTime: 0,
-    startPosition: 0
-  });
+  // Ref cho thời gian click cuối cùng (debounce)
+  const lastClickTimeRef = useRef<number>(0);
   
   // Lấy tham chiếu đến button để kiểm tra sự tập trung
   const buttonRef = useRef<HTMLButtonElement>(null);
   
-  // Kiểm tra xem trang có đang ở trạng thái cuộn không
+  // Ref cho cleanup function nếu cần hủy scroll giữa chừng
+  const cleanupScrollRef = useRef<(() => void) | null>(null);
+  
+  // Kiểm tra xem nút có nên hiển thị không dựa trên vị trí cuộn
   const checkScrollPosition = useCallback(() => {
     // Không cập nhật trạng thái nếu dialog đang mở
     if (dialogOpen) return;
     
-    // Kiểm tra position Y
-    const scrollTop = getScrollPosition();
-    
     // Hiển thị nút nếu đã cuộn xuống đủ xa
-    setVisible(scrollTop > threshold);
+    setVisible(getScrollPosition() > threshold);
+    
+    // Cập nhật trạng thái disabled dựa trên trạng thái cuộn toàn cục
+    setIsButtonDisabled(isGlobalScrolling());
   }, [threshold, dialogOpen]);
   
   // Xử lý sự kiện scroll
@@ -88,9 +63,21 @@ export function ScrollToTop({
     // Kiểm tra vị trí ban đầu
     checkScrollPosition();
     
+    // Đăng ký interval để định kỳ kiểm tra trạng thái cuộn toàn cục
+    const statusInterval = setInterval(() => {
+      setIsButtonDisabled(isGlobalScrolling());
+    }, 200);
+    
     // Hủy đăng ký khi unmount
     return () => {
       window.removeEventListener("scroll", checkScrollPosition);
+      clearInterval(statusInterval);
+      
+      // Cleanup scroll nếu đang thực hiện
+      if (cleanupScrollRef.current) {
+        cleanupScrollRef.current();
+        cleanupScrollRef.current = null;
+      }
     };
   }, [checkScrollPosition]);
   
@@ -99,61 +86,36 @@ export function ScrollToTop({
     if (dialogOpen) {
       // Ẩn nút khi dialog mở
       setVisible(false);
+      
+      // Hủy scroll đang thực hiện nếu có
+      if (cleanupScrollRef.current) {
+        cleanupScrollRef.current();
+        cleanupScrollRef.current = null;
+      }
     } else {
       // Kiểm tra lại vị trí scroll sau khi dialog đóng
       checkScrollPosition();
     }
   }, [dialogOpen, checkScrollPosition]);
   
-  // Xóa tất cả các timeout khi component unmount hoặc route thay đổi
-  const clearAllTimeouts = useCallback(() => {
-    const { debounce, scroll, fallback, reset, safety } = timeoutsRef.current;
-    if (debounce) clearTimeout(debounce);
-    if (scroll) clearTimeout(scroll);
-    if (fallback) clearTimeout(fallback);
-    if (reset) clearTimeout(reset);
-    if (safety) clearTimeout(safety);
-    
-    // Reset các tham chiếu
-    timeoutsRef.current = {
-      debounce: null,
-      scroll: null,
-      fallback: null,
-      reset: null,
-      safety: null
-    };
-  }, []);
-  
-  // Đặt lại trạng thái scrolling và xóa các timeout
-  const resetScrollingState = useCallback(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log("[ScrollToTop] Đặt lại trạng thái scroll");
-    }
-    setIsScrolling(false);
-    clearAllTimeouts();
-  }, [clearAllTimeouts]);
-  
-  // Cleanup khi component unmount
+  // Hủy scroll khi route thay đổi
   useEffect(() => {
     return () => {
-      clearAllTimeouts();
+      // Cleanup scroll nếu đang thực hiện
+      if (cleanupScrollRef.current) {
+        cleanupScrollRef.current();
+        cleanupScrollRef.current = null;
+      }
     };
-  }, [clearAllTimeouts]);
-  
-  // Cleanup khi route thay đổi
-  useEffect(() => {
-    return () => {
-      resetScrollingState();
-    };
-  }, [location, resetScrollingState]);
+  }, [location]);
   
   /**
-   * Hàm cuộn lên đầu trang - Cài đặt với cơ chế chống lỗi
+   * Xử lý khi người dùng nhấp vào nút cuộn lên đầu trang
    */
   const handleScrollToTop = useCallback(() => {
-    // Kiểm tra debounce - tránh nhiều lần click liên tiếp
+    // Debounce: Kiểm tra thời gian từ lần click cuối
     const now = Date.now();
-    const timeSinceLastClick = now - scrollInfoRef.current.lastClickTime;
+    const timeSinceLastClick = now - lastClickTimeRef.current;
     
     // Nếu đã click gần đây, bỏ qua
     if (timeSinceLastClick < debounceDelay) {
@@ -164,148 +126,46 @@ export function ScrollToTop({
     }
     
     // Cập nhật thời gian click cuối cùng
-    scrollInfoRef.current.lastClickTime = now;
+    lastClickTimeRef.current = now;
     
-    // Không thực hiện gì nếu đang trong quá trình cuộn
-    if (isScrolling) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log("[ScrollToTop] Đang scroll, bỏ qua request");
-      }
+    // Nếu đang scroll hoặc dialog đang mở, bỏ qua
+    if (isGlobalScrolling() || dialogOpen) {
       return;
     }
     
-    // Không thực hiện gì nếu dialog đang mở
-    if (dialogOpen) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log("[ScrollToTop] Dialog đang mở, bỏ qua scroll");
-      }
-      return;
+    // Ngắt scroll hiện tại nếu có
+    if (cleanupScrollRef.current) {
+      cleanupScrollRef.current();
+      cleanupScrollRef.current = null;
     }
     
-    // Ghi lại vị trí cuộn hiện tại
+    // Lấy vị trí cuộn hiện tại
     const startPosition = getScrollPosition();
-    scrollInfoRef.current.startPosition = startPosition;
     
     // Nếu đã ở đầu trang, không làm gì cả
-    if (startPosition <= 0) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log("[ScrollToTop] Đã ở đầu trang, không cần scroll");
-      }
-      return;
-    }
+    if (startPosition <= 0) return;
     
     // Log trong môi trường development
     if (process.env.NODE_ENV === 'development') {
       console.log(`[ScrollToTop] Bắt đầu scroll từ vị trí ${startPosition}px`);
     }
     
-    // Đánh dấu đang trong quá trình cuộn
-    setIsScrolling(true);
+    // Kích hoạt trạng thái disabled
+    setIsButtonDisabled(true);
     
-    // Thực hiện scroll sử dụng requestAnimationFrame để tối ưu hiệu suất
-    try {
-      // Đánh dấu document để các component khác biết đang scroll theo cách này
-      document.documentElement.setAttribute('data-scrolling', 'smooth');
-      
-      // Thêm class tạm thời vào body để ngăn các hiệu ứng scroll smooth khác
-      document.body.classList.add('scroll-in-progress');
-      
-      // Sử dụng requestAnimationFrame để scroll mượt mà hơn
-      const scrollToTopAnimated = () => {
-        const currentPosition = getScrollPosition();
+    // Thực hiện scroll bằng utility function
+    cleanupScrollRef.current = scrollToTop({
+      speed: 'normal',
+      onComplete: () => {
+        setIsButtonDisabled(false);
+        cleanupScrollRef.current = null;
         
-        // Đã gần đến đỉnh, thực hiện scroll tức thì 
-        if (currentPosition < 5) {
-          window.scrollTo(0, 0);
-          
-          // Đợi một khoảng thời gian nhỏ để đảm bảo scroll đã hoàn thành
-          setTimeout(() => {
-            // Loại bỏ trạng thái scroll
-            document.documentElement.removeAttribute('data-scrolling');
-            document.body.classList.remove('scroll-in-progress');
-            
-            // Đặt lại trạng thái
-            resetScrollingState();
-          }, 100);
-          return;
+        if (process.env.NODE_ENV === 'development') {
+          console.log("[ScrollToTop] Đặt lại trạng thái scroll");
         }
-        
-        // Tính toán vị trí mới dựa trên khoảng cách còn lại
-        // Sử dụng hệ số giảm dần để tạo hiệu ứng easing
-        const step = Math.max(Math.floor(currentPosition / 6), 1);
-        
-        // Scroll đến vị trí mới
-        window.scrollTo(0, currentPosition - step);
-        
-        // Tiếp tục animation
-        timeoutsRef.current.scroll = setTimeout(() => {
-          requestAnimationFrame(scrollToTopAnimated);
-        }, 1000 / 60); // Khoảng 60fps
-      };
-      
-      // Bắt đầu scroll
-      requestAnimationFrame(scrollToTopAnimated);
-      
-      // Giải pháp dự phòng nếu animation không hoạt động
-      const fallbackTimeout = setTimeout(() => {
-        const currentPos = getScrollPosition();
-        if (currentPos > 5) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`[ScrollToTop] Fallback: Scroll đã hoạt động một phần (${currentPos}px còn lại), force scroll`);
-          }
-          // Force scroll
-          window.scrollTo(0, 0);
-          
-          // Loại bỏ trạng thái scrolling
-          document.documentElement.removeAttribute('data-scrolling');
-          document.body.classList.remove('scroll-in-progress');
-          
-          // Đặt lại trạng thái
-          resetScrollingState();
-        }
-      }, 800);
-      
-      // Lưu tham chiếu để có thể clear khi cần
-      timeoutsRef.current.fallback = fallbackTimeout;
-      
-      // Safety timeout - đảm bảo trạng thái luôn được đặt lại sau tối đa 2000ms
-      const safetyTimeout = setTimeout(() => {
-        if (isScrolling) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log("[ScrollToTop] Safety reset: Đặt lại trạng thái scroll sau 2000ms");
-          }
-          // Force scroll và reset
-          window.scrollTo(0, 0);
-          document.documentElement.removeAttribute('data-scrolling');
-          document.body.classList.remove('scroll-in-progress');
-          resetScrollingState();
-        }
-      }, 2000);
-      
-      // Lưu tham chiếu để có thể clear khi cần
-      timeoutsRef.current.safety = safetyTimeout;
-      
-    } catch (error) {
-      console.error("[ScrollToTop] Lỗi khi scroll:", error);
-      // Fallback nếu có lỗi - scroll tức thì và đặt lại trạng thái
-      window.scrollTo(0, 0);
-      
-      // Đảm bảo dọn dẹp mọi trạng thái
-      document.documentElement.removeAttribute('data-scrolling');
-      document.body.classList.remove('scroll-in-progress');
-      resetScrollingState();
-    }
-    
-    // Cleanup function cho useEffect
-    return () => {
-      // Đảm bảo xóa các attributes và classes nếu component unmount trong quá trình scroll
-      document.documentElement.removeAttribute('data-scrolling');
-      document.body.classList.remove('scroll-in-progress');
-      
-      // Xóa tất cả timeouts
-      clearAllTimeouts();
-    };
-  }, [isScrolling, dialogOpen, debounceDelay, resetScrollingState]);
+      }
+    });
+  }, [dialogOpen, debounceDelay]);
   
   // Không hiển thị nút nếu dialog đang mở
   if (dialogOpen) {
@@ -331,11 +191,11 @@ export function ScrollToTop({
             size="icon"
             onClick={handleScrollToTop}
             aria-label="Cuộn lên đầu trang"
-            disabled={isScrolling}
+            disabled={isButtonDisabled}
             className={cn(
               "h-10 w-10 rounded-full shadow-md",
               "bg-card/90 backdrop-blur-md",
-              isScrolling && "opacity-50 cursor-not-allowed",
+              isButtonDisabled && "opacity-50 cursor-not-allowed",
               buttonClassName
             )}
           >

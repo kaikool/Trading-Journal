@@ -72,7 +72,7 @@ const SelectContent = React.forwardRef<
   // Lưu vị trí cuộn hiện tại khi mở select
   const scrollPosRef = React.useRef<number>(0);
   
-  // Bắt sự kiện trước khi hiển thị để lưu vị trí cuộn
+  // Bắt sự kiện trước khi hiển thị để xử lý cuộn phù hợp
   React.useEffect(() => {
     // Chỉ thực hiện ở client-side
     if (typeof window === 'undefined') return;
@@ -80,19 +80,47 @@ const SelectContent = React.forwardRef<
     // Lưu vị trí scroll hiện tại khi component mount
     scrollPosRef.current = window.scrollY;
     
-    // Tạo một function để khôi phục vị trí cuộn
-    const restoreScrollPosition = () => {
-      window.scrollTo(0, scrollPosRef.current);
+    // Import động để tránh circular dependencies
+    const importScrollUtils = async () => {
+      try {
+        const { markScrollStart, markScrollEnd } = await import('@/lib/scroll-utils');
+        
+        // Đánh dấu trạng thái scroll đang được kiểm soát bởi Select
+        markScrollStart();
+        
+        return markScrollEnd; // Trả về hàm cleanup
+      } catch (e) {
+        // Fallback method nếu không thể import
+        document.body.classList.add('select-open');
+        return () => document.body.classList.remove('select-open');
+      }
     };
     
-    // Thêm vào body class để ngăn scroll behavior
-    document.body.classList.add('select-open');
+    // Tạo một function để khôi phục vị trí cuộn
+    const restoreScrollPosition = () => {
+      // Chỉ khôi phục nếu vị trí hiện tại khác với vị trí lưu
+      if (Math.abs(window.scrollY - scrollPosRef.current) > 5) {
+        window.scrollTo(0, scrollPosRef.current);
+      }
+    };
+    
+    // Thực hiện setup
+    let cleanup: (() => void) | null = null;
+    
+    importScrollUtils().then(endScroll => {
+      cleanup = endScroll;
+    });
     
     // Cleanup function - chạy khi unmount
     return () => {
-      document.body.classList.remove('select-open');
-      // Restore scroll position khi đóng select
+      // Khôi phục vị trí cuộn
       restoreScrollPosition();
+      
+      // Dọn dẹp trạng thái từ ScrollUtils nếu đã được thiết lập
+      if (cleanup) cleanup();
+      
+      // Fallback cleanup
+      document.body.classList.remove('select-open');
     };
   }, []);
   
