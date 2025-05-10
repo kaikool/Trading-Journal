@@ -119,6 +119,12 @@ export async function uploadTradeImage(
     formData.append('resource_type', 'image'); // Xác định loại tài nguyên
     formData.append('multiple', 'false'); // Không cho phép nhiều file
     
+    // Tắt các transformation không mong muốn để tránh bo tròn và phần thừa màu đen
+    formData.append('transformation', 'c_limit'); // Chỉ giới hạn kích thước, không crop/resize
+    formData.append('format', 'auto'); // Tự động chọn định dạng tối ưu
+    formData.append('quality', 'auto'); // Tự động chọn chất lượng tối ưu
+    formData.append('radius', '0'); // Không bo tròn góc
+    
     // Log URL being used
     debug(`Gửi POST request đến: ${CLOUDINARY_UPLOAD_URL}`);
     
