@@ -104,6 +104,22 @@ function MainContent() {
         setTimeout(() => {
           window.scrollTo({ top: 0 });
         }, 100);
+      } else {
+        // Lưu vị trí scroll hiện tại để sử dụng sau khi dialog đóng
+        const currentScrollPosition = window.scrollY;
+        
+        // Tạo một hàm bảo vệ để giữ vị trí scroll
+        const maintainScrollPosition = () => {
+          // Nếu vẫn trong thời gian ngăn scroll sau khi dialog đóng
+          // hoặc nếu dialog vẫn đang mở, tiếp tục duy trì vị trí
+          if (dialogOpen || shouldPreventScrollAfterDialogClose()) {
+            window.scrollTo(0, currentScrollPosition);
+            requestAnimationFrame(maintainScrollPosition);
+          }
+        };
+        
+        // Bắt đầu quá trình giữ vị trí scroll
+        requestAnimationFrame(maintainScrollPosition);
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
@@ -127,6 +143,68 @@ function MainContent() {
       return () => clearTimeout(safetyTimer);
     }
   }, [isPageReady]);
+  
+  // Thêm effect riêng để xử lý khi dialog đóng mà không liên quan đến thay đổi route
+  useEffect(() => {
+    let scrollTimeoutId: ReturnType<typeof setTimeout>;
+    let activeScrollPosition = window.scrollY;
+    
+    // Xử lý khi dialog đóng
+    const handleDialogClose = () => {
+      console.log('[DEBUG] Dialog closed event received');
+      
+      // Lưu vị trí scroll hiện tại để bảo vệ
+      const currentScrollPosition = window.scrollY;
+      activeScrollPosition = currentScrollPosition;
+      
+      // Hủy timeout cũ (nếu có) để tránh xung đột
+      if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
+      
+      // Chức năng ngăn scroll
+      const preventScroll = () => {
+        // Kiểm tra nếu vẫn trong thời gian cần ngăn scroll
+        if (shouldPreventScrollAfterDialogClose()) {
+          console.log('[DEBUG] Preventing scroll, maintaining position:', activeScrollPosition);
+          window.scrollTo(0, activeScrollPosition);
+          
+          // Tiếp tục ngăn scroll
+          scrollTimeoutId = setTimeout(() => {
+            requestAnimationFrame(preventScroll);
+          }, 50); // Kiểm tra mỗi 50ms
+        } else {
+          console.log('[DEBUG] Scroll prevention period ended');
+        }
+      };
+      
+      // Ngăn nền tảng scroll lên đầu trang ngay lập tức
+      setTimeout(() => {
+        window.scrollTo(0, currentScrollPosition);
+        
+        // Bắt đầu quy trình giữ vị trí scroll
+        preventScroll();
+      }, 0);
+    };
+    
+    // Lắng nghe sự kiện dialog:close
+    document.addEventListener('dialog:close', handleDialogClose);
+    
+    // Cũng lắng nghe sự kiện scroll để cập nhật vị trí
+    const handleScroll = () => {
+      // Chỉ cập nhật nếu không đang trong thời gian ngăn scroll
+      if (!shouldPreventScrollAfterDialogClose()) {
+        activeScrollPosition = window.scrollY;
+      }
+    };
+    
+    // Thêm listener cho scroll để theo dõi vị trí cuộn mới nhất
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    return () => {
+      document.removeEventListener('dialog:close', handleDialogClose);
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutId) clearTimeout(scrollTimeoutId);
+    };
+  }, [dialogOpen, shouldPreventScrollAfterDialogClose]);
   
   // Preload route modules when location changes
   useEffect(() => {

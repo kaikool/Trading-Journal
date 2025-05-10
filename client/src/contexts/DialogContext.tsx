@@ -29,7 +29,7 @@ export function useDialog() {
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [lastDialogCloseTime, setLastDialogCloseTime] = useState(0);
-  const preventScrollAfterDialogClose = 500; // 500ms
+  const preventScrollAfterDialogClose = 1500; // 1500ms - tăng lên để đảm bảo ngăn scroll hiệu quả hơn
   const dialogCountRef = useRef(0); // Đếm số lượng dialog đang mở
 
   // Lắng nghe DOM để tự động phát hiện khi dialog được mở/đóng
@@ -107,6 +107,8 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const shouldPreventScrollAfterDialogClose = () => {
     return Date.now() - lastDialogCloseTime < preventScrollAfterDialogClose;
   };
+  
+
 
   // Giá trị của context
   const value: DialogContextType = {
