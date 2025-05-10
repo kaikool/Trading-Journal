@@ -1,12 +1,12 @@
 /**
- * Giải pháp đơn giản để sửa lỗi cuộn tự động của Radix UI Select
+ * Giải pháp nhẹ nhàng để tối ưu hóa tương tác Radix UI
  * 
- * Cách tiếp cận: Thêm CSS để ngăn chặn hành vi tự động scroll khi focus
- * và thiết lập thuộc tính position cố định cho Radix UI Select portal.
+ * Dành cho phiên bản mới của RadixUI nhưng vẫn duy trì tương thích
+ * ngược với code hiện tại.
  */
 
 /**
- * Hàm này sẽ áp dụng style fix cho các dropdown Radix UI
+ * Hàm này sẽ áp dụng style fix nhẹ nhàng hơn cho Radix UI
  */
 export function applyRadixSelectFix() {
   if (typeof document === 'undefined') {
@@ -14,96 +14,68 @@ export function applyRadixSelectFix() {
   }
 
   // Chỉ chạy một lần
-  if (document.getElementById('radix-select-scroll-fix')) {
+  if (document.getElementById('radix-ui-scroll-helper')) {
     return;
   }
 
-  // Tạo một style element
+  // Tạo một style element đơn giản hơn
   const style = document.createElement('style');
-  style.id = 'radix-select-scroll-fix';
+  style.id = 'radix-ui-scroll-helper';
   style.textContent = `
-    /* Chặn hành vi cuộn tự động khi focus */
-    [data-radix-select-content],
-    [data-radix-select-viewport],
-    [data-radix-dropdown-menu-content],
-    [data-radix-popover-content] {
-      scroll-behavior: auto !important;
-      overflow-anchor: none !important;
-      overflow-behavior: none !important;
-      -webkit-overflow-scrolling: auto !important;
-    }
-
-    /* Đảm bảo content được định vị chính xác */
+    /* Đảm bảo focus không gây scroll jump */
     [data-radix-select-content],
     [data-radix-dropdown-menu-content],
     [data-radix-popover-content] {
-      position: fixed !important;
-      /* Đặt z-index cao để tránh bị che */
-      z-index: 100 !important;
-    }
-
-    /* Ngăn chặn FOUC khi mở */
-    [data-state="open"][data-radix-select-content],
-    [data-state="open"][data-radix-dropdown-menu-content],
-    [data-state="open"][data-radix-popover-content] {
-      animation: none !important;
-      transition: opacity 0.15s !important;
+      /* Các thuộc tính cần thiết */
+      z-index: 50;
+      scroll-behavior: auto;
     }
 
     /* Đảm bảo các item được chọn không tự scroll */
     [data-radix-select-item][data-highlighted],
     [data-radix-select-item][aria-selected="true"] {
-      scroll-margin: 0 !important;
-      scroll-padding: 0 !important;
+      scroll-margin: 0;
     }
 
-    /* Vô hiệu hóa thuộc tính tự động scroll từ root document */
-    html.radix-select-open,
-    body.radix-select-open {
-      scroll-behavior: auto !important;
-      overflow-anchor: none !important;
+    /* Chỉ ngăn scroll khi dropdown mở */
+    html.radix-ui-portal-open,
+    body.radix-ui-portal-open {
+      overflow-anchor: none;
+    }
+
+    /* Đảm bảo select không gây cuộn trang */
+    [data-radix-select-content] {
+      position: fixed;
     }
   `;
 
   // Thêm vào <head>
   document.head.appendChild(style);
 
-  // Theo dõi khi nào select content được mở
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach(mutation => {
-      if (mutation.type === 'childList') {
-        // Phát hiện khi Radix content được thêm vào DOM
-        mutation.addedNodes.forEach(node => {
-          if (
-            node instanceof HTMLElement && 
-            (node.hasAttribute('data-radix-select-content') || 
-             node.querySelector('[data-radix-select-content]'))
-          ) {
-            // Thêm class vào body và html để vô hiệu hóa scrolling
-            document.documentElement.classList.add('radix-select-open');
-            document.body.classList.add('radix-select-open');
-          }
-        });
+  // Sử dụng bộ nghe sự kiện cho các cổng Radix thay vì MutationObserver phức tạp
+  document.addEventListener('mousedown', handleRadixInteraction);
+  document.addEventListener('keydown', handleRadixInteraction);
+  
+  // Log đơn giản
+  console.debug('[RadixUI] Applied lightweight scroll optimizations');
+}
 
-        // Phát hiện khi Radix content bị xóa khỏi DOM
-        mutation.removedNodes.forEach(node => {
-          if (
-            node instanceof HTMLElement && 
-            (node.hasAttribute('data-radix-select-content') || 
-             node.querySelector('[data-radix-select-content]'))
-          ) {
-            // Xóa class
-            document.documentElement.classList.remove('radix-select-open');
-            document.body.classList.remove('radix-select-open');
-          }
-        });
-      }
-    });
-  });
-
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  console.debug('[RadixSelectFix] Applied CSS fixes to prevent scrolling issues');
+/**
+ * Xử lý tương tác với RadixUI portals
+ */
+function handleRadixInteraction(event: MouseEvent | KeyboardEvent): void {
+  // Chỉ xử lý nếu có portals của Radix
+  const hasPortals = document.querySelector(
+    '[data-radix-select-content], [data-radix-dropdown-menu-content], [data-radix-popover-content]'
+  );
+  
+  if (hasPortals) {
+    document.documentElement.classList.add('radix-ui-portal-open');
+    document.body.classList.add('radix-ui-portal-open');
+  } else {
+    document.documentElement.classList.remove('radix-ui-portal-open');
+    document.body.classList.remove('radix-ui-portal-open');
+  }
 }
 
 /**
@@ -114,12 +86,21 @@ export function removeRadixSelectFix() {
     return;
   }
 
-  const style = document.getElementById('radix-select-scroll-fix');
+  // Xóa style
+  const style = document.getElementById('radix-ui-scroll-helper');
   if (style) {
     style.remove();
-    console.debug('[RadixSelectFix] Removed Radix Select CSS fixes');
   }
 
-  document.documentElement.classList.remove('radix-select-open');
-  document.body.classList.remove('radix-select-open');
+  // Xóa listeners
+  document.removeEventListener('mousedown', handleRadixInteraction);
+  document.removeEventListener('keydown', handleRadixInteraction);
+
+  // Xóa classes
+  document.documentElement.classList.remove('radix-ui-portal-open');
+  document.body.classList.remove('radix-ui-portal-open');
+  document.documentElement.classList.remove('radix-select-open'); // Hỗ trợ ngược
+  document.body.classList.remove('radix-select-open'); // Hỗ trợ ngược
+  
+  console.debug('[RadixUI] Removed scroll optimizations');
 }

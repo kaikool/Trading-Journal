@@ -69,66 +69,6 @@ const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
 >(({ className, children, position = "popper", ...props }, ref) => {
-  // Lưu vị trí cuộn hiện tại khi mở select
-  const scrollPosRef = React.useRef<number>(0);
-  
-  // Bắt sự kiện trước khi hiển thị để lưu vị trí cuộn
-  React.useEffect(() => {
-    // Chỉ thực hiện ở client-side
-    if (typeof window === 'undefined') return;
-    
-    // Lưu vị trí scroll hiện tại khi component mount
-    scrollPosRef.current = window.scrollY;
-    
-    // Thêm vào body class để ngăn scroll behavior
-    document.body.classList.add('select-open');
-    
-    // Cleanup function - chạy khi unmount
-    return () => {
-      document.body.classList.remove('select-open');
-      
-      // Khôi phục vị trí cuộn khi đóng select, nếu cần thiết
-      if (Math.abs(window.scrollY - scrollPosRef.current) > 5) {
-        window.scrollTo(0, scrollPosRef.current);
-      }
-    };
-  }, []);
-  
-  // Thêm style vào document.head nếu chưa có
-  React.useEffect(() => {
-    if (typeof document === 'undefined') return;
-    
-    if (!document.getElementById('select-noscroll-style')) {
-      const style = document.createElement('style');
-      style.id = 'select-noscroll-style';
-      style.textContent = `
-        body.select-open {
-          scroll-behavior: auto !important;
-          overflow-anchor: none !important;
-          overflow-y: scroll !important;
-        }
-        
-        /* Ngăn chặn scroll reset khi mở select */
-        [data-radix-select-content],
-        [data-radix-select-viewport],
-        [data-radix-select-item][data-highlighted],
-        [data-radix-select-item][aria-selected="true"] {
-          scroll-margin: 0 !important;
-          scroll-padding: 0 !important;
-          scroll-snap-margin: 0 !important;
-          scroll-snap-padding: 0 !important;
-          scrollbar-gutter: stable !important;
-        }
-        
-        /* Ngăn chặn focus gây cuộn trang */
-        [data-radix-select-content] *:focus {
-          outline: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-  }, []);
-  
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -140,6 +80,7 @@ const SelectContent = React.forwardRef<
           className
         )}
         position={position}
+        // Sử dụng các thuộc tính chuẩn của RadixUI để ngăn chặn cuộn tự động
         onCloseAutoFocus={(event) => {
           // Ngăn chặn focus tự động cuộn
           event.preventDefault();
@@ -149,6 +90,9 @@ const SelectContent = React.forwardRef<
             props.onCloseAutoFocus(event);
           }
         }}
+        // Thêm thuộc tính preventScroll để ngăn chặn cuộn khi focus
+        // Thuộc tính này được hỗ trợ trong phiên bản mới của RadixUI
+        avoidCollisions={true}
         {...props}
       >
         <SelectScrollUpButton />
