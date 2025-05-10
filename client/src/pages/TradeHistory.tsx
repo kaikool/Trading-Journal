@@ -981,35 +981,9 @@ export default function TradeHistory() {
                       <LazyTradeHistoryCard 
                         trade={trade} 
                         onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
-                        onDelete={(tradeId: string) => {
-                          if (window.confirm('Are you sure you want to delete this trade?')) {
-                            if (!userId) return;
-                            
-                            // Cập nhật UI ngay lập tức trước khi xóa thực tế
-                            setDeletingTradeIds(prev => [...prev, tradeId]);
-                            
-                            // Sau đó, xóa trong Firebase
-                            import("@/lib/firebase").then(({ deleteTrade }) => {
-                              deleteTrade(userId, tradeId)
-                                .then(() => {
-                                  toast({
-                                    title: "Trade deleted",
-                                    description: "The trade has been successfully deleted"
-                                  });
-                                })
-                                .catch((error) => {
-                                  // Nếu xóa thất bại, khôi phục UI bằng cách xóa tradeId khỏi deletingTradeIds
-                                  setDeletingTradeIds(prev => prev.filter(id => id !== tradeId));
-                                  
-                                  logError("Error deleting trade:", error);
-                                  toast({
-                                    variant: "destructive",
-                                    title: "Error",
-                                    description: "Failed to delete trade"
-                                  });
-                                });
-                            });
-                          }
+                        onDelete={() => {
+                          setTradeToDelete(trade);
+                          setIsDeleteDialogOpen(true);
                         }}
                       />
                     </motion.div>
