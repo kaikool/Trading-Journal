@@ -246,6 +246,22 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
               }
             }
             
+            // Check if any trades were closed in this update (for debugging)
+            const newlyClosedTrades = fetchedTrades.filter(newTrade => {
+              // Find corresponding trade in previous state
+              const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
+              
+              // Check if trade was just closed (isOpen changed from true to false)
+              return oldTrade && 
+                     oldTrade.isOpen === true && 
+                     newTrade.isOpen === false;
+            });
+            
+            // Log closed trades for debugging
+            if (newlyClosedTrades.length > 0) {
+              debug(`[DataCache] Detected ${newlyClosedTrades.length} newly closed trades`);
+            }
+            
             if (tradesChanged) {
               debug('[DataCache] Trades changed, updating cache');
               // Use queueMicrotask instead of setTimeout for better performance
@@ -255,6 +271,8 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
                   userData: prevState.userData, 
                   lastUpdated: Date.now()
                 });
+                
+                // Cache updated, can add logic here if needed
               });
             } else {
               debug('[DataCache] Trades unchanged, avoiding cache update');
