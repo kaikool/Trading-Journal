@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
+  DialogWithContext
 } from "@/components/ui/dialog";
 import {
   Accordion,
@@ -958,7 +959,7 @@ export function StrategiesManagement() {
       
       {/* Add Strategy Button at bottom */}
       <div className="flex justify-center mt-6 pt-4 border-t border-border/20">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogWithContext isOpen={isDialogOpen} onOpenChange={(open) => !open && setIsDialogOpen(false)}>
           <DialogTrigger asChild>
             <Button variant="default" size="sm" className="w-full max-w-sm">
               <Icons.ui.plus className="h-4 w-4 mr-1.5" />

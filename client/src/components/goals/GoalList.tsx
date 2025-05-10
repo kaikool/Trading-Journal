@@ -468,10 +468,10 @@ export function GoalList() {
             isSubmitting={isCreatingGoal}
           />
         </DialogContent>
-      </Dialog>
+      </DialogWithContext>
 
       {/* Dialog for editing goal */}
-      <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+      <DialogWithContext isOpen={openEditDialog} onOpenChange={(open) => !open && setOpenEditDialog(false)}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
           <DialogHeader>
             <DialogTitle>Edit Goal</DialogTitle>
@@ -511,7 +511,7 @@ export function GoalList() {
       </Dialog>
 
       {/* Dialog for adding milestone */}
-      <Dialog open={openMilestoneDialog} onOpenChange={setOpenMilestoneDialog}>
+      <DialogWithContext isOpen={openMilestoneDialog} onOpenChange={(open) => !open && setOpenMilestoneDialog(false)}>
         <DialogContent variant="compact" className="keyboard-aware-dialog safe-area-p">
           <DialogHeader>
             <DialogTitle>Add Milestone</DialogTitle>
