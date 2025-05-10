@@ -460,8 +460,8 @@ export function GoalList() {
                 description: currentGoal.description || '',
                 targetType: currentGoal.targetType,
                 targetValue: currentGoal.targetValue,
-                startDate: new Date(currentGoal.startDate),
-                endDate: new Date(currentGoal.endDate),
+                startDate: currentGoal.startDate?.toDate ? currentGoal.startDate.toDate() : new Date(),
+                endDate: currentGoal.endDate?.toDate ? currentGoal.endDate.toDate() : new Date(),
                 priority: currentGoal.priority,
                 color: currentGoal.color || '',
               }}

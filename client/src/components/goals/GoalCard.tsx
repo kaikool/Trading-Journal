@@ -129,11 +129,9 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
               {priorityLabels[goal.priority]}
             </Badge>
           </div>
-          <CardDescription>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <TrendingUp size={14} />
-              <span>{targetTypeLabels[goal.targetType] || goal.targetType}</span>
-            </div>
+          <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
+            <TrendingUp size={14} />
+            <span>{targetTypeLabels[goal.targetType] || goal.targetType}</span>
           </CardDescription>
         </CardHeader>
         
