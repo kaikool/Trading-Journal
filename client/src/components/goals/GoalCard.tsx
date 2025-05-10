@@ -1,0 +1,285 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useUserData } from '@/hooks/use-user-data';
+import { useGoalData } from '@/hooks/use-goal-data';
+import { formatDistanceToNow, isAfter } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Pencil, Trash2, Award, Calendar, AlertCircle, TrendingUp } from 'lucide-react';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface GoalCardProps {
+  goal: {
+    id: number;
+    title: string;
+    targetType: string;
+    targetValue: number;
+    currentValue: number;
+    progressPercentage: number;
+    isCompleted: boolean;
+    startDate: Date | string;
+    endDate: Date | string;
+    daysLeft: number;
+    priority: string;
+    color: string | null;
+    milestones?: {
+      id: number;
+      title: string;
+      targetValue: number;
+      isCompleted: boolean;
+      progressPercentage: number;
+    }[];
+  };
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onAddMilestone?: () => void;
+}
+
+// Mapping for target types
+const targetTypeLabels: Record<string, string> = {
+  profit: 'Lợi nhuận',
+  winRate: 'Tỷ lệ thắng',
+  profitFactor: 'Hệ số lợi nhuận',
+  riskRewardRatio: 'Tỷ lệ R:R',
+  balance: 'Số dư',
+  trades: 'Số giao dịch',
+};
+
+// Format value based on target type
+const formatValue = (value: number, type: string): string => {
+  switch (type) {
+    case 'profit':
+    case 'balance':
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'USD' }).format(value);
+    case 'winRate':
+      return `${value}%`;
+    case 'profitFactor':
+    case 'riskRewardRatio':
+      return value.toFixed(2);
+    case 'trades':
+      return value.toString();
+    default:
+      return value.toString();
+  }
+};
+
+// Priority colors
+const priorityColors: Record<string, string> = {
+  low: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+  high: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+};
+
+// Priority labels
+const priorityLabels: Record<string, string> = {
+  low: 'Thấp',
+  medium: 'Trung bình',
+  high: 'Cao',
+};
+
+export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardProps) {
+  const { calculateGoalProgress } = useGoalData();
+  
+  // Format dates
+  const startDate = new Date(goal.startDate);
+  const endDate = new Date(goal.endDate);
+  const isOverdue = isAfter(new Date(), endDate) && !goal.isCompleted;
+  
+  // Determine progress color
+  const getProgressColor = (percentage: number, isCompleted: boolean, isOverdue: boolean) => {
+    if (isCompleted) return 'bg-green-500';
+    if (isOverdue) return 'bg-red-500';
+    if (percentage >= 75) return 'bg-green-500';
+    if (percentage >= 50) return 'bg-yellow-500';
+    if (percentage >= 25) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
+
+  // Custom card border based on goal color or priority
+  const cardBorderStyle = goal.color 
+    ? { borderColor: goal.color, borderWidth: '2px' } 
+    : {};
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="overflow-hidden" style={cardBorderStyle}>
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-xl font-bold">{goal.title}</CardTitle>
+            <Badge className={priorityColors[goal.priority]}>
+              {priorityLabels[goal.priority]}
+            </Badge>
+          </div>
+          <CardDescription>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <TrendingUp size={14} />
+              <span>{targetTypeLabels[goal.targetType] || goal.targetType}</span>
+            </div>
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent className="pb-2">
+          <div className="mb-4">
+            <div className="flex justify-between mb-1 items-center">
+              <div className="text-sm text-muted-foreground">Tiến độ</div>
+              <div className="text-sm font-medium">
+                {goal.progressPercentage.toFixed(0)}%
+              </div>
+            </div>
+            <Progress 
+              value={goal.progressPercentage} 
+              className="h-2"
+              indicatorClassName={getProgressColor(goal.progressPercentage, goal.isCompleted, isOverdue)}
+            />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="text-sm">
+              <div className="text-muted-foreground">Hiện tại</div>
+              <div className="font-medium">
+                {formatValue(goal.currentValue, goal.targetType)}
+              </div>
+            </div>
+            <div className="text-sm">
+              <div className="text-muted-foreground">Mục tiêu</div>
+              <div className="font-medium">
+                {formatValue(goal.targetValue, goal.targetType)}
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-between text-sm mb-1">
+            <div className="flex items-center gap-1">
+              <Calendar size={14} className="text-muted-foreground" />
+              <span className="text-muted-foreground">
+                {isOverdue ? 'Quá hạn' : `Còn ${goal.daysLeft} ngày`}
+              </span>
+            </div>
+            
+            {goal.isCompleted && (
+              <div className="flex items-center gap-1 text-green-500">
+                <Award size={14} />
+                <span>Hoàn thành</span>
+              </div>
+            )}
+            
+            {isOverdue && !goal.isCompleted && (
+              <div className="flex items-center gap-1 text-destructive">
+                <AlertCircle size={14} />
+                <span>Quá hạn</span>
+              </div>
+            )}
+          </div>
+          
+          {goal.milestones && goal.milestones.length > 0 && (
+            <div className="mt-4">
+              <div className="text-sm font-medium mb-2">Cột mốc</div>
+              <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
+                {goal.milestones.map((milestone) => (
+                  <div key={milestone.id} className="bg-secondary p-2 rounded-md text-sm">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-medium">{milestone.title}</span>
+                      {milestone.isCompleted && (
+                        <Badge variant="outline" className="text-green-500 border-green-500">
+                          Hoàn thành
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">
+                        {formatValue(milestone.targetValue, goal.targetType)}
+                      </span>
+                      <span className="text-xs">{milestone.progressPercentage.toFixed(0)}%</span>
+                    </div>
+                    <Progress
+                      value={milestone.progressPercentage}
+                      className="h-1 mt-1"
+                      indicatorClassName={milestone.isCompleted ? 'bg-green-500' : ''}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+        
+        <CardFooter className="flex justify-between pt-2">
+          <div className="flex gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => onEdit && onEdit()}
+                  >
+                    <Pencil size={14} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Chỉnh sửa mục tiêu</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 text-destructive"
+                    onClick={() => onDelete && onDelete()}
+                  >
+                    <Trash2 size={14} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Xóa mục tiêu</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={() => onAddMilestone && onAddMilestone()}
+            >
+              Thêm cột mốc
+            </Button>
+            
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={() => calculateGoalProgress(goal.id)}
+            >
+              Cập nhật tiến độ
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </motion.div>
+  );
+}

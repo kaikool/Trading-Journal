@@ -779,7 +779,7 @@ export class MemStorage implements IStorage {
           endDate: goal.endDate,
           daysLeft,
           priority: goal.priority,
-          color: goal.color || null,
+          color: goal.color as string | null,
           milestones: milestonesWithProgress
         };
       })
