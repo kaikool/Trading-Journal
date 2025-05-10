@@ -11,7 +11,16 @@ import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { motion, AnimatePresence } from "framer-motion";
-import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import LazyTradeHistoryCard from "@/components/trades/LazyTradeHistoryCard";
 import { FilterTags } from "@/components/trades/FilterTags";
@@ -997,20 +1006,34 @@ export default function TradeHistory() {
       </div>
       
       {/* Dialog xác nhận xóa giao dịch */}
-      <ConfirmDeleteDialog
-        isOpen={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        itemToDelete={tradeToDelete}
-        onConfirm={handleDeleteTradeConfirm}
-        title="Confirm Trade Deletion"
-        description={
-          <>
-            Are you sure you want to delete this 
-            <strong> {tradeToDelete?.pair} {tradeToDelete?.direction} </strong>
-            trade? This action cannot be undone.
-          </>
-        }
-      />
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="safe-area-p">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Trade Deletion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this 
+              <strong> {tradeToDelete?.pair} {tradeToDelete?.direction} </strong>
+              trade? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (tradeToDelete) {
+                  handleDeleteTradeConfirm(tradeToDelete);
+                }
+                setIsDeleteDialogOpen(false);
+              }}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
   
