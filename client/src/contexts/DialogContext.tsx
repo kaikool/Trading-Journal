@@ -5,10 +5,6 @@ interface DialogContextType {
   dialogOpen: boolean;
   openDialog: () => void;
   closeDialog: () => void;
-  // Thời gian (ms) mà hệ thống sẽ không cuộn khi dialog đóng
-  preventScrollAfterDialogClose: number;
-  // Kiểm tra xem có nên ngăn chặn cuộn lên đầu sau khi dialog đóng không
-  shouldPreventScrollAfterDialogClose: () => boolean;
 }
 
 // Tạo context với giá trị mặc định
@@ -16,8 +12,6 @@ const DialogContext = createContext<DialogContextType>({
   dialogOpen: false,
   openDialog: () => {},
   closeDialog: () => {},
-  preventScrollAfterDialogClose: 1000,
-  shouldPreventScrollAfterDialogClose: () => false,
 });
 
 // Custom hook để sử dụng context
@@ -28,8 +22,6 @@ export function useDialog() {
 // Provider component
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [lastDialogCloseTime, setLastDialogCloseTime] = useState(0);
-  const preventScrollAfterDialogClose = 500; // 500ms
   const dialogCountRef = useRef(0); // Đếm số lượng dialog đang mở
 
   // Lắng nghe DOM để tự động phát hiện khi dialog được mở/đóng
@@ -54,9 +46,8 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
         setDialogOpen(true);
       } else if (totalDialogCount === 0 && dialogOpen) {
         dialogCountRef.current = 0;
-        console.log(`[DEBUG] DialogContext: Closing dialog, setting lastDialogCloseTime=${Date.now()}`);
+        console.log(`[DEBUG] DialogContext: Closing dialog`);
         setDialogOpen(false);
-        setLastDialogCloseTime(Date.now());
       } else {
         // Chỉ cập nhật số lượng nếu có thay đổi
         if (dialogCountRef.current !== totalDialogCount) {
@@ -106,25 +97,6 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
   // Đóng dialog
   const closeDialog = () => {
     setDialogOpen(false);
-    setLastDialogCloseTime(Date.now());
-  };
-
-  // Kiểm tra xem có nên ngăn chặn cuộn lên đầu sau khi dialog đóng không
-  const shouldPreventScrollAfterDialogClose = () => {
-    // Nếu dialog đang mở, luôn ngăn scroll
-    if (dialogOpen) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[DEBUG] shouldPreventScrollAfterDialogClose: Dialog đang mở, ngăn scroll`);
-      }
-      return true;
-    }
-    
-    // Kiểm tra dựa vào thời gian đóng dialog
-    const now = Date.now();
-    const timeSinceDialogClosed = now - lastDialogCloseTime;
-    const shouldPrevent = timeSinceDialogClosed < preventScrollAfterDialogClose;
-    console.log(`[DEBUG] shouldPreventScrollAfterDialogClose: now=${now}, lastDialogCloseTime=${lastDialogCloseTime}, diff=${timeSinceDialogClosed}ms, prevent=${shouldPrevent}`);
-    return shouldPrevent;
   };
 
   // Giá trị của context
@@ -132,8 +104,6 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
     dialogOpen,
     openDialog,
     closeDialog,
-    preventScrollAfterDialogClose,
-    shouldPreventScrollAfterDialogClose,
   };
 
   return (
