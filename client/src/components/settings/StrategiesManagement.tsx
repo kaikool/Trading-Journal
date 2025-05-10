@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { auth, getStrategies, addStrategy, updateStrategy, deleteStrategy } from "@/lib/firebase";
 import { Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import {
   StrategyConditionList,
 } from "./StrategyConditionInput";
@@ -565,6 +566,10 @@ export function StrategiesManagement() {
   // State for tracking which strategy is being edited
   const [editStrategyId, setEditStrategyId] = useState<string | null>(null);
   const [editedStrategy, setEditedStrategy] = useState<Partial<TradingStrategy> | null>(null);
+  
+  // State cho dialog xác nhận xóa
+  const [strategyToDelete, setStrategyToDelete] = useState<TradingStrategy | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   // State for tracking new rule inputs
   const [newTimeframe, setNewTimeframe] = useState("");

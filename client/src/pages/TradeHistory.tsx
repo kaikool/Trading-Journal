@@ -995,6 +995,53 @@ export default function TradeHistory() {
           </>
         ) : null}
       </div>
+      
+      {/* Dialog xác nhận xóa giao dịch */}
+      <ConfirmDeleteDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        itemToDelete={tradeToDelete}
+        onConfirm={handleDeleteTradeConfirm}
+        title="Xác nhận xóa giao dịch"
+        description={
+          <>
+            Bạn có chắc chắn muốn xóa giao dịch
+            <strong> {tradeToDelete?.pair} {tradeToDelete?.direction} </strong>
+            này không? Dữ liệu đã xóa không thể khôi phục lại được.
+          </>
+        }
+      />
     </div>
   );
+  
+  // Hàm xử lý xóa giao dịch sau khi xác nhận
+  function handleDeleteTradeConfirm(trade: Trade) {
+    if (!userId || !trade) return;
+    const tradeId = trade.id;
+    
+    // Cập nhật UI ngay lập tức trước khi xóa thực tế
+    setDeletingTradeIds(prev => [...prev, tradeId]);
+    
+    // Sau đó, xóa trong Firebase
+    import("@/lib/firebase").then(({ deleteTrade }) => {
+      deleteTrade(userId, tradeId)
+        .then(() => {
+          toast({
+            title: "Giao dịch đã xóa",
+            description: "Giao dịch đã được xóa thành công"
+          });
+        })
+        .catch((error) => {
+          // Nếu xóa thất bại, khôi phục UI bằng cách xóa tradeId khỏi deletingTradeIds
+          setDeletingTradeIds(prev => prev.filter(id => id !== tradeId));
+          
+          logError("Error deleting trade:", error);
+          toast({
+            variant: "destructive",
+            title: "Lỗi",
+            description: "Không thể xóa giao dịch. Vui lòng thử lại sau."
+          });
+        });
+    });
+  }
 }
