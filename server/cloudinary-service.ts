@@ -119,8 +119,8 @@ export function generateThumbnailUrl(originalUrl: string, width: number = 200, h
       return originalUrl;
     }
 
-    // Tạo đường dẫn mới với tham số kích thước
-    const thumbnailUrl = `${urlParts[0]}/upload/c_fill,w_${width},h_${height}/${urlParts[1]}`;
+    // Tạo đường dẫn mới với tham số kích thước và không bo góc (r_0)
+    const thumbnailUrl = `${urlParts[0]}/upload/c_fill,w_${width},h_${height},r_0/${urlParts[1]}`;
     return thumbnailUrl;
   } catch (error) {
     log(`Error generating thumbnail URL: ${error instanceof Error ? error.message : String(error)}`, 'cloudinary-service');
