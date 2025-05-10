@@ -111,6 +111,15 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
 
   // Kiểm tra xem có nên ngăn chặn cuộn lên đầu sau khi dialog đóng không
   const shouldPreventScrollAfterDialogClose = () => {
+    // Nếu dialog đang mở, luôn ngăn scroll
+    if (dialogOpen) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[DEBUG] shouldPreventScrollAfterDialogClose: Dialog đang mở, ngăn scroll`);
+      }
+      return true;
+    }
+    
+    // Kiểm tra dựa vào thời gian đóng dialog
     const now = Date.now();
     const timeSinceDialogClosed = now - lastDialogCloseTime;
     const shouldPrevent = timeSinceDialogClosed < preventScrollAfterDialogClose;

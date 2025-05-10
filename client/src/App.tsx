@@ -95,29 +95,30 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
-      // Sử dụng context để kiểm tra trạng thái dialog
-      // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
-      const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[App] Route change scroll check: dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
-      }
-      
-      if (shouldScroll) {
-        // Cuộn lên đầu trang, nhưng có độ trễ nhỏ để đảm bảo DOM đã render
+      // Tạo một trễ nhỏ để đảm bảo cập nhật dialogOpen
+      // Đây là cách tiếp cận an toàn hơn, tránh trường hợp scroll khi mở dialog
+      setTimeout(() => {
+        // Sử dụng context để kiểm tra trạng thái dialog
+        // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
+        const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
+        
         if (process.env.NODE_ENV === 'development') {
-          console.log(`[App] Scrolling to top after route change`);
+          console.log(`[App] Route change scroll check (delayed): dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
         }
         
-        // Sử dụng setTimeout để đảm bảo cuộn diễn ra sau khi UI đã cập nhật
-        setTimeout(() => {
+        if (shouldScroll) {
+          // Cuộn lên đầu trang, có độ trễ nhỏ để đảm bảo DOM đã render
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`[App] Scrolling to top after route change`);
+          }
+          
           // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
           window.scrollTo({
             top: 0,
             behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để cảm giác chuyển trang nhanh hơn
           });
-        }, 50);
-      }
+        }
+      }, 100); // Tăng độ trễ lên 100ms để đảm bảo DialogContext có thể cập nhật
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
       const readyTimer = setTimeout(() => {
