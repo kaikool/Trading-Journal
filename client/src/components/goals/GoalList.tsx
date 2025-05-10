@@ -489,8 +489,16 @@ export function GoalList() {
                 description: currentGoal.description || '',
                 targetType: currentGoal.targetType,
                 targetValue: currentGoal.targetValue,
-                startDate: currentGoal.startDate?.toDate ? currentGoal.startDate.toDate() : new Date(),
-                endDate: currentGoal.endDate?.toDate ? currentGoal.endDate.toDate() : new Date(),
+                startDate: currentGoal.startDate 
+                  ? (typeof currentGoal.startDate.toDate === 'function' 
+                     ? currentGoal.startDate.toDate() 
+                     : new Date(currentGoal.startDate))
+                  : new Date(),
+                endDate: currentGoal.endDate 
+                  ? (typeof currentGoal.endDate.toDate === 'function'
+                     ? currentGoal.endDate.toDate()
+                     : new Date(currentGoal.endDate))
+                  : new Date(),
                 priority: currentGoal.priority,
                 color: currentGoal.color || '',
               }}
