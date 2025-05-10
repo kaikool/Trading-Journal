@@ -213,7 +213,7 @@ export function ChartImageDialog({
     >
       <DialogContent 
         variant="chart"
-        className="h-[85vh] sm:h-[85vh] md:h-[85vh] lg:h-[85vh] max-h-[800px]"
+        className="h-[85vh] sm:h-[85vh] md:h-[85vh] lg:h-[85vh] max-h-[800px] safe-area-p"
       >
         {/* Title và Description theo chuẩn accessibility */}
         <DialogTitle className="sr-only">
