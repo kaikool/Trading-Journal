@@ -5,7 +5,7 @@ import { DASHBOARD_CONFIG } from './config';
 import { debug, logError, logWarning } from './debug';
 import { processTradeTrigger as originalProcessTradeTrigger } from './achievements-service';
 import { debounce } from './utils';
-import { TradingStrategy } from "@/types";
+import { TradingStrategy, Goal, Milestone } from "@/types";
 import { 
   getFirestore, 
   doc, 

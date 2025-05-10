@@ -210,6 +210,37 @@ export interface UserAchievements {
   updatedAt: Timestamp;
 }
 
+// Goal interface for Firebase
+export interface Goal {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  targetType: 'profit' | 'winRate' | 'profitFactor' | 'riskRewardRatio' | 'balance' | 'trades';
+  targetValue: number;
+  currentValue: number;
+  startDate: Timestamp | Date;
+  endDate: Timestamp | Date;
+  isCompleted: boolean;
+  priority: 'low' | 'medium' | 'high';
+  color?: string;
+  createdAt: Timestamp;
+  updatedAt?: Timestamp;
+}
+
+// Interface for Goal milestones
+export interface Milestone {
+  id: string;
+  goalId: string;
+  title: string;
+  description?: string;
+  targetValue: number;
+  isCompleted: boolean;
+  completedDate?: Timestamp | null;
+  createdAt: Timestamp;
+  updatedAt?: Timestamp;
+}
+
 export interface AppSettings {
   theme: 'light' | 'dark' | 'system';
   currency: 'USD' | 'EUR' | 'GBP' | 'JPY';
