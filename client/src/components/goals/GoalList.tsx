@@ -5,7 +5,7 @@ import { GoalForm } from './GoalForm';
 import { MilestoneForm } from './MilestoneForm';
 import { useGoalData } from '@/hooks/use-goal-data';
 import { useUserData } from '@/hooks/use-user-data';
-import { Goal, GoalMilestone } from '@shared/schema';
+import { Goal as GoalType, GoalMilestone } from '@shared/schema';
 
 import {
   Dialog,
@@ -35,7 +35,7 @@ import { Separator } from '@/components/ui/separator';
 import { 
   PlusCircle, 
   Search, 
-  Goal, 
+  Target as GoalIcon, 
   Trophy, 
   Clock, 
   FilterX,

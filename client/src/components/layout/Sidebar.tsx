@@ -21,6 +21,7 @@ const SIDEBAR_LINKS = [
   { icon: <Icons.nav.history className="h-5 w-5" />, label: "History", href: "/trade/history" },
   { icon: <Icons.nav.analytics className="h-5 w-5" />, label: "Analytics", href: "/analytics" },
   { icon: <Icons.nav.strategies className="h-5 w-5" />, label: "Strategies", href: "/strategies" },
+  { icon: <Icons.nav.goals className="h-5 w-5" />, label: "Goals", href: "/goals" },
   { icon: <Icons.nav.achievements className="h-5 w-5" />, label: "Achievements", href: "/achievements" },
   { icon: <Icons.nav.settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
@@ -329,6 +330,7 @@ export function Sidebar({ className }: { className?: string }) {
                       )) ||
                       (item.href === "/analytics" && location === "/analytics") ||
                       (item.href === "/strategies" && location === "/strategies") ||
+                      (item.href === "/goals" && location === "/goals") ||
                       (item.href === "/achievements" && location === "/achievements") ||
                       (item.href === "/settings" && location === "/settings")
                     }

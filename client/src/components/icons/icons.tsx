@@ -100,6 +100,7 @@ export const Icons = {
     history: LucideIcons.History,
     analytics: LucideIcons.BarChart2,
     strategies: LucideIcons.BookOpen,
+    goals: LucideIcons.Target,
     achievements: LucideIcons.Trophy,
     settings: LucideIcons.Settings,
     logout: LucideIcons.LogOut,
