@@ -1336,11 +1336,27 @@ async function getGoalById(userId: string, goalId: string): Promise<Goal & { mil
       // Lấy cột mốc cho mục tiêu
       const milestones = await getMilestones(userId, goalId);
       
-      return {
+      // Đảm bảo định dạng dữ liệu đúng kiểu Goal
+      const goalRaw = {
         id: docSnap.id,
-        ...goalData,
+        userId: userId,
+        title: goalData.title || '',
+        description: goalData.description,
+        targetType: goalData.targetType || 'profit',
+        targetValue: goalData.targetValue || 0,
+        currentValue: goalData.currentValue || 0,
+        startDate: goalData.startDate,
+        endDate: goalData.endDate,
+        isCompleted: goalData.isCompleted || false,
+        priority: goalData.priority || 'medium',
+        color: goalData.color,
+        createdAt: goalData.createdAt,
+        updatedAt: goalData.updatedAt,
         milestones
       };
+      
+      // Sử dụng assertion kiểu để đảm bảo TypeScript hiểu đúng
+      return goalRaw as Goal & { milestones: Milestone[] };
     } else {
       throw new Error("Goal not found");
     }
