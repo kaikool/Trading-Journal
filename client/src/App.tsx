@@ -19,7 +19,7 @@ import AchievementNotificationContainer from "@/components/achievements/Achievem
 import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DataCacheProvider } from "@/contexts/DataCacheContext";
-import { DialogProvider, useDialog } from "@/contexts/DialogContext";
+import { DialogProvider } from "@/contexts/DialogContext";
 
 // Improved dynamic imports with proper code splitting
 // Core/frequently used pages - higher priority
@@ -79,74 +79,14 @@ function MainContent() {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const currentRoute = location;
-  const { dialogOpen, shouldPreventScrollAfterDialogClose } = useDialog();
   
   // Add transition state to improve route changes
   const [isPageReady, setIsPageReady] = useState<boolean>(true);
   const [prevLocation, setPrevLocation] = useState<string>(location);
   
-  // Biến để kiểm soát nếu sự kiện route change được kích hoạt từ dialog
-  const routeChangeFromDialogRef = useRef(false);
-  
-  // Thêm event listener để phát hiện dialog sắp mở và chuyển route
-  useEffect(() => {
-    // Khi dialog sắp mở (từ bất kỳ component nào)
-    const handleDialogWillOpen = () => {
-      // Đánh dấu để không trigger scroll
-      routeChangeFromDialogRef.current = true;
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[App] Detected dialog will open, preventing scroll');
-      }
-    };
-    
-    // Khi có route change từ browser history
-    const handlePopState = () => {
-      // Kiểm tra xem có dialog nào đang mở không
-      const dialogElements = document.querySelectorAll('[role="dialog"]');
-      const radixDialogElements = document.querySelectorAll('[data-state="open"][aria-modal="true"]');
-      
-      if (dialogElements.length > 0 || radixDialogElements.length > 0) {
-        // Nếu có dialog đang mở, đánh dấu rằng route change đến từ dialog
-        routeChangeFromDialogRef.current = true;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('[App] Detected route change from dialog');
-        }
-      }
-    };
-    
-    // Khi có click vào một link
-    const handleLinkClick = (e: MouseEvent) => {
-      // Kiểm tra nếu click vào một liên kết
-      if (e.target instanceof HTMLAnchorElement && e.target.href) {
-        // Kiểm tra xem có dialog nào đang mở không
-        const dialogElements = document.querySelectorAll('[role="dialog"]');
-        const radixDialogElements = document.querySelectorAll('[data-state="open"][aria-modal="true"]');
-        
-        if (dialogElements.length > 0 || radixDialogElements.length > 0) {
-          routeChangeFromDialogRef.current = true;
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[App] Detected link click from dialog');
-          }
-        }
-      }
-    };
-    
-    // Đăng ký các event listeners
-    document.addEventListener('dialog:will-open', handleDialogWillOpen);
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('click', handleLinkClick, true);
-    
-    return () => {
-      document.removeEventListener('dialog:will-open', handleDialogWillOpen);
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('click', handleLinkClick, true);
-    };
-  }, []);
-  
   // Tối ưu hóa việc chuyển trang
   useEffect(() => {
-    // Khi location thay đổi, đánh dấu trang đang loading
+    // Khi location thay đổi, đánh dấu trang đang loading và scroll lên đầu trang
     if (prevLocation !== location) {
       // Đánh dấu trang chưa sẵn sàng và hiển thị chỉ báo loading
       setIsPageReady(false);
@@ -154,37 +94,25 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[App] Route change from dialog: ${routeChangeFromDialogRef.current}`);
-      }
+      // Dialog KHÔNG được coi là page, nên chỉ scroll khi thực sự chuyển page
+      // Kiểm tra xem URL có thay đổi không (không phải modal/dialog)
+      const isRealPageChange = prevLocation.split('?')[0] !== location.split('?')[0];
       
-      // Nếu route change không đến từ dialog, mới thực hiện scroll
-      if (!routeChangeFromDialogRef.current) {
+      if (isRealPageChange) {
         // Tạo một trễ nhỏ để đảm bảo DOM đã render
         setTimeout(() => {
-          // Chỉ cuộn lên đầu khi không phải đang có dialog
-          const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
-          
+          // Log cho debugging
           if (process.env.NODE_ENV === 'development') {
-            console.log(`[App] Safe route change scroll check: dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
+            console.log(`[App] Scrolling to top for page change: ${prevLocation} -> ${location}`);
           }
           
-          if (shouldScroll) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`[App] Scrolling to top after route change`);
-            }
-            
-            // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
-            window.scrollTo({
-              top: 0,
-              behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để cảm giác chuyển trang nhanh hơn
-            });
-          }
+          // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
+          window.scrollTo({
+            top: 0,
+            behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để cảm giác chuyển trang nhanh hơn
+          });
         }, 50);
       }
-      
-      // Reset lại biến sau khi xử lý xong
-      routeChangeFromDialogRef.current = false;
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
       const readyTimer = setTimeout(() => {
@@ -195,7 +123,7 @@ function MainContent() {
         clearTimeout(readyTimer); 
       };
     }
-  }, [location, dialogOpen, shouldPreventScrollAfterDialogClose]);
+  }, [location]);
   
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
