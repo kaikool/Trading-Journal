@@ -10,6 +10,19 @@
  * Không định nghĩa trùng lặp (như .pwa-top-inset) ở đây.
  */
 
+/* Safe area padding class for dialogs */
+.safe-area-p {
+  --dialog-padding: var(--spacing-6, 1.5rem);
+  padding-top: max(var(--dialog-padding), env(safe-area-inset-top, 0px));
+  padding-bottom: max(var(--dialog-padding), env(safe-area-inset-bottom, 0px));
+  padding-left: max(var(--dialog-padding), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--dialog-padding), env(safe-area-inset-right, 0px));
+  
+  /* Đảm bảo nội dung bên trong không bị overflow */
+  overflow-y: auto;
+  max-height: calc(100vh - max(var(--dialog-padding), env(safe-area-inset-top, 0px)) - max(var(--dialog-padding), env(safe-area-inset-bottom, 0px)));
+}
+
 /* Compact table for analytics - sử dụng giá trị spacing theo bội số của 4px */
 .compact-table th, 
 .compact-table td {
