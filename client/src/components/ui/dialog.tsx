@@ -67,9 +67,74 @@ function useDialogVariant(
 // Dialog Components
 // =======================
 
-const Dialog = DialogPrimitive.Root
+/**
+ * Dialog component được cải tiến từ DialogPrimitive.Root
+ * Tự động gửi thông báo trước khi dialog mở để ngăn chặn scroll tự động
+ */
+const Dialog = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Root>
+>((props, ref) => {
+  // Tùy chỉnh xử lý khi dialog mở/đóng
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      // Thông báo dialog sắp mở TRƯỚC khi DOM thực sự cập nhật
+      // Giúp ngăn app cuộn trang khi dialog chuẩn bị mở
+      document.dispatchEvent(new CustomEvent('dialog:will-open'));
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Dialog] Will open, dispatching early event');
+      }
+    }
+    
+    // Gọi handler từ props nếu có
+    if (props.onOpenChange) {
+      props.onOpenChange(open);
+    }
+  };
+  
+  return (
+    <DialogPrimitive.Root
+      {...props}
+      ref={ref}
+      onOpenChange={handleOpenChange}
+    />
+  );
+});
+Dialog.displayName = "Dialog";
 
-const DialogTrigger = DialogPrimitive.Trigger
+/**
+ * DialogTrigger component được cải tiến để tự động thông báo trước khi mở dialog
+ */
+const DialogTrigger = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Trigger>
+>((props, ref) => {
+  // Tùy chỉnh xử lý khi click
+  const handleClick = (e: React.MouseEvent) => {
+    // Thông báo dialog sắp mở TRƯỚC khi click event kết thúc 
+    // Giúp ngăn app cuộn trang khi dialog chuẩn bị mở
+    document.dispatchEvent(new CustomEvent('dialog:will-open'));
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[DialogTrigger] Clicked, dispatching early event');
+    }
+    
+    // Gọi onClick từ props nếu có
+    if (props.onClick) {
+      props.onClick(e);
+    }
+  };
+  
+  return (
+    <DialogPrimitive.Trigger
+      {...props}
+      ref={ref}
+      onClick={handleClick}
+    />
+  );
+});
+DialogTrigger.displayName = "DialogTrigger";
 
 const DialogPortal = DialogPrimitive.Portal
 
