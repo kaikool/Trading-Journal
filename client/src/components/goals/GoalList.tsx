@@ -5,7 +5,7 @@ import { GoalForm } from './GoalForm';
 import { MilestoneForm } from './MilestoneForm';
 import { useGoalData } from '@/hooks/use-goal-data';
 import { useUserData } from '@/hooks/use-user-data';
-import { Goal as GoalType, GoalMilestone } from '@shared/schema';
+// Firebase Firestore based types now
 
 import {
   Dialog,

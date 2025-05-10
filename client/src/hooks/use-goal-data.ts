@@ -210,7 +210,7 @@ export function useGoalData() {
 
   // Update an existing goal
   const updateGoalMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<Goal> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
       if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
       
       // Gọi hàm cập nhật mục tiêu từ Firebase
@@ -258,7 +258,7 @@ export function useGoalData() {
 
   // Create a milestone
   const createMilestoneMutation = useMutation({
-    mutationFn: async ({ goalId, data }: { goalId: string; data: Partial<GoalMilestone> }) => {
+    mutationFn: async ({ goalId, data }: { goalId: string; data: any }) => {
       if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
       
       // Gọi hàm thêm cột mốc từ Firebase
@@ -282,7 +282,7 @@ export function useGoalData() {
 
   // Update a milestone
   const updateMilestoneMutation = useMutation({
-    mutationFn: async ({ goalId, milestoneId, data }: { goalId: string; milestoneId: string; data: Partial<GoalMilestone> }) => {
+    mutationFn: async ({ goalId, milestoneId, data }: { goalId: string; milestoneId: string; data: any }) => {
       if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
       
       // Gọi hàm cập nhật cột mốc từ Firebase
