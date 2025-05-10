@@ -173,17 +173,28 @@ export function Sidebar({ className }: { className?: string }) {
   const touchEndX = useRef(0);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
-  const edgeSwipeZone = 20; // Swipe detection zone from left edge (px)
+  const edgeSwipeZone = 8; // Reduced swipe detection zone from left edge (px) - prevent accidental activation
   
   // Handle swipe events for mobile
   const handleTouchStart = (e: TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
+    
+    // Prevent browser history navigation in PWA mode when starting touch from edge
+    if (touchStartX.current < edgeSwipeZone && isPWA()) {
+      // This prevents the browser from hijacking our edge swipe
+      e.preventDefault();
+    }
   };
   
   const handleTouchMove = (e: TouchEvent) => {
     touchEndX.current = e.touches[0].clientX;
     touchEndY.current = e.touches[0].clientY;
+    
+    // Additional prevention for browser edge swipe while dragging
+    if (touchStartX.current < edgeSwipeZone && isPWA()) {
+      e.preventDefault();
+    }
   };
   
   const handleTouchEnd = () => {
@@ -228,8 +239,9 @@ export function Sidebar({ className }: { className?: string }) {
   // Đăng ký các event listeners
   useEffect(() => {
     // Đăng ký sự kiện cho touch events để hỗ trợ vuốt từ cạnh trái
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
+    // Use non-passive mode to allow preventDefault() to block browser's default edge swipe
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd);
     
     // Đăng ký sự kiện click để hỗ trợ hot zone
@@ -257,7 +269,7 @@ export function Sidebar({ className }: { className?: string }) {
         {/* Mobile Sidebar Overlay */}
         <div 
           className={cn(
-            "fixed inset-0 z-50 transition-opacity duration-300 ease-in-out bg-background/80 backdrop-blur-sm",
+            "fixed inset-0 z-[100] transition-opacity duration-300 ease-in-out bg-background/80 backdrop-blur-sm",
             isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           )}
           onClick={closeSidebar}
@@ -267,7 +279,7 @@ export function Sidebar({ className }: { className?: string }) {
         {/* Mobile Sidebar Drawer - luôn tôn trọng safe area top và bottom */}
         <aside 
           className={cn(
-            "fixed left-0 z-50 w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
+            "fixed left-0 z-[101] w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
             "top-0 bottom-0 safe-area-top safe-area-bottom flex flex-col",
             isOpen ? "translate-x-0" : "-translate-x-full",
             // Đảm bảo mobile sidebar được ưu tiên cao hơn và nhận tất cả sự kiện khi mở
