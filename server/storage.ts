@@ -1,6 +1,8 @@
 import { 
   type User, type InsertUser,
-  type Trade, type InsertTrade
+  type Trade, type InsertTrade,
+  type Goal, type InsertGoal,
+  type GoalMilestone, type InsertGoalMilestone
 } from "@shared/schema";
 
 // Interface for storage operations
@@ -18,9 +20,24 @@ export interface IStorage {
   updateTrade(id: number, tradeData: Partial<Trade>): Promise<Trade>;
   deleteTrade(id: number): Promise<void>;
   
+  // Goal operations
+  createGoal(goal: InsertGoal): Promise<Goal>;
+  getGoalById(id: number): Promise<Goal | undefined>;
+  getGoalsByUserId(userId: number): Promise<Goal[]>;
+  updateGoal(id: number, goalData: Partial<Goal>): Promise<Goal>;
+  deleteGoal(id: number): Promise<void>;
+  calculateGoalProgress(goalId: number): Promise<number>;
+  
+  // GoalMilestone operations
+  createGoalMilestone(milestone: InsertGoalMilestone): Promise<GoalMilestone>;
+  getGoalMilestonesByGoalId(goalId: number): Promise<GoalMilestone[]>;
+  updateGoalMilestone(id: number, milestoneData: Partial<GoalMilestone>): Promise<GoalMilestone>;
+  deleteGoalMilestone(id: number): Promise<void>;
+  
   // Analytics operations
   getTradeStats(userId: number): Promise<TradeStats>;
   getPerformanceData(userId: number): Promise<PerformanceData>;
+  getGoalsProgress(userId: number): Promise<GoalsProgressData>;
 }
 
 // Types for analytics
@@ -89,18 +106,67 @@ interface PerformanceData {
   };
 }
 
+// Goal progress tracking data
+interface GoalProgressItem {
+  id: number;
+  title: string;
+  targetType: string;
+  targetValue: number;
+  currentValue: number;
+  progressPercentage: number;
+  isCompleted: boolean;
+  startDate: Date;
+  endDate: Date;
+  daysLeft: number;
+  priority: string;
+  color: string | null;
+  milestones?: {
+    id: number;
+    title: string;
+    targetValue: number;
+    isCompleted: boolean;
+    progressPercentage: number;
+  }[];
+}
+
+interface GoalsProgressData {
+  activeGoals: GoalProgressItem[];
+  completedGoals: GoalProgressItem[];
+  upcomingMilestones: {
+    id: number;
+    goalId: number;
+    goalTitle: string;
+    title: string;
+    targetValue: number;
+    progressPercentage: number;
+  }[];
+  overallProgress: {
+    totalGoals: number;
+    completedGoals: number;
+    progressPercentage: number;
+  };
+}
+
 // Memory storage implementation
 export class MemStorage implements IStorage {
   private usersMap: Map<number, User>;
   private tradesMap: Map<number, Trade>;
+  private goalsMap: Map<number, Goal>;
+  private milestonesMap: Map<number, GoalMilestone>;
   private userIdCounter: number;
   private tradeIdCounter: number;
+  private goalIdCounter: number;
+  private milestoneIdCounter: number;
   
   constructor() {
     this.usersMap = new Map();
     this.tradesMap = new Map();
+    this.goalsMap = new Map();
+    this.milestonesMap = new Map();
     this.userIdCounter = 1;
     this.tradeIdCounter = 1;
+    this.goalIdCounter = 1;
+    this.milestoneIdCounter = 1;
   }
   
   // User operations
@@ -472,6 +538,290 @@ export class MemStorage implements IStorage {
             : 0,
         },
       },
+    };
+  }
+  
+  // Goal operations
+  async createGoal(goalData: InsertGoal): Promise<Goal> {
+    const id = this.goalIdCounter++;
+    const now = new Date();
+    
+    const goal: Goal = {
+      id,
+      ...goalData,
+      currentValue: 0,
+      isCompleted: false,
+      createdAt: now,
+      updatedAt: now,
+      milestones: [],
+    };
+    
+    this.goalsMap.set(id, goal);
+    return goal;
+  }
+  
+  async getGoalById(id: number): Promise<Goal | undefined> {
+    return this.goalsMap.get(id);
+  }
+  
+  async getGoalsByUserId(userId: number): Promise<Goal[]> {
+    return Array.from(this.goalsMap.values())
+      .filter((goal) => goal.userId === userId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+  
+  async updateGoal(id: number, goalData: Partial<Goal>): Promise<Goal> {
+    const goal = await this.getGoalById(id);
+    
+    if (!goal) {
+      throw new Error("Goal not found");
+    }
+    
+    const updatedGoal = {
+      ...goal,
+      ...goalData,
+      updatedAt: new Date(),
+    };
+    
+    this.goalsMap.set(id, updatedGoal);
+    return updatedGoal;
+  }
+  
+  async deleteGoal(id: number): Promise<void> {
+    const goal = await this.getGoalById(id);
+    
+    if (!goal) {
+      throw new Error("Goal not found");
+    }
+    
+    // Delete all milestones for this goal
+    const milestones = await this.getGoalMilestonesByGoalId(id);
+    for (const milestone of milestones) {
+      await this.deleteGoalMilestone(milestone.id);
+    }
+    
+    this.goalsMap.delete(id);
+  }
+  
+  async calculateGoalProgress(goalId: number): Promise<number> {
+    const goal = await this.getGoalById(goalId);
+    
+    if (!goal) {
+      throw new Error("Goal not found");
+    }
+    
+    // Get current value based on goal target type
+    const currentValue = await this.getGoalCurrentValue(goal);
+    
+    // Update the goal with the current value
+    await this.updateGoal(goalId, { currentValue });
+    
+    // Calculate progress percentage
+    const progress = Math.min(100, (currentValue / goal.targetValue) * 100);
+    
+    // If progress is 100% or more, mark goal as completed
+    if (progress >= 100 && !goal.isCompleted) {
+      await this.updateGoal(goalId, { isCompleted: true });
+    }
+    
+    return progress;
+  }
+  
+  // Helper method to get current value based on goal type
+  private async getGoalCurrentValue(goal: Goal): Promise<number> {
+    const user = await this.getUser(goal.userId);
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
+    const stats = await this.getTradeStats(goal.userId);
+    
+    switch (goal.targetType) {
+      case "profit":
+        return stats.netProfit;
+      case "winRate":
+        return stats.winRate;
+      case "profitFactor":
+        return stats.profitFactor;
+      case "riskRewardRatio":
+        return stats.avgRiskRewardRatio;
+      case "balance":
+        return user.currentBalance;
+      case "trades":
+        return stats.totalTrades;
+      default:
+        return 0;
+    }
+  }
+  
+  // GoalMilestone operations
+  async createGoalMilestone(milestoneData: InsertGoalMilestone): Promise<GoalMilestone> {
+    const id = this.milestoneIdCounter++;
+    const now = new Date();
+    
+    const milestone: GoalMilestone = {
+      id,
+      ...milestoneData,
+      isCompleted: false,
+      completedDate: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+    
+    this.milestonesMap.set(id, milestone);
+    
+    // Update the goal's milestones array
+    const goal = await this.getGoalById(milestone.goalId);
+    if (goal) {
+      const milestones = goal.milestones || [];
+      await this.updateGoal(goal.id, { 
+        milestones: [...milestones, milestone] 
+      });
+    }
+    
+    return milestone;
+  }
+  
+  async getGoalMilestonesByGoalId(goalId: number): Promise<GoalMilestone[]> {
+    return Array.from(this.milestonesMap.values())
+      .filter((milestone) => milestone.goalId === goalId)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  }
+  
+  async updateGoalMilestone(id: number, milestoneData: Partial<GoalMilestone>): Promise<GoalMilestone> {
+    const milestone = this.milestonesMap.get(id);
+    
+    if (!milestone) {
+      throw new Error("Milestone not found");
+    }
+    
+    const updatedMilestone = {
+      ...milestone,
+      ...milestoneData,
+      updatedAt: new Date(),
+    };
+    
+    // If milestone is completed and completedDate is not set, set it
+    if (updatedMilestone.isCompleted && !updatedMilestone.completedDate) {
+      updatedMilestone.completedDate = new Date();
+    }
+    
+    this.milestonesMap.set(id, updatedMilestone);
+    
+    // Update the milestone in the goal's milestones array
+    const goal = await this.getGoalById(milestone.goalId);
+    if (goal && goal.milestones) {
+      const updatedMilestones = goal.milestones.map(m => 
+        m.id === id ? updatedMilestone : m
+      );
+      await this.updateGoal(goal.id, { milestones: updatedMilestones });
+    }
+    
+    return updatedMilestone;
+  }
+  
+  async deleteGoalMilestone(id: number): Promise<void> {
+    const milestone = this.milestonesMap.get(id);
+    
+    if (!milestone) {
+      throw new Error("Milestone not found");
+    }
+    
+    this.milestonesMap.delete(id);
+    
+    // Remove the milestone from the goal's milestones array
+    const goal = await this.getGoalById(milestone.goalId);
+    if (goal && goal.milestones) {
+      const updatedMilestones = goal.milestones.filter(m => m.id !== id);
+      await this.updateGoal(goal.id, { milestones: updatedMilestones });
+    }
+  }
+  
+  // Goals progress analytics
+  async getGoalsProgress(userId: number): Promise<GoalsProgressData> {
+    const goals = await this.getGoalsByUserId(userId);
+    const now = new Date();
+    
+    // Calculate progress for each goal
+    const goalsWithProgress: GoalProgressItem[] = await Promise.all(
+      goals.map(async (goal) => {
+        const progress = await this.calculateGoalProgress(goal.id);
+        const milestones = await this.getGoalMilestonesByGoalId(goal.id);
+        
+        // Calculate days left
+        const endDate = new Date(goal.endDate);
+        const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        
+        // Calculate milestone progress
+        const milestonesWithProgress = milestones.map(milestone => {
+          const progressPercentage = goal.currentValue >= milestone.targetValue ? 100 : 
+            Math.min(100, (goal.currentValue / milestone.targetValue) * 100);
+          
+          return {
+            id: milestone.id,
+            title: milestone.title,
+            targetValue: milestone.targetValue,
+            isCompleted: milestone.isCompleted,
+            progressPercentage
+          };
+        });
+        
+        return {
+          id: goal.id,
+          title: goal.title,
+          targetType: goal.targetType,
+          targetValue: goal.targetValue,
+          currentValue: goal.currentValue,
+          progressPercentage: progress,
+          isCompleted: goal.isCompleted,
+          startDate: goal.startDate,
+          endDate: goal.endDate,
+          daysLeft,
+          priority: goal.priority,
+          color: goal.color,
+          milestones: milestonesWithProgress
+        };
+      })
+    );
+    
+    // Split goals into active and completed
+    const activeGoals = goalsWithProgress.filter(goal => !goal.isCompleted);
+    const completedGoals = goalsWithProgress.filter(goal => goal.isCompleted);
+    
+    // Find upcoming milestones (not completed, sorted by progress)
+    const allMilestones = goalsWithProgress.flatMap(goal => 
+      (goal.milestones || []).map(milestone => ({
+        id: milestone.id,
+        goalId: goal.id,
+        goalTitle: goal.title,
+        title: milestone.title,
+        targetValue: milestone.targetValue,
+        progressPercentage: milestone.progressPercentage
+      }))
+    );
+    
+    const upcomingMilestones = allMilestones
+      .filter(milestone => milestone.progressPercentage < 100)
+      .sort((a, b) => b.progressPercentage - a.progressPercentage)
+      .slice(0, 5);
+    
+    // Calculate overall progress
+    const totalGoals = goals.length;
+    const completedGoalsCount = completedGoals.length;
+    const overallProgressPercentage = totalGoals > 0 
+      ? (completedGoalsCount / totalGoals) * 100 
+      : 0;
+    
+    return {
+      activeGoals,
+      completedGoals,
+      upcomingMilestones,
+      overallProgress: {
+        totalGoals,
+        completedGoals: completedGoalsCount,
+        progressPercentage: overallProgressPercentage
+      }
     };
   }
 }
