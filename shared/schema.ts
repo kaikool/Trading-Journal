@@ -16,6 +16,37 @@ export type User = {
   updatedAt: Date;
 };
 
+// Goal type
+export type Goal = {
+  id: number;
+  userId: number;
+  title: string;
+  description?: string | null;
+  targetType: "profit" | "winRate" | "profitFactor" | "riskRewardRatio" | "balance" | "trades";
+  targetValue: number;
+  currentValue: number;
+  startDate: Date;
+  endDate: Date;
+  isCompleted: boolean;
+  color?: string | null;
+  priority: "low" | "medium" | "high";
+  milestones?: GoalMilestone[] | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// Goal Milestone type
+export type GoalMilestone = {
+  id: number;
+  goalId: number;
+  title: string;
+  targetValue: number;
+  isCompleted: boolean;
+  completedDate?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 // Trade type
 export type Trade = {
   id: number;
