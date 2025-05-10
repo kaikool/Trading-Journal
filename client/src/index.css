@@ -10,6 +10,23 @@
  * Không định nghĩa trùng lặp (như .pwa-top-inset) ở đây.
  */
 
+/* Utilities cho ScrollToTop */
+html[data-scrolling="smooth"] {
+  scroll-behavior: auto !important; /* Force auto để tránh xung đột */
+}
+
+body.scroll-in-progress {
+  /* Chặn các hiệu ứng scroll khác */
+  overflow-anchor: none;
+  overscroll-behavior-y: none;
+}
+
+body.scroll-in-progress * {
+  /* Tạm thời vô hiệu hóa các hiệu ứng transition có thể gây khó chịu khi scroll */
+  transition-duration: 0s !important;
+  animation-duration: 0s !important;
+}
+
 /* Safe area padding class for dialogs */
 .safe-area-p {
   --dialog-padding: var(--spacing-6, 1.5rem);

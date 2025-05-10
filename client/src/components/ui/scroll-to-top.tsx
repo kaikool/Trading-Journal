@@ -202,35 +202,71 @@ export function ScrollToTop({
     // Đánh dấu đang trong quá trình cuộn
     setIsScrolling(true);
     
-    // Thực hiện scroll bằng requestAnimationFrame để tối ưu hiệu suất
+    // Thực hiện scroll sử dụng requestAnimationFrame để tối ưu hiệu suất
     try {
-      // Sử dụng native API để cuộn mượt
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      // Đánh dấu document để các component khác biết đang scroll theo cách này
+      document.documentElement.setAttribute('data-scrolling', 'smooth');
       
-      // Giải pháp dự phòng nếu scrollTo với behavior smooth không hoạt động sau 600ms
+      // Thêm class tạm thời vào body để ngăn các hiệu ứng scroll smooth khác
+      document.body.classList.add('scroll-in-progress');
+      
+      // Sử dụng requestAnimationFrame để scroll mượt mà hơn
+      const scrollToTopAnimated = () => {
+        const currentPosition = getScrollPosition();
+        
+        // Đã gần đến đỉnh, thực hiện scroll tức thì 
+        if (currentPosition < 5) {
+          window.scrollTo(0, 0);
+          
+          // Đợi một khoảng thời gian nhỏ để đảm bảo scroll đã hoàn thành
+          setTimeout(() => {
+            // Loại bỏ trạng thái scroll
+            document.documentElement.removeAttribute('data-scrolling');
+            document.body.classList.remove('scroll-in-progress');
+            
+            // Đặt lại trạng thái
+            resetScrollingState();
+          }, 100);
+          return;
+        }
+        
+        // Tính toán vị trí mới dựa trên khoảng cách còn lại
+        // Sử dụng hệ số giảm dần để tạo hiệu ứng easing
+        const step = Math.max(Math.floor(currentPosition / 6), 1);
+        
+        // Scroll đến vị trí mới
+        window.scrollTo(0, currentPosition - step);
+        
+        // Tiếp tục animation
+        timeoutsRef.current.scroll = setTimeout(() => {
+          requestAnimationFrame(scrollToTopAnimated);
+        }, 1000 / 60); // Khoảng 60fps
+      };
+      
+      // Bắt đầu scroll
+      requestAnimationFrame(scrollToTopAnimated);
+      
+      // Giải pháp dự phòng nếu animation không hoạt động
       const fallbackTimeout = setTimeout(() => {
         const currentPos = getScrollPosition();
         if (currentPos > 5) {
           if (process.env.NODE_ENV === 'development') {
             console.log(`[ScrollToTop] Fallback: Scroll đã hoạt động một phần (${currentPos}px còn lại), force scroll`);
           }
+          // Force scroll
           window.scrollTo(0, 0);
+          
+          // Loại bỏ trạng thái scrolling
+          document.documentElement.removeAttribute('data-scrolling');
+          document.body.classList.remove('scroll-in-progress');
+          
+          // Đặt lại trạng thái
+          resetScrollingState();
         }
-      }, 600);
+      }, 800);
       
       // Lưu tham chiếu để có thể clear khi cần
       timeoutsRef.current.fallback = fallbackTimeout;
-      
-      // Đặt lại trạng thái sau khi cuộn hoàn tất
-      const resetTimeout = setTimeout(() => {
-        resetScrollingState();
-      }, 1000);
-      
-      // Lưu tham chiếu để có thể clear khi cần
-      timeoutsRef.current.reset = resetTimeout;
       
       // Safety timeout - đảm bảo trạng thái luôn được đặt lại sau tối đa 2000ms
       const safetyTimeout = setTimeout(() => {
@@ -238,6 +274,10 @@ export function ScrollToTop({
           if (process.env.NODE_ENV === 'development') {
             console.log("[ScrollToTop] Safety reset: Đặt lại trạng thái scroll sau 2000ms");
           }
+          // Force scroll và reset
+          window.scrollTo(0, 0);
+          document.documentElement.removeAttribute('data-scrolling');
+          document.body.classList.remove('scroll-in-progress');
           resetScrollingState();
         }
       }, 2000);
@@ -249,8 +289,22 @@ export function ScrollToTop({
       console.error("[ScrollToTop] Lỗi khi scroll:", error);
       // Fallback nếu có lỗi - scroll tức thì và đặt lại trạng thái
       window.scrollTo(0, 0);
+      
+      // Đảm bảo dọn dẹp mọi trạng thái
+      document.documentElement.removeAttribute('data-scrolling');
+      document.body.classList.remove('scroll-in-progress');
       resetScrollingState();
     }
+    
+    // Cleanup function cho useEffect
+    return () => {
+      // Đảm bảo xóa các attributes và classes nếu component unmount trong quá trình scroll
+      document.documentElement.removeAttribute('data-scrolling');
+      document.body.classList.remove('scroll-in-progress');
+      
+      // Xóa tất cả timeouts
+      clearAllTimeouts();
+    };
   }, [isScrolling, dialogOpen, debounceDelay, resetScrollingState]);
   
   // Không hiển thị nút nếu dialog đang mở
