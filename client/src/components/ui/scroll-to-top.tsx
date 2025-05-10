@@ -1,96 +1,93 @@
-import { useEffect, useState } from "react";
-import { Button } from "./button";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
-import { ChevronUp } from "lucide-react";
 import { useLocation } from "wouter";
 
 interface ScrollToTopProps {
-  threshold?: number; // Ngưỡng hiển thị nút (pixel)
-  className?: string;
+  threshold?: number;
+  showOnRouteChange?: boolean;
   buttonClassName?: string;
-  showOnRouteChange?: boolean; // Có tự động cuộn lên khi route thay đổi không
 }
 
 /**
- * Component ScrollToTop - Cung cấp nút cuộn lên đầu trang và xử lý cuộn tự động khi chuyển trang
+ * ScrollToTop component
  * 
- * @param threshold Ngưỡng cuộn xuống để hiển thị nút (mặc định: 300px)
- * @param className Class bổ sung cho container
- * @param buttonClassName Class bổ sung cho nút
- * @param showOnRouteChange Tự động cuộn lên đầu trang khi route thay đổi (mặc định: true)
+ * A simple button that appears when scrolling down
+ * and allows returning to the top of the page with one click.
  */
 export function ScrollToTop({
-  threshold = 300,
-  className,
-  buttonClassName,
+  threshold = 400,
   showOnRouteChange = true,
-}: ScrollToTopProps) {
+  buttonClassName = ""
+}: ScrollToTopProps = {}) {
   const [visible, setVisible] = useState(false);
   const [location] = useLocation();
   
-  // Xử lý hiển thị nút dựa trên vị trí cuộn
   useEffect(() => {
-    const checkScrollPosition = () => {
-      // Cập nhật trạng thái hiển thị dựa vào vị trí cuộn
-      const shouldBeVisible = window.scrollY > threshold;
-      
-      if (shouldBeVisible !== visible) {
-        setVisible(shouldBeVisible);
-      }
+    // Kiểm tra vị trí cuộn để hiển thị/ẩn nút
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setVisible(scrollY > threshold);
     };
     
-    // Kiểm tra ngay lập tức
-    checkScrollPosition();
+    // Đăng ký sự kiện cuộn
+    window.addEventListener("scroll", handleScroll, { passive: true });
     
-    // Đăng ký sự kiện cuộn với passive=true để tối ưu hiệu suất
-    window.addEventListener("scroll", checkScrollPosition, { passive: true });
+    // Kiểm tra vị trí ban đầu
+    handleScroll();
     
+    // Hủy đăng ký khi unmount
     return () => {
-      window.removeEventListener("scroll", checkScrollPosition);
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [threshold, visible]);
+  }, []);
   
-  // Xử lý cuộn lên đầu trang khi route thay đổi
+  // Xử lý khi route thay đổi
   useEffect(() => {
     if (showOnRouteChange) {
-      window.scrollTo({
-        top: 0,
-        behavior: "instant" // Sử dụng instant để tránh animation khi chuyển trang
-      });
+      // Tự động cuộn lên đầu trang khi route thay đổi
+      window.scrollTo({ top: 0 });
     }
   }, [location, showOnRouteChange]);
   
-  // Hàm xử lý sự kiện click vào nút
-  const handleScrollToTop = () => {
+  // Hàm cuộn lên đầu trang êm dịu
+  const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth" // Sử dụng smooth cho trải nghiệm tốt khi click nút
+      behavior: "smooth",
     });
   };
   
   return (
-    <div 
-      className={cn(
-        "fixed right-4 bottom-6 z-50 transition-opacity duration-200",
-        visible ? "opacity-100" : "opacity-0 pointer-events-none",
-        className
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
+          className={cn(
+            "fixed z-50 right-4 bottom-24 md:right-6 md:bottom-6",
+            "safe-area-pb safe-area-pr"
+          )}
+        >
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={scrollToTop}
+            aria-label="Cuộn lên đầu trang"
+            className={cn(
+              "h-10 w-10 rounded-full shadow-md",
+              "bg-card/90 backdrop-blur-md",
+              buttonClassName
+            )}
+          >
+            <Icons.ui.chevronUp className="h-5 w-5" />
+          </Button>
+        </motion.div>
       )}
-    >
-      <Button
-        size="icon"
-        variant="secondary"
-        onClick={handleScrollToTop}
-        aria-label="Cuộn lên đầu trang"
-        className={cn(
-          "rounded-full w-10 h-10 shadow-md bg-background/80 backdrop-blur-sm",
-          "hover:bg-background hover:shadow-lg",
-          "focus-visible:ring-2 focus-visible:ring-offset-2",
-          "transition-transform hover:scale-105 active:scale-95",
-          buttonClassName
-        )}
-      >
-        <ChevronUp className="h-5 w-5" />
-      </Button>
-    </div>
+    </AnimatePresence>
   );
 }

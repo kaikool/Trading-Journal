@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useUserActivity } from "@/hooks/use-user-activity";
-import { useScrollDirection } from "@/hooks/use-scroll-direction";
 
 interface SidebarHintProps {
   onClick: () => void;
@@ -23,7 +22,6 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const { isActive } = useUserActivity(3000);
-  const { direction: scrollDirection, isScrolling } = useScrollDirection();
   
   // State
   const [visible, setVisible] = useState(false);
@@ -54,7 +52,7 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     }
   }, [hasInteracted, isMobile, sidebarCollapsed]);
 
-  // Show/hide based on user activity and scrolling
+  // Show/hide based on user activity only - đơn giản hóa
   useEffect(() => {
     if (!isMobile && !sidebarCollapsed) {
       setVisible(false);
@@ -67,12 +65,10 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
       timeoutRef.current = null;
     }
 
-    // Show hint when user is scrolling up (looking for navigation)
+    // Đơn giản hóa: chỉ hiển thị dựa trên trạng thái active của người dùng
     if (isActive && (isMobile || sidebarCollapsed)) {
-      if (isScrolling && scrollDirection === 'up') {
-        setVisible(true);
-        showCount.current += 1;
-      }
+      setVisible(true);
+      showCount.current += 1;
       
       // Automatically hide after a delay
       const hideDelay = hasInteracted ? 3000 : 5000;
@@ -90,7 +86,7 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [isActive, isScrolling, scrollDirection, isMobile, sidebarCollapsed, hasInteracted]);
+  }, [isActive, isMobile, sidebarCollapsed, hasInteracted]);
 
   // Handle click
   const handleClick = () => {

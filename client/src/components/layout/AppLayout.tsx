@@ -60,12 +60,8 @@ export function AppLayout({ children }: AppLayoutProps) {
       <Sidebar />
       
       {/* Main Content Area */}
-      {/* Thêm ScrollToTop component */}
-      <ScrollToTop 
-        threshold={300}
-        showOnRouteChange={true}
-        buttonClassName={isMobile ? "bottom-16" : ""}
-      />
+      {/* Nút cuộn lên đầu trang đơn giản */}
+      <ScrollToTop />
         
       <main 
         className={cn(
