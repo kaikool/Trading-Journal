@@ -1536,16 +1536,26 @@ async function addMilestone(userId: string, goalId: string, milestoneData: any) 
  * @param goalId - ID của mục tiêu
  * @returns Mảng các cột mốc
  */
-async function getMilestones(userId: string, goalId: string) {
+async function getMilestones(userId: string, goalId: string): Promise<Milestone[]> {
   try {
     const milestonesRef = collection(db, "users", userId, "goals", goalId, "milestones");
     const q = query(milestonesRef, orderBy("createdAt", "asc"));
     const querySnapshot = await getDocs(q);
     
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        goalId,
+        title: data.title || '',
+        targetValue: data.targetValue || 0,
+        isCompleted: data.isCompleted || false,
+        completedDate: data.completedDate || null,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        description: data.description
+      } as Milestone;
+    });
   } catch (error) {
     logError("Error getting milestones:", error);
     return [];
