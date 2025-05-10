@@ -97,11 +97,9 @@ export async function uploadTradeImage(
     formData.append('resource_type', 'image'); // Xác định loại tài nguyên
     formData.append('multiple', 'false'); // Không cho phép nhiều file
     
-    // Tắt các transformation không mong muốn để tránh bo tròn và phần thừa màu đen
-    formData.append('transformation', CLOUDINARY_CONFIG.transformations.no_corner_radius); // Chỉ giới hạn kích thước, không crop
-    formData.append('format', 'auto'); // Tự động chọn định dạng tối ưu
-    formData.append('quality', 'auto'); // Tự động chọn chất lượng tối ưu
-    formData.append('strip', 'all'); // Loại bỏ metadata không cần thiết
+    // Lưu ý: Các tham số transformation không được phép khi sử dụng unsigned upload
+    // Các transformation nên được cấu hình trong upload preset trên Cloudinary Dashboard
+    // hoặc áp dụng sau khi upload thông qua URL
     
     // Log URL being used
     debug(`Gửi POST request đến: ${CLOUDINARY_CONFIG.upload_url}`);
