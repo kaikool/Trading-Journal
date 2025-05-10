@@ -46,6 +46,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogWithContext,
 } from "@/components/ui/alert-dialog";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
@@ -1147,7 +1148,7 @@ export function StrategiesManagement() {
       </div>
       
       {/* Confirm Delete Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialogWithContext isOpen={isDeleteDialogOpen} onOpenChange={(open) => !open && setIsDeleteDialogOpen(false)}>
         <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Strategy</AlertDialogTitle>
