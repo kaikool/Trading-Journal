@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
+import { motion, AnimatePresence } from "framer-motion";
 
 import LazyTradeHistoryCard from "@/components/trades/LazyTradeHistoryCard";
 import { FilterTags } from "@/components/trades/FilterTags";
@@ -57,6 +58,8 @@ export default function TradeHistory() {
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">("newest");
   const [filteredTrades, setFilteredTrades] = useState<Trade[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  // State để theo dõi các giao dịch đang được xóa - cải thiện trải nghiệm người dùng
+  const [deletingTradeIds, setDeletingTradeIds] = useState<string[]>([]);
   
   // Thêm state để tracking các discipline flags
   const [hasEnteredEarly, setHasEnteredEarly] = useState<boolean | undefined>(undefined);
@@ -961,37 +964,53 @@ export default function TradeHistory() {
         ) : trades.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {trades.map((trade: Trade) => (
-                <LazyTradeHistoryCard 
-                  key={trade.id} 
-                  trade={trade} 
-                  onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
-                  onDelete={(tradeId: string) => {
-                    if (window.confirm('Are you sure you want to delete this trade?')) {
-                      if (!userId) return;
-                      
-                      // Handle trade deletion through Firebase
-                      import("@/lib/firebase").then(({ deleteTrade }) => {
-                        deleteTrade(userId, tradeId)
-                          .then(() => {
-                            toast({
-                              title: "Trade deleted",
-                              description: "The trade has been successfully deleted"
+              <AnimatePresence>
+                {trades
+                  .filter(trade => !deletingTradeIds.includes(trade.id))
+                  .map((trade: Trade) => (
+                    <motion.div
+                      key={trade.id}
+                      initial={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+                      layout
+                    >
+                      <LazyTradeHistoryCard 
+                        trade={trade} 
+                        onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
+                        onDelete={(tradeId: string) => {
+                          if (window.confirm('Are you sure you want to delete this trade?')) {
+                            if (!userId) return;
+                            
+                            // Cập nhật UI ngay lập tức trước khi xóa thực tế
+                            setDeletingTradeIds(prev => [...prev, tradeId]);
+                            
+                            // Sau đó, xóa trong Firebase
+                            import("@/lib/firebase").then(({ deleteTrade }) => {
+                              deleteTrade(userId, tradeId)
+                                .then(() => {
+                                  toast({
+                                    title: "Trade deleted",
+                                    description: "The trade has been successfully deleted"
+                                  });
+                                })
+                                .catch((error) => {
+                                  // Nếu xóa thất bại, khôi phục UI bằng cách xóa tradeId khỏi deletingTradeIds
+                                  setDeletingTradeIds(prev => prev.filter(id => id !== tradeId));
+                                  
+                                  logError("Error deleting trade:", error);
+                                  toast({
+                                    variant: "destructive",
+                                    title: "Error",
+                                    description: "Failed to delete trade"
+                                  });
+                                });
                             });
-                          })
-                          .catch((error) => {
-                            logError("Error deleting trade:", error);
-                            toast({
-                              variant: "destructive",
-                              title: "Error",
-                              description: "Failed to delete trade"
-                            });
-                          });
-                      });
-                    }
-                  }}
-                />
-              ))}
+                          }
+                        }}
+                      />
+                    </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
             
             {/* Pagination removed - displaying all trades at once */}
