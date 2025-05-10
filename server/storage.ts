@@ -387,7 +387,7 @@ export class MemStorage implements IStorage {
     const sessionMap = new Map<string, { trades: number; wins: number }>();
     
     closedTrades.forEach(trade => {
-      const session = trade.session || 'Unknown';
+      const session = trade.sessionType || 'Unknown';
       const isWin = (trade.profitLoss || 0) > 0;
       
       if (!sessionMap.has(session)) {

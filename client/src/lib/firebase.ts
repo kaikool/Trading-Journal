@@ -1325,7 +1325,7 @@ async function getGoals(userId: string) {
  * @param goalId - ID của mục tiêu
  * @returns Thông tin mục tiêu
  */
-async function getGoalById(userId: string, goalId: string) {
+async function getGoalById(userId: string, goalId: string): Promise<Goal & { milestones: Milestone[] }> {
   try {
     const docRef = doc(db, "users", userId, "goals", goalId);
     const docSnap = await getDoc(docRef);
