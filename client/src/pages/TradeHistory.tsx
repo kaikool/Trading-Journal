@@ -1002,44 +1002,44 @@ export default function TradeHistory() {
         onOpenChange={setIsDeleteDialogOpen}
         itemToDelete={tradeToDelete}
         onConfirm={handleDeleteTradeConfirm}
-        title="Xác nhận xóa giao dịch"
+        title="Confirm Trade Deletion"
         description={
           <>
-            Bạn có chắc chắn muốn xóa giao dịch
+            Are you sure you want to delete this 
             <strong> {tradeToDelete?.pair} {tradeToDelete?.direction} </strong>
-            này không? Dữ liệu đã xóa không thể khôi phục lại được.
+            trade? This action cannot be undone.
           </>
         }
       />
     </div>
   );
   
-  // Hàm xử lý xóa giao dịch sau khi xác nhận
+  // Function to handle trade deletion after confirmation
   function handleDeleteTradeConfirm(trade: Trade) {
     if (!userId || !trade) return;
     const tradeId = trade.id;
     
-    // Cập nhật UI ngay lập tức trước khi xóa thực tế
+    // Update UI immediately before actual deletion
     setDeletingTradeIds(prev => [...prev, tradeId]);
     
-    // Sau đó, xóa trong Firebase
+    // Then delete from Firebase
     import("@/lib/firebase").then(({ deleteTrade }) => {
       deleteTrade(userId, tradeId)
         .then(() => {
           toast({
-            title: "Giao dịch đã xóa",
-            description: "Giao dịch đã được xóa thành công"
+            title: "Trade deleted",
+            description: "The trade has been successfully deleted"
           });
         })
         .catch((error) => {
-          // Nếu xóa thất bại, khôi phục UI bằng cách xóa tradeId khỏi deletingTradeIds
+          // If deletion fails, restore UI by removing tradeId from deletingTradeIds
           setDeletingTradeIds(prev => prev.filter(id => id !== tradeId));
           
           logError("Error deleting trade:", error);
           toast({
             variant: "destructive",
-            title: "Lỗi",
-            description: "Không thể xóa giao dịch. Vui lòng thử lại sau."
+            title: "Error",
+            description: "Unable to delete the trade. Please try again later."
           });
         });
     });
