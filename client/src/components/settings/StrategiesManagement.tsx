@@ -738,13 +738,16 @@ export function StrategiesManagement() {
     }
   }, [strategies, isSaving, resetFormFields, toast]);
   
-  // Handle deleting a strategy
+  // Handle opening delete confirmation dialog
+  const handleOpenDeleteDialog = useCallback((strategy: TradingStrategy) => {
+    if (!auth.currentUser || isSaving) return;
+    setStrategyToDelete(strategy);
+    setIsDeleteDialogOpen(true);
+  }, [auth.currentUser, isSaving]);
+  
+  // Handle deleting a strategy after confirmation
   const handleDeleteStrategy = useCallback(async (strategy: TradingStrategy) => {
     if (!auth.currentUser || isSaving) return;
-    
-    if (!window.confirm(`Are you sure you want to delete the strategy "${strategy.name}"?`)) {
-      return;
-    }
     
     try {
       setIsSaving(true);
@@ -768,6 +771,8 @@ export function StrategiesManagement() {
       });
     } finally {
       setIsSaving(false);
+      setIsDeleteDialogOpen(false);
+      setStrategyToDelete(null);
     }
   }, [isSaving, toast]);
   
@@ -903,7 +908,7 @@ export function StrategiesManagement() {
               setEditedStrategy({ ...strategy });
             }}
             onUpdate={handleUpdateStrategy}
-            onDelete={() => handleDeleteStrategy(strategy)}
+            onDelete={() => handleOpenDeleteDialog(strategy)}
             onSetAsDefault={() => handleSetDefaultStrategy(strategy)}
             isSaving={isSaving}
             onEditFieldChange={(fieldName, value) => {
@@ -1079,5 +1084,17 @@ export function StrategiesManagement() {
         </Dialog>
       </div>
     </div>
+    
+    {/* Confirm Delete Dialog */}
+    <ConfirmDeleteDialog
+      isOpen={isDeleteDialogOpen}
+      onOpenChange={setIsDeleteDialogOpen}
+      itemToDelete={strategyToDelete}
+      onConfirm={handleDeleteStrategy}
+      title="Delete Strategy"
+      description={strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
+      cancelText="Cancel"
+      confirmText="Delete"
+    />
   );
 }
