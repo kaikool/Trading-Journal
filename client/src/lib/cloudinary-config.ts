@@ -27,15 +27,15 @@ export const CLOUDINARY_CONFIG = {
     no_corner_radius: 'c_limit,r_0',
     
     // Các preset chuẩn
-    thumbnail: 'c_thumb,w_200,h_200,q_auto,f_auto',
-    medium: 'c_limit,w_600,h_600,q_auto,f_auto',
-    large: 'c_limit,w_1200,h_1200,q_auto,f_auto',
+    thumbnail: 'c_thumb,w_200,h_200,q_auto,f_auto,r_0',
+    medium: 'c_limit,w_600,h_600,q_auto,f_auto,r_0',
+    large: 'c_limit,w_1200,h_1200,q_auto,f_auto,r_0',
     
     // Preset cho ảnh giao dịch 
     chart: 'c_limit,w_1600,q_auto,f_auto,r_0',
     
     // Preset cho ảnh trong danh sách
-    list_item: 'c_scale,w_300,q_auto,f_auto',
+    list_item: 'c_scale,w_300,q_auto,f_auto,r_0',
   }
 };
 
