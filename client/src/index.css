@@ -29,6 +29,17 @@
   }
 }
 
+/* Mobile keyboard adjustment class */
+.keyboard-aware-dialog {
+  @media (max-width: 640px) {
+    /* When virtual keyboard is active (heuristic based on viewport height) */
+    @supports (height: 100dvh) {
+      max-height: 82dvh;
+      margin-bottom: 2dvh;
+    }
+  }
+}
+
 /* Compact table for analytics - sử dụng giá trị spacing theo bội số của 4px */
 .compact-table th, 
 .compact-table td {

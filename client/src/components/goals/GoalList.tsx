@@ -197,7 +197,7 @@ export function GoalList() {
 
         {/* New goal dialog */}
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
-          <DialogContent variant="form">
+          <DialogContent variant="form" className="keyboard-aware-dialog">
             <DialogHeader>
               <DialogTitle>Create New Goal</DialogTitle>
               <DialogDescription>
@@ -475,7 +475,7 @@ export function GoalList() {
 
       {/* Dialog for editing goal */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-        <DialogContent variant="form">
+        <DialogContent variant="form" className="keyboard-aware-dialog">
           <DialogHeader>
             <DialogTitle>Edit Goal</DialogTitle>
             <DialogDescription>
@@ -507,7 +507,7 @@ export function GoalList() {
 
       {/* Dialog for adding milestone */}
       <Dialog open={openMilestoneDialog} onOpenChange={setOpenMilestoneDialog}>
-        <DialogContent variant="compact">
+        <DialogContent variant="compact" className="keyboard-aware-dialog">
           <DialogHeader>
             <DialogTitle>Add Milestone</DialogTitle>
             <DialogDescription>
