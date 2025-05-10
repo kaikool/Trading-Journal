@@ -130,7 +130,7 @@
 
 /* Milestone list styling */
 .milestone-list {
-  padding: 0 var(--spacing-1);
+  padding: 0; /* Loại bỏ padding tại đây vì chúng ta sẽ sử dụng padding của CardContent */
   max-height: 8rem;
   overflow-y: auto;
   /* space-y được quản lý bởi Tailwind nên không cần định nghĩa ở đây */

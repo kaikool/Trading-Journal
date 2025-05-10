@@ -140,7 +140,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
       transition={{ duration: 0.3 }}
     >
       <Card className="overflow-hidden" style={cardBorderStyle}>
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2" compact>
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl font-bold">{goal.title}</CardTitle>
             <Badge className={priorityColors[goal.priority]}>
@@ -153,7 +153,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="pb-2">
+        <CardContent className="pb-2" compact>
           <div className="mb-4">
             <div className="flex justify-between mb-1 items-center">
               <div className="text-sm text-muted-foreground">Progress</div>
@@ -238,7 +238,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           )}
         </CardContent>
         
-        <CardFooter className="pt-2">
+        <CardFooter className="pt-2" compact>
           <div className="flex flex-wrap items-center justify-between w-full gap-2">
             {/* Các nút action chính */}
             <div className="flex gap-1">
