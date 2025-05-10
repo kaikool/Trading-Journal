@@ -1,82 +1,58 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
-export type ScrollDirection = 'up' | 'down' | 'idle';
-
-/**
- * Simplified interface for scroll state
- * Contains only essential information for most UI interactions
- */
-interface ScrollState {
-  direction: ScrollDirection;
-  isAtTop: boolean; 
-  isScrolling: boolean;
-}
+type ScrollDirection = "up" | "down" | "none";
 
 /**
- * Simplified scroll direction hook
- * 
- * This version is highly optimized and only tracks:
- * - Direction of scroll (up/down/idle)
- * - Whether user is at top of page
- * - Whether user is actively scrolling
- * 
- * @param threshold - Threshold for top detection (in pixels)
+ * Hook theo dõi hướng cuộn của người dùng (lên, xuống hoặc không cuộn)
+ * Đã được tối ưu hóa cho hiệu suất với các cải tiến:
+ * - Sử dụng passive event listener để tránh blocking main thread
+ * - Debounce để giảm số lượng re-render không cần thiết
+ * - Threshold để tránh phát hiện các chuyển động nhỏ
  */
-export function useScrollDirection(threshold = 10): ScrollState {
-  const [scrollState, setScrollState] = useState<ScrollState>({
-    direction: 'idle',
-    isAtTop: true,
-    isScrolling: false
-  });
+export function useScrollDirection(threshold = 10, debounceDelay = 50): ScrollDirection {
+  const [scrollDirection, setScrollDirection] = useState<ScrollDirection>("none");
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const [lastEventTime, setLastEventTime] = useState<number>(0);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let scrollTimeout: number | null = null;
-    
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const isAtTop = scrollY < threshold;
-      
-      // Determine scroll direction
-      const direction = lastScrollY > scrollY ? 'up' : 'down';
-      
-      // Update state
-      setScrollState({
-        direction,
-        isAtTop,
-        isScrolling: true
-      });
-      
-      // Remember current position
-      lastScrollY = scrollY;
-      
-      // Reset scrolling status after inactivity
-      if (scrollTimeout) {
-        window.clearTimeout(scrollTimeout);
-      }
-      
-      scrollTimeout = window.setTimeout(() => {
-        setScrollState(prevState => ({
-          ...prevState,
-          isScrolling: false
-        }));
-      }, 150);
-    };
-    
-    // Check immediately
-    handleScroll();
-    
-    // Use passive event listener for better performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeout) {
-        window.clearTimeout(scrollTimeout);
-      }
-    };
-  }, [threshold]);
+    // Theo dõi vị trí cuộn gần đây nhất (sau khi browser update)
+    let lastKnownScrollY = window.scrollY;
 
-  return scrollState;
+    // Handler xử lý sự kiện scroll
+    const updateScrollDirection = () => {
+      const now = Date.now();
+      
+      // Kiểm tra xem có nên debounce không
+      if (now - lastEventTime < debounceDelay) {
+        return;
+      }
+      
+      const scrollY = window.scrollY;
+      const direction: ScrollDirection = 
+        Math.abs(scrollY - lastScrollY) < threshold 
+          ? "none"
+          : scrollY > lastScrollY 
+            ? "down" 
+            : "up";
+            
+      // Chỉ cập nhật nếu có sự thay đổi direction
+      if (direction !== scrollDirection) {
+        setScrollDirection(direction);
+      }
+      
+      // Ghi nhớ vị trí và thời gian
+      setLastScrollY(scrollY);
+      setLastEventTime(now);
+    };
+
+    // Thêm event listener
+    window.addEventListener("scroll", updateScrollDirection, { passive: true });
+    
+    // Xử lý cleanup
+    return () => {
+      window.removeEventListener("scroll", updateScrollDirection);
+    };
+  }, [scrollDirection, lastScrollY, threshold, debounceDelay, lastEventTime]);
+
+  return scrollDirection;
 }

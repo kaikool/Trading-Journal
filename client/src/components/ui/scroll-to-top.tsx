@@ -1,89 +1,60 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons/icons";
+import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLocation } from "wouter";
-
-interface ScrollToTopProps {
-  threshold?: number;
-  showOnRouteChange?: boolean;
-  buttonClassName?: string;
-}
 
 /**
- * ScrollToTop component
- * 
- * A simple button that appears when scrolling down
- * and allows returning to the top of the page with one click.
+ * Component hiển thị nút cuộn lên đầu trang, với hiệu ứng ẩn/hiện dựa trên vị trí cuộn
+ * Phiên bản đơn giản hóa 2023 với chỉ một mục đích: giúp người dùng cuộn lên đầu trang
+ * khi họ muốn, thay vì dựa vào auto-scroll
  */
-export function ScrollToTop({
-  threshold = 400,
-  showOnRouteChange = true,
-  buttonClassName = ""
-}: ScrollToTopProps = {}) {
-  const [visible, setVisible] = useState(false);
-  const [location] = useLocation();
+export function ScrollToTop() {
+  const [showScrollTop, setShowScrollTop] = useState(false);
   
+  // Theo dõi vị trí cuộn để hiển thị/ẩn nút
   useEffect(() => {
-    // Kiểm tra vị trí cuộn để hiển thị/ẩn nút
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      setVisible(scrollY > threshold);
+      // Hiển thị nút khi người dùng đã cuộn xuống ít nhất 300px
+      const scrollThreshold = 300;
+      const shouldShow = window.scrollY > scrollThreshold;
+      
+      if (shouldShow !== showScrollTop) {
+        setShowScrollTop(shouldShow);
+      }
     };
     
-    // Đăng ký sự kiện cuộn
     window.addEventListener("scroll", handleScroll, { passive: true });
     
-    // Kiểm tra vị trí ban đầu
+    // Kiểm tra ban đầu
     handleScroll();
     
-    // Hủy đăng ký khi unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [showScrollTop]);
   
-  // Tạm thời vô hiệu hóa cơ chế auto-scroll khi đổi route
-  // Chúng ta sẽ xử lý cuộn lên đầu trang trong App.tsx
-  // Cách này tránh các vấn đề với dialog mà không cần kiểm tra DOM
-  
-  // Hàm cuộn lên đầu trang êm dịu
+  // Xử lý khi người dùng click vào nút
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: "smooth"
     });
   };
   
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.2 }}
-          className={cn(
-            "fixed z-50 right-4 bottom-24 md:right-6 md:bottom-6",
-            "safe-area-pb safe-area-pr"
-          )}
-        >
-          <Button
-            variant="secondary"
-            size="icon"
-            onClick={scrollToTop}
-            aria-label="Cuộn lên đầu trang"
-            className={cn(
-              "h-10 w-10 rounded-full shadow-md",
-              "bg-card/90 backdrop-blur-md",
-              buttonClassName
-            )}
-          >
-            <Icons.ui.chevronUp className="h-5 w-5" />
-          </Button>
-        </motion.div>
+    <Button
+      onClick={scrollToTop}
+      variant="secondary"
+      size="icon"
+      className={cn(
+        "fixed bottom-6 right-6 z-50 h-10 w-10 rounded-full shadow-md transition-all duration-300 dark:bg-slate-800 dark:hover:bg-slate-700",
+        showScrollTop 
+          ? "translate-y-0 opacity-100" 
+          : "translate-y-16 opacity-0 pointer-events-none"
       )}
-    </AnimatePresence>
+      aria-label="Cuộn lên đầu trang"
+    >
+      <ArrowUp className="h-5 w-5" />
+    </Button>
   );
 }
