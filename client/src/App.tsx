@@ -34,6 +34,7 @@ const Analytics = lazy(() => import("@/pages/Analytics"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const Strategies = lazy(() => import("@/pages/Strategies"));
 const Achievements = lazy(() => import("@/pages/Achievements"));
+const Goals = lazy(() => import("@/pages/Goals"));
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 // Tạo layout component được bọc bởi ErrorBoundary
@@ -251,6 +252,8 @@ function MainContent() {
             <Route path="/strategies" component={Strategies} />
             {/* Achievements page */}
             <Route path="/achievements" component={Achievements} />
+            {/* Goals page */}
+            <Route path="/goals" component={Goals} />
             
             {/* Fallback to 404 */}
             <Route path="/:rest*" component={NotFound} />

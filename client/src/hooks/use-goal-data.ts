@@ -4,6 +4,12 @@ import { apiRequest } from '@/lib/queryClient';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
 
+// Helper function to transform API response
+const transformResponse = async (response: Response) => {
+  const data = await response.json();
+  return data;
+};
+
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
   completedGoals: GoalProgressItem[];
@@ -57,7 +63,10 @@ export function useGoalData() {
     error: goalsError
   } = useQuery({
     queryKey: ['/api/goals', userId],
-    queryFn: () => apiRequest(`/api/goals?userId=${userId}`),
+    queryFn: async () => {
+      const response = await apiRequest(`/api/goals?userId=${userId}`);
+      return transformResponse(response);
+    },
     enabled: !!userId,
   });
 
@@ -68,17 +77,22 @@ export function useGoalData() {
     error: progressError
   } = useQuery<{ success: boolean; progress: GoalProgressData }>({
     queryKey: ['/api/analytics/goals-progress', userId],
-    queryFn: () => apiRequest(`/api/analytics/goals-progress?userId=${userId}`),
+    queryFn: async () => {
+      const response = await apiRequest(`/api/analytics/goals-progress?userId=${userId}`);
+      return transformResponse(response);
+    },
     enabled: !!userId,
   });
 
   // Create a new goal
   const createGoalMutation = useMutation({
-    mutationFn: (goalData: Partial<Goal>) => 
-      apiRequest('/api/goals', {
+    mutationFn: async (goalData: Partial<Goal>) => {
+      const response = await apiRequest('/api/goals', {
         method: 'POST',
         body: JSON.stringify(goalData),
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
@@ -98,11 +112,13 @@ export function useGoalData() {
 
   // Update an existing goal
   const updateGoalMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<Goal> }) =>
-      apiRequest(`/api/goals/${id}`, {
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Goal> }) => {
+      const response = await apiRequest(`/api/goals/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
@@ -122,10 +138,12 @@ export function useGoalData() {
 
   // Delete a goal
   const deleteGoalMutation = useMutation({
-    mutationFn: (goalId: number) =>
-      apiRequest(`/api/goals/${goalId}`, {
+    mutationFn: async (goalId: number) => {
+      const response = await apiRequest(`/api/goals/${goalId}`, {
         method: 'DELETE',
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
@@ -145,11 +163,13 @@ export function useGoalData() {
 
   // Create a milestone
   const createMilestoneMutation = useMutation({
-    mutationFn: ({ goalId, data }: { goalId: number; data: Partial<GoalMilestone> }) =>
-      apiRequest(`/api/goals/${goalId}/milestones`, {
+    mutationFn: async ({ goalId, data }: { goalId: number; data: Partial<GoalMilestone> }) => {
+      const response = await apiRequest(`/api/goals/${goalId}/milestones`, {
         method: 'POST',
         body: JSON.stringify(data),
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/goals', variables.goalId, 'milestones'] });
@@ -170,11 +190,13 @@ export function useGoalData() {
 
   // Update a milestone
   const updateMilestoneMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<GoalMilestone> }) =>
-      apiRequest(`/api/goals/milestones/${id}`, {
+    mutationFn: async ({ id, data }: { id: number; data: Partial<GoalMilestone> }) => {
+      const response = await apiRequest(`/api/goals/milestones/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
@@ -194,10 +216,12 @@ export function useGoalData() {
 
   // Delete a milestone
   const deleteMilestoneMutation = useMutation({
-    mutationFn: (milestoneId: number) =>
-      apiRequest(`/api/goals/milestones/${milestoneId}`, {
+    mutationFn: async (milestoneId: number) => {
+      const response = await apiRequest(`/api/goals/milestones/${milestoneId}`, {
         method: 'DELETE',
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
@@ -217,10 +241,12 @@ export function useGoalData() {
 
   // Calculate goal progress
   const calculateGoalProgressMutation = useMutation({
-    mutationFn: (goalId: number) =>
-      apiRequest(`/api/goals/${goalId}/calculate-progress`, {
+    mutationFn: async (goalId: number) => {
+      const response = await apiRequest(`/api/goals/${goalId}/calculate-progress`, {
         method: 'POST',
-      }),
+      });
+      return transformResponse(response);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
@@ -240,8 +266,8 @@ export function useGoalData() {
 
   return {
     // Queries
-    goals: goals?.goals || [],
-    goalProgress: goalProgress?.progress,
+    goals: goals?.success ? goals.goals || [] : [],
+    goalProgress: goalProgress?.success ? goalProgress.progress : undefined,
     isLoadingGoals,
     isLoadingProgress,
     goalsError,
