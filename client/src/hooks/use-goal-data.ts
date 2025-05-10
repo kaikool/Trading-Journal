@@ -17,8 +17,8 @@ type GoalProgressData = {
   activeGoals: GoalProgressItem[];
   completedGoals: GoalProgressItem[];
   upcomingMilestones: {
-    id: number;
-    goalId: number;
+    id: string;
+    goalId: string;
     goalTitle: string;
     title: string;
     targetValue: number;
@@ -32,7 +32,7 @@ type GoalProgressData = {
 };
 
 type GoalProgressItem = {
-  id: number;
+  id: string;
   title: string;
   targetType: string;
   targetValue: number;
@@ -45,7 +45,7 @@ type GoalProgressItem = {
   priority: string;
   color: string | null;
   milestones?: {
-    id: number;
+    id: string;
     title: string;
     targetValue: number;
     isCompleted: boolean;
