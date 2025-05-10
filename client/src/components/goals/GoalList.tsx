@@ -501,14 +501,14 @@ export function GoalList() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog xác nhận xóa mục tiêu */}
+      {/* Dialog to confirm goal deletion */}
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Bạn có chắc chắn muốn xóa?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
             <AlertDialogDescription>
-              Hành động này sẽ xóa vĩnh viễn mục tiêu "{currentGoal?.title}" và tất cả cột mốc liên quan.
-              Dữ liệu đã xóa không thể khôi phục.
+              This action will permanently delete the goal "{currentGoal?.title}" and all related milestones.
+              Deleted data cannot be recovered.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -516,13 +516,13 @@ export function GoalList() {
               setOpenDeleteDialog(false);
               setCurrentGoal(null);
             }}>
-              Hủy
+              Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteGoal}
               className="bg-destructive hover:bg-destructive/90"
             >
-              Xóa
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

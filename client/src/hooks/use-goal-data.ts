@@ -53,17 +53,17 @@ export function useGoalData() {
   const { userData } = useUserData();
   const firebaseUserId = auth.currentUser?.uid;
 
-  // State cho dữ liệu mục tiêu từ Firebase
+  // State for goal data from Firebase
   const [goalsData, setGoalsData] = useState<any[]>([]);
   const [isLoadingGoals, setIsLoadingGoals] = useState(true);
   const [goalsError, setGoalsError] = useState<Error | null>(null);
 
-  // State cho dữ liệu tiến độ mục tiêu
+  // State for goal progress data
   const [goalProgressData, setGoalProgressData] = useState<GoalProgressData | undefined>(undefined);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [progressError, setProgressError] = useState<Error | null>(null);
 
-  // Effect để lấy dữ liệu mục tiêu từ Firebase
+  // Effect to fetch goal data from Firebase
   useEffect(() => {
     if (!firebaseUserId) {
       setIsLoadingGoals(false);
@@ -72,7 +72,7 @@ export function useGoalData() {
 
     setIsLoadingGoals(true);
     
-    // Đăng ký listener để lắng nghe thay đổi mục tiêu theo thời gian thực
+    // Register listener to monitor goal changes in real-time
     const unsubscribe = onGoalsSnapshot(
       firebaseUserId,
       (goals) => {
@@ -80,7 +80,7 @@ export function useGoalData() {
         setGoalsData(goals);
         setIsLoadingGoals(false);
         
-        // Khi có dữ liệu mục tiêu mới, tính toán dữ liệu tiến độ
+        // When new goal data is received, calculate progress data
         calculateGoalProgressData(goals);
       },
       (error) => {
@@ -90,28 +90,28 @@ export function useGoalData() {
       }
     );
 
-    // Cleanup khi component unmount
+    // Cleanup when component unmounts
     return () => unsubscribe();
   }, [firebaseUserId]);
 
-  // Hàm tính toán dữ liệu tiến độ mục tiêu
+  // Function to calculate goal progress data
   const calculateGoalProgressData = (goals: any[]) => {
     try {
       setIsLoadingProgress(true);
       
-      // Tính toán ngày hiện tại
+      // Calculate current date
       const now = new Date();
       
-      // Chuẩn bị dữ liệu mục tiêu với thông tin tiến độ
+      // Prepare goal data with progress information
       const goalsWithProgress = goals.map(goal => {
-        // Tính số ngày còn lại
+        // Calculate days remaining
         const endDate = new Date(goal.endDate?.toDate ? goal.endDate.toDate() : goal.endDate);
         const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
         
-        // Tính tiến độ mục tiêu
+        // Calculate goal progress
         const progressPercentage = Math.min(100, (goal.currentValue / goal.targetValue) * 100 || 0);
         
-        // Tính tiến độ cho từng cột mốc
+        // Calculate progress for each milestone
         const milestonesWithProgress = (goal.milestones || []).map((milestone: any) => {
           const milestoneProgress = goal.currentValue >= milestone.targetValue ? 100 : 
             Math.min(100, (goal.currentValue / milestone.targetValue) * 100);
@@ -130,11 +130,11 @@ export function useGoalData() {
         };
       });
       
-      // Phân loại mục tiêu thành đang hoạt động và đã hoàn thành
+      // Categorize goals into active and completed
       const activeGoals = goalsWithProgress.filter(goal => !goal.isCompleted);
       const completedGoals = goalsWithProgress.filter(goal => goal.isCompleted);
       
-      // Tìm các cột mốc sắp đến
+      // Find upcoming milestones
       const allMilestones = goalsWithProgress.flatMap(goal => 
         (goal.milestones || []).map((milestone: any) => ({
           id: milestone.id,
@@ -151,14 +151,14 @@ export function useGoalData() {
         .sort((a: any, b: any) => b.progressPercentage - a.progressPercentage)
         .slice(0, 5);
       
-      // Tính tổng tiến độ
+      // Calculate overall progress
       const totalGoals = goals.length;
       const completedGoalsCount = completedGoals.length;
       const overallProgressPercentage = totalGoals > 0 
         ? (completedGoalsCount / totalGoals) * 100 
         : 0;
       
-      // Cập nhật state
+      // Update state
       setGoalProgressData({
         activeGoals,
         completedGoals,
@@ -181,29 +181,29 @@ export function useGoalData() {
   // Create a new goal
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: any) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Chuyển đổi dữ liệu mục tiêu
+      // Format the goal data
       const formattedData = {
         ...goalData,
         userId: firebaseUserId
       };
       
-      // Gọi hàm thêm mục tiêu từ Firebase
+      // Call the Firebase add goal function
       return addGoal(firebaseUserId, formattedData);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Mục tiêu đã được tạo',
-        description: 'Mục tiêu mới của bạn đã được tạo thành công.',
+        title: 'Goal Created',
+        description: 'Your new goal has been created successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi tạo mục tiêu',
-        description: error?.message || 'Đã xảy ra lỗi khi tạo mục tiêu.',
+        title: 'Error Creating Goal',
+        description: error?.message || 'An error occurred while creating the goal.',
       });
     },
   });
@@ -211,23 +211,23 @@ export function useGoalData() {
   // Update an existing goal
   const updateGoalMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Gọi hàm cập nhật mục tiêu từ Firebase
+      // Call the Firebase update goal function
       return updateGoal(firebaseUserId, id, data);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Mục tiêu đã được cập nhật',
-        description: 'Mục tiêu của bạn đã được cập nhật thành công.',
+        title: 'Goal Updated',
+        description: 'Your goal has been updated successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi cập nhật mục tiêu',
-        description: error?.message || 'Đã xảy ra lỗi khi cập nhật mục tiêu.',
+        title: 'Error Updating Goal',
+        description: error?.message || 'An error occurred while updating the goal.',
       });
     },
   });
@@ -235,23 +235,23 @@ export function useGoalData() {
   // Delete a goal
   const deleteGoalMutation = useMutation({
     mutationFn: async (goalId: string) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Gọi hàm xóa mục tiêu từ Firebase
+      // Call the Firebase delete goal function
       return deleteGoal(firebaseUserId, goalId);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Mục tiêu đã bị xóa',
-        description: 'Mục tiêu đã được xóa thành công.',
+        title: 'Goal Deleted',
+        description: 'The goal has been deleted successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi xóa mục tiêu',
-        description: error?.message || 'Đã xảy ra lỗi khi xóa mục tiêu.',
+        title: 'Error Deleting Goal',
+        description: error?.message || 'An error occurred while deleting the goal.',
       });
     },
   });
