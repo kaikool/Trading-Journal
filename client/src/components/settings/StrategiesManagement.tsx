@@ -943,7 +943,7 @@ export function StrategiesManagement() {
   ]);
   
   return (
-    <>
+    <div>
       <div className="mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 via-primary to-primary/80 bg-clip-text text-transparent">Trading Strategies</h2>
@@ -1092,7 +1092,7 @@ export function StrategiesManagement() {
           </DialogContent>
         </Dialog>
       </div>
-    
+      
       {/* Confirm Delete Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="safe-area-p">
