@@ -1094,5 +1094,15 @@ export function StrategiesManagement() {
         description={strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete?.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
       />
     </div>
+    
+    {/* Delete confirmation dialog */}
+    <ConfirmDeleteDialog
+      isOpen={isDeleteDialogOpen}
+      onOpenChange={setIsDeleteDialogOpen}
+      itemToDelete={strategyToDelete}
+      onConfirm={handleDeleteStrategy}
+      title="Delete Strategy"
+      description={strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete?.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
+    />
   );
 }
