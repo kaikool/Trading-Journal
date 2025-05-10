@@ -104,22 +104,6 @@ function MainContent() {
         setTimeout(() => {
           window.scrollTo({ top: 0 });
         }, 100);
-      } else {
-        // Lưu vị trí scroll hiện tại để sử dụng sau khi dialog đóng
-        const currentScrollPosition = window.scrollY;
-        
-        // Tạo một hàm bảo vệ để giữ vị trí scroll
-        const maintainScrollPosition = () => {
-          // Nếu vẫn trong thời gian ngăn scroll sau khi dialog đóng
-          // hoặc nếu dialog vẫn đang mở, tiếp tục duy trì vị trí
-          if (dialogOpen || shouldPreventScrollAfterDialogClose()) {
-            window.scrollTo(0, currentScrollPosition);
-            requestAnimationFrame(maintainScrollPosition);
-          }
-        };
-        
-        // Bắt đầu quá trình giữ vị trí scroll
-        requestAnimationFrame(maintainScrollPosition);
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
@@ -143,9 +127,6 @@ function MainContent() {
       return () => clearTimeout(safetyTimer);
     }
   }, [isPageReady]);
-  
-  // Chú ý: Chúng ta đã xóa effect xử lý dialog:close tại đây
-  // Bây giờ việc này được xử lý bởi hook useDialogScrollManager trong AppLayout
   
   // Preload route modules when location changes
   useEffect(() => {

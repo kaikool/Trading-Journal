@@ -4,7 +4,6 @@ import { Sidebar } from "./Sidebar";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { useDialogScrollManager } from "@/hooks/use-dialog-scroll-manager";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -25,9 +24,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [mounted, setMounted] = useState(false);
   const [respectSafeArea, setRespectSafeArea] = useState(true);
   const [viewportHeight, setViewportHeight] = useState(0);
-  
-  // Kích hoạt hook quản lý scroll
-  useDialogScrollManager();
   
   // Không còn sử dụng usePreventScrollJump phức tạp nữa
   // Thay thế bằng ScrollToTop đơn giản và hiệu quả
