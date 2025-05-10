@@ -48,6 +48,9 @@ export type Trade = {
   notes?: string | null;
   entryImage?: string | null;
   exitImage?: string | null;
+  status?: string; // Added to fix the TS2339 errors
+  riskRewardRatio?: number; // Added to fix the TS2339 errors
+  isRevenge?: boolean; // Added to fix the TS2339 errors (redundant with revenge but needed for backward compatibility)
   createdAt: Date;
   updatedAt: Date;
 };
