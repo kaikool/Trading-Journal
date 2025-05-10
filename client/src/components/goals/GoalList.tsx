@@ -198,7 +198,7 @@ export function GoalList() {
         </div>
 
         {/* New goal dialog */}
-        <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open) => !open && setOpenCreateDialog(false)}>
+        <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open: boolean) => !open && setOpenCreateDialog(false)}>
           <DialogContent variant="form" className="keyboard-aware-dialog safe-area-p">
             <DialogHeader>
               <DialogTitle>Create New Goal</DialogTitle>
@@ -455,7 +455,7 @@ export function GoalList() {
       </div>
 
       {/* Dialog for creating new goal */}
-      <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open) => !open && setOpenCreateDialog(false)}>
+      <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open: boolean) => !open && setOpenCreateDialog(false)}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
           <DialogHeader>
             <DialogTitle>Create New Goal</DialogTitle>
@@ -537,7 +537,7 @@ export function GoalList() {
       </DialogWithContext>
 
       {/* Dialog to confirm goal deletion */}
-      <AlertDialogWithContext isOpen={openDeleteDialog} onOpenChange={(open) => !open && setOpenDeleteDialog(false)}>
+      <AlertDialogWithContext isOpen={openDeleteDialog} onOpenChange={(open: boolean) => !open && setOpenDeleteDialog(false)}>
         <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>

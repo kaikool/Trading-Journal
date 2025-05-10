@@ -960,7 +960,7 @@ export function StrategiesManagement() {
       
       {/* Add Strategy Button at bottom */}
       <div className="flex justify-center mt-6 pt-4 border-t border-border/20">
-        <DialogWithContext isOpen={isDialogOpen} onOpenChange={(open) => !open && setIsDialogOpen(false)}>
+        <DialogWithContext isOpen={isDialogOpen} onOpenChange={(open: boolean) => !open && setIsDialogOpen(false)}>
           <DialogTrigger asChild>
             <Button variant="default" size="sm" className="w-full max-w-sm">
               <Icons.ui.plus className="h-4 w-4 mr-1.5" />
@@ -1144,11 +1144,11 @@ export function StrategiesManagement() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+        </DialogWithContext>
       </div>
       
       {/* Confirm Delete Dialog */}
-      <AlertDialogWithContext isOpen={isDeleteDialogOpen} onOpenChange={(open) => !open && setIsDeleteDialogOpen(false)}>
+      <AlertDialogWithContext isOpen={isDeleteDialogOpen} onOpenChange={(open: boolean) => !open && setIsDeleteDialogOpen(false)}>
         <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Strategy</AlertDialogTitle>
@@ -1173,7 +1173,7 @@ export function StrategiesManagement() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialogWithContext>
     </div>
   );
 }
