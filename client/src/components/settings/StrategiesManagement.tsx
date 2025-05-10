@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { auth, getStrategies, addStrategy, updateStrategy, deleteStrategy } from "@/lib/firebase";
 import { Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 import {
   StrategyConditionList,
 } from "./StrategyConditionInput";
@@ -37,6 +36,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 // All icons are now imported from the centralized Icons component
