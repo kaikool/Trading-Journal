@@ -355,13 +355,13 @@ export function GoalList() {
               exit={{ opacity: 0 }}
               className="h-full"
             >
-              <ScrollArea className="h-full px-2">
+              <ScrollArea className="h-full goal-scroll-padding goal-scroll-area">
                 {filterGoals(goalProgress.activeGoals).length > 0 ? (
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+                    className="goal-grid"
                   >
                     {filterGoals(goalProgress.activeGoals).map((goal) => (
                       <GoalCard
@@ -412,13 +412,13 @@ export function GoalList() {
               exit={{ opacity: 0 }}
               className="h-full"
             >
-              <ScrollArea className="h-full px-2">
+              <ScrollArea className="h-full goal-scroll-padding goal-scroll-area">
                 {filterGoals(goalProgress.completedGoals).length > 0 ? (
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+                    className="goal-grid"
                   >
                     {filterGoals(goalProgress.completedGoals).map((goal) => (
                       <GoalCard

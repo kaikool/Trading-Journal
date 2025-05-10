@@ -1,0 +1,70 @@
+/* Goal Component System - Following chuẩn 4px */
+
+/* Khoảng cách và padding */
+:root {
+  /* Sử dụng CSS variables từ globals.css */
+  --goal-card-padding: var(--spacing-4); /* 16px */
+  --goal-grid-gap: var(--spacing-3); /* 12px */
+  --goal-section-margin: var(--spacing-4); /* 16px */
+  --goal-item-margin: var(--spacing-2); /* 8px */
+  --goal-inner-gap: var(--spacing-1); /* 4px */
+  --goal-icon-spacing: var(--spacing-1); /* 4px */
+  
+  /* Kích thước icon */
+  --goal-icon-size: var(--icon-xs); /* 12px */
+  --goal-button-icon-size: var(--icon-xs); /* 12px */
+  
+  /* Typography */
+  --goal-title-size: var(--text-xl); /* 20px */
+  --goal-title-weight: var(--font-bold);
+  --goal-description-size: var(--text-sm); /* 14px */
+  --goal-value-size: var(--text-base); /* 16px */
+  --goal-label-size: var(--text-sm); /* 14px */
+  
+  /* Buttons và controls */
+  --goal-button-height: 2rem; /* 32px */
+  --goal-button-icon-only-width: 2rem; /* 32px */
+  --goal-button-text-padding: 0 var(--spacing-2); /* 0 8px */
+  
+  /* Border, radius, shadows */
+  --goal-card-border-width: 2px;
+  --goal-card-radius: var(--radius);
+  --goal-card-shadow: var(--shadow-sm);
+  --goal-card-hover-shadow: var(--shadow-md);
+}
+
+/* Override Scrollbar in goal sections */
+.goal-scroll-area::-webkit-scrollbar {
+  width: var(--spacing-2); /* 8px */
+  height: var(--spacing-2); /* 8px */
+}
+
+/* Utility classes */
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: var(--goal-grid-gap);
+}
+
+@media (min-width: 768px) {
+  .goal-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .goal-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Layout padding standardization */
+.goal-scroll-padding {
+  padding-left: var(--spacing-2);
+  padding-right: var(--spacing-2);
+}
+
+/* Animation values */
+.goal-transition {
+  transition: all 0.3s ease;
+}

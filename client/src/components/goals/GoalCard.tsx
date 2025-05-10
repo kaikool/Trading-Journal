@@ -130,7 +130,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
 
   // Custom card border based on goal color or priority
   const cardBorderStyle = goal.color 
-    ? { borderColor: goal.color, borderWidth: '2px' } 
+    ? { borderColor: goal.color, borderWidth: 'var(--goal-card-border-width)' } 
     : {};
 
   return (
@@ -138,6 +138,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      className="goal-transition"
     >
       <Card className="overflow-hidden" style={cardBorderStyle}>
         <CardHeader className="pb-2" compact>
@@ -148,7 +149,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             </Badge>
           </div>
           <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
-            <TrendingUp size={14} />
+            <TrendingUp size="var(--goal-icon-size)" />
             <span>{targetTypeLabels[goal.targetType] || goal.targetType}</span>
           </CardDescription>
         </CardHeader>
