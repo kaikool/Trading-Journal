@@ -1094,14 +1094,32 @@ export function StrategiesManagement() {
       </div>
     
       {/* Confirm Delete Dialog */}
-      <ConfirmDeleteDialog
-        isOpen={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        itemToDelete={strategyToDelete}
-        onConfirm={handleDeleteStrategy}
-        title="Delete Strategy"
-        description={strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete?.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
-      />
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="safe-area-p">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Strategy</AlertDialogTitle>
+            <AlertDialogDescription>
+              {strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete?.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (strategyToDelete) {
+                  handleDeleteStrategy(strategyToDelete);
+                }
+                setIsDeleteDialogOpen(false);
+              }}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
