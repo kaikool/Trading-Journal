@@ -12,70 +12,70 @@ import {
 
 interface ConfirmDeleteDialogProps {
   /**
-   * Trạng thái mở của dialog
+   * Dialog open state
    */
   isOpen: boolean;
   
   /**
-   * Callback khi trạng thái mở của dialog thay đổi
+   * Callback when dialog open state changes
    */
   onOpenChange: (open: boolean) => void;
   
   /**
-   * ID hoặc dữ liệu của item cần xóa, sẽ được truyền lại qua onConfirm
+   * Item data or ID to be deleted, will be passed back via onConfirm
    */
   itemToDelete: any;
   
   /**
-   * Callback khi người dùng xác nhận xóa
+   * Callback when user confirms deletion
    */
   onConfirm: (item: any) => void;
   
   /**
-   * Tiêu đề của dialog
+   * Dialog title
    */
   title?: string;
   
   /**
-   * Mô tả chi tiết được hiển thị trong dialog
+   * Detailed description displayed in the dialog
    */
   description?: React.ReactNode;
   
   /**
-   * Nhãn của nút hủy
+   * Cancel button label
    */
   cancelText?: string;
   
   /**
-   * Nhãn của nút xác nhận xóa
+   * Confirm button label
    */
   confirmText?: string;
   
   /**
-   * CSS class để override cho nút xác nhận nếu cần
+   * CSS class to override the confirm button styling if needed
    */
   confirmButtonClass?: string;
 }
 
 /**
- * Component dialog xác nhận xóa đa năng có thể dùng cho mọi loại xóa trong ứng dụng:
- * - Xóa giao dịch (trade)
- * - Xóa mục tiêu (goal)
- * - Xóa chiến lược (strategy)
- * - Và nhiều loại khác
+ * Universal confirmation dialog component that can be used for any deletion operation in the application:
+ * - Deleting trades
+ * - Deleting goals
+ * - Deleting strategies
+ * - And many other item types
  * 
- * Component này sử dụng AlertDialog từ shadcn/ui và có thể được tùy chỉnh dễ dàng
- * thông qua các props.
+ * This component uses AlertDialog from shadcn/ui and can be easily customized
+ * through props.
  */
 export function ConfirmDeleteDialog({
   isOpen,
   onOpenChange,
   itemToDelete,
   onConfirm,
-  title = "Xác nhận xóa",
-  description = "Bạn có chắc chắn muốn xóa mục này không? Dữ liệu đã xóa không thể khôi phục lại được.",
-  cancelText = "Hủy",
-  confirmText = "Xóa",
+  title = "Confirm Delete",
+  description = "Are you sure you want to delete this item? This action cannot be undone.",
+  cancelText = "Cancel",
+  confirmText = "Delete",
   confirmButtonClass = "bg-destructive hover:bg-destructive/90",
 }: ConfirmDeleteDialogProps) {
   const handleConfirm = React.useCallback(() => {
