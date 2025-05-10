@@ -27,6 +27,42 @@ body.scroll-in-progress * {
   animation-duration: 0s !important;
 }
 
+/* Ngăn trang cuộn khi mở dialog */
+[data-state="open"][role="dialog"],
+[data-state="open"][aria-modal="true"] {
+  /* Ngăn trang cuộn khi dialog mở */
+  overscroll-behavior: contain;
+  scroll-margin: 0;
+}
+
+/* Ngăn auto-scroll đến dialog khi nó mở */
+[role="dialog"],
+[aria-modal="true"] {
+  scroll-behavior: auto !important;
+  scroll-margin-block: 0 !important;
+  scroll-padding-block: 0 !important;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+  scrollbar-gutter: auto !important;
+  overflow-anchor: none !important;
+}
+
+/* Cố định vị trí trang khi dialog mở */
+body.dialog-open {
+  /* Ngăn cuộn trang khi dialog mở */
+  position: fixed;
+  width: 100%;
+  /* Sử dụng vị trí cuộn đã lưu để tránh nhảy trang */
+  top: calc(-1 * var(--scroll-position, 0px));
+}
+
+/* Đảm bảo dialog luôn hiển thị trên top */
+body.dialog-open [role="dialog"],
+body.dialog-open [aria-modal="true"] {
+  position: fixed;
+  z-index: 100;
+}
+
 /* Safe area padding class for dialogs */
 .safe-area-p {
   --dialog-padding: var(--spacing-6, 1.5rem);
