@@ -113,23 +113,14 @@ export function ScrollToTop({
    * Xử lý khi người dùng nhấp vào nút cuộn lên đầu trang
    */
   const handleScrollToTop = useCallback(() => {
-    // Debounce: Kiểm tra thời gian từ lần click cuối
-    const now = Date.now();
-    const timeSinceLastClick = now - lastClickTimeRef.current;
-    
-    // Nếu đã click gần đây, bỏ qua
-    if (timeSinceLastClick < debounceDelay) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[ScrollToTop] Debouncing clicks: chỉ ${timeSinceLastClick}ms từ click trước`);
-      }
-      return;
-    }
-    
-    // Cập nhật thời gian click cuối cùng
-    lastClickTimeRef.current = now;
+    // Loại bỏ cơ chế debounce vì nó gây nhầm lẫn cho người dùng
+    // Thay vào đó, chúng ta chỉ kiểm tra xem có đang scroll hay không
     
     // Nếu đang scroll hoặc dialog đang mở, bỏ qua
-    if (isGlobalScrolling() || dialogOpen) {
+    if (isButtonDisabled || dialogOpen) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[ScrollToTop] Đang trong trạng thái disabled, bỏ qua yêu cầu");
+      }
       return;
     }
     
@@ -143,20 +134,27 @@ export function ScrollToTop({
     const startPosition = getScrollPosition();
     
     // Nếu đã ở đầu trang, không làm gì cả
-    if (startPosition <= 0) return;
+    if (startPosition <= 0) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[ScrollToTop] Đã ở đầu trang, không cần scroll");
+      }
+      return;
+    }
     
     // Log trong môi trường development
     if (process.env.NODE_ENV === 'development') {
       console.log(`[ScrollToTop] Bắt đầu scroll từ vị trí ${startPosition}px`);
     }
     
-    // Kích hoạt trạng thái disabled
+    // Kích hoạt trạng thái disabled ngay lập tức
     setIsButtonDisabled(true);
     
-    // Thực hiện scroll bằng utility function
+    // Thực hiện scroll bằng utility function với force=true để đảm bảo luôn chạy
     cleanupScrollRef.current = scrollToTop({
       speed: 'normal',
+      force: true, // Đảm bảo luôn scrolling ngay cả khi có flag đang scroll
       onComplete: () => {
+        // Đảm bảo button được kích hoạt lại sau khi hoàn thành
         setIsButtonDisabled(false);
         cleanupScrollRef.current = null;
         
@@ -165,7 +163,7 @@ export function ScrollToTop({
         }
       }
     });
-  }, [dialogOpen, debounceDelay]);
+  }, [isButtonDisabled, dialogOpen]);
   
   // Không hiển thị nút nếu dialog đang mở
   if (dialogOpen) {

@@ -103,9 +103,28 @@ export function scrollToTop(options: {
       return;
     }
     
-    // Tính bước cuộn dựa trên vị trí hiện tại
-    // Càng gần đến đích, bước càng nhỏ -> tạo hiệu ứng easing
-    const step = Math.max(Math.floor(currentPosition / factor), 1);
+    // Tính toán bước cuộn theo đường cong easing
+    // Sử dụng công thức tỷ lệ phần trăm để có động lực mượt mà
+    // Tốc độ nhanh hơn khi cuộn từ vị trí xa, chậm lại khi đến gần đích
+    
+    let step: number;
+    
+    // Tối ưu dựa vào speed đã chọn
+    if (speed === 'fast') {
+      // Fast speed: Bước nhảy lớn, cuộn nhanh
+      const percentage = Math.min(Math.max(currentPosition / 1000, 0.2), 0.5);
+      step = Math.max(Math.ceil(currentPosition * percentage), 20);
+    }
+    else if (speed === 'slow') {
+      // Slow speed: Bước nhảy nhỏ, cuộn chậm và mượt
+      const percentage = Math.min(Math.max(currentPosition / 2000, 0.05), 0.15);
+      step = Math.max(Math.ceil(currentPosition * percentage), 5);
+    }
+    else {
+      // Normal speed: Cân bằng giữa tốc độ và mượt mà
+      const percentage = Math.min(Math.max(currentPosition / 1500, 0.1), 0.25);
+      step = Math.max(Math.ceil(currentPosition * percentage), 10);
+    }
     
     // Thực hiện cuộn
     window.scrollTo(0, currentPosition - step);
@@ -117,28 +136,75 @@ export function scrollToTop(options: {
   // Bắt đầu animation
   animationFrame = requestAnimationFrame(doSmoothScroll);
   
+  // Theo dõi tiến trình scroll để phát hiện khi bị kẹt
+  let lastPosition = startPosition;
+  let stuckCounter = 0;
+  
+  // Kiểm tra tiến trình sau một khoảng thời gian
+  const progressCheckInterval = setInterval(() => {
+    const currentPos = getScrollPosition();
+    
+    // Nếu vị trí không thay đổi trong 100ms, tăng bộ đếm kẹt
+    if (Math.abs(currentPos - lastPosition) < 2) {
+      stuckCounter++;
+      
+      // Nếu bị kẹt quá 3 lần liên tiếp (300ms), kích hoạt force scroll
+      if (stuckCounter >= 3) {
+        clearInterval(progressCheckInterval);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[ScrollUtils] Phát hiện scroll bị kẹt tại ${currentPos}px, force scroll`);
+        }
+        
+        // Force scroll đến đầu trang
+        window.scrollTo(0, 0);
+        cancelAll();
+        if (onComplete) onComplete();
+      }
+    } else {
+      // Đặt lại bộ đếm nếu có tiến trình
+      stuckCounter = 0;
+      lastPosition = currentPos;
+    }
+  }, 100);
+  
   // Fallback nếu animation không hoạt động sau khoảng thời gian
   fallbackTimeout = setTimeout(() => {
     const currentPos = getScrollPosition();
     if (currentPos > 5) {
+      clearInterval(progressCheckInterval);
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[ScrollUtils] Fallback: Scroll đã hoạt động một phần (${currentPos}px còn lại), force scroll`);
+      }
+      
       // Force scroll tức thì
       window.scrollTo(0, 0);
       cancelAll();
       if (onComplete) onComplete();
     }
-  }, 800);
+  }, 600); // Giảm xuống 600ms để nhanh hơn
   
-  // Safety timeout - luôn đảm bảo scroll kết thúc sau tối đa 2000ms
+  // Safety timeout - luôn đảm bảo scroll kết thúc sau tối đa 1500ms
   safetyTimeout = setTimeout(() => {
+    clearInterval(progressCheckInterval);
+    
     if (isScrollingActive) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[ScrollUtils] Safety timeout: Đặt lại trạng thái scroll sau 1500ms");
+      }
       window.scrollTo(0, 0);
       cancelAll();
       if (onComplete) onComplete();
     }
-  }, 2000);
+  }, 1500); // Giảm xuống 1500ms vì không cần thiết đợi lâu hơn
   
-  // Return cleanup function
-  return cancelAll;
+  // Đảm bảo hủy interval trong cleanup function
+  const originalCancelAll = cancelAll;
+  return () => {
+    clearInterval(progressCheckInterval);
+    originalCancelAll();
+  };
 }
 
 /**
