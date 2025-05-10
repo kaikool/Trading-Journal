@@ -99,8 +99,11 @@ function MainContent() {
       // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
       const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
       
+      console.log(`[App] Route change scroll check: dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
+      
       if (shouldScroll) {
         // Cuộn lên đầu trang, nhưng có độ trễ nhỏ để đảm bảo DOM đã render
+        console.log(`[App] Scrolling to top after route change`);
         setTimeout(() => {
           window.scrollTo({ top: 0 });
         }, 100);

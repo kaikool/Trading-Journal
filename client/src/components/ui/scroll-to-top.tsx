@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
-import { useDialog } from "@/contexts/DialogContext";
 
 interface ScrollToTopProps {
   threshold?: number;
@@ -13,100 +12,108 @@ interface ScrollToTopProps {
 }
 
 /**
- * ScrollToTop component
+ * ScrollToTop component - Phiên bản mới xây dựng từ đầu
  * 
- * A simple button that appears when scrolling down
- * and allows returning to the top of the page with one click.
+ * Một nút đơn giản xuất hiện khi cuộn xuống và cho phép
+ * quay trở lại đầu trang với một lần nhấp chuột.
  */
 export function ScrollToTop({
   threshold = 400,
   showOnRouteChange = true,
   buttonClassName = ""
 }: ScrollToTopProps = {}) {
+  // State để kiểm soát hiển thị nút
   const [visible, setVisible] = useState(false);
+  // State để theo dõi trạng thái scroll đang diễn ra
+  const [isScrolling, setIsScrolling] = useState(false);
   const [location] = useLocation();
-  const { dialogOpen, shouldPreventScrollAfterDialogClose } = useDialog();
   
-  useEffect(() => {
-    // Kiểm tra vị trí cuộn để hiển thị/ẩn nút
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      
-      // Chỉ hiển thị nút khi đã cuộn xuống đủ xa và không có dialog nào đang mở
-      const shouldShow = scrollY > threshold && !dialogOpen;
-      setVisible(shouldShow);
-    };
+  // Kiểm tra xem trang có đang ở trạng thái cuộn không
+  const checkIfScrolling = useCallback(() => {
+    // Chỉ cần kiểm tra position Y
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
     
-    // Đăng ký sự kiện cuộn
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Hiển thị nút nếu đã cuộn xuống đủ xa
+    setVisible(scrollTop > threshold);
+  }, [threshold]);
+  
+  // Xử lý sự kiện scroll
+  useEffect(() => {
+    // Đăng ký sự kiện cuộn với passive flag để tối ưu hiệu suất
+    window.addEventListener("scroll", checkIfScrolling, { passive: true });
     
     // Kiểm tra vị trí ban đầu
-    handleScroll();
+    checkIfScrolling();
     
     // Hủy đăng ký khi unmount
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", checkIfScrolling);
     };
-  }, [threshold, dialogOpen]);
+  }, [checkIfScrolling]);
   
-  // Tạm thời vô hiệu hóa cơ chế auto-scroll khi đổi route
-  // Chúng ta sẽ xử lý cuộn lên đầu trang trong App.tsx
-  // Cách này tránh các vấn đề với dialog mà không cần kiểm tra DOM
+  // Lấy tham chiếu đến button để kiểm tra sự tập trung
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
   
-  // Ref để theo dõi thời gian click cuối cùng
-  const lastClickTimeRef = useRef(0);
-  
-  // Hàm cuộn lên đầu trang với hiệu ứng mượt mà và phối hợp với DialogContext
-  const scrollToTop = () => {
-    // Ngăn chặn thực thi nếu dialog đang mở hoặc vừa đóng
-    if (dialogOpen || shouldPreventScrollAfterDialogClose()) {
-      console.log("[DEBUG] ScrollToTop ignored - dialog is open or just closed");
+  /**
+   * Hàm cuộn lên đầu trang - Cài đặt lại từ đầu để tránh xung đột
+   */
+  const handleScrollToTop = useCallback(() => {
+    // Không thực hiện gì nếu đang trong quá trình cuộn
+    if (isScrolling) {
+      console.log("[ScrollToTop] Đang scroll, bỏ qua request");
       return;
     }
     
-    // Kiểm tra khoảng thời gian tối thiểu giữa các lần click
-    const now = Date.now();
-    const MIN_CLICK_INTERVAL = 400; // Giảm xuống từ 500ms để cải thiện phản hồi
+    // Ghi lại vị trí cuộn hiện tại
+    const startPosition = window.scrollY || document.documentElement.scrollTop;
     
-    if (now - lastClickTimeRef.current > MIN_CLICK_INTERVAL) {
-      // Cập nhật thời gian click cuối cùng
-      lastClickTimeRef.current = now;
-      
-      // Ghi lại vị trí hiện tại để kiểm tra hiệu quả
-      const currentPosition = window.scrollY;
-      console.log("[DEBUG] ScrollToTop clicked, scrolling from position:", currentPosition);
-      
-      // Sử dụng Promise để xác định khi nào smooth scroll kết thúc
-      const performScroll = () => {
-        return new Promise<void>((resolve) => {
-          // Thực hiện cuộn mượt mà
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-          });
-          
-          // Đặt một timeout để kiểm tra kết quả
-          setTimeout(() => {
-            // Nếu vị trí vẫn khá xa đầu trang, thực hiện cuộn tức thì
-            if (window.scrollY > 100) {
-              console.log("[DEBUG] Smooth scroll ineffective (position:", window.scrollY, "), forcing instant scroll");
-              window.scrollTo(0, 0);
-            }
-            resolve();
-          }, 400); // Thời gian kiểm tra dài hơn để đảm bảo smooth scroll có cơ hội hoạt động
-        });
-      };
-      
-      // Thực hiện cuộn và xử lý kết quả
-      performScroll().catch(err => {
-        console.error("[ERROR] ScrollToTop failed:", err);
-        // Fallback: cuộn cứng nếu có lỗi
-        window.scrollTo(0, 0);
-      });
-    } else {
-      console.log("[DEBUG] ScrollToTop ignored - too many clicks");
+    // Nếu đã ở đầu trang, không làm gì cả
+    if (startPosition <= 0) {
+      console.log("[ScrollToTop] Đã ở đầu trang, không cần scroll");
+      return;
     }
-  };
+    
+    console.log(`[ScrollToTop] Bắt đầu scroll từ vị trí ${startPosition}px`);
+    
+    // Đánh dấu đang trong quá trình cuộn
+    setIsScrolling(true);
+    
+    // Thực hiện cuộn mượt
+    try {
+      // Sử dụng native API để cuộn
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      
+      // Giải pháp dự phòng nếu scrollTo với behavior smooth không hoạt động
+      const fallbackScroll = setTimeout(() => {
+        // Kiểm tra vị trí hiện tại, nếu chưa về đầu trang thì force scroll
+        const currentPos = window.scrollY || document.documentElement.scrollTop;
+        if (currentPos > 5) {
+          console.log(`[ScrollToTop] Fallback: Scroll đã hoạt động một phần (${currentPos}px còn lại), force scroll`);
+          window.scrollTo(0, 0);
+        }
+      }, 600);
+      
+      // Đặt lại trạng thái sau khi cuộn hoàn tất
+      const resetScrollingState = setTimeout(() => {
+        console.log("[ScrollToTop] Đặt lại trạng thái scroll");
+        setIsScrolling(false);
+        clearTimeout(fallbackScroll);
+      }, 1000);
+      
+      return () => {
+        clearTimeout(fallbackScroll);
+        clearTimeout(resetScrollingState);
+      };
+    } catch (error) {
+      console.error("[ScrollToTop] Lỗi khi scroll:", error);
+      // Fallback nếu có lỗi - scroll tức thì
+      window.scrollTo(0, 0);
+      setIsScrolling(false);
+    }
+  }, [isScrolling]);
   
   return (
     <AnimatePresence>
@@ -116,19 +123,19 @@ export function ScrollToTop({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.2 }}
-          className={cn(
-            "fixed z-50 right-4 bottom-24 md:right-6 md:bottom-6",
-            "safe-area-pb safe-area-pr"
-          )}
+          className="fixed z-50 right-4 bottom-24 md:right-6 md:bottom-6 safe-area-pb safe-area-pr"
         >
           <Button
+            ref={buttonRef}
             variant="secondary"
             size="icon"
-            onClick={scrollToTop}
+            onClick={handleScrollToTop}
             aria-label="Cuộn lên đầu trang"
+            disabled={isScrolling}
             className={cn(
               "h-10 w-10 rounded-full shadow-md",
               "bg-card/90 backdrop-blur-md",
+              isScrolling && "opacity-50 cursor-not-allowed",
               buttonClassName
             )}
           >

@@ -44,17 +44,23 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
       // Tổng số dialog đang mở
       const totalDialogCount = dialogElements.length + radixDialogElements.length;
       
+      // Log thông tin để debug
+      console.log(`[DEBUG] DialogContext: detected ${dialogElements.length} standard dialogs, ${radixDialogElements.length} Radix dialogs`);
+      
       // Cập nhật trạng thái và đếm số lượng
       if (totalDialogCount > 0 && !dialogOpen) {
         dialogCountRef.current = totalDialogCount;
+        console.log(`[DEBUG] DialogContext: Opening dialog, count=${totalDialogCount}`);
         setDialogOpen(true);
       } else if (totalDialogCount === 0 && dialogOpen) {
         dialogCountRef.current = 0;
+        console.log(`[DEBUG] DialogContext: Closing dialog, setting lastDialogCloseTime=${Date.now()}`);
         setDialogOpen(false);
         setLastDialogCloseTime(Date.now());
       } else {
         // Chỉ cập nhật số lượng nếu có thay đổi
         if (dialogCountRef.current !== totalDialogCount) {
+          console.log(`[DEBUG] DialogContext: Dialog count changed ${dialogCountRef.current} -> ${totalDialogCount}`);
           dialogCountRef.current = totalDialogCount;
         }
       }
@@ -105,7 +111,11 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
 
   // Kiểm tra xem có nên ngăn chặn cuộn lên đầu sau khi dialog đóng không
   const shouldPreventScrollAfterDialogClose = () => {
-    return Date.now() - lastDialogCloseTime < preventScrollAfterDialogClose;
+    const now = Date.now();
+    const timeSinceDialogClosed = now - lastDialogCloseTime;
+    const shouldPrevent = timeSinceDialogClosed < preventScrollAfterDialogClose;
+    console.log(`[DEBUG] shouldPreventScrollAfterDialogClose: now=${now}, lastDialogCloseTime=${lastDialogCloseTime}, diff=${timeSinceDialogClosed}ms, prevent=${shouldPrevent}`);
+    return shouldPrevent;
   };
 
   // Giá trị của context
