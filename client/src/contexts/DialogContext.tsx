@@ -23,24 +23,6 @@ export function useDialog() {
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const dialogCountRef = useRef(0); // Đếm số lượng dialog đang mở
-  
-  // Patch the Element.focus method to prevent scrolling
-  useEffect(() => {
-    // Lưu trữ phương thức focus gốc
-    const originalFocus = HTMLElement.prototype.focus;
-    
-    // Ghi đè phương thức focus để luôn có preventScroll = true
-    HTMLElement.prototype.focus = function(options?: FocusOptions) {
-      // Đảm bảo luôn có preventScroll = true
-      const newOptions = { preventScroll: true, ...options };
-      return originalFocus.call(this, newOptions);
-    };
-    
-    // Khôi phục phương thức gốc khi unmount
-    return () => {
-      HTMLElement.prototype.focus = originalFocus;
-    };
-  }, []);
 
   // Lắng nghe DOM để tự động phát hiện khi dialog được mở/đóng
   useEffect(() => {
@@ -62,19 +44,10 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
         dialogCountRef.current = totalDialogCount;
         console.log(`[DEBUG] DialogContext: Opening dialog, count=${totalDialogCount}`);
         setDialogOpen(true);
-        
-        // Thêm class vào body để ngăn chặn cuộn
-        document.body.classList.add('dialog-open');
-        
-        // Lưu vị trí cuộn hiện tại
-        document.body.style.setProperty('--scroll-position', `${window.scrollY}px`);
       } else if (totalDialogCount === 0 && dialogOpen) {
         dialogCountRef.current = 0;
         console.log(`[DEBUG] DialogContext: Closing dialog`);
         setDialogOpen(false);
-        
-        // Xóa class khỏi body khi dialog đóng
-        document.body.classList.remove('dialog-open');
       } else {
         // Chỉ cập nhật số lượng nếu có thay đổi
         if (dialogCountRef.current !== totalDialogCount) {
