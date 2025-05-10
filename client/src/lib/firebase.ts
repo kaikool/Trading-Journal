@@ -895,9 +895,7 @@ async function getStorageDownloadUrl(path: string): Promise<string> {
   }
 }
 
-// PHIÊN BẢN ĐƠN GIẢN HÓA để khắc phục vấn đề upload ảnh
-import { optimizeImage } from './image-optimizer';
-
+// Hàm upload ảnh giao dịch trực tiếp đến Cloudinary
 async function uploadTradeImage(
   userId: string, 
   tradeId: string, 
