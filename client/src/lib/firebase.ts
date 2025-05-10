@@ -933,65 +933,37 @@ async function uploadTradeImage(
     if (!userId) throw new Error("ID người dùng là bắt buộc");
     if (!tradeId) tradeId = "temp-" + Date.now();
     
-    // Log thông tin tải lên - trước khi tối ưu hóa
+    // Log thông tin tải lên
     debug(`File gốc: ${file.name} (${(file.size/1024).toFixed(2)}KB), type: ${file.type}`);
     debug(`User ID: ${userId}, Trade ID: ${tradeId}, Image type: ${type}`);
     
-    // Tối ưu hóa file ảnh trước khi upload - Cải tiến performance
-    if (progressCallback) progressCallback(5);
-    debug('Bắt đầu tối ưu hóa ảnh trước khi upload...');
+    // Báo cáo tiến trình
+    if (progressCallback) progressCallback(10);
     
-    try {
-      // Tối ưu hóa ảnh với cấu hình phù hợp cho forex chart
-      const optimizedFile = await optimizeImage(file, {
-        maxWidth: 1600,                 // Đủ lớn cho chart chi tiết
-        maxHeight: 1200,                // Tỷ lệ khung hình phù hợp
-        quality: 0.85,                  // Chất lượng ban đầu cao
-        maxSizeKB: 1024,                // Giới hạn 1MB 
-        outputFormat: 'original'        // Giữ nguyên định dạng
-      });
-      
-      // Log kết quả tối ưu hóa
-      debug(`Kết quả tối ưu hóa: ${(file.size/1024).toFixed(2)}KB -> ${(optimizedFile.size/1024).toFixed(2)}KB (${Math.round(optimizedFile.size/file.size*100)}%)`);
-      
-      // Cập nhật file với phiên bản đã tối ưu
-      file = optimizedFile;
-    } catch (optimizeError) {
-      // Nếu tối ưu hóa thất bại, tiếp tục với file gốc
-      logWarning("Không thể tối ưu hóa ảnh:", optimizeError);
-      debug("Tiếp tục tải lên với file gốc");
-    }
+    // Chuyển đổi loại ảnh cho API
+    const imageType = type.replace('before', 'chart').replace('after', 'exit');
     
-    // Use the API service to upload the image through Cloudinary
-    if (progressCallback) progressCallback(20); // Optimization complete
-    
-    // Use the API service to upload the file
-    try {
-      const imageType = type.replace('before', 'chart').replace('after', 'exit');
-      const uploadResult = await apiUploadTradeImage(userId, tradeId, file, imageType as any, (progress) => {
-        // Map progress from API to our callback
-        const mappedProgress = Math.round(progress * 0.8) + 20;
-        if (progressCallback) {
-          progressCallback(mappedProgress);
-        }
-        
-        // Log progress occasionally
-        if (mappedProgress % 20 === 0 || mappedProgress === 100) {
-          debug(`Upload progress: ${mappedProgress}%`);
-        }
-      });
-      
-      if (!uploadResult.success) {
-        throw new Error("Upload failed");
+    // Upload trực tiếp qua API
+    const uploadResult = await apiUploadTradeImage(userId, tradeId, file, imageType as any, (progress) => {
+      // Map progress from API to our callback
+      const mappedProgress = Math.round(progress * 0.9) + 10;
+      if (progressCallback) {
+        progressCallback(mappedProgress);
       }
       
-      debug(`Upload complete, URL available: ${uploadResult.imageUrl.slice(0, 50)}...`);
-      if (progressCallback) progressCallback(100);
-      return uploadResult.imageUrl;
-    } catch (uploadError) {
-      logError("Error during API upload:", uploadError);
-      throw uploadError;
+      // Log progress occasionally
+      if (mappedProgress % 20 === 0 || mappedProgress === 100) {
+        debug(`Upload progress: ${mappedProgress}%`);
+      }
+    });
+    
+    if (!uploadResult.success) {
+      throw new Error("Upload failed");
     }
+    
+    debug(`Upload complete, URL available: ${uploadResult.imageUrl.slice(0, 50)}...`);
+    if (progressCallback) progressCallback(100);
+    return uploadResult.imageUrl;
   } catch (error) {
     logError("Error in uploadTradeImage:", error);
     throw error;
