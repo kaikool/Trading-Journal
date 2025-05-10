@@ -197,7 +197,7 @@ export function GoalList() {
 
         {/* New goal dialog */}
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
             <DialogHeader>
               <DialogTitle>Create New Goal</DialogTitle>
               <DialogDescription>
@@ -532,7 +532,7 @@ export function GoalList() {
 
       {/* Dialog to confirm goal deletion */}
       <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
             <AlertDialogDescription>
