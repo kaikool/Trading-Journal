@@ -33,22 +33,22 @@ import {
 import { cn } from '@/lib/utils';
 import { CalendarIcon, XCircle } from 'lucide-react';
 
-// Schema để xác thực form dữ liệu
+// Schema to validate form data
 const goalFormSchema = z.object({
-  title: z.string().min(1, 'Tiêu đề không được để trống'),
+  title: z.string().min(1, 'Title cannot be empty'),
   description: z.string().optional(),
   targetType: z.enum(['profit', 'winRate', 'profitFactor', 'riskRewardRatio', 'balance', 'trades']),
-  targetValue: z.coerce.number().positive('Giá trị mục tiêu phải lớn hơn 0'),
+  targetValue: z.coerce.number().positive('Target value must be greater than 0'),
   startDate: z.date(),
   endDate: z.date(),
   priority: z.enum(['low', 'medium', 'high']),
   color: z.string().optional(),
 });
 
-// Loại dữ liệu cho form
+// Type for form data
 type GoalFormValues = z.infer<typeof goalFormSchema>;
 
-// Props cho component GoalForm
+// Props for GoalForm component
 interface GoalFormProps {
   defaultValues?: Partial<GoalFormValues>;
   onSubmit: (data: GoalFormValues) => void;
@@ -59,7 +59,7 @@ interface GoalFormProps {
 export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = false }: GoalFormProps) {
   const { userData } = useUserData();
   
-  // Thiết lập giá trị mặc định cho form
+  // Set default values for form
   const today = new Date();
   const nextMonth = new Date();
   nextMonth.setMonth(nextMonth.getMonth() + 1);
@@ -79,32 +79,32 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
     },
   });
 
-  // Mảng các loại mục tiêu
+  // Array of target types
   const targetTypes = [
-    { value: 'profit', label: 'Lợi nhuận' },
-    { value: 'winRate', label: 'Tỷ lệ thắng' },
-    { value: 'profitFactor', label: 'Hệ số lợi nhuận' },
-    { value: 'riskRewardRatio', label: 'Tỷ lệ R:R' },
-    { value: 'balance', label: 'Số dư' },
-    { value: 'trades', label: 'Số giao dịch' },
+    { value: 'profit', label: 'Profit' },
+    { value: 'winRate', label: 'Win Rate' },
+    { value: 'profitFactor', label: 'Profit Factor' },
+    { value: 'riskRewardRatio', label: 'R:R Ratio' },
+    { value: 'balance', label: 'Balance' },
+    { value: 'trades', label: 'Number of Trades' },
   ];
 
-  // Mảng các mức độ ưu tiên
+  // Array of priority levels
   const priorities = [
-    { value: 'low', label: 'Thấp' },
-    { value: 'medium', label: 'Trung bình' },
-    { value: 'high', label: 'Cao' },
+    { value: 'low', label: 'Low' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'high', label: 'High' },
   ];
 
-  // Mảng các màu sắc có sẵn
+  // Array of predefined colors
   const predefinedColors = [
-    { value: '#0ea5e9', label: 'Xanh da trời' },
-    { value: '#10b981', label: 'Xanh lá cây' },
-    { value: '#f59e0b', label: 'Cam' },
-    { value: '#ef4444', label: 'Đỏ' },
-    { value: '#8b5cf6', label: 'Tím' },
-    { value: '#ec4899', label: 'Hồng' },
-    { value: '#6b7280', label: 'Xám' },
+    { value: '#0ea5e9', label: 'Blue' },
+    { value: '#10b981', label: 'Green' },
+    { value: '#f59e0b', label: 'Orange' },
+    { value: '#ef4444', label: 'Red' },
+    { value: '#8b5cf6', label: 'Purple' },
+    { value: '#ec4899', label: 'Pink' },
+    { value: '#6b7280', label: 'Gray' },
   ];
 
   return (
@@ -115,9 +115,9 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tiêu đề mục tiêu</FormLabel>
+              <FormLabel>Goal Title</FormLabel>
               <FormControl>
-                <Input placeholder="VD: Đạt được lợi nhuận 1000$" {...field} />
+                <Input placeholder="Ex: Achieve $1000 profit" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -129,10 +129,10 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mô tả</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Mô tả chi tiết về mục tiêu này"
+                  placeholder="Detailed description about this goal"
                   className="resize-none"
                   {...field}
                   value={field.value || ''}
@@ -149,14 +149,14 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             name="targetType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Loại mục tiêu</FormLabel>
+                <FormLabel>Goal Type</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chọn loại mục tiêu" />
+                      <SelectValue placeholder="Select goal type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -177,21 +177,21 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             name="targetValue"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Giá trị mục tiêu</FormLabel>
+                <FormLabel>Target Value</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     step={form.watch('targetType') === 'winRate' ? '0.1' : '1'}
                     min="0"
-                    placeholder="VD: 1000"
+                    placeholder="Ex: 1000"
                     {...field}
                     onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
                 </FormControl>
                 <FormDescription>
-                  {form.watch('targetType') === 'winRate' && 'Tỷ lệ % (từ 1-100)'}
-                  {form.watch('targetType') === 'profitFactor' && 'VD: 2.5'}
-                  {form.watch('targetType') === 'riskRewardRatio' && 'VD: 1.5'}
+                  {form.watch('targetType') === 'winRate' && 'Percentage (1-100)'}
+                  {form.watch('targetType') === 'profitFactor' && 'Ex: 2.5'}
+                  {form.watch('targetType') === 'riskRewardRatio' && 'Ex: 1.5'}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -205,7 +205,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Ngày bắt đầu</FormLabel>
+                <FormLabel>Start Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -219,7 +219,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                         {field.value ? (
                           format(field.value, "dd/MM/yyyy")
                         ) : (
-                          <span>Chọn ngày</span>
+                          <span>Select date</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -244,7 +244,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             name="endDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Ngày kết thúc</FormLabel>
+                <FormLabel>End Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -258,7 +258,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                         {field.value ? (
                           format(field.value, "dd/MM/yyyy")
                         ) : (
-                          <span>Chọn ngày</span>
+                          <span>Select date</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -286,14 +286,14 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Mức độ ưu tiên</FormLabel>
+                <FormLabel>Priority</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chọn mức độ ưu tiên" />
+                      <SelectValue placeholder="Select priority level" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -314,7 +314,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             name="color"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Màu sắc (tùy chọn)</FormLabel>
+                <FormLabel>Color (optional)</FormLabel>
                 <div className="flex gap-2 items-center">
                   <Select
                     onValueChange={field.onChange}
@@ -322,7 +322,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn màu sắc" />
+                        <SelectValue placeholder="Select color" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -365,10 +365,10 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
 
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Hủy
+            Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Đang lưu...' : 'Lưu mục tiêu'}
+            {isSubmitting ? 'Saving...' : 'Save Goal'}
           </Button>
         </div>
       </form>
