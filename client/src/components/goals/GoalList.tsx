@@ -146,7 +146,7 @@ export function GoalList() {
     );
   };
 
-  // Animation variants cho danh sách mục tiêu
+  // Animation variants for goal list
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -167,7 +167,7 @@ export function GoalList() {
     );
   }
 
-  // Không có dữ liệu mục tiêu
+  // No goal data available
   if (!goalProgress) {
     return (
       <div className="h-full flex flex-col">
@@ -216,7 +216,7 @@ export function GoalList() {
     );
   }
 
-  // Dữ liệu mục tiêu có sẵn - hiển thị danh sách
+  // Goal data available - display list
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
@@ -427,13 +427,13 @@ export function GoalList() {
         </AnimatePresence>
       </div>
 
-      {/* Dialog tạo mục tiêu mới */}
+      {/* Dialog for creating new goal */}
       <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Tạo mục tiêu mới</DialogTitle>
+            <DialogTitle>Create New Goal</DialogTitle>
             <DialogDescription>
-              Thiết lập mục tiêu giao dịch để theo dõi và cải thiện hiệu suất của bạn.
+              Set up trading goals to track and improve your performance.
             </DialogDescription>
           </DialogHeader>
           <GoalForm 
@@ -444,13 +444,13 @@ export function GoalList() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog chỉnh sửa mục tiêu */}
+      {/* Dialog for editing goal */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Chỉnh sửa mục tiêu</DialogTitle>
+            <DialogTitle>Edit Goal</DialogTitle>
             <DialogDescription>
-              Cập nhật thông tin mục tiêu của bạn.
+              Update your goal information.
             </DialogDescription>
           </DialogHeader>
           {currentGoal && (
@@ -476,13 +476,13 @@ export function GoalList() {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog thêm cột mốc */}
+      {/* Dialog for adding milestone */}
       <Dialog open={openMilestoneDialog} onOpenChange={setOpenMilestoneDialog}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Thêm cột mốc</DialogTitle>
+            <DialogTitle>Add Milestone</DialogTitle>
             <DialogDescription>
-              Tạo cột mốc mới cho mục tiêu "{currentGoal?.title}".
+              Create a new milestone for the goal "{currentGoal?.title}".
             </DialogDescription>
           </DialogHeader>
           {currentGoal && (

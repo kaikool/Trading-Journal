@@ -89,7 +89,7 @@ export function MilestoneForm({
     }
   };
 
-  // Format giá trị số dựa vào loại mục tiêu
+  // Format numeric step based on goal type
   const getStep = (type: string) => {
     switch (type) {
       case 'winRate':
@@ -109,9 +109,9 @@ export function MilestoneForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tiêu đề cột mốc</FormLabel>
+              <FormLabel>Milestone Title</FormLabel>
               <FormControl>
-                <Input placeholder="VD: Đạt 50% mục tiêu" {...field} />
+                <Input placeholder="Ex: Reach 50% of the goal" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -123,14 +123,14 @@ export function MilestoneForm({
           name="targetValue"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Giá trị cột mốc ({getTargetTypeLabel(goalType)})</FormLabel>
+              <FormLabel>Milestone Value ({getTargetTypeLabel(goalType)})</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   step={getStep(goalType)}
                   min="0"
                   max={goalType === 'winRate' ? 100 : undefined}
-                  placeholder={`VD: ${goalTarget / 2}`}
+                  placeholder={`Ex: ${goalTarget / 2}`}
                   {...field}
                 />
               </FormControl>
@@ -148,9 +148,9 @@ export function MilestoneForm({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Đánh dấu hoàn thành</FormLabel>
+                <FormLabel className="text-base">Mark as Completed</FormLabel>
                 <FormDescription>
-                  Bật nếu cột mốc này đã đạt được
+                  Turn on if this milestone has been achieved
                 </FormDescription>
               </div>
               <FormControl>
@@ -165,10 +165,10 @@ export function MilestoneForm({
 
         <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Hủy
+            Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Đang lưu...' : 'Lưu cột mốc'}
+            {isSubmitting ? 'Saving...' : 'Save Milestone'}
           </Button>
         </div>
       </form>
