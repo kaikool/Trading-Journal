@@ -11,6 +11,7 @@ import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { motion, AnimatePresence } from "framer-motion";
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog";
 
 import LazyTradeHistoryCard from "@/components/trades/LazyTradeHistoryCard";
 import { FilterTags } from "@/components/trades/FilterTags";
@@ -60,6 +61,9 @@ export default function TradeHistory() {
   const [showFilters, setShowFilters] = useState(false);
   // State để theo dõi các giao dịch đang được xóa - cải thiện trải nghiệm người dùng
   const [deletingTradeIds, setDeletingTradeIds] = useState<string[]>([]);
+  // State cho dialog xác nhận xóa
+  const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
   // Thêm state để tracking các discipline flags
   const [hasEnteredEarly, setHasEnteredEarly] = useState<boolean | undefined>(undefined);
