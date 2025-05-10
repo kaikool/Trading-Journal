@@ -172,8 +172,7 @@ export function GoalList() {
     return (
       <div className="h-full flex flex-col">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Trading Goals</h2>
-          <Button onClick={() => setOpenCreateDialog(true)}>
+          <Button onClick={() => setOpenCreateDialog(true)} className="ml-auto" size="default">
             <PlusCircle className="mr-2 h-4 w-4" />
             Create New Goal
           </Button>
@@ -220,59 +219,85 @@ export function GoalList() {
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Trading Goals</h2>
-        <Button onClick={() => setOpenCreateDialog(true)}>
+        <Button onClick={() => setOpenCreateDialog(true)} className="ml-auto" size="default">
           <PlusCircle className="mr-2 h-4 w-4" />
           Create New Goal
         </Button>
       </div>
 
       {/* Progress overview section */}
-      <div className="bg-card rounded-lg p-4 mb-6 border">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
-            <h3 className="text-lg font-medium mb-2">Overall Progress</h3>
-            <div className="flex items-center gap-2 mb-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        {/* Main progress card */}
+        <div className="col-span-1 lg:col-span-2 bg-card rounded-lg p-6 border shadow-sm">
+          <h3 className="text-xl font-semibold mb-4 flex items-center">
+            <Trophy className="mr-2 h-5 w-5 text-primary" />
+            Overall Goal Progress
+          </h3>
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-muted-foreground">
+                  {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} goals completed
+                </span>
+                <span className="font-semibold text-lg">
+                  {goalProgress.overallProgress.progressPercentage.toFixed(0)}%
+                </span>
+              </div>
               <Progress 
                 value={goalProgress.overallProgress.progressPercentage} 
-                className="h-4" 
+                className="h-3" 
               />
-              <span className="font-medium w-12 text-right">
-                {goalProgress.overallProgress.progressPercentage.toFixed(0)}%
-              </span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} goals completed
-            </p>
-          </div>
-          
-          <div className="space-y-2 flex flex-col justify-center">
-            <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-green-500" />
-              <span className="font-medium">{goalProgress.completedGoals.length} completed goals</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <GoalIcon className="h-5 w-5 text-blue-500" />
-              <span className="font-medium">{goalProgress.activeGoals.length} active goals</span>
+            
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold">{goalProgress.activeGoals.length}</span>
+                <span className="text-sm text-muted-foreground">Active Goals</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold">{goalProgress.completedGoals.length}</span>
+                <span className="text-sm text-muted-foreground">Completed Goals</span>
+              </div>
             </div>
           </div>
+        </div>
+        
+        {/* Progress statistics card */}
+        <div className="col-span-1 bg-card rounded-lg p-6 border shadow-sm">
+          <h3 className="text-xl font-semibold mb-4 flex items-center">
+            <GoalIcon className="mr-2 h-5 w-5 text-primary" />
+            Progress Statistics
+          </h3>
           
-          <div className="space-y-2 flex flex-col justify-center">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-yellow-500" />
-              <span className="font-medium">
-                {goalProgress.upcomingMilestones.length} upcoming milestones
-              </span>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-muted/40 rounded-md">
+              <div className="flex items-center">
+                <Trophy className="h-5 w-5 text-green-500 mr-3" />
+                <span className="font-medium">Completed</span>
+              </div>
+              <span className="font-bold">{goalProgress.completedGoals.length}</span>
             </div>
+            
+            <div className="flex items-center justify-between p-3 bg-muted/40 rounded-md">
+              <div className="flex items-center">
+                <Clock className="h-5 w-5 text-yellow-500 mr-3" />
+                <span className="font-medium">Milestones</span>
+              </div>
+              <span className="font-bold">{goalProgress.upcomingMilestones.length}</span>
+            </div>
+            
             {goalProgress.activeGoals.some(goal => 
               new Date(goal.endDate) < new Date() && !goal.isCompleted
             ) && (
-              <div className="flex items-center gap-2">
-                <Info className="h-5 w-5 text-red-500" />
-                <span className="font-medium">
+              <div className="flex items-center justify-between p-3 bg-muted/40 rounded-md">
+                <div className="flex items-center">
+                  <Info className="h-5 w-5 text-red-500 mr-3" />
+                  <span className="font-medium">Overdue</span>
+                </div>
+                <span className="font-bold">
                   {goalProgress.activeGoals.filter(goal => 
                     new Date(goal.endDate) < new Date() && !goal.isCompleted
-                  ).length} overdue goals
+                  ).length}
                 </span>
               </div>
             )}
@@ -281,38 +306,42 @@ export function GoalList() {
       </div>
 
       {/* Search and filter section */}
-      <div className="mb-4 flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search goals..."
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          {searchTerm && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-1 top-1 h-7 w-7"
-              onClick={() => setSearchTerm('')}
-            >
-              <FilterX className="h-4 w-4" />
-            </Button>
-          )}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div className="lg:col-span-2 relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search goals by title or description..."
+              className="pl-10 h-10 bg-muted/30"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-1 top-1 h-8 w-8"
+                onClick={() => setSearchTerm('')}
+              >
+                <FilterX className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
         
-        <Tabs 
-          defaultValue="active" 
-          className="w-full sm:w-[400px]"
-          value={activeTab}
-          onValueChange={setActiveTab}
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center">
+          <Tabs 
+            defaultValue="active" 
+            className="w-full"
+            value={activeTab}
+            onValueChange={setActiveTab}
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="active">Active</TabsTrigger>
+              <TabsTrigger value="completed">Completed</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
       {/* Tab content */}
