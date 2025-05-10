@@ -95,8 +95,16 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
-      // Vô hiệu hóa hoàn toàn cơ chế auto-scroll khi thay đổi route
-      // Người dùng sẽ dùng nút ScrollToTop để cuộn lên đầu trang khi muốn
+      // Sử dụng context để kiểm tra trạng thái dialog
+      // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
+      const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
+      
+      if (shouldScroll) {
+        // Cuộn lên đầu trang, nhưng có độ trễ nhỏ để đảm bảo DOM đã render
+        setTimeout(() => {
+          window.scrollTo({ top: 0 });
+        }, 100);
+      }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
       const readyTimer = setTimeout(() => {
@@ -107,7 +115,7 @@ function MainContent() {
         clearTimeout(readyTimer); 
       };
     }
-  }, [location]);
+  }, [location, dialogOpen, shouldPreventScrollAfterDialogClose]);
   
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
