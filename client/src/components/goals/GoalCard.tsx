@@ -281,40 +281,30 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             
             {/* Các nút chức năng */}
             <div className="flex gap-1 ml-auto">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="default" 
-                      size="sm"
-                      className="h-8 flex items-center gap-1 px-2 sm:px-3"
-                      onClick={() => onAddMilestone && onAddMilestone()}
-                    >
-                      <Plus size={14} />
-                      <span className="hidden sm:inline">Add Milestone</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Add milestone to track progress</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Button 
+                variant="default" 
+                size="sm"
+                className="h-8 flex items-center gap-1 px-2 sm:px-3"
+                onClick={() => onAddMilestone && onAddMilestone()}
+              >
+                <Plus size={14} />
+                <span>Add Milestone</span>
+              </Button>
               
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button 
                       variant="secondary" 
-                      size="sm"
-                      className="h-8 flex items-center gap-1 px-2 sm:px-3"
+                      size="icon"
+                      className="h-8 w-8"
                       onClick={() => calculateGoalProgress(goal.id.toString())}
                     >
                       <RefreshCw size={14} />
-                      <span className="hidden sm:inline">Update Progress</span>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Recalculate current progress</p>
+                    <p>Update Progress</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
