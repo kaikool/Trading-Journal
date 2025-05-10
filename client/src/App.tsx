@@ -270,7 +270,7 @@ function MainContent() {
   
   return (
     <>
-      {/* Nút Scroll To Top sử dụng JavaScript thuần trong scroll-fix.ts */}
+      {/* ScrollToTop được quản lý bởi ScrollToTop component trong AppLayout */}
       
       {/* Unified layout system with new Sidebar - bọc bởi ErrorBoundary */}
       <SafeAppLayout>
