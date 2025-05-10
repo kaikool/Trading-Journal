@@ -161,7 +161,7 @@ export function GoalList() {
   if (isLoadingProgress) {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4">
-        <Goal className="h-12 w-12 animate-pulse text-primary" />
+        <GoalIcon className="h-12 w-12 animate-pulse text-primary" />
         <p className="text-lg font-medium">Đang tải dữ liệu mục tiêu...</p>
       </div>
     );
@@ -180,7 +180,7 @@ export function GoalList() {
         </div>
         
         <div className="flex-1 flex flex-col items-center justify-center h-96 space-y-4">
-          <Goal className="h-16 w-16 text-muted-foreground" />
+          <GoalIcon className="h-16 w-16 text-muted-foreground" />
           <div className="text-center space-y-2">
             <p className="text-xl font-medium">Chưa có mục tiêu nào</p>
             <p className="text-muted-foreground">
@@ -252,7 +252,7 @@ export function GoalList() {
               <span className="font-medium">{goalProgress.completedGoals.length} mục tiêu hoàn thành</span>
             </div>
             <div className="flex items-center gap-2">
-              <Goal className="h-5 w-5 text-blue-500" />
+              <GoalIcon className="h-5 w-5 text-blue-500" />
               <span className="font-medium">{goalProgress.activeGoals.length} mục tiêu đang thực hiện</span>
             </div>
           </div>
@@ -346,7 +346,7 @@ export function GoalList() {
                   </motion.div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <Goal className="h-12 w-12 text-muted-foreground mb-4" />
+                    <GoalIcon className="h-12 w-12 text-muted-foreground mb-4" />
                     {searchTerm ? (
                       <>
                         <h3 className="text-lg font-medium">Không tìm thấy mục tiêu</h3>
