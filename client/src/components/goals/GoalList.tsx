@@ -355,7 +355,7 @@ export function GoalList() {
               exit={{ opacity: 0 }}
               className="h-full"
             >
-              <ScrollArea className="h-full pr-4">
+              <ScrollArea className="h-full px-4">
                 {filterGoals(goalProgress.activeGoals).length > 0 ? (
                   <motion.div
                     variants={containerVariants}
@@ -412,7 +412,7 @@ export function GoalList() {
               exit={{ opacity: 0 }}
               className="h-full"
             >
-              <ScrollArea className="h-full pr-4">
+              <ScrollArea className="h-full px-4">
                 {filterGoals(goalProgress.completedGoals).length > 0 ? (
                   <motion.div
                     variants={containerVariants}
