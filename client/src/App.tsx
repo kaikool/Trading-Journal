@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, Suspense, useContext } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense, useContext, useRef } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -85,6 +85,65 @@ function MainContent() {
   const [isPageReady, setIsPageReady] = useState<boolean>(true);
   const [prevLocation, setPrevLocation] = useState<string>(location);
   
+  // Biến để kiểm soát nếu sự kiện route change được kích hoạt từ dialog
+  const routeChangeFromDialogRef = useRef(false);
+  
+  // Thêm event listener để phát hiện dialog sắp mở và chuyển route
+  useEffect(() => {
+    // Khi dialog sắp mở (từ bất kỳ component nào)
+    const handleDialogWillOpen = () => {
+      // Đánh dấu để không trigger scroll
+      routeChangeFromDialogRef.current = true;
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[App] Detected dialog will open, preventing scroll');
+      }
+    };
+    
+    // Khi có route change từ browser history
+    const handlePopState = () => {
+      // Kiểm tra xem có dialog nào đang mở không
+      const dialogElements = document.querySelectorAll('[role="dialog"]');
+      const radixDialogElements = document.querySelectorAll('[data-state="open"][aria-modal="true"]');
+      
+      if (dialogElements.length > 0 || radixDialogElements.length > 0) {
+        // Nếu có dialog đang mở, đánh dấu rằng route change đến từ dialog
+        routeChangeFromDialogRef.current = true;
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[App] Detected route change from dialog');
+        }
+      }
+    };
+    
+    // Khi có click vào một link
+    const handleLinkClick = (e: MouseEvent) => {
+      // Kiểm tra nếu click vào một liên kết
+      if (e.target instanceof HTMLAnchorElement && e.target.href) {
+        // Kiểm tra xem có dialog nào đang mở không
+        const dialogElements = document.querySelectorAll('[role="dialog"]');
+        const radixDialogElements = document.querySelectorAll('[data-state="open"][aria-modal="true"]');
+        
+        if (dialogElements.length > 0 || radixDialogElements.length > 0) {
+          routeChangeFromDialogRef.current = true;
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[App] Detected link click from dialog');
+          }
+        }
+      }
+    };
+    
+    // Đăng ký các event listeners
+    document.addEventListener('dialog:will-open', handleDialogWillOpen);
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('click', handleLinkClick, true);
+    
+    return () => {
+      document.removeEventListener('dialog:will-open', handleDialogWillOpen);
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('click', handleLinkClick, true);
+    };
+  }, []);
+  
   // Tối ưu hóa việc chuyển trang
   useEffect(() => {
     // Khi location thay đổi, đánh dấu trang đang loading
@@ -95,30 +154,37 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
-      // Tạo một trễ nhỏ để đảm bảo cập nhật dialogOpen
-      // Đây là cách tiếp cận an toàn hơn, tránh trường hợp scroll khi mở dialog
-      setTimeout(() => {
-        // Sử dụng context để kiểm tra trạng thái dialog
-        // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
-        const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
-        
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`[App] Route change scroll check (delayed): dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
-        }
-        
-        if (shouldScroll) {
-          // Cuộn lên đầu trang, có độ trễ nhỏ để đảm bảo DOM đã render
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[App] Route change from dialog: ${routeChangeFromDialogRef.current}`);
+      }
+      
+      // Nếu route change không đến từ dialog, mới thực hiện scroll
+      if (!routeChangeFromDialogRef.current) {
+        // Tạo một trễ nhỏ để đảm bảo DOM đã render
+        setTimeout(() => {
+          // Chỉ cuộn lên đầu khi không phải đang có dialog
+          const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
+          
           if (process.env.NODE_ENV === 'development') {
-            console.log(`[App] Scrolling to top after route change`);
+            console.log(`[App] Safe route change scroll check: dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
           }
           
-          // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
-          window.scrollTo({
-            top: 0,
-            behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để cảm giác chuyển trang nhanh hơn
-          });
-        }
-      }, 100); // Tăng độ trễ lên 100ms để đảm bảo DialogContext có thể cập nhật
+          if (shouldScroll) {
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`[App] Scrolling to top after route change`);
+            }
+            
+            // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
+            window.scrollTo({
+              top: 0,
+              behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để cảm giác chuyển trang nhanh hơn
+            });
+          }
+        }, 50);
+      }
+      
+      // Reset lại biến sau khi xử lý xong
+      routeChangeFromDialogRef.current = false;
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
       const readyTimer = setTimeout(() => {
