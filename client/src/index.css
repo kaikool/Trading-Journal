@@ -29,15 +29,37 @@
   }
 }
 
-/* Mobile keyboard adjustment class */
+/* Mobile & PWA keyboard adjustment class */
 .keyboard-aware-dialog {
-  @media (max-width: 640px) {
+  @media (max-width: 640px), (display-mode: standalone), (display-mode: fullscreen) {
     /* When virtual keyboard is active (heuristic based on viewport height) */
     @supports (height: 100dvh) {
       max-height: 82dvh;
       margin-bottom: 2dvh;
     }
+    
+    /* Chức năng thích nghi với bàn phím bổ sung cho PWA */
+    @media (display-mode: standalone), (display-mode: fullscreen) {
+      max-height: 80dvh; /* Hơi thấp hơn cho PWA vì có thể có UI của browser */
+      bottom: env(safe-area-inset-bottom, 0px);
+      
+      /* Cải thiện tính phản hồi khi bàn phím hiện lên */
+      transition: max-height 0.3s ease, transform 0.3s ease;
+    }
   }
+}
+
+/* Khi bàn phím hiện trên PWA hoặc mobile, áp dụng các style đặc biệt */
+:root.keyboard-visible .keyboard-aware-dialog {
+  max-height: 60dvh !important; /* Mạnh tay hơn để cho phép nhìn thấy nội dung khi bàn phím hiện */
+  transform: translateY(-15%); /* Di chuyển dialog lên để có thể nhìn thấy input field */
+}
+
+/* Đảm bảo phần tử đang được focus hiển thị tốt */
+.keyboard-focused {
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 25%);
 }
 
 /* Compact table for analytics - sử dụng giá trị spacing theo bội số của 4px */

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -63,6 +63,47 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
   const today = new Date();
   const nextMonth = new Date();
   nextMonth.setMonth(nextMonth.getMonth() + 1);
+  
+  // Theo dõi khi bàn phím xuất hiện trên PWA và thiết bị di động
+  useEffect(() => {
+    // Hàm phát hiện bàn phím hiện lên trên PWA
+    const checkKeyboardVisible = () => {
+      const formElement = document.querySelector('form');
+      const activeElement = document.activeElement;
+      
+      // Kiểm tra nếu focus đang ở trong một input field thuộc form
+      if (formElement && activeElement && 
+          (activeElement.tagName === 'INPUT' || 
+           activeElement.tagName === 'TEXTAREA' || 
+           activeElement.tagName === 'SELECT')) {
+        // Thêm class chỉ ra bàn phím đang hiện
+        document.documentElement.classList.add('keyboard-visible');
+        
+        // Thêm class vào phần tử đang được focus để tránh bị scrolling
+        activeElement.classList.add('keyboard-focused');
+        
+        // Đảm bảo phần tử được cuộn vào view nếu cần
+        setTimeout(() => {
+          activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      } else {
+        document.documentElement.classList.remove('keyboard-visible');
+      }
+    };
+    
+    // Đăng ký các sự kiện để kiểm tra bàn phím
+    document.addEventListener('focusin', checkKeyboardVisible);
+    document.addEventListener('focusout', () => {
+      document.documentElement.classList.remove('keyboard-visible');
+    });
+    
+    return () => {
+      // Dọn dẹp khi component unmount
+      document.removeEventListener('focusin', checkKeyboardVisible);
+      document.removeEventListener('focusout', checkKeyboardVisible);
+      document.documentElement.classList.remove('keyboard-visible');
+    };
+  }, []);
   
   const form = useForm<GoalFormValues>({
     resolver: zodResolver(goalFormSchema),
