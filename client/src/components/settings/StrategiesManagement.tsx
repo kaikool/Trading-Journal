@@ -934,7 +934,7 @@ export function StrategiesManagement() {
   ]);
   
   return (
-    <div className="space-y-4">
+    <>
       <div className="mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary/90 via-primary to-primary/80 bg-clip-text text-transparent">Trading Strategies</h2>
@@ -1083,15 +1083,16 @@ export function StrategiesManagement() {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
     
-    <ConfirmDeleteDialog
-      isOpen={isDeleteDialogOpen}
-      onOpenChange={setIsDeleteDialogOpen}
-      itemToDelete={strategyToDelete}
-      onConfirm={handleDeleteStrategy}
-      title="Delete Strategy"
-      description={strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete?.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
-    />
+      {/* Confirm Delete Dialog */}
+      <ConfirmDeleteDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        itemToDelete={strategyToDelete}
+        onConfirm={handleDeleteStrategy}
+        title="Delete Strategy"
+        description={strategyToDelete ? `Are you sure you want to delete the strategy "${strategyToDelete?.name}"? This action cannot be undone.` : "Are you sure you want to delete this strategy?"}
+      />
+    </div>
   );
 }
