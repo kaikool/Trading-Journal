@@ -42,11 +42,7 @@ import {
   Info
 } from 'lucide-react';
 
-interface GoalListProps {
-  openCreateDialogState?: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
-}
-
-export function GoalList({ openCreateDialogState }: GoalListProps) {
+export function GoalList() {
   const { userData } = useUserData();
   const { 
     goalProgress, 
@@ -61,9 +57,8 @@ export function GoalList({ openCreateDialogState }: GoalListProps) {
     isCreatingMilestone,
   } = useGoalData();
 
-  // State management - use parent state if provided, otherwise use local state
-  const [localOpenCreateDialog, setLocalOpenCreateDialog] = useState(false);
-  const [openCreateDialog, setOpenCreateDialog] = openCreateDialogState || [localOpenCreateDialog, setLocalOpenCreateDialog];
+  // State management
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openMilestoneDialog, setOpenMilestoneDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -177,7 +172,8 @@ export function GoalList({ openCreateDialogState }: GoalListProps) {
     return (
       <div className="h-full flex flex-col">
         <div className="flex justify-between items-center mb-6">
-          <Button onClick={() => setOpenCreateDialog(true)} className="ml-auto">
+          <h2 className="text-2xl font-bold">Trading Goals</h2>
+          <Button onClick={() => setOpenCreateDialog(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Create New Goal
           </Button>
@@ -192,10 +188,9 @@ export function GoalList({ openCreateDialogState }: GoalListProps) {
             </p>
             <Button 
               className="mt-4" 
-              size="lg"
               onClick={() => setOpenCreateDialog(true)}
             >
-              <PlusCircle className="mr-2 h-5 w-5" />
+              <PlusCircle className="mr-2 h-4 w-4" />
               Create Your First Goal
             </Button>
           </div>
@@ -225,65 +220,46 @@ export function GoalList({ openCreateDialogState }: GoalListProps) {
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <Button 
-          onClick={() => setOpenCreateDialog(true)}
-          className="ml-auto"
-          variant="default"
-        >
+        <h2 className="text-2xl font-bold">Trading Goals</h2>
+        <Button onClick={() => setOpenCreateDialog(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Create New Goal
         </Button>
       </div>
 
       {/* Progress overview section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        {/* Overall Progress Card */}
-        <div className="bg-card rounded-lg p-5 border shadow-sm flex flex-col">
-          <h3 className="text-lg font-medium mb-3 flex items-center">
-            <GoalIcon className="mr-2 h-5 w-5 text-primary" />
-            Overall Progress
-          </h3>
-          <div className="flex items-center gap-2 mb-3">
-            <Progress 
-              value={goalProgress.overallProgress.progressPercentage} 
-              className="h-5" 
-            />
-            <span className="font-medium w-12 text-right">
-              {goalProgress.overallProgress.progressPercentage.toFixed(0)}%
-            </span>
+      <div className="bg-card rounded-lg p-4 mb-6 border">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
+            <h3 className="text-lg font-medium mb-2">Overall Progress</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <Progress 
+                value={goalProgress.overallProgress.progressPercentage} 
+                className="h-4" 
+              />
+              <span className="font-medium w-12 text-right">
+                {goalProgress.overallProgress.progressPercentage.toFixed(0)}%
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} goals completed
+            </p>
           </div>
-          <p className="text-sm text-muted-foreground mt-auto">
-            {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} goals completed
-          </p>
-        </div>
-        
-        {/* Goals Summary Card */}
-        <div className="bg-card rounded-lg p-5 border shadow-sm flex flex-col">
-          <h3 className="text-lg font-medium mb-3 flex items-center">
-            <Trophy className="mr-2 h-5 w-5 text-primary" />
-            Goals Summary
-          </h3>
-          <div className="space-y-3 flex-1">
+          
+          <div className="space-y-2 flex flex-col justify-center">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <Trophy className="h-5 w-5 text-green-500" />
               <span className="font-medium">{goalProgress.completedGoals.length} completed goals</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
+              <GoalIcon className="h-5 w-5 text-blue-500" />
               <span className="font-medium">{goalProgress.activeGoals.length} active goals</span>
             </div>
           </div>
-        </div>
-        
-        {/* Milestones and Alerts Card */}
-        <div className="bg-card rounded-lg p-5 border shadow-sm flex flex-col">
-          <h3 className="text-lg font-medium mb-3 flex items-center">
-            <Clock className="mr-2 h-5 w-5 text-primary" />
-            Milestones & Alerts
-          </h3>
-          <div className="space-y-3 flex-1">
+          
+          <div className="space-y-2 flex flex-col justify-center">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-yellow-500" />
+              <Clock className="h-5 w-5 text-yellow-500" />
               <span className="font-medium">
                 {goalProgress.upcomingMilestones.length} upcoming milestones
               </span>
@@ -292,7 +268,7 @@ export function GoalList({ openCreateDialogState }: GoalListProps) {
               new Date(goal.endDate) < new Date() && !goal.isCompleted
             ) && (
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-red-500" />
+                <Info className="h-5 w-5 text-red-500" />
                 <span className="font-medium">
                   {goalProgress.activeGoals.filter(goal => 
                     new Date(goal.endDate) < new Date() && !goal.isCompleted

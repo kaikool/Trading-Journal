@@ -1,13 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { GoalList } from '@/components/goals/GoalList';
+import { DashboardHeader } from '@/components/layout/DashboardHeader';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
 
 export function Goals() {
-  const [openCreateDialog, setOpenCreateDialog] = React.useState(false);
-  
   return (
     <PageContainer>
       <motion.div
@@ -17,18 +14,10 @@ export function Goals() {
         transition={{ duration: 0.3 }}
         className="h-full flex flex-col"
       >
-        {/* Header with gradient title styling matching Dashboard */}
-        <div className="flex flex-col mb-4">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
-            Trading Goals
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm md:text-base">
-            Set up and track progress of your trading goals
-          </p>
-        </div>
+        <DashboardHeader title="Trading Goals" description="Set up and track progress of your trading goals" />
         
         <div className="flex-1 overflow-hidden">
-          <GoalList openCreateDialogState={[openCreateDialog, setOpenCreateDialog]} />
+          <GoalList />
         </div>
       </motion.div>
     </PageContainer>
