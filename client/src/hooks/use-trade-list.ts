@@ -259,8 +259,9 @@ export function useTradeList(options: {
       const now = Date.now();
       const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
       
-      // Thêm debounce để tránh cập nhật quá nhanh
-      if (timeSinceLastUpdate < 500) {
+      // Thêm debounce để tránh cập nhật quá nhanh, nhưng với thời gian ngắn hơn
+      // Thời gian debounce ngắn hơn giúp UI cập nhật nhanh hơn khi xóa giao dịch
+      if (timeSinceLastUpdate < 100) {
         debug("[DataCache] Debouncing trades update, too frequent");
         return;
       }
