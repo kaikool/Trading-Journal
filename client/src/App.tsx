@@ -109,15 +109,12 @@ function MainContent() {
           console.log(`[App] Scrolling to top after route change`);
         }
         
-        // Sử dụng ScrollUtils để cuộn lên trên đầu một cách tức thì
         // Sử dụng setTimeout để đảm bảo cuộn diễn ra sau khi UI đã cập nhật
         setTimeout(() => {
-          // Import động để tránh circular dependencies
-          import('@/lib/scroll-utils').then(({ scrollToTop }) => {
-            scrollToTop({
-              speed: 'fast', // Tốc độ nhanh cho chuyển trang
-              force: true     // Ghi đè các scroll khác
-            });
+          // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
+          window.scrollTo({
+            top: 0,
+            behavior: 'auto' // Sử dụng 'auto' thay vì 'smooth' để cảm giác chuyển trang nhanh hơn
           });
         }, 50);
       }
