@@ -1442,6 +1442,8 @@
     position: relative;
     transform-origin: center;
     will-change: transform; /* Optimize performance for transforms */
+    overflow: hidden; /* Thêm overflow hidden để ngăn phần thừa màu đen hiển thị */
+    border-radius: 0.5rem; /* Thêm border-radius cho container */
   }
   
   /* Zoom states for image container */
@@ -1476,6 +1478,8 @@
     -webkit-tap-highlight-color: transparent;
     transform-origin: center;
     transition: var(--chart-image-transition);
+    border-radius: 0.5rem; /* Thêm border-radius đồng bộ */
+    background-color: transparent; /* Đảm bảo không có background */
     
     /* Enable pan gestures only (pinch is handled by JS) */
     touch-action: pan-x pan-y;
