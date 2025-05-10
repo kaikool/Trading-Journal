@@ -96,11 +96,11 @@ const formatValue = (value: number, type: string): string => {
   }
 };
 
-// Priority colors
+// Priority colors using CSS variables and semantic colors
 const priorityColors: Record<string, string> = {
-  low: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-  high: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+  low: 'bg-success/10 text-success-foreground dark:bg-success/20 dark:text-success-foreground/90',
+  medium: 'bg-warning/10 text-warning-foreground dark:bg-warning/20 dark:text-warning-foreground/90',
+  high: 'bg-destructive/10 text-destructive-foreground dark:bg-destructive/20 dark:text-destructive-foreground/90',
 };
 
 // Priority labels
@@ -118,14 +118,14 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
   const endDate = new Date(goal.endDate);
   const isOverdue = isAfter(new Date(), endDate) && !goal.isCompleted;
   
-  // Determine progress color
+  // Determine progress color using semantic colors
   const getProgressColor = (percentage: number, isCompleted: boolean, isOverdue: boolean) => {
-    if (isCompleted) return 'bg-green-500';
-    if (isOverdue) return 'bg-red-500';
-    if (percentage >= 75) return 'bg-green-500';
-    if (percentage >= 50) return 'bg-yellow-500';
+    if (isCompleted) return 'bg-success';
+    if (isOverdue) return 'bg-destructive';
+    if (percentage >= 75) return 'bg-success';
+    if (percentage >= 50) return 'bg-warning';
     if (percentage >= 25) return 'bg-orange-500';
-    return 'bg-red-500';
+    return 'bg-destructive';
   };
 
   // Custom card border based on goal color or priority
@@ -193,7 +193,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             </div>
             
             {goal.isCompleted && (
-              <div className="flex items-center gap-[var(--goal-inner-gap)] text-green-500">
+              <div className="flex items-center gap-[var(--goal-inner-gap)] text-success">
                 <Award size="var(--goal-icon-size)" />
                 <span>Completed</span>
               </div>
@@ -216,7 +216,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                     <div className="flex justify-between items-center mb-[var(--goal-inner-gap)]">
                       <span className="font-medium">{milestone.title}</span>
                       {milestone.isCompleted && (
-                        <Badge variant="outline" className="text-green-500 border-green-500">
+                        <Badge variant="outline" className="text-success border-success">
                           Completed
                         </Badge>
                       )}
@@ -230,7 +230,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                     <Progress
                       value={milestone.progressPercentage}
                       className="h-1 mt-[var(--goal-inner-gap)]"
-                      indicatorClassName={milestone.isCompleted ? 'bg-green-500' : ''}
+                      indicatorClassName={milestone.isCompleted ? 'bg-success' : ''}
                     />
                   </div>
                 ))}
@@ -239,10 +239,10 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           )}
         </CardContent>
         
-        <CardFooter className="pt-2" compact>
-          <div className="flex flex-wrap items-center justify-between w-full gap-2">
+        <CardFooter className="pt-[var(--spacing-2)]" compact>
+          <div className="flex flex-wrap items-center justify-between w-full gap-[var(--spacing-2)]">
             {/* Các nút action chính */}
-            <div className="flex gap-1">
+            <div className="flex gap-[var(--goal-inner-gap)]">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -281,7 +281,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             </div>
             
             {/* Các nút chức năng */}
-            <div className="flex gap-1 ml-auto">
+            <div className="flex gap-[var(--goal-inner-gap)] ml-auto">
               <Button 
                 variant="default" 
                 size="sm"
