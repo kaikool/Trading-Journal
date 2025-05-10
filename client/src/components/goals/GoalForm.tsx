@@ -181,10 +181,11 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                 <FormControl>
                   <Input
                     type="number"
-                    step={field.value === 'winRate' ? '0.1' : '1'}
+                    step={form.watch('targetType') === 'winRate' ? '0.1' : '1'}
                     min="0"
                     placeholder="VD: 1000"
                     {...field}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
                 </FormControl>
                 <FormDescription>
