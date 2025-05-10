@@ -1242,6 +1242,514 @@ async function createDefaultStrategiesIfNeeded(userId: string) {
   }
 }
 
+// Goals CRUD Operations
+/**
+ * Thêm mục tiêu mới vào Firestore
+ * 
+ * @param userId - ID của người dùng
+ * @param goalData - Dữ liệu mục tiêu
+ * @returns Đối tượng mục tiêu với ID
+ */
+async function addGoal(userId: string, goalData: any) {
+  try {
+    debug("Adding new goal to Firestore", { userId });
+    const goalsRef = collection(db, "users", userId, "goals");
+    
+    // Đảm bảo các trường thời gian là đối tượng Date
+    const processedData = {
+      ...goalData,
+      startDate: goalData.startDate instanceof Date ? 
+        Timestamp.fromDate(goalData.startDate) : goalData.startDate,
+      endDate: goalData.endDate instanceof Date ? 
+        Timestamp.fromDate(goalData.endDate) : goalData.endDate
+    };
+    
+    // Thêm document vào Firestore
+    const docRef = await addDoc(goalsRef, {
+      ...processedData,
+      userId,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    
+    debug("Goal added successfully with ID:", docRef.id);
+    
+    // Trả về đối tượng với id để dễ truy cập
+    return {
+      ...docRef,
+      id: docRef.id
+    };
+  } catch (error) {
+    logError("Error adding goal:", error);
+    throw error;
+  }
+}
+
+/**
+ * Lấy tất cả mục tiêu của người dùng
+ * 
+ * @param userId - ID của người dùng
+ * @returns Mảng các mục tiêu
+ */
+async function getGoals(userId: string) {
+  try {
+    const goalsRef = collection(db, "users", userId, "goals");
+    const q = query(goalsRef, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    
+    // Lấy dữ liệu mục tiêu
+    const goals = await Promise.all(querySnapshot.docs.map(async doc => {
+      const goalData = doc.data();
+      
+      // Lấy cột mốc cho mỗi mục tiêu
+      const milestones = await getMilestones(userId, doc.id);
+      
+      return {
+        id: doc.id,
+        ...goalData,
+        milestones
+      };
+    }));
+    
+    return goals;
+  } catch (error) {
+    logError("Error getting goals:", error);
+    throw error;
+  }
+}
+
+/**
+ * Lấy thông tin mục tiêu theo ID
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @returns Thông tin mục tiêu
+ */
+async function getGoalById(userId: string, goalId: string) {
+  try {
+    const docRef = doc(db, "users", userId, "goals", goalId);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const goalData = docSnap.data();
+      
+      // Lấy cột mốc cho mục tiêu
+      const milestones = await getMilestones(userId, goalId);
+      
+      return {
+        id: docSnap.id,
+        ...goalData,
+        milestones
+      };
+    } else {
+      throw new Error("Goal not found");
+    }
+  } catch (error) {
+    logError("Error getting goal by ID:", error);
+    throw error;
+  }
+}
+
+/**
+ * Cập nhật thông tin mục tiêu
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @param goalData - Dữ liệu cần cập nhật
+ * @returns Promise<void>
+ */
+async function updateGoal(userId: string, goalId: string, goalData: any) {
+  try {
+    const goalRef = doc(db, "users", userId, "goals", goalId);
+    
+    // Xử lý các trường thời gian
+    const processedData = { ...goalData };
+    if (goalData.startDate instanceof Date) {
+      processedData.startDate = Timestamp.fromDate(goalData.startDate);
+    }
+    if (goalData.endDate instanceof Date) {
+      processedData.endDate = Timestamp.fromDate(goalData.endDate);
+    }
+    
+    // Loại bỏ trường milestones nếu có (sẽ được lưu riêng)
+    delete processedData.milestones;
+    
+    // Thêm updatedAt vào dữ liệu cập nhật
+    const dataToUpdate = {
+      ...processedData,
+      updatedAt: serverTimestamp()
+    };
+    
+    await updateDoc(goalRef, dataToUpdate);
+    debug("Goal updated successfully:", goalId);
+    
+    return getGoalById(userId, goalId);
+  } catch (error) {
+    logError("Error updating goal:", error);
+    throw error;
+  }
+}
+
+/**
+ * Xóa mục tiêu
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @returns Promise<void>
+ */
+async function deleteGoal(userId: string, goalId: string) {
+  try {
+    // Xóa tất cả các cột mốc trước (nếu có)
+    await deleteMilestonesForGoal(userId, goalId);
+    
+    // Xóa mục tiêu
+    const goalRef = doc(db, "users", userId, "goals", goalId);
+    await deleteDoc(goalRef);
+    debug("Goal deleted successfully:", goalId);
+  } catch (error) {
+    logError("Error deleting goal:", error);
+    throw error;
+  }
+}
+
+/**
+ * Lắng nghe thay đổi mục tiêu theo thời gian thực
+ * 
+ * @param userId - ID của người dùng
+ * @param callback - Hàm xử lý khi có dữ liệu mới
+ * @param errorCallback - Hàm xử lý khi có lỗi (tùy chọn)
+ * @returns Hàm hủy lắng nghe
+ */
+function onGoalsSnapshot(
+  userId: string,
+  callback: (goals: any[]) => void,
+  errorCallback?: (error: Error) => void
+) {
+  if (!userId) return () => {};
+  
+  const goalsRef = collection(db, "users", userId, "goals");
+  const q = query(goalsRef, orderBy("createdAt", "desc"));
+  
+  let listenerActive = true;
+  let cacheVersion = 0;
+  const currentCacheVersion = cacheVersion;
+  
+  debug(`Setting up goals snapshot listener for user ${userId}`);
+  
+  const unsubscribe = onSnapshot(q,
+    async (snapshot) => {
+      if (!listenerActive || currentCacheVersion !== cacheVersion) {
+        debug("Goals snapshot received, but listener no longer active or cache version changed");
+        return;
+      }
+      
+      try {
+        debug(`Received ${snapshot.docs.length} goals from snapshot`);
+        
+        // Lấy dữ liệu mục tiêu và thêm cột mốc
+        const goals = await Promise.all(snapshot.docs.map(async doc => {
+          const goalData = doc.data();
+          
+          // Lấy cột mốc cho mỗi mục tiêu
+          const milestones = await getMilestones(userId, doc.id);
+          
+          return {
+            id: doc.id,
+            ...goalData,
+            milestones
+          };
+        }));
+        
+        callback(goals);
+      } catch (error) {
+        debug("Error in goals snapshot callback:", error);
+        
+        if (errorCallback) {
+          errorCallback(error as Error);
+        }
+      }
+    },
+    (error) => {
+      logError("Error in goals snapshot listener:", error);
+      
+      if (errorCallback) {
+        errorCallback(error);
+      }
+    }
+  );
+  
+  return () => {
+    debug("Goals snapshot listener unsubscribed and cleaned up");
+    
+    listenerActive = false;
+    cacheVersion++;
+    
+    unsubscribe();
+  };
+}
+
+// Milestone CRUD Operations
+/**
+ * Thêm cột mốc mới cho mục tiêu
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @param milestoneData - Dữ liệu cột mốc
+ * @returns Đối tượng cột mốc với ID
+ */
+async function addMilestone(userId: string, goalId: string, milestoneData: any) {
+  try {
+    debug(`Adding new milestone for goal ${goalId}`);
+    const milestonesRef = collection(db, "users", userId, "goals", goalId, "milestones");
+    
+    // Xử lý trường completedDate nếu có
+    const processedData = { ...milestoneData };
+    if (milestoneData.completedDate instanceof Date) {
+      processedData.completedDate = Timestamp.fromDate(milestoneData.completedDate);
+    }
+    
+    // Thêm document vào Firestore
+    const docRef = await addDoc(milestonesRef, {
+      ...processedData,
+      goalId,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    
+    debug("Milestone added successfully with ID:", docRef.id);
+    
+    // Trả về đối tượng với id để dễ truy cập
+    return {
+      ...docRef,
+      id: docRef.id
+    };
+  } catch (error) {
+    logError("Error adding milestone:", error);
+    throw error;
+  }
+}
+
+/**
+ * Lấy tất cả cột mốc của một mục tiêu
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @returns Mảng các cột mốc
+ */
+async function getMilestones(userId: string, goalId: string) {
+  try {
+    const milestonesRef = collection(db, "users", userId, "goals", goalId, "milestones");
+    const q = query(milestonesRef, orderBy("createdAt", "asc"));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    logError("Error getting milestones:", error);
+    return [];
+  }
+}
+
+/**
+ * Cập nhật thông tin cột mốc
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @param milestoneId - ID của cột mốc
+ * @param milestoneData - Dữ liệu cần cập nhật
+ * @returns Promise<void>
+ */
+async function updateMilestone(userId: string, goalId: string, milestoneId: string, milestoneData: any) {
+  try {
+    const milestoneRef = doc(db, "users", userId, "goals", goalId, "milestones", milestoneId);
+    
+    // Xử lý trường completedDate nếu có
+    const processedData = { ...milestoneData };
+    if (milestoneData.completedDate instanceof Date) {
+      processedData.completedDate = Timestamp.fromDate(milestoneData.completedDate);
+    }
+    
+    // Thêm updatedAt vào dữ liệu cập nhật
+    const dataToUpdate = {
+      ...processedData,
+      updatedAt: serverTimestamp()
+    };
+    
+    await updateDoc(milestoneRef, dataToUpdate);
+    debug("Milestone updated successfully:", milestoneId);
+  } catch (error) {
+    logError("Error updating milestone:", error);
+    throw error;
+  }
+}
+
+/**
+ * Xóa cột mốc
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @param milestoneId - ID của cột mốc
+ * @returns Promise<void>
+ */
+async function deleteMilestone(userId: string, goalId: string, milestoneId: string) {
+  try {
+    const milestoneRef = doc(db, "users", userId, "goals", goalId, "milestones", milestoneId);
+    await deleteDoc(milestoneRef);
+    debug("Milestone deleted successfully:", milestoneId);
+  } catch (error) {
+    logError("Error deleting milestone:", error);
+    throw error;
+  }
+}
+
+/**
+ * Xóa tất cả các cột mốc của một mục tiêu
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @returns Promise<void>
+ */
+async function deleteMilestonesForGoal(userId: string, goalId: string) {
+  try {
+    const milestonesRef = collection(db, "users", userId, "goals", goalId, "milestones");
+    const querySnapshot = await getDocs(milestonesRef);
+    
+    // Batch delete để tối ưu hiệu suất
+    const batch = writeBatch(db);
+    querySnapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    
+    await batch.commit();
+    debug(`${querySnapshot.docs.length} milestones deleted for goal:`, goalId);
+  } catch (error) {
+    logError("Error deleting milestones for goal:", error);
+    throw error;
+  }
+}
+
+/**
+ * Tính toán tiến độ của mục tiêu dựa trên dữ liệu giao dịch
+ * 
+ * @param userId - ID của người dùng
+ * @param goalId - ID của mục tiêu
+ * @returns Phần trăm tiến độ
+ */
+async function calculateGoalProgress(userId: string, goalId: string) {
+  try {
+    const goal = await getGoalById(userId, goalId);
+    if (!goal) {
+      throw new Error("Goal not found");
+    }
+    
+    // Lấy dữ liệu người dùng và thống kê giao dịch
+    const userData = await getUserData(userId);
+    const tradeStats = await getTradeStats(userId);
+    
+    // Lấy giá trị hiện tại dựa trên loại mục tiêu
+    let currentValue = 0;
+    switch (goal.targetType) {
+      case "profit":
+        currentValue = tradeStats.netProfit;
+        break;
+      case "winRate":
+        currentValue = tradeStats.winRate;
+        break;
+      case "profitFactor":
+        currentValue = tradeStats.profitFactor;
+        break;
+      case "riskRewardRatio":
+        currentValue = tradeStats.avgRiskRewardRatio;
+        break;
+      case "balance":
+        currentValue = userData.currentBalance;
+        break;
+      case "trades":
+        currentValue = tradeStats.totalTrades;
+        break;
+      default:
+        currentValue = 0;
+    }
+    
+    // Cập nhật mục tiêu với giá trị hiện tại
+    await updateGoal(userId, goalId, { currentValue });
+    
+    // Tính phần trăm tiến độ (tối đa 100%)
+    const progress = Math.min(100, (currentValue / goal.targetValue) * 100);
+    
+    // Nếu tiến độ đạt 100% hoặc hơn và mục tiêu chưa hoàn thành, đánh dấu là đã hoàn thành
+    if (progress >= 100 && !goal.isCompleted) {
+      await updateGoal(userId, goalId, { isCompleted: true });
+    }
+    
+    return progress;
+  } catch (error) {
+    logError("Error calculating goal progress:", error);
+    throw error;
+  }
+}
+
+/**
+ * Lấy thống kê giao dịch của người dùng
+ * 
+ * @param userId - ID của người dùng
+ * @returns Thống kê giao dịch
+ */
+async function getTradeStats(userId: string) {
+  try {
+    // Lấy tất cả giao dịch đã đóng
+    const trades = await getAllTrades(userId);
+    const closedTrades = trades.filter((trade: any) => trade.closeDate && trade.profitLoss !== undefined);
+    
+    if (closedTrades.length === 0) {
+      return {
+        totalTrades: 0,
+        winningTrades: 0,
+        losingTrades: 0,
+        winRate: 0,
+        totalProfit: 0,
+        totalLoss: 0,
+        netProfit: 0,
+        avgProfit: 0,
+        avgLoss: 0,
+        profitFactor: 0,
+        largestWin: 0,
+        largestLoss: 0,
+        avgRiskRewardRatio: 0
+      };
+    }
+    
+    // Tính toán các thống kê
+    const winningTrades = closedTrades.filter((trade: any) => trade.profitLoss > 0);
+    const losingTrades = closedTrades.filter((trade: any) => trade.profitLoss < 0);
+    const breakEvenTrades = closedTrades.filter((trade: any) => trade.profitLoss === 0);
+    
+    const totalProfit = winningTrades.reduce((sum: number, trade: any) => sum + trade.profitLoss, 0);
+    const totalLoss = Math.abs(losingTrades.reduce((sum: number, trade: any) => sum + trade.profitLoss, 0));
+    
+    return {
+      totalTrades: closedTrades.length,
+      winningTrades: winningTrades.length,
+      losingTrades: losingTrades.length,
+      winRate: (winningTrades.length / closedTrades.length) * 100,
+      totalProfit,
+      totalLoss,
+      netProfit: totalProfit - totalLoss,
+      avgProfit: winningTrades.length > 0 ? totalProfit / winningTrades.length : 0,
+      avgLoss: losingTrades.length > 0 ? totalLoss / losingTrades.length : 0,
+      profitFactor: totalLoss > 0 ? totalProfit / totalLoss : totalProfit > 0 ? Infinity : 0,
+      largestWin: winningTrades.length > 0 ? Math.max(...winningTrades.map((t: any) => t.profitLoss)) : 0,
+      largestLoss: losingTrades.length > 0 ? Math.abs(Math.min(...losingTrades.map((t: any) => t.profitLoss))) : 0,
+      avgRiskRewardRatio: closedTrades.reduce((sum: number, trade: any) => sum + (trade.riskRewardRatio || 0), 0) / closedTrades.length
+    };
+  } catch (error) {
+    logError("Error calculating trade stats:", error);
+    throw error;
+  }
+}
+
 /**
  * Liên kết tài khoản hiện tại với Google
  * 
@@ -1427,5 +1935,23 @@ export {
   linkAccountWithGoogle,
   getLinkedProviders,
   unlinkProvider,
-  getProviderName
+  getProviderName,
+  
+  // Goals functions
+  addGoal,
+  getGoals,
+  getGoalById,
+  updateGoal,
+  deleteGoal,
+  onGoalsSnapshot,
+  
+  // Milestones functions
+  addMilestone,
+  getMilestones,
+  updateMilestone,
+  deleteMilestone,
+  
+  // Goal analytics functions
+  calculateGoalProgress,
+  getTradeStats
 };
