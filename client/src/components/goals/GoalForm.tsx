@@ -143,7 +143,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           )}
         />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="targetType"
@@ -199,7 +199,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="startDate"
@@ -212,7 +212,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "pl-3 text-left font-normal",
+                          "pl-3 text-left font-normal w-full",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -251,7 +251,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "pl-3 text-left font-normal",
+                          "pl-3 text-left font-normal w-full",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -280,7 +280,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField
             control={form.control}
             name="priority"
@@ -363,11 +363,11 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex justify-end gap-2 pt-3 mt-2 sticky bottom-0 pb-1">
+          <Button type="button" variant="outline" onClick={onCancel} className="min-w-[80px]">
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} className="min-w-[100px]">
             {isSubmitting ? 'Saving...' : 'Save Goal'}
           </Button>
         </div>
