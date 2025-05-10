@@ -288,6 +288,6 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           </div>
         </CardFooter>
       </Card>
-    </motion.div>>
+    </motion.div>
   );
 }

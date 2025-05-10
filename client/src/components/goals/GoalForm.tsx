@@ -109,17 +109,21 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Goal Title</FormLabel>
+            <FormItem className="mb-3">
+              <FormLabel className="text-sm">Goal Title</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Achieve $1000 profit" {...field} />
+                <Input 
+                  placeholder="Ex: Achieve $1000 profit" 
+                  {...field} 
+                  className="h-9"
+                />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -128,34 +132,34 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
+            <FormItem className="mb-3">
+              <FormLabel className="text-sm">Description</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Detailed description about this goal"
-                  className="resize-none"
+                  className="resize-none min-h-[60px]"
                   {...field}
                   value={field.value || ''}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <FormField
             control={form.control}
             name="targetType"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Goal Type</FormLabel>
+              <FormItem className="mb-2">
+                <FormLabel className="text-sm">Goal Type</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9">
                       <SelectValue placeholder="Select goal type" />
                     </SelectTrigger>
                   </FormControl>
@@ -167,7 +171,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -176,43 +180,44 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             control={form.control}
             name="targetValue"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Target Value</FormLabel>
+              <FormItem className="mb-2">
+                <FormLabel className="text-sm">Target Value</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     step={form.watch('targetType') === 'winRate' ? '0.1' : '1'}
                     min="0"
                     placeholder="Ex: 1000"
+                    className="h-9"
                     {...field}
                     onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="text-xs">
                   {form.watch('targetType') === 'winRate' && 'Percentage (1-100)'}
                   {form.watch('targetType') === 'profitFactor' && 'Ex: 2.5'}
                   {form.watch('targetType') === 'riskRewardRatio' && 'Ex: 1.5'}
                 </FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <FormField
             control={form.control}
             name="startDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Start Date</FormLabel>
+              <FormItem className="flex flex-col mb-2">
+                <FormLabel className="text-sm">Start Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "pl-3 text-left font-normal",
+                          "h-9 pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -234,7 +239,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                     />
                   </PopoverContent>
                 </Popover>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -243,15 +248,15 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             control={form.control}
             name="endDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>End Date</FormLabel>
+              <FormItem className="flex flex-col mb-2">
+                <FormLabel className="text-sm">End Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant={"outline"}
                         className={cn(
-                          "pl-3 text-left font-normal",
+                          "h-9 pl-3 text-left font-normal",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -274,25 +279,25 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                     />
                   </PopoverContent>
                 </Popover>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <FormField
             control={form.control}
             name="priority"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Priority</FormLabel>
+              <FormItem className="mb-2">
+                <FormLabel className="text-sm">Priority</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9">
                       <SelectValue placeholder="Select priority level" />
                     </SelectTrigger>
                   </FormControl>
@@ -304,7 +309,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
@@ -313,15 +318,15 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
             control={form.control}
             name="color"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Color (optional)</FormLabel>
+              <FormItem className="mb-2">
+                <FormLabel className="text-sm">Color (optional)</FormLabel>
                 <div className="flex gap-2 items-center">
                   <Select
                     onValueChange={field.onChange}
                     value={field.value || ''}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-9">
                         <SelectValue placeholder="Select color" />
                       </SelectTrigger>
                     </FormControl>
@@ -330,7 +335,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                         <SelectItem key={color.value} value={color.value}>
                           <div className="flex items-center gap-2">
                             <div
-                              className="w-4 h-4 rounded-full"
+                              className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: color.value }}
                             />
                             <span>{color.label}</span>
@@ -341,33 +346,45 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                   </Select>
                   
                   {field.value && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                       <div
-                        className="w-6 h-6 rounded-full border"
+                        className="w-5 h-5 rounded-full border"
                         style={{ backgroundColor: field.value }}
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
+                        className="h-7 w-7"
                         onClick={() => form.setValue('color', '')}
                       >
-                        <XCircle className="h-4 w-4" />
+                        <XCircle className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   )}
                 </div>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex justify-end gap-2 pt-4 pb-2">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onCancel} 
+            className="h-9"
+            size="sm"
+          >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className="h-9"
+            size="sm"
+          >
             {isSubmitting ? 'Saving...' : 'Save Goal'}
           </Button>
         </div>
