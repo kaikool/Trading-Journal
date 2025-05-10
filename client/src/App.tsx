@@ -93,8 +93,18 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
-      // Cuộn lên đầu trang ngay khi chuyển route
-      // Chỉ còn ScrollToTop component sẽ xử lý vấn đề này, không cần code ở đây nữa
+      // Thêm logic để cuộn lên đầu trang khi thay đổi route
+      // Nhưng chỉ khi không phải do dialog đóng
+      const dialogActive = document.querySelector('[role="dialog"]') !== null;
+      const modalPortalActive = document.getElementById('modal-portal') !== null;
+      
+      // Kiểm tra khác route thực sự (không phải hash change hoặc dialog) và không có dialog
+      if (!dialogActive && !modalPortalActive) {
+        // Cuộn lên đầu trang, nhưng có độ trễ nhỏ để đảm bảo DOM đã render
+        setTimeout(() => {
+          window.scrollTo({ top: 0 });
+        }, 100);
+      }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
       const readyTimer = setTimeout(() => {

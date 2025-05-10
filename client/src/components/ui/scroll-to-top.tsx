@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons/icons";
@@ -44,13 +44,9 @@ export function ScrollToTop({
     };
   }, []);
   
-  // Xử lý khi route thay đổi
-  useEffect(() => {
-    if (showOnRouteChange) {
-      // Tự động cuộn lên đầu trang khi route thay đổi
-      window.scrollTo({ top: 0 });
-    }
-  }, [location, showOnRouteChange]);
+  // Tạm thời vô hiệu hóa cơ chế auto-scroll khi đổi route
+  // Chúng ta sẽ xử lý cuộn lên đầu trang trong App.tsx
+  // Cách này tránh các vấn đề với dialog mà không cần kiểm tra DOM
   
   // Hàm cuộn lên đầu trang êm dịu
   const scrollToTop = () => {
