@@ -271,7 +271,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             <Button 
               variant="secondary" 
               size="sm"
-              onClick={() => calculateGoalProgress(goal.id)}
+              onClick={() => calculateGoalProgress(goal.id.toString())}
             >
               Cập nhật tiến độ
             </Button>

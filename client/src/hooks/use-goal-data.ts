@@ -1,17 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Goal, GoalMilestone } from '@shared/schema';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
-import { addGoal, getGoals, getGoalById, updateGoal, deleteGoal, calculateGoalProgress, onGoalsSnapshot } from '@/lib/firebase'; 
-import { addMilestone, getMilestones, updateMilestone, deleteMilestone } from '@/lib/firebase';
+import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, onGoalsSnapshot } from '@/lib/firebase'; 
+import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
 import { auth } from '@/lib/firebase';
 import { useEffect, useState } from 'react';
 import { debug } from '@/lib/debug';
-
-// Helper function để chuyển đổi dữ liệu từ Firebase sang dạng phù hợp
-const transformFirebaseData = <T>(data: any): T => {
-  return data as T;
-};
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
