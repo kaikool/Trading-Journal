@@ -133,6 +133,9 @@
   position: relative;
   width: 100%;
   height: 100%;
+  border-radius: 0; /* Loại bỏ bo góc để tránh viền đen */
+  overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài */
+  background-color: transparent; /* Đảm bảo không có màu nền */
 }
 
 .trade-card-placeholder {
@@ -157,6 +160,8 @@
   inset: 0;
   transition: opacity 0.3s ease-in-out;
   opacity: 0;
+  border-radius: 0; /* Loại bỏ bo góc */
+  object-fit: cover; /* Đảm bảo ảnh lấp đầy container nhưng không bị méo */
 }
 
 .trade-card-image.loaded {
@@ -673,6 +678,30 @@
 /* ======================================= */
 /* Base layer definitions */
 /* ======================================= */
+/* Fix cho tất cả các ảnh và container ảnh để tránh viền đen khi bo góc */
+.image-container,
+[class*="image-container"],
+[class*="card-image"],
+.optimized-image,
+.trade-image-container,
+.trade-chart-container,
+.chart-dialog-image {
+  overflow: hidden;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+}
+
+.image-container img,
+[class*="image-container"] img,
+[class*="card-image"] img,
+.optimized-image img,
+.trade-image-container img,
+.trade-chart-container img,
+.chart-dialog-image img {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+}
+
 @layer base {
   :root {
     /* Safe area insets - base definitions */
