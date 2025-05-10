@@ -3,8 +3,7 @@ import { cn } from "@/lib/utils";
 import { Sidebar } from "./Sidebar";
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useScrollDirection } from "@/hooks/use-scroll-direction";
-import { usePreventScrollJump } from "@/hooks/use-prevent-scroll-jump";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -26,21 +25,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [respectSafeArea, setRespectSafeArea] = useState(true);
   const [viewportHeight, setViewportHeight] = useState(0);
   
-  // Chỉ sử dụng hook ngăn cuộn khi component đã mount
-  usePreventScrollJump({
-    enabled: mounted,
-    selector: [
-      '[data-radix-select-content]',
-      '[data-radix-dropdown-menu-content]',
-      '[data-radix-popover-content]',
-      '[data-radix-dialog-content]',
-      '[role="dialog"]',
-      '[role="listbox"]'
-    ].join(', '),
-    preventDuration: 450,
-    disableScrollIntoView: true,
-    maintainFocus: true
-  });
+  // Không còn sử dụng usePreventScrollJump phức tạp nữa
+  // Thay thế bằng ScrollToTop đơn giản và hiệu quả
 
   useEffect(() => {
     setMounted(true);
@@ -74,6 +60,13 @@ export function AppLayout({ children }: AppLayoutProps) {
       <Sidebar />
       
       {/* Main Content Area */}
+      {/* Thêm ScrollToTop component */}
+      <ScrollToTop 
+        threshold={300}
+        showOnRouteChange={true}
+        buttonClassName={isMobile ? "bottom-16" : ""}
+      />
+        
       <main 
         className={cn(
           "flex-1 transition-all duration-300 ease-in-out min-h-screen flex flex-col",
@@ -86,11 +79,8 @@ export function AppLayout({ children }: AppLayoutProps) {
         )}
         style={{ 
           minHeight: viewportHeight > 0 ? `${viewportHeight}px` : '100vh',
-          // Vấn đề focus trong Select dropdown, thay đổi scroll behavior
-          overflowY: 'auto',
-          overscrollBehavior: 'none',
-          // Tắt hoàn toàn automatic scrolling và scroll anchoring
-          scrollBehavior: 'auto'
+          // Đơn giản hóa: chỉ thiết lập overflow
+          overflowY: 'auto'
         }}
       >
         {/* Safe area vùng đầu trang */}
