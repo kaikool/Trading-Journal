@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useUserData } from '@/hooks/use-user-data';
 import { useGoalData } from '@/hooks/use-goal-data';
 import { formatDistanceToNow, isAfter } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import {
   Card,
   CardContent,
@@ -52,12 +52,12 @@ interface GoalCardProps {
 
 // Mapping for target types
 const targetTypeLabels: Record<string, string> = {
-  profit: 'Lợi nhuận',
-  winRate: 'Tỷ lệ thắng',
-  profitFactor: 'Hệ số lợi nhuận',
-  riskRewardRatio: 'Tỷ lệ R:R',
-  balance: 'Số dư',
-  trades: 'Số giao dịch',
+  profit: 'Profit',
+  winRate: 'Win Rate',
+  profitFactor: 'Profit Factor',
+  riskRewardRatio: 'R:R Ratio',
+  balance: 'Balance',
+  trades: 'Number of Trades',
 };
 
 // Format value based on target type
@@ -65,7 +65,7 @@ const formatValue = (value: number, type: string): string => {
   switch (type) {
     case 'profit':
     case 'balance':
-      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'USD' }).format(value);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
     case 'winRate':
       return `${value}%`;
     case 'profitFactor':
@@ -87,9 +87,9 @@ const priorityColors: Record<string, string> = {
 
 // Priority labels
 const priorityLabels: Record<string, string> = {
-  low: 'Thấp',
-  medium: 'Trung bình',
-  high: 'Cao',
+  low: 'Low',
+  medium: 'Medium',
+  high: 'High',
 };
 
 export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardProps) {
@@ -138,7 +138,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
         <CardContent className="pb-2">
           <div className="mb-4">
             <div className="flex justify-between mb-1 items-center">
-              <div className="text-sm text-muted-foreground">Tiến độ</div>
+              <div className="text-sm text-muted-foreground">Progress</div>
               <div className="text-sm font-medium">
                 {goal.progressPercentage.toFixed(0)}%
               </div>
@@ -152,13 +152,13 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           
           <div className="grid grid-cols-2 gap-2 mb-4">
             <div className="text-sm">
-              <div className="text-muted-foreground">Hiện tại</div>
+              <div className="text-muted-foreground">Current</div>
               <div className="font-medium">
                 {formatValue(goal.currentValue, goal.targetType)}
               </div>
             </div>
             <div className="text-sm">
-              <div className="text-muted-foreground">Mục tiêu</div>
+              <div className="text-muted-foreground">Target</div>
               <div className="font-medium">
                 {formatValue(goal.targetValue, goal.targetType)}
               </div>
@@ -169,28 +169,28 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             <div className="flex items-center gap-1">
               <Calendar size={14} className="text-muted-foreground" />
               <span className="text-muted-foreground">
-                {isOverdue ? 'Quá hạn' : `Còn ${goal.daysLeft} ngày`}
+                {isOverdue ? 'Overdue' : `${goal.daysLeft} days left`}
               </span>
             </div>
             
             {goal.isCompleted && (
               <div className="flex items-center gap-1 text-green-500">
                 <Award size={14} />
-                <span>Hoàn thành</span>
+                <span>Completed</span>
               </div>
             )}
             
             {isOverdue && !goal.isCompleted && (
               <div className="flex items-center gap-1 text-destructive">
                 <AlertCircle size={14} />
-                <span>Quá hạn</span>
+                <span>Overdue</span>
               </div>
             )}
           </div>
           
           {goal.milestones && goal.milestones.length > 0 && (
             <div className="mt-4">
-              <div className="text-sm font-medium mb-2">Cột mốc</div>
+              <div className="text-sm font-medium mb-2">Milestones</div>
               <div className="space-y-2 max-h-32 overflow-y-auto pr-1">
                 {goal.milestones.map((milestone) => (
                   <div key={milestone.id} className="bg-secondary p-2 rounded-md text-sm">
@@ -198,7 +198,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                       <span className="font-medium">{milestone.title}</span>
                       {milestone.isCompleted && (
                         <Badge variant="outline" className="text-green-500 border-green-500">
-                          Hoàn thành
+                          Completed
                         </Badge>
                       )}
                     </div>
@@ -235,7 +235,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Chỉnh sửa mục tiêu</p>
+                  <p>Edit Goal</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -253,7 +253,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Xóa mục tiêu</p>
+                  <p>Delete Goal</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -265,7 +265,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
               size="sm"
               onClick={() => onAddMilestone && onAddMilestone()}
             >
-              Thêm cột mốc
+              Add Milestone
             </Button>
             
             <Button 
@@ -273,7 +273,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
               size="sm"
               onClick={() => calculateGoalProgress(goal.id.toString())}
             >
-              Cập nhật tiến độ
+              Update Progress
             </Button>
           </div>
         </CardFooter>

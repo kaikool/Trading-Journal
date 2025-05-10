@@ -16,17 +16,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 
-// Định nghĩa schema xác thực cho form
+// Define validation schema for the form
 const milestoneFormSchema = z.object({
-  title: z.string().min(1, 'Tiêu đề không được để trống'),
-  targetValue: z.coerce.number().positive('Giá trị mục tiêu phải lớn hơn 0'),
+  title: z.string().min(1, 'Title cannot be empty'),
+  targetValue: z.coerce.number().positive('Target value must be greater than 0'),
   isCompleted: z.boolean().default(false),
 });
 
-// Loại dữ liệu cho form
+// Type for form data
 type MilestoneFormValues = z.infer<typeof milestoneFormSchema>;
 
-// Props cho component MilestoneForm
+// Props for MilestoneForm component
 interface MilestoneFormProps {
   goalId: number;
   goalType: string;
@@ -47,7 +47,7 @@ export function MilestoneForm({
   isSubmitting = false,
 }: MilestoneFormProps) {
   
-  // Thiết lập form với giá trị mặc định
+  // Set up form with default values
   const form = useForm<MilestoneFormValues>({
     resolver: zodResolver(milestoneFormSchema),
     defaultValues: {
@@ -58,33 +58,33 @@ export function MilestoneForm({
     },
   });
 
-  // Format mô tả dựa trên loại mục tiêu
+  // Format description based on goal type
   const getTargetDescription = (type: string) => {
     switch (type) {
       case 'profit':
       case 'balance':
-        return 'Nhập giá trị bằng USD (vd: 500)';
+        return 'Enter value in USD (e.g. 500)';
       case 'winRate':
-        return 'Nhập giá trị tỷ lệ % (vd: 55)';
+        return 'Enter percentage value (e.g. 55)';
       case 'profitFactor':
       case 'riskRewardRatio':
-        return 'Nhập giá trị thập phân (vd: 1.5)';
+        return 'Enter decimal value (e.g. 1.5)';
       case 'trades':
-        return 'Nhập số lượng giao dịch';
+        return 'Enter number of trades';
       default:
         return '';
     }
   };
 
-  // Format label cho loại mục tiêu
+  // Format label for target type
   const getTargetTypeLabel = (type: string) => {
     switch (type) {
-      case 'profit': return 'Lợi nhuận';
-      case 'winRate': return 'Tỷ lệ thắng';
-      case 'profitFactor': return 'Hệ số lợi nhuận';
-      case 'riskRewardRatio': return 'Tỷ lệ R:R';
-      case 'balance': return 'Số dư';
-      case 'trades': return 'Số giao dịch';
+      case 'profit': return 'Profit';
+      case 'winRate': return 'Win Rate';
+      case 'profitFactor': return 'Profit Factor';
+      case 'riskRewardRatio': return 'R:R Ratio';
+      case 'balance': return 'Balance';
+      case 'trades': return 'Number of Trades';
       default: return type;
     }
   };
