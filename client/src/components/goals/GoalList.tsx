@@ -5,6 +5,7 @@ import { GoalForm } from './GoalForm';
 import { MilestoneForm } from './MilestoneForm';
 import { useGoalData } from '@/hooks/use-goal-data';
 import { useUserData } from '@/hooks/use-user-data';
+import ConfirmDeleteDialog from '@/components/common/ConfirmDeleteDialog';
 // Firebase Firestore based types now
 
 import {
@@ -535,31 +536,21 @@ export function GoalList() {
       </Dialog>
 
       {/* Dialog to confirm goal deletion */}
-      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-        <AlertDialogContent className="safe-area-p">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action will permanently delete the goal "{currentGoal?.title}" and all related milestones.
-              Deleted data cannot be recovered.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setOpenDeleteDialog(false);
-              setCurrentGoal(null);
-            }}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteGoal}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDeleteDialog
+        isOpen={openDeleteDialog}
+        onOpenChange={setOpenDeleteDialog}
+        itemToDelete={currentGoal}
+        onConfirm={handleDeleteGoal}
+        title="Confirm Delete Goal"
+        description={
+          <>
+            This action will permanently delete the goal <strong>"{currentGoal?.title}"</strong> and all related milestones.
+            Deleted data cannot be recovered.
+          </>
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </div>
   );
 }
