@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 
 // Định nghĩa kiểu dữ liệu cho context
 interface DialogContextType {
@@ -30,16 +30,33 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [lastDialogCloseTime, setLastDialogCloseTime] = useState(0);
   const preventScrollAfterDialogClose = 500; // 500ms
+  const dialogCountRef = useRef(0); // Đếm số lượng dialog đang mở
 
   // Lắng nghe DOM để tự động phát hiện khi dialog được mở/đóng
   useEffect(() => {
     const detectDialogOpen = () => {
+      // Phát hiện dialog qua selector role="dialog"
       const dialogElements = document.querySelectorAll('[role="dialog"]');
-      if (dialogElements.length > 0 && !dialogOpen) {
+      
+      // Phát hiện dialog qua Radix data-state="open"
+      const radixDialogElements = document.querySelectorAll('[data-state="open"][aria-modal="true"]');
+      
+      // Tổng số dialog đang mở
+      const totalDialogCount = dialogElements.length + radixDialogElements.length;
+      
+      // Cập nhật trạng thái và đếm số lượng
+      if (totalDialogCount > 0 && !dialogOpen) {
+        dialogCountRef.current = totalDialogCount;
         setDialogOpen(true);
-      } else if (dialogElements.length === 0 && dialogOpen) {
+      } else if (totalDialogCount === 0 && dialogOpen) {
+        dialogCountRef.current = 0;
         setDialogOpen(false);
         setLastDialogCloseTime(Date.now());
+      } else {
+        // Chỉ cập nhật số lượng nếu có thay đổi
+        if (dialogCountRef.current !== totalDialogCount) {
+          dialogCountRef.current = totalDialogCount;
+        }
       }
     };
 
@@ -51,8 +68,18 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['data-state'], // Theo dõi thuộc tính data-state của Radix UI
+      attributeFilter: ['data-state', 'aria-modal', 'role'], // Theo dõi các thuộc tính liên quan đến dialog
     });
+
+    // Thiết lập theo dõi sự kiện dialog khi dùng không phải Radix
+    const handleDialogEvent = () => {
+      // Đợi một tick để DOM cập nhật
+      setTimeout(detectDialogOpen, 0);
+    };
+    
+    // Lắng nghe các sự kiện dialog
+    document.addEventListener('dialog:open', handleDialogEvent);
+    document.addEventListener('dialog:close', handleDialogEvent);
 
     // Kiểm tra ban đầu
     detectDialogOpen();
@@ -60,6 +87,8 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
     // Cleanup khi unmount
     return () => {
       observer.disconnect();
+      document.removeEventListener('dialog:open', handleDialogEvent);
+      document.removeEventListener('dialog:close', handleDialogEvent);
     };
   }, [dialogOpen]);
 

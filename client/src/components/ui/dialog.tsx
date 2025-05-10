@@ -1,6 +1,8 @@
 import * as React from "react"
+import { useEffect } from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { Icons } from "@/components/icons/icons"
+import { useDialog } from "@/contexts/DialogContext"
 
 import { cn } from "@/lib/utils"
 
