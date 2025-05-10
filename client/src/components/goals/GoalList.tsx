@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogWithContext
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -196,7 +197,7 @@ export function GoalList() {
         </div>
 
         {/* New goal dialog */}
-        <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
+        <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open) => !open && setOpenCreateDialog(false)}>
           <DialogContent variant="form" className="keyboard-aware-dialog safe-area-p">
             <DialogHeader>
               <DialogTitle>Create New Goal</DialogTitle>
@@ -210,7 +211,7 @@ export function GoalList() {
               isSubmitting={isCreatingGoal}
             />
           </DialogContent>
-        </Dialog>
+        </DialogWithContext>
       </div>
     );
   }
@@ -453,7 +454,7 @@ export function GoalList() {
       </div>
 
       {/* Dialog for creating new goal */}
-      <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
+      <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open) => !open && setOpenCreateDialog(false)}>
         <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
           <DialogHeader>
             <DialogTitle>Create New Goal</DialogTitle>

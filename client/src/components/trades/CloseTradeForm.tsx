@@ -742,6 +742,6 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
+    </DialogWithContext>
   );
 }
