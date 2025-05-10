@@ -475,7 +475,7 @@ export function GoalList() {
 
       {/* Dialog for editing goal */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-        <DialogContent variant="form" className="keyboard-aware-dialog safe-area-p">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
           <DialogHeader>
             <DialogTitle>Edit Goal</DialogTitle>
             <DialogDescription>
