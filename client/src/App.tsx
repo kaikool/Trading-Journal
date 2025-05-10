@@ -19,6 +19,7 @@ import AchievementNotificationContainer from "@/components/achievements/Achievem
 import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DataCacheProvider } from "@/contexts/DataCacheContext";
+import { DialogProvider, useDialog } from "@/contexts/DialogContext";
 
 // Improved dynamic imports with proper code splitting
 // Core/frequently used pages - higher priority
@@ -78,6 +79,7 @@ function MainContent() {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const currentRoute = location;
+  const { dialogOpen, shouldPreventScrollAfterDialogClose } = useDialog();
   
   // Add transition state to improve route changes
   const [isPageReady, setIsPageReady] = useState<boolean>(true);
@@ -93,13 +95,11 @@ function MainContent() {
       // Lưu lại route hiện tại
       setPrevLocation(location);
       
-      // Thêm logic để cuộn lên đầu trang khi thay đổi route
-      // Nhưng chỉ khi không phải do dialog đóng
-      const dialogActive = document.querySelector('[role="dialog"]') !== null;
-      const modalPortalActive = document.getElementById('modal-portal') !== null;
+      // Sử dụng context để kiểm tra trạng thái dialog
+      // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
+      const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
       
-      // Kiểm tra khác route thực sự (không phải hash change hoặc dialog) và không có dialog
-      if (!dialogActive && !modalPortalActive) {
+      if (shouldScroll) {
         // Cuộn lên đầu trang, nhưng có độ trễ nhỏ để đảm bảo DOM đã render
         setTimeout(() => {
           window.scrollTo({ top: 0 });
@@ -115,7 +115,7 @@ function MainContent() {
         clearTimeout(readyTimer); 
       };
     }
-  }, [location]);
+  }, [location, dialogOpen, shouldPreventScrollAfterDialogClose]);
   
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
@@ -306,10 +306,12 @@ function App() {
       <ThemeProvider>
         <LayoutProvider>
           <DataCacheProvider>
-            <MainContent />
-            <Toaster />
-            <PWAContainer />
-            <AchievementNotificationContainer />
+            <DialogProvider>
+              <MainContent />
+              <Toaster />
+              <PWAContainer />
+              <AchievementNotificationContainer />
+            </DialogProvider>
           </DataCacheProvider>
         </LayoutProvider>
       </ThemeProvider>
