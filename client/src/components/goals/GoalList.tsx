@@ -240,7 +240,7 @@ export function GoalList() {
                   {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} goals completed
                 </span>
                 <span className="font-semibold text-lg">
-                  {goalProgress.overallProgress.progressPercentage.toFixed(0)}%
+                  {goalProgress.overallProgress.progressPercentage.toFixed(2)}%
                 </span>
               </div>
               <Progress 

@@ -83,16 +83,16 @@ const formatValue = (value: number, type: string): string => {
   switch (type) {
     case 'profit':
     case 'balance':
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
     case 'winRate':
-      return `${value}%`;
+      return `${value.toFixed(2)}%`;
     case 'profitFactor':
     case 'riskRewardRatio':
       return value.toFixed(2);
     case 'trades':
-      return value.toString();
+      return Math.round(value).toString();
     default:
-      return value.toString();
+      return value.toFixed(2);
   }
 };
 
