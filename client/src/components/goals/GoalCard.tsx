@@ -96,11 +96,11 @@ const formatValue = (value: number, type: string): string => {
   }
 };
 
-// Priority colors với độ tương phản cao hơn
+// Priority colors với độ tương phản cao
 const priorityColors: Record<string, string> = {
-  low: 'bg-success/20 text-success-foreground font-medium dark:bg-success/30 dark:text-success-foreground',
-  medium: 'bg-warning/20 text-warning-foreground font-medium dark:bg-warning/30 dark:text-warning-foreground',
-  high: 'bg-destructive/20 text-destructive-foreground font-medium dark:bg-destructive/30 dark:text-destructive-foreground',
+  low: 'bg-success text-white font-medium',
+  medium: 'bg-warning text-white font-medium',
+  high: 'bg-destructive text-white font-medium',
 };
 
 // Priority labels
