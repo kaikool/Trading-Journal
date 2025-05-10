@@ -99,14 +99,22 @@ function MainContent() {
       // Chỉ cuộn lên đầu trang khi không phải đang có dialog hoặc vừa đóng dialog
       const shouldScroll = !dialogOpen && !shouldPreventScrollAfterDialogClose();
       
-      console.log(`[App] Route change scroll check: dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[App] Route change scroll check: dialogOpen=${dialogOpen}, shouldScroll=${shouldScroll}`);
+      }
       
       if (shouldScroll) {
         // Cuộn lên đầu trang, nhưng có độ trễ nhỏ để đảm bảo DOM đã render
-        console.log(`[App] Scrolling to top after route change`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[App] Scrolling to top after route change`);
+        }
+        
+        // Sử dụng requestAnimationFrame để đảm bảo scroll được thực hiện sau khi render
         setTimeout(() => {
-          window.scrollTo({ top: 0 });
-        }, 100);
+          requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          });
+        }, 50);
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
