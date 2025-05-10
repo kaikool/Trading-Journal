@@ -209,7 +209,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           {goal.milestones && goal.milestones.length > 0 && (
             <div className="mt-4">
               <div className="text-sm font-medium mb-2">Milestones</div>
-              <div className="space-y-2 max-h-32 overflow-y-auto px-1">
+              <div className="milestone-list space-y-2">
                 {goal.milestones.map((milestone) => (
                   <div key={milestone.id} className="bg-secondary p-2 rounded-md text-sm">
                     <div className="flex justify-between items-center mb-1">

@@ -128,6 +128,14 @@
   opacity: 1;
 }
 
+/* Milestone list styling */
+.milestone-list {
+  padding: 0 var(--spacing-1);
+  max-height: 8rem;
+  overflow-y: auto;
+  /* space-y được quản lý bởi Tailwind nên không cần định nghĩa ở đây */
+}
+
 /* Trade card image transition system */
 .trade-card-image-container {
   position: relative;

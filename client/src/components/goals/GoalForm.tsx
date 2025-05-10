@@ -64,43 +64,26 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
   const nextMonth = new Date();
   nextMonth.setMonth(nextMonth.getMonth() + 1);
   
-  // Theo dõi khi bàn phím xuất hiện trên PWA và thiết bị di động
+  // Simple keyboard detection for PWA and mobile
   useEffect(() => {
-    // Hàm phát hiện bàn phím hiện lên trên PWA
-    const checkKeyboardVisible = () => {
-      const formElement = document.querySelector('form');
-      const activeElement = document.activeElement;
-      
-      // Kiểm tra nếu focus đang ở trong một input field thuộc form
-      if (formElement && activeElement && 
-          (activeElement.tagName === 'INPUT' || 
-           activeElement.tagName === 'TEXTAREA' || 
-           activeElement.tagName === 'SELECT')) {
-        // Thêm class chỉ ra bàn phím đang hiện
-        document.documentElement.classList.add('keyboard-visible');
-        
-        // Thêm class vào phần tử đang được focus để tránh bị scrolling
-        activeElement.classList.add('keyboard-focused');
-        
-        // Đảm bảo phần tử được cuộn vào view nếu cần
-        setTimeout(() => {
-          activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-      } else {
-        document.documentElement.classList.remove('keyboard-visible');
-      }
+    const handleFocus = () => {
+      // Just add a class to indicate keyboard is visible
+      document.documentElement.classList.add('keyboard-visible');
     };
     
-    // Đăng ký các sự kiện để kiểm tra bàn phím
-    document.addEventListener('focusin', checkKeyboardVisible);
-    document.addEventListener('focusout', () => {
+    const handleBlur = () => {
+      // Remove the class when focus is lost
       document.documentElement.classList.remove('keyboard-visible');
-    });
+    };
+    
+    // Register events
+    document.addEventListener('focusin', handleFocus);
+    document.addEventListener('focusout', handleBlur);
     
     return () => {
-      // Dọn dẹp khi component unmount
-      document.removeEventListener('focusin', checkKeyboardVisible);
-      document.removeEventListener('focusout', checkKeyboardVisible);
+      // Cleanup
+      document.removeEventListener('focusin', handleFocus);
+      document.removeEventListener('focusout', handleBlur);
       document.documentElement.classList.remove('keyboard-visible');
     };
   }, []);
