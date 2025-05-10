@@ -1,8 +1,6 @@
 import { 
   type User, type InsertUser,
-  type Trade, type InsertTrade,
-  type Goal, type InsertGoal,
-  type GoalMilestone, type InsertGoalMilestone
+  type Trade, type InsertTrade
 } from "@shared/schema";
 
 // Interface for storage operations
@@ -20,24 +18,9 @@ export interface IStorage {
   updateTrade(id: number, tradeData: Partial<Trade>): Promise<Trade>;
   deleteTrade(id: number): Promise<void>;
   
-  // Goal operations
-  createGoal(goal: InsertGoal): Promise<Goal>;
-  getGoalById(id: number): Promise<Goal | undefined>;
-  getGoalsByUserId(userId: number): Promise<Goal[]>;
-  updateGoal(id: number, goalData: Partial<Goal>): Promise<Goal>;
-  deleteGoal(id: number): Promise<void>;
-  calculateGoalProgress(goalId: number): Promise<number>;
-  
-  // GoalMilestone operations
-  createGoalMilestone(milestone: InsertGoalMilestone): Promise<GoalMilestone>;
-  getGoalMilestonesByGoalId(goalId: number): Promise<GoalMilestone[]>;
-  updateGoalMilestone(id: number, milestoneData: Partial<GoalMilestone>): Promise<GoalMilestone>;
-  deleteGoalMilestone(id: number): Promise<void>;
-  
   // Analytics operations
   getTradeStats(userId: number): Promise<TradeStats>;
   getPerformanceData(userId: number): Promise<PerformanceData>;
-  getGoalsProgress(userId: number): Promise<GoalsProgressData>;
 }
 
 // Types for analytics
@@ -106,67 +89,20 @@ interface PerformanceData {
   };
 }
 
-// Goal progress tracking data
-interface GoalProgressItem {
-  id: number;
-  title: string;
-  targetType: string;
-  targetValue: number;
-  currentValue: number;
-  progressPercentage: number;
-  isCompleted: boolean;
-  startDate: Date;
-  endDate: Date;
-  daysLeft: number;
-  priority: string;
-  color: string | null;
-  milestones?: {
-    id: number;
-    title: string;
-    targetValue: number;
-    isCompleted: boolean;
-    progressPercentage: number;
-  }[];
-}
-
-interface GoalsProgressData {
-  activeGoals: GoalProgressItem[];
-  completedGoals: GoalProgressItem[];
-  upcomingMilestones: {
-    id: number;
-    goalId: number;
-    goalTitle: string;
-    title: string;
-    targetValue: number;
-    progressPercentage: number;
-  }[];
-  overallProgress: {
-    totalGoals: number;
-    completedGoals: number;
-    progressPercentage: number;
-  };
-}
+// No goal tracking data
 
 // Memory storage implementation
 export class MemStorage implements IStorage {
   private usersMap: Map<number, User>;
   private tradesMap: Map<number, Trade>;
-  private goalsMap: Map<number, Goal>;
-  private milestonesMap: Map<number, GoalMilestone>;
   private userIdCounter: number;
   private tradeIdCounter: number;
-  private goalIdCounter: number;
-  private milestoneIdCounter: number;
   
   constructor() {
     this.usersMap = new Map();
     this.tradesMap = new Map();
-    this.goalsMap = new Map();
-    this.milestonesMap = new Map();
     this.userIdCounter = 1;
     this.tradeIdCounter = 1;
-    this.goalIdCounter = 1;
-    this.milestoneIdCounter = 1;
   }
   
   // User operations
