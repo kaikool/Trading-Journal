@@ -14,7 +14,7 @@ export function Goals() {
         transition={{ duration: 0.3 }}
         className="h-full flex flex-col"
       >
-        <DashboardHeader title="Mục tiêu Giao dịch" description="Thiết lập và theo dõi tiến độ các mục tiêu giao dịch của bạn" />
+        <DashboardHeader title="Trading Goals" description="Set up and track progress of your trading goals" />
         
         <div className="flex-1 overflow-hidden">
           <GoalList />

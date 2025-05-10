@@ -42,29 +42,29 @@ function SidebarItem({
   collapsed?: boolean;
   onClick?: () => void;
 }) {
-  // Xử lý sự kiện click với cải tiến cho PWA
+  // Handle click event with PWA improvements
   const handleClick = (e: React.MouseEvent) => {
-    // Ngăn sự kiện click lan truyền xuyên qua sidebar
+    // Prevent click event from propagating through the sidebar
     e.stopPropagation();
-    e.preventDefault(); // Ngăn chặn hành vi mặc định của link
+    e.preventDefault(); // Prevent default link behavior
     
-    // Thực hiện callback onClick nếu được cung cấp
+    // Execute onClick callback if provided
     if (onClick) onClick();
     
-    // Sử dụng hàm isPWA được import từ hook
+    // Use isPWA function imported from hook
     const inPWAMode = isPWA();
     
-    // Thực hiện điều hướng theo cách thủ công để tránh vấn đề với PWA
+    // Perform manual navigation to avoid issues with PWA
     if (inPWAMode) {
-      // Thêm timeout nhỏ để đảm bảo các hiệu ứng UI được hiển thị trước khi điều hướng
+      // Add small timeout to ensure UI effects are displayed before navigation
       setTimeout(() => {
-        // Sửa lỗi điều hướng trong PWA mode bằng cách thay thế toàn bộ location
+        // Fix navigation in PWA mode by replacing the entire location
         window.location.replace(href);
-      }, 50); // Tăng thời gian chờ để đảm bảo hiệu ứng UI hoàn tất
+      }, 50); // Increase wait time to ensure UI effects complete
     } else {
-      // Sử dụng history API trực tiếp cho điều hướng nhanh hơn trong môi trường web
+      // Use history API directly for faster navigation in web environment
       window.history.pushState({}, '', href);
-      // Kích hoạt sự kiện popstate để wouter phát hiện thay đổi URL
+      // Trigger popstate event so wouter detects URL change
       window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
@@ -168,14 +168,14 @@ export function Sidebar({ className }: { className?: string }) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
   
-  // Các biến để xử lý vuốt từ cạnh trái để hiện sidebar
+  // Variables to handle swipe from left edge to show sidebar
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
-  const edgeSwipeZone = 20; // Vùng nhận diện vuốt từ cạnh trái (px)
+  const edgeSwipeZone = 20; // Swipe detection zone from left edge (px)
   
-  // Xử lý sự kiện vuốt (swipe) cho mobile
+  // Handle swipe events for mobile
   const handleTouchStart = (e: TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
