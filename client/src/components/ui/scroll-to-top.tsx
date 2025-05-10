@@ -48,12 +48,33 @@ export function ScrollToTop({
   // Chúng ta sẽ xử lý cuộn lên đầu trang trong App.tsx
   // Cách này tránh các vấn đề với dialog mà không cần kiểm tra DOM
   
-  // Hàm cuộn lên đầu trang êm dịu
+  // Ref để theo dõi thời gian click cuối cùng
+  const lastClickTimeRef = useRef(0);
+  
+  // Hàm cuộn lên đầu trang êm dịu với debounce
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    // Thêm debounce để tránh việc phải click 2 lần
+    const now = Date.now();
+    const DEBOUNCE_TIME = 300; // 300ms debounce
+    
+    // Chỉ thực hiện nếu đã qua thời gian debounce
+    if (now - lastClickTimeRef.current > DEBOUNCE_TIME) {
+      lastClickTimeRef.current = now;
+      
+      // Force scroll to top ngay lập tức
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      
+      // Để đảm bảo cuộn hoạt động, thậm chí scroll lại sau 50ms
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+      }, 50);
+    }
   };
   
   return (
