@@ -128,53 +128,13 @@ const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => {
-  // Use callback ref để có thể can thiệp vào element khi nó được render
-  const handleRef = React.useCallback(
-    (node: HTMLDivElement | null) => {
-      // Forward ref to original ref
-      if (typeof ref === 'function') {
-        ref(node);
-      } else if (ref) {
-        ref.current = node;
-      }
-      
-      // Nếu element tồn tại, vô hiệu hóa khả năng scroll của nó
-      if (node) {
-        // Chỉ áp dụng cho item được highlight hoặc được chọn
-        if (node.hasAttribute('data-highlighted') || node.getAttribute('aria-selected') === 'true') {
-          // Monkey patch scrollIntoView của element này
-          const originalScrollIntoView = node.scrollIntoView;
-          node.scrollIntoView = function() {
-            // Không làm gì - chặn hoàn toàn hành vi cuộn
-            console.debug('[SelectItem] Blocked scrollIntoView');
-            return;
-          };
-        }
-      }
-    },
-    [ref]
-  );
-  
   return (
     <SelectPrimitive.Item
-      ref={handleRef}
+      ref={ref}
       className={cn(
         "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        // Thêm class scroll-noop để chỉ định không sử dụng scroll behaviors mặc định
-        "scroll-noop",
         className
       )}
-      // Vô hiệu hóa khả năng tự focus và cuộn
-      onFocus={(e) => {
-        // Ngăn chặn focus gây cuộn trang
-        e.preventDefault();
-        e.currentTarget.blur();
-        
-        // Xử lý callback focus ban đầu nếu có
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-      }}
       {...props}
     >
       <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
