@@ -315,7 +315,7 @@ export function GoalList() {
         </Tabs>
       </div>
 
-      {/* Nội dung tab */}
+      {/* Tab content */}
       <div className="flex-1 overflow-hidden">
         <AnimatePresence mode="wait">
           {activeTab === 'active' && (
@@ -349,23 +349,23 @@ export function GoalList() {
                     <GoalIcon className="h-12 w-12 text-muted-foreground mb-4" />
                     {searchTerm ? (
                       <>
-                        <h3 className="text-lg font-medium">Không tìm thấy mục tiêu</h3>
+                        <h3 className="text-lg font-medium">No goals found</h3>
                         <p className="text-muted-foreground">
-                          Không có mục tiêu nào phù hợp với từ khóa "{searchTerm}"
+                          No goals match your search term "{searchTerm}"
                         </p>
                       </>
                     ) : (
                       <>
-                        <h3 className="text-lg font-medium">Không có mục tiêu đang thực hiện</h3>
+                        <h3 className="text-lg font-medium">No active goals</h3>
                         <p className="text-muted-foreground">
-                          Bạn chưa có mục tiêu đang thực hiện nào
+                          You don't have any active goals yet
                         </p>
                         <Button
                           className="mt-4"
                           onClick={() => setOpenCreateDialog(true)}
                         >
                           <PlusCircle className="mr-2 h-4 w-4" />
-                          Tạo mục tiêu mới
+                          Create New Goal
                         </Button>
                       </>
                     )}
@@ -406,16 +406,16 @@ export function GoalList() {
                     <Trophy className="h-12 w-12 text-muted-foreground mb-4" />
                     {searchTerm ? (
                       <>
-                        <h3 className="text-lg font-medium">Không tìm thấy mục tiêu</h3>
+                        <h3 className="text-lg font-medium">No goals found</h3>
                         <p className="text-muted-foreground">
-                          Không có mục tiêu hoàn thành nào phù hợp với từ khóa "{searchTerm}"
+                          No completed goals match your search term "{searchTerm}"
                         </p>
                       </>
                     ) : (
                       <>
-                        <h3 className="text-lg font-medium">Chưa có mục tiêu hoàn thành</h3>
+                        <h3 className="text-lg font-medium">No completed goals</h3>
                         <p className="text-muted-foreground">
-                          Hoàn thành mục tiêu để xem chúng hiển thị ở đây
+                          Complete goals to see them displayed here
                         </p>
                       </>
                     )}
