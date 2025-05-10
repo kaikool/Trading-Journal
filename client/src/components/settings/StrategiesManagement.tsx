@@ -1029,7 +1029,59 @@ export function StrategiesManagement() {
                 />
               </div>
               
-              <div className="pt-1">
+              {/* Entry Conditions */}
+              <div className="mt-4">
+                <StrategyConditionList
+                  title="Entry Conditions"
+                  icon={<Icons.trade.doorOpen className="h-4 w-4 mr-1" />}
+                  emptyMessage="No entry conditions defined yet. Click 'Add' to create your first entry condition."
+                  conditions={newStrategy.entryConditions || []}
+                  onAdd={(condition) => setNewStrategy({
+                    ...newStrategy,
+                    entryConditions: addConditionToArray(newStrategy.entryConditions || [], condition)
+                  })}
+                  onUpdate={(id, updates) => {
+                    const updatedConditions = (newStrategy.entryConditions || []).map(condition => 
+                      condition.id === id ? { ...condition, ...updates } : condition
+                    );
+                    setNewStrategy({ ...newStrategy, entryConditions: updatedConditions });
+                  }}
+                  onDelete={(id) => {
+                    setNewStrategy({
+                      ...newStrategy,
+                      entryConditions: (newStrategy.entryConditions || []).filter(condition => condition.id !== id)
+                    });
+                  }}
+                />
+              </div>
+              
+              {/* Exit Conditions */}
+              <div className="mt-4">
+                <StrategyConditionList
+                  title="Exit Conditions"
+                  icon={<Icons.trade.logOut className="h-4 w-4 mr-1" />}
+                  emptyMessage="No exit conditions defined yet. Click 'Add' to create your first exit condition."
+                  conditions={newStrategy.exitConditions || []}
+                  onAdd={(condition) => setNewStrategy({
+                    ...newStrategy,
+                    exitConditions: addConditionToArray(newStrategy.exitConditions || [], condition)
+                  })}
+                  onUpdate={(id, updates) => {
+                    const updatedConditions = (newStrategy.exitConditions || []).map(condition => 
+                      condition.id === id ? { ...condition, ...updates } : condition
+                    );
+                    setNewStrategy({ ...newStrategy, exitConditions: updatedConditions });
+                  }}
+                  onDelete={(id) => {
+                    setNewStrategy({
+                      ...newStrategy,
+                      exitConditions: (newStrategy.exitConditions || []).filter(condition => condition.id !== id)
+                    });
+                  }}
+                />
+              </div>
+              
+              <div className="pt-3">
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="isDefault"
