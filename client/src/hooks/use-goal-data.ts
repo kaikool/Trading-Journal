@@ -2,32 +2,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Goal, GoalMilestone } from '@shared/schema';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
-import { API_BASE } from '@/lib/api-config';
+import { addGoal, getGoals, getGoalById, updateGoal, deleteGoal, calculateGoalProgress, onGoalsSnapshot } from '@/lib/firebase'; 
+import { addMilestone, getMilestones, updateMilestone, deleteMilestone } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
+import { useEffect, useState } from 'react';
+import { debug } from '@/lib/debug';
 
-// Helper function to transform API response
-const transformResponse = async (response: Response) => {
-  const data = await response.json();
-  return data;
+// Helper function để chuyển đổi dữ liệu từ Firebase sang dạng phù hợp
+const transformFirebaseData = <T>(data: any): T => {
+  return data as T;
 };
-
-// Implementation of apiRequest function
-async function apiRequest(url: string, options: RequestInit = {}) {
-  const fullUrl = url.startsWith('http') ? url : `${API_BASE}${url}`;
-  const response = await fetch(fullUrl, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-  
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || response.statusText);
-  }
-  
-  return response;
-}
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
@@ -73,48 +57,149 @@ export function useGoalData() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { userData } = useUserData();
-  const userId = userData?.id;
+  const firebaseUserId = auth.currentUser?.uid;
 
-  // Fetch all goals
-  const {
-    data: goals,
-    isLoading: isLoadingGoals,
-    error: goalsError
-  } = useQuery({
-    queryKey: ['/api/goals', userId],
-    queryFn: async () => {
-      const response = await apiRequest(`/api/goals?userId=${userId}`);
-      return transformResponse(response);
-    },
-    enabled: !!userId,
-  });
+  // State cho dữ liệu mục tiêu từ Firebase
+  const [goalsData, setGoalsData] = useState<any[]>([]);
+  const [isLoadingGoals, setIsLoadingGoals] = useState(true);
+  const [goalsError, setGoalsError] = useState<Error | null>(null);
 
-  // Fetch goal progress analytics
-  const {
-    data: goalProgress,
-    isLoading: isLoadingProgress,
-    error: progressError
-  } = useQuery<{ success: boolean; progress: GoalProgressData }>({
-    queryKey: ['/api/analytics/goals-progress', userId],
-    queryFn: async () => {
-      const response = await apiRequest(`/api/analytics/goals-progress?userId=${userId}`);
-      return transformResponse(response);
-    },
-    enabled: !!userId,
-  });
+  // State cho dữ liệu tiến độ mục tiêu
+  const [goalProgressData, setGoalProgressData] = useState<GoalProgressData | undefined>(undefined);
+  const [isLoadingProgress, setIsLoadingProgress] = useState(true);
+  const [progressError, setProgressError] = useState<Error | null>(null);
+
+  // Effect để lấy dữ liệu mục tiêu từ Firebase
+  useEffect(() => {
+    if (!firebaseUserId) {
+      setIsLoadingGoals(false);
+      return;
+    }
+
+    setIsLoadingGoals(true);
+    
+    // Đăng ký listener để lắng nghe thay đổi mục tiêu theo thời gian thực
+    const unsubscribe = onGoalsSnapshot(
+      firebaseUserId,
+      (goals) => {
+        debug(`Received ${goals.length} goals from Firebase`);
+        setGoalsData(goals);
+        setIsLoadingGoals(false);
+        
+        // Khi có dữ liệu mục tiêu mới, tính toán dữ liệu tiến độ
+        calculateGoalProgressData(goals);
+      },
+      (error) => {
+        debug("Error fetching goals:", error);
+        setGoalsError(error);
+        setIsLoadingGoals(false);
+      }
+    );
+
+    // Cleanup khi component unmount
+    return () => unsubscribe();
+  }, [firebaseUserId]);
+
+  // Hàm tính toán dữ liệu tiến độ mục tiêu
+  const calculateGoalProgressData = (goals: any[]) => {
+    try {
+      setIsLoadingProgress(true);
+      
+      // Tính toán ngày hiện tại
+      const now = new Date();
+      
+      // Chuẩn bị dữ liệu mục tiêu với thông tin tiến độ
+      const goalsWithProgress = goals.map(goal => {
+        // Tính số ngày còn lại
+        const endDate = new Date(goal.endDate?.toDate ? goal.endDate.toDate() : goal.endDate);
+        const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        
+        // Tính tiến độ mục tiêu
+        const progressPercentage = Math.min(100, (goal.currentValue / goal.targetValue) * 100 || 0);
+        
+        // Tính tiến độ cho từng cột mốc
+        const milestonesWithProgress = (goal.milestones || []).map((milestone: any) => {
+          const milestoneProgress = goal.currentValue >= milestone.targetValue ? 100 : 
+            Math.min(100, (goal.currentValue / milestone.targetValue) * 100);
+          
+          return {
+            ...milestone,
+            progressPercentage: milestoneProgress
+          };
+        });
+        
+        return {
+          ...goal,
+          daysLeft,
+          progressPercentage,
+          milestones: milestonesWithProgress
+        };
+      });
+      
+      // Phân loại mục tiêu thành đang hoạt động và đã hoàn thành
+      const activeGoals = goalsWithProgress.filter(goal => !goal.isCompleted);
+      const completedGoals = goalsWithProgress.filter(goal => goal.isCompleted);
+      
+      // Tìm các cột mốc sắp đến
+      const allMilestones = goalsWithProgress.flatMap(goal => 
+        (goal.milestones || []).map((milestone: any) => ({
+          id: milestone.id,
+          goalId: goal.id,
+          goalTitle: goal.title,
+          title: milestone.title,
+          targetValue: milestone.targetValue,
+          progressPercentage: milestone.progressPercentage
+        }))
+      );
+      
+      const upcomingMilestones = allMilestones
+        .filter((milestone: any) => milestone.progressPercentage < 100)
+        .sort((a: any, b: any) => b.progressPercentage - a.progressPercentage)
+        .slice(0, 5);
+      
+      // Tính tổng tiến độ
+      const totalGoals = goals.length;
+      const completedGoalsCount = completedGoals.length;
+      const overallProgressPercentage = totalGoals > 0 
+        ? (completedGoalsCount / totalGoals) * 100 
+        : 0;
+      
+      // Cập nhật state
+      setGoalProgressData({
+        activeGoals,
+        completedGoals,
+        upcomingMilestones,
+        overallProgress: {
+          totalGoals,
+          completedGoals: completedGoalsCount,
+          progressPercentage: overallProgressPercentage
+        }
+      });
+      
+      setIsLoadingProgress(false);
+    } catch (error) {
+      debug("Error calculating goal progress data:", error);
+      setProgressError(error as Error);
+      setIsLoadingProgress(false);
+    }
+  };
 
   // Create a new goal
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: Partial<Goal>) => {
-      const response = await apiRequest('/api/goals', {
-        method: 'POST',
-        body: JSON.stringify(goalData),
-      });
-      return transformResponse(response);
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Chuyển đổi dữ liệu mục tiêu
+      const formattedData = {
+        ...goalData,
+        userId: firebaseUserId
+      };
+      
+      // Gọi hàm thêm mục tiêu từ Firebase
+      return addGoal(firebaseUserId, formattedData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Mục tiêu đã được tạo',
         description: 'Mục tiêu mới của bạn đã được tạo thành công.',
@@ -131,16 +216,14 @@ export function useGoalData() {
 
   // Update an existing goal
   const updateGoalMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Partial<Goal> }) => {
-      const response = await apiRequest(`/api/goals/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
-      return transformResponse(response);
+    mutationFn: async ({ id, data }: { id: string; data: Partial<Goal> }) => {
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Gọi hàm cập nhật mục tiêu từ Firebase
+      return updateGoal(firebaseUserId, id, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Mục tiêu đã được cập nhật',
         description: 'Mục tiêu của bạn đã được cập nhật thành công.',
@@ -157,15 +240,14 @@ export function useGoalData() {
 
   // Delete a goal
   const deleteGoalMutation = useMutation({
-    mutationFn: async (goalId: number) => {
-      const response = await apiRequest(`/api/goals/${goalId}`, {
-        method: 'DELETE',
-      });
-      return transformResponse(response);
+    mutationFn: async (goalId: string) => {
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Gọi hàm xóa mục tiêu từ Firebase
+      return deleteGoal(firebaseUserId, goalId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Mục tiêu đã bị xóa',
         description: 'Mục tiêu đã được xóa thành công.',
@@ -182,17 +264,14 @@ export function useGoalData() {
 
   // Create a milestone
   const createMilestoneMutation = useMutation({
-    mutationFn: async ({ goalId, data }: { goalId: number; data: Partial<GoalMilestone> }) => {
-      const response = await apiRequest(`/api/goals/${goalId}/milestones`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
-      return transformResponse(response);
+    mutationFn: async ({ goalId, data }: { goalId: string; data: Partial<GoalMilestone> }) => {
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Gọi hàm thêm cột mốc từ Firebase
+      return addMilestone(firebaseUserId, goalId, data);
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/goals', variables.goalId, 'milestones'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+    onSuccess: () => {
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Cột mốc đã được tạo',
         description: 'Cột mốc mới đã được tạo thành công.',
@@ -209,16 +288,14 @@ export function useGoalData() {
 
   // Update a milestone
   const updateMilestoneMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: Partial<GoalMilestone> }) => {
-      const response = await apiRequest(`/api/goals/milestones/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
-      return transformResponse(response);
+    mutationFn: async ({ goalId, milestoneId, data }: { goalId: string; milestoneId: string; data: Partial<GoalMilestone> }) => {
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Gọi hàm cập nhật cột mốc từ Firebase
+      return updateMilestone(firebaseUserId, goalId, milestoneId, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Cột mốc đã được cập nhật',
         description: 'Cột mốc đã được cập nhật thành công.',
@@ -235,15 +312,14 @@ export function useGoalData() {
 
   // Delete a milestone
   const deleteMilestoneMutation = useMutation({
-    mutationFn: async (milestoneId: number) => {
-      const response = await apiRequest(`/api/goals/milestones/${milestoneId}`, {
-        method: 'DELETE',
-      });
-      return transformResponse(response);
+    mutationFn: async ({ goalId, milestoneId }: { goalId: string; milestoneId: string }) => {
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Gọi hàm xóa cột mốc từ Firebase
+      return deleteMilestone(firebaseUserId, goalId, milestoneId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Cột mốc đã bị xóa',
         description: 'Cột mốc đã được xóa thành công.',
@@ -260,15 +336,14 @@ export function useGoalData() {
 
   // Calculate goal progress
   const calculateGoalProgressMutation = useMutation({
-    mutationFn: async (goalId: number) => {
-      const response = await apiRequest(`/api/goals/${goalId}/calculate-progress`, {
-        method: 'POST',
-      });
-      return transformResponse(response);
+    mutationFn: async (goalId: string) => {
+      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      
+      // Gọi hàm tính toán tiến độ từ Firebase
+      return calculateGoalProgress(firebaseUserId, goalId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/goals-progress'] });
+      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
       toast({
         title: 'Tiến độ đã được cập nhật',
         description: 'Tiến độ mục tiêu đã được tính toán lại thành công.',
@@ -285,8 +360,8 @@ export function useGoalData() {
 
   return {
     // Queries
-    goals: goals?.success ? goals.goals || [] : [],
-    goalProgress: goalProgress?.success ? goalProgress.progress : undefined,
+    goals: goalsData,
+    goalProgress: goalProgressData,
     isLoadingGoals,
     isLoadingProgress,
     goalsError,
