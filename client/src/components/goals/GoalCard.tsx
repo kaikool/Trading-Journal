@@ -15,13 +15,31 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Pencil, Trash2, Award, Calendar, AlertCircle, TrendingUp } from 'lucide-react';
+import { 
+  Pencil, 
+  Trash2, 
+  Award, 
+  Calendar, 
+  AlertCircle, 
+  TrendingUp, 
+  MoreHorizontal, 
+  Plus, 
+  RefreshCw 
+} from 'lucide-react';
 import { 
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface GoalCardProps {
   goal: {
@@ -220,61 +238,87 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           )}
         </CardContent>
         
-        <CardFooter className="flex justify-between pt-2">
-          <div className="flex gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => onEdit && onEdit()}
-                  >
-                    <Pencil size={14} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Edit Goal</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+        <CardFooter className="pt-2">
+          <div className="flex flex-wrap items-center justify-between w-full gap-2">
+            {/* Các nút action chính */}
+            <div className="flex gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onEdit && onEdit()}
+                    >
+                      <Pencil size={14} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Edit Goal</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 text-destructive"
+                      onClick={() => onDelete && onDelete()}
+                    >
+                      <Trash2 size={14} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Delete Goal</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 text-destructive"
-                    onClick={() => onDelete && onDelete()}
-                  >
-                    <Trash2 size={14} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Delete Goal</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="default" 
-              size="sm"
-              onClick={() => onAddMilestone && onAddMilestone()}
-            >
-              Add Milestone
-            </Button>
-            
-            <Button 
-              variant="secondary" 
-              size="sm"
-              onClick={() => calculateGoalProgress(goal.id.toString())}
-            >
-              Update Progress
-            </Button>
+            {/* Các nút chức năng */}
+            <div className="flex gap-1 ml-auto">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="default" 
+                      size="sm"
+                      className="h-8 flex items-center gap-1 px-2 sm:px-3"
+                      onClick={() => onAddMilestone && onAddMilestone()}
+                    >
+                      <Plus size={14} />
+                      <span className="hidden sm:inline">Add Milestone</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Add milestone to track progress</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="secondary" 
+                      size="sm"
+                      className="h-8 flex items-center gap-1 px-2 sm:px-3"
+                      onClick={() => calculateGoalProgress(goal.id.toString())}
+                    >
+                      <RefreshCw size={14} />
+                      <span className="hidden sm:inline">Update Progress</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Recalculate current progress</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
         </CardFooter>
       </Card>
