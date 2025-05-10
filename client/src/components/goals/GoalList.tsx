@@ -345,7 +345,7 @@ export function GoalList() {
       </div>
 
       {/* Tab content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto h-full">
         <AnimatePresence mode="wait">
           {activeTab === 'active' && (
             <motion.div
@@ -355,52 +355,50 @@ export function GoalList() {
               exit={{ opacity: 0 }}
               className="h-full"
             >
-              <ScrollArea className="h-full goal-scroll-padding goal-scroll-area">
-                {filterGoals(goalProgress.activeGoals).length > 0 ? (
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="goal-grid"
-                  >
-                    {filterGoals(goalProgress.activeGoals).map((goal) => (
-                      <GoalCard
-                        key={goal.id}
-                        goal={goal}
-                        onEdit={() => handleEditGoal(goal)}
-                        onDelete={() => handleDeletePrompt(goal)}
-                        onAddMilestone={() => handleAddMilestone(goal)}
-                      />
-                    ))}
-                  </motion.div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <GoalIcon className="h-12 w-12 text-muted-foreground mb-4" />
-                    {searchTerm ? (
-                      <>
-                        <h3 className="text-lg font-medium">No goals found</h3>
-                        <p className="text-muted-foreground">
-                          No goals match your search term "{searchTerm}"
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <h3 className="text-lg font-medium">No active goals</h3>
-                        <p className="text-muted-foreground">
-                          You don't have any active goals yet
-                        </p>
-                        <Button
-                          className="mt-4"
-                          onClick={() => setOpenCreateDialog(true)}
-                        >
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Create New Goal
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
+              {filterGoals(goalProgress.activeGoals).length > 0 ? (
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="goal-grid"
+                >
+                  {filterGoals(goalProgress.activeGoals).map((goal) => (
+                    <GoalCard
+                      key={goal.id}
+                      goal={goal}
+                      onEdit={() => handleEditGoal(goal)}
+                      onDelete={() => handleDeletePrompt(goal)}
+                      onAddMilestone={() => handleAddMilestone(goal)}
+                    />
+                  ))}
+                </motion.div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-64 text-center">
+                  <GoalIcon className="h-12 w-12 text-muted-foreground mb-4" />
+                  {searchTerm ? (
+                    <>
+                      <h3 className="text-lg font-medium">No goals found</h3>
+                      <p className="text-muted-foreground">
+                        No goals match your search term "{searchTerm}"
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-medium">No active goals</h3>
+                      <p className="text-muted-foreground">
+                        You don't have any active goals yet
+                      </p>
+                      <Button
+                        className="mt-4"
+                        onClick={() => setOpenCreateDialog(true)}
+                      >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Create New Goal
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -412,45 +410,43 @@ export function GoalList() {
               exit={{ opacity: 0 }}
               className="h-full"
             >
-              <ScrollArea className="h-full goal-scroll-padding goal-scroll-area">
-                {filterGoals(goalProgress.completedGoals).length > 0 ? (
-                  <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="goal-grid"
-                  >
-                    {filterGoals(goalProgress.completedGoals).map((goal) => (
-                      <GoalCard
-                        key={goal.id}
-                        goal={goal}
-                        onEdit={() => handleEditGoal(goal)}
-                        onDelete={() => handleDeletePrompt(goal)}
-                        onAddMilestone={() => handleAddMilestone(goal)}
-                      />
-                    ))}
-                  </motion.div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <Trophy className="h-12 w-12 text-muted-foreground mb-4" />
-                    {searchTerm ? (
-                      <>
-                        <h3 className="text-lg font-medium">No goals found</h3>
-                        <p className="text-muted-foreground">
-                          No completed goals match your search term "{searchTerm}"
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <h3 className="text-lg font-medium">No completed goals</h3>
-                        <p className="text-muted-foreground">
-                          Complete goals to see them displayed here
-                        </p>
-                      </>
-                    )}
-                  </div>
-                )}
-              </ScrollArea>
+              {filterGoals(goalProgress.completedGoals).length > 0 ? (
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="goal-grid"
+                >
+                  {filterGoals(goalProgress.completedGoals).map((goal) => (
+                    <GoalCard
+                      key={goal.id}
+                      goal={goal}
+                      onEdit={() => handleEditGoal(goal)}
+                      onDelete={() => handleDeletePrompt(goal)}
+                      onAddMilestone={() => handleAddMilestone(goal)}
+                    />
+                  ))}
+                </motion.div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-64 text-center">
+                  <Trophy className="h-12 w-12 text-muted-foreground mb-4" />
+                  {searchTerm ? (
+                    <>
+                      <h3 className="text-lg font-medium">No goals found</h3>
+                      <p className="text-muted-foreground">
+                        No completed goals match your search term "{searchTerm}"
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-medium">No completed goals</h3>
+                      <p className="text-muted-foreground">
+                        Complete goals to see them displayed here
+                      </p>
+                    </>
+                  )}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
