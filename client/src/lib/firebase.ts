@@ -3,7 +3,8 @@ import { getAuth, type User, signOut, updateProfile, createUserWithEmailAndPassw
 import { calculatePips, calculateProfit } from './forex-calculator';
 import { DASHBOARD_CONFIG } from './config';
 import { debug, logError, logWarning } from './debug';
-import { processTradeTrigger } from './achievements-service';
+import { processTradeTrigger as originalProcessTradeTrigger } from './achievements-service';
+import { debounce } from './utils';
 import { TradingStrategy } from "@/types";
 import { 
   getFirestore, 
@@ -47,6 +48,14 @@ let db: ReturnType<typeof getFirestore>;
 
 // Performance optimized initialization flag
 let isInitialized = false;
+
+// Debounced version of processTradeTrigger to improve performance
+// This delays achievement processing for 2 seconds to avoid blocking UI updates
+const processTradeTrigger = debounce((userId: string, action: 'create' | 'update' | 'delete') => {
+  debug(`Running debounced achievement processing for ${action}`);
+  originalProcessTradeTrigger(userId, action)
+    .catch(error => logError("Error in debounced achievement processing:", error));
+}, 2000);
 
 // Function to initialize Firebase once when needed - performance optimized
 function initFirebase() {
