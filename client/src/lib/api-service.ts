@@ -5,6 +5,7 @@
  */
 
 import { debug } from './debug';
+import CLOUDINARY_CONFIG from './cloudinary-config';
 
 /**
  * Mapping between image types in UI and image types in storage
@@ -18,29 +19,6 @@ const IMAGE_TYPE_MAP = {
   'h4exit': 'exit-h4',
   'm15exit': 'exit-m15'
 } as const;
-
-/**
- * Cloudinary direct upload configuration
- * 
- * LƯU Ý QUAN TRỌNG:
- * 1. upload_preset PHẢI được tạo và cấu hình trong Cloudinary dashboard
- * 2. upload_preset PHẢI được đặt là "Unsigned" trong Cloudinary settings
- * 3. cloud_name phải chính xác
- * 
- * Nếu gặp lỗi "Upload preset not found", bạn cần:
- * 1. Đăng nhập vào Cloudinary dashboard
- * 2. Vào Settings > Upload > Upload presets
- * 3. Tạo mới hoặc kiểm tra preset đã tồn tại
- * 4. Đảm bảo preset được đặt là "Unsigned"
- */
-const CLOUDINARY_CONFIG = {
-  cloud_name: 'dxi9ensjq',
-  upload_preset: 'trading_journal_uploads' // Preset đặc biệt cho ứng dụng này (cần được tạo trong dashboard)
-};
-
-// Cloudinary API URL cho unsigned upload (không yêu cầu chữ ký)
-// Format chính xác: https://api.cloudinary.com/v1_1/cloud_name/image/upload
-const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloud_name}/image/upload`;
 
 // Type definitions to ensure type safety
 type UiImageType = keyof typeof IMAGE_TYPE_MAP;
@@ -102,7 +80,7 @@ export async function uploadTradeImage(
     debug('Tải lên trực tiếp đến Cloudinary...');
     
     // Xác định folder dựa vào context
-    const folder = `trades/${userId}/${tradeId}`;
+    const folder = CLOUDINARY_CONFIG.folders.trades(userId, tradeId);
     
     debug(`Chuẩn bị upload đến Cloudinary. Cloud name: ${CLOUDINARY_CONFIG.cloud_name}, Upload preset: ${CLOUDINARY_CONFIG.upload_preset}`);
     debug(`File details: name=${file.name}, type=${file.type}, size=${file.size} bytes`);
@@ -120,16 +98,16 @@ export async function uploadTradeImage(
     formData.append('multiple', 'false'); // Không cho phép nhiều file
     
     // Tắt các transformation không mong muốn để tránh bo tròn và phần thừa màu đen
-    formData.append('transformation', 'c_limit'); // Chỉ giới hạn kích thước, không crop/resize
+    formData.append('transformation', CLOUDINARY_CONFIG.transformations.no_corner_radius); // Chỉ giới hạn kích thước, không crop
     formData.append('format', 'auto'); // Tự động chọn định dạng tối ưu
     formData.append('quality', 'auto'); // Tự động chọn chất lượng tối ưu
-    formData.append('radius', '0'); // Không bo tròn góc
+    formData.append('strip', 'all'); // Loại bỏ metadata không cần thiết
     
     // Log URL being used
-    debug(`Gửi POST request đến: ${CLOUDINARY_UPLOAD_URL}`);
+    debug(`Gửi POST request đến: ${CLOUDINARY_CONFIG.upload_url}`);
     
     // Gửi request trực tiếp đến Cloudinary
-    const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+    const response = await fetch(CLOUDINARY_CONFIG.upload_url, {
       method: 'POST',
       body: formData
     });

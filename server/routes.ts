@@ -4,7 +4,6 @@ import path from "path";
 import { storage } from "./storage";
 import { z } from "zod";
 import { insertUserSchema, insertTradeSchema } from "@shared/schema";
-import { setupUploadRoutes } from "./upload-service";
 import { registerBatchEndpoints } from "./batch-api";
 import { log } from "./vite";
 
@@ -217,9 +216,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Đăng ký batch API endpoints
   registerBatchEndpoints(app);
-
-  // Thiết lập service upload ảnh
-  setupUploadRoutes(app);
   
   const httpServer = createServer(app);
   return httpServer;

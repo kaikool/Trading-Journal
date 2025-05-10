@@ -1,17 +1,17 @@
 /**
  * Image Optimizer Utility
  * 
- * Cung cấp các hàm để tối ưu hóa ảnh trước khi tải lên Firebase Storage
+ * Cung cấp các hàm để tối ưu hóa ảnh trước khi tải lên Cloudinary
  * - Resize ảnh theo kích thước phù hợp
  * - Nén ảnh để giảm dung lượng
  * - Chuyển đổi định dạng nếu cần thiết
  */
 
 /**
- * Tối ưu hóa ảnh trước khi upload
+ * Tối ưu hóa ảnh trước khi upload - phiên bản đơn giản và hiệu quả
  * Sử dụng Canvas API để:
  * 1. Resize ảnh về kích thước phù hợp
- * 2. Nén ảnh để giảm dung lượng
+ * 2. Nén ảnh với chất lượng tốt nhất có thể
  * 
  * @param file File ảnh cần tối ưu hóa
  * @param options Tùy chọn tối ưu hóa
@@ -42,7 +42,7 @@ export async function optimizeImage(
     return file;
   }
 
-  // Trả về file gốc nếu đã đủ nhỏ và không cần resize
+  // Kiểm tra nhanh - nếu file đã đủ nhỏ và không cần resize
   if (file.size <= maxSizeKB * 1024) {
     const img = await createImageBitmap(file);
     if (img.width <= maxWidth && img.height <= maxHeight) {
@@ -60,7 +60,7 @@ export async function optimizeImage(
     // Tải ảnh vào element để xử lý
     const img = await loadImage(url);
     
-    // Tính toán kích thước mới giữ nguyên tỷ lệ
+    // Tính toán kích thước mới dựa vào kích thước tối đa được chỉ định
     const { width, height } = calculateDimensions(
       img.width,
       img.height,
@@ -85,38 +85,28 @@ export async function optimizeImage(
       mimeType = `image/${outputFormat}`;
     }
     
-    // Nén theo chất lượng cao nhất chỉ khi cần thiết
-    let currentQuality = quality;
-    let blob: Blob | null = null;
+    // Tạo blob với chất lượng tốt
+    let blob = await new Promise<Blob | null>(resolve => {
+      canvas.toBlob(resolve, mimeType, quality);
+    });
     
-    // Lặp đến khi đạt được kích thước mong muốn hoặc chất lượng quá thấp
-    while (currentQuality >= 0.5) {
-      blob = await new Promise<Blob | null>(resolve => {
-        canvas.toBlob(resolve, mimeType, currentQuality);
-      });
-      
-      if (!blob) break;
-      
-      // Kiểm tra kích thước blob sau khi nén
-      if (blob.size <= maxSizeKB * 1024) break;
-      
-      // Giảm chất lượng và thử lại
-      currentQuality -= 0.05;
-    }
-    
-    // Nếu vẫn không đủ nhỏ, giảm kích thước và thử lại
+    // Nếu blob quá lớn, thử giảm kích thước
     if (blob && blob.size > maxSizeKB * 1024) {
-      // Tính lại kích thước mới
-      const scaleFactor = Math.sqrt(maxSizeKB * 1024 / blob.size);
+      // Tính tỷ lệ nén cần thiết (căn bậc hai vì diện tích ~ chiều dài^2)
+      const targetSize = maxSizeKB * 1024;
+      const compressionRatio = targetSize / blob.size;
+      const scaleFactor = Math.sqrt(compressionRatio) * 0.9; // Thêm 10% margin để đảm bảo đủ nhỏ
+      
+      // Tính kích thước mới
       const newWidth = Math.floor(width * scaleFactor);
       const newHeight = Math.floor(height * scaleFactor);
       
-      // Reset và vẽ lại với kích thước mới
+      // Tạo lại canvas với kích thước mới
       canvas.width = newWidth;
       canvas.height = newHeight;
       ctx.drawImage(img, 0, 0, newWidth, newHeight);
       
-      // Thử nén lại
+      // Tạo blob mới
       blob = await new Promise<Blob | null>(resolve => {
         canvas.toBlob(resolve, mimeType, quality);
       });
@@ -137,7 +127,7 @@ export async function optimizeImage(
       const fileName = `${baseName}.${newExtension}`;
       
       // Log để theo dõi tỷ lệ nén
-      console.log(`Tối ưu hóa: ${file.size / 1024} KB -> ${blob.size / 1024} KB (${Math.round(blob.size / file.size * 100)}%)`);
+      console.log(`Tối ưu hóa: ${(file.size / 1024).toFixed(1)} KB -> ${(blob.size / 1024).toFixed(1)} KB (${Math.round(blob.size / file.size * 100)}%)`);
       
       return new File([blob], fileName, { type: mimeType });
     }
