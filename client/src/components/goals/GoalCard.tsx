@@ -83,16 +83,16 @@ const formatValue = (value: number, type: string): string => {
   switch (type) {
     case 'profit':
     case 'balance':
-      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(value));
     case 'winRate':
-      return `${value.toFixed(2)}%`;
+      return `${Math.round(value)}%`;
     case 'profitFactor':
     case 'riskRewardRatio':
-      return value.toFixed(2);
+      return Math.round(value).toString();
     case 'trades':
       return Math.round(value).toString();
     default:
-      return value.toFixed(2);
+      return Math.round(value).toString();
   }
 };
 
@@ -159,7 +159,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             <div className="flex justify-between mb-[var(--goal-inner-gap)] items-center">
               <div className="text-sm text-muted-foreground">Progress</div>
               <div className="text-sm font-medium">
-                {goal.progressPercentage.toFixed(0)}%
+                {goal.progressPercentage}%
               </div>
             </div>
             <Progress 
@@ -225,7 +225,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                       <span className="text-muted-foreground">
                         {formatValue(milestone.targetValue, goal.targetType)}
                       </span>
-                      <span className="text-xs">{milestone.progressPercentage.toFixed(0)}%</span>
+                      <span className="text-xs">{milestone.progressPercentage}%</span>
                     </div>
                     <Progress
                       value={milestone.progressPercentage}

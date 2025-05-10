@@ -108,13 +108,13 @@ export function useGoalData() {
         const endDate = new Date(goal.endDate?.toDate ? goal.endDate.toDate() : goal.endDate);
         const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
         
-        // Calculate goal progress with fixed number of decimal places
-        const progressPercentage = parseFloat(Math.min(100, (goal.currentValue / goal.targetValue) * 100 || 0).toFixed(2));
+        // Calculate goal progress as integer
+        const progressPercentage = Math.round(Math.min(100, (goal.currentValue / goal.targetValue) * 100 || 0));
         
-        // Calculate progress for each milestone with fixed number of decimal places
+        // Calculate progress for each milestone as integer
         const milestonesWithProgress = (goal.milestones || []).map((milestone: any) => {
           const milestoneProgress = goal.currentValue >= milestone.targetValue ? 100 : 
-            parseFloat(Math.min(100, (goal.currentValue / milestone.targetValue) * 100).toFixed(2));
+            Math.round(Math.min(100, (goal.currentValue / milestone.targetValue) * 100));
           
           return {
             ...milestone,
@@ -151,11 +151,11 @@ export function useGoalData() {
         .sort((a: any, b: any) => b.progressPercentage - a.progressPercentage)
         .slice(0, 5);
       
-      // Calculate overall progress with fixed decimal places
+      // Calculate overall progress as integer
       const totalGoals = goals.length;
       const completedGoalsCount = completedGoals.length;
       const overallProgressPercentage = totalGoals > 0 
-        ? parseFloat(((completedGoalsCount / totalGoals) * 100).toFixed(2))
+        ? Math.round((completedGoalsCount / totalGoals) * 100)
         : 0;
       
       // Update state
