@@ -130,13 +130,13 @@ export function GoalList() {
     setOpenDeleteDialog(true);
   };
 
-  // Hiển thị dialog thêm cột mốc
+  // Show add milestone dialog
   const handleAddMilestone = (goal: any) => {
     setCurrentGoal(goal);
     setOpenMilestoneDialog(true);
   };
 
-  // Lọc mục tiêu theo từ khóa tìm kiếm
+  // Filter goals by search keyword
   const filterGoals = (goals: any[]) => {
     if (!searchTerm) return goals;
     
@@ -162,7 +162,7 @@ export function GoalList() {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4">
         <GoalIcon className="h-12 w-12 animate-pulse text-primary" />
-        <p className="text-lg font-medium">Đang tải dữ liệu mục tiêu...</p>
+        <p className="text-lg font-medium">Loading goal data...</p>
       </div>
     );
   }
@@ -172,37 +172,37 @@ export function GoalList() {
     return (
       <div className="h-full flex flex-col">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Mục tiêu Giao dịch</h2>
+          <h2 className="text-2xl font-bold">Trading Goals</h2>
           <Button onClick={() => setOpenCreateDialog(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
-            Tạo mục tiêu mới
+            Create New Goal
           </Button>
         </div>
         
         <div className="flex-1 flex flex-col items-center justify-center h-96 space-y-4">
           <GoalIcon className="h-16 w-16 text-muted-foreground" />
           <div className="text-center space-y-2">
-            <p className="text-xl font-medium">Chưa có mục tiêu nào</p>
+            <p className="text-xl font-medium">No goals yet</p>
             <p className="text-muted-foreground">
-              Tạo mục tiêu để theo dõi và nâng cao hiệu suất giao dịch của bạn
+              Create goals to track and improve your trading performance
             </p>
             <Button 
               className="mt-4" 
               onClick={() => setOpenCreateDialog(true)}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
-              Tạo mục tiêu đầu tiên
+              Create Your First Goal
             </Button>
           </div>
         </div>
 
-        {/* Dialog tạo mục tiêu mới */}
+        {/* New goal dialog */}
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
           <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Tạo mục tiêu mới</DialogTitle>
+              <DialogTitle>Create New Goal</DialogTitle>
               <DialogDescription>
-                Thiết lập mục tiêu giao dịch để theo dõi và cải thiện hiệu suất của bạn.
+                Set up trading goals to track and improve your performance.
               </DialogDescription>
             </DialogHeader>
             <GoalForm 
@@ -220,18 +220,18 @@ export function GoalList() {
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Mục tiêu Giao dịch</h2>
+        <h2 className="text-2xl font-bold">Trading Goals</h2>
         <Button onClick={() => setOpenCreateDialog(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
-          Tạo mục tiêu mới
+          Create New Goal
         </Button>
       </div>
 
-      {/* Phần tổng quan về tiến độ */}
+      {/* Progress overview section */}
       <div className="bg-card rounded-lg p-4 mb-6 border">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="col-span-1 md:col-span-2 flex flex-col justify-center">
-            <h3 className="text-lg font-medium mb-2">Tổng tiến độ đạt được</h3>
+            <h3 className="text-lg font-medium mb-2">Overall Progress</h3>
             <div className="flex items-center gap-2 mb-2">
               <Progress 
                 value={goalProgress.overallProgress.progressPercentage} 
@@ -242,18 +242,18 @@ export function GoalList() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} mục tiêu đã hoàn thành
+              {goalProgress.overallProgress.completedGoals} / {goalProgress.overallProgress.totalGoals} goals completed
             </p>
           </div>
           
           <div className="space-y-2 flex flex-col justify-center">
             <div className="flex items-center gap-2">
               <Trophy className="h-5 w-5 text-green-500" />
-              <span className="font-medium">{goalProgress.completedGoals.length} mục tiêu hoàn thành</span>
+              <span className="font-medium">{goalProgress.completedGoals.length} completed goals</span>
             </div>
             <div className="flex items-center gap-2">
               <GoalIcon className="h-5 w-5 text-blue-500" />
-              <span className="font-medium">{goalProgress.activeGoals.length} mục tiêu đang thực hiện</span>
+              <span className="font-medium">{goalProgress.activeGoals.length} active goals</span>
             </div>
           </div>
           
@@ -261,7 +261,7 @@ export function GoalList() {
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-yellow-500" />
               <span className="font-medium">
-                {goalProgress.upcomingMilestones.length} cột mốc sắp đến
+                {goalProgress.upcomingMilestones.length} upcoming milestones
               </span>
             </div>
             {goalProgress.activeGoals.some(goal => 
@@ -272,7 +272,7 @@ export function GoalList() {
                 <span className="font-medium">
                   {goalProgress.activeGoals.filter(goal => 
                     new Date(goal.endDate) < new Date() && !goal.isCompleted
-                  ).length} mục tiêu quá hạn
+                  ).length} overdue goals
                 </span>
               </div>
             )}
@@ -280,12 +280,12 @@ export function GoalList() {
         </div>
       </div>
 
-      {/* Phần tìm kiếm và lọc */}
+      {/* Search and filter section */}
       <div className="mb-4 flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Tìm kiếm mục tiêu..."
+            placeholder="Search goals..."
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -309,8 +309,8 @@ export function GoalList() {
           onValueChange={setActiveTab}
         >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="active">Đang thực hiện</TabsTrigger>
-            <TabsTrigger value="completed">Đã hoàn thành</TabsTrigger>
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
