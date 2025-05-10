@@ -1,14 +1,33 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Goal, GoalMilestone } from '@shared/schema';
-import { apiRequest } from '@/lib/queryClient';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
+import { API_BASE } from '@/lib/api-config';
 
 // Helper function to transform API response
 const transformResponse = async (response: Response) => {
   const data = await response.json();
   return data;
 };
+
+// Implementation of apiRequest function
+async function apiRequest(url: string, options: RequestInit = {}) {
+  const fullUrl = url.startsWith('http') ? url : `${API_BASE}${url}`;
+  const response = await fetch(fullUrl, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || response.statusText);
+  }
+  
+  return response;
+}
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
