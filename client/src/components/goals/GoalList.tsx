@@ -57,7 +57,7 @@ export function GoalList() {
     isCreatingMilestone,
   } = useGoalData();
 
-  // State quản lý
+  // State management
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [openMilestoneDialog, setOpenMilestoneDialog] = useState(false);
@@ -66,7 +66,7 @@ export function GoalList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active');
 
-  // Xử lý tạo mục tiêu mới
+  // Handle creating a new goal
   const handleCreateGoal = (data: any) => {
     if (!userData) return;
     
@@ -81,7 +81,7 @@ export function GoalList() {
     setOpenCreateDialog(false);
   };
 
-  // Xử lý cập nhật mục tiêu
+  // Handle updating goal
   const handleUpdateGoal = (data: any) => {
     if (!currentGoal) return;
     
@@ -94,7 +94,7 @@ export function GoalList() {
     setCurrentGoal(null);
   };
 
-  // Xử lý xóa mục tiêu
+  // Handle deleting goal
   const handleDeleteGoal = () => {
     if (!currentGoal) return;
     
@@ -103,7 +103,7 @@ export function GoalList() {
     setCurrentGoal(null);
   };
 
-  // Xử lý thêm cột mốc
+  // Handle adding milestone
   const handleCreateMilestone = (data: any) => {
     if (!currentGoal) return;
     
@@ -118,13 +118,13 @@ export function GoalList() {
     setOpenMilestoneDialog(false);
   };
 
-  // Hiển thị dialog chỉnh sửa mục tiêu
+  // Show goal edit dialog
   const handleEditGoal = (goal: any) => {
     setCurrentGoal(goal);
     setOpenEditDialog(true);
   };
 
-  // Hiển thị dialog xác nhận xóa mục tiêu
+  // Show goal delete confirmation dialog
   const handleDeletePrompt = (goal: any) => {
     setCurrentGoal(goal);
     setOpenDeleteDialog(true);
