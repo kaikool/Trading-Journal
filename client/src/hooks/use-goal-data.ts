@@ -259,23 +259,23 @@ export function useGoalData() {
   // Create a milestone
   const createMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, data }: { goalId: string; data: any }) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Gọi hàm thêm cột mốc từ Firebase
+      // Call the Firebase add milestone function
       return addMilestone(firebaseUserId, goalId, data);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Cột mốc đã được tạo',
-        description: 'Cột mốc mới đã được tạo thành công.',
+        title: 'Milestone Created',
+        description: 'New milestone has been created successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi tạo cột mốc',
-        description: error?.message || 'Đã xảy ra lỗi khi tạo cột mốc.',
+        title: 'Error Creating Milestone',
+        description: error?.message || 'An error occurred while creating the milestone.',
       });
     },
   });
@@ -283,23 +283,23 @@ export function useGoalData() {
   // Update a milestone
   const updateMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, milestoneId, data }: { goalId: string; milestoneId: string; data: any }) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Gọi hàm cập nhật cột mốc từ Firebase
+      // Call the Firebase update milestone function
       return updateMilestone(firebaseUserId, goalId, milestoneId, data);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Cột mốc đã được cập nhật',
-        description: 'Cột mốc đã được cập nhật thành công.',
+        title: 'Milestone Updated',
+        description: 'Milestone has been updated successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi cập nhật cột mốc',
-        description: error?.message || 'Đã xảy ra lỗi khi cập nhật cột mốc.',
+        title: 'Error Updating Milestone',
+        description: error?.message || 'An error occurred while updating the milestone.',
       });
     },
   });
@@ -307,23 +307,23 @@ export function useGoalData() {
   // Delete a milestone
   const deleteMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, milestoneId }: { goalId: string; milestoneId: string }) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Gọi hàm xóa cột mốc từ Firebase
+      // Call the Firebase delete milestone function
       return deleteMilestone(firebaseUserId, goalId, milestoneId);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Cột mốc đã bị xóa',
-        description: 'Cột mốc đã được xóa thành công.',
+        title: 'Milestone Deleted',
+        description: 'Milestone has been deleted successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi xóa cột mốc',
-        description: error?.message || 'Đã xảy ra lỗi khi xóa cột mốc.',
+        title: 'Error Deleting Milestone',
+        description: error?.message || 'An error occurred while deleting the milestone.',
       });
     },
   });
@@ -331,23 +331,23 @@ export function useGoalData() {
   // Calculate goal progress
   const calculateGoalProgressMutation = useMutation({
     mutationFn: async (goalId: string) => {
-      if (!firebaseUserId) throw new Error("Người dùng chưa đăng nhập");
+      if (!firebaseUserId) throw new Error("User is not logged in");
       
-      // Gọi hàm tính toán tiến độ từ Firebase
+      // Call the Firebase calculate progress function
       return calculateGoalProgress(firebaseUserId, goalId);
     },
     onSuccess: () => {
-      // Không cần invalidate query vì snapshot listener sẽ tự động cập nhật
+      // No need to invalidate query as snapshot listener will auto-update
       toast({
-        title: 'Tiến độ đã được cập nhật',
-        description: 'Tiến độ mục tiêu đã được tính toán lại thành công.',
+        title: 'Progress Updated',
+        description: 'Goal progress has been recalculated successfully.',
       });
     },
     onError: (error: any) => {
       toast({
         variant: 'destructive',
-        title: 'Lỗi khi tính toán tiến độ',
-        description: error?.message || 'Đã xảy ra lỗi khi tính toán tiến độ mục tiêu.',
+        title: 'Error Calculating Progress',
+        description: error?.message || 'An error occurred while calculating goal progress.',
       });
     },
   });

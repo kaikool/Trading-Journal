@@ -40,7 +40,7 @@ export function useUserData() {
         setUserId(user.uid);
       } else {
         setUserId(null);
-        // Xóa dữ liệu global khi đăng xuất
+        // Clear global data on logout
         globalUserData = null;
         globalCurrentBalance = null;
       }
@@ -81,15 +81,15 @@ export function useUserData() {
       if (data) {
         console.log("Global user hook: User data loaded, balance:", data.currentBalance);
         
-        // Cập nhật cả state local và biến global
+        // Update both local state and global variable
         setUserData(data);
         globalUserData = data;
         
-        // Cập nhật currentBalance global - không lưu trữ giá trị này, 
-        // để mỗi component tự tính dựa trên trades
+        // Update global currentBalance - this value is not stored persistently 
+        // so each component can calculate based on trades
         globalCurrentBalance = null;
           
-        // Cập nhật thời gian fetch
+        // Update fetch timestamp
         lastFetchTime = now;
       }
     } catch (error) {
