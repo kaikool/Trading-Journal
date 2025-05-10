@@ -218,6 +218,48 @@ function DialogHeaderFooterLayout({
   );
 }
 
+/**
+ * DialogWithContext - Dialog component that automatically integrates with DialogContext
+ * for better scroll behavior management
+ */
+interface DialogWithContextProps extends React.ComponentProps<typeof Dialog> {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const DialogWithContext: React.FC<DialogWithContextProps> = ({
+  isOpen,
+  onOpenChange,
+  children,
+  ...props
+}) => {
+  const { openDialog, closeDialog } = useDialog();
+  
+  // Notify DialogContext when dialog opens/closes
+  useEffect(() => {
+    if (isOpen) {
+      openDialog();
+      // Thêm dispatch để đảm bảo mọi component đều biết dialog đã mở
+      document.dispatchEvent(new CustomEvent('dialog:open'));
+    } 
+  }, [isOpen, openDialog]);
+  
+  // Xử lý callback onOpenChange
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      closeDialog();
+      document.dispatchEvent(new CustomEvent('dialog:close'));
+    }
+    onOpenChange(open);
+  };
+  
+  return (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange} {...props}>
+      {children}
+    </Dialog>
+  );
+};
+
 export {
   Dialog,
   DialogPortal,
@@ -231,4 +273,5 @@ export {
   DialogDescription,
   DialogHeaderFooterLayout,
   useDialogVariant,
+  DialogWithContext,
 }

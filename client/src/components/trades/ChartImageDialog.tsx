@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-  Dialog, 
+  Dialog,
   DialogContent, 
   DialogTitle, 
   DialogDescription
 } from '@/components/ui/dialog';
+import { useDialog } from '@/contexts/DialogContext';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons/icons';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -207,8 +208,8 @@ export function ChartImageDialog({
   const dialogDescription = `Trading chart for ${tradePair}`;
   
   return (
-    <Dialog 
-      open={isOpen} 
+    <DialogWithContext 
+      isOpen={isOpen} 
       onOpenChange={(open) => !open && onClose()}
     >
       <DialogContent 
@@ -398,6 +399,6 @@ export function ChartImageDialog({
           )}
         </div>
       </DialogContent>
-    </Dialog>
+    </DialogWithContext>
   );
 }
