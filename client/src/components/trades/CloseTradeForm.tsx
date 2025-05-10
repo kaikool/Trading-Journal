@@ -12,7 +12,8 @@ import {
   DialogTitle, 
   DialogHeader, 
   DialogFooter,
-  DialogDescription
+  DialogDescription,
+  DialogWithContext
 } from "@/components/ui/dialog";
 import {
   Tabs,
@@ -354,7 +355,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <DialogWithContext isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className="px-0 py-0 gap-0 overflow-hidden sm:max-w-[450px] rounded-lg safe-area-p"
         aria-describedby="close-trade-form-description"

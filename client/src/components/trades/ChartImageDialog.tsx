@@ -3,7 +3,8 @@ import {
   Dialog,
   DialogContent, 
   DialogTitle, 
-  DialogDescription
+  DialogDescription,
+  DialogWithContext
 } from '@/components/ui/dialog';
 import { useDialog } from '@/contexts/DialogContext';
 import { Button } from '@/components/ui/button';
