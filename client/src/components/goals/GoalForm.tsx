@@ -109,7 +109,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
@@ -133,7 +133,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
               <FormControl>
                 <Textarea
                   placeholder="Detailed description about this goal"
-                  className="resize-none"
+                  className="resize-none h-20"
                   {...field}
                   value={field.value || ''}
                 />

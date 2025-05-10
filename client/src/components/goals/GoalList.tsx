@@ -197,7 +197,7 @@ export function GoalList() {
 
         {/* New goal dialog */}
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
+          <DialogContent variant="form">
             <DialogHeader>
               <DialogTitle>Create New Goal</DialogTitle>
               <DialogDescription>
@@ -475,7 +475,7 @@ export function GoalList() {
 
       {/* Dialog for editing goal */}
       <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto safe-area-p">
+        <DialogContent variant="form">
           <DialogHeader>
             <DialogTitle>Edit Goal</DialogTitle>
             <DialogDescription>
@@ -507,7 +507,7 @@ export function GoalList() {
 
       {/* Dialog for adding milestone */}
       <Dialog open={openMilestoneDialog} onOpenChange={setOpenMilestoneDialog}>
-        <DialogContent className="sm:max-w-[500px] safe-area-p">
+        <DialogContent variant="compact">
           <DialogHeader>
             <DialogTitle>Add Milestone</DialogTitle>
             <DialogDescription>
