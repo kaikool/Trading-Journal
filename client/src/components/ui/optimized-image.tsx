@@ -108,7 +108,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden bg-transparent", /* Thay đổi bg-muted/40 thành bg-transparent để tránh viền đen */
+        "relative overflow-hidden bg-transparent", /* Nền trong suốt để tránh viền đen */
         containerClassName
       )}
       style={containerStyle}
@@ -122,7 +122,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
               src={placeholder} 
               alt="Loading" 
               className="w-full h-full object-cover opacity-50"
-              style={{ borderRadius: 0 }} /* Thêm style này để đảm bảo không có bo góc */
+              style={{ borderRadius: 'inherit' }} /* Kế thừa bo góc từ container cha */
             />
           ) : (
             <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground/70" />
@@ -151,7 +151,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           isLoaded ? "opacity-100" : "opacity-0",
           className
         )}
-        style={{ borderRadius: 0 }} /* Thêm style này để đảm bảo không có bo góc */
+        style={{ borderRadius: 'inherit' }} /* Kế thừa bo góc từ container cha */
         onLoad={handleLoad}
         onError={handleError}
         data-trade-id={tradeId}

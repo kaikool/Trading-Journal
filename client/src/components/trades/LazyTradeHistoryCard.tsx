@@ -224,9 +224,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
             <div className="flex flex-col md:flex-row">
               {/* Thumbnail container with CardImage */}
               <div 
-                className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden"
+                className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden rounded-lg" /* Thêm rounded-lg để bo góc */
                 onClick={handleOpenChartDialog}
-                style={{ borderRadius: 0 }} /* Đảm bảo không có bo góc tại container cha */
               >
                 {displayUrl ? (
                   <div className="trade-card-image-container">
