@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
+import { useDialog } from "@/contexts/DialogContext";
 
 interface ScrollToTopProps {
   threshold?: number;
@@ -24,12 +25,16 @@ export function ScrollToTop({
 }: ScrollToTopProps = {}) {
   const [visible, setVisible] = useState(false);
   const [location] = useLocation();
+  const { dialogOpen, shouldPreventScrollAfterDialogClose } = useDialog();
   
   useEffect(() => {
     // Kiểm tra vị trí cuộn để hiển thị/ẩn nút
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setVisible(scrollY > threshold);
+      
+      // Chỉ hiển thị nút khi đã cuộn xuống đủ xa và không có dialog nào đang mở
+      const shouldShow = scrollY > threshold && !dialogOpen;
+      setVisible(shouldShow);
     };
     
     // Đăng ký sự kiện cuộn
@@ -42,7 +47,7 @@ export function ScrollToTop({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [threshold, dialogOpen]);
   
   // Tạm thời vô hiệu hóa cơ chế auto-scroll khi đổi route
   // Chúng ta sẽ xử lý cuộn lên đầu trang trong App.tsx
@@ -51,29 +56,55 @@ export function ScrollToTop({
   // Ref để theo dõi thời gian click cuối cùng
   const lastClickTimeRef = useRef(0);
   
-  // Hàm cuộn lên đầu trang êm dịu với debounce
+  // Hàm cuộn lên đầu trang với hiệu ứng mượt mà và phối hợp với DialogContext
   const scrollToTop = () => {
-    // Thêm debounce để tránh việc phải click 2 lần
-    const now = Date.now();
-    const DEBOUNCE_TIME = 300; // 300ms debounce
+    // Ngăn chặn thực thi nếu dialog đang mở hoặc vừa đóng
+    if (dialogOpen || shouldPreventScrollAfterDialogClose()) {
+      console.log("[DEBUG] ScrollToTop ignored - dialog is open or just closed");
+      return;
+    }
     
-    // Chỉ thực hiện nếu đã qua thời gian debounce
-    if (now - lastClickTimeRef.current > DEBOUNCE_TIME) {
+    // Kiểm tra khoảng thời gian tối thiểu giữa các lần click
+    const now = Date.now();
+    const MIN_CLICK_INTERVAL = 400; // Giảm xuống từ 500ms để cải thiện phản hồi
+    
+    if (now - lastClickTimeRef.current > MIN_CLICK_INTERVAL) {
+      // Cập nhật thời gian click cuối cùng
       lastClickTimeRef.current = now;
       
-      // Force scroll to top ngay lập tức
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      // Ghi lại vị trí hiện tại để kiểm tra hiệu quả
+      const currentPosition = window.scrollY;
+      console.log("[DEBUG] ScrollToTop clicked, scrolling from position:", currentPosition);
       
-      // Để đảm bảo cuộn hoạt động, thậm chí scroll lại sau 50ms
-      setTimeout(() => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
+      // Sử dụng Promise để xác định khi nào smooth scroll kết thúc
+      const performScroll = () => {
+        return new Promise<void>((resolve) => {
+          // Thực hiện cuộn mượt mà
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+          
+          // Đặt một timeout để kiểm tra kết quả
+          setTimeout(() => {
+            // Nếu vị trí vẫn khá xa đầu trang, thực hiện cuộn tức thì
+            if (window.scrollY > 100) {
+              console.log("[DEBUG] Smooth scroll ineffective (position:", window.scrollY, "), forcing instant scroll");
+              window.scrollTo(0, 0);
+            }
+            resolve();
+          }, 400); // Thời gian kiểm tra dài hơn để đảm bảo smooth scroll có cơ hội hoạt động
         });
-      }, 50);
+      };
+      
+      // Thực hiện cuộn và xử lý kết quả
+      performScroll().catch(err => {
+        console.error("[ERROR] ScrollToTop failed:", err);
+        // Fallback: cuộn cứng nếu có lỗi
+        window.scrollTo(0, 0);
+      });
+    } else {
+      console.log("[DEBUG] ScrollToTop ignored - too many clicks");
     }
   };
   
