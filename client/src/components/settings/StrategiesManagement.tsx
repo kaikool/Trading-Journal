@@ -960,13 +960,17 @@ export function StrategiesManagement() {
       
       {/* Add Strategy Button at bottom */}
       <div className="flex justify-center mt-6 pt-4 border-t border-border/20">
+        <Button 
+          variant="default" 
+          size="sm" 
+          className="w-full max-w-sm"
+          onClick={() => setIsDialogOpen(true)}
+        >
+          <Icons.ui.plus className="h-4 w-4 mr-1.5" />
+          Add Strategy
+        </Button>
+        
         <DialogWithContext isOpen={isDialogOpen} onOpenChange={(open: boolean) => !open && setIsDialogOpen(false)}>
-          <DialogTrigger asChild>
-            <Button variant="default" size="sm" className="w-full max-w-sm">
-              <Icons.ui.plus className="h-4 w-4 mr-1.5" />
-              Add Strategy
-            </Button>
-          </DialogTrigger>
           <DialogContent className="sm:max-w-[700px] overflow-y-auto max-h-[85vh] safe-area-p">
             <DialogHeader className="mb-2">
               <DialogTitle className="text-lg font-semibold">Create new trading strategy</DialogTitle>
