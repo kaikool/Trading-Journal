@@ -12,16 +12,18 @@ import { toast } from '@/hooks/use-toast';
 
 interface GetPriceButtonProps {
   symbol: string;
-  onPriceFetched: (price: number) => void;
+  onPriceFetched?: (price: number) => void;
+  onPriceReceived?: (price: number) => void;
   tooltipText?: string;
-  size?: 'default' | 'sm' | 'xs'; // Kích thước của nút
-  variant?: 'outline' | 'ghost' | 'link'; // Kiểu dáng của nút
-  className?: string; // CSS tùy chỉnh
+  size?: 'default' | 'sm' | 'xs'; // Button size
+  variant?: 'outline' | 'ghost' | 'link'; // Button style
+  className?: string; // Custom CSS
 }
 
 export function GetPriceButton({ 
   symbol, 
   onPriceFetched,
+  onPriceReceived,
   tooltipText = "Get Current Market Price",
   size = 'default',
   variant = 'outline',
@@ -37,7 +39,9 @@ export function GetPriceButton({
     symbol,
     onSuccess: (price) => {
       debug(`[GetPriceButton] Received price for ${symbol}: ${price}`);
-      onPriceFetched(price);
+      // Support both callback prop names
+      if (onPriceFetched) onPriceFetched(price);
+      if (onPriceReceived) onPriceReceived(price);
       setLastFetchTime(new Date());
       
       toast({

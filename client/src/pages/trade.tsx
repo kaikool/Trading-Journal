@@ -226,13 +226,18 @@ export default function TradePage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div className="p-4 border border-muted rounded-md">
-                      <p className="text-muted-foreground mb-4">
-                        Loading trade details...
-                      </p>
-                    </div>
-                  </div>
+                  <TradeDetails 
+                    isCalculatingLotSize={isCalculatingLotSize}
+                    isCalculatingTakeProfit={isCalculatingTakeProfit}
+                    accountBalance={accountBalance}
+                    riskPercentage={riskPercentage}
+                    setRiskPercentage={setRiskPercentage}
+                    canFetchPrice={canFetchPrice}
+                    isEditMode={false}
+                    calculateOptimalLotSize={calculateOptimalLotSize}
+                    calculateOptimalTakeProfit={calculateOptimalTakeProfit}
+                    riskRewardRatio={riskRewardRatio}
+                  />
                 </CardContent>
               </Card>
             </motion.div>
