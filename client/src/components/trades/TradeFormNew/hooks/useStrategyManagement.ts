@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TradeFormValues } from '../types';
 import { getStrategies } from '@/lib/firebase';
-import { TradingStrategy, StrategyConditionCheck } from '@/types';
+import { TradingStrategy, StrategyConditionCheck, StrategyCondition } from '@/types';
 import { logError } from '@/lib/debug';
 
 interface UseStrategyManagementProps {
@@ -34,12 +34,12 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
             const found = userStrategies.find(s => s.id === currentStrategy);
             if (found) {
               setSelectedStrategy(found);
-              if (found.conditions && found.conditions.length > 0) {
+              if (found.rules && found.rules.length > 0) {
                 setStrategyChecks(
-                  found.conditions.map(condition => ({
-                    id: condition.id,
-                    text: condition.text,
-                    checked: false
+                  found.rules.map(condition => ({
+                    conditionId: condition.id,
+                    checked: false,
+                    passed: false
                   }))
                 );
               }
@@ -48,12 +48,12 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
             // No strategy selected yet, set default
             form.setValue('strategy', userStrategies[0].id);
             setSelectedStrategy(userStrategies[0]);
-            if (userStrategies[0].conditions && userStrategies[0].conditions.length > 0) {
+            if (userStrategies[0].rules && userStrategies[0].rules.length > 0) {
               setStrategyChecks(
-                userStrategies[0].conditions.map(condition => ({
-                  id: condition.id,
-                  text: condition.text,
-                  checked: false
+                userStrategies[0].rules.map(condition => ({
+                  conditionId: condition.id,
+                  checked: false,
+                  passed: false
                 }))
               );
             }
@@ -82,12 +82,12 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
         
         if (foundStrategy) {
           setSelectedStrategy(foundStrategy);
-          if (foundStrategy.conditions && foundStrategy.conditions.length > 0) {
+          if (foundStrategy.rules && foundStrategy.rules.length > 0) {
             setStrategyChecks(
-              foundStrategy.conditions.map(condition => ({
-                id: condition.id,
-                text: condition.text,
-                checked: false
+              foundStrategy.rules.map((condition: StrategyCondition) => ({
+                conditionId: condition.id,
+                checked: false,
+                passed: false
               }))
             );
           } else {
@@ -104,7 +104,7 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
   const handleStrategyCheckToggle = useCallback((id: string, checked: boolean) => {
     setStrategyChecks(prev => 
       prev.map(item => 
-        item.id === id ? { ...item, checked } : item
+        item.conditionId === id ? { ...item, checked, passed: checked } : item
       )
     );
   }, []);
