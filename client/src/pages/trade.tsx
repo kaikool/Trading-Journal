@@ -30,6 +30,7 @@ import {
   TradePsychology,
   TradeImages,
   NotesSection,
+  TabbedTradeForm,
 } from "@/components/trades/TradeFormNew/components";
 import { FormActions } from "@/components/trades/TradeFormNew/components/FormActions";
 
@@ -181,7 +182,7 @@ export default function TradePage() {
             />
           )}
 
-          {/* Main Trade Form Card - Enhanced Visual Design */}
+          {/* Main Trade Form Card with Tabbed Interface */}
           <Card className="relative mb-5 overflow-hidden border-border/60">
             <CardGradient 
               variant="primary" 
@@ -207,7 +208,8 @@ export default function TradePage() {
             </CardHeader>
             
             <CardContent className="p-5">
-              <TradeDetails
+              <TabbedTradeForm
+                // Trade details props
                 isCalculatingLotSize={isCalculatingLotSize}
                 isCalculatingTakeProfit={isCalculatingTakeProfit}
                 accountBalance={accountBalance}
@@ -218,94 +220,24 @@ export default function TradePage() {
                 calculateOptimalLotSize={calculateOptimalLotSize}
                 calculateOptimalTakeProfit={calculateOptimalTakeProfit}
                 riskRewardRatio={riskRewardRatio}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Strategy and Psychology Tabs - Enhanced UI */}
-          <Card className="mb-5 border-border/60">
-            <Tabs defaultValue="strategy" className="w-full">
-              <CardHeader className="pb-0 border-b border-border/20">
-                <TabsList className="grid w-full grid-cols-2 p-0.5 bg-muted/20">
-                  <TabsTrigger value="strategy" className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
-                    <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
-                    Trading Strategy
-                  </TabsTrigger>
-                  <TabsTrigger value="psychology" className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
-                    <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                    Trading Psychology
-                  </TabsTrigger>
-                </TabsList>
-              </CardHeader>
-              
-              <CardContent className="pt-5 px-5">
-                <TabsContent value="strategy" className="mt-0 animate-in fade-in-50 duration-300 ease-in-out">
-                  <TradeStrategy 
-                    strategies={strategies}
-                    isLoadingStrategies={isLoadingStrategies}
-                    selectedStrategy={selectedStrategy}
-                    strategyChecks={strategyChecks}
-                    handleStrategyCheckToggle={handleStrategyCheckToggle}
-                  />
-                </TabsContent>
                 
-                <TabsContent value="psychology" className="mt-0 animate-in fade-in-50 duration-300 ease-in-out">
-                  <TradePsychology />
-                </TabsContent>
-              </CardContent>
-            </Tabs>
-          </Card>
-
-          {/* Notes Section - Enhanced UI */}
-          <Card className="mb-5 border-border/60">
-            <CardHeader className="pb-2 border-b border-border/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CardIcon color="primary" variant="soft">
-                    <Icons.general.clipboard className="h-4 w-4" />
-                  </CardIcon>
-                  <CardTitle>Trading Notes</CardTitle>
-                </div>
-                <span className="text-xs text-muted-foreground">Add your analysis and observations</span>
-              </div>
-            </CardHeader>
-            <CardContent className="p-5">
-              <NotesSection />
-            </CardContent>
-          </Card>
-
-          {/* Chart Images - Enhanced UI */}
-          <Card className="mb-5 border-border/60">
-            <CardHeader className="pb-2 border-b border-border/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CardIcon color="primary" variant="soft">
-                    <Icons.analytics.barChart className="h-4 w-4" />
-                  </CardIcon>
-                  <CardTitle>Chart Images</CardTitle>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  Upload entry and exit screenshots
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="p-5">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <TradeImages 
-                  entryImage1={entryImage1}
-                  entryImage2={entryImage2}
-                  exitImage1={exitImage1}
-                  exitImage2={exitImage2}
-                  handleEntryImageChange={handleEntryImageChange}
-                  handleExitImageChange={handleExitImageChange}
-                  removeEntryImage={removeEntryImage}
-                  removeExitImage={removeExitImage}
-                />
-              </motion.div>
+                // Strategy props
+                strategies={strategies}
+                isLoadingStrategies={isLoadingStrategies}
+                selectedStrategy={selectedStrategy}
+                strategyChecks={strategyChecks}
+                handleStrategyCheckToggle={handleStrategyCheckToggle}
+                
+                // Image props
+                entryImage1={entryImage1}
+                entryImage2={entryImage2}
+                exitImage1={exitImage1}
+                exitImage2={exitImage2}
+                handleEntryImageChange={handleEntryImageChange}
+                handleExitImageChange={handleExitImageChange}
+                removeEntryImage={removeEntryImage}
+                removeExitImage={removeExitImage}
+              />
             </CardContent>
           </Card>
 

@@ -11,6 +11,7 @@ import {
 } from './';
 import { cn } from '@/lib/utils';
 import { TradingStrategy, StrategyConditionCheck } from '@/types';
+import { ImageState } from '../types';
 
 /**
  * Custom hook for responsive design
@@ -33,7 +34,7 @@ const TRADE_FORM_TABS = [
   {
     id: 'general',
     label: 'General',
-    icon: <Icons.ui.clipboardCheck className="h-4 w-4" />,
+    icon: <Icons.ui.circleCheck className="h-4 w-4" />,
     mobileLabel: 'General',
   },
   {
@@ -83,10 +84,10 @@ interface TabbedTradeFormProps {
   handleStrategyCheckToggle: (checkId: string, checked: boolean) => void;
   
   // Image props
-  entryImage1: { url: string | null; loading: boolean };
-  entryImage2: { url: string | null; loading: boolean };
-  exitImage1: { url: string | null; loading: boolean };
-  exitImage2: { url: string | null; loading: boolean };
+  entryImage1: ImageState;
+  entryImage2: ImageState;
+  exitImage1: ImageState;
+  exitImage2: ImageState;
   handleEntryImageChange: (index: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleExitImageChange: (index: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   removeEntryImage: (index: 1 | 2) => () => void;
