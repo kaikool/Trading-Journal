@@ -33,7 +33,7 @@ export function FormHeader({
     return (
       <Alert className="mb-6">
         <div className="flex items-center gap-2">
-          <Icons.ui.fileText className="h-4 w-4 text-primary" />
+          <Icons.general.clipboard className="h-4 w-4 text-primary" />
           <AlertTitle className="font-medium">Unsaved draft available</AlertTitle>
         </div>
         <AlertDescription className="mt-2 text-sm">
@@ -83,7 +83,7 @@ export function FormHeader({
           className="px-3 py-1 cursor-pointer flex items-center gap-1.5 hover:bg-primary/5 transition-colors"
           onClick={() => setShowDraftNotice(true)}
         >
-          <Icons.ui.fileText className="h-3 w-3 text-primary" />
+          <Icons.general.clipboard className="h-3 w-3 text-primary" />
           <span>Draft available</span>
         </Badge>
       </div>

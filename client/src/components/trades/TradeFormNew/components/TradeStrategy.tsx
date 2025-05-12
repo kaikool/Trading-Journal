@@ -211,8 +211,16 @@ export function TradeStrategy({
           <h4 className="text-sm font-medium">Strategy Checklist</h4>
           
           <StrategyChecklist
-            items={strategyChecks}
-            onToggle={handleStrategyCheckToggle}
+            strategy={selectedStrategy}
+            value={strategyChecks}
+            onChange={(checks) => {
+              if (checks.length > 0) {
+                // Update all checks based on the new value
+                for (const check of checks) {
+                  handleStrategyCheckToggle(check.conditionId, check.checked);
+                }
+              }
+            }}
           />
         </div>
       )}
