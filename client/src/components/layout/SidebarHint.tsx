@@ -52,7 +52,7 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     }
   }, [hasInteracted, isMobile, sidebarCollapsed]);
 
-  // Show/hide based on user activity only - đơn giản hóa
+  // Show/hide based on user activity with improved visibility
   useEffect(() => {
     if (!isMobile && !sidebarCollapsed) {
       setVisible(false);
@@ -65,28 +65,57 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
       timeoutRef.current = null;
     }
 
-    // Đơn giản hóa: chỉ hiển thị dựa trên trạng thái active của người dùng
+    // Hiển thị hint khi người dùng đang hoạt động
     if (isActive && (isMobile || sidebarCollapsed)) {
       setVisible(true);
       showCount.current += 1;
       
-      // Automatically hide after a delay
-      const hideDelay = hasInteracted ? 3000 : 5000;
+      // Hiển thị lâu hơn để người dùng dễ nhận biết
+      const hideDelay = hasInteracted ? 8000 : 12000; // Tăng thời gian hiển thị lên 8-12 giây
+      
+      // Thiết lập timeout để ẩn hint sau một thời gian
       timeoutRef.current = setTimeout(() => {
-        setVisible(false);
+        // Thêm hiệu ứng nhấp nháy trước khi biến mất
+        const pulseElement = document.querySelector('.sidebar-hint-pulse');
+        if (pulseElement) {
+          pulseElement.classList.add('pulse-animation');
+          
+          // Sau khi nhấp nháy xong mới ẩn hint
+          setTimeout(() => {
+            setVisible(false);
+          }, 1000);
+        } else {
+          setVisible(false);
+        }
       }, hideDelay);
     } else if (!isActive) {
-      // Hide when user is inactive
-      setVisible(false);
+      // Vẫn hiển thị trong một khoảng thời gian ngắn khi người dùng không hoạt động
+      const inactiveDelay = 3000;
+      timeoutRef.current = setTimeout(() => {
+        setVisible(false);
+      }, inactiveDelay);
     }
+
+    // Hiển thị định kỳ hint mỗi 60 giây nếu người dùng ở trong ứng dụng
+    const periodicInterval = setInterval(() => {
+      if (isActive && (isMobile || sidebarCollapsed) && !visible) {
+        setVisible(true);
+        
+        // Tự động ẩn sau 5 giây
+        setTimeout(() => {
+          setVisible(false);
+        }, 5000);
+      }
+    }, 60000); // 60 giây
 
     // Cleanup
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      clearInterval(periodicInterval);
     };
-  }, [isActive, isMobile, sidebarCollapsed, hasInteracted]);
+  }, [isActive, isMobile, sidebarCollapsed, hasInteracted, visible]);
 
   // Handle click
   const handleClick = () => {
@@ -104,38 +133,48 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ opacity: 0, x: -5 }}
-          animate={{ opacity: 0.9, x: 0 }}
-          exit={{ opacity: 0, x: -5 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -8 }}
+          transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
           onClick={handleClick}
           className={cn(
-            "fixed z-40 left-0 flex items-center cursor-pointer",
-            isMobile ? "top-1/2 -translate-y-1/2 h-16" : "top-24 h-12"
+            "fixed z-40 left-0 flex items-center cursor-pointer sidebar-hint-pulse",
+            isMobile ? "top-1/2 -translate-y-1/2 h-20" : "top-24 h-16"
           )}
           role="button"
           aria-label="Open sidebar"
         >
-          {/* Subtle indicator */}
+          {/* Enhanced indicator */}
           <div className="h-full flex items-center">
-            {/* Subtle vertical line indicator */}
+            {/* Vertical bar indicator - thicker and more visible */}
             <div className={cn(
-              isMobile ? "h-10" : "h-6",
-              "w-0.5 rounded-r-full",
-              "bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20",
+              isMobile ? "h-16" : "h-12",
+              "w-1.5 rounded-r-full",
+              "bg-gradient-to-b from-primary/40 via-primary/70 to-primary/40",
+              "shadow-[0_0_8px_rgba(0,0,0,0.1)]"
             )} />
             
-            {/* Small button with arrow */}
+            {/* Larger button with arrow */}
             <div className={cn(
-              "bg-card/5 backdrop-blur-sm",
-              "border-r border-t border-b border-border/10",
-              "rounded-r-md shadow-sm",
-              "py-1 pl-0.5 pr-1.5",
+              "bg-card/40 backdrop-blur-md",
+              "border-r border-t border-b border-primary/20",
+              "rounded-r-lg shadow-md",
+              "py-2 px-2",
               "flex items-center justify-center",
               "transition-all duration-200",
-              "hover:bg-card/10 hover:border-border/20 hover:shadow"
+              "hover:bg-primary/10 hover:border-primary/30 hover:shadow-lg",
+              isMobile ? "w-8" : "w-6"
             )}>
-              <Icons.ui.chevronRight className="h-3 w-3 text-primary/60" />
+              <div className="flex flex-col items-center">
+                <Icons.ui.panelLeft className={cn(
+                  "text-primary", 
+                  isMobile ? "h-5 w-5" : "h-4 w-4"
+                )} />
+                {isMobile && (
+                  <span className="text-[10px] mt-0.5 text-primary font-medium">Menu</span>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>
