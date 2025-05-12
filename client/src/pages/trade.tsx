@@ -197,12 +197,11 @@ export default function TradePage() {
                   <CardTitle>Trade Details</CardTitle>
                 </div>
                 
-                {/* Status indicator for better UX */}
+                {/* Simple status indicator */}
                 {riskRewardRatio > 0 && (
-                  <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 px-2 py-0.5">
-                    <Icons.general.checkCircle className="h-3 w-3 mr-1" />
-                    <span className="text-xs">Ready for submission</span>
-                  </Badge>
+                  <span className="text-xs text-primary">
+                    Ready for submission
+                  </span>
                 )}
               </div>
             </CardHeader>
@@ -257,38 +256,57 @@ export default function TradePage() {
             </Tabs>
           </Card>
 
-          {/* Notes Section */}
-          <Card className="mb-5">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <Icons.general.clipboard className="h-5 w-5 text-primary" />
-                <CardTitle>Notes</CardTitle>
+          {/* Notes Section - Enhanced UI */}
+          <Card className="mb-5 border-border/60">
+            <CardHeader className="pb-2 border-b border-border/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CardIcon color="primary" variant="soft">
+                    <Icons.general.clipboard className="h-4 w-4" />
+                  </CardIcon>
+                  <CardTitle>Trading Notes</CardTitle>
+                </div>
+                <span className="text-xs text-muted-foreground">Add your analysis and observations</span>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5">
               <NotesSection />
             </CardContent>
           </Card>
 
-          {/* Chart Images */}
-          <Card className="mb-5">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <Icons.analytics.barChart className="h-5 w-5 text-primary" />
-                <CardTitle>Chart Images</CardTitle>
+          {/* Chart Images - Enhanced UI */}
+          <Card className="mb-5 border-border/60">
+            <CardHeader className="pb-2 border-b border-border/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CardIcon color="primary" variant="soft">
+                    <Icons.analytics.barChart className="h-4 w-4" />
+                  </CardIcon>
+                  <CardTitle>Chart Images</CardTitle>
+                </div>
+                <div className="flex items-center">
+                  <Icons.general.image className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Upload entry and exit screenshots</span>
+                </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <TradeImages 
-                entryImage1={entryImage1}
-                entryImage2={entryImage2}
-                exitImage1={exitImage1}
-                exitImage2={exitImage2}
-                handleEntryImageChange={handleEntryImageChange}
-                handleExitImageChange={handleExitImageChange}
-                removeEntryImage={removeEntryImage}
-                removeExitImage={removeExitImage}
-              />
+            <CardContent className="p-5">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <TradeImages 
+                  entryImage1={entryImage1}
+                  entryImage2={entryImage2}
+                  exitImage1={exitImage1}
+                  exitImage2={exitImage2}
+                  handleEntryImageChange={handleEntryImageChange}
+                  handleExitImageChange={handleExitImageChange}
+                  removeEntryImage={removeEntryImage}
+                  removeExitImage={removeExitImage}
+                />
+              </motion.div>
             </CardContent>
           </Card>
 
