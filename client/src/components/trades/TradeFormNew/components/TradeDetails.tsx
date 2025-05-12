@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons/icons';
 import { GetPriceButton } from '../../GetPriceButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,6 +16,7 @@ import { format } from 'date-fns';
 import { cn, formatCurrency } from '@/lib/utils';
 import { useNumberInput } from "@/hooks/use-number-input";
 import { TradeFormValues } from '../types';
+import { ChangeEvent } from 'react';
 
 interface TradeDetailsProps {
   isCalculatingLotSize: boolean;
@@ -310,18 +313,32 @@ export function TradeDetails({
           <Label htmlFor="lotSize" className="font-medium">Lot Size</Label>
           
           <div className="flex gap-2 items-center">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Risk:</span>
-              <Input
-                type="number"
-                className="h-7 w-14 p-1 text-center text-xs"
-                value={riskValue}
-                onChange={onRiskChange}
+            <div className="flex flex-col gap-1 w-32">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Risk:</span>
+                <Badge 
+                  variant="outline" 
+                  className={cn(
+                    "font-mono text-xs h-5 px-1.5",
+                    riskValue <= 1 ? "bg-green-50 text-green-600 border-green-200" : 
+                    riskValue <= 2 ? "bg-amber-50 text-amber-600 border-amber-200" :
+                    "bg-red-50 text-red-600 border-red-200"
+                  )}
+                >
+                  {riskValue}%
+                </Badge>
+              </div>
+              <Slider
+                value={[Number(riskValue)]}
                 min={0.1}
                 max={5}
                 step={0.1}
+                onValueChange={(values) => {
+                  const newValue = values[0];
+                  setRiskPercentage(newValue);
+                }}
+                className="py-0.5"
               />
-              <span className="text-xs text-muted-foreground">%</span>
             </div>
             
             <Button
