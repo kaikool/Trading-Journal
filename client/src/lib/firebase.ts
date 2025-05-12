@@ -1503,9 +1503,27 @@ function onGoalsSnapshot(
           // Lấy cột mốc cho mỗi mục tiêu
           const milestones = await getMilestones(userId, doc.id);
           
-          return {
+          // Tạo đối tượng tuân thủ interface Goal
+          const goal: Goal = {
             id: doc.id,
-            ...goalData,
+            userId: userId,
+            title: goalData.title || "",
+            description: goalData.description,
+            targetType: goalData.targetType || "profit",
+            targetValue: goalData.targetValue || 0,
+            currentValue: goalData.currentValue || 0,
+            startDate: goalData.startDate || Timestamp.now(),
+            endDate: goalData.endDate || Timestamp.now(),
+            isCompleted: goalData.isCompleted || false,
+            priority: goalData.priority || "medium",
+            color: goalData.color,
+            createdAt: goalData.createdAt || Timestamp.now(),
+            updatedAt: goalData.updatedAt
+          };
+          
+          // Trả về đối tượng với milestones
+          return {
+            ...goal,
             milestones
           };
         }));
@@ -1715,8 +1733,25 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
     // Cập nhật từng goal
     for (const goal of goals) {
       try {
-        // Đảm bảo đối tượng goal tuân thủ đúng interface Goal
-        const typedGoal = goal as Goal;
+        // Tạo một bản sao của đối tượng goal với interface Goal
+        // Lưu ý: goal.id được giữ nguyên, không đặt giá trị mặc định cho id
+        const { id } = goal;
+        const typedGoal: Goal = {
+          id,
+          userId: goal.userId || "", 
+          title: goal.title || "",
+          description: goal.description,
+          targetType: goal.targetType || "profit",
+          targetValue: goal.targetValue || 0,
+          currentValue: goal.currentValue || 0,
+          startDate: goal.startDate || Timestamp.now(),
+          endDate: goal.endDate || Timestamp.now(),
+          isCompleted: goal.isCompleted || false,
+          priority: goal.priority || "medium",
+          color: goal.color,
+          createdAt: goal.createdAt || Timestamp.now(),
+          updatedAt: goal.updatedAt
+        };
         
         // Lấy giá trị hiện tại dựa trên loại mục tiêu
         let currentValue = 0;
