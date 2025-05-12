@@ -226,18 +226,11 @@ export default function TradePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6 md:grid-cols-2">
-                    <TradeDetails 
-                      canFetchPrice={canFetchPrice}
-                      accountBalance={accountBalance}
-                      riskPercentage={riskPercentage}
-                      setRiskPercentage={setRiskPercentage}
-                      riskRewardRatio={riskRewardRatio}
-                      isCalculatingLotSize={isCalculatingLotSize}
-                      isCalculatingTakeProfit={isCalculatingTakeProfit}
-                      calculateOptimalLotSize={calculateOptimalLotSize}
-                      calculateOptimalTakeProfit={calculateOptimalTakeProfit}
-                      isEditMode={false}
-                    />
+                    <div className="p-4 border border-muted rounded-md">
+                      <p className="text-muted-foreground mb-4">
+                        Đang tải chi tiết giao dịch...
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -250,7 +243,7 @@ export default function TradePage() {
                   <CardHeader className="pb-0">
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
-                        <Icons.trade.listChecks className="h-4 w-4 mr-2" />
+                        <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
                         Strategy
                       </TabsTrigger>
                       <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
@@ -262,17 +255,19 @@ export default function TradePage() {
                   
                   <CardContent className="pt-4">
                     <TabsContent value="strategy" className="mt-0">
-                      <TradeStrategy 
-                        strategies={strategies}
-                        isLoadingStrategies={isLoadingStrategies}
-                        selectedStrategy={selectedStrategy}
-                        strategyChecks={strategyChecks}
-                        handleStrategyCheckToggle={handleStrategyCheckToggle}
-                      />
+                      <div className="p-4 border border-muted rounded-md">
+                        <p className="text-muted-foreground mb-4">
+                          Đang tải chiến lược giao dịch...
+                        </p>
+                      </div>
                     </TabsContent>
                     
                     <TabsContent value="psychology" className="mt-0">
-                      <TradePsychology />
+                      <div className="p-4 border border-muted rounded-md">
+                        <p className="text-muted-foreground mb-4">
+                          Đang tải tâm lý giao dịch...
+                        </p>
+                      </div>
                     </TabsContent>
                   </CardContent>
                 </Tabs>
@@ -289,7 +284,11 @@ export default function TradePage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <NotesSection />
+                  <div className="p-4 border border-muted rounded-md">
+                    <p className="text-muted-foreground mb-4">
+                      Đang tải ghi chú...
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -330,7 +329,7 @@ export default function TradePage() {
                         size="sm"
                         onClick={clearDraft}
                       >
-                        <Icons.trade.trash className="h-4 w-4 mr-2" />
+                        <Icons.general.trash className="h-4 w-4 mr-2" />
                         Clear Draft
                       </Button>
                     )}

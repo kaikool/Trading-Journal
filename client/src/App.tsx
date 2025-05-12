@@ -262,7 +262,7 @@ function MainContent() {
             {/* Protected routes */}
             <Route path="/" component={Dashboard} />
             <Route path="/dashboard" component={Dashboard} />
-            <Route path="/trade/new" component={NewTrade} />
+            <Route path="/trade/new" component={TradeForm} />
             <Route path="/trade/edit/:tradeId" component={ViewTrade} />
             <Route path="/trade/view/:tradeId" component={ViewTrade} />
             <Route path="/trade/history" component={TradeHistory} />
