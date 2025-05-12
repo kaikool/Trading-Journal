@@ -14,12 +14,11 @@ import {
   CardTitle,
   CardFooter,
   CardGradient,
+  CardIcon
 } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 // Trade Form Components
 import {
@@ -30,6 +29,9 @@ import {
   TradeImages,
   NotesSection,
 } from "@/components/trades/TradeFormNew/components";
+
+// Types
+import { TradeFormProps } from "@/components/trades/TradeFormNew/types";
 
 // Animation variants
 const fadeIn = {
@@ -71,7 +73,7 @@ export default function TradePage() {
   }
 
   // Setup trade form props for the custom hook
-  const tradeFormProps = {
+  const tradeFormProps: TradeFormProps = {
     mode: "new",
     userId,
     onSubmitting: setIsSubmitting,
@@ -218,7 +220,7 @@ export default function TradePage() {
                 />
                 <CardHeader className="pb-2 lg:pb-4">
                   <div className="flex items-center gap-2">
-                    <Icons.tradingView className="h-6 w-6 text-primary" />
+                    <Icons.trade.candlestick className="h-6 w-6 text-primary" />
                     <CardTitle>Trade Details</CardTitle>
                   </div>
                 </CardHeader>
@@ -234,6 +236,7 @@ export default function TradePage() {
                       isCalculatingTakeProfit={isCalculatingTakeProfit}
                       calculateOptimalLotSize={calculateOptimalLotSize}
                       calculateOptimalTakeProfit={calculateOptimalTakeProfit}
+                      isEditMode={false}
                     />
                   </div>
                 </CardContent>
@@ -247,11 +250,11 @@ export default function TradePage() {
                   <CardHeader className="pb-0">
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
-                        <Icons.targetArrow className="h-4 w-4 mr-2" />
+                        <Icons.trade.listChecks className="h-4 w-4 mr-2" />
                         Strategy
                       </TabsTrigger>
                       <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
-                        <Icons.psychology className="h-4 w-4 mr-2" />
+                        <Icons.analytics.brain className="h-4 w-4 mr-2" />
                         Psychology
                       </TabsTrigger>
                     </TabsList>
@@ -281,7 +284,7 @@ export default function TradePage() {
               <Card className="mb-6">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Icons.clipboard className="h-5 w-5 text-primary" />
+                    <Icons.general.clipboard className="h-5 w-5 text-primary" />
                     <CardTitle>Notes</CardTitle>
                   </div>
                 </CardHeader>
@@ -296,7 +299,7 @@ export default function TradePage() {
               <Card className="mb-6">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
-                    <Icons.chartBar className="h-5 w-5 text-primary" />
+                    <Icons.analytics.barChart className="h-5 w-5 text-primary" />
                     <CardTitle>Chart Images</CardTitle>
                   </div>
                 </CardHeader>
@@ -327,7 +330,7 @@ export default function TradePage() {
                         size="sm"
                         onClick={clearDraft}
                       >
-                        <Icons.trash className="h-4 w-4 mr-2" />
+                        <Icons.trade.trash className="h-4 w-4 mr-2" />
                         Clear Draft
                       </Button>
                     )}
@@ -349,7 +352,7 @@ export default function TradePage() {
                     >
                       <span className="relative z-10 flex items-center">
                         Save Trade
-                        <Icons.arrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        <Icons.ui.chevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </span>
                       <span className="absolute inset-0 bg-primary/10 translate-y-[100%] group-hover:translate-y-0 transition-transform" />
                     </Button>
