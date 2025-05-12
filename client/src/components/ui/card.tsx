@@ -8,15 +8,12 @@ const Card = React.forwardRef<
     hover?: boolean;
     variant?: 'default' | 'outline' | 'elevated' | 'subtle' | 'glass';
     gradient?: boolean;
-    noOverflow?: boolean;
   }
->(({ className, hover = true, variant = 'default', gradient = false, noOverflow = false, ...props }, ref) => (
+>(({ className, hover = true, variant = 'default', gradient = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-lg text-card-foreground relative",
-      // Conditional overflow handling
-      noOverflow ? "overflow-visible" : "overflow-hidden",
+      "rounded-lg text-card-foreground relative overflow-hidden",
       // Base variants với màu nền tinh tế hơn
       variant === 'default' && "bg-card/95 border-border/30 border shadow-[var(--shadow-sm)]",
       variant === 'outline' && "bg-card/80 border-border/40 border",
@@ -96,15 +93,13 @@ const CardContent = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement> & {
     compact?: boolean;
     padded?: boolean;
-    noOverflow?: boolean;
   }
->(({ className, compact = false, padded = true, noOverflow = false, ...props }, ref) => (
+>(({ className, compact = false, padded = true, ...props }, ref) => (
   <div 
     ref={ref} 
     className={cn(
       "relative z-10", 
       padded ? (compact ? "px-4 pb-4 pt-0" : "px-6 pb-6 pt-0") : "",
-      noOverflow ? "overflow-visible" : "",
       className
     )} 
     {...props} 

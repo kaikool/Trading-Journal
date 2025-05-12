@@ -83,16 +83,9 @@ const SelectContent = React.forwardRef<
     // Thêm vào body class để ngăn scroll behavior
     document.body.classList.add('select-open');
     
-    // Prevent scroll on body
-    const originalStyle = window.getComputedStyle(document.body).overflow;
-    document.body.style.overflow = 'hidden';
-    
     // Cleanup function - chạy khi unmount
     return () => {
       document.body.classList.remove('select-open');
-      
-      // Restore original overflow style
-      document.body.style.overflow = originalStyle;
       
       // Khôi phục vị trí cuộn khi đóng select, nếu cần thiết
       if (Math.abs(window.scrollY - scrollPosRef.current) > 5) {
@@ -112,11 +105,7 @@ const SelectContent = React.forwardRef<
         body.select-open {
           scroll-behavior: auto !important;
           overflow-anchor: none !important;
-        }
-        
-        /* Prevent parent scroll when select dropdown is open */
-        [data-radix-select-content] {
-          overscroll-behavior: contain;
+          overflow-y: scroll !important;
         }
         
         /* Ngăn chặn scroll reset khi mở select */
@@ -165,7 +154,7 @@ const SelectContent = React.forwardRef<
         <SelectScrollUpButton />
         <SelectPrimitive.Viewport
           className={cn(
-            "p-1 overflow-y-auto overflow-x-hidden no-scrollbar",
+            "p-1",
             position === "popper" &&
               "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
           )}
