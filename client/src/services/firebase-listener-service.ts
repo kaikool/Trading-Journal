@@ -163,7 +163,7 @@ class FirebaseListenerService {
    * @param config Cấu hình listener
    * @returns Hàm hủy đăng ký
    */
-  private setupCollectionListener(listenerId: string, collectionRef: any, config: ListenerConfig<any>): Unsubscribe {
+  public setupCollectionListener(listenerId: string, collectionRef: any, config: ListenerConfig<any>): Unsubscribe {
     // Hủy listener hiện tại nếu tồn tại
     this.unregisterListener(listenerId);
     
@@ -173,8 +173,10 @@ class FirebaseListenerService {
     let active = true;
     const cacheVersion = Date.now();
     
-    // Tạo query với sắp xếp theo createdAt
-    const q = query(collectionRef, orderBy('createdAt', 'desc')) as any;
+    // Nếu collectionRef đã là query, sử dụng trực tiếp
+    const q = typeof collectionRef.type === 'string' && collectionRef.type === 'query' 
+      ? collectionRef
+      : query(collectionRef, orderBy('createdAt', 'desc'));
     
     const unsubscribe = onSnapshot(
       q,

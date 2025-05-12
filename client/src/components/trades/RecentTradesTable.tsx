@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore";
+import { collection, query, where, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { firebaseListenerService } from "@/services/firebase-listener-service";
+import { debug, logError } from "@/lib/debug";
 import { useLocation } from "wouter";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { CurrencyPair, Direction } from "@/lib/forex-calculator";
@@ -57,40 +59,48 @@ export default function RecentTradesTable({
         limit(tradeLimit)
       );
       
-      // Đặt một cache version để theo dõi phiên bản dữ liệu
-      let cacheVersion = 0;
-      const currentCacheVersion = cacheVersion;
-      
       // Cải thiện hiệu suất với việc giảm tần suất cập nhật UI
       // Nó sẽ hạn chế hiển thị những cập nhật không cần thiết
       let debounceTimeout: NodeJS.Timeout | null = null;
       
-      // Sử dụng onSnapshot với cơ chế tối ưu
-      const unsubscribe = onSnapshot(
-        q, 
-        { includeMetadataChanges: false }, // Chỉ nhận thông báo khi có thay đổi thực sự
-        (querySnapshot) => {
-          // Nếu phiên bản cache đã thay đổi, không xử lý callback này
-          if (currentCacheVersion !== cacheVersion) return;
-          
-          // Clear timeout trước đó nếu có
-          if (debounceTimeout) clearTimeout(debounceTimeout);
-          
-          // Debounce để tránh render quá thường xuyên khi có nhiều sự kiện liên tiếp
-          debounceTimeout = setTimeout(() => {
-            const recentTrades = querySnapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            })) as Trade[];
+      // Sử dụng onTradesSnapshot từ FirebaseListenerService
+      // Tạo một random ID cho listener này để tránh xung đột
+      const listenerId = `recent_closed_trades_${userId}_${tradeLimit}_${Date.now()}`;
+      
+      // Thay vì thiết lập query trực tiếp, sử dụng helper method
+      const unsubscribe = firebaseListenerService.onTradesSnapshot(
+        userId,
+        {
+          callback: (trades) => {
+            // Clear timeout trước đó nếu có
+            if (debounceTimeout) clearTimeout(debounceTimeout);
             
-            console.log("RecentTradesTable: Realtime update received, trades:", recentTrades.length);
-            setTrades(recentTrades);
+            // Lọc ra các giao dịch đã đóng và sắp xếp theo thời gian đóng
+            const closedTrades = trades
+              .filter(trade => trade.closeDate)
+              .sort((a, b) => {
+                const getTimestamp = (date: any) => {
+                  if (typeof date === 'object' && date && 'toDate' in date) {
+                    return date.toDate().getTime();
+                  }
+                  return new Date(date).getTime();
+                };
+                
+                return getTimestamp(b.closeDate) - getTimestamp(a.closeDate);
+              })
+              .slice(0, tradeLimit) as Trade[];
+            
+            // Debounce để tránh render quá thường xuyên khi có nhiều sự kiện liên tiếp
+            debounceTimeout = setTimeout(() => {
+              debug("RecentTradesTable: Realtime update received, trades:", closedTrades.length);
+              setTrades(closedTrades);
+              setLocalLoading(false);
+            }, 150); // Debounce 150ms
+          },
+          errorCallback: (error) => {
+            logError("Error listening to recent trades:", error);
             setLocalLoading(false);
-          }, 150); // Debounce 150ms
-        }, 
-        (error) => {
-          console.error("Error listening to recent trades:", error);
-          setLocalLoading(false);
+          }
         }
       );
       
