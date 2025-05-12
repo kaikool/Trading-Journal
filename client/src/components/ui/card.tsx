@@ -13,7 +13,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg text-card-foreground relative overflow-hidden",
+      "rounded-lg text-card-foreground relative",
       // Base variants với màu nền tinh tế hơn
       variant === 'default' && "bg-card/95 border-border/30 border shadow-[var(--shadow-sm)]",
       variant === 'outline' && "bg-card/80 border-border/40 border",
@@ -98,7 +98,7 @@ const CardContent = React.forwardRef<
   <div 
     ref={ref} 
     className={cn(
-      "relative z-10", 
+      "relative z-10 overflow-visible", 
       padded ? (compact ? "px-4 pb-4 pt-0" : "px-6 pb-6 pt-0") : "",
       className
     )} 

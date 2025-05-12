@@ -159,11 +159,11 @@ export function TabbedTradeForm({
       onValueChange={setActiveTab}
       className="w-full"
     >
-      <div className="mb-4 relative overflow-hidden">
+      <div className="mb-4 relative">
         <TabsList 
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
-            isMobile ? "flex overflow-x-auto no-scrollbar overflow-y-hidden" : "grid grid-cols-5"
+            isMobile ? "flex overflow-x-auto no-scrollbar overflow-y-hidden" : "grid grid-cols-5 overflow-hidden"
           )}
         >
           {TRADE_FORM_TABS.map((tab) => (

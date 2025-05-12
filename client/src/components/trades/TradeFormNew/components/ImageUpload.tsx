@@ -32,7 +32,7 @@ export function ImageUpload({
   } = imageState;
   
   return (
-    <div className="space-y-3 overflow-hidden">
+    <div className="space-y-3 overflow-visible">
       <Label className="font-medium text-sm sm:text-base mb-1 inline-block">{title}</Label>
       
       {preview ? (

@@ -18,7 +18,7 @@ export function FormActions({
   clearDraft
 }: FormActionsProps) {
   return (
-    <div className="flex justify-end gap-3 items-center pt-4 mt-6 mb-8 px-4 border-t border-border/50 overflow-hidden">
+    <div className="flex justify-end gap-3 items-center pt-4 mt-6 mb-8 px-4 border-t border-border/50">
       <Button
         type="button"
         variant="outline"
