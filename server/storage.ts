@@ -193,7 +193,7 @@ export class MemStorage implements IStorage {
     }
     
     const oldProfitLoss = trade.profitLoss || 0;
-    const oldStatus = trade.status;
+    const oldStatus = trade.isOpen === false;
     
     const updatedTrade = {
       ...trade,
@@ -207,14 +207,14 @@ export class MemStorage implements IStorage {
     if (
       trade.userId && 
       (
-        (updatedTrade.status === 'CLOSED' && oldStatus !== 'CLOSED') ||
-        (updatedTrade.status === 'CLOSED' && updatedTrade.profitLoss !== oldProfitLoss)
+        (updatedTrade.isOpen === false && oldStatus !== false) ||
+        (updatedTrade.isOpen === false && updatedTrade.profitLoss !== oldProfitLoss)
       )
     ) {
       const user = await this.getUser(trade.userId);
       if (user) {
         // Subtract old value and add new value
-        const balanceAdjustment = (updatedTrade.profitLoss || 0) - (oldStatus === 'CLOSED' ? oldProfitLoss : 0);
+        const balanceAdjustment = (updatedTrade.profitLoss || 0) - (oldStatus === false ? oldProfitLoss : 0);
         
         await this.updateUser(user.id, {
           currentBalance: user.currentBalance + balanceAdjustment,
@@ -235,7 +235,7 @@ export class MemStorage implements IStorage {
     this.tradesMap.delete(id);
     
     // Update user balance if trade was closed and had profit/loss
-    if (trade.status === 'CLOSED' && trade.userId && trade.profitLoss !== undefined && trade.profitLoss !== null) {
+    if (trade.isOpen === false && trade.userId && trade.profitLoss !== undefined && trade.profitLoss !== null) {
       const user = await this.getUser(trade.userId);
       if (user && trade.profitLoss !== null) {
         await this.updateUser(user.id, {

@@ -36,6 +36,15 @@ export type Trade = {
   strategy: string;
   techPattern?: string | null;
   emotion?: string | null;
+  isOpen?: boolean; // Trade status: true = open, false = closed
+  discipline?: {
+    followedPlan: boolean;
+    enteredEarly: boolean;
+    revenge: boolean;
+    overLeveraged: boolean;
+    movedStopLoss: boolean;
+  };
+  // For backward compatibility
   followedPlan: boolean;
   enteredEarly: boolean;
   revenge: boolean;
@@ -47,7 +56,9 @@ export type Trade = {
   notes?: string | null;
   entryImage?: string | null;
   exitImage?: string | null;
-  status?: string; // Added to fix the TS2339 errors
+  entryImageM15?: string | null;
+  exitImageM15?: string | null;
+  status?: string; // Added to fix the TS2339 errors (deprecated, use isOpen instead)
   riskRewardRatio?: number; // Added to fix the TS2339 errors
   isRevenge?: boolean; // Added to fix the TS2339 errors (redundant with revenge but needed for backward compatibility)
   createdAt: Date;
