@@ -151,19 +151,19 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
             <div className={cn(
               isMobile ? "h-16" : "h-12",
               "w-1.5 rounded-r-full",
-              "bg-gradient-to-b from-primary/40 via-primary/70 to-primary/40",
-              "shadow-[0_0_8px_rgba(0,0,0,0.1)]"
+              "bg-border",
+              "shadow-sm"
             )} />
             
             {/* Larger button with menu icon */}
             <div className={cn(
-              "bg-primary/15 backdrop-blur-md",
-              "border-r border-t border-b border-primary/30",
+              "bg-primary/10 backdrop-blur-md",
+              "border-r border-t border-b border-border",
               "rounded-r-lg shadow-md",
               "py-2 px-3",
               "flex items-center justify-center",
               "transition-all duration-200",
-              "hover:bg-primary/25 hover:border-primary/50 hover:shadow-lg",
+              "hover:bg-muted hover:border-border hover:shadow-lg",
               isMobile ? "w-14" : "w-10"
             )}>
               <div className="flex flex-col items-center">

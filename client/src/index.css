@@ -122,15 +122,15 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 /* Sidebar Hint Animations */
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 0 8px rgba(var(--primary-rgb), 0);
+    box-shadow: 0 0 0 8px hsl(var(--primary) / 0);
     transform: scale(1.05);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
     transform: scale(1);
   }
 }
@@ -148,8 +148,7 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 }
 
 .sidebar-hint-pulse {
-  --primary-rgb: 14, 165, 233; /* Màu sky-500 (adjust to match theme) */
-  filter: drop-shadow(0 0 3px rgba(var(--primary-rgb), 0.5));
+  filter: drop-shadow(0 0 3px hsl(var(--primary) / 0.5));
 }
 
 .sidebar-hint-pulse.pulse-animation {
@@ -158,9 +157,9 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 
 /* Make text more visible */
 .sidebar-hint-pulse .text-primary {
-  text-shadow: 0 0 5px rgba(var(--primary-rgb), 0.25);
+  text-shadow: 0 0 5px hsl(var(--primary) / 0.25);
   font-weight: 600;
-  color: rgba(var(--primary-rgb), 1);
+  color: hsl(var(--primary));
 }
 
 /* Highlight nhẹ để tăng khả năng nhận biết */
@@ -172,9 +171,9 @@ body[data-offline-mode="true"] .suspense-boundary::after {
   height: 100%;
   width: 10px;
   background: linear-gradient(90deg, 
-    rgba(var(--primary-rgb), 0) 0%, 
-    rgba(var(--primary-rgb), 0.2) 50%, 
-    rgba(var(--primary-rgb), 0) 100%
+    hsl(var(--primary) / 0) 0%, 
+    hsl(var(--primary) / 0.2) 50%, 
+    hsl(var(--primary) / 0) 100%
   );
   pointer-events: none;
   animation: glow 1.5s ease-in-out infinite;
