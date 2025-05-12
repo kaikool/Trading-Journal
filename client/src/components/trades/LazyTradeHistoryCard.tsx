@@ -81,7 +81,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
   } = trade || {};
   
   // Calculate time difference in user-friendly format
-  const entryDateStr = createdAt ? formatTimestamp(createdAt) : 'Unknown';
+  const createdDateStr = createdAt ? formatTimestamp(createdAt) : 'Unknown';
   const closeDateStr = closeDate ? formatTimestamp(closeDate) : 'Open';
   
   // Kiểm tra nếu giao dịch đang mở (chưa có closeDate hoặc result)
@@ -333,7 +333,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 
                 <div className="flex items-center space-x-2 text-sm mb-3 bg-background/50 p-2 px-2.5 rounded-md border border-border/30 shadow-sm">
                   <span className="text-xs text-muted-foreground">Date:</span> 
-                  <span className="font-medium">{entryDateStr}</span>
+                  <span className="font-medium">{createdDateStr}</span>
                   {closeDate && (
                     <>
                       <span className="text-muted-foreground/60 mx-1">→</span>

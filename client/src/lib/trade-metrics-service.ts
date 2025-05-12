@@ -287,7 +287,7 @@ class TradeMetricsService {
       const q = query(
         tradesRef, 
         where('userId', '==', userId),
-        orderBy('entryDate', 'desc'),
+        orderBy('createdAt', 'desc'),
         limit(50) // Giới hạn số lượng giao dịch kiểm tra để tối ưu hiệu suất
       );
       
@@ -325,7 +325,7 @@ class TradeMetricsService {
       const q = query(
         tradesRef, 
         where('userId', '==', userId),
-        orderBy('entryDate', 'desc'),
+        orderBy('createdAt', 'desc'),
         limit(50)
       );
       
@@ -360,7 +360,7 @@ class TradeMetricsService {
       const q = query(
         tradesRef, 
         where('userId', '==', userId),
-        orderBy('entryDate', 'desc'),
+        orderBy('createdAt', 'desc'),
         limit(50)
       );
       
@@ -395,7 +395,7 @@ class TradeMetricsService {
       const q = query(
         tradesRef, 
         where('userId', '==', userId),
-        orderBy('entryDate', 'desc')
+        orderBy('createdAt', 'desc')
       );
       
       const querySnapshot = await getDocs(q);
@@ -526,7 +526,7 @@ class TradeMetricsService {
       const q = query(
         tradesRef, 
         where('userId', '==', userId),
-        orderBy('entryDate', 'desc'),
+        orderBy('createdAt', 'desc'),
         limit(50)
       );
       
@@ -560,7 +560,7 @@ class TradeMetricsService {
       const q = query(
         tradesRef, 
         where('userId', '==', userId),
-        orderBy('entryDate', 'desc'),
+        orderBy('createdAt', 'desc'),
         limit(100) // Kiểm tra nhiều hơn vì thành tựu này yêu cầu 100 giao dịch
       );
       
