@@ -205,7 +205,7 @@ export function TradeDetails({
                       {canFetchPrice && selectedPair && (
                         <GetPriceButton
                           symbol={selectedPair}
-                          size="xs"
+                          size="sm"
                           onPriceReceived={(price) => {
                             form.setValue("entryPrice", price);
                             form.trigger("entryPrice");
@@ -416,7 +416,7 @@ export function TradeDetails({
                           </Label>
                           <Button
                             type="button"
-                            size="xs"
+                            size="sm"
                             variant="ghost"
                             className="h-5 text-xs gap-1 rounded-sm"
                             onClick={calculateOptimalLotSize}
@@ -447,13 +447,38 @@ export function TradeDetails({
                     )}
                   />
                   
-                  {/* Risk Percentage */}
-                  <div className="rounded-md border border-border/50 bg-muted/10 p-2 shadow-sm">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center">
-                        <Icons.analytics.percent className="h-3 w-3 mr-1 text-muted-foreground" />
-                        <span className="text-xs font-medium">Risk</span>
-                      </div>
+                  </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Risk & Reward Section */}
+      <Card className="rounded-lg border-border/50 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/30 py-3 px-4">
+          <div className="flex items-center">
+            <Icons.analytics.trendingUp className="h-4 w-4 text-primary mr-2" />
+            <CardTitle className="text-sm font-medium">Risk & Reward</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+            {/* Left Column - Risk Parameters */}
+            <div className="space-y-4">
+              <div className="rounded-md border border-border/50 bg-muted/10 p-3 shadow-sm">
+                <div className="flex items-center mb-2">
+                  <Icons.ui.shieldAlert className="h-4 w-4 text-amber-500 mr-2" />
+                  <h3 className="text-sm font-medium">Risk Parameters</h3>
+                </div>
+                
+                <div className="space-y-3">
+                  {/* Risk Slider with Risk Amount */}
+                  <div className="rounded-md bg-muted/20 p-2.5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-medium">Risk Percentage:</span>
                       <Badge 
                         variant="outline" 
                         className={cn(
@@ -475,30 +500,98 @@ export function TradeDetails({
                         const newValue = values[0];
                         setRiskPercentage(newValue);
                       }}
-                      className="mb-0.5"
+                      className="mb-1"
                     />
-                    <div className="flex justify-between text-[9px] text-muted-foreground mt-0.5">
-                      <span>Safe</span>
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                      <span>Conservative</span>
                       <span>Moderate</span>
                       <span>Aggressive</span>
                     </div>
                   </div>
+                  
+                  {/* Account Balance */}
+                  <div className="flex flex-col space-y-1 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Account Balance:</span>
+                      <span className="font-medium">{formatCurrency(accountBalance)}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">Risk Amount:</span>
+                      <span className={cn(
+                        "font-medium",
+                        Number(riskValue) <= 1 ? "text-green-600" : 
+                        Number(riskValue) <= 2 ? "text-amber-600" :
+                        "text-red-600"
+                      )}>
+                        {formatCurrency(accountBalance * (Number(riskValue) / 100))}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right Column - Reward Parameters */}
+            <div className="space-y-4">
+              <div className="rounded-md border border-border/50 bg-muted/10 p-3 shadow-sm">
+                <div className="flex items-center mb-2">
+                  <Icons.analytics.target className="h-4 w-4 text-green-500 mr-2" />
+                  <h3 className="text-sm font-medium">Reward Calculation</h3>
                 </div>
                 
-                {/* Account Balance */}
-                <div className="mt-2 text-xs text-muted-foreground flex flex-wrap items-center gap-x-1">
-                  <span className="font-medium">Balance:</span>
-                  <span>{formatCurrency(accountBalance)}</span>
-                  <span className="mx-1">•</span>
-                  <span className="font-medium">Risk Amount:</span>
-                  <span className={cn(
-                    Number(riskValue) <= 1 ? "text-green-600 font-medium" : 
-                    Number(riskValue) <= 2 ? "text-amber-600 font-medium" :
-                    "text-red-600 font-medium"
-                  )}>
-                    {formatCurrency(accountBalance * (Number(riskValue) / 100))}
-                  </span>
-                </div>
+                {/* Risk:Reward Ratio */}
+                {riskRewardRatio > 0 ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">Risk:Reward Ratio</span>
+                      <Badge 
+                        variant="outline" 
+                        className={cn(
+                          "font-mono text-xs h-5 px-1.5",
+                          riskRewardRatio >= 2 ? "bg-green-50 text-green-600 border-green-200" : 
+                          riskRewardRatio >= 1 ? "bg-amber-50 text-amber-600 border-amber-200" :
+                          "bg-red-50 text-red-600 border-red-200"
+                        )}
+                      >
+                        {formattedRatio}
+                      </Badge>
+                    </div>
+                    
+                    {/* Progress bar showing the R:R visually */}
+                    <div className="mt-1 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
+                        transition={{ duration: 0.5 }}
+                        className={cn(
+                          "h-full rounded-full",
+                          riskRewardRatio >= 2 ? "bg-green-500" : 
+                          riskRewardRatio >= 1 ? "bg-amber-500" : 
+                          "bg-red-500"
+                        )}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                      <span>1:1</span>
+                      <span>2:1</span>
+                      <span>3:1</span>
+                    </div>
+                    
+                    <div className="rounded-md bg-muted/30 p-2 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Potential Profit:</span>
+                        <span className="font-medium text-green-600">
+                          {formatCurrency(accountBalance * (Number(riskValue) / 100) * riskRewardRatio)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-3 text-xs text-muted-foreground">
+                    <Icons.analytics.barChart className="h-8 w-8 mb-2 opacity-20" />
+                    <p>Enter Stop Loss and Take Profit values to calculate R:R ratio</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
