@@ -51,7 +51,8 @@ import { StrategyChecklist } from "./StrategyChecklistComponent";
 
 // Firebase & Services
 import { db } from "@/lib/firebase";
-import { addTrade, updateTrade, getUserData, getStrategies, onTradesSnapshot } from "@/lib/firebase";
+import { addTrade, updateTrade, getUserData, getStrategies } from "@/lib/firebase";
+import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { uploadTradeImage } from "@/lib/api-service";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { calculateCurrentBalance } from "@/lib/balance-calculation-rules";
@@ -510,14 +511,22 @@ export default function TradeFormNew(props: TradeFormProps) {
       
       // Promise to get trades for calculating currentBalance
       const tradesPromise = new Promise<any[]>((resolve) => {
-        onTradesSnapshot(
+        // Use firebaseListenerService instead of direct Firebase call
+        const unsubscribe = firebaseListenerService.onTradesSnapshot(
           userId,
-          (fetchedTrades) => {
-            resolve(fetchedTrades);
-          },
-          (error) => {
-            logError("Error fetching trades:", error);
-            resolve([]); // Resolve with empty array on error
+          {
+            callback: (fetchedTrades) => {
+              // Resolve the promise and immediately unsubscribe
+              resolve(fetchedTrades);
+              // Since we only need the current data, unsubscribe immediately
+              setTimeout(() => unsubscribe(), 0);
+            },
+            errorCallback: (error) => {
+              logError("Error fetching trades:", error);
+              resolve([]); // Resolve with empty array on error
+              // Since we only need the current data, unsubscribe immediately
+              setTimeout(() => unsubscribe(), 0);
+            }
           }
         );
       });
