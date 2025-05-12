@@ -104,16 +104,14 @@ export default function RecentTradesTable({
         }
       );
       
-      // Cleanup function với cơ chế hủy đăng ký tốt hơn
+      // Cleanup function đơn giản hơn với FirebaseListenerService
       return () => {
-        // Tăng cache version để bỏ qua các callback trễ
-        cacheVersion++;
-        
         // Clear timeout nếu có
         if (debounceTimeout) clearTimeout(debounceTimeout);
         
         // Hủy đăng ký listener
         unsubscribe();
+        debug(`Unsubscribed from listener ${listenerId}`);
       };
     } catch (error) {
       console.error("Error setting up recent trades listener:", error);
