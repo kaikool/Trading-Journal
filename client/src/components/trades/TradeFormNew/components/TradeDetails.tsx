@@ -123,7 +123,7 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem>
                       <div className="h-6 flex items-center">
-                        <Label htmlFor="pair" className="text-xs font-medium">
+                        <Label htmlFor="pair" className="text-sm font-medium">
                           Currency Pair
                         </Label>
                       </div>
@@ -161,7 +161,7 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem>
                       <div className="h-6 flex items-center">
-                        <Label htmlFor="direction" className="text-xs font-medium">
+                        <Label htmlFor="direction" className="text-sm font-medium">
                           Direction
                         </Label>
                       </div>
@@ -200,7 +200,7 @@ export function TradeDetails({
                 render={({ field }) => (
                   <FormItem>
                     <div className="h-6 flex items-center justify-between">
-                      <Label htmlFor="entryPrice" className="text-xs font-medium">
+                      <Label htmlFor="entryPrice" className="text-sm font-medium">
                         Entry Price
                       </Label>
                       {canFetchPrice && selectedPair && (
@@ -239,7 +239,7 @@ export function TradeDetails({
                 render={({ field }) => (
                   <FormItem>
                     <div className="h-6 flex items-center">
-                      <Label htmlFor="entryDate" className="text-xs font-medium">
+                      <Label htmlFor="entryDate" className="text-sm font-medium">
                         Entry Date
                       </Label>
                     </div>
@@ -294,7 +294,7 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem>
                       <div className="h-6 flex items-center">
-                        <Label htmlFor="stopLoss" className="text-xs font-medium">
+                        <Label htmlFor="stopLoss" className="text-sm font-medium">
                           Stop Loss
                         </Label>
                       </div>
@@ -322,7 +322,7 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem>
                       <div className="h-6 flex items-center justify-between">
-                        <Label htmlFor="takeProfit" className="text-xs font-medium">
+                        <Label htmlFor="takeProfit" className="text-sm font-medium">
                           Take Profit
                         </Label>
                         <Button
