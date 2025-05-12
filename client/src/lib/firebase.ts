@@ -359,7 +359,9 @@ async function getTrades(userId: string) {
  * @param userId ID của người dùng cần theo dõi trades
  * @param callback Hàm xử lý khi có dữ liệu mới
  * @param errorCallback Hàm xử lý khi có lỗi (tùy chọn)
- * @returns Hàm unsubscribe 
+ * @returns Hàm unsubscribe
+ * @deprecated Sử dụng FirebaseListenerService.onTradesSnapshot thay thế.
+ * FirebaseListenerService cung cấp quản lý tập trung cho các Firebase listeners.
  */
 function onTradesSnapshot(
   userId: string, 
@@ -1069,6 +1071,8 @@ async function getStrategies(userId: string): Promise<Array<TradingStrategy & { 
  * @param userId ID của người dùng cần theo dõi strategies
  * @param callback Hàm xử lý khi có dữ liệu mới
  * @returns Hàm unsubscribe
+ * @deprecated Sử dụng FirebaseListenerService.onStrategiesSnapshot thay thế.
+ * FirebaseListenerService cung cấp quản lý tập trung cho các Firebase listeners.
  */
 function onStrategiesSnapshot(userId: string, callback: (strategies: any[]) => void) {
   if (!userId) return () => {};
@@ -1435,6 +1439,8 @@ async function deleteGoal(userId: string, goalId: string) {
  * @param callback - Hàm xử lý khi có dữ liệu mới
  * @param errorCallback - Hàm xử lý khi có lỗi (tùy chọn)
  * @returns Hàm hủy lắng nghe
+ * @deprecated Sử dụng FirebaseListenerService.onGoalsSnapshot thay thế.
+ * FirebaseListenerService cung cấp quản lý tập trung cho các Firebase listeners.
  */
 function onGoalsSnapshot(
   userId: string,
