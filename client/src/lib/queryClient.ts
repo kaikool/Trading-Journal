@@ -66,36 +66,54 @@ export const queryClient = new QueryClient({
 // Cập nhật cấu hình QueryClient dựa trên hiệu năng thiết bị
 export async function updateQueryClientConfig() {
   try {
-    const { getOptimalUiConfig } = await import('./performance');
-    const config = await getOptimalUiConfig();
-    
-    // Cập nhật cấu hình dựa trên hiệu năng thiết bị
-    const staleTime = config.queryStaleTime;
-    const gcTime = config.queryStaleTime * 2; // Thời gian cache sau khi stale
-    
-    // Áp dụng cấu hình tối ưu cho ứng dụng single-user
-    queryClient.setDefaultOptions({
-      queries: {
-        queryFn: getQueryFn({ on401: "throw" }),
-        refetchInterval: false,
-        refetchOnWindowFocus: false, // Tắt refetch khi focus vì đây là ứng dụng single-user
-        staleTime: staleTime,
-        gcTime: gcTime,
-        retry: config.devicePerformance === 'low' ? 0 : 1, // Giảm số lần retry trên thiết bị hiệu năng thấp
-        retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
-        structuralSharing: true, // Tối ưu hóa bộ nhớ
-      },
-    });
-    
-    // Log trong môi trường development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('QueryClient configured based on device performance', {
-        devicePerformance: config.devicePerformance,
-        staleTime,
-        gcTime,
-        refetchOnWindowFocus: false,
+    // Use direct import instead of dynamic import to avoid module loading issues
+    import('./performance').then(async (module) => {
+      const config = await module.getOptimalUiConfig();
+      
+      // Cập nhật cấu hình dựa trên hiệu năng thiết bị
+      const staleTime = config.queryStaleTime;
+      const gcTime = config.queryStaleTime * 2; // Thời gian cache sau khi stale
+      
+      // Áp dụng cấu hình tối ưu cho ứng dụng single-user
+      queryClient.setDefaultOptions({
+        queries: {
+          queryFn: getQueryFn({ on401: "throw" }),
+          refetchInterval: false,
+          refetchOnWindowFocus: false, // Tắt refetch khi focus vì đây là ứng dụng single-user
+          staleTime: staleTime,
+          gcTime: gcTime,
+          retry: config.devicePerformance === 'low' ? 0 : 1, // Giảm số lần retry trên thiết bị hiệu năng thấp
+          retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+          structuralSharing: true, // Tối ưu hóa bộ nhớ
+        },
       });
-    }
+      
+      // Log trong môi trường development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('QueryClient configured based on device performance', {
+          devicePerformance: config.devicePerformance,
+          staleTime,
+          gcTime,
+          refetchOnWindowFocus: false,
+        });
+      }
+    }).catch(error => {
+      console.error('Failed to optimize QueryClient config:', error);
+      
+      // Apply default configuration if optimization fails
+      queryClient.setDefaultOptions({
+        queries: {
+          queryFn: getQueryFn({ on401: "throw" }),
+          refetchInterval: false,
+          refetchOnWindowFocus: false,
+          staleTime: 1000 * 60 * 5, // 5 minutes default
+          gcTime: 1000 * 60 * 10, // 10 minutes default
+          retry: 1,
+          retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+          structuralSharing: true,
+        },
+      });
+    });
   } catch (error) {
     console.error('Failed to optimize QueryClient config', error);
   }

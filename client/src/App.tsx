@@ -305,9 +305,14 @@ function MainContent() {
 function App() {
   // Configure performance optimization when application starts
   useEffect(() => {
-    import('./lib/queryClient').then(({ updateQueryClientConfig }) => {
-      updateQueryClientConfig().catch(console.error);
-    });
+    // Import queryClient module and call updateQueryClientConfig directly
+    import('./lib/queryClient').then((module) => {
+      module.updateQueryClientConfig().catch(err => 
+        console.error("Error updating query client config:", err)
+      );
+    }).catch(err => 
+      console.error("Error importing queryClient module:", err)
+    );
   }, []);
 
   return (
