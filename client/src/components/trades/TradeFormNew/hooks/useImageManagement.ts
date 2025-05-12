@@ -162,11 +162,12 @@ export function useImageManagement({
     
     try {
       // Upload the image
+      const imageTypeKey = index === 1 ? 'h4chart' : 'm15chart';
       const result = await uploadTradeImage(
-        file,
         userId,
-        `entry${index}`,
-        tradeId,
+        tradeId || 'draft',
+        file,
+        imageTypeKey,
         (progress) => {
           setImageState(prev => ({
             ...prev,
@@ -175,10 +176,10 @@ export function useImageManagement({
         }
       );
       
-      if (result.success && result.url) {
+      if (result.success && result.imageUrl) {
         setImageState(prev => ({
           ...prev,
-          downloadUrl: result.url,
+          downloadUrl: result.imageUrl,
           uploadSuccess: true,
           isUploading: false
         }));
@@ -186,7 +187,7 @@ export function useImageManagement({
         // Save draft with new image URLs
         saveImagesToDraft();
       } else {
-        throw new Error(result.error || 'Upload failed');
+        throw new Error('Upload failed');
       }
     } catch (error) {
       logError('Error uploading image:', error);
@@ -242,11 +243,12 @@ export function useImageManagement({
     
     try {
       // Upload the image
+      const imageTypeKey = index === 1 ? 'h4exit' : 'm15exit';
       const result = await uploadTradeImage(
-        file,
         userId,
-        `exit${index}`,
-        tradeId,
+        tradeId || 'draft',
+        file,
+        imageTypeKey,
         (progress) => {
           setImageState(prev => ({
             ...prev,
@@ -255,10 +257,10 @@ export function useImageManagement({
         }
       );
       
-      if (result.success && result.url) {
+      if (result.success && result.imageUrl) {
         setImageState(prev => ({
           ...prev,
-          downloadUrl: result.url,
+          downloadUrl: result.imageUrl,
           uploadSuccess: true,
           isUploading: false
         }));
@@ -266,7 +268,7 @@ export function useImageManagement({
         // Save draft with new image URLs
         saveImagesToDraft();
       } else {
-        throw new Error(result.error || 'Upload failed');
+        throw new Error('Upload failed');
       }
     } catch (error) {
       logError('Error uploading image:', error);
