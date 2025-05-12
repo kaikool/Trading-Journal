@@ -79,8 +79,8 @@ export default function TradePage() {
     onSubmitting: setIsSubmitting,
     onSuccess: () => {
       toast({
-        title: "Giao dịch đã được lưu",
-        description: "Giao dịch của bạn đã được ghi lại và thêm vào nhật ký.",
+        title: "Trade saved successfully",
+        description: "Your trade has been recorded and added to your journal.",
       });
       setLocation("/trade/history");
     },
@@ -161,9 +161,9 @@ export default function TradePage() {
               >
                 <Icons.ui.spinner className="h-10 w-10 animate-spin text-primary" />
               </motion.div>
-              <h3 className="text-lg font-semibold">Đang lưu giao dịch...</h3>
+              <h3 className="text-lg font-semibold">Saving trade...</h3>
               <p className="text-muted-foreground mt-2 max-w-md">
-                Vui lòng đợi trong khi chúng tôi ghi lại chi tiết giao dịch và xử lý ảnh đã tải lên.
+                Please wait while we record your trade details and process your uploaded images.
               </p>
             </CardContent>
           </Card>
@@ -228,7 +228,7 @@ export default function TradePage() {
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="p-4 border border-muted rounded-md">
                       <p className="text-muted-foreground mb-4">
-                        Đang tải chi tiết giao dịch...
+                        Loading trade details...
                       </p>
                     </div>
                   </div>
@@ -369,7 +369,7 @@ export default function TradePage() {
                       className="relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center">
-                        Lưu Giao Dịch
+                        Save Trade
                         <Icons.ui.chevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </span>
                       <span className="absolute inset-0 bg-primary/10 translate-y-[100%] group-hover:translate-y-0 transition-transform" />
