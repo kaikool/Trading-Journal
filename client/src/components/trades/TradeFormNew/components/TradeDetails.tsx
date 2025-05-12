@@ -123,7 +123,6 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem className="relative">
                       <Label htmlFor="pair" className="text-xs font-medium mb-1 block">
-                        <Icons.ui.banknote className="h-3 w-3 inline-block mr-1 opacity-70" />
                         Currency Pair
                       </Label>
                       <Select
@@ -160,7 +159,6 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem className="relative">
                       <Label htmlFor="direction" className="text-xs font-medium mb-1 block">
-                        <Icons.ui.moveVertical className="h-3 w-3 inline-block mr-1 opacity-70" />
                         Direction
                       </Label>
                       <Select
@@ -199,7 +197,6 @@ export function TradeDetails({
                   <FormItem className="mb-3 relative">
                     <div className="flex justify-between items-center mb-1">
                       <Label htmlFor="entryPrice" className="text-xs font-medium">
-                        <Icons.ui.tag className="h-3 w-3 inline-block mr-1 opacity-70" />
                         Entry Price
                       </Label>
                       {canFetchPrice && selectedPair && (
@@ -238,7 +235,6 @@ export function TradeDetails({
                 render={({ field }) => (
                   <FormItem className="relative">
                     <Label htmlFor="entryDate" className="text-xs font-medium mb-1 block">
-                      <Icons.general.calendar className="h-3 w-3 inline-block mr-1 opacity-70" />
                       Entry Date
                     </Label>
                     <Popover>
@@ -258,7 +254,7 @@ export function TradeDetails({
                             ) : (
                               <span>Pick a date</span>
                             )}
-                            <Icons.general.calendar className="ml-auto h-4 w-4 opacity-50" />
+
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -293,7 +289,6 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem className="relative">
                       <Label htmlFor="stopLoss" className="text-xs font-medium mb-1 block">
-                        <Icons.ui.shieldAlert className="h-3 w-3 inline-block mr-1 opacity-70" />
                         Stop Loss
                       </Label>
                       <FormControl>
@@ -321,7 +316,6 @@ export function TradeDetails({
                     <FormItem className="relative">
                       <div className="flex justify-between items-center mb-1">
                         <Label htmlFor="takeProfit" className="text-xs font-medium">
-                          <Icons.analytics.target className="h-3 w-3 inline-block mr-1 opacity-70" />
                           Take Profit
                         </Label>
                         <Button
