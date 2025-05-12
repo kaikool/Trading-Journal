@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext, ReactNode, useMemo, useCallback } from 'react';
-import { auth, onTradesSnapshot, getUserData } from '@/lib/firebase';
+import { auth, getUserData } from '@/lib/firebase';
 import { debug, logError } from '@/lib/debug';
+import { firebaseListenerService } from '@/services/firebase-listener-service';
 
 interface CachedData {
   trades: any[];
@@ -210,86 +211,90 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
     
     try {
       debug('[DataCache] Setting up trades snapshot listener');
-      const unsubscribe = onTradesSnapshot(
+      
+      // Sử dụng FirebaseListenerService thay vì gọi trực tiếp đến Firebase
+      const unsubscribe = firebaseListenerService.onTradesSnapshot(
         userId,
-        (fetchedTrades) => {
-          debug(`[DataCache] Received ${fetchedTrades.length} trades from snapshot`);
-          
-          setDataState(prevState => {
-            // PERFORMANCE OPTIMIZATION: Avoid expensive JSON.stringify for deep comparison
-            // Instead use a simpler length check with sample validation
-            let tradesChanged = fetchedTrades.length !== prevState.trades.length;
+        {
+          callback: (fetchedTrades: any[]) => {
+            debug(`[DataCache] Received ${fetchedTrades.length} trades from snapshot`);
             
-            // If lengths are the same, only check a few key trades
-            if (!tradesChanged && fetchedTrades.length > 0) {
-              // Check the first trade which is usually the most recent
-              if (fetchedTrades[0]?.id !== prevState.trades[0]?.id) {
-                tradesChanged = true;
-              }
-              // Check another random trade if we have at least 3
-              else if (fetchedTrades.length >= 3) {
-                const randomIndex = Math.floor(Math.random() * fetchedTrades.length);
-                const newTrade = fetchedTrades[randomIndex];
-                const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
-                
-                // If we can't find the trade or its timestamp changed
-                // Safely check for Firestore Timestamp objects vs serialized dates
-                if (!oldTrade || 
-                    // Handle both Firestore Timestamp and serialized dates
-                    (typeof newTrade.updatedAt?.toDate === 'function' && 
-                     typeof oldTrade.updatedAt?.toDate !== 'function') ||
-                    // Handle string comparison for cache objects
-                    (typeof newTrade.updatedAt === 'string' && 
-                     newTrade.updatedAt !== oldTrade.updatedAt)) {
+            setDataState(prevState => {
+              // PERFORMANCE OPTIMIZATION: Avoid expensive JSON.stringify for deep comparison
+              // Instead use a simpler length check with sample validation
+              let tradesChanged = fetchedTrades.length !== prevState.trades.length;
+              
+              // If lengths are the same, only check a few key trades
+              if (!tradesChanged && fetchedTrades.length > 0) {
+                // Check the first trade which is usually the most recent
+                if (fetchedTrades[0]?.id !== prevState.trades[0]?.id) {
                   tradesChanged = true;
                 }
+                // Check another random trade if we have at least 3
+                else if (fetchedTrades.length >= 3) {
+                  const randomIndex = Math.floor(Math.random() * fetchedTrades.length);
+                  const newTrade = fetchedTrades[randomIndex];
+                  const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
+                  
+                  // If we can't find the trade or its timestamp changed
+                  // Safely check for Firestore Timestamp objects vs serialized dates
+                  if (!oldTrade || 
+                      // Handle both Firestore Timestamp and serialized dates
+                      (typeof newTrade.updatedAt?.toDate === 'function' && 
+                       typeof oldTrade.updatedAt?.toDate !== 'function') ||
+                      // Handle string comparison for cache objects
+                      (typeof newTrade.updatedAt === 'string' && 
+                       newTrade.updatedAt !== oldTrade.updatedAt)) {
+                    tradesChanged = true;
+                  }
+                }
               }
-            }
-            
-            // Check if any trades were closed in this update (for debugging)
-            const newlyClosedTrades = fetchedTrades.filter(newTrade => {
-              // Find corresponding trade in previous state
-              const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
               
-              // Check if trade was just closed (isOpen changed from true to false)
-              return oldTrade && 
-                     oldTrade.isOpen === true && 
-                     newTrade.isOpen === false;
+              // Check if any trades were closed in this update (for debugging)
+              const newlyClosedTrades = fetchedTrades.filter((newTrade: any) => {
+                // Find corresponding trade in previous state
+                const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
+                
+                // Check if trade was just closed (isOpen changed from true to false)
+                return oldTrade && 
+                       oldTrade.isOpen === true && 
+                       newTrade.isOpen === false;
+              });
+              
+              // Log closed trades for debugging
+              if (newlyClosedTrades.length > 0) {
+                debug(`[DataCache] Detected ${newlyClosedTrades.length} newly closed trades`);
+              }
+              
+              if (tradesChanged) {
+                debug('[DataCache] Trades changed, updating cache');
+                // Use queueMicrotask instead of setTimeout for better performance
+                queueMicrotask(() => {
+                  updateCache({ 
+                    trades: fetchedTrades, 
+                    userData: prevState.userData, 
+                    lastUpdated: Date.now()
+                  });
+                  
+                  // Cache updated, can add logic here if needed
+                });
+              } else {
+                debug('[DataCache] Trades unchanged, avoiding cache update');
+              }
+              
+              return {
+                ...prevState,
+                trades: fetchedTrades,
+                isTradesLoaded: true
+              };
             });
             
-            // Log closed trades for debugging
-            if (newlyClosedTrades.length > 0) {
-              debug(`[DataCache] Detected ${newlyClosedTrades.length} newly closed trades`);
-            }
-            
-            if (tradesChanged) {
-              debug('[DataCache] Trades changed, updating cache');
-              // Use queueMicrotask instead of setTimeout for better performance
-              queueMicrotask(() => {
-                updateCache({ 
-                  trades: fetchedTrades, 
-                  userData: prevState.userData, 
-                  lastUpdated: Date.now()
-                });
-                
-                // Cache updated, can add logic here if needed
-              });
-            } else {
-              debug('[DataCache] Trades unchanged, avoiding cache update');
-            }
-            
-            return {
-              ...prevState,
-              trades: fetchedTrades,
-              isTradesLoaded: true
-            };
-          });
-          
-          setIsLoading(false);
-        },
-        (error) => {
-          logError("[DataCache] Error fetching trades:", error);
-          setIsLoading(false);
+            setIsLoading(false);
+          },
+          errorCallback: (error: Error) => {
+            logError("[DataCache] Error fetching trades:", error);
+            setIsLoading(false);
+          }
         }
       );
       
