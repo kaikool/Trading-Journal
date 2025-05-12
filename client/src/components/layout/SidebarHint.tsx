@@ -149,7 +149,7 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
           initial={{ opacity: 0, x: -8 }}
           animate={{ opacity: 1, x: 0, y: position.y }}
           exit={{ opacity: 0, x: -8 }}
-          transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
+          transition={{ duration: 0.3, type: "tween", ease: "easeOut" }}
           onClick={handleClick}
           className={cn(
             "fixed z-40 left-0 flex items-center cursor-move sidebar-hint-pulse",
@@ -160,11 +160,11 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
           drag="y"
           dragControls={dragControls}
           dragConstraints={{ top: 10, bottom: window.innerHeight - 100 }}
-          dragElastic={0.1}
+          dragElastic={0}
           dragMomentum={false}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
-          whileDrag={{ scale: 1.05 }}
+          whileDrag={{ scale: 1 }}
         >
           {/* Button with menu icon */}
           <div className={cn(

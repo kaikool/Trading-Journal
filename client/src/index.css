@@ -139,7 +139,7 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 }
 
 .sidebar-hint-pulse.pulse-animation {
-  animation: pulse 0.8s ease-in-out 3;
+  /* Bỏ hoàn toàn animation pulse */
 }
 
 /* Make text more visible */
