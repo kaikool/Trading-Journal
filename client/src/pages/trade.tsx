@@ -183,7 +183,7 @@ export default function TradePage() {
           )}
 
           {/* Main Trade Form Card with Tabbed Interface */}
-          <Card className="relative mb-5 border-border/60">
+          <Card className="relative mb-5 border-border/60" noOverflow={true}>
             <CardGradient 
               variant="primary" 
               intensity="subtle" 
@@ -207,7 +207,7 @@ export default function TradePage() {
               </div>
             </CardHeader>
             
-            <CardContent className="p-5 overflow-visible">
+            <CardContent className="p-5" noOverflow={true}>
               <TabbedTradeForm
                 // Trade details props
                 isCalculatingLotSize={isCalculatingLotSize}
