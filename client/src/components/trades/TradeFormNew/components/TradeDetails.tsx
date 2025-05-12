@@ -465,7 +465,7 @@ export function TradeDetails({
                       <Badge 
                         variant="outline" 
                         className={cn(
-                          "font-mono text-xs h-5 px-1.5",
+                          "font-mono text-sm h-6 px-2",
                           Number(riskValue) <= 1 ? "bg-green-50 text-green-600 border-green-200" : 
                           Number(riskValue) <= 2 ? "bg-amber-50 text-amber-600 border-amber-200" :
                           "bg-red-50 text-red-600 border-red-200"
@@ -533,11 +533,11 @@ export function TradeDetails({
                 {riskRewardRatio > 0 ? (
                   <div className="space-y-4 mt-2">
                     <div className="h-6 flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">Risk:Reward Ratio</span>
+                      <span className="text-sm text-muted-foreground">Risk:Reward Ratio</span>
                       <Badge 
                         variant="outline" 
                         className={cn(
-                          "font-mono text-xs h-5 px-1.5",
+                          "font-mono text-sm h-6 px-2",
                           riskRewardRatio >= 2 ? "bg-green-50 text-green-600 border-green-200" : 
                           riskRewardRatio >= 1 ? "bg-amber-50 text-amber-600 border-amber-200" :
                           "bg-red-50 text-red-600 border-red-200"
