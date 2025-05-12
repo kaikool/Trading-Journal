@@ -70,8 +70,8 @@ export function TradeDetails({
   
   return (
     <div className="space-y-4">
-      {/* Two-column layout for all form items */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+      {/* Force two-column layout on all devices */}
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
         {/* Column 1 */}
         <div className="space-y-4">
           {/* Currency Pair */}
@@ -121,7 +121,7 @@ export function TradeDetails({
                   {canFetchPrice && selectedPair && (
                     <GetPriceButton
                       symbol={selectedPair}
-                      size="xs"
+                      size="sm"
                       onPriceReceived={(price) => {
                         form.setValue("entryPrice", price);
                         form.trigger("entryPrice");
@@ -184,7 +184,7 @@ export function TradeDetails({
                     <Label htmlFor="lotSize" className="font-medium text-sm">Lot Size</Label>
                     <Button
                       type="button"
-                      size="xs"
+                      size="sm"
                       variant="outline"
                       className="h-6 text-xs gap-1"
                       onClick={calculateOptimalLotSize}
@@ -365,7 +365,7 @@ export function TradeDetails({
                   <Label htmlFor="takeProfit" className="font-medium text-sm">Take Profit</Label>
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     variant="outline"
                     className="h-6 text-xs gap-1"
                     onClick={calculateOptimalTakeProfit}
