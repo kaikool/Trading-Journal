@@ -72,7 +72,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     pips = 0,
     profitLoss = 0,
     strategy = 'Unknown',
-    entryDate,
+    createdAt,
     closeDate,
     entryImage,
     entryImageM15,

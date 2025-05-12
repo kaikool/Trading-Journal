@@ -153,14 +153,14 @@ export function formatTimestamp(
  * Hook để sử dụng với Firebase Timestamp
  * Tự động chuyển đổi tất cả các loại timestamp thành dạng Date
  */
-export function safelyParseTradeDate<T extends { closeDate?: any, entryDate?: any }>(trade: T): T & { 
+export function safelyParseTradeDate<T extends { closeDate?: any, createdAt?: any }>(trade: T): T & { 
   parsedCloseDate?: Date | null, 
   parsedEntryDate?: Date | null 
 } {
   if (!trade) return trade;
 
   const parsedCloseDate = parseTimestamp(trade.closeDate);
-  const parsedEntryDate = parseTimestamp(trade.entryDate);
+  const parsedEntryDate = parseTimestamp(trade.createdAt);
 
   return {
     ...trade,
@@ -177,13 +177,13 @@ export function safelyParseTradeDate<T extends { closeDate?: any, entryDate?: an
  */
 export function groupTradesByMonth<T extends Record<string, any>>(
   trades: T[],
-  options: { dateProp?: 'closeDate' | 'entryDate' } = {}
+  options: { dateProp?: 'closeDate' | 'createdAt' } = {}
 ): Record<string, T[]> {
   if (!trades || trades.length === 0) {
     return {};
   }
   
-  const { dateProp = 'closeDate' } = options;
+  const { dateProp = 'createdAt' } = options;
   const result: Record<string, T[]> = {};
   
   // Cache các kết quả đã tính toán để tránh xử lý lặp lại
