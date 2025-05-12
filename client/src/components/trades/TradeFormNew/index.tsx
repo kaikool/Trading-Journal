@@ -14,7 +14,10 @@ import {
 } from './components';
 
 export default function TradeFormNew(props: TradeFormProps) {
-  const onCancel = props.mode === "edit" && 'onCancel' in props ? props.onCancel : undefined;
+  // Handle onCancel prop for edit mode
+  const onCancel = props.mode === "edit" && 'onCancel' in props 
+    ? (props as EditTradeProps).onCancel 
+    : undefined;
   
   // Use the main custom hook that integrates all functionality
   const {

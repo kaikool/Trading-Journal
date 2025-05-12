@@ -36,7 +36,7 @@ export function FormActions({
           onClick={clearDraft}
           disabled={isFormSubmitting}
         >
-          <Icons.ui.trash className="h-3.5 w-3.5 text-muted-foreground" />
+          <Icons.general.trash className="h-3.5 w-3.5 text-muted-foreground" />
           <span>Clear Draft</span>
         </Button>
       )}

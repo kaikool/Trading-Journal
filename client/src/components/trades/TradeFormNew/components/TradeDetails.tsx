@@ -162,7 +162,7 @@ export function TradeDetails({
                       ) : (
                         <span>Pick a date</span>
                       )}
-                      <Icons.ui.calendar className="ml-auto h-4 w-4 opacity-50" />
+                      <Icons.general.calendar className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -264,7 +264,7 @@ export function TradeDetails({
             {isCalculatingTakeProfit ? (
               <Icons.ui.spinner className="h-3 w-3 animate-spin" />
             ) : (
-              <Icons.ui.calculator className="h-3 w-3" />
+              <Icons.analytics.percent className="h-3 w-3" />
             )}
             <span>Calculate R:R</span>
           </Button>
@@ -335,7 +335,7 @@ export function TradeDetails({
               {isCalculatingLotSize ? (
                 <Icons.ui.spinner className="h-3 w-3 animate-spin" />
               ) : (
-                <Icons.ui.calculator className="h-3 w-3" />
+                <Icons.analytics.percent className="h-3 w-3" />
               )}
               <span>Calculate</span>
             </Button>

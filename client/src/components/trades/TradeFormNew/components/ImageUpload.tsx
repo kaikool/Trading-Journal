@@ -57,7 +57,7 @@ export function ImageUpload({
               className="flex items-center gap-1.5"
               onClick={onRemoveImage}
             >
-              <Icons.ui.trash className="h-3 w-3" />
+              <Icons.general.trash className="h-3 w-3" />
               <span>Remove</span>
             </Button>
           </div>
