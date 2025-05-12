@@ -140,42 +140,42 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
           onClick={handleClick}
           className={cn(
             "fixed z-40 left-0 flex items-center cursor-pointer sidebar-hint-pulse",
-            isMobile ? "top-1/2 -translate-y-1/2 h-20" : "top-24 h-16"
+            isMobile ? "top-1/2 -translate-y-1/2 h-16" : "top-24 h-14"
           )}
           role="button"
           aria-label="Open sidebar"
         >
           {/* Enhanced indicator */}
           <div className="h-full flex items-center">
-            {/* Vertical bar indicator - thicker and more visible */}
+            {/* Vertical bar indicator - compact but visible */}
             <div className={cn(
-              isMobile ? "h-16" : "h-12",
-              "w-1.5 rounded-r-full",
+              isMobile ? "h-12" : "h-10",
+              "w-1 rounded-r-full",
               "bg-border",
               "shadow-sm"
             )} />
             
-            {/* Larger button with menu icon */}
+            {/* More compact button with menu icon */}
             <div className={cn(
               "bg-primary/10 backdrop-blur-md",
               "border-r border-t border-b border-border",
-              "rounded-r-lg shadow-md",
-              "py-2 px-3",
+              "rounded-r-lg shadow-sm",
+              "py-1.5 px-2",
               "flex items-center justify-center",
               "transition-all duration-200",
-              "hover:bg-muted hover:border-border hover:shadow-lg",
-              isMobile ? "w-14" : "w-10"
+              "hover:bg-muted hover:border-border hover:shadow",
+              isMobile ? "w-12" : "w-9"
             )}>
               <div className="flex flex-col items-center">
                 <Icons.ui.menu className={cn(
                   "text-primary", 
-                  isMobile ? "h-6 w-6" : "h-5 w-5"
+                  isMobile ? "h-5 w-5" : "h-4 w-4"
                 )} />
                 {isMobile && (
-                  <span className="text-xs mt-1 text-primary font-semibold">Menu</span>
+                  <span className="text-[10px] mt-0.5 text-primary font-medium">Menu</span>
                 )}
                 {!isMobile && (
-                  <span className="text-[9px] mt-0.5 text-primary font-medium">Menu</span>
+                  <span className="text-[8px] mt-0.5 text-primary font-medium">Menu</span>
                 )}
               </div>
             </div>
