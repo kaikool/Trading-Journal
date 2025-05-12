@@ -102,9 +102,9 @@ export function TradeDetails({
       variants={containerAnimation}
       className="space-y-5"
     >
-      {/* Entry Info Section */}
+      {/* Entry Info Section - Modernized UI */}
       <Card className="rounded-lg border-border/50 shadow-sm overflow-hidden">
-        <CardHeader className="bg-muted/30 py-3 px-4">
+        <CardHeader className="bg-primary/5 py-3 px-4">
           <div className="flex items-center">
             <Icons.ui.arrowRightCircle className="h-4 w-4 text-primary mr-2" />
             <CardTitle className="text-sm font-medium">Entry Information</CardTitle>
@@ -360,7 +360,7 @@ export function TradeDetails({
 
               {/* Risk/Reward Status Card - conditionally shown */}
               {riskRewardRatio > 0 && (
-                <div className="mb-3 rounded-md border border-border/50 bg-muted/10 p-2 shadow-sm">
+                <div className="mb-3 rounded-md border border-border/50 bg-gradient-to-r from-muted/5 to-muted/20 p-2 shadow-sm">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center">
                       <Icons.analytics.barChart className="h-3 w-3 mr-1.5 text-primary" />
@@ -379,16 +379,16 @@ export function TradeDetails({
                     </Badge>
                   </div>
                   {/* Progress bar showing the R:R visually */}
-                  <div className="mt-1 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                  <div className="mt-1 h-2 w-full bg-muted/30 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
                       transition={{ duration: 0.5 }}
                       className={cn(
-                        "h-full rounded-full",
-                        riskRewardRatio >= 2 ? "bg-green-500" : 
-                        riskRewardRatio >= 1 ? "bg-amber-500" : 
-                        "bg-red-500"
+                        "h-full rounded-full shadow-inner",
+                        riskRewardRatio >= 2 ? "bg-gradient-to-r from-green-400 to-green-500" : 
+                        riskRewardRatio >= 1 ? "bg-gradient-to-r from-amber-400 to-amber-500" : 
+                        "bg-gradient-to-r from-red-400 to-red-500"
                       )}
                     />
                   </div>

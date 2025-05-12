@@ -20,6 +20,7 @@ import {
 import { Icons } from "@/components/icons/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 // Trade Form Components
 import {
@@ -180,20 +181,33 @@ export default function TradePage() {
             />
           )}
 
-          {/* Main Trade Form Card */}
-          <Card className="relative mb-5 overflow-hidden">
+          {/* Main Trade Form Card - Enhanced Visual Design */}
+          <Card className="relative mb-5 overflow-hidden border-border/60">
             <CardGradient 
               variant="primary" 
               intensity="subtle" 
               direction="bottom-left" 
             />
-            <CardHeader className="pb-2 lg:pb-4">
-              <div className="flex items-center gap-2">
-                <Icons.trade.candlestick className="h-6 w-6 text-primary" />
-                <CardTitle>Trade Details</CardTitle>
+            <CardHeader className="pb-2 lg:pb-4 border-b border-border/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CardIcon color="primary" variant="soft">
+                    <Icons.trade.candlestick className="h-5 w-5" />
+                  </CardIcon>
+                  <CardTitle>Trade Details</CardTitle>
+                </div>
+                
+                {/* Status indicator for better UX */}
+                {riskRewardRatio > 0 && (
+                  <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 px-2 py-0.5">
+                    <Icons.general.checkCircle className="h-3 w-3 mr-1" />
+                    <span className="text-xs">Ready for submission</span>
+                  </Badge>
+                )}
               </div>
             </CardHeader>
-            <CardContent>
+            
+            <CardContent className="p-5">
               <TradeDetails
                 isCalculatingLotSize={isCalculatingLotSize}
                 isCalculatingTakeProfit={isCalculatingTakeProfit}
@@ -209,24 +223,24 @@ export default function TradePage() {
             </CardContent>
           </Card>
 
-          {/* Strategy and Psychology Tabs */}
-          <Card className="mb-5">
+          {/* Strategy and Psychology Tabs - Enhanced UI */}
+          <Card className="mb-5 border-border/60">
             <Tabs defaultValue="strategy" className="w-full">
-              <CardHeader className="pb-0">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
+              <CardHeader className="pb-0 border-b border-border/20">
+                <TabsList className="grid w-full grid-cols-2 p-0.5 bg-muted/20">
+                  <TabsTrigger value="strategy" className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
                     <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
-                    Strategy
+                    Trading Strategy
                   </TabsTrigger>
-                  <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
+                  <TabsTrigger value="psychology" className="data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
                     <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                    Psychology
+                    Trading Psychology
                   </TabsTrigger>
                 </TabsList>
               </CardHeader>
               
-              <CardContent className="pt-4">
-                <TabsContent value="strategy" className="mt-0">
+              <CardContent className="pt-5 px-5">
+                <TabsContent value="strategy" className="mt-0 animate-in fade-in-50 duration-300 ease-in-out">
                   <TradeStrategy 
                     strategies={strategies}
                     isLoadingStrategies={isLoadingStrategies}
@@ -236,7 +250,7 @@ export default function TradePage() {
                   />
                 </TabsContent>
                 
-                <TabsContent value="psychology" className="mt-0">
+                <TabsContent value="psychology" className="mt-0 animate-in fade-in-50 duration-300 ease-in-out">
                   <TradePsychology />
                 </TabsContent>
               </CardContent>
