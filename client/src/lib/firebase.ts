@@ -1663,6 +1663,80 @@ async function deleteMilestonesForGoal(userId: string, goalId: string) {
 }
 
 /**
+ * Tính toán tiến độ của tất cả mục tiêu của người dùng
+ * 
+ * @param userId - ID của người dùng 
+ * @returns Promise<void>
+ */
+async function calculateAllGoalsProgress(userId: string): Promise<void> {
+  try {
+    // Lấy tất cả goal của người dùng
+    const goals = await getGoals(userId);
+    
+    if (goals.length === 0) {
+      debug("No goals found for user, skipping goal progress calculation");
+      return;
+    }
+    
+    // Lấy dữ liệu người dùng và thống kê giao dịch (chỉ cần lấy một lần để tối ưu hiệu suất)
+    const userData = await getUserData(userId);
+    const tradeStats = await getTradeStats(userId);
+    
+    debug(`Updating progress for ${goals.length} goals`);
+    
+    // Cập nhật từng goal
+    for (const goal of goals) {
+      try {
+        // Lấy giá trị hiện tại dựa trên loại mục tiêu
+        let currentValue = 0;
+        switch (goal.targetType) {
+          case "profit":
+            currentValue = tradeStats.netProfit;
+            break;
+          case "winRate":
+            currentValue = tradeStats.winRate;
+            break;
+          case "profitFactor":
+            currentValue = tradeStats.profitFactor;
+            break;
+          case "riskRewardRatio":
+            currentValue = tradeStats.avgRiskRewardRatio;
+            break;
+          case "balance":
+            currentValue = userData.currentBalance;
+            break;
+          case "trades":
+            currentValue = tradeStats.totalTrades;
+            break;
+          default:
+            currentValue = 0;
+        }
+        
+        // Cập nhật mục tiêu với giá trị hiện tại
+        await updateGoal(userId, goal.id, { currentValue });
+        
+        // Tính phần trăm tiến độ (tối đa 100%)
+        const progress = Math.min(100, (currentValue / goal.targetValue) * 100);
+        
+        // Nếu tiến độ đạt 100% hoặc hơn và mục tiêu chưa hoàn thành, đánh dấu là đã hoàn thành
+        if (progress >= 100 && !goal.isCompleted) {
+          await updateGoal(userId, goal.id, { isCompleted: true });
+          debug(`Goal ${goal.id} marked as completed with progress ${progress.toFixed(2)}%`);
+        }
+      } catch (error) {
+        // Log lỗi nhưng tiếp tục xử lý các goal khác
+        logError(`Error calculating progress for goal ${goal.id}:`, error);
+      }
+    }
+    
+    debug(`Successfully updated progress for all ${goals.length} goals`);
+  } catch (error) {
+    logError("Error calculating all goals progress:", error);
+    throw error;
+  }
+}
+
+/**
  * Tính toán tiến độ của mục tiêu dựa trên dữ liệu giao dịch
  * 
  * @param userId - ID của người dùng
@@ -1985,5 +2059,6 @@ export {
   
   // Goal analytics functions
   calculateGoalProgress,
+  calculateAllGoalsProgress,
   getTradeStats
 };
