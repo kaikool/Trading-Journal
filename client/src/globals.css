@@ -1038,7 +1038,7 @@
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     /* Apply safe area to top automatically */
     padding-top: var(--safe-top);
-    touch-action: pan-y; /* Chỉ cho phép vuốt dọc */
+    touch-action: auto; /* Cho phép tất cả các cử chỉ cảm ứng, bao gồm vuốt để điều hướng Safari */
   }
   
   /* Bottom spacing is now handled through a unified system:
