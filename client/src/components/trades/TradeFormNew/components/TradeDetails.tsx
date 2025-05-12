@@ -501,11 +501,11 @@ export function TradeDetails({
                   
                   {/* Account Balance */}
                   <div className="flex flex-col space-y-2 text-sm">
-                    <div className="h-5 flex items-center justify-between">
+                    <div className="h-6 flex items-center justify-between">
                       <span className="text-muted-foreground">Account Balance:</span>
                       <span className="font-medium">{formatCurrency(accountBalance)}</span>
                     </div>
-                    <div className="h-5 flex items-center justify-between">
+                    <div className="h-6 flex items-center justify-between">
                       <span className="text-muted-foreground">Risk Amount:</span>
                       <span className={cn(
                         "font-medium",
@@ -568,7 +568,7 @@ export function TradeDetails({
                     </div>
                     
                     <div className="rounded-md bg-muted/30 p-3 text-sm">
-                      <div className="h-5 flex items-center justify-between">
+                      <div className="h-6 flex items-center justify-between">
                         <span className="text-muted-foreground">Potential Profit:</span>
                         <span className="font-medium text-green-600">
                           {formatCurrency(accountBalance * (Number(riskValue) / 100) * riskRewardRatio)}
