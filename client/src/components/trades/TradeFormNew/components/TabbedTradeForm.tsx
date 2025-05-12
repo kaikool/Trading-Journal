@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons/icons';
 import { 
   TradeDetails,
+  TradeRiskReward,
   TradeStrategy,
   TradePsychology,
   TradeImages,
@@ -45,13 +46,19 @@ function useMediaQuery(query: string): boolean {
   return matches;
 }
 
-// Tab configuration for the trade form
+// Tab configuration for the trade form with proper section separation
 const TRADE_FORM_TABS = [
   {
-    id: 'general',
-    label: 'General',
-    icon: <Icons.ui.circleCheck className="h-4 w-4" />,
-    mobileLabel: 'General',
+    id: 'entry',
+    label: 'Entry Details',
+    icon: <Icons.ui.arrowRightCircle className="h-4 w-4" />,
+    mobileLabel: 'Entry',
+  },
+  {
+    id: 'risk',
+    label: 'Risk & Reward',
+    icon: <Icons.analytics.trendingUp className="h-4 w-4" />,
+    mobileLabel: 'Risk',
   },
   {
     id: 'strategy',
@@ -193,17 +200,22 @@ export function TabbedTradeForm({
         variants={tabContentVariants}
         className="min-h-[300px] overflow-visible"
       >
-        <TabsContent value="general" className="mt-0 pt-2 overflow-visible">
+        <TabsContent value="entry" className="mt-0 pt-2 overflow-visible">
           <TradeDetails
             isCalculatingLotSize={isCalculatingLotSize}
             isCalculatingTakeProfit={isCalculatingTakeProfit}
+            canFetchPrice={canFetchPrice}
+            calculateOptimalLotSize={calculateOptimalLotSize}
+            calculateOptimalTakeProfit={calculateOptimalTakeProfit}
+            riskRewardRatio={riskRewardRatio}
+          />
+        </TabsContent>
+
+        <TabsContent value="risk" className="mt-0 pt-2 overflow-visible">
+          <TradeRiskReward
             accountBalance={accountBalance}
             riskPercentage={riskPercentage}
             setRiskPercentage={setRiskPercentage}
-            canFetchPrice={canFetchPrice}
-            isEditMode={isEditMode}
-            calculateOptimalLotSize={calculateOptimalLotSize}
-            calculateOptimalTakeProfit={calculateOptimalTakeProfit}
             riskRewardRatio={riskRewardRatio}
           />
         </TabsContent>
