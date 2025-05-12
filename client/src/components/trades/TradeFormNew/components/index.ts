@@ -1,5 +1,6 @@
 export * from './FormHeader';
 export * from './TradeDetails';
+export * from './TradeRiskReward';
 export * from './TradeStrategy';
 export * from './TradePsychology';
 export * from './TradeImages';
