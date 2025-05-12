@@ -746,6 +746,7 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any, opti
   skipImageProcessing?: boolean;
   skipRecalculation?: boolean;
   skipAchievements?: boolean;
+  skipGoalsRecalculation?: boolean;
   useBatch?: boolean;
 } = {}) {
   try {
@@ -792,6 +793,21 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any, opti
       // Không cần await vì đã chuyển sang debounced
       processTradeTrigger(userId, 'update');
       debug("Achievement processing queued (debounced) for trade update");
+    }
+    
+    // Tự động tính toán lại tiến độ mục tiêu khi cập nhật giao dịch, đặc biệt quan trọng khi đóng giao dịch
+    // Tính toán này bị trì hoãn nhẹ để cho phép các thao tác UI khác được ưu tiên
+    if (!options.skipGoalsRecalculation) {
+      // Sử dụng setTimeout để tránh block UI
+      setTimeout(async () => {
+        try {
+          await calculateAllGoalsProgress(userId);
+          debug("Goals progress recalculated after trade update");
+        } catch (error) {
+          logError("Error recalculating goals after trade update:", error);
+          // Không throw error để không ảnh hưởng đến luồng chính
+        }
+      }, 1000);
     }
     
     return tradeData;
