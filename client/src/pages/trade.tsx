@@ -314,7 +314,7 @@ export default function TradePage() {
                       </div>
                       <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
                         <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Tải lên ảnh vào lệnh (tùy chọn)</p>
+                        <p className="text-sm text-muted-foreground">Upload entry image (optional)</p>
                       </div>
                     </div>
                     
@@ -324,11 +324,11 @@ export default function TradePage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
                         <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Tải lên ảnh đóng lệnh</p>
+                        <p className="text-sm text-muted-foreground">Upload exit image</p>
                       </div>
                       <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
                         <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Tải lên ảnh đóng lệnh (tùy chọn)</p>
+                        <p className="text-sm text-muted-foreground">Upload exit image (optional)</p>
                       </div>
                     </div>
                   </div>
@@ -349,7 +349,7 @@ export default function TradePage() {
                         onClick={clearDraft}
                       >
                         <Icons.general.trash className="h-4 w-4 mr-2" />
-                        Xóa bản nháp
+                        Clear Draft
                       </Button>
                     )}
                   </div>
@@ -360,7 +360,7 @@ export default function TradePage() {
                       variant="outline"
                       onClick={() => setLocation("/trade/history")}
                     >
-                      Hủy
+                      Cancel
                     </Button>
                     
                     <Button 
