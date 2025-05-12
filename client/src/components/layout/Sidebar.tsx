@@ -173,7 +173,7 @@ export function Sidebar({ className }: { className?: string }) {
   const touchEndX = useRef(0);
   const touchStartY = useRef(0);
   const touchEndY = useRef(0);
-  const edgeSwipeZone = 20; // Swipe detection zone from left edge (px)
+  const edgeSwipeZone = 4; // Swipe detection zone from left edge (px) - reduced from 20px to 4px
   
   // Handle swipe events for mobile
   const handleTouchStart = (e: TouchEvent) => {
@@ -211,19 +211,7 @@ export function Sidebar({ className }: { className?: string }) {
     }
   };
   
-  // Khu vực "hot zone" ở góc trái dưới để hiện sidebar 
-  const handleBodyClick = (e: MouseEvent) => {
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    
-    // Khi user chạm vào góc trái dưới (khu vực 30% chiều rộng x 30% chiều cao)
-    const isInHotZone = e.clientX < windowWidth * 0.3 && e.clientY > windowHeight * 0.7;
-    
-    if (isInHotZone) {
-      // Mở sidebar khi click vào hot zone
-      setIsOpen(true);
-    }
-  };
+  // Hotzone đã bị loại bỏ để tránh xung đột với các phần tử nhập liệu
 
   // Đăng ký các event listeners
   useEffect(() => {
@@ -232,15 +220,13 @@ export function Sidebar({ className }: { className?: string }) {
     document.addEventListener('touchmove', handleTouchMove, { passive: true });
     document.addEventListener('touchend', handleTouchEnd);
     
-    // Đăng ký sự kiện click để hỗ trợ hot zone
-    document.body.addEventListener('click', handleBodyClick);
+    // Hotzone đã bị loại bỏ để tránh xung đột với các phần tử nhập liệu
     
     return () => {
       // Hủy đăng ký tất cả event listeners khi component unmount
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleTouchEnd);
-      document.body.removeEventListener('click', handleBodyClick);
     };
   }, [isOpen]);
 
