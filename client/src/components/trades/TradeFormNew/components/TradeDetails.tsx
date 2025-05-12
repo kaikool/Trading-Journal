@@ -459,7 +459,7 @@ export function TradeDetails({
                 
                 <div className="space-y-4 mt-2">
                   {/* Risk Slider with Risk Amount */}
-                  <div className="rounded-md bg-muted/20 p-3">
+                  <div className="rounded-md bg-muted/20 p-3 relative">
                     <div className="h-6 flex items-center justify-between">
                       <span className="text-xs font-medium">Risk Percentage:</span>
                       <Badge 
@@ -474,17 +474,24 @@ export function TradeDetails({
                         {riskValue}%
                       </Badge>
                     </div>
-                    <Slider
-                      value={[Number(riskValue)]}
-                      min={0.1}
-                      max={5}
-                      step={0.1}
-                      onValueChange={(values) => {
-                        const newValue = values[0];
-                        setRiskPercentage(newValue);
-                      }}
-                      className="mt-2 mb-1.5"
-                    />
+                    <div className="py-3 px-1 mt-2 mb-1.5 relative" data-testid="risk-slider-container">
+                      <Slider
+                        value={[Number(riskValue)]}
+                        min={0.1}
+                        max={5}
+                        step={0.1}
+                        onValueChange={(values) => {
+                          const newValue = values[0];
+                          setRiskPercentage(newValue);
+                        }}
+                        className={cn(
+                          "cursor-grab active:cursor-grabbing",
+                          Number(riskValue) <= 1 ? "text-green-600" : 
+                          Number(riskValue) <= 2 ? "text-amber-600" :
+                          "text-red-600"
+                        )}
+                      />
+                    </div>
                     <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                       <span>Conservative</span>
                       <span>Moderate</span>
