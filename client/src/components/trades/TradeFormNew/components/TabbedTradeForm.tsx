@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons/icons';
@@ -23,9 +23,26 @@ import { ImageState } from '../types';
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState<boolean>(false);
 
-  // useEffect hook doesn't work with immediate JSX transform
-  // This is a simplified version that just returns false initially
-  // The actual implementation is in the hooks/use-media-query.ts file
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+    
+    // Set initial value
+    setMatches(mediaQuery.matches);
+
+    // Create event handler
+    const handleChange = (event: MediaQueryListEvent) => {
+      setMatches(event.matches);
+    };
+
+    // Add listener
+    mediaQuery.addEventListener('change', handleChange);
+    
+    // Clean up
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, [query]);
+
   return matches;
 }
 
@@ -61,7 +78,7 @@ const TRADE_FORM_TABS = [
     icon: <Icons.general.clipboard className="h-4 w-4" />,
     mobileLabel: 'Notes',
   },
-];
+] as const;
 
 interface TabbedTradeFormProps {
   // Trade details props
@@ -77,11 +94,11 @@ interface TabbedTradeFormProps {
   riskRewardRatio: number;
   
   // Strategy props
-  strategies: TradingStrategy[];
+  strategies: any[];
   isLoadingStrategies: boolean;
-  selectedStrategy: TradingStrategy | null;
-  strategyChecks: StrategyConditionCheck[];
-  handleStrategyCheckToggle: (checkId: string, checked: boolean) => void;
+  selectedStrategy: any;
+  strategyChecks: any[];
+  handleStrategyCheckToggle: (id: string, checked: boolean) => void;
   
   // Image props
   entryImage1: ImageState;
