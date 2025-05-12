@@ -1105,9 +1105,10 @@
      */
     height: var(--spacing-bottom-nav-safe) !important;
     
-    /* Ngăn chặn cuộn và kéo */
+    /* Ngăn chặn cuộn nhưng vẫn cho phép vuốt ngang Safari */
     overflow: hidden !important;
-    touch-action: manipulation !important;
+    /* UPDATED: Thay đổi touch-action để cho phép vuốt điều hướng của Safari */
+    touch-action: pan-x !important; /* Chỉ cho phép vuốt ngang */
     user-select: none !important;
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
@@ -1208,8 +1209,8 @@
     color: var(--mobile-nav-inactive-color);
     transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
     
-    /* Touch optimization for mobile standards */
-    touch-action: manipulation;
+    /* Touch optimization for mobile standards - cho phép vuốt Safari */
+    touch-action: auto;
     -webkit-tap-highlight-color: transparent;
     
     /* UPDATED: Increased minimum touch target size to 56px
@@ -1302,13 +1303,14 @@
     letter-spacing: -0.02em;
   }
   
-  /* Class để ngăn chặn cuộn và tương tác khác */
+  /* Class để ngăn chặn cuộn nhưng vẫn cho phép điều hướng Safari */
   .no-scroll {
     overflow: hidden !important;
     overscroll-behavior: none !important;
-    touch-action: none !important;
+    /* Giữ nguyên touch-action mặc định để cho phép vuốt điều hướng Safari */
+    /* touch-action: pan-x !important; Chỉ cho phép vuốt ngang */
     pointer-events: auto !important;
-    -webkit-overflow-scrolling: none !important;
+    /* Loại bỏ -webkit-overflow-scrolling: none để không can thiệp vào Safari */
     user-select: none !important;
     -webkit-user-select: none !important;
   }
