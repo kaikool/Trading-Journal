@@ -144,7 +144,7 @@ export function LazyTradeViewEdit({
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Entry Date</span>
-            <span className="font-medium">{formatTimestamp(trade.entryDate)}</span>
+            <span className="font-medium">{formatTimestamp(trade.createdAt)}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Exit Date</span>

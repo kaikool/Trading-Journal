@@ -64,7 +64,7 @@ export interface Trade {
   stopLoss: number;
   takeProfit: number;          // Expected TP price when opening a position
   lotSize: number;
-  entryDate: Timestamp;
+
   
   // Trade status
   isOpen?: boolean;            // true = position is open, false = position is closed
