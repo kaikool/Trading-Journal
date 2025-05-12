@@ -79,8 +79,8 @@ export default function TradePage() {
     onSubmitting: setIsSubmitting,
     onSuccess: () => {
       toast({
-        title: "Trade saved successfully",
-        description: "Your trade has been recorded and added to your journal.",
+        title: "Giao dịch đã được lưu",
+        description: "Giao dịch của bạn đã được ghi lại và thêm vào nhật ký.",
       });
       setLocation("/trade/history");
     },
@@ -161,9 +161,9 @@ export default function TradePage() {
               >
                 <Icons.ui.spinner className="h-10 w-10 animate-spin text-primary" />
               </motion.div>
-              <h3 className="text-lg font-semibold">Saving your trade...</h3>
+              <h3 className="text-lg font-semibold">Đang lưu giao dịch...</h3>
               <p className="text-muted-foreground mt-2 max-w-md">
-                Please wait while we record your trade details and process any uploaded images.
+                Vui lòng đợi trong khi chúng tôi ghi lại chi tiết giao dịch và xử lý ảnh đã tải lên.
               </p>
             </CardContent>
           </Card>
@@ -181,10 +181,10 @@ export default function TradePage() {
         variants={fadeIn}
       >
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          New Trade
+          Tạo Giao Dịch Mới
         </h1>
         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-          Record your trade details to track performance and gain insights
+          Ghi lại chi tiết giao dịch để theo dõi hiệu suất và có được những hiểu biết sâu sắc
         </p>
       </motion.div>
 
@@ -221,7 +221,7 @@ export default function TradePage() {
                 <CardHeader className="pb-2 lg:pb-4">
                   <div className="flex items-center gap-2">
                     <Icons.trade.candlestick className="h-6 w-6 text-primary" />
-                    <CardTitle>Trade Details</CardTitle>
+                    <CardTitle>Chi Tiết Giao Dịch</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -244,11 +244,11 @@ export default function TradePage() {
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
                         <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
-                        Strategy
+                        Chiến Lược
                       </TabsTrigger>
                       <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
                         <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                        Psychology
+                        Tâm Lý
                       </TabsTrigger>
                     </TabsList>
                   </CardHeader>
@@ -280,7 +280,7 @@ export default function TradePage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icons.general.clipboard className="h-5 w-5 text-primary" />
-                    <CardTitle>Notes</CardTitle>
+                    <CardTitle>Ghi Chú</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -299,20 +299,39 @@ export default function TradePage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icons.analytics.barChart className="h-5 w-5 text-primary" />
-                    <CardTitle>Chart Images</CardTitle>
+                    <CardTitle>Ảnh Biểu Đồ</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <TradeImages 
-                    entryImage1={entryImage1}
-                    entryImage2={entryImage2}
-                    exitImage1={exitImage1}
-                    exitImage2={exitImage2}
-                    handleEntryImageChange={handleEntryImageChange}
-                    handleExitImageChange={handleExitImageChange}
-                    removeEntryImage={removeEntryImage}
-                    removeExitImage={removeExitImage}
-                  />
+                  <div className="p-4 border border-muted rounded-md">
+                    <p className="text-muted-foreground mb-2">
+                      Ảnh vào lệnh
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
+                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Tải lên ảnh vào lệnh</p>
+                      </div>
+                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
+                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Tải lên ảnh vào lệnh (tùy chọn)</p>
+                      </div>
+                    </div>
+                    
+                    <p className="text-muted-foreground mb-2">
+                      Ảnh đóng lệnh
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
+                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Tải lên ảnh đóng lệnh</p>
+                      </div>
+                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
+                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Tải lên ảnh đóng lệnh (tùy chọn)</p>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -330,7 +349,7 @@ export default function TradePage() {
                         onClick={clearDraft}
                       >
                         <Icons.general.trash className="h-4 w-4 mr-2" />
-                        Clear Draft
+                        Xóa bản nháp
                       </Button>
                     )}
                   </div>
@@ -341,7 +360,7 @@ export default function TradePage() {
                       variant="outline"
                       onClick={() => setLocation("/trade/history")}
                     >
-                      Cancel
+                      Hủy
                     </Button>
                     
                     <Button 
@@ -350,7 +369,7 @@ export default function TradePage() {
                       className="relative overflow-hidden group"
                     >
                       <span className="relative z-10 flex items-center">
-                        Save Trade
+                        Lưu Giao Dịch
                         <Icons.ui.chevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </span>
                       <span className="absolute inset-0 bg-primary/10 translate-y-[100%] group-hover:translate-y-0 transition-transform" />
