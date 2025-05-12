@@ -181,10 +181,10 @@ export default function TradePage() {
         variants={fadeIn}
       >
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-          Tạo Giao Dịch Mới
+          New Trade
         </h1>
         <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-          Ghi lại chi tiết giao dịch để theo dõi hiệu suất và có được những hiểu biết sâu sắc
+          Record your trade details to track performance and gain insights
         </p>
       </motion.div>
 
@@ -221,7 +221,7 @@ export default function TradePage() {
                 <CardHeader className="pb-2 lg:pb-4">
                   <div className="flex items-center gap-2">
                     <Icons.trade.candlestick className="h-6 w-6 text-primary" />
-                    <CardTitle>Chi Tiết Giao Dịch</CardTitle>
+                    <CardTitle>Trade Details</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -244,11 +244,11 @@ export default function TradePage() {
                     <TabsList className="grid w-full grid-cols-2">
                       <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
                         <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
-                        Chiến Lược
+                        Strategy
                       </TabsTrigger>
                       <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
                         <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                        Tâm Lý
+                        Psychology
                       </TabsTrigger>
                     </TabsList>
                   </CardHeader>
@@ -257,7 +257,7 @@ export default function TradePage() {
                     <TabsContent value="strategy" className="mt-0">
                       <div className="p-4 border border-muted rounded-md">
                         <p className="text-muted-foreground mb-4">
-                          Đang tải chiến lược giao dịch...
+                          Loading trading strategy...
                         </p>
                       </div>
                     </TabsContent>
@@ -265,7 +265,7 @@ export default function TradePage() {
                     <TabsContent value="psychology" className="mt-0">
                       <div className="p-4 border border-muted rounded-md">
                         <p className="text-muted-foreground mb-4">
-                          Đang tải tâm lý giao dịch...
+                          Loading trading psychology...
                         </p>
                       </div>
                     </TabsContent>
@@ -280,13 +280,13 @@ export default function TradePage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icons.general.clipboard className="h-5 w-5 text-primary" />
-                    <CardTitle>Ghi Chú</CardTitle>
+                    <CardTitle>Notes</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="p-4 border border-muted rounded-md">
                     <p className="text-muted-foreground mb-4">
-                      Đang tải ghi chú...
+                      Loading notes...
                     </p>
                   </div>
                 </CardContent>
@@ -299,18 +299,18 @@ export default function TradePage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-2">
                     <Icons.analytics.barChart className="h-5 w-5 text-primary" />
-                    <CardTitle>Ảnh Biểu Đồ</CardTitle>
+                    <CardTitle>Chart Images</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="p-4 border border-muted rounded-md">
                     <p className="text-muted-foreground mb-2">
-                      Ảnh vào lệnh
+                      Entry Images
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                       <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
                         <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Tải lên ảnh vào lệnh</p>
+                        <p className="text-sm text-muted-foreground">Upload entry image</p>
                       </div>
                       <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
                         <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
@@ -319,7 +319,7 @@ export default function TradePage() {
                     </div>
                     
                     <p className="text-muted-foreground mb-2">
-                      Ảnh đóng lệnh
+                      Exit Images
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
