@@ -255,19 +255,17 @@ export default function TradePage() {
                   
                   <CardContent className="pt-4">
                     <TabsContent value="strategy" className="mt-0">
-                      <div className="p-4 border border-muted rounded-md">
-                        <p className="text-muted-foreground mb-4">
-                          Loading trading strategy...
-                        </p>
-                      </div>
+                      <TradeStrategy 
+                        strategies={strategies}
+                        isLoadingStrategies={isLoadingStrategies}
+                        selectedStrategy={selectedStrategy}
+                        strategyChecks={strategyChecks}
+                        handleStrategyCheckToggle={handleStrategyCheckToggle}
+                      />
                     </TabsContent>
                     
                     <TabsContent value="psychology" className="mt-0">
-                      <div className="p-4 border border-muted rounded-md">
-                        <p className="text-muted-foreground mb-4">
-                          Loading trading psychology...
-                        </p>
-                      </div>
+                      <TradePsychology />
                     </TabsContent>
                   </CardContent>
                 </Tabs>
@@ -284,11 +282,7 @@ export default function TradePage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 border border-muted rounded-md">
-                    <p className="text-muted-foreground mb-4">
-                      Loading notes...
-                    </p>
-                  </div>
+                  <NotesSection />
                 </CardContent>
               </Card>
             </motion.div>
@@ -303,35 +297,16 @@ export default function TradePage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="p-4 border border-muted rounded-md">
-                    <p className="text-muted-foreground mb-2">
-                      Entry Images
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
-                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Upload entry image</p>
-                      </div>
-                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
-                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Upload entry image (optional)</p>
-                      </div>
-                    </div>
-                    
-                    <p className="text-muted-foreground mb-2">
-                      Exit Images
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
-                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Upload exit image</p>
-                      </div>
-                      <div className="border border-dashed border-muted rounded-md p-6 flex flex-col items-center justify-center">
-                        <Icons.general.image className="h-8 w-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Upload exit image (optional)</p>
-                      </div>
-                    </div>
-                  </div>
+                  <TradeImages 
+                    entryImage1={entryImage1}
+                    entryImage2={entryImage2}
+                    exitImage1={exitImage1}
+                    exitImage2={exitImage2}
+                    handleEntryImageChange={handleEntryImageChange}
+                    handleExitImageChange={handleExitImageChange}
+                    removeEntryImage={removeEntryImage}
+                    removeExitImage={removeExitImage}
+                  />
                 </CardContent>
               </Card>
             </motion.div>
@@ -339,42 +314,14 @@ export default function TradePage() {
             {/* Form Actions */}
             <motion.div variants={fadeIn}>
               <Card>
-                <CardFooter className="flex justify-between px-6 py-4">
-                  <div className="flex items-center gap-4">
-                    {hasDraft && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={clearDraft}
-                      >
-                        <Icons.general.trash className="h-4 w-4 mr-2" />
-                        Clear Draft
-                      </Button>
-                    )}
-                  </div>
-                  
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setLocation("/trade/history")}
-                    >
-                      Cancel
-                    </Button>
-                    
-                    <Button 
-                      type="submit"
-                      disabled={isFormSubmitting}
-                      className="relative overflow-hidden group"
-                    >
-                      <span className="relative z-10 flex items-center">
-                        Save Trade
-                        <Icons.ui.chevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </span>
-                      <span className="absolute inset-0 bg-primary/10 translate-y-[100%] group-hover:translate-y-0 transition-transform" />
-                    </Button>
-                  </div>
+                <CardFooter className="px-6 py-4">
+                  <FormActions 
+                    isEditMode={false}
+                    isFormSubmitting={isFormSubmitting}
+                    hasDraft={hasDraft}
+                    onCancel={() => setLocation("/trade/history")}
+                    clearDraft={clearDraft}
+                  />
                 </CardFooter>
               </Card>
             </motion.div>
