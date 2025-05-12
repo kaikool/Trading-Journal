@@ -168,7 +168,7 @@ export default function TradePage() {
       </div>
 
       <FormProvider {...form}>
-        <form onSubmit={onSubmit} className="space-y-5 overflow-visible">
+        <form onSubmit={onSubmit} className="space-y-5">
           {/* Draft notice */}
           {hasDraft && showDraftNotice && (
             <FormHeader 
@@ -183,7 +183,7 @@ export default function TradePage() {
           )}
 
           {/* Main Trade Form Card with Tabbed Interface */}
-          <Card className="relative mb-5 border-border/60">
+          <Card className="relative mb-5 border-border/60 !overflow-visible">
             <CardGradient 
               variant="primary" 
               intensity="subtle" 
@@ -207,7 +207,7 @@ export default function TradePage() {
               </div>
             </CardHeader>
             
-            <CardContent className="p-5 overflow-visible">
+            <CardContent className="p-5">
               <TabbedTradeForm
                 // Trade details props
                 isCalculatingLotSize={isCalculatingLotSize}

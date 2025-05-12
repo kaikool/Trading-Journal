@@ -458,6 +458,7 @@
  * All components use CSS variables defined in :root
  */
 @layer utilities {
+  /* Scroll behavior utilities */
   /* Hide scrollbars while maintaining scroll functionality */
   .no-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
@@ -466,6 +467,28 @@
   
   .no-scrollbar::-webkit-scrollbar {
     display: none;  /* Chrome, Safari, Opera */
+  }
+  
+  /* Horizontal scroll container with hidden scrollbar */
+  .scroll-x-only {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+  
+  .scroll-x-only::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
+  
+  /* Prevent all scrolling */
+  .no-scroll {
+    overflow: hidden;
+  }
+  
+  /* Allow content to overflow without scrollbars */
+  .overflow-all {
+    overflow: visible;
   }
   
   /* Safe area padding utilities - using CSS variables */
