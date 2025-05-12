@@ -1618,17 +1618,23 @@ async function getMilestones(userId: string, goalId: string): Promise<Milestone[
     
     return querySnapshot.docs.map(doc => {
       const data = doc.data();
-      return {
+      
+      // Đảm bảo tất cả các trường cần thiết của Milestone đều tồn tại
+      const milestone: Milestone = {
         id: doc.id,
         goalId,
         title: data.title || '',
-        targetValue: data.targetValue || 0,
-        isCompleted: data.isCompleted || false,
+        description: data.description || '',
+        targetType: data.targetType || 'profit', // Thêm targetType
+        targetValue: Number(data.targetValue) || 0,
+        currentValue: Number(data.currentValue) || 0, // Thêm currentValue
+        isCompleted: Boolean(data.isCompleted) || false,
         completedDate: data.completedDate || null,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-        description: data.description
-      } as Milestone;
+        createdAt: data.createdAt || Timestamp.now(),
+        updatedAt: data.updatedAt || Timestamp.now()
+      };
+      
+      return milestone;
     });
   } catch (error) {
     logError("Error getting milestones:", error);
@@ -1809,11 +1815,13 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
  * @param goalId - ID của mục tiêu
  * @returns Phần trăm tiến độ
  */
-async function calculateGoalProgress(userId: string, goalId: string) {
+async function calculateGoalProgress(userId: string, goalId: string): Promise<number> {
   try {
     const goal = await getGoalById(userId, goalId);
-    if (!goal) {
-      throw new Error("Goal not found");
+    
+    // Đảm bảo goal và các thuộc tính cần thiết tồn tại
+    if (!goal || typeof goal.targetType === 'undefined' || typeof goal.targetValue === 'undefined') {
+      throw new Error("Goal not found or missing required properties");
     }
     
     // Lấy dữ liệu người dùng và thống kê giao dịch
@@ -1822,7 +1830,11 @@ async function calculateGoalProgress(userId: string, goalId: string) {
     
     // Lấy giá trị hiện tại dựa trên loại mục tiêu
     let currentValue = 0;
-    switch (goal.targetType) {
+    
+    // Đảm bảo targetType là một giá trị hợp lệ
+    const targetType = goal.targetType as 'profit' | 'winRate' | 'profitFactor' | 'riskRewardRatio' | 'balance' | 'trades';
+    
+    switch (targetType) {
       case "profit":
         currentValue = tradeStats.netProfit;
         break;
@@ -1848,11 +1860,15 @@ async function calculateGoalProgress(userId: string, goalId: string) {
     // Cập nhật mục tiêu với giá trị hiện tại
     await updateGoal(userId, goalId, { currentValue });
     
+    // Đảm bảo targetValue là một số
+    const targetValue = Number(goal.targetValue) || 1; // Tránh chia cho 0
+    
     // Tính phần trăm tiến độ (tối đa 100%)
-    const progress = Math.min(100, (currentValue / goal.targetValue) * 100);
+    const progress = Math.min(100, (currentValue / targetValue) * 100);
     
     // Nếu tiến độ đạt 100% hoặc hơn và mục tiêu chưa hoàn thành, đánh dấu là đã hoàn thành
-    if (progress >= 100 && !goal.isCompleted) {
+    const isCompleted = Boolean(goal.isCompleted);
+    if (progress >= 100 && !isCompleted) {
       await updateGoal(userId, goalId, { isCompleted: true });
     }
     
