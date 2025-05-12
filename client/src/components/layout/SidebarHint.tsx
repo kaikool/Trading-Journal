@@ -155,24 +155,27 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
               "shadow-[0_0_8px_rgba(0,0,0,0.1)]"
             )} />
             
-            {/* Larger button with arrow */}
+            {/* Larger button with menu icon */}
             <div className={cn(
-              "bg-card/40 backdrop-blur-md",
-              "border-r border-t border-b border-primary/20",
+              "bg-primary/15 backdrop-blur-md",
+              "border-r border-t border-b border-primary/30",
               "rounded-r-lg shadow-md",
-              "py-2 px-2",
+              "py-2 px-3",
               "flex items-center justify-center",
               "transition-all duration-200",
-              "hover:bg-primary/10 hover:border-primary/30 hover:shadow-lg",
-              isMobile ? "w-8" : "w-6"
+              "hover:bg-primary/25 hover:border-primary/50 hover:shadow-lg",
+              isMobile ? "w-14" : "w-10"
             )}>
               <div className="flex flex-col items-center">
-                <Icons.ui.panelLeft className={cn(
+                <Icons.ui.menu className={cn(
                   "text-primary", 
-                  isMobile ? "h-5 w-5" : "h-4 w-4"
+                  isMobile ? "h-6 w-6" : "h-5 w-5"
                 )} />
                 {isMobile && (
-                  <span className="text-[10px] mt-0.5 text-primary font-medium">Menu</span>
+                  <span className="text-xs mt-1 text-primary font-semibold">Menu</span>
+                )}
+                {!isMobile && (
+                  <span className="text-[9px] mt-0.5 text-primary font-medium">Menu</span>
                 )}
               </div>
             </div>

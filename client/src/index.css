@@ -149,10 +149,18 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 
 .sidebar-hint-pulse {
   --primary-rgb: 14, 165, 233; /* Màu sky-500 (adjust to match theme) */
+  filter: drop-shadow(0 0 3px rgba(var(--primary-rgb), 0.5));
 }
 
 .sidebar-hint-pulse.pulse-animation {
   animation: pulse 0.8s ease-in-out 3, glow 1.2s ease-in-out infinite;
+}
+
+/* Make text more visible */
+.sidebar-hint-pulse .text-primary {
+  text-shadow: 0 0 5px rgba(var(--primary-rgb), 0.25);
+  font-weight: 600;
+  color: rgba(var(--primary-rgb), 1);
 }
 
 /* Highlight nhẹ để tăng khả năng nhận biết */
