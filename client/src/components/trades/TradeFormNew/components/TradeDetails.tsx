@@ -213,10 +213,10 @@ export function TradeDetails({
                   id="entryPrice"
                   placeholder="0.00000"
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onChange={field.onChange}
                   onBlur={field.onBlur}
                   min={0}
-                  step="0.00001"
+                  step={0.00001}
                 />
               </FormControl>
               <FormMessage />
@@ -240,10 +240,10 @@ export function TradeDetails({
                   id="stopLoss"
                   placeholder="0.00000"
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onChange={field.onChange}
                   onBlur={field.onBlur}
                   min={0}
-                  step="0.00001"
+                  step={0.00001}
                 />
               </FormControl>
               <FormMessage />
@@ -282,10 +282,10 @@ export function TradeDetails({
                   id="takeProfit"
                   placeholder="0.00000"
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onChange={field.onChange}
                   onBlur={field.onBlur}
                   min={0}
-                  step="0.00001"
+                  step={0.00001}
                 />
               </FormControl>
               <FormMessage />
@@ -320,8 +320,8 @@ export function TradeDetails({
                   variant="outline" 
                   className={cn(
                     "font-mono text-xs h-5 px-1.5",
-                    riskValue <= 1 ? "bg-green-50 text-green-600 border-green-200" : 
-                    riskValue <= 2 ? "bg-amber-50 text-amber-600 border-amber-200" :
+                    Number(riskValue) <= 1 ? "bg-green-50 text-green-600 border-green-200" : 
+                    Number(riskValue) <= 2 ? "bg-amber-50 text-amber-600 border-amber-200" :
                     "bg-red-50 text-red-600 border-red-200"
                   )}
                 >
@@ -369,7 +369,7 @@ export function TradeDetails({
                   id="lotSize"
                   placeholder="0.01"
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onChange={field.onChange}
                   onBlur={field.onBlur}
                   min={0.01}
                   step={0.01}
