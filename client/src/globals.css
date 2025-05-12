@@ -458,6 +458,16 @@
  * All components use CSS variables defined in :root
  */
 @layer utilities {
+  /* Hide scrollbars while maintaining scroll functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
+  
   /* Safe area padding utilities - using CSS variables */
   .pt-safe { padding-top: var(--safe-top); }
   .pr-safe { padding-right: var(--safe-right); }
