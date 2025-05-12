@@ -234,7 +234,9 @@ export interface Milestone {
   goalId: string;
   title: string;
   description?: string;
+  targetType?: string;           // Thêm targetType để tương thích với code hiện tại
   targetValue: number;
+  currentValue?: number;         // Thêm currentValue để tương thích với code hiện tại
   isCompleted: boolean;
   completedDate?: Timestamp | null;
   createdAt: Timestamp;
