@@ -107,7 +107,7 @@ export function TradeDetails({
         <CardHeader className="bg-primary/5 py-3 px-4">
           <div className="flex items-center">
             <Icons.ui.arrowRightCircle className="h-4 w-4 text-primary mr-2" />
-            <CardTitle className="text-sm font-medium">Entry Information</CardTitle>
+            <CardTitle className="text-base font-medium">Entry Information</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="p-4">
@@ -445,7 +445,7 @@ export function TradeDetails({
         <CardHeader className="bg-muted/30 py-3 px-4">
           <div className="flex items-center">
             <Icons.analytics.trendingUp className="h-4 w-4 text-primary mr-2" />
-            <CardTitle className="text-sm font-medium">Risk & Reward</CardTitle>
+            <CardTitle className="text-base font-medium">Risk & Reward</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="p-4">
@@ -461,7 +461,7 @@ export function TradeDetails({
                   {/* Risk Slider with Risk Amount */}
                   <div className="rounded-md bg-muted/20 p-3 relative">
                     <div className="h-6 flex items-center justify-between">
-                      <span className="text-xs font-medium">Risk Percentage:</span>
+                      <span className="text-sm font-medium">Risk Percentage:</span>
                       <Badge 
                         variant="outline" 
                         className={cn(
