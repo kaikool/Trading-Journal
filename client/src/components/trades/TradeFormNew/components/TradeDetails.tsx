@@ -329,9 +329,8 @@ export function TradeDetails({
                           {isCalculatingTakeProfit ? (
                             <Icons.ui.spinner className="h-3 w-3 animate-spin" />
                           ) : (
-                            <Icons.analytics.percent className="h-3 w-3" />
+                            <span>R:R</span>
                           )}
-                          <span>R:R</span>
                         </Button>
                       </div>
                       <FormControl>
@@ -397,7 +396,6 @@ export function TradeDetails({
                   <FormItem className="relative">
                     <div className="flex justify-between items-center mb-1">
                       <Label htmlFor="lotSize" className="text-xs font-medium">
-                        <Icons.ui.scale className="h-3 w-3 inline-block mr-1 opacity-70" />
                         Lot Size
                       </Label>
                       <Button
@@ -451,7 +449,7 @@ export function TradeDetails({
             <div className="space-y-4">
               <div className="rounded-md border border-border/50 bg-muted/10 p-3 shadow-sm">
                 <div className="flex items-center mb-2">
-                  <Icons.ui.shieldAlert className="h-4 w-4 text-amber-500 mr-2" />
+
                   <h3 className="text-sm font-medium">Risk Parameters</h3>
                 </div>
                 
