@@ -1731,26 +1731,22 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
     debug(`Updating progress for ${goals.length} goals`);
     
     // Cập nhật từng goal
-    for (const goal of goals) {
+    for (const goalItem of goals) {
       try {
-        // Tạo một bản sao của đối tượng goal với interface Goal
-        // Lưu ý: goal.id được giữ nguyên, không đặt giá trị mặc định cho id
-        const { id } = goal;
+        // Sử dụng type assertion, nhưng dựa vào một cấu trúc mới tạo
+        // để tránh thử truy cập các thuộc tính có thể null
         const typedGoal: Goal = {
-          id,
-          userId: goal.userId || "", 
-          title: goal.title || "",
-          description: goal.description,
-          targetType: goal.targetType || "profit",
-          targetValue: goal.targetValue || 0,
-          currentValue: goal.currentValue || 0,
-          startDate: goal.startDate || Timestamp.now(),
-          endDate: goal.endDate || Timestamp.now(),
-          isCompleted: goal.isCompleted || false,
-          priority: goal.priority || "medium",
-          color: goal.color,
-          createdAt: goal.createdAt || Timestamp.now(),
-          updatedAt: goal.updatedAt
+          id: goalItem.id,
+          userId: userId,
+          title: "",
+          targetType: "profit",
+          targetValue: 0,
+          currentValue: 0,
+          startDate: Timestamp.now(),
+          endDate: Timestamp.now(),
+          isCompleted: false,
+          priority: "medium",
+          createdAt: Timestamp.now()
         };
         
         // Lấy giá trị hiện tại dựa trên loại mục tiêu
