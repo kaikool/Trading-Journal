@@ -111,18 +111,18 @@ export function TradeDetails({
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
             {/* Left Column */}
-            <div>
+            <div className="space-y-4">
               {/* Currency Pair and Direction in one row */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-4">
                 {/* Currency Pair */}
                 <FormField
                   control={form.control}
                   name="pair"
                   render={({ field }) => (
-                    <FormItem className="relative">
-                      <Label htmlFor="pair" className="text-xs font-medium mb-1 block">
+                    <FormItem>
+                      <Label htmlFor="pair" className="text-xs font-medium mb-1.5 block">
                         Currency Pair
                       </Label>
                       <Select
@@ -157,8 +157,8 @@ export function TradeDetails({
                   control={form.control}
                   name="direction"
                   render={({ field }) => (
-                    <FormItem className="relative">
-                      <Label htmlFor="direction" className="text-xs font-medium mb-1 block">
+                    <FormItem>
+                      <Label htmlFor="direction" className="text-xs font-medium mb-1.5 block">
                         Direction
                       </Label>
                       <Select
@@ -194,8 +194,8 @@ export function TradeDetails({
                 control={form.control}
                 name="entryPrice"
                 render={({ field }) => (
-                  <FormItem className="mb-3 relative">
-                    <div className="flex justify-between items-center mb-1">
+                  <FormItem>
+                    <div className="flex justify-between items-center mb-1.5">
                       <Label htmlFor="entryPrice" className="text-xs font-medium">
                         Entry Price
                       </Label>
@@ -233,8 +233,8 @@ export function TradeDetails({
                 control={form.control}
                 name="entryDate"
                 render={({ field }) => (
-                  <FormItem className="relative">
-                    <Label htmlFor="entryDate" className="text-xs font-medium mb-1 block">
+                  <FormItem>
+                    <Label htmlFor="entryDate" className="text-xs font-medium mb-1.5 block">
                       Entry Date
                     </Label>
                     <Popover>
@@ -254,7 +254,6 @@ export function TradeDetails({
                             ) : (
                               <span>Pick a date</span>
                             )}
-
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -279,16 +278,16 @@ export function TradeDetails({
             </div>
             
             {/* Right Column */}
-            <div>
+            <div className="space-y-4">
               {/* Stop Loss and Take Profit in one row */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-2 gap-4">
                 {/* Stop Loss */}
                 <FormField
                   control={form.control}
                   name="stopLoss"
                   render={({ field }) => (
-                    <FormItem className="relative">
-                      <Label htmlFor="stopLoss" className="text-xs font-medium mb-1 block">
+                    <FormItem>
+                      <Label htmlFor="stopLoss" className="text-xs font-medium mb-1.5 block">
                         Stop Loss
                       </Label>
                       <FormControl>
@@ -313,8 +312,8 @@ export function TradeDetails({
                   control={form.control}
                   name="takeProfit"
                   render={({ field }) => (
-                    <FormItem className="relative">
-                      <div className="flex justify-between items-center mb-1">
+                    <FormItem>
+                      <div className="flex justify-between items-center mb-1.5">
                         <Label htmlFor="takeProfit" className="text-xs font-medium">
                           Take Profit
                         </Label>
@@ -353,8 +352,8 @@ export function TradeDetails({
 
               {/* Risk/Reward Status Card - conditionally shown */}
               {riskRewardRatio > 0 && (
-                <div className="mb-3 rounded-md border border-border/50 bg-gradient-to-r from-muted/5 to-muted/20 p-2 shadow-sm">
-                  <div className="flex items-center justify-between mb-1">
+                <div className="rounded-md border border-border/50 bg-gradient-to-r from-muted/5 to-muted/20 p-3 shadow-sm">
+                  <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center">
                       <span className="text-xs font-medium">Risk/Reward</span>
                     </div>
@@ -371,7 +370,7 @@ export function TradeDetails({
                     </Badge>
                   </div>
                   {/* Progress bar showing the R:R visually */}
-                  <div className="mt-1 h-2 w-full bg-muted/30 rounded-full overflow-hidden">
+                  <div className="mt-1.5 h-2 w-full bg-muted/30 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
@@ -392,8 +391,8 @@ export function TradeDetails({
                 control={form.control}
                 name="lotSize"
                 render={({ field }) => (
-                  <FormItem className="relative">
-                    <div className="flex justify-between items-center mb-1">
+                  <FormItem>
+                    <div className="flex justify-between items-center mb-1.5">
                       <Label htmlFor="lotSize" className="text-xs font-medium">
                         Lot Size
                       </Label>
@@ -442,19 +441,18 @@ export function TradeDetails({
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
             {/* Left Column - Risk Parameters */}
             <div className="space-y-4">
-              <div className="rounded-md border border-border/50 bg-muted/10 p-3 shadow-sm">
-                <div className="flex items-center mb-2">
-
+              <div className="rounded-md border border-border/50 bg-muted/10 p-4 shadow-sm">
+                <div className="flex items-center mb-3">
                   <h3 className="text-sm font-medium">Risk Parameters</h3>
                 </div>
                 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {/* Risk Slider with Risk Amount */}
-                  <div className="rounded-md bg-muted/20 p-2.5">
-                    <div className="flex items-center justify-between mb-1.5">
+                  <div className="rounded-md bg-muted/20 p-3">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium">Risk Percentage:</span>
                       <Badge 
                         variant="outline" 
@@ -477,9 +475,9 @@ export function TradeDetails({
                         const newValue = values[0];
                         setRiskPercentage(newValue);
                       }}
-                      className="mb-1"
+                      className="mb-1.5"
                     />
-                    <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                       <span>Conservative</span>
                       <span>Moderate</span>
                       <span>Aggressive</span>
@@ -487,7 +485,7 @@ export function TradeDetails({
                   </div>
                   
                   {/* Account Balance */}
-                  <div className="flex flex-col space-y-1 text-xs">
+                  <div className="flex flex-col space-y-2 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Account Balance:</span>
                       <span className="font-medium">{formatCurrency(accountBalance)}</span>
@@ -510,15 +508,15 @@ export function TradeDetails({
             
             {/* Right Column - Reward Parameters */}
             <div className="space-y-4">
-              <div className="rounded-md border border-border/50 bg-muted/10 p-3 shadow-sm">
-                <div className="flex items-center mb-2">
+              <div className="rounded-md border border-border/50 bg-muted/10 p-4 shadow-sm">
+                <div className="flex items-center mb-3">
                   <Icons.analytics.target className="h-4 w-4 text-green-500 mr-2" />
                   <h3 className="text-sm font-medium">Reward Calculation</h3>
                 </div>
                 
                 {/* Risk:Reward Ratio */}
                 {riskRewardRatio > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Risk:Reward Ratio</span>
                       <Badge 
@@ -535,7 +533,7 @@ export function TradeDetails({
                     </div>
                     
                     {/* Progress bar showing the R:R visually */}
-                    <div className="mt-1 h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="mt-1 h-2 w-full bg-muted rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
@@ -548,13 +546,13 @@ export function TradeDetails({
                         )}
                       />
                     </div>
-                    <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                       <span>1:1</span>
                       <span>2:1</span>
                       <span>3:1</span>
                     </div>
                     
-                    <div className="rounded-md bg-muted/30 p-2 text-xs">
+                    <div className="rounded-md bg-muted/30 p-3 text-xs">
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Potential Profit:</span>
                         <span className="font-medium text-green-600">
@@ -564,8 +562,7 @@ export function TradeDetails({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-3 text-xs text-muted-foreground">
-
+                  <div className="flex flex-col items-center justify-center py-4 text-xs text-muted-foreground">
                     <p>Enter Stop Loss and Take Profit values to calculate R:R ratio</p>
                   </div>
                 )}
