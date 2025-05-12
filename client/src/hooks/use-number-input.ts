@@ -11,41 +11,33 @@ interface StandaloneNumberInputOptions {
   onChange?: (value: number) => void;
 }
 
-/**
- * Phiên bản overload của hook useNumberInput - sử dụng cho form
- */
-export function useNumberInput<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends Path<TFieldValues> = Path<TFieldValues>
->(
-  controllerProps: UseControllerProps<TFieldValues, TName>,
-  inputProps?: Partial<Omit<NumberInputProps, "value" | "onChange">>
-): {
+// Kết quả trả về cho phiên bản form
+type FormNumberInputResult = {
   value: string | number;
   onChange: (value: number | null) => void;
   onBlur: () => void;
   name: string;
   ref: React.Ref<any>;
   error: any;
+  [key: string]: any;
 };
 
-/**
- * Phiên bản overload của hook useNumberInput - sử dụng độc lập
- */
-export function useNumberInput(
-  options: StandaloneNumberInputOptions
-): {
+// Kết quả trả về cho phiên bản độc lập
+type StandaloneNumberInputResult = {
   value: number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: any) => void;
 };
 
+// Type chung cho cả hai phiên bản
+type NumberInputResult = FormNumberInputResult | StandaloneNumberInputResult;
+
 /**
- * Triển khai hook cho cả hai trường hợp sử dụng
+ * Hook useNumberInput - hỗ trợ cả hai chế độ: form controller và standalone
  */
 export function useNumberInput(
   optionsOrControllerProps: UseControllerProps<any, any> | StandaloneNumberInputOptions,
   inputProps?: Partial<Omit<NumberInputProps, "value" | "onChange">>
-) {
+): NumberInputResult {
   // Kiểm tra xem đang sử dụng phiên bản nào của hook
   const isStandalone = 'initial' in optionsOrControllerProps;
 
@@ -55,8 +47,13 @@ export function useNumberInput(
     const [value, setValue] = useState<number>(options.initial || 0);
 
     const handleChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = parseFloat(e.target.value);
+      (e: any) => {
+        const inputValue = typeof e === 'object' && e.target 
+          ? e.target.value 
+          : e;
+          
+        const newValue = parseFloat(String(inputValue));
+        
         if (!isNaN(newValue)) {
           // Áp dụng giới hạn min/max nếu có
           let constrainedValue = newValue;

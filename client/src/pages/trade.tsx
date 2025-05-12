@@ -35,16 +35,6 @@ import { FormActions } from "@/components/trades/TradeFormNew/components/FormAct
 // Types
 import { TradeFormProps } from "@/components/trades/TradeFormNew/types";
 
-// Tối ưu animations - đơn giản hóa
-const fadeIn = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.3, ease: "easeOut" }
-  }
-};
-
 export default function TradePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [_, setLocation] = useLocation();
@@ -191,129 +181,115 @@ export default function TradePage() {
           )}
 
           {/* Main Trade Form Card */}
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-              <Card className="relative mb-6 overflow-hidden card-spotlight">
-                <CardGradient 
-                  variant="primary" 
-                  intensity="subtle" 
-                  direction="bottom-left" 
-                />
-                <CardHeader className="pb-2 lg:pb-4">
-                  <div className="flex items-center gap-2">
-                    <Icons.trade.candlestick className="h-6 w-6 text-primary" />
-                    <CardTitle>Trade Details</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <TradeDetails
-                    isCalculatingLotSize={isCalculatingLotSize}
-                    isCalculatingTakeProfit={isCalculatingTakeProfit}
-                    accountBalance={accountBalance}
-                    riskPercentage={riskPercentage}
-                    setRiskPercentage={setRiskPercentage}
-                    canFetchPrice={canFetchPrice}
-                    isEditMode={false}
-                    calculateOptimalLotSize={calculateOptimalLotSize}
-                    calculateOptimalTakeProfit={calculateOptimalTakeProfit}
-                    riskRewardRatio={riskRewardRatio}
+          <Card className="relative mb-5 overflow-hidden">
+            <CardGradient 
+              variant="primary" 
+              intensity="subtle" 
+              direction="bottom-left" 
+            />
+            <CardHeader className="pb-2 lg:pb-4">
+              <div className="flex items-center gap-2">
+                <Icons.trade.candlestick className="h-6 w-6 text-primary" />
+                <CardTitle>Trade Details</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <TradeDetails
+                isCalculatingLotSize={isCalculatingLotSize}
+                isCalculatingTakeProfit={isCalculatingTakeProfit}
+                accountBalance={accountBalance}
+                riskPercentage={riskPercentage}
+                setRiskPercentage={setRiskPercentage}
+                canFetchPrice={canFetchPrice}
+                isEditMode={false}
+                calculateOptimalLotSize={calculateOptimalLotSize}
+                calculateOptimalTakeProfit={calculateOptimalTakeProfit}
+                riskRewardRatio={riskRewardRatio}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Strategy and Psychology Tabs */}
+          <Card className="mb-5">
+            <Tabs defaultValue="strategy" className="w-full">
+              <CardHeader className="pb-0">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
+                    <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
+                    Strategy
+                  </TabsTrigger>
+                  <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
+                    <Icons.analytics.brain className="h-4 w-4 mr-2" />
+                    Psychology
+                  </TabsTrigger>
+                </TabsList>
+              </CardHeader>
+              
+              <CardContent className="pt-4">
+                <TabsContent value="strategy" className="mt-0">
+                  <TradeStrategy 
+                    strategies={strategies}
+                    isLoadingStrategies={isLoadingStrategies}
+                    selectedStrategy={selectedStrategy}
+                    strategyChecks={strategyChecks}
+                    handleStrategyCheckToggle={handleStrategyCheckToggle}
                   />
-                </CardContent>
-              </Card>
-            </motion.div>
+                </TabsContent>
+                
+                <TabsContent value="psychology" className="mt-0">
+                  <TradePsychology />
+                </TabsContent>
+              </CardContent>
+            </Tabs>
+          </Card>
 
-            {/* Strategy and Psychology Tabs */}
-            <motion.div variants={fadeIn}>
-              <Card className="mb-6">
-                <Tabs defaultValue="strategy" className="w-full">
-                  <CardHeader className="pb-0">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="strategy" className="data-[state=active]:bg-muted">
-                        <Icons.ui.clipboardList className="h-4 w-4 mr-2" />
-                        Strategy
-                      </TabsTrigger>
-                      <TabsTrigger value="psychology" className="data-[state=active]:bg-muted">
-                        <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                        Psychology
-                      </TabsTrigger>
-                    </TabsList>
-                  </CardHeader>
-                  
-                  <CardContent className="pt-4">
-                    <TabsContent value="strategy" className="mt-0">
-                      <TradeStrategy 
-                        strategies={strategies}
-                        isLoadingStrategies={isLoadingStrategies}
-                        selectedStrategy={selectedStrategy}
-                        strategyChecks={strategyChecks}
-                        handleStrategyCheckToggle={handleStrategyCheckToggle}
-                      />
-                    </TabsContent>
-                    
-                    <TabsContent value="psychology" className="mt-0">
-                      <TradePsychology />
-                    </TabsContent>
-                  </CardContent>
-                </Tabs>
-              </Card>
-            </motion.div>
+          {/* Notes Section */}
+          <Card className="mb-5">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <Icons.general.clipboard className="h-5 w-5 text-primary" />
+                <CardTitle>Notes</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <NotesSection />
+            </CardContent>
+          </Card>
 
-            {/* Notes Section */}
-            <motion.div variants={fadeIn}>
-              <Card className="mb-6">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Icons.general.clipboard className="h-5 w-5 text-primary" />
-                    <CardTitle>Notes</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <NotesSection />
-                </CardContent>
-              </Card>
-            </motion.div>
+          {/* Chart Images */}
+          <Card className="mb-5">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <Icons.analytics.barChart className="h-5 w-5 text-primary" />
+                <CardTitle>Chart Images</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <TradeImages 
+                entryImage1={entryImage1}
+                entryImage2={entryImage2}
+                exitImage1={exitImage1}
+                exitImage2={exitImage2}
+                handleEntryImageChange={handleEntryImageChange}
+                handleExitImageChange={handleExitImageChange}
+                removeEntryImage={removeEntryImage}
+                removeExitImage={removeExitImage}
+              />
+            </CardContent>
+          </Card>
 
-            {/* Chart Images */}
-            <motion.div variants={fadeIn}>
-              <Card className="mb-6">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Icons.analytics.barChart className="h-5 w-5 text-primary" />
-                    <CardTitle>Chart Images</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <TradeImages 
-                    entryImage1={entryImage1}
-                    entryImage2={entryImage2}
-                    exitImage1={exitImage1}
-                    exitImage2={exitImage2}
-                    handleEntryImageChange={handleEntryImageChange}
-                    handleExitImageChange={handleExitImageChange}
-                    removeEntryImage={removeEntryImage}
-                    removeExitImage={removeExitImage}
-                  />
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Form Actions */}
-            <motion.div variants={fadeIn}>
-              <Card>
-                <CardFooter className="px-6 py-4">
-                  <FormActions 
-                    isEditMode={false}
-                    isFormSubmitting={isFormSubmitting}
-                    hasDraft={hasDraft}
-                    onCancel={() => setLocation("/trade/history")}
-                    clearDraft={clearDraft}
-                  />
-                </CardFooter>
-              </Card>
-            </motion.div>
-          </motion.div>
+          {/* Form Actions */}
+          <Card>
+            <CardFooter className="px-6 py-4">
+              <FormActions 
+                isEditMode={false}
+                isFormSubmitting={isFormSubmitting}
+                hasDraft={hasDraft}
+                onCancel={() => setLocation("/trade/history")}
+                clearDraft={clearDraft}
+              />
+            </CardFooter>
+          </Card>
         </form>
       </FormProvider>
     </div>
