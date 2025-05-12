@@ -953,6 +953,7 @@
     will-change: scroll-position; /* Gợi ý trình duyệt tối ưu hiệu năng cuộn */
     text-rendering: optimizeSpeed; /* Tối ưu hiển thị văn bản khi cuộn */
     backface-visibility: hidden; /* Giảm hiện tượng flickering */
+    touch-action: auto; /* Cho phép tất cả các cử chỉ cảm ứng, bao gồm vuốt để điều hướng Safari */
   }
   
   /* Tối ưu cho trình duyệt WebKit trên iOS */
