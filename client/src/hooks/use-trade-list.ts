@@ -6,6 +6,7 @@ import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
 import { Timestamp } from "firebase/firestore";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
+import { firebaseListenerService } from "@/services/firebase-listener-service";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
@@ -242,46 +243,54 @@ export function useTradeList(options: {
     if (!userId || !enableRealtime) return;
     
     debug("[DataCache] Trades snapshot listener setup");
-    const unsubscribe = firebase.onTradesSnapshot(userId, (updatedTrades) => {
-      // Kiểm tra xem dữ liệu có thay đổi thực sự hay không để tránh re-render
-      try {
-        const newTradesData = JSON.stringify(updatedTrades.map(t => ({ id: t.id, updatedAt: t.updatedAt })));
-        if (newTradesData === lastTradesDataRef.current) {
-          debug("[DataCache] Trades snapshot unchanged, avoiding update");
-          return;
+    const unsubscribe = firebaseListenerService.onTradesSnapshot(
+      userId,
+      {
+        callback: (updatedTrades) => {
+          // Kiểm tra xem dữ liệu có thay đổi thực sự hay không để tránh re-render
+          try {
+            const newTradesData = JSON.stringify(updatedTrades.map(t => ({ id: t.id, updatedAt: t.updatedAt })));
+            if (newTradesData === lastTradesDataRef.current) {
+              debug("[DataCache] Trades snapshot unchanged, avoiding update");
+              return;
+            }
+            lastTradesDataRef.current = newTradesData;
+          } catch (error) {
+            // Nếu có lỗi khi so sánh JSON, vẫn tiếp tục cập nhật
+            logError("[DataCache] Error comparing trades data:", error);
+          }
+          
+          const now = Date.now();
+          const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
+          
+          // Thêm debounce để tránh cập nhật quá nhanh, nhưng với thời gian ngắn hơn
+          // Thời gian debounce ngắn hơn giúp UI cập nhật nhanh hơn khi xóa giao dịch
+          if (timeSinceLastUpdate < 100) {
+            debug("[DataCache] Debouncing trades update, too frequent");
+            return;
+          }
+          
+          debug("Realtime trades update received:", updatedTrades.length);
+          lastTradesUpdateRef.current = now;
+          
+          // Cập nhật danh sách trades trong cache
+          allTradesRef.current = updatedTrades as Trade[];
+          totalTradesCountRef.current = updatedTrades.length;
+          
+          // Cập nhật cache của React Query - chỉ invalidate query hiện tại
+          queryClient.invalidateQueries({ 
+            queryKey: ['trades', userId, sortBy, JSON.stringify(filters)],
+            exact: true
+          });
+          
+          // Fetch lại dữ liệu hiện tại nếu có thay đổi
+          refetch();
+        },
+        errorCallback: (error) => {
+          logError("[TradeList] Error in trades snapshot:", error);
         }
-        lastTradesDataRef.current = newTradesData;
-      } catch (error) {
-        // Nếu có lỗi khi so sánh JSON, vẫn tiếp tục cập nhật
-        logError("[DataCache] Error comparing trades data:", error);
       }
-      
-      const now = Date.now();
-      const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
-      
-      // Thêm debounce để tránh cập nhật quá nhanh, nhưng với thời gian ngắn hơn
-      // Thời gian debounce ngắn hơn giúp UI cập nhật nhanh hơn khi xóa giao dịch
-      if (timeSinceLastUpdate < 100) {
-        debug("[DataCache] Debouncing trades update, too frequent");
-        return;
-      }
-      
-      debug("Realtime trades update received:", updatedTrades.length);
-      lastTradesUpdateRef.current = now;
-      
-      // Cập nhật danh sách trades trong cache
-      allTradesRef.current = updatedTrades as Trade[];
-      totalTradesCountRef.current = updatedTrades.length;
-      
-      // Cập nhật cache của React Query - chỉ invalidate query hiện tại
-      queryClient.invalidateQueries({ 
-        queryKey: ['trades', userId, sortBy, JSON.stringify(filters)],
-        exact: true
-      });
-      
-      // Fetch lại dữ liệu hiện tại nếu có thay đổi
-      refetch();
-    });
+    );
     
     return () => {
       debug("[DataCache] Trades snapshot listener unsubscribed and cleaned up");

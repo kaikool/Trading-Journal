@@ -4,6 +4,8 @@ import * as firebase from "@/lib/firebase";
 import { TradeFilterOptions, Trade } from "@/types";
 import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
 import { Timestamp } from "firebase/firestore";
+import { firebaseListenerService } from "@/services/firebase-listener-service";
+import { debug, logError } from "@/lib/debug";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
@@ -217,21 +219,31 @@ export function useTradeList(options: {
   useEffect(() => {
     if (!userId || !enableRealtime) return;
     
-    const unsubscribe = firebase.onTradesSnapshot(userId, (updatedTrades) => {
-      console.log("Realtime trades update received:", updatedTrades.length);
-      
-      // Cập nhật danh sách trades trong cache
-      allTradesRef.current = updatedTrades as Trade[];
-      totalTradesCountRef.current = updatedTrades.length;
-      
-      // Cập nhật cache của React Query
-      queryClient.invalidateQueries({ queryKey: ['trades', userId] });
-      
-      // Fetch lại dữ liệu hiện tại nếu có thay đổi
-      refetch();
-    });
+    // Sử dụng FirebaseListenerService
+    const unsubscribe = firebaseListenerService.onTradesSnapshot(
+      userId,
+      {
+        callback: (updatedTrades) => {
+          debug("Realtime trades update received:", updatedTrades.length);
+          
+          // Cập nhật danh sách trades trong cache
+          allTradesRef.current = updatedTrades as Trade[];
+          totalTradesCountRef.current = updatedTrades.length;
+          
+          // Cập nhật cache của React Query
+          queryClient.invalidateQueries({ queryKey: ['trades', userId] });
+          
+          // Fetch lại dữ liệu hiện tại nếu có thay đổi
+          refetch();
+        },
+        errorCallback: (error) => {
+          logError("Error in trades snapshot:", error);
+        }
+      }
+    );
     
     return () => {
+      debug("Unsubscribing from trades snapshot");
       unsubscribe(); // Hủy đăng ký listener khi unmount
     };
   }, [userId, enableRealtime, queryClient, refetch]);
