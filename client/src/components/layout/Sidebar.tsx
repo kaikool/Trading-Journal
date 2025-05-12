@@ -168,72 +168,13 @@ export function Sidebar({ className }: { className?: string }) {
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
   
-  // Variables to handle swipe from left edge to show sidebar
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const touchStartY = useRef(0);
-  const touchEndY = useRef(0);
-  const edgeSwipeZone = 4; // Swipe detection zone from left edge (px) - reduced from 20px to 4px
-  
-  // Handle swipe events for mobile
-  const handleTouchStart = (e: TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
-  
-  const handleTouchMove = (e: TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-    touchEndY.current = e.touches[0].clientY;
-  };
-  
-  const handleTouchEnd = () => {
-    // Tính toán khoảng cách và hướng vuốt
-    const swipeDistanceX = touchEndX.current - touchStartX.current;
-    const swipeDistanceY = Math.abs(touchEndY.current - touchStartY.current);
-    
-    // Chỉ xử lý vuốt từ trái qua phải, từ cạnh trái màn hình
-    if (
-      touchStartX.current < edgeSwipeZone && // Bắt đầu từ cạnh trái
-      swipeDistanceX > 70 && // Vuốt đủ xa
-      swipeDistanceY < 100 && // Không vuốt quá chếch theo chiều dọc
-      !isOpen // Chỉ mở sidebar khi nó đang đóng
-    ) {
-      setIsOpen(true);
-    }
-    
-    // Nếu vuốt từ phải qua trái khi sidebar đang mở
-    if (
-      swipeDistanceX < -70 && // Vuốt từ phải sang trái
-      swipeDistanceY < 100 && // Không vuốt quá chếch theo chiều dọc
-      isOpen // Chỉ đóng sidebar khi nó đang mở
-    ) {
-      setIsOpen(false);
-    }
-  };
-  
-  // Hotzone đã bị loại bỏ để tránh xung đột với các phần tử nhập liệu
-
-  // Đăng ký các event listeners
-  useEffect(() => {
-    // Đăng ký sự kiện cho touch events để hỗ trợ vuốt từ cạnh trái
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: true });
-    document.addEventListener('touchend', handleTouchEnd);
-    
-    // Hotzone đã bị loại bỏ để tránh xung đột với các phần tử nhập liệu
-    
-    return () => {
-      // Hủy đăng ký tất cả event listeners khi component unmount
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isOpen]);
+  // Đã loại bỏ cơ chế swipe để mở sidebar, chỉ giữ lại nút SidebarHint
+  // và các phương thức mở/đóng sidebar bằng nút
 
   // Prevent hydration mismatch
   if (!mounted) return null;
 
-  // Mobile sidebar version (slide-out drawer) - không cần nút menu vì đã có vuốt từ cạnh trái
+  // Mobile sidebar version (slide-out drawer) - chỉ mở bằng nút SidebarHint
   if (isMobile) {
     return (
       <>
