@@ -122,9 +122,11 @@ export function TradeDetails({
                   name="pair"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="pair" className="text-xs font-medium mb-1.5 block">
-                        Currency Pair
-                      </Label>
+                      <div className="h-6 flex items-center">
+                        <Label htmlFor="pair" className="text-xs font-medium">
+                          Currency Pair
+                        </Label>
+                      </div>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -158,9 +160,11 @@ export function TradeDetails({
                   name="direction"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="direction" className="text-xs font-medium mb-1.5 block">
-                        Direction
-                      </Label>
+                      <div className="h-6 flex items-center">
+                        <Label htmlFor="direction" className="text-xs font-medium">
+                          Direction
+                        </Label>
+                      </div>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -195,7 +199,7 @@ export function TradeDetails({
                 name="entryPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex justify-between items-center mb-1.5">
+                    <div className="h-6 flex items-center justify-between">
                       <Label htmlFor="entryPrice" className="text-xs font-medium">
                         Entry Price
                       </Label>
@@ -234,9 +238,11 @@ export function TradeDetails({
                 name="entryDate"
                 render={({ field }) => (
                   <FormItem>
-                    <Label htmlFor="entryDate" className="text-xs font-medium mb-1.5 block">
-                      Entry Date
-                    </Label>
+                    <div className="h-6 flex items-center">
+                      <Label htmlFor="entryDate" className="text-xs font-medium">
+                        Entry Date
+                      </Label>
+                    </div>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -287,9 +293,11 @@ export function TradeDetails({
                   name="stopLoss"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="stopLoss" className="text-xs font-medium mb-1.5 block">
-                        Stop Loss
-                      </Label>
+                      <div className="h-6 flex items-center">
+                        <Label htmlFor="stopLoss" className="text-xs font-medium">
+                          Stop Loss
+                        </Label>
+                      </div>
                       <FormControl>
                         <NumberInput
                           id="stopLoss"
@@ -313,7 +321,7 @@ export function TradeDetails({
                   name="takeProfit"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex justify-between items-center mb-1.5">
+                      <div className="h-6 flex items-center justify-between">
                         <Label htmlFor="takeProfit" className="text-xs font-medium">
                           Take Profit
                         </Label>
@@ -392,7 +400,7 @@ export function TradeDetails({
                 name="lotSize"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex justify-between items-center mb-1.5">
+                    <div className="h-6 flex items-center justify-between">
                       <Label htmlFor="lotSize" className="text-xs font-medium">
                         Lot Size
                       </Label>
@@ -445,14 +453,14 @@ export function TradeDetails({
             {/* Left Column - Risk Parameters */}
             <div className="space-y-4">
               <div className="rounded-md border border-border/50 bg-muted/10 p-4 shadow-sm">
-                <div className="flex items-center mb-3">
+                <div className="h-6 flex items-center">
                   <h3 className="text-sm font-medium">Risk Parameters</h3>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-4 mt-2">
                   {/* Risk Slider with Risk Amount */}
                   <div className="rounded-md bg-muted/20 p-3">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="h-6 flex items-center justify-between">
                       <span className="text-xs font-medium">Risk Percentage:</span>
                       <Badge 
                         variant="outline" 
@@ -475,7 +483,7 @@ export function TradeDetails({
                         const newValue = values[0];
                         setRiskPercentage(newValue);
                       }}
-                      className="mb-1.5"
+                      className="mt-2 mb-1.5"
                     />
                     <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
                       <span>Conservative</span>
@@ -486,11 +494,11 @@ export function TradeDetails({
                   
                   {/* Account Balance */}
                   <div className="flex flex-col space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
+                    <div className="h-5 flex items-center justify-between">
                       <span className="text-muted-foreground">Account Balance:</span>
                       <span className="font-medium">{formatCurrency(accountBalance)}</span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="h-5 flex items-center justify-between">
                       <span className="text-muted-foreground">Risk Amount:</span>
                       <span className={cn(
                         "font-medium",
@@ -509,15 +517,15 @@ export function TradeDetails({
             {/* Right Column - Reward Parameters */}
             <div className="space-y-4">
               <div className="rounded-md border border-border/50 bg-muted/10 p-4 shadow-sm">
-                <div className="flex items-center mb-3">
+                <div className="h-6 flex items-center">
                   <Icons.analytics.target className="h-4 w-4 text-green-500 mr-2" />
                   <h3 className="text-sm font-medium">Reward Calculation</h3>
                 </div>
                 
                 {/* Risk:Reward Ratio */}
                 {riskRewardRatio > 0 ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                  <div className="space-y-4 mt-2">
+                    <div className="h-6 flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Risk:Reward Ratio</span>
                       <Badge 
                         variant="outline" 
@@ -533,7 +541,7 @@ export function TradeDetails({
                     </div>
                     
                     {/* Progress bar showing the R:R visually */}
-                    <div className="mt-1 h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="mt-2 h-2 w-full bg-muted rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
@@ -553,7 +561,7 @@ export function TradeDetails({
                     </div>
                     
                     <div className="rounded-md bg-muted/30 p-3 text-xs">
-                      <div className="flex justify-between items-center">
+                      <div className="h-5 flex items-center justify-between">
                         <span className="text-muted-foreground">Potential Profit:</span>
                         <span className="font-medium text-green-600">
                           {formatCurrency(accountBalance * (Number(riskValue) / 100) * riskRewardRatio)}
@@ -562,7 +570,7 @@ export function TradeDetails({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-4 text-xs text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center h-28 text-xs text-muted-foreground">
                     <p>Enter Stop Loss and Take Profit values to calculate R:R ratio</p>
                   </div>
                 )}
