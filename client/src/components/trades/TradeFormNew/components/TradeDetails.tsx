@@ -474,7 +474,7 @@ export function TradeDetails({
                         {riskValue}%
                       </Badge>
                     </div>
-                    <div className="py-3 px-1 mt-2 mb-1.5 relative" data-testid="risk-slider-container">
+                    <div className="py-4 px-2 mt-2 mb-2 relative touch-none cursor-pointer" data-testid="risk-slider-container">
                       <Slider
                         value={[Number(riskValue)]}
                         min={0.1}
@@ -484,12 +484,7 @@ export function TradeDetails({
                           const newValue = values[0];
                           setRiskPercentage(newValue);
                         }}
-                        className={cn(
-                          "cursor-grab active:cursor-grabbing",
-                          Number(riskValue) <= 1 ? "text-green-600" : 
-                          Number(riskValue) <= 2 ? "text-amber-600" :
-                          "text-red-600"
-                        )}
+                        className="cursor-grab active:cursor-grabbing"
                       />
                     </div>
                     <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
