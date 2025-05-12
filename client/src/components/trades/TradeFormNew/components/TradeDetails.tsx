@@ -293,7 +293,7 @@ export function TradeDetails({
                   render={({ field }) => (
                     <FormItem className="relative">
                       <Label htmlFor="stopLoss" className="text-xs font-medium mb-1 block">
-                        <Icons.trade.stopLoss className="h-3 w-3 inline-block mr-1 opacity-70" />
+                        <Icons.ui.shieldAlert className="h-3 w-3 inline-block mr-1 opacity-70" />
                         Stop Loss
                       </Label>
                       <FormControl>
@@ -321,12 +321,12 @@ export function TradeDetails({
                     <FormItem className="relative">
                       <div className="flex justify-between items-center mb-1">
                         <Label htmlFor="takeProfit" className="text-xs font-medium">
-                          <Icons.trade.takeProfit className="h-3 w-3 inline-block mr-1 opacity-70" />
+                          <Icons.analytics.target className="h-3 w-3 inline-block mr-1 opacity-70" />
                           Take Profit
                         </Label>
                         <Button
                           type="button"
-                          size="xs"
+                          size="sm"
                           variant="ghost"
                           className="h-5 text-xs gap-1 rounded-sm"
                           onClick={calculateOptimalTakeProfit}
@@ -363,7 +363,7 @@ export function TradeDetails({
                 <div className="mb-3 rounded-md border border-border/50 bg-muted/10 p-2 shadow-sm">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center">
-                      <Icons.analytics.chartBar className="h-3 w-3 mr-1.5 text-primary" />
+                      <Icons.analytics.barChart className="h-3 w-3 mr-1.5 text-primary" />
                       <span className="text-xs font-medium">Risk/Reward</span>
                     </div>
                     <Badge 
@@ -411,7 +411,7 @@ export function TradeDetails({
                       <FormItem className="relative">
                         <div className="flex justify-between items-center mb-1">
                           <Label htmlFor="lotSize" className="text-xs font-medium">
-                            <Icons.trade.lotSize className="h-3 w-3 inline-block mr-1 opacity-70" />
+                            <Icons.ui.scale className="h-3 w-3 inline-block mr-1 opacity-70" />
                             Lot Size
                           </Label>
                           <Button
