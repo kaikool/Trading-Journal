@@ -29,6 +29,7 @@ import {
   TradeImages,
   NotesSection,
 } from "@/components/trades/TradeFormNew/components";
+import { FormActions } from "@/components/trades/TradeFormNew/components/FormActions";
 
 // Types
 import { TradeFormProps } from "@/components/trades/TradeFormNew/types";
