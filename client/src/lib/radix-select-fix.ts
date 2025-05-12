@@ -30,7 +30,7 @@ export function applyRadixSelectFix() {
       scroll-behavior: auto !important;
       overflow-anchor: none !important;
       overflow-behavior: none !important;
-      -webkit-overflow-scrolling: auto !important;
+      /* Removed -webkit-overflow-scrolling which can cause issues on Safari */
     }
 
     /* Đảm bảo content được định vị chính xác */
