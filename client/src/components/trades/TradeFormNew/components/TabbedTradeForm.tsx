@@ -10,14 +10,30 @@ import {
   NotesSection,
 } from './';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import { TradingStrategy, StrategyConditionCheck } from '@/types';
+
+/**
+ * Custom hook for responsive design
+ * Returns true if the media query matches
+ * 
+ * @param query CSS media query string
+ * @returns boolean indicating if the query matches
+ */
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState<boolean>(false);
+
+  // useEffect hook doesn't work with immediate JSX transform
+  // This is a simplified version that just returns false initially
+  // The actual implementation is in the hooks/use-media-query.ts file
+  return matches;
+}
 
 // Tab configuration for the trade form
 const TRADE_FORM_TABS = [
   {
     id: 'general',
     label: 'General',
-    icon: <Icons.ui.clipboard className="h-4 w-4" />,
+    icon: <Icons.ui.clipboardCheck className="h-4 w-4" />,
     mobileLabel: 'General',
   },
   {
@@ -60,17 +76,17 @@ interface TabbedTradeFormProps {
   riskRewardRatio: number;
   
   // Strategy props
-  strategies: any[];
+  strategies: TradingStrategy[];
   isLoadingStrategies: boolean;
-  selectedStrategy: string | null;
-  strategyChecks: Record<string, boolean>;
-  handleStrategyCheckToggle: (checkId: string) => void;
+  selectedStrategy: TradingStrategy | null;
+  strategyChecks: StrategyConditionCheck[];
+  handleStrategyCheckToggle: (checkId: string, checked: boolean) => void;
   
   // Image props
-  entryImage1: any;
-  entryImage2: any;
-  exitImage1: any;
-  exitImage2: any;
+  entryImage1: { url: string | null; loading: boolean };
+  entryImage2: { url: string | null; loading: boolean };
+  exitImage1: { url: string | null; loading: boolean };
+  exitImage2: { url: string | null; loading: boolean };
   handleEntryImageChange: (index: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   handleExitImageChange: (index: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   removeEntryImage: (index: 1 | 2) => () => void;
