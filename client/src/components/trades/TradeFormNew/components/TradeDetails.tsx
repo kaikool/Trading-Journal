@@ -356,7 +356,6 @@ export function TradeDetails({
                 <div className="mb-3 rounded-md border border-border/50 bg-gradient-to-r from-muted/5 to-muted/20 p-2 shadow-sm">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center">
-                      <Icons.analytics.barChart className="h-3 w-3 mr-1.5 text-primary" />
                       <span className="text-xs font-medium">Risk/Reward</span>
                     </div>
                     <Badge 
@@ -409,9 +408,8 @@ export function TradeDetails({
                         {isCalculatingLotSize ? (
                           <Icons.ui.spinner className="h-3 w-3 animate-spin" />
                         ) : (
-                          <Icons.analytics.percent className="h-3 w-3" />
+                          <span>Calculate</span>
                         )}
-                        <span>Calc</span>
                       </Button>
                     </div>
                     <FormControl>
@@ -567,7 +565,7 @@ export function TradeDetails({
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-3 text-xs text-muted-foreground">
-                    <Icons.analytics.barChart className="h-8 w-8 mb-2 opacity-20" />
+
                     <p>Enter Stop Loss and Take Profit values to calculate R:R ratio</p>
                   </div>
                 )}
