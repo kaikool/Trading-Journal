@@ -10,7 +10,6 @@ import {
   NotesSection,
 } from './';
 import { cn } from '@/lib/utils';
-import { TradingStrategy, StrategyConditionCheck } from '@/types';
 import { ImageState } from '../types';
 
 /**
