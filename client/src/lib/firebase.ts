@@ -1715,9 +1715,12 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
     // Cập nhật từng goal
     for (const goal of goals) {
       try {
+        // Đảm bảo đối tượng goal tuân thủ đúng interface Goal
+        const typedGoal = goal as Goal;
+        
         // Lấy giá trị hiện tại dựa trên loại mục tiêu
         let currentValue = 0;
-        switch (goal.targetType) {
+        switch (typedGoal.targetType) {
           case "profit":
             currentValue = tradeStats.netProfit;
             break;
@@ -1741,15 +1744,15 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
         }
         
         // Cập nhật mục tiêu với giá trị hiện tại
-        await updateGoal(userId, goal.id, { currentValue });
+        await updateGoal(userId, typedGoal.id, { currentValue });
         
         // Tính phần trăm tiến độ (tối đa 100%)
-        const progress = Math.min(100, (currentValue / goal.targetValue) * 100);
+        const progress = Math.min(100, (currentValue / typedGoal.targetValue) * 100);
         
         // Nếu tiến độ đạt 100% hoặc hơn và mục tiêu chưa hoàn thành, đánh dấu là đã hoàn thành
-        if (progress >= 100 && !goal.isCompleted) {
-          await updateGoal(userId, goal.id, { isCompleted: true });
-          debug(`Goal ${goal.id} marked as completed with progress ${progress.toFixed(2)}%`);
+        if (progress >= 100 && !typedGoal.isCompleted) {
+          await updateGoal(userId, typedGoal.id, { isCompleted: true });
+          debug(`Goal ${typedGoal.id} marked as completed with progress ${progress.toFixed(2)}%`);
         }
       } catch (error) {
         // Log lỗi nhưng tiếp tục xử lý các goal khác
