@@ -1323,7 +1323,13 @@ async function addGoal(userId: string, goalData: any) {
  * @param userId - ID của người dùng
  * @returns Mảng các mục tiêu
  */
-async function getGoals(userId: string) {
+/**
+ * Lấy tất cả mục tiêu của người dùng
+ * 
+ * @param userId - ID của người dùng
+ * @returns Mảng các mục tiêu
+ */
+async function getGoals(userId: string): Promise<Array<Goal & { milestones: Milestone[] }>> {
   try {
     const goalsRef = collection(db, "users", userId, "goals");
     const q = query(goalsRef, orderBy("createdAt", "desc"));
@@ -1331,7 +1337,7 @@ async function getGoals(userId: string) {
     
     // Lấy dữ liệu mục tiêu
     const goals = await Promise.all(querySnapshot.docs.map(async doc => {
-      const goalData = doc.data();
+      const goalData = doc.data() as Omit<Goal, 'id'>;
       
       // Lấy cột mốc cho mỗi mục tiêu
       const milestones = await getMilestones(userId, doc.id);
@@ -1340,7 +1346,7 @@ async function getGoals(userId: string) {
         id: doc.id,
         ...goalData,
         milestones
-      };
+      } as Goal & { milestones: Milestone[] };
     }));
     
     return goals;
@@ -1733,25 +1739,23 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
     // Cập nhật từng goal
     for (const goalItem of goals) {
       try {
-        // Sử dụng type assertion, nhưng dựa vào một cấu trúc mới tạo
-        // để tránh thử truy cập các thuộc tính có thể null
-        const typedGoal: Goal = {
-          id: goalItem.id,
-          userId: userId,
-          title: "",
-          targetType: "profit",
-          targetValue: 0,
-          currentValue: 0,
-          startDate: Timestamp.now(),
-          endDate: Timestamp.now(),
-          isCompleted: false,
-          priority: "medium",
-          createdAt: Timestamp.now()
-        };
+        // Truy cập an toàn vào các thuộc tính của goalItem
+        // Đảm bảo an toàn về kiểu dữ liệu bằng cách kiểm tra tính tồn tại và gán giá trị mặc định nếu cần
+        const goalId = goalItem.id;
+        
+        // Đảm bảo goalItem có đầy đủ thuộc tính của Goal
+        if (!('targetType' in goalItem) || !('targetValue' in goalItem) || !('isCompleted' in goalItem)) {
+          logError(`Goal ${goalId} is missing required properties, skipping`);
+          continue;
+        }
+        
+        const targetType = goalItem.targetType as 'profit' | 'winRate' | 'profitFactor' | 'riskRewardRatio' | 'balance' | 'trades';
+        const targetValue = Number(goalItem.targetValue) || 0;
+        const isCompleted = Boolean(goalItem.isCompleted);
         
         // Lấy giá trị hiện tại dựa trên loại mục tiêu
         let currentValue = 0;
-        switch (typedGoal.targetType) {
+        switch (targetType) {
           case "profit":
             currentValue = tradeStats.netProfit;
             break;
@@ -1775,19 +1779,19 @@ async function calculateAllGoalsProgress(userId: string): Promise<void> {
         }
         
         // Cập nhật mục tiêu với giá trị hiện tại
-        await updateGoal(userId, typedGoal.id, { currentValue });
+        await updateGoal(userId, goalId, { currentValue });
         
         // Tính phần trăm tiến độ (tối đa 100%)
-        const progress = Math.min(100, (currentValue / typedGoal.targetValue) * 100);
+        const progress = Math.min(100, (currentValue / targetValue) * 100);
         
         // Nếu tiến độ đạt 100% hoặc hơn và mục tiêu chưa hoàn thành, đánh dấu là đã hoàn thành
-        if (progress >= 100 && !typedGoal.isCompleted) {
-          await updateGoal(userId, typedGoal.id, { isCompleted: true });
-          debug(`Goal ${typedGoal.id} marked as completed with progress ${progress.toFixed(2)}%`);
+        if (progress >= 100 && !isCompleted) {
+          await updateGoal(userId, goalId, { isCompleted: true });
+          debug(`Goal ${goalId} marked as completed with progress ${progress.toFixed(2)}%`);
         }
       } catch (error) {
         // Log lỗi nhưng tiếp tục xử lý các goal khác
-        logError(`Error calculating progress for goal ${goal.id}:`, error);
+        logError(`Error calculating progress for goal ${goalItem.id}:`, error);
       }
     }
     
