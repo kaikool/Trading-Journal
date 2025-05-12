@@ -70,9 +70,6 @@ export function TradeDetails({
   // Format risk:reward ratio
   const formattedRatio = riskRewardRatio ? `${riskRewardRatio.toFixed(2)}:1` : "0:1";
   
-  // Get entry date from form
-  const entryDate = form.watch("entryDate");
-
   // Get pair from form for price button
   const selectedPair = form.watch("pair");
   
@@ -232,55 +229,7 @@ export function TradeDetails({
                 )}
               />
 
-              {/* Entry Date */}
-              <FormField
-                control={form.control}
-                name="entryDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="h-6 flex items-center">
-                      <Label htmlFor="entryDate" className="text-sm font-medium">
-                        Entry Date
-                      </Label>
-                    </div>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "h-9 w-full pl-3 text-left font-normal text-sm",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              <span>
-                                {format(new Date(field.value), "MMM d, yyyy")}
-                              </span>
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <CalendarComponent
-                          mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(day) => {
-                            if (day) {
-                              field.onChange(format(day, "yyyy-MM-dd"));
-                            }
-                          }}
-                          disabled={(date) => date > new Date()}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </div>
             
             {/* Right Column */}

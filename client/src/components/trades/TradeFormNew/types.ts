@@ -33,9 +33,7 @@ export const tradeFormSchema = z.object({
   }).refine(value => value > 0, {
     message: "Lot size must be a positive number",
   }),
-  entryDate: z.string({
-    required_error: "Entry date is required"
-  }).min(1, { message: "Entry date is required" }),
+
   strategy: z.string({
     required_error: "Trading strategy is required"
   }).min(1, { message: "Please select a trading strategy" }),

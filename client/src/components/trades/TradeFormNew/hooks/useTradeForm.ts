@@ -133,9 +133,7 @@ export function useTradeForm(props: TradeFormProps) {
         stopLoss: initialValues.stopLoss,
         takeProfit: initialValues.takeProfit,
         lotSize: initialValues.lotSize,
-        entryDate: initialValues.entryDate 
-          ? format(new Date(initialValues.entryDate), "yyyy-MM-dd")
-          : format(new Date(), "yyyy-MM-dd"),
+
         strategy: initialValues.strategy || "",
         techPattern: initialValues.techPattern || "",
         emotion: initialValues.emotion || "",
@@ -189,7 +187,7 @@ export function useTradeForm(props: TradeFormProps) {
         stopLoss: 0,
         takeProfit: 0,
         lotSize: 0.01,
-        entryDate: format(new Date(), "yyyy-MM-dd"),
+
         strategy: "",
         techPattern: "",
         emotion: "",
