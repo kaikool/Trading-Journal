@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
@@ -22,6 +22,7 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const { isActive } = useUserActivity(3000);
+  const dragControls = useDragControls();
   
   // State
   const [visible, setVisible] = useState(false);
@@ -29,11 +30,17 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     // Check localStorage to see if user has interacted before
     return localStorage.getItem("sidebar-hint-interacted") === "true";
   });
+  const [position, setPosition] = useState<{y: number}>(() => {
+    // Get saved position from localStorage or use default
+    const savedPos = localStorage.getItem("sidebar-hint-position");
+    return savedPos ? JSON.parse(savedPos) : { y: isMobile ? window.innerHeight / 2 : 100 };
+  });
 
   // Refs
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initialLoadRef = useRef(true);
   const showCount = useRef(0);
+  const isDragging = useRef(false);
 
   // Show on initial load if appropriate
   useEffect(() => {
@@ -70,23 +77,12 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
       setVisible(true);
       showCount.current += 1;
       
-      // Hiển thị lâu hơn để người dùng dễ nhận biết
-      const hideDelay = hasInteracted ? 8000 : 12000; // Tăng thời gian hiển thị lên 8-12 giây
+      // Hiển thị trong thời gian ngắn hơn
+      const hideDelay = hasInteracted ? 5000 : 8000;
       
       // Thiết lập timeout để ẩn hint sau một thời gian
       timeoutRef.current = setTimeout(() => {
-        // Thêm hiệu ứng nhấp nháy trước khi biến mất
-        const pulseElement = document.querySelector('.sidebar-hint-pulse');
-        if (pulseElement) {
-          pulseElement.classList.add('pulse-animation');
-          
-          // Sau khi nhấp nháy xong mới ẩn hint
-          setTimeout(() => {
-            setVisible(false);
-          }, 1000);
-        } else {
-          setVisible(false);
-        }
+        setVisible(false);
       }, hideDelay);
     } else if (!isActive) {
       // Vẫn hiển thị trong một khoảng thời gian ngắn khi người dùng không hoạt động
@@ -117,8 +113,25 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     };
   }, [isActive, isMobile, sidebarCollapsed, hasInteracted, visible]);
 
-  // Handle click
+  // Handle drag end - save position
+  const handleDragEnd = (event: any, info: any) => {
+    isDragging.current = false;
+    // Update position
+    const newPosition = { y: position.y + info.offset.y };
+    setPosition(newPosition);
+    // Save position to localStorage
+    localStorage.setItem("sidebar-hint-position", JSON.stringify(newPosition));
+  };
+
+  // Start dragging
+  const handleDragStart = () => {
+    isDragging.current = true;
+  };
+
+  // Handle click - don't toggle sidebar if we're dragging
   const handleClick = () => {
+    if (isDragging.current) return;
+    
     if (!hasInteracted) {
       setHasInteracted(true);
       localStorage.setItem("sidebar-hint-interacted", "true");
@@ -134,50 +147,47 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
       {visible && (
         <motion.div
           initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
+          animate={{ opacity: 1, x: 0, y: position.y }}
           exit={{ opacity: 0, x: -8 }}
           transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
           onClick={handleClick}
           className={cn(
-            "fixed z-40 left-0 flex items-center cursor-pointer sidebar-hint-pulse",
-            isMobile ? "top-1/2 -translate-y-1/2 h-16" : "top-24 h-14"
+            "fixed z-40 left-0 flex items-center cursor-move sidebar-hint-pulse",
+            "h-auto"
           )}
           role="button"
           aria-label="Open sidebar"
+          drag="y"
+          dragControls={dragControls}
+          dragConstraints={{ top: 10, bottom: window.innerHeight - 100 }}
+          dragElastic={0.1}
+          dragMomentum={false}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          whileDrag={{ scale: 1.05 }}
         >
-          {/* Enhanced indicator */}
-          <div className="h-full flex items-center">
-            {/* Vertical bar indicator - compact but visible */}
-            <div className={cn(
-              isMobile ? "h-12" : "h-10",
-              "w-1 rounded-r-full",
-              "bg-border",
-              "shadow-sm"
-            )} />
-            
-            {/* More compact button with menu icon */}
-            <div className={cn(
-              "bg-primary/10 backdrop-blur-md",
-              "border-r border-t border-b border-border",
-              "rounded-r-lg shadow-sm",
-              "py-1.5 px-2",
-              "flex items-center justify-center",
-              "transition-all duration-200",
-              "hover:bg-muted hover:border-border hover:shadow",
-              isMobile ? "w-12" : "w-9"
-            )}>
-              <div className="flex flex-col items-center">
-                <Icons.ui.menu className={cn(
-                  "text-primary", 
-                  isMobile ? "h-5 w-5" : "h-4 w-4"
-                )} />
-                {isMobile && (
-                  <span className="text-[10px] mt-0.5 text-primary font-medium">Menu</span>
-                )}
-                {!isMobile && (
-                  <span className="text-[8px] mt-0.5 text-primary font-medium">Menu</span>
-                )}
-              </div>
+          {/* Button with menu icon */}
+          <div className={cn(
+            "bg-primary/10 backdrop-blur-md",
+            "border border-border",
+            "rounded-r-lg shadow-sm",
+            "py-1.5 px-2",
+            "flex items-center justify-center",
+            "transition-all duration-200",
+            "hover:bg-muted hover:border-border hover:shadow",
+            isMobile ? "w-12" : "w-9"
+          )}>
+            <div className="flex flex-col items-center">
+              <Icons.ui.menu className={cn(
+                "text-primary", 
+                isMobile ? "h-5 w-5" : "h-4 w-4"
+              )} />
+              {isMobile && (
+                <span className="text-[10px] mt-0.5 text-primary font-medium">Menu</span>
+              )}
+              {!isMobile && (
+                <span className="text-[8px] mt-0.5 text-primary font-medium">Menu</span>
+              )}
             </div>
           </div>
         </motion.div>
