@@ -880,6 +880,18 @@ async function deleteTrade(userId: string, tradeId: string) {
     processTradeTrigger(userId, 'delete');
     debug("Achievement processing queued (debounced) for trade deletion");
     
+    // Tự động tính toán lại tiến độ mục tiêu khi xóa giao dịch
+    // Tính toán này bị trì hoãn nhẹ để cho phép các thao tác UI khác được ưu tiên
+    setTimeout(async () => {
+      try {
+        await calculateAllGoalsProgress(userId);
+        debug("Goals progress recalculated after trade deletion");
+      } catch (error) {
+        logError("Error recalculating goals after trade deletion:", error);
+        // Không throw error để không ảnh hưởng đến luồng chính
+      }
+    }, 1000);
+    
     return true;
   } catch (error) {
     logError(`Error in deleteTrade function:`, error);
