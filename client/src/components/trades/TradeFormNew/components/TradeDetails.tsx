@@ -392,65 +392,52 @@ export function TradeDetails({
                       )}
                     />
                   </div>
-                  <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
-                    <span>1:1</span>
-                    <span>2:1</span>
-                    <span>3:1</span>
-                  </div>
                 </div>
               )}
 
-              {/* Lot Size and Risk Calculator */}
-              <div className="relative">
-                <div className="grid grid-cols-2 gap-3 items-start">
-                  {/* Lot Size */}
-                  <FormField
-                    control={form.control}
-                    name="lotSize"
-                    render={({ field }) => (
-                      <FormItem className="relative">
-                        <div className="flex justify-between items-center mb-1">
-                          <Label htmlFor="lotSize" className="text-xs font-medium">
-                            <Icons.ui.scale className="h-3 w-3 inline-block mr-1 opacity-70" />
-                            Lot Size
-                          </Label>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="ghost"
-                            className="h-5 text-xs gap-1 rounded-sm"
-                            onClick={calculateOptimalLotSize}
-                            disabled={isCalculatingLotSize}
-                          >
-                            {isCalculatingLotSize ? (
-                              <Icons.ui.spinner className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <Icons.analytics.percent className="h-3 w-3" />
-                            )}
-                            <span>Calc</span>
-                          </Button>
-                        </div>
-                        <FormControl>
-                          <NumberInput
-                            id="lotSize"
-                            placeholder="0.01"
-                            value={field.value}
-                            onChange={field.onChange}
-                            onBlur={field.onBlur}
-                            min={0.01}
-                            step={0.01}
-                            className="h-9"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  </div>
-                </div>
-                </div>
-              </div>
+              {/* Lot Size */}
+              <FormField
+                control={form.control}
+                name="lotSize"
+                render={({ field }) => (
+                  <FormItem className="relative">
+                    <div className="flex justify-between items-center mb-1">
+                      <Label htmlFor="lotSize" className="text-xs font-medium">
+                        <Icons.ui.scale className="h-3 w-3 inline-block mr-1 opacity-70" />
+                        Lot Size
+                      </Label>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="h-5 text-xs gap-1 rounded-sm"
+                        onClick={calculateOptimalLotSize}
+                        disabled={isCalculatingLotSize}
+                      >
+                        {isCalculatingLotSize ? (
+                          <Icons.ui.spinner className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Icons.analytics.percent className="h-3 w-3" />
+                        )}
+                        <span>Calc</span>
+                      </Button>
+                    </div>
+                    <FormControl>
+                      <NumberInput
+                        id="lotSize"
+                        placeholder="0.01"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        min={0.01}
+                        step={0.01}
+                        className="h-9"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
         </CardContent>
