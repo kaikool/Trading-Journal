@@ -95,10 +95,10 @@ export function useTradeForm(props: TradeFormProps) {
       let result;
       if (isEditMode && initialValues?.id) {
         // Update existing trade
-        result = await updateTrade(initialValues.id, tradeData);
+        result = await updateTrade(userId, initialValues.id, tradeData);
       } else {
         // Create new trade
-        result = await addTrade(tradeData);
+        result = await addTrade(userId, tradeData);
       }
       
       if (result.success) {
@@ -146,7 +146,7 @@ export function useTradeForm(props: TradeFormProps) {
         sessionType: initialValues.sessionType || "",
         hasNews: initialValues.hasNews || false,
         notes: initialValues.notes || "",
-        isOpen: initialValues.status === "OPEN",
+        isOpen: initialValues.isOpen || false,
         exitPrice: initialValues.exitPrice || null,
         result: initialValues.result as any || undefined,
         closingNote: ""
@@ -159,9 +159,9 @@ export function useTradeForm(props: TradeFormProps) {
         });
       }
       
-      if (initialValues.entryImage2) {
+      if (initialValues.entryImageM15) {
         imageManagement.updateImageStateFromDraft({
-          entryImage2: initialValues.entryImage2
+          entryImage2: initialValues.entryImageM15
         });
       }
       
@@ -171,9 +171,9 @@ export function useTradeForm(props: TradeFormProps) {
         });
       }
       
-      if (initialValues.exitImage2) {
+      if (initialValues.exitImageM15) {
         imageManagement.updateImageStateFromDraft({
-          exitImage2: initialValues.exitImage2
+          exitImage2: initialValues.exitImageM15
         });
       }
       
