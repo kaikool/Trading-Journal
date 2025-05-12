@@ -329,7 +329,7 @@ export function TradeDetails({
                           type="button"
                           size="sm"
                           variant="ghost"
-                          className="h-5 text-xs gap-1 rounded-sm"
+                          className="h-6 text-sm gap-1 rounded-sm"
                           onClick={calculateOptimalTakeProfit}
                           disabled={isCalculatingTakeProfit}
                         >
@@ -363,12 +363,12 @@ export function TradeDetails({
                 <div className="rounded-md border border-border/50 bg-gradient-to-r from-muted/5 to-muted/20 p-3 shadow-sm">
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center">
-                      <span className="text-xs font-medium">Risk/Reward</span>
+                      <span className="text-sm font-medium">Risk/Reward</span>
                     </div>
                     <Badge 
                       variant="outline" 
                       className={cn(
-                        "font-mono text-xs h-5 px-1.5",
+                        "font-mono text-sm h-6 px-2",
                         riskRewardRatio >= 2 ? "bg-green-50 text-green-600 border-green-200" : 
                         riskRewardRatio >= 1 ? "bg-amber-50 text-amber-600 border-amber-200" :
                         "bg-red-50 text-red-600 border-red-200"
@@ -401,14 +401,14 @@ export function TradeDetails({
                 render={({ field }) => (
                   <FormItem>
                     <div className="h-6 flex items-center justify-between">
-                      <Label htmlFor="lotSize" className="text-xs font-medium">
+                      <Label htmlFor="lotSize" className="text-sm font-medium">
                         Lot Size
                       </Label>
                       <Button
                         type="button"
                         size="sm"
                         variant="ghost"
-                        className="h-5 text-xs gap-1 rounded-sm"
+                        className="h-6 text-sm gap-1 rounded-sm"
                         onClick={calculateOptimalLotSize}
                         disabled={isCalculatingLotSize}
                       >
@@ -500,7 +500,7 @@ export function TradeDetails({
                   </div>
                   
                   {/* Account Balance */}
-                  <div className="flex flex-col space-y-2 text-xs">
+                  <div className="flex flex-col space-y-2 text-sm">
                     <div className="h-5 flex items-center justify-between">
                       <span className="text-muted-foreground">Account Balance:</span>
                       <span className="font-medium">{formatCurrency(accountBalance)}</span>
@@ -567,7 +567,7 @@ export function TradeDetails({
                       <span>3:1</span>
                     </div>
                     
-                    <div className="rounded-md bg-muted/30 p-3 text-xs">
+                    <div className="rounded-md bg-muted/30 p-3 text-sm">
                       <div className="h-5 flex items-center justify-between">
                         <span className="text-muted-foreground">Potential Profit:</span>
                         <span className="font-medium text-green-600">
@@ -577,7 +577,7 @@ export function TradeDetails({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-28 text-xs text-muted-foreground">
+                  <div className="flex flex-col items-center justify-center h-28 text-sm text-muted-foreground">
                     <p>Enter Stop Loss and Take Profit values to calculate R:R ratio</p>
                   </div>
                 )}
