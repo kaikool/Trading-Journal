@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { FormProvider } from "react-hook-form";
 import { useTradeForm } from "@/components/trades/TradeFormNew/hooks";
+import { debug } from "@/lib/debug";
 
 // UI Components
 import {
@@ -34,23 +35,13 @@ import { FormActions } from "@/components/trades/TradeFormNew/components/FormAct
 // Types
 import { TradeFormProps } from "@/components/trades/TradeFormNew/types";
 
-// Animation variants
+// Tối ưu animations - đơn giản hóa
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: "easeOut" }
-  }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
+    transition: { duration: 0.3, ease: "easeOut" }
   }
 };
 
@@ -142,29 +133,25 @@ export default function TradePage() {
 
   if (isSubmitting) {
     return (
-      <div className="container max-w-7xl mx-auto px-4 py-8 sm:px-6 md:px-8">
+      <div className="px-0 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
         >
-          <Card className="relative overflow-hidden card-spotlight">
+          <Card className="relative overflow-hidden">
             <CardGradient 
               variant="primary"
               intensity="subtle"
               direction="top-right"
             />
-            <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-              <motion.div 
-                className="rounded-full bg-primary/10 p-6 mb-5"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              >
-                <Icons.ui.spinner className="h-10 w-10 animate-spin text-primary" />
-              </motion.div>
+            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="rounded-full bg-primary/10 p-5 mb-4">
+                <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
+              </div>
               <h3 className="text-lg font-semibold">Saving trade...</h3>
               <p className="text-muted-foreground mt-2 max-w-md">
-                Please wait while we record your trade details and process your uploaded images.
+                Recording your trade details and processing uploaded images
               </p>
             </CardContent>
           </Card>
@@ -173,46 +160,41 @@ export default function TradePage() {
     );
   }
 
+  // Log khi component được render
+  debug("Rendering TradePage, draft status:", { hasDraft, showDraftNotice });
+
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-8 sm:px-6 md:px-8">
-      <motion.div
-        className="mb-6"
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-      >
+    <div className="px-0 sm:px-6 lg:px-8">
+      {/* Header with consistent styling across app */}
+      <div className="mb-4">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           New Trade
         </h1>
-        <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+        <p className="text-muted-foreground mt-0.5 text-sm sm:text-base">
           Record your trade details to track performance and gain insights
         </p>
-      </motion.div>
+      </div>
 
       <FormProvider {...form}>
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-5">
+          {/* Draft notice */}
+          {hasDraft && showDraftNotice && (
+            <FormHeader 
+              isEditMode={false}
+              hasDraft={hasDraft}
+              showDraftNotice={showDraftNotice}
+              isDraftLoading={isDraftLoading}
+              setShowDraftNotice={setShowDraftNotice}
+              loadDraft={loadDraft}
+              clearDraft={clearDraft}
+            />
+          )}
+
+          {/* Main Trade Form Card */}
           <motion.div
-            variants={staggerContainer}
             initial="hidden"
             animate="visible"
-          >
-            {/* Draft notice */}
-            {hasDraft && showDraftNotice && (
-              <motion.div variants={fadeIn}>
-                <FormHeader 
-                  isEditMode={false}
-                  hasDraft={hasDraft}
-                  showDraftNotice={showDraftNotice}
-                  isDraftLoading={isDraftLoading}
-                  setShowDraftNotice={setShowDraftNotice}
-                  loadDraft={loadDraft}
-                  clearDraft={clearDraft}
-                />
-              </motion.div>
-            )}
-
-            {/* Main Trade Form Card */}
-            <motion.div variants={fadeIn}>
+            variants={fadeIn}
               <Card className="relative mb-6 overflow-hidden card-spotlight">
                 <CardGradient 
                   variant="primary" 
