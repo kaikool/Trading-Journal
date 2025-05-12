@@ -159,11 +159,11 @@ export function TabbedTradeForm({
       onValueChange={setActiveTab}
       className="w-full"
     >
-      <div className="mb-4 relative no-scroll">
+      <div className="mb-4 relative overflow-hidden">
         <TabsList 
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
-            isMobile ? "flex scroll-x-only" : "grid grid-cols-5"
+            isMobile ? "flex overflow-x-auto no-scrollbar overflow-y-hidden" : "grid grid-cols-5"
           )}
         >
           {TRADE_FORM_TABS.map((tab) => (
@@ -191,9 +191,9 @@ export function TabbedTradeForm({
         initial="hidden"
         animate="visible"
         variants={tabContentVariants}
-        className="min-h-[300px] overflow-all"
+        className="min-h-[300px] overflow-visible"
       >
-        <TabsContent value="general" className="mt-0 pt-2 overflow-all">
+        <TabsContent value="general" className="mt-0 pt-2 overflow-visible">
           <TradeDetails
             isCalculatingLotSize={isCalculatingLotSize}
             isCalculatingTakeProfit={isCalculatingTakeProfit}
@@ -208,7 +208,7 @@ export function TabbedTradeForm({
           />
         </TabsContent>
         
-        <TabsContent value="strategy" className="mt-0 pt-2 overflow-all">
+        <TabsContent value="strategy" className="mt-0 pt-2 overflow-visible">
           <TradeStrategy
             strategies={strategies}
             isLoadingStrategies={isLoadingStrategies}
@@ -218,11 +218,11 @@ export function TabbedTradeForm({
           />
         </TabsContent>
         
-        <TabsContent value="psychology" className="mt-0 pt-2 overflow-all">
+        <TabsContent value="psychology" className="mt-0 pt-2 overflow-visible">
           <TradePsychology />
         </TabsContent>
         
-        <TabsContent value="images" className="mt-0 pt-2 overflow-all">
+        <TabsContent value="images" className="mt-0 pt-2 overflow-visible">
           <TradeImages
             entryImage1={entryImage1}
             entryImage2={entryImage2}
@@ -235,7 +235,7 @@ export function TabbedTradeForm({
           />
         </TabsContent>
         
-        <TabsContent value="notes" className="mt-0 pt-2 overflow-all">
+        <TabsContent value="notes" className="mt-0 pt-2 overflow-visible">
           <NotesSection />
         </TabsContent>
       </motion.div>

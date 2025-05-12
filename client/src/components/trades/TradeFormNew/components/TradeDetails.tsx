@@ -103,7 +103,7 @@ export function TradeDetails({
       className="space-y-5"
     >
       {/* Entry Info Section - Modernized UI */}
-      <Card className="rounded-lg border-border/50 shadow-sm !overflow-visible">
+      <Card className="rounded-lg border-border/50 shadow-sm overflow-hidden">
         <CardHeader className="bg-primary/5 py-3 px-4">
           <div className="flex items-center">
             <Icons.ui.arrowRightCircle className="h-4 w-4 text-primary mr-2" />
@@ -378,7 +378,7 @@ export function TradeDetails({
                     </Badge>
                   </div>
                   {/* Progress bar showing the R:R visually */}
-                  <div className="mt-1.5 h-2 w-full bg-muted/30 rounded-full">
+                  <div className="mt-1.5 h-2 w-full bg-muted/30 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
@@ -441,7 +441,7 @@ export function TradeDetails({
       </Card>
 
       {/* Risk & Reward Section */}
-      <Card className="rounded-lg border-border/50 shadow-sm !overflow-visible">
+      <Card className="rounded-lg border-border/50 shadow-sm overflow-hidden">
         <CardHeader className="bg-muted/30 py-3 px-4">
           <div className="flex items-center">
             <Icons.analytics.trendingUp className="h-4 w-4 text-primary mr-2" />
@@ -543,7 +543,7 @@ export function TradeDetails({
                     </div>
                     
                     {/* Progress bar showing the R:R visually */}
-                    <div className="mt-2 h-2 w-full bg-muted rounded-full">
+                    <div className="mt-2 h-2 w-full bg-muted rounded-full overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
