@@ -284,10 +284,9 @@ export default function TradePage() {
                   </CardIcon>
                   <CardTitle>Chart Images</CardTitle>
                 </div>
-                <div className="flex items-center">
-                  <Icons.general.image className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Upload entry and exit screenshots</span>
-                </div>
+                <span className="text-xs text-muted-foreground">
+                  Upload entry and exit screenshots
+                </span>
               </div>
             </CardHeader>
             <CardContent className="p-5">
