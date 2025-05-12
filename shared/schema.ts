@@ -28,7 +28,6 @@ export type Trade = {
   stopLoss: number;
   takeProfit: number;
   lotSize: number;
-  entryDate: Date;
   closeDate?: Date | null;
   exitPrice?: number | null;
   result?: string | null;
@@ -73,7 +72,6 @@ export const insertTradeSchema = z.object({
   stopLoss: z.number(),
   takeProfit: z.number(),
   lotSize: z.number(),
-  entryDate: z.date(),
   closeDate: z.date().optional(),
   exitPrice: z.number().optional(),
   result: z.string().optional(),
