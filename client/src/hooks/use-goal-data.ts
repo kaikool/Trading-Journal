@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
-import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, onGoalsSnapshot } from '@/lib/firebase'; 
+import { addGoal, updateGoal, deleteGoal, calculateGoalProgress } from '@/lib/firebase'; 
 import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
 import { auth } from '@/lib/firebase';
 import { useEffect, useState } from 'react';
 import { debug } from '@/lib/debug';
+import { firebaseListenerService } from '@/services/firebase-listener-service';
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
@@ -72,21 +73,23 @@ export function useGoalData() {
 
     setIsLoadingGoals(true);
     
-    // Register listener to monitor goal changes in real-time
-    const unsubscribe = onGoalsSnapshot(
+    // Register listener to monitor goal changes in real-time using FirebaseListenerService
+    const unsubscribe = firebaseListenerService.onGoalsSnapshot(
       firebaseUserId,
-      (goals) => {
-        debug(`Received ${goals.length} goals from Firebase`);
-        setGoalsData(goals);
-        setIsLoadingGoals(false);
-        
-        // When new goal data is received, calculate progress data
-        calculateGoalProgressData(goals);
-      },
-      (error) => {
-        debug("Error fetching goals:", error);
-        setGoalsError(error);
-        setIsLoadingGoals(false);
+      {
+        callback: (goals: any[]) => {
+          debug(`Received ${goals.length} goals from Firebase`);
+          setGoalsData(goals);
+          setIsLoadingGoals(false);
+          
+          // When new goal data is received, calculate progress data
+          calculateGoalProgressData(goals);
+        },
+        errorCallback: (error: Error) => {
+          debug("Error fetching goals:", error);
+          setGoalsError(error);
+          setIsLoadingGoals(false);
+        }
       }
     );
 
