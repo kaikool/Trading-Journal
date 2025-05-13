@@ -89,7 +89,6 @@ interface TabbedTradeFormProps {
   accountBalance: number;
   riskPercentage: number;
   setRiskPercentage: (value: number) => void;
-  isEditMode: boolean;
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
   riskRewardRatio: number;
@@ -119,7 +118,6 @@ export function TabbedTradeForm({
   accountBalance,
   riskPercentage,
   setRiskPercentage,
-  isEditMode,
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
   riskRewardRatio,
@@ -311,7 +309,6 @@ export function TabbedTradeForm({
               accountBalance={accountBalance}
               riskPercentage={riskPercentage}
               setRiskPercentage={setRiskPercentage}
-              isEditMode={isEditMode}
               calculateOptimalLotSize={calculateOptimalLotSize}
               calculateOptimalTakeProfit={calculateOptimalTakeProfit}
               riskRewardRatio={riskRewardRatio}

@@ -26,7 +26,6 @@ interface TradeDetailsProps {
   accountBalance: number;
   riskPercentage: number;
   setRiskPercentage: (value: number) => void;
-  isEditMode: boolean;
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
   riskRewardRatio?: number;
@@ -38,7 +37,6 @@ export function TradeDetails({
   accountBalance,
   riskPercentage,
   setRiskPercentage,
-  isEditMode,
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
   riskRewardRatio = 0
