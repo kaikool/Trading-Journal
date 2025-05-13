@@ -163,8 +163,28 @@ export function TabbedTradeForm({
       // Can scroll left if we're not at the beginning
       setCanScrollLeft(scrollLeft > 0);
       
-      // Can scroll right if we haven't scrolled all the way to the end
-      setCanScrollRight(scrollLeft < (scrollWidth - clientWidth - 1)); // -1 for rounding errors
+      // Cách tính toán mới:
+      // 1. Lấy kích thước của tab list
+      // 2. Kiểm tra vị trí cuối cùng của tab "Notes" có nằm trong tầm nhìn không
+      
+      // Tìm tab cuối cùng
+      const lastTabElement = tabListRef.current.querySelector('[value="notes"]');
+      
+      if (lastTabElement) {
+        // Vị trí của tab cuối và độ rộng của nó
+        const lastTabRight = lastTabElement.getBoundingClientRect().right;
+        const tabListRight = tabListRef.current.getBoundingClientRect().right;
+        
+        // Nếu phần bên phải của tab cuối cùng đã nằm trong phạm vi của tablist
+        // thì không hiển thị mũi tên nữa
+        const isLastTabVisible = lastTabRight <= tabListRight + 5; // thêm 5px margin
+        
+        setCanScrollRight(!isLastTabVisible);
+      } else {
+        // Dự phòng, sử dụng phương pháp cũ nếu không tìm thấy tab cuối
+        const margin = 50;
+        setCanScrollRight(scrollLeft < (scrollWidth - clientWidth - margin));
+      }
     }
   }, []);
   
