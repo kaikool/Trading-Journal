@@ -160,7 +160,8 @@ export function useTradeForm(props: TradeFormProps) {
         
         onSuccess();
       } else {
-        throw new Error(result.error || 'Unknown error occurred');
+        // Different error handling for failed operation
+        throw new Error('Failed to save trade data');
       }
     } catch (error) {
       logError('Error submitting trade:', error);
