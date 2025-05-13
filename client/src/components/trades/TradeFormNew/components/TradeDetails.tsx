@@ -29,6 +29,7 @@ interface TradeDetailsProps {
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
   riskRewardRatio?: number;
+  canFetchPrice: boolean;
 }
 
 export function TradeDetails({
@@ -40,7 +41,8 @@ export function TradeDetails({
   isEditMode,
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
-  riskRewardRatio = 0
+  riskRewardRatio = 0,
+  canFetchPrice
 }: TradeDetailsProps) {
   const form = useFormContext<TradeFormValues>();
   
@@ -202,20 +204,22 @@ export function TradeDetails({
                         decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
                         className="h-9 pr-9" /* Added padding-right for the button */
                       />
-                      {/* Luôn hiển thị nút fetch giá */}
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                        <GetPriceButton
-                          symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
-                          size="sm"
-                          variant="ghost" /* Remove background */
-                          onPriceReceived={(price) => {
-                            form.setValue("entryPrice", price);
-                            form.trigger("entryPrice");
-                          }}
-                          tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
-                          className="text-primary hover:text-primary/80" /* Styling for the button */
-                        />
-                      </div>
+                      {/* Chỉ hiển thị nút fetch giá khi canFetchPrice = true */}
+                      {canFetchPrice && (
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                          <GetPriceButton
+                            symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
+                            size="sm"
+                            variant="ghost" /* Remove background */
+                            onPriceReceived={(price) => {
+                              form.setValue("entryPrice", price);
+                              form.trigger("entryPrice");
+                            }}
+                            tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
+                            className="text-primary hover:text-primary/80" /* Styling for the button */
+                          />
+                        </div>
+                      )}
                     </div>
                   </FormControl>
                   <FormMessage />
