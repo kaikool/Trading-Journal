@@ -136,7 +136,7 @@ export function TradeRiskReward({
                 max={5}
                 step={0.1}
                 onValueChange={(values) => {
-                  setRiskPercentage(values[0]);
+                  onRiskChange(values[0].toString());
                 }}
                 className="my-3"
               />
