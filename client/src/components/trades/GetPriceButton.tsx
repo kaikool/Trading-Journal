@@ -9,6 +9,7 @@ import { Icons } from '@/components/icons/icons';
 import { useMarketPrice } from '@/hooks/use-market-price';
 import { debug } from '@/lib/debug';
 import { toast } from '@/hooks/use-toast';
+import { formatPrice } from '@/lib/forex-calculator';
 
 interface GetPriceButtonProps {
   symbol: string;
@@ -48,9 +49,12 @@ export function GetPriceButton({
       if (onPriceReceived) onPriceReceived(formattedPrice);
       setLastFetchTime(new Date());
       
+      // Format price according to forex standard for display in toast
+      const displayPrice = formatPrice(formattedPrice, symbol as any);
+      
       toast({
         title: "Price Updated",
-        description: `${symbol} price updated to ${formattedPrice}`,
+        description: `${symbol} price updated to ${displayPrice}`,
         variant: "default",
       });
     },

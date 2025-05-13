@@ -179,7 +179,18 @@ export function TradeDetails({
                       onBlur={field.onBlur}
                       min={0}
                       step={0.00001}
-                      decimalPlaces={selectedPair && selectedPair.includes('XAU') ? 2 : 5} /* Các cặp tiền tệ thông thường: 5 chữ số thập phân, Gold (XAU): 2 chữ số */
+                      decimalPlaces={
+                        !selectedPair ? 5 :                          // Default 5 decimal places
+                        selectedPair.includes('XAU') ? 2 :           // Gold: 2 decimal places
+                        selectedPair.includes('JPY') ? 3 :           // JPY pairs: 3 decimal places
+                        5                                            // Other forex pairs: 5 decimal places
+                      }
+                      formatOptions={{
+                        // Đảm bảo chỉ hiển thị số chữ số thập phân cần thiết
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
+                                              selectedPair && selectedPair.includes('JPY') ? 3 : 5
+                      }}
                       className="h-9 pr-9" /* Added padding-right for the button */
                     />
                     {canFetchPrice && (
