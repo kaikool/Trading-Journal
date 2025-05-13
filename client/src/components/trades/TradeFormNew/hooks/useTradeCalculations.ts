@@ -173,7 +173,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
         entryPrice: Number(entryPrice),
         stopLossPrice: Number(stopLoss),
         direction: direction as Direction,
-        riskRewardRatio: defaultRiskRewardRatio,
+        riskRewardRatio: rr,
         symbol: pair as CurrencyPair
       });
       
