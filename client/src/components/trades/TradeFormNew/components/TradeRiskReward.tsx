@@ -20,6 +20,7 @@ interface TradeRiskRewardProps {
   riskPercentage: number;
   setRiskPercentage: (value: number) => void;
   riskRewardRatio: number;
+  setRiskRewardRatio?: (value: number) => void;
 }
 
 export function TradeRiskReward({
@@ -30,9 +31,6 @@ export function TradeRiskReward({
 }: TradeRiskRewardProps) {
   const form = useFormContext<TradeFormValues>();
   
-  // Format risk:reward ratio
-  const formattedRatio = riskRewardRatio ? `${riskRewardRatio.toFixed(2)}:1` : "0:1";
-  
   // Màu sắc theo risk và ratio
   const getRiskColor = (value: number) => {
     if (value > 2) return "text-red-500";
@@ -40,6 +38,7 @@ export function TradeRiskReward({
     return "text-emerald-500";
   };
 
+  // Màu sắc cho Risk:Reward (giờ là 1:X thay vì X:1)
   const getRRColor = (value: number) => {
     if (value >= 2) return "text-emerald-500";
     if (value >= 1) return "text-amber-500";
@@ -124,7 +123,7 @@ export function TradeRiskReward({
             </div>
           </div>
           
-          {/* Risk:Reward Ratio - Đơn giản */}
+          {/* Risk:Reward Ratio - Thay bằng Slider */}
           <div className="mt-2 pt-2 border-t border-border/30">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Risk:Reward Ratio</span>
@@ -132,19 +131,44 @@ export function TradeRiskReward({
                 "text-lg font-medium", 
                 getRRColor(riskRewardRatio)
               )}>
-                {formattedRatio}
+                1:{riskRewardRatio.toFixed(2)}
               </span>
             </div>
             
-            <div className="mt-2 h-1.5 w-full bg-muted rounded-full overflow-hidden">
-              <div 
-                className={cn(
-                  "h-full",
-                  riskRewardRatio >= 2 ? "bg-emerald-500" : 
-                  riskRewardRatio >= 1 ? "bg-amber-500" : 
-                  "bg-red-500"
-                )}
-                style={{ width: `${Math.min(riskRewardRatio * 33, 100)}%` }}
+            <div className="pt-1 pb-1">
+              <Slider
+                value={[riskRewardRatio]}
+                min={0.1}
+                max={3}
+                step={0.1}
+                onValueChange={(values) => {
+                  // Cập nhật R:R và tính lại Take Profit dựa trên giá trị mới
+                  const newRR = values[0];
+                  
+                  // Tính toán Take Profit mới dựa trên Risk:Reward
+                  if (entryPrice && stopLoss) {
+                    const priceDiff = Math.abs(entryPrice - stopLoss);
+                    const direction = form.watch("direction");
+                    
+                    let newTakeProfit = 0;
+                    if (direction === "BUY") {
+                      // Nếu BUY, TP = Entry + (Entry - SL) * RR
+                      newTakeProfit = entryPrice + (priceDiff * newRR);
+                    } else {
+                      // Nếu SELL, TP = Entry - (SL - Entry) * RR
+                      newTakeProfit = entryPrice - (priceDiff * newRR);
+                    }
+                    
+                    // Cập nhật form với giá trị Take Profit mới (chuyển về số)
+                    const formattedTP = parseFloat(newTakeProfit.toFixed(5));
+                    form.setValue("takeProfit", formattedTP, {
+                      shouldValidate: true,
+                      shouldDirty: true
+                    });
+                  }
+                }}
+                className="my-2 trade-risk-slider"
+                aria-label="Risk reward ratio"
               />
             </div>
           </div>
