@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons/icons';
+import { useSwipeable } from 'react-swipeable';
 import { 
   TradeDetails,
   TradeRiskReward,
@@ -12,6 +13,7 @@ import {
 } from './';
 import { cn } from '@/lib/utils';
 import { ImageState } from '../types';
+import { debug } from '@/lib/debug';
 
 /**
  * Custom hook for responsive design
@@ -159,6 +161,36 @@ export function TabbedTradeForm({
     visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
   };
   
+  // Find the current tab index
+  const currentTabIndex = TRADE_FORM_TABS.findIndex(tab => tab.id === activeTab);
+  
+  // Get tab navigation helpers
+  const goToNextTab = useCallback(() => {
+    if (currentTabIndex < TRADE_FORM_TABS.length - 1) {
+      const nextTab = TRADE_FORM_TABS[currentTabIndex + 1].id;
+      setActiveTab(nextTab);
+      debug('Swiped Left - Moving to tab:', nextTab);
+    }
+  }, [currentTabIndex, setActiveTab]);
+  
+  const goToPrevTab = useCallback(() => {
+    if (currentTabIndex > 0) {
+      const prevTab = TRADE_FORM_TABS[currentTabIndex - 1].id;
+      setActiveTab(prevTab);
+      debug('Swiped Right - Moving to tab:', prevTab);
+    }
+  }, [currentTabIndex, setActiveTab]);
+  
+  // Setup swipe handlers
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: goToNextTab,
+    onSwipedRight: goToPrevTab,
+    preventScrollOnSwipe: false,
+    trackMouse: false,
+    swipeDuration: 250,
+    delta: 10,
+  });
+  
   return (
     <Tabs 
       defaultValue="entry" 
@@ -168,9 +200,34 @@ export function TabbedTradeForm({
     >
       <div className="mb-4 relative">
         {isMobile && (
-          <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
-            <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
-          </div>
+          <>
+            <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
+              <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
+            </div>
+            
+            {/* Navigation buttons for mobile */}
+            {currentTabIndex > 0 && (
+              <button 
+                type="button"
+                onClick={goToPrevTab}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 h-8 w-8 bg-background/80 rounded-full shadow-sm flex items-center justify-center z-20 text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Previous tab"
+              >
+                <Icons.ui.chevronLeft className="h-4 w-4" />
+              </button>
+            )}
+            
+            {currentTabIndex < TRADE_FORM_TABS.length - 1 && (
+              <button 
+                type="button"
+                onClick={goToNextTab}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 h-8 w-8 bg-background/80 rounded-full shadow-sm flex items-center justify-center z-20 text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Next tab"
+              >
+                <Icons.ui.chevronRight className="h-4 w-4" />
+              </button>
+            )}
+          </>
         )}
         <TabsList 
           className={cn(
@@ -199,11 +256,12 @@ export function TabbedTradeForm({
       </div>
       
       <motion.div
+        {...swipeHandlers}
         key={activeTab}
         initial="hidden"
         animate="visible"
         variants={tabContentVariants}
-        className="min-h-[300px] overflow-visible"
+        className="min-h-[300px] overflow-visible touch-pan-y"
       >
         <TabsContent value="entry" className="mt-0 pt-2 overflow-visible">
           <TradeDetails
