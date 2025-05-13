@@ -97,16 +97,15 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       if (!isNaN(numValue)) {
         // Định dạng số với độ chính xác thập phân cần thiết
         try {
-          // Chỉ hiển thị số thập phân nếu cần thiết
-          const options: Intl.NumberFormatOptions = {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: decimalPlaces,
-            useGrouping: false, // Không sử dụng dấu phân tách hàng nghìn
-            ...formatOptions
-          };
+          // Tính toán số chữ số thập phân cần hiển thị - luôn dùng dấu chấm
+          let digitsToShow = numValue % 1 === 0 ? 0 : // Nếu là số nguyên, không hiển thị số thập phân
+            Math.min(
+              String(numValue).split('.')[1]?.length || 0, // Giữ nguyên số chữ số thập phân đã có
+              decimalPlaces // Nhưng không vượt quá decimalPlaces
+            );
           
-          // Định dạng số cho hiển thị
-          const formatted = new Intl.NumberFormat(locale, options).format(numValue);
+          // Định dạng số cho hiển thị bằng toFixed để luôn dùng dấu chấm
+          const formatted = numValue.toFixed(digitsToShow);
           setFormattedValue(formatted);
           setInputValue(formatted);
         } catch (error) {
@@ -136,6 +135,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         
         // QUAN TRỌNG: Cho phép nhập các ký tự đặc biệt trong quá trình nhập
         // Người dùng có thể đang nhập một số chưa hoàn chỉnh
+        // Thêm regex cho phép nhiều số thập phân: dấu chấm/phẩy và số ở sau
         const validInput = /^-?[0-9]*[.,]?[0-9]*$/.test(val);
         if (!validInput) {
           return; // Bỏ qua nếu có ký tự không phải số, dấu phẩy hoặc chấm
@@ -248,8 +248,14 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
               ...formatOptions
             };
             
-            // Cập nhật giá trị đã định dạng
-            const formatted = new Intl.NumberFormat(locale, options).format(numValue);
+            // Cập nhật giá trị đã định dạng - luôn dùng dấu chấm làm dấu thập phân
+            let formatted = numValue.toFixed(
+              numValue % 1 === 0 ? 0 : // Nếu là số nguyên, không hiển thị số thập phân
+              Math.min(
+                String(numValue).split('.')[1]?.length || 0, // Giữ nguyên số chữ số thập phân người dùng nhập
+                decimalPlaces // Nhưng không vượt quá decimalPlaces
+              )
+            );
             setFormattedValue(formatted);
             setInputValue(formatted);
           }
