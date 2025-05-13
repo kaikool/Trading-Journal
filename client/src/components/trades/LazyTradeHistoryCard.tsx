@@ -175,8 +175,10 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
         if (!user) return;
         
         const strategyData = await getStrategyById(user.uid, strategy);
-        if (strategyData && strategyData.name) {
-          setStrategyName(strategyData.name);
+        // TypeScript cast to make sure we have the right type
+        const strategyWithName = strategyData as unknown as TradingStrategy;
+        if (strategyWithName && strategyWithName.name) {
+          setStrategyName(strategyWithName.name);
         } else {
           setStrategyName('Unknown Strategy');
         }
