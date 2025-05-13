@@ -136,30 +136,12 @@ export function TradeRiskReward({
                 </div>
               </div>
               
-              <div className="relative pt-2 pb-5">
-                {/* Custom labels with vertical indicators */}
-                <div className="absolute top-0 left-0 right-0 flex justify-between px-0.5 pointer-events-none">
-                  <div className="flex flex-col items-center">
-                    <div className="w-0.5 h-2 bg-muted-foreground/20" />
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div className="w-0.5 h-2 bg-muted-foreground/20" />
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div className="w-0.5 h-2 bg-muted-foreground/20" />
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <div className="w-0.5 h-2 bg-muted-foreground/20" />
-                  </div>
+              <div className="pt-1 pb-4">
+                {/* Background color indicator bar */}
+                <div className="h-1.5 w-full mt-5 mb-2 rounded-full overflow-hidden bg-muted">
+                  <div className="h-full w-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-500" />
                 </div>
                 
-                {/* Custom risk level indicators */}
-                <div className="absolute -top-2 left-0 right-0 flex">
-                  <div className="w-1/3 h-1 bg-gradient-to-r from-emerald-500 to-amber-500 rounded-l-full" />
-                  <div className="w-1/3 h-1 bg-gradient-to-r from-amber-500 to-amber-600" />
-                  <div className="w-1/3 h-1 bg-gradient-to-r from-amber-600 to-red-500 rounded-r-full" />
-                </div>
-              
                 <Slider
                   value={[riskPercentage]}
                   min={0.1}
@@ -168,14 +150,14 @@ export function TradeRiskReward({
                   onValueChange={(values) => {
                     setRiskPercentage(values[0]);
                   }}
-                  className="my-3"
+                  className="my-2"
                 />
                 
-                <div className="flex text-xs font-medium justify-between mt-2 px-0.5 text-muted-foreground/70">
-                  <span className="bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded-md">0.1%</span>
-                  <span className="bg-emerald-500/10 text-emerald-600 px-1.5 py-0.5 rounded-md">1%</span>
-                  <span className="bg-amber-500/10 text-amber-600 px-1.5 py-0.5 rounded-md">2%</span>
-                  <span className="bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded-md">5%</span>
+                <div className="flex justify-between mt-2 px-1">
+                  <div className="text-xs font-medium bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded-md">0.1%</div>
+                  <div className="text-xs font-medium bg-emerald-500/10 text-emerald-600 px-2 py-0.5 rounded-md">1%</div>
+                  <div className="text-xs font-medium bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-md">2%</div>
+                  <div className="text-xs font-medium bg-red-500/10 text-red-500 px-2 py-0.5 rounded-md">5%</div>
                 </div>
               </div>
             </div>
@@ -291,18 +273,22 @@ export function TradeRiskReward({
                   </div>
                 </div>
                 
-                <div className="relative">
-                  <div className="absolute -top-1 left-0 right-0 flex items-center justify-between px-2 text-xs text-muted-foreground/70">
+                <div className="relative my-3">
+                  <div className="flex items-center justify-between mb-1 text-xs text-muted-foreground/80">
                     <span>Poor</span>
                     <span>Good</span>
                     <span>Excellent</span>
                   </div>
-                  <div className="h-1 bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 rounded-full mt-4" />
+                  <div className="h-2 bg-gradient-to-r from-red-500 via-amber-500 to-emerald-500 rounded-full overflow-hidden relative">
+                    <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-transparent to-white/10"></div>
+                  </div>
                   <div 
-                    className="absolute top-[17px] transform -translate-x-1/2"
+                    className="absolute -bottom-2 transform -translate-x-1/2"
                     style={{ left: `${rrProgressValue}%` }}
                   >
-                    <div className="w-3 h-3 rounded-full bg-white border-2 border-primary shadow-md"></div>
+                    <div className="h-5 w-5 rounded-full bg-white border-2 border-primary shadow-lg flex items-center justify-center">
+                      <div className="h-2 w-2 rounded-full bg-primary"></div>
+                    </div>
                   </div>
                 </div>
               </div>
