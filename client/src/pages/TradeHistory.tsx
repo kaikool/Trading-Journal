@@ -965,9 +965,9 @@ export default function TradeHistory() {
         </Card>
       )}
 
-      <div className="w-full space-y-5">
+      <div className="w-full space-y-5 overflow-hidden">
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full overflow-hidden">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="h-[320px] w-full">
                 <Skeleton className="h-full w-full rounded-lg" />
@@ -976,7 +976,7 @@ export default function TradeHistory() {
           </div>
         ) : trades.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full overflow-hidden">
               <AnimatePresence>
                 {trades
                   .filter(trade => !deletingTradeIds.includes(trade.id))
@@ -986,7 +986,7 @@ export default function TradeHistory() {
                       initial={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
                       layout
-                      className="w-full"
+                      className="w-full overflow-hidden"
                     >
                       <LazyTradeHistoryCard 
                         trade={trade} 
