@@ -223,7 +223,7 @@ export function TabbedTradeForm({
     if (currentTabIndex < TRADE_FORM_TABS.length - 1) {
       const nextTab = TRADE_FORM_TABS[currentTabIndex + 1].id;
       setActiveTab(nextTab);
-      debug('Swiped Left - Moving to tab:', nextTab);
+      // Tab changed via swipe left
     }
   }, [currentTabIndex, setActiveTab]);
   
@@ -231,7 +231,7 @@ export function TabbedTradeForm({
     if (currentTabIndex > 0) {
       const prevTab = TRADE_FORM_TABS[currentTabIndex - 1].id;
       setActiveTab(prevTab);
-      debug('Swiped Right - Moving to tab:', prevTab);
+      // Tab changed via swipe right
     }
   }, [currentTabIndex, setActiveTab]);
   

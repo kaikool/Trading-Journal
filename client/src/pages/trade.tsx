@@ -5,7 +5,6 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { FormProvider } from "react-hook-form";
 import { useTradeForm } from "@/components/trades/TradeFormNew/hooks";
-import { debug } from "@/lib/debug";
 
 // UI Components
 import {
@@ -139,8 +138,7 @@ export default function TradePage() {
     );
   }
 
-  // Log khi component được render
-  debug("Rendering TradePage, draft status:", { hasDraft, showDraftNotice });
+  // Removed debug logging
 
   return (
     <div className="px-0 sm:px-6 lg:px-8">

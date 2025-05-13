@@ -31,10 +31,7 @@ export function useDraftManagement({
   const draftSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Create component-specific debug helper function
-  const devLog = (message: string, data?: any) => {
-    debug(`[DraftManagement] ${message}`, data);
-  };
+  // Removed unused debug helper function
 
   // Load draft from localStorage
   const loadDraftFromLocalStorage = useCallback((userId: string): { formData: any, imageUrls: any, timestamp: string } | null => {
@@ -92,7 +89,6 @@ export function useDraftManagement({
         
         localStorage.setItem(draftKey, JSON.stringify(draftData));
         setHasDraft(true);
-        debug('Draft saved successfully');
       } catch (error) {
         logError('Error saving draft to localStorage:', error);
       } finally {
@@ -111,7 +107,7 @@ export function useDraftManagement({
     // Only set timer if there's a draft
     if (!isEditMode && userId && hasDraft) {
       inactivityTimeoutRef.current = setTimeout(() => {
-        debug('Automatically clearing draft due to inactivity (5 minutes)');
+        // Clear draft after 5 minutes of inactivity
         clearDraftFromLocalStorage(userId);
         setHasDraft(false);
       }, 5 * 60 * 1000); // 5 minutes = 300,000ms
@@ -210,7 +206,6 @@ export function useDraftManagement({
     hasDraft,
     showDraftNotice,
     isDraftLoading,
-    isDraftSaving,
     setShowDraftNotice,
     loadDraft,
     saveDraft,
