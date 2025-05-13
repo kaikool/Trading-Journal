@@ -345,16 +345,16 @@ export function calculateTakeProfitPrice(params: TakeProfitCalculationParams): n
  * Format price with appropriate decimal places based on currency pair
  * 
  * XAUUSD: xxxx.xx (2 decimal places)
- * USDJPY: xxx.xx (2 decimal places)
- * EURUSD and other pairs: x.xxxx (4 decimal places)
+ * USDJPY: xxx.xxx (3 decimal places)
+ * EURUSD and other pairs: x.xxxxx (5 decimal places)
  */
 export function formatPrice(price: number, pair: CurrencyPair): string {
   if (pair === "XAUUSD") {
     return price.toFixed(2); // Format gold price as xxxx.xx
   } else if (pair === "USDJPY") {
-    return price.toFixed(2); // Format JPY pairs as xxx.xx
+    return price.toFixed(3); // Format JPY pairs as xxx.xxx
   } else {
-    return price.toFixed(4); // Format other pairs as x.xxxx
+    return price.toFixed(5); // Format other pairs as x.xxxxx (5 decimal places for precision)
   }
 }
 
