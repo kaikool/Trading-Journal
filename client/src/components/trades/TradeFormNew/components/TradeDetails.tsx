@@ -197,12 +197,7 @@ export function TradeDetails({
                         onChange={field.onChange}
                         onBlur={field.onBlur}
                         min={0}
-                        step={
-                          !selectedPair ? 0.0001 :              // Default 4 decimal places
-                          selectedPair.includes('XAU') ? 0.01 : // Gold: 2 decimal places
-                          selectedPair.includes('JPY') ? 0.01 : // JPY pairs: 2 decimal places
-                          0.0001                                // Other forex pairs: 4 decimal places
-                        }
+                        step={0.00001} // Giữ nguyên giá trị nhỏ để cho phép nhập linh hoạt
                         decimalPlaces={
                           !selectedPair ? 4 :                   // Default 4 decimal places
                           selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
@@ -263,12 +258,7 @@ export function TradeDetails({
                       onChange={field.onChange}
                       onBlur={field.onBlur}
                       min={0}
-                      step={
-                        !selectedPair ? 0.0001 :              // Default 4 decimal places
-                        selectedPair.includes('XAU') ? 0.01 : // Gold: 2 decimal places
-                        selectedPair.includes('JPY') ? 0.01 : // JPY pairs: 2 decimal places
-                        0.0001                                // Other forex pairs: 4 decimal places
-                      }
+                      step={0.00001} // Giữ nguyên giá trị nhỏ để cho phép nhập linh hoạt
                       decimalPlaces={
                         !selectedPair ? 4 :                   // Default 4 decimal places
                         selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
@@ -310,12 +300,7 @@ export function TradeDetails({
                       onChange={field.onChange}
                       onBlur={field.onBlur}
                       min={0}
-                      step={
-                        !selectedPair ? 0.0001 :              // Default 4 decimal places
-                        selectedPair.includes('XAU') ? 0.01 : // Gold: 2 decimal places
-                        selectedPair.includes('JPY') ? 0.01 : // JPY pairs: 2 decimal places
-                        0.0001                                // Other forex pairs: 4 decimal places
-                      }
+                      step={0.00001} // Giữ nguyên giá trị nhỏ để cho phép nhập linh hoạt
                       decimalPlaces={
                         !selectedPair ? 4 :                   // Default 4 decimal places
                         selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
