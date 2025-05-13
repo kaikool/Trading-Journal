@@ -148,7 +148,10 @@ export function TradeDetails({
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger id="pair" className="h-9 text-sm">
+                      <SelectTrigger 
+                        id="pair" 
+                        className="h-9 text-sm"
+                      >
                         <SelectValue placeholder="Select pair" />
                       </SelectTrigger>
                     </FormControl>
