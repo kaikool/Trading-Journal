@@ -12,7 +12,8 @@ import {
   calculateTakeProfitPrice,
   formatPrice,
   CurrencyPair,
-  Direction
+  Direction,
+  Currency
 } from '@/lib/forex-calculator';
 import { isSymbolSupported } from '@/lib/market-price-service';
 
@@ -124,7 +125,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
         accountBalance,
         riskPercentage,
         direction: direction as Direction,
-        accountCurrency: "USD"
+        accountCurrency: "USD" as Currency
       });
       
       // Round to 2 decimal places
@@ -176,10 +177,10 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     const { pair, direction, entryPrice, exitPrice } = form.getValues();
     if (!pair || !direction || !entryPrice || !exitPrice) return "0";
     
-    const directionTyped = direction;
-    const pairTyped = pair;
-    const entryPriceNum = entryPrice;
-    const exitPriceNum = exitPrice;
+    const directionTyped = direction as Direction;
+    const pairTyped = pair as CurrencyPair;
+    const entryPriceNum = Number(entryPrice);
+    const exitPriceNum = Number(exitPrice);
     
     const pips = calculatePips(pairTyped, directionTyped, entryPriceNum, exitPriceNum);
     return pips.toFixed(1);
@@ -190,18 +191,19 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     const { pair, direction, entryPrice, exitPrice, lotSize } = form.getValues();
     if (!pair || !direction || !entryPrice || !exitPrice || !lotSize) return 0;
     
-    const directionTyped = direction;
-    const pairTyped = pair;
-    const entryPriceNum = entryPrice;
-    const exitPriceNum = exitPrice;
-    const lotSizeNum = lotSize;
+    const directionTyped = direction as Direction;
+    const pairTyped = pair as CurrencyPair;
+    const entryPriceNum = Number(entryPrice);
+    const exitPriceNum = Number(exitPrice);
+    const lotSizeNum = Number(lotSize);
     
     const profit = calculateProfit({
-      symbol: pairTyped,
+      pair: pairTyped,
       entryPrice: entryPriceNum,
       exitPrice: exitPriceNum,
       lotSize: lotSizeNum,
-      direction: directionTyped
+      direction: directionTyped,
+      accountCurrency: "USD"
     });
     
     return profit;
