@@ -116,12 +116,13 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
       
       // Calculate lot size based on risk percentage
       const lotSize = calculateLotSize({
-        symbol: pair,
-        entryPrice,
-        stopLossPrice: stopLoss,
+        pair: pair as CurrencyPair,
+        entryPrice: Number(entryPrice),
+        stopLoss: Number(stopLoss),
         accountBalance,
         riskPercentage,
-        direction
+        direction: direction as Direction,
+        accountCurrency: "USD"
       });
       
       // Round to 2 decimal places

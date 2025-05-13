@@ -82,7 +82,7 @@ export function TradeRiskReward({
             
             <div className="flex items-center gap-2 mt-4 mb-1">
               <Slider
-                value={[riskValue]}
+                value={[Number(riskValue)]}
                 min={0.1}
                 max={5}
                 step={0.1}
@@ -110,11 +110,11 @@ export function TradeRiskReward({
                 <span className="text-muted-foreground">Risk Amount:</span>
                 <span className={cn(
                   "font-medium",
-                  riskValue > 2 ? "text-red-500" : 
-                  riskValue > 1 ? "text-amber-500" : 
+                  Number(riskValue) > 2 ? "text-red-500" : 
+                  Number(riskValue) > 1 ? "text-amber-500" : 
                   "text-green-500"
                 )}>
-                  {formatCurrency(accountBalance * (riskValue / 100))}
+                  {formatCurrency(accountBalance * (Number(riskValue) / 100))}
                 </span>
               </div>
             </div>
@@ -161,7 +161,7 @@ export function TradeRiskReward({
             <div className="flex justify-between text-sm mt-3 pt-3 border-t border-muted/30">
               <span className="text-muted-foreground">Potential Gain:</span>
               <span className="font-medium text-green-500">
-                {formatCurrency(accountBalance * (riskValue / 100) * riskRewardRatio)}
+                {formatCurrency(accountBalance * (Number(riskValue) / 100) * riskRewardRatio)}
               </span>
             </div>
           </div>
