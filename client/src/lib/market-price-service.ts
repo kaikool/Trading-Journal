@@ -230,15 +230,3 @@ export function formatSymbolForAPI(symbol: string): string {
   return symbol;
 }
 
-/**
- * Kiểm tra xem ký hiệu có được hỗ trợ bởi TwelveData không
- */
-export function isSymbolSupported(symbol: string): boolean {
-  // Danh sách các cặp tiền tệ/hàng hóa phổ biến
-  const supportedSymbols = [
-    'EURUSD', 'GBPUSD', 'USDJPY', 'USDCHF', 'AUDUSD', 'USDCAD', 
-    'NZDUSD', 'EURJPY', 'GBPJPY', 'EURGBP', 'XAUUSD', 'XAGUSD'
-  ];
-  
-  return supportedSymbols.includes(symbol.toUpperCase());
-}

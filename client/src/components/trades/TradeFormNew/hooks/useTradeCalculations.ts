@@ -133,7 +133,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
         }
       }
       
-      // Không cần kiểm tra symbol hỗ trợ nữa, luôn cho phép lấy giá
+
     });
     
     return () => subscription.unsubscribe();
