@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFormContext } from "react-hook-form";
 import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { Label } from '@/components/ui/label';
@@ -33,6 +33,14 @@ export function TradeRiskReward({
 }: TradeRiskRewardProps) {
   const form = useFormContext<TradeFormValues>();
   
+  // Sử dụng state nội bộ để đảm bảo đồng bộ với prop
+  const [internalRiskValue, setInternalRiskValue] = useState(riskPercentage);
+  
+  // Cập nhật state nội bộ khi prop thay đổi
+  useEffect(() => {
+    setInternalRiskValue(riskPercentage);
+  }, [riskPercentage]);
+  
   // Format risk:reward ratio
   const formattedRatio = riskRewardRatio ? `${riskRewardRatio.toFixed(2)}:1` : "0:1";
   
@@ -41,7 +49,7 @@ export function TradeRiskReward({
     value: riskValue, 
     onChange: onRiskChange 
   } = useNumberInput({
-    initial: riskPercentage,
+    initial: internalRiskValue, // Sử dụng state nội bộ
     min: 0.1,
     max: 5,
     step: 0.1,
@@ -81,7 +89,7 @@ export function TradeRiskReward({
   };
 
   // Tính toán giá trị risk amount và potential gain
-  const riskAmount = accountBalance * (Number(riskValue) / 100);
+  const riskAmount = accountBalance * (internalRiskValue / 100);
   const potentialGain = riskAmount * riskRewardRatio;
   
   // Tính toán pips và potential profit
@@ -124,20 +132,21 @@ export function TradeRiskReward({
                 <Label className="text-sm">Risk per Trade</Label>
                 <Badge 
                   variant="outline" 
-                  className={cn("font-medium", getRiskColor(Number(riskValue)))}
+                  className={cn("font-medium", getRiskColor(internalRiskValue))}
                 >
-                  {riskValue}%
+                  {internalRiskValue.toFixed(1)}%
                 </Badge>
               </div>
               
               <Slider
-                value={[Number(riskValue)]}
+                value={[internalRiskValue]}
                 min={0.1}
                 max={5}
                 step={0.1}
                 onValueChange={(values) => {
-                  // onRiskChange nhận number hoặc object input event
-                  onRiskChange(values[0]);
+                  const newValue = values[0];
+                  setInternalRiskValue(newValue);
+                  setRiskPercentage(newValue);
                 }}
                 className="my-3"
               />
