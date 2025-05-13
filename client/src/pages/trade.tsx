@@ -195,7 +195,7 @@ export default function TradePage() {
                   <CardIcon color="primary" variant="soft">
                     <Icons.trade.candlestick className="h-5 w-5" />
                   </CardIcon>
-                  <CardTitle>Trade Details</CardTitle>
+                  <CardTitle>Journal Entry</CardTitle>
                 </div>
                 
                 {/* Simple status indicator */}

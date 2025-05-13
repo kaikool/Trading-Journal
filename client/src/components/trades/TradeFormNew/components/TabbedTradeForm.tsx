@@ -147,8 +147,8 @@ export function TabbedTradeForm({
   removeEntryImage,
   removeExitImage,
 }: TabbedTradeFormProps) {
-  // State for active tab
-  const [activeTab, setActiveTab] = useState('general');
+  // State for active tab - set to 'entry' to match the first tab in TRADE_FORM_TABS
+  const [activeTab, setActiveTab] = useState('entry');
   
   // Check if screen is mobile
   const isMobile = useMediaQuery('(max-width: 640px)');
@@ -161,7 +161,7 @@ export function TabbedTradeForm({
   
   return (
     <Tabs 
-      defaultValue="general" 
+      defaultValue="entry" 
       value={activeTab} 
       onValueChange={setActiveTab}
       className="w-full"
