@@ -274,9 +274,12 @@ export function TradeDetails({
               render={({ field }) => (
                 <FormItem>
                   <div className="h-6 flex items-center justify-between">
-                    <Label htmlFor="takeProfit" className="text-sm font-medium">
-                      Take Profit
-                    </Label>
+                    <div className="flex items-center gap-1">
+                      <Label htmlFor="takeProfit" className="text-sm font-medium">
+                        Take Profit
+                      </Label>
+                      <span className="text-xs text-muted-foreground italic bg-muted px-1 rounded">Auto R:R</span>
+                    </div>
                     <Button
                       type="button"
                       size="sm"
@@ -284,6 +287,7 @@ export function TradeDetails({
                       className="h-6 text-sm gap-1 rounded-sm"
                       onClick={calculateOptimalTakeProfit}
                       disabled={isCalculatingTakeProfit}
+                      title="Manually recalculate based on R:R"
                     >
                       {isCalculatingTakeProfit ? (
                         <Icons.ui.spinner className="h-3 w-3 animate-spin" />

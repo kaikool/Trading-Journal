@@ -75,16 +75,48 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     loadUserData();
   }, [userId]);
   
-  // Calculate risk:reward ratio when relevant form fields change
+  // Calculate risk:reward ratio and auto-calculate take profit when relevant form fields change
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-      // Only proceed if all required values are present
+      // Auto-calculate take profit when entry price or stop loss changes
       if (
         name === 'entryPrice' || 
         name === 'stopLoss' || 
-        name === 'takeProfit' || 
         name === 'direction'
       ) {
+        const { entryPrice, stopLoss, direction, pair } = form.getValues();
+        
+        // If entry price and stop loss are set, automatically calculate the take profit
+        if (entryPrice && stopLoss && direction && pair) {
+          try {
+            // Get risk:reward ratio from settings
+            const rr = defaultRiskRewardRatio || 1.5;
+            
+            // Calculate take profit based on risk:reward ratio
+            const takeProfitPrice = calculateTakeProfitPrice({
+              entryPrice: Number(entryPrice),
+              stopLossPrice: Number(stopLoss),
+              direction: direction as Direction,
+              riskRewardRatio: rr,
+              symbol: pair as CurrencyPair
+            });
+            
+            // Format the price to the appropriate number of decimal places
+            const formattedPrice = formatPrice(takeProfitPrice, pair as CurrencyPair);
+            
+            // Set take profit in form
+            form.setValue('takeProfit', Number(formattedPrice));
+            
+            // Also update the risk:reward ratio display
+            setRiskRewardRatio(rr);
+          } catch (error) {
+            console.error('Error auto-calculating take profit:', error);
+          }
+        }
+      }
+      
+      // Update risk:reward ratio when take profit changes manually
+      if (name === 'takeProfit') {
         const { entryPrice, stopLoss, takeProfit, direction } = form.getValues();
         
         if (entryPrice && stopLoss && takeProfit && direction) {
@@ -117,7 +149,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     });
     
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, defaultRiskRewardRatio]);
   
   // Calculate lot size based on risk percentage
   const calculateOptimalLotSize = useCallback(() => {
