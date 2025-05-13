@@ -10,7 +10,9 @@ import {
   calculatePips, 
   calculateProfit, 
   calculateTakeProfitPrice,
-  formatPrice
+  formatPrice,
+  CurrencyPair,
+  Direction
 } from '@/lib/forex-calculator';
 import { isSymbolSupported } from '@/lib/market-price-service';
 
@@ -152,16 +154,16 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
       const takeProfitPrice = calculateTakeProfitPrice({
         entryPrice: Number(entryPrice),
         stopLossPrice: Number(stopLoss),
-        direction: direction,
+        direction: direction as Direction,
         riskRewardRatio: defaultRiskRewardRatio,
-        symbol: pair
+        symbol: pair as CurrencyPair
       });
       
       // Format the price to the appropriate number of decimal places
-      const formattedPrice = formatPrice(takeProfitPrice, pair);
+      const formattedPrice = formatPrice(takeProfitPrice, pair as CurrencyPair);
       
       // Set take profit in form
-      form.setValue('takeProfit', formattedPrice);
+      form.setValue('takeProfit', Number(formattedPrice));
     } catch (error) {
       console.error('Error calculating take profit:', error);
     } finally {
