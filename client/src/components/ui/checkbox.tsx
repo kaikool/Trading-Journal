@@ -5,11 +5,11 @@ import { useCallback } from "react"
 
 import { cn } from "@/lib/utils"
 
-// Cải tiến Checkbox component để tránh lỗi flushSync
+// Cải tiến Checkbox component để tránh lỗi flushSync và làm việc tốt với Accordion
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
->(({ className, onCheckedChange, ...props }, ref) => {
+>(({ className, onCheckedChange, onClick, ...props }, ref) => {
   // Tạo handler riêng để tránh flushSync trong lifecycle method
   // Sử dụng setTimeout để đưa event handling ra khỏi lifecycle method
   const handleCheckedChange = useCallback(
@@ -23,6 +23,16 @@ const Checkbox = React.forwardRef<
     },
     [onCheckedChange]
   );
+  
+  // Handler để dừng lan truyền các sự kiện để tránh Accordion bắt chúng
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Dừng lan truyền sự kiện
+    e.stopPropagation();
+    // Gọi hàm click gốc nếu có
+    if (onClick) {
+      onClick(e as any);
+    }
+  }, [onClick]);
 
   return (
     <CheckboxPrimitive.Root
@@ -31,6 +41,10 @@ const Checkbox = React.forwardRef<
         "peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         className
       )}
+      onClick={handleClick}
+      onMouseDown={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+      onFocus={(e) => e.stopPropagation()}
       onCheckedChange={handleCheckedChange}
       {...props}
     >

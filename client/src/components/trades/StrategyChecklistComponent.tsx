@@ -18,9 +18,18 @@ interface StrategyCheckItemProps {
  */
 export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckItemProps) {
   return (
-    <div className="flex items-start py-2 px-2 border-b border-border/30 last:border-0 hover:bg-muted/20">
+    <div 
+      className="flex items-start py-2 px-2 border-b border-border/30 last:border-0 hover:bg-muted/20"
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+      onFocus={(e) => e.stopPropagation()}
+    >
       {/* Simple checkbox that toggles passed status directly */}
-      <div className="flex-shrink-0 mr-3 pt-0.5">
+      <div 
+        className="flex-shrink-0 mr-3 pt-0.5" 
+        onClick={(e) => e.stopPropagation()}
+      >
         <Checkbox
           id={`check-${check.conditionId}`}
           checked={check.passed}
