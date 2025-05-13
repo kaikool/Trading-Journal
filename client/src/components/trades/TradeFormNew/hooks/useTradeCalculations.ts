@@ -149,15 +149,15 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
       
       // Calculate take profit based on risk:reward ratio
       const takeProfitPrice = calculateTakeProfitPrice({
-        entryPrice,
-        stopLossPrice: stopLoss,
-        direction,
+        entryPrice: Number(entryPrice),
+        stopLossPrice: Number(stopLoss),
+        direction: direction,
         riskRewardRatio: defaultRiskRewardRatio,
         symbol: pair
       });
       
       // Format the price to the appropriate number of decimal places
-      const formattedPrice = formatPrice(pair, takeProfitPrice);
+      const formattedPrice = formatPrice(takeProfitPrice, pair);
       
       // Set take profit in form
       form.setValue('takeProfit', formattedPrice);

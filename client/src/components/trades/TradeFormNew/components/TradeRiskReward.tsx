@@ -129,7 +129,7 @@ export function TradeRiskReward({
               <span className="text-muted-foreground">Pips at Risk:</span>
               <span className="font-medium">
                 {form.watch("entryPrice") && form.watch("stopLoss") ? 
-                  Math.abs(form.watch("entryPrice") - form.watch("stopLoss")).toFixed(5) : 
+                  Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("stopLoss"))).toFixed(5) : 
                   "0.00000"}
               </span>
             </div>
@@ -139,7 +139,7 @@ export function TradeRiskReward({
               <span className="text-muted-foreground">Potential Profit:</span>
               <span className="font-medium text-green-500">
                 {form.watch("entryPrice") && form.watch("takeProfit") ? 
-                  Math.abs(form.watch("entryPrice") - form.watch("takeProfit")).toFixed(5) : 
+                  Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("takeProfit"))).toFixed(5) : 
                   "0.00000"}
               </span>
             </div>

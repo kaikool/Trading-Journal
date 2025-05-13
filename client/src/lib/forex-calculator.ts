@@ -321,17 +321,22 @@ export function calculateStopLossPrice(
 /**
  * Calculate take profit price based on risk/reward ratio
  */
-export function calculateTakeProfitPrice(
-  entryPrice: number,
-  stopLoss: number,
-  riskRewardRatio: number,
-  direction: Direction
-): number {
+export interface TakeProfitCalculationParams {
+  entryPrice: number;
+  stopLossPrice: number;
+  riskRewardRatio: number;
+  direction: Direction;
+  symbol: CurrencyPair;
+}
+
+export function calculateTakeProfitPrice(params: TakeProfitCalculationParams): number {
+  const { entryPrice, stopLossPrice, riskRewardRatio, direction } = params;
+  
   if (direction === "BUY") {
-    const risk = entryPrice - stopLoss;
+    const risk = entryPrice - stopLossPrice;
     return entryPrice + (risk * riskRewardRatio);
   } else {
-    const risk = stopLoss - entryPrice;
+    const risk = stopLossPrice - entryPrice;
     return entryPrice - (risk * riskRewardRatio);
   }
 }
