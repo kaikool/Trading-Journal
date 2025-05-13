@@ -53,15 +53,24 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
           
           // Set risk and reward ratio defaults if available
           if (userData.settings) {
+            console.log("[DEBUG] User settings loaded:", userData.settings);
             if (userData.settings.defaultRiskPercentage) {
+              console.log("[DEBUG] Setting default risk percentage:", userData.settings.defaultRiskPercentage);
               setRiskPercentage(userData.settings.defaultRiskPercentage);
+            } else {
+              console.log("[DEBUG] No default risk percentage in settings, using:", riskPercentage);
             }
             
             if (userData.settings.defaultRiskRewardRatio) {
               const defaultRR = userData.settings.defaultRiskRewardRatio;
+              console.log("[DEBUG] Setting default R:R ratio:", defaultRR);
               setDefaultRiskRewardRatio(defaultRR);
               setRiskRewardRatio(defaultRR);
+            } else {
+              console.log("[DEBUG] No default R:R ratio in settings, using:", riskRewardRatio);
             }
+          } else {
+            console.log("[DEBUG] No user settings found in userData:", userData);
           }
         }
       } catch (error) {
