@@ -151,7 +151,7 @@ export function TradeRiskReward({
             
             <div className="pt-1">
               <div className="flex items-center gap-2 text-sm mb-2">
-                <Icons.general.dollarSign className="h-3.5 w-3.5 text-muted-foreground" />
+                <Icons.analytics.dollar className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="text-muted-foreground">Risk Amount</span>
               </div>
               
@@ -171,7 +171,7 @@ export function TradeRiskReward({
               {/* Pips at Risk */}
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Icons.ui.ruler className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Icons.general.target className="h-3.5 w-3.5 text-muted-foreground" />
                   <Label className="text-xs text-muted-foreground">Pips at Risk</Label>
                 </div>
                 <div className="h-8 bg-muted/50 rounded-md flex items-center px-3">
@@ -182,7 +182,7 @@ export function TradeRiskReward({
               {/* Potential Profit Pips */}
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1.5">
-                  <Icons.analytics.profit className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Icons.analytics.trendingUp className="h-3.5 w-3.5 text-muted-foreground" />
                   <Label className="text-xs text-muted-foreground">Potential Profit</Label>
                 </div>
                 <div className="h-8 bg-muted/50 rounded-md flex items-center px-3">
@@ -197,7 +197,7 @@ export function TradeRiskReward({
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <Icons.analytics.scale className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Icons.ui.scale className="h-3.5 w-3.5 text-muted-foreground" />
                     <Label className="text-xs text-muted-foreground">Risk:Reward Ratio</Label>
                   </div>
                   <span className={cn("text-sm font-medium", getRRColor(riskRewardRatio))}>
@@ -210,7 +210,7 @@ export function TradeRiskReward({
               {/* Potential Gain */}
               <div className="bg-muted/50 rounded-md flex items-center justify-between p-3">
                 <div className="flex items-center gap-1.5">
-                  <Icons.analytics.trending className="h-4 w-4 text-muted-foreground" />
+                  <Icons.analytics.trendingUp className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">Potential Gain</span>
                 </div>
                 <span className="text-sm font-medium text-emerald-500">{formatCurrency(potentialGain)}</span>
