@@ -1,0 +1,61 @@
+useTradeForm.ts:157 
+ Uncaught ReferenceError: Cannot access 'imageManagement' before initialization
+    at getDefaultValues (useTradeForm.ts:157:9)
+    at useTradeForm (useTradeForm.ts:27:20)
+    at TradeFormNew (index.tsx:65:7)
+useTradeForm.ts:157 
+ Uncaught ReferenceError: Cannot access 'imageManagement' before initialization
+    at getDefaultValues (useTradeForm.ts:157:9)
+    at useTradeForm (useTradeForm.ts:27:20)
+    at TradeFormNew (index.tsx:65:7)
+react-dom.development.js:18704 
+ The above error occurred in the <TradeFormNew> component:
+
+    at TradeFormNew (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/trades/TradeFormNew/index.tsx:32:26)
+    at div
+    at LazyTradeEditForm (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/trades/LazyTradeEditForm.tsx:21:3)
+    at Suspense
+    at div
+    at https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…unner/workspace/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=f7417274:41:13
+    at Presence (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…unner/workspace/node_modules/.vite/deps/chunk-LME5HNLI.js?v=f7417274:24:11)
+    at https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…orkspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=f7417274:448:13
+    at _c5 (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/ui/tabs.tsx:72:12)
+    at div
+    at https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…unner/workspace/node_modules/.vite/deps/chunk-RLTE5R7I.js?v=f7417274:41:13
+    at Provider (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…unner/workspace/node_modules/.vite/deps/chunk-JJS7DLG7.js?v=f7417274:38:15)
+    at https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=f7417274:326:7
+    at div
+    at div
+    at _c9 (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/ui/card.tsx:136:12)
+    at div
+    at _c (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/ui/card.tsx:20:11)
+    at LazyTradeViewEdit (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/trades/LazyTradeViewEdit.tsx:39:3)
+    at div
+    at ViewTradeOptimized (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/pages/ViewTradeOptimized.tsx:30:23)
+    at Route (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f7417274:323:16)
+    at Switch (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=f7417274:379:17)
+    at Suspense
+    at ErrorBoundary (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at div
+    at div
+    at main
+    at div
+    at AppLayout (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/layout/AppLayout.tsx:24:29)
+    at ErrorBoundary (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at withErrorBoundary(AppLayout)
+    at MainContent (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/App.tsx?v=dJ_1zsLBhXmVVKSxrGEHp:86:27)
+    at DialogProvider (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/contexts/DialogContext.tsx:31:34)
+    at DataCacheProvider (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/contexts/DataCacheContext.tsx:26:37)
+    at LayoutProvider (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/contexts/LayoutContext.tsx:31:34)
+    at ThemeProvider (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/contexts/ThemeContext.tsx:38:33)
+    at QueryClientProvider (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=f7417274:2805:3)
+    at App (https://1a03ce4c-d04d-43fc-93c6-927a9efc510b-00-kjj7obtpaot1.sisko.replit.dev/src/App.tsx?v=dJ_1zsLBhXmVVKSxrGEHp:367:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+error-boundary.tsx:51 
+ ErrorBoundary caught an error: ReferenceError: Cannot access 'imageManagement' before initialization
+    at getDefaultValues (useTradeForm.ts:157:9)
+    at useTradeForm (useTradeForm.ts:27:20)
+    at TradeFormNew (index.tsx:65:7)
+ 
+{componentStack: '\n    at TradeFormNew (https://1a03ce4c-d04d-43fc-9…it.dev/src/App.tsx?v=dJ_1zsLBhXmVVKSxrGEHp:367:3)'}

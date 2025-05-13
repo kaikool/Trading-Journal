@@ -21,10 +21,56 @@ export function useTradeForm(props: TradeFormProps) {
   const [isFormSubmitting, setIsFormSubmitting] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   
-  // Initialize the form with default values
+  // Tạo một tham chiếu không đồng bộ để tránh lỗi khởi tạo lồng nhau
+  let imageManagementRef: ReturnType<typeof useImageManagement> | null = null;
+  
+  // Khởi tạo form với giá trị mặc định không phụ thuộc vào imageManagement
   const form = useForm<TradeFormValues>({
     resolver: zodResolver(tradeFormSchema),
-    defaultValues: getDefaultValues()
+    defaultValues: isEditMode && initialValues ? {
+      pair: initialValues.pair || "",
+      direction: initialValues.direction as "BUY" | "SELL",
+      entryPrice: initialValues.entryPrice,
+      stopLoss: initialValues.stopLoss,
+      takeProfit: initialValues.takeProfit,
+      lotSize: initialValues.lotSize,
+      strategy: initialValues.strategy || "",
+      techPattern: initialValues.techPattern || "",
+      emotion: initialValues.emotion || "",
+      followedPlan: initialValues.discipline?.followedPlan || false,
+      enteredEarly: initialValues.discipline?.enteredEarly || false,
+      revenge: initialValues.discipline?.revenge || false,
+      overLeveraged: initialValues.discipline?.overLeveraged || false,
+      movedStopLoss: initialValues.discipline?.movedStopLoss || false,
+      marketCondition: initialValues.marketCondition || "",
+      sessionType: initialValues.sessionType || "",
+      hasNews: initialValues.hasNews || false,
+      notes: initialValues.notes || "",
+      isOpen: initialValues.isOpen || false,
+      exitPrice: initialValues.exitPrice || null,
+      result: initialValues.result as any || undefined,
+      closingNote: ""
+    } : {
+      pair: "XAUUSD",
+      direction: "BUY",
+      entryPrice: 0,
+      stopLoss: 0,
+      takeProfit: 0,
+      lotSize: 0.01,
+      strategy: "",
+      techPattern: "",
+      emotion: "",
+      followedPlan: true,
+      enteredEarly: false,
+      revenge: false,
+      overLeveraged: false,
+      movedStopLoss: false,
+      marketCondition: "",
+      sessionType: "",
+      hasNews: false,
+      notes: "",
+      isOpen: true
+    }
   });
   
   // Setup custom hooks
@@ -32,9 +78,12 @@ export function useTradeForm(props: TradeFormProps) {
     userId,
     tradeId: tradeId?.toString(),
     onSaveDraft: (imageUrls) => {
-      draftManagement.saveDraft(imageUrls);
+      draftManagement?.saveDraft(imageUrls);
     }
   });
+  
+  // Lưu tham chiếu sau khi khởi tạo
+  imageManagementRef = imageManagement;
   
   const draftManagement = useDraftManagement({
     form,
@@ -122,37 +171,11 @@ export function useTradeForm(props: TradeFormProps) {
     }
   };
   
-  // Helper function to get default values for the form
-  function getDefaultValues(): Partial<TradeFormValues> {
-    if (isEditMode && initialValues) {
-      // Prepare existing trade values for edit
-      const values: Partial<TradeFormValues> = {
-        pair: initialValues.pair || "",
-        direction: initialValues.direction as "BUY" | "SELL",
-        entryPrice: initialValues.entryPrice,
-        stopLoss: initialValues.stopLoss,
-        takeProfit: initialValues.takeProfit,
-        lotSize: initialValues.lotSize,
-
-        strategy: initialValues.strategy || "",
-        techPattern: initialValues.techPattern || "",
-        emotion: initialValues.emotion || "",
-        followedPlan: initialValues.discipline?.followedPlan || false,
-        enteredEarly: initialValues.discipline?.enteredEarly || false,
-        revenge: initialValues.discipline?.revenge || false,
-        overLeveraged: initialValues.discipline?.overLeveraged || false,
-        movedStopLoss: initialValues.discipline?.movedStopLoss || false,
-        marketCondition: initialValues.marketCondition || "",
-        sessionType: initialValues.sessionType || "",
-        hasNews: initialValues.hasNews || false,
-        notes: initialValues.notes || "",
-        isOpen: initialValues.isOpen || false,
-        exitPrice: initialValues.exitPrice || null,
-        result: initialValues.result as any || undefined,
-        closingNote: ""
-      };
-      
-      // Initialize image previews if available
+  // Khởi tạo hình ảnh nếu có trong trade
+  useEffect(() => {
+    // Chỉ thực hiện khi ở chế độ edit và có initialValues
+    if (isEditMode && initialValues && imageManagement) {
+      // Xử lý các ảnh nếu có
       if (initialValues.entryImage) {
         imageManagement.updateImageStateFromDraft({
           entryImage1: initialValues.entryImage
@@ -176,34 +199,8 @@ export function useTradeForm(props: TradeFormProps) {
           exitImage2: initialValues.exitImageM15
         });
       }
-      
-      return values;
-    } else {
-      // For new trades, provide sensible defaults
-      return {
-        pair: "XAUUSD",
-        direction: "BUY",
-        entryPrice: 0,
-        stopLoss: 0,
-        takeProfit: 0,
-        lotSize: 0.01,
-
-        strategy: "",
-        techPattern: "",
-        emotion: "",
-        followedPlan: true,
-        enteredEarly: false,
-        revenge: false,
-        overLeveraged: false,
-        movedStopLoss: false,
-        marketCondition: "",
-        sessionType: "",
-        hasNews: false,
-        notes: "",
-        isOpen: true
-      };
     }
-  }
+  }, [isEditMode, initialValues, imageManagement]);
   
   // Handle image changes for entry images
   const handleEntryImageChange = useCallback((index: 1 | 2) => {
