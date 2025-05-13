@@ -189,14 +189,6 @@ export default function TradePage() {
               intensity="subtle" 
               direction="bottom-left" 
             />
-            {/* Chỉ hiển thị indicator khi cần, không cần tiêu đề card */}
-            {riskRewardRatio > 0 && (
-              <div className="absolute top-3 right-3">
-                <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-md">
-                  Ready for submission
-                </span>
-              </div>
-            )}
             
             <CardContent className="p-5 overflow-visible">
               <TabbedTradeForm
