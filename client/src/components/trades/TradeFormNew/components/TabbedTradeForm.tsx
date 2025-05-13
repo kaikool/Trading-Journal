@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons/icons';
@@ -148,6 +148,48 @@ export function TabbedTradeForm({
   // Check if screen is mobile
   const isMobile = useMediaQuery('(max-width: 640px)');
   
+  // States to track scrollability
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  
+  // Reference to the tab list element
+  const tabListRef = useRef<HTMLDivElement>(null);
+  
+  // Function to check scrollability in both directions
+  const checkScrollability = useCallback(() => {
+    if (tabListRef.current) {
+      const { scrollWidth, clientWidth, scrollLeft } = tabListRef.current;
+      
+      // Can scroll left if we're not at the beginning
+      setCanScrollLeft(scrollLeft > 0);
+      
+      // Can scroll right if we haven't scrolled all the way to the end
+      setCanScrollRight(scrollLeft < (scrollWidth - clientWidth - 1)); // -1 for rounding errors
+    }
+  }, []);
+  
+  // Set up listeners to check scrollability
+  useEffect(() => {
+    if (isMobile) {
+      const tabListElement = tabListRef.current;
+      if (tabListElement) {
+        // Initial check
+        checkScrollability();
+        
+        // Check on scroll
+        tabListElement.addEventListener('scroll', checkScrollability);
+        
+        // Check on resize
+        window.addEventListener('resize', checkScrollability);
+        
+        return () => {
+          tabListElement.removeEventListener('scroll', checkScrollability);
+          window.removeEventListener('resize', checkScrollability);
+        };
+      }
+    }
+  }, [checkScrollability, isMobile]);
+  
   // Animation variants for tab content
   const tabContentVariants = {
     hidden: { opacity: 0, x: 5 },
@@ -192,7 +234,22 @@ export function TabbedTradeForm({
       className="w-full"
     >
       <div className="mb-4 relative">
+        {/* Left scroll indicator */}
+        {isMobile && canScrollLeft && (
+          <div className="absolute -left-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-r from-background to-transparent z-10 flex items-center justify-end pointer-events-none">
+            <Icons.ui.chevronLeft className="h-4 w-4 text-muted-foreground/70" />
+          </div>
+        )}
+        
+        {/* Right scroll indicator */}
+        {isMobile && canScrollRight && (
+          <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
+            <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/70" />
+          </div>
+        )}
+        
         <TabsList 
+          ref={tabListRef}
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
             isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x scrollbar-hide" : "grid grid-cols-5 overflow-hidden"
