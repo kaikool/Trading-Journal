@@ -23,23 +23,19 @@ const Slider = React.forwardRef<
     }}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-secondary/50 border border-secondary/80">
-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
-    </SliderPrimitive.Track>
-    {/* Thêm một div phụ để fix lỗi hiển thị */}
-    <div className="absolute inset-0 pointer-events-none" />
-    {props.value?.map((_, i) => (
-      <SliderPrimitive.Thumb 
-        key={i}
-        className="block h-6 w-6 rounded-full border-[3px] border-white bg-primary shadow-[0_0_10px_rgba(0,0,0,0.2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-grab active:cursor-grabbing z-10" 
-        style={{
-          // Thêm inline style để đảm bảo thumb luôn hiển thị rõ ràng
-          position: 'relative',
-          display: 'block',
-          opacity: 1
-        }}
-      />
-    ))}
+    {/* Thêm div container để đảm bảo không bị overflow cắt thumb */}
+    <div className="relative h-12 w-full py-4">
+      <SliderPrimitive.Track className="absolute top-1/2 left-0 -translate-y-1/2 h-2 w-full rounded-full bg-secondary/50 border border-secondary/80 overflow-hidden">
+        <SliderPrimitive.Range className="absolute h-full bg-primary" />
+      </SliderPrimitive.Track>
+      
+      {props.value?.map((_, i) => (
+        <SliderPrimitive.Thumb 
+          key={i}
+          className="block h-5 w-5 rounded-full border-2 border-white bg-primary shadow-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-grab active:cursor-grabbing"
+        />
+      ))}
+    </div>
   </SliderPrimitive.Root>
 ))
 Slider.displayName = SliderPrimitive.Root.displayName

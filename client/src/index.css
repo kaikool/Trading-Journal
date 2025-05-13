@@ -172,63 +172,51 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 
 /* Tùy chỉnh cho thanh slider trong TradeRiskReward */
 .trade-risk-slider {
-  /* Tăng chiều cao của track để dễ nhận biết */
-  height: 8px !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* Cải thiện hiển thị của Slider track */
+/* Cải thiện hiển thị track của slider */
+.trade-risk-slider div:first-child {
+  position: relative;
+  margin: 8px 0;
+}
+
+/* Style cho track (thanh trượt) */
 .trade-risk-slider [data-orientation="horizontal"] {
-  height: 8px !important;
+  height: 4px !important;
+  background-color: hsl(var(--secondary)/30%) !important;
 }
 
-/* Đảm bảo thumb luôn hiển thị rõ ràng và đầy đủ */
-.trade-risk-slider [role="slider"] {
-  width: 24px !important;
-  height: 24px !important;
+/* Style cho phần filled của track */
+.trade-risk-slider [data-orientation="horizontal"] div {
   background-color: hsl(var(--primary)) !important;
-  border: 3px solid white !important; 
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
-  /* Loại bỏ transform translateY để tránh cắt nửa hình tròn */
-  transform: translate(-50%, -50%) !important;
-  top: 50% !important;
+}
+
+/* Đảm bảo thumb luôn hiển thị rõ ràng và đúng kích thước */
+.trade-risk-slider [role="slider"] {
+  width: 18px !important;
+  height: 18px !important;
+  background-color: hsl(var(--primary)) !important;
+  border: 2px solid white !important; 
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.2) !important;
   opacity: 1 !important;
   z-index: 10 !important;
-  position: absolute !important;
-  display: block !important;
-  margin: 0 !important;
 }
 
 /* Cải thiện thumb trên các thiết bị di động */
 @media (max-width: 640px) {
   .trade-risk-slider [role="slider"] {
-    width: 28px !important;
-    height: 28px !important;
-    border-width: 4px !important;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.3) !important;
-    /* Giữ nguyên transform và position từ selector chính */
-    transform: translate(-50%, -50%) !important;
-    position: absolute !important;
+    width: 20px !important;
+    height: 20px !important;
   }
 }
 
-/* Tạo vùng chạm rộng hơn cho thumb */
-.trade-risk-slider [role="slider"]::before {
-  content: "";
-  position: absolute;
-  top: -12px;
-  left: -12px;
-  right: -12px;
-  bottom: -12px;
-  background-color: transparent;
-  border-radius: 50%;
-  z-index: -1;
-}
-
-/* Thêm sự tập trung vào thumb khi tương tác */
+/* Thêm hiệu ứng khi tương tác */
 .trade-risk-slider [role="slider"]:hover,
 .trade-risk-slider [role="slider"]:active {
-  background-color: hsl(var(--primary)/90%) !important;
-  border-color: #ffffff !important;
-  transform: translate(-50%, -50%) scale(1.1) !important;
+  background-color: hsl(var(--primary)) !important;
+  border-color: white !important;
+  transform: scale(1.1) !important;
   transition: transform 0.15s ease !important;
 }
