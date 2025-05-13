@@ -22,19 +22,27 @@ import { motion } from 'framer-motion';
 interface TradeDetailsProps {
   isCalculatingLotSize: boolean;
   isCalculatingTakeProfit: boolean;
+  accountBalance: number;
+  riskPercentage: number;
+  setRiskPercentage: (value: number) => void;
   canFetchPrice: boolean;
+  isEditMode: boolean;
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
-  riskRewardRatio: number;
+  riskRewardRatio?: number;
 }
 
 export function TradeDetails({
   isCalculatingLotSize,
   isCalculatingTakeProfit,
+  accountBalance,
+  riskPercentage,
+  setRiskPercentage,
   canFetchPrice,
+  isEditMode,
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
-  riskRewardRatio
+  riskRewardRatio = 0
 }: TradeDetailsProps) {
   const form = useFormContext<TradeFormValues>();
   

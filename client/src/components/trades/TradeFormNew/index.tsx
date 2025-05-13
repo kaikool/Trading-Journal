@@ -2,7 +2,7 @@ import React from 'react';
 import { FormProvider } from "react-hook-form";
 import { Card, CardContent } from '@/components/ui/card';
 import { useTradeForm } from './hooks';
-import { TradeFormProps } from './types';
+import { TradeFormProps, EditTradeProps } from './types';
 import {
   FormHeader,
   TradeDetails,
