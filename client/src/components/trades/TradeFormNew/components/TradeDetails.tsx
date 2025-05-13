@@ -77,158 +77,153 @@ export function TradeDetails({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {/* Left Column */}
         <div className="space-y-4">
-          {/* Currency Pair, Entry Price and Buy/Sell Buttons in a better layout */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Left Column: Currency Pair + Entry Price */}
-            <div className="space-y-4">
-              {/* Currency Pair */}
-              <FormField
-                control={form.control}
-                name="pair"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="h-6 flex items-center">
-                      <Label htmlFor="pair" className="text-sm font-medium">
-                        Currency Pair
-                      </Label>
-                    </div>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      value={field.value}
+          {/* Direction Buttons - Moved to the top */}
+          <FormField
+            control={form.control}
+            name="direction"
+            render={({ field }) => (
+              <FormItem>
+                <div className="h-6 flex items-center">
+                  <Label className="text-sm font-medium">
+                    Direction
+                  </Label>
+                </div>
+                <FormControl>
+                  <div className="grid grid-cols-2 gap-2 mt-[5px]">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => {
+                        field.onChange("BUY");
+                        form.trigger("direction");
+                      }}
+                      variant={field.value === "BUY" ? "default" : "outline"}
+                      className={cn(
+                        "h-9 transition-all",
+                        field.value === "BUY" ? "bg-green-600 hover:bg-green-700 text-white" : "hover:border-green-600 hover:text-green-600"
+                      )}
                     >
-                      <FormControl>
-                        <SelectTrigger id="pair" className="h-9 text-sm">
-                          <SelectValue placeholder="Select pair" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="EURUSD">EUR/USD</SelectItem>
-                        <SelectItem value="GBPUSD">GBP/USD</SelectItem>
-                        <SelectItem value="USDJPY">USD/JPY</SelectItem>
-                        <SelectItem value="AUDUSD">AUD/USD</SelectItem>
-                        <SelectItem value="USDCAD">USD/CAD</SelectItem>
-                        <SelectItem value="NZDUSD">NZD/USD</SelectItem>
-                        <SelectItem value="EURGBP">EUR/GBP</SelectItem>
-                        <SelectItem value="USDCHF">USD/CHF</SelectItem>
-                        <SelectItem value="XAUUSD">XAU/USD</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <Icons.trade.arrowUp className="mr-1 h-4 w-4" /> 
+                      Buy (Long)
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => {
+                        field.onChange("SELL");
+                        form.trigger("direction");
+                      }}
+                      variant={field.value === "SELL" ? "default" : "outline"}
+                      className={cn(
+                        "h-9 transition-all",
+                        field.value === "SELL" ? "bg-red-600 hover:bg-red-700 text-white" : "hover:border-red-600 hover:text-red-600"
+                      )}
+                    >
+                      <Icons.trade.arrowDown className="mr-1 h-4 w-4" /> 
+                      Sell (Short)
+                    </Button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              {/* Entry Price with GetPrice button inside the input */}
-              <FormField
-                control={form.control}
-                name="entryPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="h-6 flex items-center justify-between">
-                      <Label htmlFor="entryPrice" className="text-sm font-medium">
-                        Entry Price
-                      </Label>
-                    </div>
+          {/* Currency Pair + Entry Price in one row */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Currency Pair */}
+            <FormField
+              control={form.control}
+              name="pair"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="h-6 flex items-center">
+                    <Label htmlFor="pair" className="text-sm font-medium">
+                      Currency Pair
+                    </Label>
+                  </div>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    value={field.value}
+                  >
                     <FormControl>
-                      <div className="relative">
-                        <NumberInput
-                          id="entryPrice"
-                          placeholder="0.00000"
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          min={0}
-                          step={0.00001}
-                          decimalPlaces={
-                            !selectedPair ? 5 :                          // Default 5 decimal places
-                            selectedPair.includes('XAU') ? 2 :           // Gold: 2 decimal places
-                            selectedPair.includes('JPY') ? 3 :           // JPY pairs: 3 decimal places
-                            5                                            // Other forex pairs: 5 decimal places
-                          }
-                          formatOptions={{
-                            // Đảm bảo chỉ hiển thị số chữ số thập phân cần thiết
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
-                                                  selectedPair && selectedPair.includes('JPY') ? 3 : 5
+                      <SelectTrigger id="pair" className="h-9 text-sm">
+                        <SelectValue placeholder="Select pair" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="EURUSD">EUR/USD</SelectItem>
+                      <SelectItem value="GBPUSD">GBP/USD</SelectItem>
+                      <SelectItem value="USDJPY">USD/JPY</SelectItem>
+                      <SelectItem value="AUDUSD">AUD/USD</SelectItem>
+                      <SelectItem value="USDCAD">USD/CAD</SelectItem>
+                      <SelectItem value="NZDUSD">NZD/USD</SelectItem>
+                      <SelectItem value="EURGBP">EUR/GBP</SelectItem>
+                      <SelectItem value="USDCHF">USD/CHF</SelectItem>
+                      <SelectItem value="XAUUSD">XAU/USD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Entry Price with GetPrice button inside the input */}
+            <FormField
+              control={form.control}
+              name="entryPrice"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="h-6 flex items-center justify-between">
+                    <Label htmlFor="entryPrice" className="text-sm font-medium">
+                      Entry Price
+                    </Label>
+                  </div>
+                  <FormControl>
+                    <div className="relative">
+                      <NumberInput
+                        id="entryPrice"
+                        placeholder="0.00000"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        min={0}
+                        step={0.00001}
+                        decimalPlaces={
+                          !selectedPair ? 5 :                          // Default 5 decimal places
+                          selectedPair.includes('XAU') ? 2 :           // Gold: 2 decimal places
+                          selectedPair.includes('JPY') ? 3 :           // JPY pairs: 3 decimal places
+                          5                                            // Other forex pairs: 5 decimal places
+                        }
+                        formatOptions={{
+                          // Đảm bảo chỉ hiển thị số chữ số thập phân cần thiết
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
+                                                selectedPair && selectedPair.includes('JPY') ? 3 : 5
+                        }}
+                        className="h-9 pr-9" /* Added padding-right for the button */
+                      />
+                      {/* Luôn hiển thị nút fetch giá */}
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                        <GetPriceButton
+                          symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
+                          size="sm"
+                          variant="ghost" /* Remove background */
+                          onPriceReceived={(price) => {
+                            form.setValue("entryPrice", price);
+                            form.trigger("entryPrice");
                           }}
-                          className="h-9 pr-9" /* Added padding-right for the button */
+                          tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
+                          className="text-primary hover:text-primary/80" /* Styling for the button */
                         />
-                        {/* Luôn hiển thị nút fetch giá */}
-                        <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                          <GetPriceButton
-                            symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
-                            size="sm"
-                            variant="ghost" /* Remove background */
-                            onPriceReceived={(price) => {
-                              form.setValue("entryPrice", price);
-                              form.trigger("entryPrice");
-                            }}
-                            tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
-                            className="text-primary hover:text-primary/80" /* Styling for the button */
-                          />
-                        </div>
                       </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* Right Column: Direction Buttons */}
-            <div>
-              <FormField
-                control={form.control}
-                name="direction"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="h-6 flex items-center">
-                      <Label className="text-sm font-medium">
-                        Direction
-                      </Label>
                     </div>
-                    <FormControl>
-                      <div className="grid grid-cols-2 gap-2 mt-[5px]">
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={() => {
-                            field.onChange("BUY");
-                            form.trigger("direction");
-                          }}
-                          variant={field.value === "BUY" ? "default" : "outline"}
-                          className={cn(
-                            "h-9 transition-all",
-                            field.value === "BUY" ? "bg-green-600 hover:bg-green-700 text-white" : "hover:border-green-600 hover:text-green-600"
-                          )}
-                        >
-                          <Icons.trade.arrowUp className="mr-1 h-4 w-4" /> 
-                          Buy (Long)
-                        </Button>
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={() => {
-                            field.onChange("SELL");
-                            form.trigger("direction");
-                          }}
-                          variant={field.value === "SELL" ? "default" : "outline"}
-                          className={cn(
-                            "h-9 transition-all",
-                            field.value === "SELL" ? "bg-red-600 hover:bg-red-700 text-white" : "hover:border-red-600 hover:text-red-600"
-                          )}
-                        >
-                          <Icons.trade.arrowDown className="mr-1 h-4 w-4" /> 
-                          Sell (Short)
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         </div>
         
