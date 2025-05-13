@@ -26,6 +26,8 @@ const Slider = React.forwardRef<
     <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-secondary/50 border border-secondary/80">
       <SliderPrimitive.Range className="absolute h-full bg-primary" />
     </SliderPrimitive.Track>
+    {/* Thêm một div phụ để fix lỗi hiển thị */}
+    <div className="absolute inset-0 pointer-events-none" />
     {props.value?.map((_, i) => (
       <SliderPrimitive.Thumb 
         key={i}
