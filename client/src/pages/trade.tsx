@@ -183,7 +183,6 @@ export default function TradePage() {
                 accountBalance={accountBalance}
                 riskPercentage={riskPercentage}
                 setRiskPercentage={setRiskPercentage}
-                isEditMode={false}
                 calculateOptimalLotSize={calculateOptimalLotSize}
                 calculateOptimalTakeProfit={calculateOptimalTakeProfit}
                 riskRewardRatio={riskRewardRatio}

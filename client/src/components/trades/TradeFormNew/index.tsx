@@ -89,7 +89,6 @@ export default function TradeFormNew(props: TradeFormProps) {
                   accountBalance={accountBalance}
                   riskPercentage={riskPercentage}
                   setRiskPercentage={setRiskPercentage}
-                  isEditMode={isEditMode}
                   calculateOptimalLotSize={calculateOptimalLotSize}
                   calculateOptimalTakeProfit={calculateOptimalTakeProfit}
                   riskRewardRatio={riskRewardRatio}

@@ -8,7 +8,7 @@ import { useStrategyManagement } from './useStrategyManagement';
 import { useTradeCalculations } from './useTradeCalculations';
 import { addTrade, updateTrade } from '@/lib/firebase';
 import { serverTimestamp } from 'firebase/firestore';
-import { debug, logError } from '@/lib/debug';
+import { logError } from '@/lib/debug';
 import { format } from "date-fns";
 
 export function useTradeForm(props: TradeFormProps) {
@@ -227,6 +227,7 @@ export function useTradeForm(props: TradeFormProps) {
   return {
     form,
     isFormSubmitting,
+    isEditMode,
     
     // Draft management
     ...draftManagement,
