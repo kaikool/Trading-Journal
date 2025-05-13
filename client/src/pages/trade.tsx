@@ -232,9 +232,9 @@ export default function TradePage() {
             </CardContent>
           </Card>
 
-          {/* Form Actions */}
-          <Card>
-            <CardFooter className="px-6 py-4">
+          {/* Form Actions - Sticky Footer */}
+          <div className="sticky bottom-4 mt-4">
+            <div className="bg-card rounded-lg border shadow-sm px-4 py-3">
               <FormActions 
                 isEditMode={false}
                 isFormSubmitting={isFormSubmitting}
@@ -242,8 +242,8 @@ export default function TradePage() {
                 onCancel={() => setLocation("/trade/history")}
                 clearDraft={clearDraft}
               />
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </form>
       </FormProvider>
     </div>

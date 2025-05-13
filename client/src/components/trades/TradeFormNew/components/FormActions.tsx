@@ -18,46 +18,53 @@ export function FormActions({
   clearDraft
 }: FormActionsProps) {
   return (
-    <div className="flex justify-end gap-3 items-center pt-4 mt-6 mb-8 px-4 border-t border-border/50">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={onCancel}
-        disabled={isFormSubmitting}
-      >
-        Cancel
-      </Button>
+    <div className="flex justify-between items-center w-full">
+      <div className="flex items-center gap-2">
+        {!isEditMode && hasDraft && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={clearDraft}
+            disabled={isFormSubmitting}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          >
+            <Icons.general.trash className="h-4 w-4 mr-1.5" />
+            Clear Draft
+          </Button>
+        )}
+      </div>
       
-      {!isEditMode && hasDraft && (
+      <div className="flex items-center gap-3">
         <Button
           type="button"
           variant="outline"
-          className="flex items-center gap-1.5"
-          onClick={clearDraft}
+          size="sm"
+          onClick={onCancel}
           disabled={isFormSubmitting}
         >
-          <Icons.general.trash className="h-3.5 w-3.5 text-muted-foreground" />
-          <span>Clear Draft</span>
+          Cancel
         </Button>
-      )}
-      
-      <Button
-        type="submit"
-        disabled={isFormSubmitting}
-        className="min-w-[100px]"
-      >
-        {isFormSubmitting ? (
-          <>
-            <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
-            Saving...
-          </>
-        ) : (
-          <>
-            <Icons.ui.save className="mr-2 h-4 w-4" />
-            {isEditMode ? 'Update Trade' : 'Save Trade'}
-          </>
-        )}
-      </Button>
+        
+        <Button
+          type="submit"
+          disabled={isFormSubmitting}
+          size="sm"
+          className="min-w-[100px] font-medium"
+        >
+          {isFormSubmitting ? (
+            <>
+              <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Icons.ui.save className="mr-2 h-4 w-4" />
+              {isEditMode ? 'Update Trade' : 'Save Trade'}
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }
