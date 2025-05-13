@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { cn, formatCurrency } from '@/lib/utils';
-import { useNumberInput } from "@/hooks/use-number-input";
 import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
 import { Icons } from '@/components/icons/icons';
@@ -33,30 +32,8 @@ export function TradeRiskReward({
 }: TradeRiskRewardProps) {
   const form = useFormContext<TradeFormValues>();
   
-  // Sử dụng state nội bộ để đảm bảo đồng bộ với prop
-  const [internalRiskValue, setInternalRiskValue] = useState(riskPercentage);
-  
-  // Cập nhật state nội bộ khi prop thay đổi
-  useEffect(() => {
-    setInternalRiskValue(riskPercentage);
-  }, [riskPercentage]);
-  
   // Format risk:reward ratio
   const formattedRatio = riskRewardRatio ? `${riskRewardRatio.toFixed(2)}:1` : "0:1";
-  
-  // For risk percentage input
-  const { 
-    value: riskValue, 
-    onChange: onRiskChange 
-  } = useNumberInput({
-    initial: internalRiskValue, // Sử dụng state nội bộ
-    min: 0.1,
-    max: 5,
-    step: 0.1,
-    onChange: (value) => {
-      setRiskPercentage(value);
-    }
-  });
   
   // Animation variants
   const containerAnimation = {
@@ -89,7 +66,7 @@ export function TradeRiskReward({
   };
 
   // Tính toán giá trị risk amount và potential gain
-  const riskAmount = accountBalance * (internalRiskValue / 100);
+  const riskAmount = accountBalance * (riskPercentage / 100);
   const potentialGain = riskAmount * riskRewardRatio;
   
   // Tính toán pips và potential profit
@@ -132,21 +109,19 @@ export function TradeRiskReward({
                 <Label className="text-sm">Risk per Trade</Label>
                 <Badge 
                   variant="outline" 
-                  className={cn("font-medium", getRiskColor(internalRiskValue))}
+                  className={cn("font-medium", getRiskColor(riskPercentage))}
                 >
-                  {internalRiskValue.toFixed(1)}%
+                  {riskPercentage.toFixed(1)}%
                 </Badge>
               </div>
               
               <Slider
-                value={[internalRiskValue]}
+                value={[riskPercentage]}
                 min={0.1}
                 max={5}
                 step={0.1}
                 onValueChange={(values) => {
-                  const newValue = values[0];
-                  setInternalRiskValue(newValue);
-                  setRiskPercentage(newValue);
+                  setRiskPercentage(values[0]);
                 }}
                 className="my-3"
               />
@@ -167,7 +142,7 @@ export function TradeRiskReward({
               
               <div className="flex items-center gap-2">
                 <div className="w-full h-8 bg-muted/50 rounded-md flex items-center px-3">
-                  <span className={cn("text-sm font-medium", getRiskColor(Number(riskValue)))}>
+                  <span className={cn("text-sm font-medium", getRiskColor(riskPercentage))}>
                     {formatCurrency(riskAmount)}
                   </span>
                 </div>
