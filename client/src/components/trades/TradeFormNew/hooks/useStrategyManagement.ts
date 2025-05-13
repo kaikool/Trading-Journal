@@ -34,29 +34,64 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
             const found = userStrategies.find(s => s.id === currentStrategy);
             if (found) {
               setSelectedStrategy(found);
+              // Initialize checks for both rules and entry conditions
+              const allChecks: StrategyConditionCheck[] = [];
+              
+              // Add rules checks
               if (found.rules && found.rules.length > 0) {
-                setStrategyChecks(
-                  found.rules.map(condition => ({
+                found.rules.forEach(condition => {
+                  allChecks.push({
                     conditionId: condition.id,
                     checked: false,
                     passed: false
-                  }))
-                );
+                  });
+                });
               }
+              
+              // Add entry conditions checks
+              if (found.entryConditions && found.entryConditions.length > 0) {
+                found.entryConditions.forEach(condition => {
+                  allChecks.push({
+                    conditionId: condition.id,
+                    checked: false,
+                    passed: false
+                  });
+                });
+              }
+              
+              setStrategyChecks(allChecks);
             }
           } else {
             // No strategy selected yet, set default
             form.setValue('strategy', userStrategies[0].id);
             setSelectedStrategy(userStrategies[0]);
+            
+            // Initialize checks for both rules and entry conditions
+            const allChecks: StrategyConditionCheck[] = [];
+            
+            // Add rules checks
             if (userStrategies[0].rules && userStrategies[0].rules.length > 0) {
-              setStrategyChecks(
-                userStrategies[0].rules.map(condition => ({
+              userStrategies[0].rules.forEach(condition => {
+                allChecks.push({
                   conditionId: condition.id,
                   checked: false,
                   passed: false
-                }))
-              );
+                });
+              });
             }
+            
+            // Add entry conditions checks
+            if (userStrategies[0].entryConditions && userStrategies[0].entryConditions.length > 0) {
+              userStrategies[0].entryConditions.forEach(condition => {
+                allChecks.push({
+                  conditionId: condition.id,
+                  checked: false,
+                  passed: false
+                });
+              });
+            }
+            
+            setStrategyChecks(allChecks);
           }
         }
         
@@ -82,14 +117,34 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
         
         if (foundStrategy) {
           setSelectedStrategy(foundStrategy);
+          
+          // Initialize checks for both rules and entry conditions
+          const allChecks: StrategyConditionCheck[] = [];
+          
+          // Add rules checks
           if (foundStrategy.rules && foundStrategy.rules.length > 0) {
-            setStrategyChecks(
-              foundStrategy.rules.map((condition: StrategyCondition) => ({
+            foundStrategy.rules.forEach((condition: StrategyCondition) => {
+              allChecks.push({
                 conditionId: condition.id,
                 checked: false,
                 passed: false
-              }))
-            );
+              });
+            });
+          }
+          
+          // Add entry conditions checks
+          if (foundStrategy.entryConditions && foundStrategy.entryConditions.length > 0) {
+            foundStrategy.entryConditions.forEach((condition: StrategyCondition) => {
+              allChecks.push({
+                conditionId: condition.id,
+                checked: false,
+                passed: false
+              });
+            });
+          }
+          
+          if (allChecks.length > 0) {
+            setStrategyChecks(allChecks);
           } else {
             setStrategyChecks([]);
           }
