@@ -20,7 +20,7 @@ interface TradeRiskRewardProps {
   riskPercentage: number;
   setRiskPercentage: (value: number) => void;
   riskRewardRatio: number;
-  setRiskRewardRatio?: (value: number) => void;
+  setRiskRewardRatio: (value: number) => void;
 }
 
 export function TradeRiskReward({
@@ -147,9 +147,7 @@ export function TradeRiskReward({
                   const newRR = values[0];
                   
                   // Cập nhật state với giá trị mới
-                  if (setRiskRewardRatio) {
-                    setRiskRewardRatio(newRR);
-                  }
+                  setRiskRewardRatio(newRR);
                   
                   // Tính toán Take Profit mới dựa trên Risk:Reward
                   if (entryPrice && stopLoss) {
