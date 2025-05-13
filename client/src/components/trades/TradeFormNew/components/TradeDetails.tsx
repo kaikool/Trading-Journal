@@ -293,46 +293,6 @@ export function TradeDetails({
             />
           </div>
 
-          {/* Risk/Reward Status Card - conditionally shown */}
-          {riskRewardRatio !== undefined && riskRewardRatio > 0 && (
-            <div className="rounded-md border border-border/50 bg-gradient-to-r from-muted/5 to-muted/20 p-3 shadow-sm">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center">
-                  <span className="text-sm font-medium">Risk/Reward</span>
-                </div>
-                <Badge 
-                  variant="outline" 
-                  className={cn(
-                    "font-mono text-sm h-6 px-2",
-                    (riskRewardRatio !== undefined && riskRewardRatio >= 2) 
-                      ? "bg-green-50 text-green-600 border-green-200" : 
-                    (riskRewardRatio !== undefined && riskRewardRatio >= 1) 
-                      ? "bg-amber-50 text-amber-600 border-amber-200" :
-                    "bg-red-50 text-red-600 border-red-200"
-                  )}
-                >
-                  {formattedRatio}
-                </Badge>
-              </div>
-              {/* Progress bar showing the R:R visually */}
-              <div className="mt-1.5 h-2 w-full bg-muted/30 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min((riskRewardRatio || 0) * 33, 100)}%` }}
-                  transition={{ duration: 0.5 }}
-                  className={cn(
-                    "h-full rounded-full shadow-inner",
-                    (riskRewardRatio !== undefined && riskRewardRatio >= 2) 
-                      ? "bg-gradient-to-r from-green-400 to-green-500" : 
-                    (riskRewardRatio !== undefined && riskRewardRatio >= 1) 
-                      ? "bg-gradient-to-r from-amber-400 to-amber-500" : 
-                    "bg-gradient-to-r from-red-400 to-red-500"
-                  )}
-                />
-              </div>
-            </div>
-          )}
-
           {/* Lot Size */}
           <FormField
             control={form.control}
