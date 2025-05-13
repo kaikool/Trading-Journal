@@ -195,7 +195,7 @@ export function TradeRiskReward({
               <div className="rounded-lg border p-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">Potential Profit</span>
-                  <span className="text-sm font-medium text-emerald-500">{potentialProfitPips}</span>
+                  <span className="text-sm font-medium text-emerald-500">{formattedPotentialPips}</span>
                 </div>
                 <div className="text-xs text-muted-foreground">Entry to Take Profit</div>
               </div>
