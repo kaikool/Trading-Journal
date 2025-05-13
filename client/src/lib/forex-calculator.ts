@@ -82,7 +82,7 @@ const POINT_SIZE: Readonly<Record<CurrencyPair, number>> = Object.freeze({
  * CẢNH BÁO: KHÔNG THAY ĐỔI CÁC GIÁ TRỊ NÀY. Các giá trị này
  * tuân theo tiêu chuẩn thị trường forex và được áp dụng ở tất cả các sàn.
  */
-const PIP_SIZE: Readonly<Record<CurrencyPair, number>> = Object.freeze({
+export const PIP_SIZE: Readonly<Record<CurrencyPair, number>> = Object.freeze({
   EURUSD: 0.0001,  // 1 pip = 0.0001 (4 decimal places) = 10 points
   GBPUSD: 0.0001,  // 1 pip = 0.0001 (4 decimal places) = 10 points
   AUDUSD: 0.0001,  // 1 pip = 0.0001 (4 decimal places) = 10 points

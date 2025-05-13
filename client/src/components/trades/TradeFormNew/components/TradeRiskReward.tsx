@@ -9,7 +9,7 @@ import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
 import { Icons } from '@/components/icons/icons';
 import { Progress } from '@/components/ui/progress';
-import { formatPrice, CurrencyPair } from '@/lib/forex-calculator';
+import { formatPrice, CurrencyPair, PIP_SIZE } from '@/lib/forex-calculator';
 
 /**
  * TradeRiskReward Component
@@ -73,18 +73,18 @@ export function TradeRiskReward({
   // Lấy cặp tiền tệ từ form
   const currencyPair = form.watch("pair") as CurrencyPair || "EURUSD";
   
-  // Tính toán pips và potential profit - sử dụng formatPrice để hiển thị đúng số thập phân
+  // Tính toán pips và potential profit
   const pipsAtRisk = form.watch("entryPrice") && form.watch("stopLoss") 
-    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("stopLoss")))
+    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("stopLoss"))) / PIP_SIZE[currencyPair]
     : 0;
     
   const potentialProfitPips = form.watch("entryPrice") && form.watch("takeProfit")
-    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("takeProfit")))
+    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("takeProfit"))) / PIP_SIZE[currencyPair]
     : 0;
     
-  // Format giá trị pip dựa trên loại cặp tiền
-  const formattedPipsAtRisk = formatPrice(pipsAtRisk, currencyPair);
-  const formattedPotentialPips = formatPrice(potentialProfitPips, currencyPair);
+  // Format giá trị pip (rounded to 1 decimal place)
+  const formattedPipsAtRisk = pipsAtRisk.toFixed(1);
+  const formattedPotentialPips = potentialProfitPips.toFixed(1);
 
   // Progress value cho risk/reward visual
   const rrProgressValue = Math.min(riskRewardRatio * 33, 100); // Scale to fit within visual
