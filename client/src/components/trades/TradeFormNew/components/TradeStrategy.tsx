@@ -135,7 +135,7 @@ const StrategySelectionCard = ({
               onClick={() => onChange(strategy.id)}
             >
               <div className="flex items-center gap-1.5">
-                <Icons.ui.checkCircle className={cn(
+                <Icons.ui.circleCheck className={cn(
                   "h-3.5 w-3.5",
                   selectedId === strategy.id ? "text-primary" : "text-muted-foreground/40"
                 )} />
