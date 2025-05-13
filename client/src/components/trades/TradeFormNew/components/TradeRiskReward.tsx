@@ -9,6 +9,7 @@ import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
 import { Icons } from '@/components/icons/icons';
 import { Progress } from '@/components/ui/progress';
+import { formatPrice, CurrencyPair } from '@/lib/forex-calculator';
 
 /**
  * TradeRiskReward Component
@@ -69,14 +70,21 @@ export function TradeRiskReward({
   const riskAmount = accountBalance * (riskPercentage / 100);
   const potentialGain = riskAmount * riskRewardRatio;
   
-  // Tính toán pips và potential profit
+  // Lấy cặp tiền tệ từ form
+  const currencyPair = form.watch("pair") as CurrencyPair || "EURUSD";
+  
+  // Tính toán pips và potential profit - sử dụng formatPrice để hiển thị đúng số thập phân
   const pipsAtRisk = form.watch("entryPrice") && form.watch("stopLoss") 
-    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("stopLoss"))).toFixed(5)
-    : "0.00000";
+    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("stopLoss")))
+    : 0;
     
   const potentialProfitPips = form.watch("entryPrice") && form.watch("takeProfit")
-    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("takeProfit"))).toFixed(5)
-    : "0.00000";
+    ? Math.abs(Number(form.watch("entryPrice")) - Number(form.watch("takeProfit")))
+    : 0;
+    
+  // Format giá trị pip dựa trên loại cặp tiền
+  const formattedPipsAtRisk = formatPrice(pipsAtRisk, currencyPair);
+  const formattedPotentialPips = formatPrice(potentialProfitPips, currencyPair);
 
   // Progress value cho risk/reward visual
   const rrProgressValue = Math.min(riskRewardRatio * 33, 100); // Scale to fit within visual
@@ -178,7 +186,7 @@ export function TradeRiskReward({
               <div className="rounded-lg border p-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm">Pips at Risk</span>
-                  <span className="text-sm font-medium">{pipsAtRisk}</span>
+                  <span className="text-sm font-medium">{formattedPipsAtRisk}</span>
                 </div>
                 <div className="text-xs text-muted-foreground">Entry to Stop Loss</div>
               </div>
