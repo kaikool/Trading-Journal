@@ -111,7 +111,7 @@ export function TradeDetails({
                       <SelectItem value="NZDUSD">NZD/USD</SelectItem>
                       <SelectItem value="EURGBP">EUR/GBP</SelectItem>
                       <SelectItem value="USDCHF">USD/CHF</SelectItem>
-                      <SelectItem value="XAUUSD">XAU/USD (Gold)</SelectItem>
+                      <SelectItem value="XAUUSD">XAU/USD</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -184,14 +184,14 @@ export function TradeDetails({
                     {canFetchPrice && (
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                         <GetPriceButton
-                          symbol={selectedPair || "EURUSD"} /* Sử dụng EURUSD là giá trị mặc định nếu chưa chọn */
+                          symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
                           size="sm"
                           variant="ghost" /* Remove background */
                           onPriceReceived={(price) => {
                             form.setValue("entryPrice", price);
                             form.trigger("entryPrice");
                           }}
-                          tooltipText={`Get current ${selectedPair || "EURUSD"} price`}
+                          tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
                           className="text-primary hover:text-primary/80" /* Styling for the button */
                         />
                       </div>

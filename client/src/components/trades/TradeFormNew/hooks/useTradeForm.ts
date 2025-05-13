@@ -181,7 +181,7 @@ export function useTradeForm(props: TradeFormProps) {
     } else {
       // For new trades, provide sensible defaults
       return {
-        pair: "EURUSD",
+        pair: "XAUUSD",
         direction: "BUY",
         entryPrice: 0,
         stopLoss: 0,
