@@ -10,6 +10,26 @@
  * Không định nghĩa trùng lặp (như .pwa-top-inset) ở đây.
  */
 
+/* Loại bỏ viền focus màu xanh trên toàn bộ ứng dụng */
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: 0 !important;
+  ring-offset: 0 !important;
+}
+
+/* Loại bỏ viền focus cho tất cả các input, button và control */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+[role="button"]:focus,
+a:focus,
+[tabindex]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Utilities cho ScrollToTop */
 html[data-scrolling="smooth"] {
   scroll-behavior: auto !important; /* Force auto để tránh xung đột */
