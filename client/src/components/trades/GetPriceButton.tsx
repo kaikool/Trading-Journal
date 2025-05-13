@@ -39,14 +39,18 @@ export function GetPriceButton({
     symbol,
     onSuccess: (price) => {
       debug(`[GetPriceButton] Received price for ${symbol}: ${price}`);
+      
+      // Ensure price is a number and properly formatted
+      const formattedPrice = typeof price === 'number' ? price : Number(price);
+      
       // Support both callback prop names
-      if (onPriceFetched) onPriceFetched(price);
-      if (onPriceReceived) onPriceReceived(price);
+      if (onPriceFetched) onPriceFetched(formattedPrice);
+      if (onPriceReceived) onPriceReceived(formattedPrice);
       setLastFetchTime(new Date());
       
       toast({
         title: "Price Updated",
-        description: `${symbol} price updated to ${price}`,
+        description: `${symbol} price updated to ${formattedPrice}`,
         variant: "default",
       });
     },
