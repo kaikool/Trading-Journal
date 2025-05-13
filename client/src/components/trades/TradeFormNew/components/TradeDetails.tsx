@@ -197,7 +197,7 @@ export function TradeDetails({
                         onChange={field.onChange}
                         onBlur={field.onBlur}
                         min={0}
-                        step={0.00001}
+                        step={0.0001}
                         decimalPlaces={
                           !selectedPair ? 4 :                          // Default 4 decimal places
                           selectedPair.includes('XAU') ? 2 :           // Gold: 2 decimal places
