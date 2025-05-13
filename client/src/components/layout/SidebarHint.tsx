@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useDragControls } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
@@ -17,12 +17,12 @@ interface SidebarHintProps {
  * - Elegant, subtle design that doesn't interfere with the UI
  * - Smart behavior based on user interaction
  * - Shows in the right moments and hides when not needed
+ * - Fixed position at 1/3 from the bottom of the screen
  */
 export function SidebarHint({ onClick }: SidebarHintProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const { isActive } = useUserActivity(3000);
-  const dragControls = useDragControls();
   
   // State
   const [visible, setVisible] = useState(false);
@@ -30,17 +30,26 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     // Check localStorage to see if user has interacted before
     return localStorage.getItem("sidebar-hint-interacted") === "true";
   });
-  const [position, setPosition] = useState<{y: number}>(() => {
-    // Get saved position from localStorage or use default
-    const savedPos = localStorage.getItem("sidebar-hint-position");
-    return savedPos ? JSON.parse(savedPos) : { y: isMobile ? window.innerHeight / 2 : 100 };
+  
+  // Calculate fixed position - 1/3 from the bottom of screen
+  const [fixedPosition, setFixedPosition] = useState(() => {
+    return window.innerHeight * (2/3); // 2/3 of the way down from the top (1/3 from bottom)
   });
+
+  // Update position if window is resized
+  useEffect(() => {
+    const handleResize = () => {
+      setFixedPosition(window.innerHeight * (2/3));
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Refs
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const initialLoadRef = useRef(true);
   const showCount = useRef(0);
-  const isDragging = useRef(false);
 
   // Show on initial load if appropriate
   useEffect(() => {
@@ -113,25 +122,8 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
     };
   }, [isActive, isMobile, sidebarCollapsed, hasInteracted, visible]);
 
-  // Handle drag end - save position
-  const handleDragEnd = (event: any, info: any) => {
-    isDragging.current = false;
-    // Update position
-    const newPosition = { y: position.y + info.offset.y };
-    setPosition(newPosition);
-    // Save position to localStorage
-    localStorage.setItem("sidebar-hint-position", JSON.stringify(newPosition));
-  };
-
-  // Start dragging
-  const handleDragStart = () => {
-    isDragging.current = true;
-  };
-
-  // Handle click - don't toggle sidebar if we're dragging
+  // Handle click - mark as interacted and toggle sidebar
   const handleClick = () => {
-    if (isDragging.current) return;
-    
     if (!hasInteracted) {
       setHasInteracted(true);
       localStorage.setItem("sidebar-hint-interacted", "true");
@@ -147,24 +139,16 @@ export function SidebarHint({ onClick }: SidebarHintProps) {
       {visible && (
         <motion.div
           initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0, y: position.y }}
+          animate={{ opacity: 1, x: 0, y: fixedPosition }}
           exit={{ opacity: 0, x: -8 }}
           transition={{ duration: 0.3, type: "tween", ease: "easeOut" }}
           onClick={handleClick}
           className={cn(
-            "fixed z-40 left-0 flex items-center cursor-move sidebar-hint-pulse",
+            "fixed z-40 left-0 flex items-center cursor-pointer sidebar-hint-pulse",
             "h-auto"
           )}
           role="button"
           aria-label="Open sidebar"
-          drag="y"
-          dragControls={dragControls}
-          dragConstraints={{ top: 10, bottom: window.innerHeight - 100 }}
-          dragElastic={0}
-          dragMomentum={false}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          whileDrag={{ scale: 1 }}
         >
           {/* Button with menu icon */}
           <div className={cn(
