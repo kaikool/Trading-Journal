@@ -94,23 +94,21 @@ export function TradeRiskReward({
               </div>
             </div>
             
-            <div className="pt-2 pb-2">
-              {/* Cải tiến slider để hiển thị rõ ràng hơn */}
-              <div className="relative">
-                <Slider
-                  value={[riskPercentage]}
-                  min={0.1}
-                  max={3}
-                  step={0.1}
-                  onValueChange={(values) => {
-                    setRiskPercentage(values[0]);
-                  }}
-                  className="my-2 trade-risk-slider"
-                  aria-label="Risk percentage"
-                />
-              </div>
+            <div className="pt-1 pb-1">
+              {/* Slider đơn giản không cần div bao ngoài */}
+              <Slider
+                value={[riskPercentage]}
+                min={0.1}
+                max={3}
+                step={0.1}
+                onValueChange={(values) => {
+                  setRiskPercentage(values[0]);
+                }}
+                className="my-2 trade-risk-slider"
+                aria-label="Risk percentage"
+              />
               
-              <div className="flex justify-between text-xs text-muted-foreground mt-3">
+              <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>0.1%</span>
                 <span>1%</span>
                 <span>2%</span>
