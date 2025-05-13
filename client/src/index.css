@@ -169,3 +169,11 @@ body[data-offline-mode="true"] .suspense-boundary::after {
 }
 
 /* Bỏ hiệu ứng hover glow */
+
+/* Tùy chỉnh cho thanh slider trong TradeRiskReward */
+.trade-risk-slider [role="slider"] {
+  width: 20px !important;
+  height: 20px !important;
+  border: 2px solid white !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}

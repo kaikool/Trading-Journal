@@ -84,28 +84,34 @@ export function TradeRiskReward({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium">Risk per Trade</Label>
-              <span className={cn("text-sm font-semibold", getRiskColor(riskPercentage))}>
-                {riskPercentage.toFixed(1)}% ({formatCurrency(riskAmount)})
-              </span>
+              <div className="flex flex-col items-end">
+                <span className={cn("text-lg font-semibold", getRiskColor(riskPercentage))}>
+                  {riskPercentage.toFixed(1)}%
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {formatCurrency(riskAmount)}
+                </span>
+              </div>
             </div>
             
             <div className="pt-1 pb-1">
+              {/* Tùy chỉnh thumb của slider bằng CSS */}
               <Slider
                 value={[riskPercentage]}
                 min={0.1}
-                max={5}
+                max={3}
                 step={0.1}
                 onValueChange={(values) => {
                   setRiskPercentage(values[0]);
                 }}
-                className="my-2"
+                className="my-2 trade-risk-slider"
               />
               
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>0.1%</span>
                 <span>1%</span>
                 <span>2%</span>
-                <span>5%</span>
+                <span>3%</span>
               </div>
             </div>
           </div>
