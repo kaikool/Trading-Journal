@@ -29,7 +29,13 @@ const Slider = React.forwardRef<
     {props.value?.map((_, i) => (
       <SliderPrimitive.Thumb 
         key={i}
-        className="block h-6 w-6 rounded-full border-[3px] border-white bg-primary shadow-[0_0_10px_rgba(0,0,0,0.2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-grab active:cursor-grabbing" 
+        className="block h-6 w-6 rounded-full border-[3px] border-white bg-primary shadow-[0_0_10px_rgba(0,0,0,0.2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-grab active:cursor-grabbing z-10" 
+        style={{
+          // Thêm inline style để đảm bảo thumb luôn hiển thị rõ ràng
+          position: 'relative',
+          display: 'block',
+          opacity: 1
+        }}
       />
     ))}
   </SliderPrimitive.Root>
