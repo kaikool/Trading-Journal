@@ -238,7 +238,11 @@ export function TabbedTradeForm({
             <TradeDetails
               isCalculatingLotSize={isCalculatingLotSize}
               isCalculatingTakeProfit={isCalculatingTakeProfit}
+              accountBalance={accountBalance}
+              riskPercentage={riskPercentage}
+              setRiskPercentage={setRiskPercentage}
               canFetchPrice={canFetchPrice}
+              isEditMode={isEditMode}
               calculateOptimalLotSize={calculateOptimalLotSize}
               calculateOptimalTakeProfit={calculateOptimalTakeProfit}
               riskRewardRatio={riskRewardRatio}
