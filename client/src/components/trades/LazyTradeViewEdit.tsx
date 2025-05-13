@@ -20,7 +20,8 @@ import {
   CardValue 
 } from "@/components/ui/card";
 import { formatTimestamp } from "@/lib/format-timestamp";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { formatCurrency, formatPriceForPair } from "@/utils/format-number";
 import { getTradeStatusConfig, TradeStatus } from "@/lib/trade-status-config";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -176,11 +177,11 @@ export function LazyTradeViewEdit({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm app-accordion-content-section">
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Entry</span>
-            <span className="font-medium">{trade.entryPrice}</span>
+            <span className="font-medium">{formatPriceForPair(trade.entryPrice, trade.pair)}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Exit</span>
-            <span className="font-medium">{trade.exitPrice || 'Open'}</span>
+            <span className="font-medium">{trade.exitPrice ? formatPriceForPair(trade.exitPrice, trade.pair) : 'Open'}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Entry Date</span>

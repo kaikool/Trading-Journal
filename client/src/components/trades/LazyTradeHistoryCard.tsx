@@ -355,19 +355,19 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Entry</span>
-                    <span className="font-medium truncate">{entryPrice}</span>
+                    <span className="font-medium truncate">{formatPriceForPair(entryPrice, trade.pair)}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Exit</span>
-                    <span className="font-medium truncate">{exitPrice || 'Open'}</span>
+                    <span className="font-medium truncate">{exitPrice ? formatPriceForPair(exitPrice, trade.pair) : 'Open'}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Stop Loss</span>
-                    <span className="font-medium truncate">{trade.stopLoss}</span>
+                    <span className="font-medium truncate">{formatPriceForPair(trade.stopLoss, trade.pair)}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Take Profit</span>
-                    <span className="font-medium truncate">{trade.takeProfit}</span>
+                    <span className="font-medium truncate">{formatPriceForPair(trade.takeProfit, trade.pair)}</span>
                   </div>
                 </div>
                 
