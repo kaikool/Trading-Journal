@@ -113,7 +113,6 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
     strategies,
     isLoadingStrategies,
     selectedStrategy,
-    strategyLoaded,
     strategyChecks,
     handleStrategyCheckToggle
   };

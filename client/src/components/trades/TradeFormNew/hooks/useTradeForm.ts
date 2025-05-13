@@ -226,9 +226,7 @@ export function useTradeForm(props: TradeFormProps) {
   
   return {
     form,
-    isEditMode,
     isFormSubmitting,
-    isSuccess,
     
     // Draft management
     ...draftManagement,

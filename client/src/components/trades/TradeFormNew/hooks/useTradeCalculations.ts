@@ -249,14 +249,9 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     riskPercentage,
     setRiskPercentage,
     riskRewardRatio,
-    defaultRiskRewardRatio,
-    setDefaultRiskRewardRatio,
     isCalculatingLotSize,
     isCalculatingTakeProfit,
-    isLoadingUserData,
     calculateOptimalLotSize,
-    calculateOptimalTakeProfit,
-    calculatePreviewPips,
-    calculatePreviewProfit
+    calculateOptimalTakeProfit
   };
 }
