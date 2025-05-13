@@ -101,11 +101,9 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
               symbol: pair as CurrencyPair
             });
             
-            // Format the price to the appropriate number of decimal places
-            const formattedPrice = formatPrice(takeProfitPrice, pair as CurrencyPair);
-            
-            // Set take profit in form
-            form.setValue('takeProfit', Number(formattedPrice));
+            // Set take profit in form directly without formatting
+            // NumberInput component will handle the formatting
+            form.setValue('takeProfit', takeProfitPrice);
             
             // Also update the risk:reward ratio display
             setRiskRewardRatio(rr);
@@ -209,11 +207,9 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
         symbol: pair as CurrencyPair
       });
       
-      // Format the price to the appropriate number of decimal places
-      const formattedPrice = formatPrice(takeProfitPrice, pair as CurrencyPair);
-      
-      // Set take profit in form
-      form.setValue('takeProfit', Number(formattedPrice));
+      // Set take profit in form directly without formatting
+      // NumberInput component will handle the formatting
+      form.setValue('takeProfit', takeProfitPrice);
     } catch (error) {
       console.error('Error calculating take profit:', error);
     } finally {

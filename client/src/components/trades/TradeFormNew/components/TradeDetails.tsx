@@ -197,19 +197,9 @@ export function TradeDetails({
                         onChange={field.onChange}
                         onBlur={field.onBlur}
                         min={0}
-                        step={0.00001} // Giữ nguyên giá trị nhỏ để cho phép nhập linh hoạt
-                        decimalPlaces={
-                          !selectedPair ? 4 :                   // Default 4 decimal places
-                          selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
-                          selectedPair.includes('JPY') ? 2 :    // JPY pairs: 2 decimal places
-                          4                                     // Other forex pairs: 4 decimal places
-                        }
-                        formatOptions={{
-                          // Đảm bảo chỉ hiển thị số chữ số thập phân cần thiết
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
-                                                selectedPair && selectedPair.includes('JPY') ? 2 : 4
-                        }}
+                        allowNegative={false}
+                        step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
+                        decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
                         className="h-9 pr-9" /* Added padding-right for the button */
                       />
                       {/* Luôn hiển thị nút fetch giá */}
@@ -258,18 +248,9 @@ export function TradeDetails({
                       onChange={field.onChange}
                       onBlur={field.onBlur}
                       min={0}
-                      step={0.00001} // Giữ nguyên giá trị nhỏ để cho phép nhập linh hoạt
-                      decimalPlaces={
-                        !selectedPair ? 4 :                   // Default 4 decimal places
-                        selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
-                        selectedPair.includes('JPY') ? 2 :    // JPY pairs: 2 decimal places
-                        4                                     // Other forex pairs: 4 decimal places
-                      }
-                      formatOptions={{
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
-                                             selectedPair && selectedPair.includes('JPY') ? 2 : 4
-                      }}
+                      allowNegative={false}
+                      step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
+                      decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
                       className="h-9"
                     />
                   </FormControl>
@@ -300,18 +281,9 @@ export function TradeDetails({
                       onChange={field.onChange}
                       onBlur={field.onBlur}
                       min={0}
-                      step={0.00001} // Giữ nguyên giá trị nhỏ để cho phép nhập linh hoạt
-                      decimalPlaces={
-                        !selectedPair ? 4 :                   // Default 4 decimal places
-                        selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
-                        selectedPair.includes('JPY') ? 2 :    // JPY pairs: 2 decimal places
-                        4                                     // Other forex pairs: 4 decimal places
-                      }
-                      formatOptions={{
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
-                                             selectedPair && selectedPair.includes('JPY') ? 2 : 4
-                      }}
+                      allowNegative={false}
+                      step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
+                      decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
                       className="h-9"
                     />
                   </FormControl>
