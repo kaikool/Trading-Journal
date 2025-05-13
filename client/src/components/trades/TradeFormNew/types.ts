@@ -78,6 +78,7 @@ export interface EditTradeProps {
   onSuccess: () => void;
   onError: (error: unknown) => void;
   onChange?: () => void;
+  onCancel?: () => void;
 }
 
 // Unified props type
