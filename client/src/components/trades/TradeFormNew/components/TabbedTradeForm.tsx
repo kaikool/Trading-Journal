@@ -200,34 +200,9 @@ export function TabbedTradeForm({
     >
       <div className="mb-4 relative">
         {isMobile && (
-          <>
-            <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
-              <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
-            </div>
-            
-            {/* Navigation buttons for mobile */}
-            {currentTabIndex > 0 && (
-              <button 
-                type="button"
-                onClick={goToPrevTab}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 h-8 w-8 bg-background/80 rounded-full shadow-sm flex items-center justify-center z-20 text-muted-foreground hover:text-primary transition-colors"
-                aria-label="Previous tab"
-              >
-                <Icons.ui.chevronLeft className="h-4 w-4" />
-              </button>
-            )}
-            
-            {currentTabIndex < TRADE_FORM_TABS.length - 1 && (
-              <button 
-                type="button"
-                onClick={goToNextTab}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 h-8 w-8 bg-background/80 rounded-full shadow-sm flex items-center justify-center z-20 text-muted-foreground hover:text-primary transition-colors"
-                aria-label="Next tab"
-              >
-                <Icons.ui.chevronRight className="h-4 w-4" />
-              </button>
-            )}
-          </>
+          <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
+            <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
+          </div>
         )}
         <TabsList 
           className={cn(
