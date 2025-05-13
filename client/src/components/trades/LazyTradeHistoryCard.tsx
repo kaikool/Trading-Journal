@@ -227,7 +227,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
       {inView ? (
         <Card 
           className={cn(
-            "overflow-hidden cursor-pointer relative card-spotlight border border-[0.09375rem]",
+            "cursor-pointer relative card-spotlight border border-[0.09375rem]",
             // Thêm viền màu theo trạng thái giao dịch
             isTradeOpen 
               ? "border-primary/60" // Giao dịch đang mở
@@ -326,7 +326,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     >
                       {direction === "BUY" ? <Icons.trade.arrowUp className="h-3.5 w-3.5" /> : <Icons.trade.arrowDown className="h-3.5 w-3.5" />}
                     </CardIcon>
-                    <h3 className="text-lg font-semibold">
+                    <h3 className="text-lg font-semibold truncate">
                       {pair}
                     </h3>
                   </div>
@@ -339,7 +339,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     >
                       <Icons.analytics.barChart className="h-3.5 w-3.5" />
                     </CardIcon>
-                    <span className="text-sm ml-1.5 text-muted-foreground font-medium">
+                    <span className="text-sm ml-1.5 text-muted-foreground font-medium max-w-[150px] truncate">
                       {isLoadingStrategy ? (
                         <span className="flex items-center">
                           <Icons.ui.spinner className="h-3 w-3 mr-1.5 animate-spin" />
@@ -353,29 +353,29 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Entry</span>
-                    <span className="font-medium">{entryPrice}</span>
+                    <span className="font-medium truncate">{entryPrice}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Exit</span>
-                    <span className="font-medium">{exitPrice || 'Open'}</span>
+                    <span className="font-medium truncate">{exitPrice || 'Open'}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Stop Loss</span>
-                    <span className="font-medium">{trade.stopLoss}</span>
+                    <span className="font-medium truncate">{trade.stopLoss}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-muted-foreground">Take Profit</span>
-                    <span className="font-medium">{trade.takeProfit}</span>
+                    <span className="font-medium truncate">{trade.takeProfit}</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-2 text-sm mb-3 bg-background/50 p-2 px-2.5 rounded-md border border-border/30 shadow-sm">
                   <span className="text-xs text-muted-foreground">Date:</span> 
-                  <span className="font-medium">{createdDateStr}</span>
+                  <span className="font-medium truncate">{createdDateStr}</span>
                   {closeDate && (
                     <>
                       <span className="text-muted-foreground/60 mx-1">→</span>
-                      <span className="font-medium">{closeDateStr}</span>
+                      <span className="font-medium truncate">{closeDateStr}</span>
                     </>
                   )}
                 </div>
