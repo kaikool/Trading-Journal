@@ -153,3 +153,47 @@ export function formatRiskReward(risk: number, reward: number): string {
   const ratio = reward / risk;
   return `1:${ratio.toFixed(1)}`;
 }
+
+/**
+ * Định dạng giá theo cặp tiền tệ
+ * Mỗi cặp tiền tệ có quy tắc hiển thị số thập phân riêng:
+ * - XAUUSD: 2 số thập phân (ví dụ: 1923.45)
+ * - USDJPY: 2-3 số thập phân (ví dụ: 143.50)
+ * - Các cặp khác: 4-5 số thập phân (ví dụ: 1.0526)
+ * 
+ * @param value Giá trị cần định dạng
+ * @param pair Cặp tiền tệ
+ * @returns Chuỗi đã được định dạng theo quy tắc của cặp tiền tệ
+ */
+export function formatPriceForPair(
+  value: number | string,
+  pair?: string
+): string {
+  if (value === null || value === undefined) return '';
+  
+  // Convert to number if string
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+  // Check if valid number
+  if (isNaN(numValue)) return '';
+  
+  const upperPair = pair?.toUpperCase() || 'XAUUSD';
+  
+  // Define decimal places based on currency pair
+  let decimalPlaces = 5; // Default for most forex pairs
+  
+  if (upperPair === 'XAUUSD') {
+    decimalPlaces = 2; // For Gold (XAUUSD)
+  } else if (upperPair === 'USDJPY') {
+    decimalPlaces = 3; // For USDJPY
+  } else if (upperPair.includes('JPY')) {
+    decimalPlaces = 3; // For any JPY pairs
+  } else {
+    decimalPlaces = 5; // For other major forex pairs (can show 5 decimal places)
+  }
+  
+  return formatNumber(numValue, {
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces
+  });
+}
