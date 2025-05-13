@@ -193,21 +193,20 @@ export function TradeDetails({
                       }}
                       className="h-9 pr-9" /* Added padding-right for the button */
                     />
-                    {canFetchPrice && (
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                        <GetPriceButton
-                          symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
-                          size="sm"
-                          variant="ghost" /* Remove background */
-                          onPriceReceived={(price) => {
-                            form.setValue("entryPrice", price);
-                            form.trigger("entryPrice");
-                          }}
-                          tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
-                          className="text-primary hover:text-primary/80" /* Styling for the button */
-                        />
-                      </div>
-                    )}
+                    {/* Luôn hiển thị nút fetch giá */}
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                      <GetPriceButton
+                        symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
+                        size="sm"
+                        variant="ghost" /* Remove background */
+                        onPriceReceived={(price) => {
+                          form.setValue("entryPrice", price);
+                          form.trigger("entryPrice");
+                        }}
+                        tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
+                        className="text-primary hover:text-primary/80" /* Styling for the button */
+                      />
+                    </div>
                   </div>
                 </FormControl>
                 <FormMessage />
