@@ -11,25 +11,13 @@ import { debug } from "@/lib/debug";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-  CardGradient,
-  CardIcon
+  CardGradient
 } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 // Trade Form Components
 import {
   FormHeader,
-  TradeDetails,
-  TradeStrategy,
-  TradePsychology,
-  TradeImages,
-  NotesSection,
   TabbedTradeForm,
 } from "@/components/trades/TradeFormNew/components";
 import { FormActions } from "@/components/trades/TradeFormNew/components/FormActions";
