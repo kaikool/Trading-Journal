@@ -57,7 +57,6 @@ export default function TradeFormNew(props: TradeFormProps) {
     riskRewardRatio,
     isCalculatingLotSize,
     isCalculatingTakeProfit,
-    canFetchPrice,
     calculateOptimalLotSize,
     calculateOptimalTakeProfit,
     

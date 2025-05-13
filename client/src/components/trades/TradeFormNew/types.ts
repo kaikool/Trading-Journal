@@ -121,8 +121,6 @@ export interface TradeFormContextType {
   isCalculatingLotSize: boolean;
   isCalculatingTakeProfit: boolean;
   
-  // Price fetching state
-  canFetchPrice: boolean;
   
   // Strategy state
   strategies: TradingStrategy[];

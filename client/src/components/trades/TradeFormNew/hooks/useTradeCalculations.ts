@@ -15,7 +15,7 @@ import {
   Direction,
   Currency
 } from '@/lib/forex-calculator';
-import { isSymbolSupported } from '@/lib/market-price-service';
+
 
 interface UseTradeCalculationsProps {
   form: UseFormReturn<TradeFormValues>;
