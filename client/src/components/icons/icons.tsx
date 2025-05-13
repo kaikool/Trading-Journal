@@ -21,7 +21,10 @@ export const Icons = {
     percent: LucideIcons.Percent,
     stats: LucideIcons.BarChart4,
     compare: LucideIcons.GitCompare,
-    target: LucideIcons.Target, // Added for StrategyConditionInput.tsx
+    target: LucideIcons.Target,
+    scale: LucideIcons.Scale,
+    profit: LucideIcons.TrendingUp,
+    chartLine: LucideIcons.LineChart
   },
   
   // Nhóm User Interface (giao diện người dùng)
@@ -95,6 +98,7 @@ export const Icons = {
     ban: LucideIcons.Ban,
     percent: LucideIcons.Percent,
     zap: LucideIcons.Zap,
+    ruler: LucideIcons.Ruler,
     // Added for StrategyConditionInput.tsx
     settings2: LucideIcons.Settings2,
     pencil: LucideIcons.Pencil,
@@ -179,6 +183,7 @@ export const Icons = {
     arrowCircleRight: LucideIcons.ArrowRightCircle,
     arrowCircleLeft: LucideIcons.ArrowLeftCircle,
     riskReward: LucideIcons.ScaleIcon,
+    pips: LucideIcons.Ruler,
   },
 
   // Các icon khác không thuộc nhóm cụ thể
@@ -209,7 +214,8 @@ export const Icons = {
     fileX: LucideIcons.FileX,
     trash: LucideIcons.Trash2,
     download: LucideIcons.Download,
-    info: LucideIcons.Info, // Added for StrategyConditionInput.tsx
+    info: LucideIcons.Info,
+    dollarSign: LucideIcons.DollarSign
   },
 };
 
