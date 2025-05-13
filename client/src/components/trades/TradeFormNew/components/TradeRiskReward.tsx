@@ -136,7 +136,8 @@ export function TradeRiskReward({
                 max={5}
                 step={0.1}
                 onValueChange={(values) => {
-                  onRiskChange(values[0].toString());
+                  // onRiskChange nhận number hoặc object input event
+                  onRiskChange(values[0]);
                 }}
                 className="my-3"
               />
