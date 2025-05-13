@@ -119,7 +119,6 @@ export function TabbedTradeForm({
   accountBalance,
   riskPercentage,
   setRiskPercentage,
-  canFetchPrice,
   isEditMode,
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
@@ -240,7 +239,6 @@ export function TabbedTradeForm({
               accountBalance={accountBalance}
               riskPercentage={riskPercentage}
               setRiskPercentage={setRiskPercentage}
-              canFetchPrice={canFetchPrice}
               isEditMode={isEditMode}
               calculateOptimalLotSize={calculateOptimalLotSize}
               calculateOptimalTakeProfit={calculateOptimalTakeProfit}

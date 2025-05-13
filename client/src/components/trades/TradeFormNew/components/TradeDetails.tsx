@@ -25,7 +25,6 @@ interface TradeDetailsProps {
   accountBalance: number;
   riskPercentage: number;
   setRiskPercentage: (value: number) => void;
-  canFetchPrice: boolean;
   isEditMode: boolean;
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
@@ -38,7 +37,6 @@ export function TradeDetails({
   accountBalance,
   riskPercentage,
   setRiskPercentage,
-  canFetchPrice,
   isEditMode,
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
