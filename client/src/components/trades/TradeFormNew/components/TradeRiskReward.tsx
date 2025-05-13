@@ -67,35 +67,34 @@ export function TradeRiskReward({
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
-        {/* Header đơn giản */}
-        <div className="border-b px-4 py-3 flex items-center justify-between bg-muted/30">
+        {/* Header tinh tế */}
+        <div className="border-b px-4 py-2.5 flex items-center justify-between bg-muted/20">
           <div className="flex items-center gap-1.5">
-            <Icons.analytics.chartLine className="h-4 w-4 text-muted-foreground" />
+            <Icons.analytics.chartLine className="h-4 w-4 text-primary/70" />
             <h3 className="text-sm font-medium">Risk Management</h3>
           </div>
-          <Badge variant="outline" className="text-xs font-normal">
+          <Badge variant="outline" className="text-xs font-normal px-2 py-0.5 bg-background">
             Balance: {formatCurrency(accountBalance)}
           </Badge>
         </div>
         
-        {/* Nội dung chính - layout đơn giản hơn */}
-        <div className="p-4 grid grid-cols-1 gap-4">
+        {/* Nội dung chính - layout tinh tế hơn */}
+        <div className="p-5 grid grid-cols-1 gap-5">
           {/* Phần Risk Slider */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium">Risk per Trade</Label>
+              <Label className="text-sm font-medium text-foreground/90">Risk per Trade</Label>
               <div className="flex flex-col items-end">
                 <span className={cn("text-lg font-semibold", getRiskColor(riskPercentage))}>
                   {riskPercentage.toFixed(1)}%
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground/80">
                   {formatCurrency(riskAmount)}
                 </span>
               </div>
             </div>
             
-            <div className="pt-1 pb-1">
-              {/* Slider đơn giản không cần div bao ngoài */}
+            <div>
               <Slider
                 value={[riskPercentage]}
                 min={0.1}
@@ -104,39 +103,39 @@ export function TradeRiskReward({
                 onValueChange={(values) => {
                   setRiskPercentage(values[0]);
                 }}
-                className="my-2 trade-risk-slider"
+                className="my-1.5 trade-risk-slider"
                 aria-label="Risk percentage"
               />
             </div>
           </div>
           
-          {/* Thông tin Risk:Reward - Tối giản */}
-          <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border/30">
+          {/* Thông tin Risk:Reward - Tối giản và tinh tế */}
+          <div className="grid grid-cols-2 gap-6 pt-3 border-t border-border/20">
             {/* Hiển thị cô đọng pips at risk và potential profit */}
             <div className="flex flex-col">
-              <span className="text-sm text-muted-foreground">Pips at Risk</span>
-              <span className="text-xl font-medium">{pipsAtRisk.toFixed(1)}</span>
+              <span className="text-sm text-muted-foreground/90 mb-1">Pips at Risk</span>
+              <span className="text-lg font-medium">{pipsAtRisk.toFixed(1)}</span>
             </div>
             
             <div className="flex flex-col">
-              <span className="text-sm text-muted-foreground">Potential Profit (Pips)</span>
-              <span className="text-xl font-medium text-emerald-500">{potentialProfitPips.toFixed(1)}</span>
+              <span className="text-sm text-muted-foreground/90 mb-1">Potential Profit</span>
+              <span className="text-lg font-medium text-emerald-500">{potentialProfitPips.toFixed(1)} pips</span>
             </div>
           </div>
           
-          {/* Risk:Reward Ratio - Thay bằng Slider */}
-          <div className="mt-2 pt-2 border-t border-border/30">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Risk:Reward Ratio</span>
+          {/* Risk:Reward Ratio - Thiết kế tinh tế */}
+          <div className="pt-3 border-t border-border/20">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-foreground/90">Risk:Reward Ratio</span>
               <span className={cn(
                 "text-lg font-medium", 
-                entryPrice && stopLoss ? getRRColor(riskRewardRatio) : "text-muted-foreground"
+                entryPrice && stopLoss ? getRRColor(riskRewardRatio) : "text-muted-foreground/70"
               )}>
                 1:{riskRewardRatio.toFixed(2)}
               </span>
             </div>
             
-            <div className="pt-1 pb-1">
+            <div>
               <Slider
                 value={[riskRewardRatio]}
                 min={0.1}
@@ -175,7 +174,7 @@ export function TradeRiskReward({
                   }
                 }}
                 className={cn(
-                  "my-2 trade-risk-slider",
+                  "my-1.5 trade-risk-slider",
                   !entryPrice || !stopLoss ? "opacity-50" : ""
                 )}
                 aria-label="Risk reward ratio"
