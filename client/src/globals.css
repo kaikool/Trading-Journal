@@ -635,7 +635,6 @@
   --transition-timing: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   
   border-radius: var(--item-radius);
-  overflow: hidden;
   transition: all var(--transition-timing);
   box-shadow: var(--item-shadow-normal);
   background: var(--background);
@@ -648,7 +647,6 @@
 }
 
 .app-accordion-content {
-  overflow: hidden;
   background: hsl(var(--card) / 0.7);
 }
 
