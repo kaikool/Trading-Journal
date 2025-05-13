@@ -5,7 +5,7 @@ import { useCallback } from "react"
 
 import { cn } from "@/lib/utils"
 
-// Cải tiến Checkbox component để tránh lỗi flushSync
+// Cải tiến Checkbox component để tránh lỗi flushSync và xử lý vấn đề với Accordion
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
@@ -23,6 +23,16 @@ const Checkbox = React.forwardRef<
     },
     [onCheckedChange]
   );
+  
+  // Thêm handler để dừng lan truyền sự kiện từ checkbox
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    // Dừng lan truyền để tránh việc Accordion bắt sự kiện này
+    e.stopPropagation();
+    // Nếu có onClick được truyền vào, thực thi nó
+    if (props.onClick) {
+      props.onClick(e);
+    }
+  }, [props.onClick]);
 
   return (
     <CheckboxPrimitive.Root
