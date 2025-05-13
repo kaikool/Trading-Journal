@@ -25,7 +25,7 @@ const Checkbox = React.forwardRef<
   );
   
   // Thêm handler để dừng lan truyền sự kiện từ checkbox
-  const handleClick = useCallback((e: React.MouseEvent) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // Dừng lan truyền để tránh việc Accordion bắt sự kiện này
     e.stopPropagation();
     // Nếu có onClick được truyền vào, thực thi nó
@@ -42,6 +42,7 @@ const Checkbox = React.forwardRef<
         className
       )}
       onCheckedChange={handleCheckedChange}
+      onClick={handleClick}
       {...props}
     >
       <CheckboxPrimitive.Indicator
