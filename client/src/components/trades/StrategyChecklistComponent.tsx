@@ -239,7 +239,7 @@ export function StrategyChecklist({
             <div className="flex items-center gap-2">
               <div>
                 <h3 className="text-sm font-medium flex items-center">
-                  <Icons.ui.checkCircle className="h-3.5 w-3.5 mr-1.5 text-primary" />
+                  <Icons.ui.check className="h-3.5 w-3.5 mr-1.5 text-primary" />
                   Strategy Checklist
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
