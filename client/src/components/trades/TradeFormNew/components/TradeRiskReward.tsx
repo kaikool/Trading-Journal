@@ -27,7 +27,8 @@ export function TradeRiskReward({
   accountBalance,
   riskPercentage,
   setRiskPercentage,
-  riskRewardRatio
+  riskRewardRatio,
+  setRiskRewardRatio
 }: TradeRiskRewardProps) {
   const form = useFormContext<TradeFormValues>();
   
@@ -142,8 +143,13 @@ export function TradeRiskReward({
                 max={3}
                 step={0.1}
                 onValueChange={(values) => {
-                  // Cập nhật R:R và tính lại Take Profit dựa trên giá trị mới
+                  // Lấy giá trị mới của Risk:Reward từ slider
                   const newRR = values[0];
+                  
+                  // Cập nhật state với giá trị mới
+                  if (setRiskRewardRatio) {
+                    setRiskRewardRatio(newRR);
+                  }
                   
                   // Tính toán Take Profit mới dựa trên Risk:Reward
                   if (entryPrice && stopLoss) {
