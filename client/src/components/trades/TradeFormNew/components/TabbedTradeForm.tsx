@@ -167,10 +167,15 @@ export function TabbedTradeForm({
       className="w-full"
     >
       <div className="mb-4 relative">
+        {isMobile && (
+          <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
+            <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
+          </div>
+        )}
         <TabsList 
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
-            isMobile ? "flex overflow-x-auto no-scrollbar overflow-y-hidden" : "grid grid-cols-5 overflow-hidden"
+            isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x" : "grid grid-cols-6 overflow-hidden"
           )}
         >
           {TRADE_FORM_TABS.map((tab) => (
@@ -179,7 +184,7 @@ export function TabbedTradeForm({
               value={tab.id}
               className={cn(
                 "flex items-center justify-center gap-2 h-9 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-md transition-all",
-                isMobile ? "flex-shrink-0 px-3" : ""
+                isMobile ? "flex-shrink-0 px-3 min-w-[4rem] snap-start snap-always" : ""
               )}
             >
               {tab.icon}
