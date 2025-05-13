@@ -158,7 +158,7 @@ export function TradeDetails({
             />
           </div>
 
-          {/* Entry Price with GetPrice button */}
+          {/* Entry Price with GetPrice button inside the input */}
           <FormField
             control={form.control}
             name="entryPrice"
@@ -168,29 +168,35 @@ export function TradeDetails({
                   <Label htmlFor="entryPrice" className="text-sm font-medium">
                     Entry Price
                   </Label>
-                  {canFetchPrice && selectedPair && (
-                    <GetPriceButton
-                      symbol={selectedPair}
-                      size="sm"
-                      onPriceReceived={(price) => {
-                        form.setValue("entryPrice", price);
-                        form.trigger("entryPrice");
-                      }}
-                      tooltipText={`Get current ${selectedPair} price`}
-                    />
-                  )}
                 </div>
                 <FormControl>
-                  <NumberInput
-                    id="entryPrice"
-                    placeholder="0.00000"
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    min={0}
-                    step={0.00001}
-                    className="h-9"
-                  />
+                  <div className="relative">
+                    <NumberInput
+                      id="entryPrice"
+                      placeholder="0.00000"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      min={0}
+                      step={0.00001}
+                      className="h-9 pr-9" /* Added padding-right for the button */
+                    />
+                    {canFetchPrice && selectedPair && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                        <GetPriceButton
+                          symbol={selectedPair}
+                          size="sm"
+                          variant="ghost" /* Remove background */
+                          onPriceReceived={(price) => {
+                            form.setValue("entryPrice", price);
+                            form.trigger("entryPrice");
+                          }}
+                          tooltipText={`Get current ${selectedPair} price`}
+                          className="text-primary hover:text-primary/80" /* Styling for the button */
+                        />
+                      </div>
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
