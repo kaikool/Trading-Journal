@@ -11,33 +11,33 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-// Options with colors and icons for various categories
+// Options with colors for various categories
 const optionGroups = {
   emotion: [
-    { value: "calm", label: "Calm", icon: <Icons.ui.info className="h-3 w-3 mr-1" />, color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
-    { value: "confident", label: "Confident", icon: <Icons.analytics.award className="h-3 w-3 mr-1" />, color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-    { value: "fearful", label: "Fearful", icon: <Icons.ui.warning className="h-3 w-3 mr-1" />, color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" },
-    { value: "greedy", label: "Greedy", icon: <Icons.ui.dollarSign className="h-3 w-3 mr-1" />, color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" },
-    { value: "anxious", label: "Anxious", icon: <Icons.general.clock className="h-3 w-3 mr-1" />, color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
-    { value: "excited", label: "Excited", icon: <Icons.ui.circleDot className="h-3 w-3 mr-1" />, color: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300" },
-    { value: "impatient", label: "Impatient", icon: <Icons.general.clock className="h-3 w-3 mr-1" />, color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-    { value: "uncertain", label: "Uncertain", icon: <Icons.ui.info className="h-3 w-3 mr-1" />, color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" },
-    { value: "frustrated", label: "Frustrated", icon: <Icons.trade.arrowUp className="h-3 w-3 mr-1" />, color: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300" },
-    { value: "regretful", label: "Regretful", icon: <Icons.ui.refresh className="h-3 w-3 mr-1" />, color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" }
+    { value: "calm", label: "Calm", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
+    { value: "confident", label: "Confident", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
+    { value: "fearful", label: "Fearful", color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" },
+    { value: "greedy", label: "Greedy", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" },
+    { value: "anxious", label: "Anxious", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
+    { value: "excited", label: "Excited", color: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300" },
+    { value: "impatient", label: "Impatient", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
+    { value: "uncertain", label: "Uncertain", color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" },
+    { value: "frustrated", label: "Frustrated", color: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300" },
+    { value: "regretful", label: "Regretful", color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" }
   ],
   market: [
-    { value: "trending", label: "Trending", icon: <Icons.analytics.trendingUp className="h-3 w-3 mr-1" />, color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
-    { value: "ranging", label: "Ranging", icon: <Icons.ui.moveVertical className="h-3 w-3 mr-1" />, color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
-    { value: "volatile", label: "Volatile", icon: <Icons.analytics.activity className="h-3 w-3 mr-1" />, color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-    { value: "consolidating", label: "Consolidating", icon: <Icons.analytics.compare className="h-3 w-3 mr-1" />, color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
-    { value: "breakout", label: "Breakout", icon: <Icons.analytics.trending className="h-3 w-3 mr-1" />, color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" }
+    { value: "trending", label: "Trending", color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
+    { value: "ranging", label: "Ranging", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
+    { value: "volatile", label: "Volatile", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
+    { value: "consolidating", label: "Consolidating", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
+    { value: "breakout", label: "Breakout", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" }
   ],
   session: [
-    { value: "london", label: "London", icon: <Icons.ui.circleDot className="h-3 w-3 mr-1" />, color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" },
-    { value: "newyork", label: "New York", icon: <Icons.general.database className="h-3 w-3 mr-1" />, color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
-    { value: "tokyo", label: "Tokyo", icon: <Icons.ui.sun className="h-3 w-3 mr-1" />, color: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300" },
-    { value: "sydney", label: "Sydney", icon: <Icons.general.database className="h-3 w-3 mr-1" />, color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
-    { value: "overlap", label: "Overlap", icon: <Icons.ui.circleCheck className="h-3 w-3 mr-1" />, color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" }
+    { value: "london", label: "London", color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" },
+    { value: "newyork", label: "New York", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
+    { value: "tokyo", label: "Tokyo", color: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300" },
+    { value: "sydney", label: "Sydney", color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
+    { value: "overlap", label: "Overlap", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" }
   ]
 };
 
@@ -62,7 +62,6 @@ const OptionBadges = ({
         )}
         onClick={() => onChange(option.value)}
       >
-        {option.icon}
         {option.label}
       </Badge>
     ))}
@@ -71,23 +70,18 @@ const OptionBadges = ({
 
 const CategorySection = ({ 
   title, 
-  icon, 
   options, 
   value, 
   onChange
 }: { 
   title: string;
-  icon: React.ReactNode;
   options: any[];
   value: string | undefined;
   onChange: (value: string) => void;
 }) => (
   <div className="space-y-2">
     <div className="flex items-center justify-between">
-      <div className="flex items-center gap-1">
-        {icon}
-        <Label className="text-sm">{title}</Label>
-      </div>
+      <Label className="text-sm font-medium">{title}</Label>
       {value && (
         <Badge variant="outline" className="text-xs px-1.5 py-0 h-5 bg-primary/5 border-primary/10">
           {options.find(o => o.value === value)?.label}
@@ -161,8 +155,7 @@ export function TradeStrategy({
       {/* Strategy selection card */}
       <Card className="border-border/30 shadow-sm bg-card/50">
         <CardHeader className="pb-2 pt-3 px-4">
-          <CardTitle className="text-sm font-medium flex items-center gap-1.5">
-            <Icons.nav.analytics className="h-3.5 w-3.5 text-primary" />
+          <CardTitle className="text-sm font-medium">
             Select Strategy
           </CardTitle>
         </CardHeader>
@@ -242,8 +235,7 @@ export function TradeStrategy({
       {/* Market context and trading session */}
       <Card className="border-border/30 shadow-sm bg-card/50">
         <CardHeader className="pb-2 pt-3 px-4">
-          <CardTitle className="text-sm font-medium flex items-center gap-1.5">
-            <Icons.analytics.lineChart className="h-3.5 w-3.5 text-primary" />
+          <CardTitle className="text-sm font-medium">
             Market Context
           </CardTitle>
         </CardHeader>
@@ -257,7 +249,6 @@ export function TradeStrategy({
                 <FormItem>
                   <CategorySection
                     title="Market Condition"
-                    icon={<Icons.analytics.trendingUp className="h-3.5 w-3.5 text-muted-foreground" />}
                     options={optionGroups.market}
                     value={field.value}
                     onChange={field.onChange}
@@ -275,7 +266,6 @@ export function TradeStrategy({
                 <FormItem>
                   <CategorySection
                     title="Trading Session"
-                    icon={<Icons.general.clock className="h-3.5 w-3.5 text-muted-foreground" />}
                     options={optionGroups.session}
                     value={field.value}
                     onChange={field.onChange}
@@ -291,8 +281,7 @@ export function TradeStrategy({
       {/* Trading psychology */}
       <Card className="border-border/30 shadow-sm bg-card/50">
         <CardHeader className="pb-2 pt-3 px-4">
-          <CardTitle className="text-sm font-medium flex items-center gap-1.5">
-            <Icons.general.heart className="h-3.5 w-3.5 text-primary" />
+          <CardTitle className="text-sm font-medium">
             Trading Psychology
           </CardTitle>
         </CardHeader>
@@ -304,7 +293,6 @@ export function TradeStrategy({
               <FormItem>
                 <CategorySection
                   title="Emotional State"
-                  icon={<Icons.general.heart className="h-3.5 w-3.5 text-muted-foreground" />}
                   options={optionGroups.emotion}
                   value={field.value}
                   onChange={field.onChange}
@@ -344,21 +332,18 @@ export function TradeStrategy({
               
               {selectedOptions.market && (
                 <Badge className={`text-xs px-2 ${selectedOptions.market.color}`}>
-                  {selectedOptions.market.icon}
                   {selectedOptions.market.label}
                 </Badge>
               )}
               
               {selectedOptions.session && (
                 <Badge className={`text-xs px-2 ${selectedOptions.session.color}`}>
-                  {selectedOptions.session.icon}
                   {selectedOptions.session.label}
                 </Badge>
               )}
               
               {selectedOptions.emotion && (
                 <Badge className={`text-xs px-2 ${selectedOptions.emotion.color}`}>
-                  {selectedOptions.emotion.icon}
                   {selectedOptions.emotion.label}
                 </Badge>
               )}
