@@ -323,9 +323,9 @@ async function addTrade(userId: string, tradeData: any) {
     processTradeTrigger(userId, 'create');
     debug("Achievement processing queued (debounced) for new trade");
     
-    // Return an object with id for easier access
+    // Return success response with id for easier access
     return {
-      ...docRef,
+      success: true,
       id: docRef.id
     };
   } catch (error) {
@@ -615,7 +615,10 @@ async function updateTradeWithBatch(userId: string, tradeId: string, tradeData: 
     await batch.commit();
     debug(`Batch commit completed successfully for trade ${tradeId}`);
     
-    return tradeData;
+    return {
+      success: true,
+      data: tradeData
+    };
   } catch (error) {
     logError(`Error in batch update for trade ${tradeId}:`, error);
     throw error;
@@ -810,7 +813,10 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any, opti
       }, 1000);
     }
     
-    return tradeData;
+    return {
+      success: true,
+      data: tradeData
+    };
   } catch (error) {
     logError("Error updating trade:", error);
     throw error;
