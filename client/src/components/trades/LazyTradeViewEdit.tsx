@@ -1,6 +1,7 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useState, useEffect } from "react";
 import { Icons } from "@/components/icons/icons";
-import { Trade } from "@/types";
+import { Trade, TradingStrategy } from "@/types";
+import { auth, getStrategyById } from "@/lib/firebase";
 
 // Define TradeDiscipline interface for better type safety
 interface TradeDiscipline {
@@ -54,6 +55,40 @@ export function LazyTradeViewEdit({
   const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<string>("view");
   const [showChartDialog, setShowChartDialog] = useState(false);
+  const [strategyName, setStrategyName] = useState<string>("");
+  const [isLoadingStrategy, setIsLoadingStrategy] = useState<boolean>(false);
+  
+  // Fetch strategy name from ID when component loads
+  useEffect(() => {
+    const fetchStrategyName = async () => {
+      try {
+        if (!trade.strategy) {
+          setStrategyName('No Strategy');
+          return;
+        }
+        
+        setIsLoadingStrategy(true);
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const strategyData = await getStrategyById(user.uid, trade.strategy);
+        // TypeScript cast to make sure we have the right type
+        const strategyWithName = strategyData as unknown as TradingStrategy;
+        if (strategyWithName && strategyWithName.name) {
+          setStrategyName(strategyWithName.name);
+        } else {
+          setStrategyName('Unknown Strategy');
+        }
+      } catch (error) {
+        console.error('Error fetching strategy:', error);
+        setStrategyName('Unknown Strategy');
+      } finally {
+        setIsLoadingStrategy(false);
+      }
+    };
+    
+    fetchStrategyName();
+  }, [trade.strategy]);
   
   // Trade Details Display - used in both tabs
   const TradeDetailsDisplay = () => (
@@ -128,7 +163,12 @@ export function LazyTradeViewEdit({
               <Icons.analytics.barChart className="h-3.5 w-3.5" />
             </CardIcon>
             <span className="text-sm text-muted-foreground font-medium">
-              {trade.strategy}
+              {isLoadingStrategy ? (
+                <span className="inline-flex items-center">
+                  <Icons.ui.spinner className="h-3 w-3 animate-spin mr-1" />
+                  Loading...
+                </span>
+              ) : strategyName}
             </span>
           </div>
         </div>
