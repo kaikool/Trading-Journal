@@ -1,16 +1,15 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useFormContext } from "react-hook-form";
 import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/icons/icons';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TradeFormValues } from '../types';
 import { TradingStrategy, StrategyConditionCheck } from '@/types';
 import { StrategyChecklist } from '../../StrategyChecklistComponent';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 
 interface TradeStrategyProps {
@@ -21,6 +20,7 @@ interface TradeStrategyProps {
   handleStrategyCheckToggle: (id: string, checked: boolean) => void;
 }
 
+// Category options with icons and colors
 const emotionOptions = [
   { value: "calm", label: "Calm", icon: <Icons.ui.info className="h-3 w-3 mr-1" />, color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
   { value: "confident", label: "Confident", icon: <Icons.analytics.award className="h-3 w-3 mr-1" />, color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
@@ -50,6 +50,108 @@ const sessionOptions = [
   { value: "overlap", label: "Session Overlap", icon: <Icons.ui.circleCheck className="h-3 w-3 mr-1" />, color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" },
 ];
 
+// Category component for selecting strategy options
+const CategoryBadges = ({ 
+  label, 
+  icon, 
+  options, 
+  value, 
+  onChange 
+}: { 
+  label: string; 
+  icon: React.ReactNode; 
+  options: any[]; 
+  value: string | undefined; 
+  onChange: (value: string) => void; 
+}) => (
+  <div className="space-y-2">
+    <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center gap-1">
+        {icon}
+        <Label className="text-sm">{label}</Label>
+      </div>
+      {value && (
+        <Badge variant="outline" className="text-xs px-1.5 py-0 h-5 bg-background">
+          Selected: {options.find(o => o.value === value)?.label || value}
+        </Badge>
+      )}
+    </div>
+    <div className="flex flex-wrap gap-1.5">
+      {options.map(option => (
+        <Badge 
+          key={option.value} 
+          variant={value === option.value ? "default" : "outline"}
+          className={`cursor-pointer px-2 py-0.5 text-xs font-normal hover:bg-muted/40 ${value === option.value ? option.color : ''}`}
+          onClick={() => onChange(option.value)}
+        >
+          {option.icon}
+          {option.label}
+        </Badge>
+      ))}
+    </div>
+  </div>
+);
+
+// Strategy selection card component
+const StrategySelectionCard = ({ 
+  strategies, 
+  isLoading, 
+  selectedId, 
+  onChange 
+}: { 
+  strategies: TradingStrategy[]; 
+  isLoading: boolean; 
+  selectedId: string | undefined; 
+  onChange: (id: string) => void 
+}) => (
+  <Card className="border-border/30 shadow-sm">
+    <CardHeader className="pb-2 pt-4 px-4">
+      <CardTitle className="text-sm font-medium flex items-center gap-1.5">
+        <Icons.nav.analytics className="h-3.5 w-3.5 text-primary" />
+        Trading Strategy
+      </CardTitle>
+      <CardDescription className="text-xs">
+        Select your preferred trading strategy
+      </CardDescription>
+    </CardHeader>
+    <CardContent className="px-4 pb-4">
+      {isLoading ? (
+        <div className="flex items-center justify-center py-6">
+          <Icons.ui.spinner className="h-5 w-5 mr-2 animate-spin text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Loading strategies...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {strategies.map(strategy => (
+            <Badge 
+              key={strategy.id} 
+              variant={selectedId === strategy.id ? "default" : "outline"}
+              className={cn(
+                "cursor-pointer h-auto py-2 px-3 flex items-center justify-between gap-2",
+                selectedId === strategy.id 
+                  ? "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20" 
+                  : "bg-card hover:bg-muted/40 border-border/40"
+              )}
+              onClick={() => onChange(strategy.id)}
+            >
+              <div className="flex items-center gap-1.5">
+                <Icons.ui.checkCircle className={cn(
+                  "h-3.5 w-3.5",
+                  selectedId === strategy.id ? "text-primary" : "text-muted-foreground/40"
+                )} />
+                <span className="font-medium text-xs">{strategy.name}</span>
+              </div>
+              {strategy.isDefault && (
+                <div className="rounded-full bg-primary/10 h-1.5 w-1.5"></div>
+              )}
+            </Badge>
+          ))}
+        </div>
+      )}
+    </CardContent>
+  </Card>
+);
+
 export function TradeStrategy({
   strategies,
   isLoadingStrategies,
@@ -77,6 +179,14 @@ export function TradeStrategy({
     return currentValue ? sessionOptions.find(option => option.value === currentValue) : null;
   }, [form.watch('sessionType')]);
   
+  // Maintain active section state
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  
+  // Toggle section visibility
+  const toggleSection = (section: string) => {
+    setActiveSection(activeSection === section ? null : section);
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-2">
@@ -90,230 +200,214 @@ export function TradeStrategy({
         )}
       </div>
       
+      {/* Strategy selection */}
+      <StrategySelectionCard 
+        strategies={strategies}
+        isLoading={isLoadingStrategies}
+        selectedId={form.watch('strategy')}
+        onChange={(id) => form.setValue('strategy', id)}
+      />
+      
+      {/* Technical Pattern input */}
+      <Card className="border-border/30 shadow-sm">
+        <CardContent className="pt-4 px-4 pb-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-1 mb-1">
+              <div className="flex items-center gap-1">
+                <Icons.analytics.chartLine className="h-3.5 w-3.5 text-muted-foreground" />
+                <Label htmlFor="techPattern" className="text-sm">Technical Pattern</Label>
+              </div>
+              {form.watch('techPattern') && (
+                <Badge variant="outline" className="text-xs px-1.5 py-0 h-5 bg-primary/5 border-primary/10">
+                  {form.watch('techPattern')}
+                </Badge>
+              )}
+            </div>
+            <FormField
+              control={form.control}
+              name="techPattern"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      id="techPattern"
+                      placeholder="e.g., Double Top, Engulfing Pattern"
+                      className="h-9"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Market Conditions Card */}
       <Card className="border-border/30 shadow-sm">
         <CardHeader className="pb-2 pt-4 px-4">
           <CardTitle className="text-sm font-medium flex items-center gap-1.5">
-            <Icons.ui.settings2 className="h-3.5 w-3.5 text-primary" />
-            Strategy Configuration
+            <Icons.analytics.lineChart className="h-3.5 w-3.5 text-primary" />
+            Market Context
           </CardTitle>
           <CardDescription className="text-xs">
-            Configure your trading approach for this position
+            Define the market conditions for this trade
           </CardDescription>
         </CardHeader>
         
         <CardContent className="px-4 pb-4">
-          <Tabs defaultValue="main" className="w-full">
-            <TabsList className="w-full grid grid-cols-2 h-8 mb-3">
-              <TabsTrigger value="main" className="text-xs">Strategy & Pattern</TabsTrigger>
-              <TabsTrigger value="context" className="text-xs">Context & Session</TabsTrigger>
-            </TabsList>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Market Condition Options */}
+            <FormField
+              control={form.control}
+              name="marketCondition"
+              render={({ field }) => (
+                <FormItem>
+                  <CategoryBadges
+                    label="Market Condition"
+                    icon={<Icons.analytics.trendingUp className="h-3.5 w-3.5 text-muted-foreground" />}
+                    options={marketConditionOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             
-            <TabsContent value="main" className="space-y-4 mt-0">
-              {/* Strategy */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Icons.nav.analytics className="h-3.5 w-3.5 text-muted-foreground" />
-                  <Label htmlFor="strategy" className="text-sm">Strategy</Label>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="strategy"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        value={field.value}
-                        disabled={isLoadingStrategies}
-                      >
-                        <FormControl>
-                          <SelectTrigger id="strategy" className="h-9">
-                            {isLoadingStrategies ? (
-                              <div className="flex items-center gap-2">
-                                <Icons.ui.spinner className="h-3 w-3 animate-spin" />
-                                <span>Loading strategies...</span>
-                              </div>
-                            ) : (
-                              <SelectValue placeholder="Select strategy" />
-                            )}
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {strategies.map(strategy => (
-                            <SelectItem key={strategy.id} value={strategy.id} className="text-sm">
-                              {strategy.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+            {/* Session Type Options */}
+            <FormField
+              control={form.control}
+              name="sessionType"
+              render={({ field }) => (
+                <FormItem>
+                  <CategoryBadges
+                    label="Trading Session"
+                    icon={<Icons.general.clock className="h-3.5 w-3.5 text-muted-foreground" />}
+                    options={sessionOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Emotion Card */}
+      <Card className="border-border/30 shadow-sm">
+        <CardHeader className="pb-2 pt-4 px-4">
+          <CardTitle className="text-sm font-medium flex items-center gap-1.5">
+            <Icons.general.heart className="h-3.5 w-3.5 text-primary" />
+            Trading Psychology
+          </CardTitle>
+          <CardDescription className="text-xs">
+            Identify your emotional state during this trade
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent className="px-4 pb-4">
+          <FormField
+            control={form.control}
+            name="emotion"
+            render={({ field }) => (
+              <FormItem>
+                <CategoryBadges
+                  label="Emotion"
+                  icon={<Icons.general.heart className="h-3.5 w-3.5 text-muted-foreground" />}
+                  options={emotionOptions}
+                  value={field.value}
+                  onChange={field.onChange}
                 />
-              </div>
-              
-              {/* Technical Pattern */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Icons.analytics.chartLine className="h-3.5 w-3.5 text-muted-foreground" />
-                  <Label htmlFor="techPattern" className="text-sm">Technical Pattern</Label>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="techPattern"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          id="techPattern"
-                          placeholder="e.g., Double Top, Engulfing Pattern"
-                          className="h-9"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              {/* Emotions as Badges */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Icons.general.heart className="h-3.5 w-3.5 text-muted-foreground" />
-                  <Label className="text-sm">Emotion</Label>
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="emotion"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex flex-wrap gap-1.5">
-                        {emotionOptions.map(option => (
-                          <Badge 
-                            key={option.value} 
-                            variant={field.value === option.value ? "default" : "outline"}
-                            className={`cursor-pointer px-2 py-0.5 text-xs font-normal hover:bg-muted/40 ${field.value === option.value ? option.color : ''}`}
-                            onClick={() => field.onChange(option.value)}
-                          >
-                            {option.icon}
-                            {option.label}
-                          </Badge>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="context" className="space-y-4 mt-0">
-              {/* Market conditions as Badges */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Icons.analytics.lineChart className="h-3.5 w-3.5 text-muted-foreground" />
-                  <Label className="text-sm">Market Condition</Label>
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="marketCondition"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex flex-wrap gap-1.5">
-                        {marketConditionOptions.map(option => (
-                          <Badge 
-                            key={option.value} 
-                            variant={field.value === option.value ? "default" : "outline"}
-                            className={`cursor-pointer px-2 py-0.5 text-xs font-normal hover:bg-muted/40 ${field.value === option.value ? option.color : ''}`}
-                            onClick={() => field.onChange(option.value)}
-                          >
-                            {option.icon}
-                            {option.label}
-                          </Badge>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              {/* Session Type as Badges */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-1 mb-1">
-                  <Icons.general.clock className="h-3.5 w-3.5 text-muted-foreground" />
-                  <Label className="text-sm">Trading Session</Label>
-                </div>
-                
-                <FormField
-                  control={form.control}
-                  name="sessionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex flex-wrap gap-1.5">
-                        {sessionOptions.map(option => (
-                          <Badge 
-                            key={option.value} 
-                            variant={field.value === option.value ? "default" : "outline"}
-                            className={`cursor-pointer px-2 py-0.5 text-xs font-normal hover:bg-muted/40 ${field.value === option.value ? option.color : ''}`}
-                            onClick={() => field.onChange(option.value)}
-                          >
-                            {option.icon}
-                            {option.label}
-                          </Badge>
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </CardContent>
       </Card>
       
       {/* Selected Options Summary */}
       {(selectedEmotion || selectedMarketCondition || selectedSession || form.watch('techPattern')) && (
-        <div className="rounded-md border border-border/30 p-3 bg-muted/5">
-          <h4 className="text-xs font-medium mb-2 flex items-center gap-1.5">
-            <Icons.ui.circleCheck className="h-3.5 w-3.5 text-primary" />
-            Selected Strategy Parameters
-          </h4>
+        <Card className="border-border/30 shadow-sm bg-muted/5">
+          <CardHeader className="pb-2 pt-3 px-4">
+            <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+              <Icons.ui.circleCheck className="h-3.5 w-3.5 text-primary" />
+              Selected Strategy Parameters
+            </CardTitle>
+          </CardHeader>
           
-          <div className="flex flex-wrap gap-1.5">
-            {form.watch('techPattern') && (
-              <Badge variant="outline" className="bg-background text-xs px-2">
-                <Icons.analytics.chartLine className="h-3 w-3 mr-1 text-muted-foreground" />
-                {form.watch('techPattern')}
-              </Badge>
-            )}
-            
-            {selectedEmotion && (
-              <Badge className={`text-xs px-2 ${selectedEmotion.color}`}>
-                {selectedEmotion.icon}
-                {selectedEmotion.label}
-              </Badge>
-            )}
-            
-            {selectedMarketCondition && (
-              <Badge className={`text-xs px-2 ${selectedMarketCondition.color}`}>
-                {selectedMarketCondition.icon}
-                {selectedMarketCondition.label}
-              </Badge>
-            )}
-            
-            {selectedSession && (
-              <Badge className={`text-xs px-2 ${selectedSession.color}`}>
-                {selectedSession.icon}
-                {selectedSession.label}
-              </Badge>
-            )}
-          </div>
-        </div>
+          <CardContent className="px-4 pb-4 pt-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <div className="text-xs text-muted-foreground">Strategy</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedStrategy ? (
+                    <Badge variant="outline" className="bg-background text-xs px-2">
+                      <Icons.nav.analytics className="h-3 w-3 mr-1 text-primary" />
+                      {selectedStrategy.name}
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-background text-xs px-2 text-muted-foreground">
+                      <Icons.ui.info className="h-3 w-3 mr-1" />
+                      Not selected
+                    </Badge>
+                  )}
+                  
+                  {form.watch('techPattern') && (
+                    <Badge variant="outline" className="bg-background text-xs px-2">
+                      <Icons.analytics.chartLine className="h-3 w-3 mr-1 text-muted-foreground" />
+                      {form.watch('techPattern')}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-1">
+                <div className="text-xs text-muted-foreground">Market Context</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedMarketCondition ? (
+                    <Badge className={`text-xs px-2 ${selectedMarketCondition.color}`}>
+                      {selectedMarketCondition.icon}
+                      {selectedMarketCondition.label}
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-background text-xs px-2 text-muted-foreground">
+                      <Icons.ui.info className="h-3 w-3 mr-1" />
+                      No condition
+                    </Badge>
+                  )}
+                  
+                  {selectedSession && (
+                    <Badge className={`text-xs px-2 ${selectedSession.color}`}>
+                      {selectedSession.icon}
+                      {selectedSession.label}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              
+              <div className="space-y-1 sm:col-span-2">
+                <div className="text-xs text-muted-foreground">Psychology</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedEmotion ? (
+                    <Badge className={`text-xs px-2 ${selectedEmotion.color}`}>
+                      {selectedEmotion.icon}
+                      {selectedEmotion.label}
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-background text-xs px-2 text-muted-foreground">
+                      <Icons.ui.info className="h-3 w-3 mr-1" />
+                      No emotion selected
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
       
       {/* Strategy checklist section */}
