@@ -18,79 +18,95 @@ interface StrategyCheckItemProps {
  */
 export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckItemProps) {
   return (
-    <div className="flex items-start py-2 px-2 border-b border-border/30 last:border-0 hover:bg-muted/20">
-      {/* Simple checkbox that toggles passed status directly */}
-      <div className="flex-shrink-0 mr-3 pt-0.5">
-        <Checkbox
-          id={`check-${check.conditionId}`}
-          checked={check.passed}
-          onCheckedChange={(checked) => {
-            onChange({
-              ...check,
-              checked: true, // Always mark as checked when user interacts with it
-              passed: checked === true // Update the passed state based on checkbox
-            });
-          }}
-          className="h-4 w-4"
-        />
-      </div>
-      
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
-          <label
-            htmlFor={`check-${check.conditionId}`}
-            className="text-sm font-medium cursor-pointer flex-1"
-          >
-            {condition.label || "Untitled condition"}
-          </label>
+    <div className="p-3 hover:bg-muted/5 transition-colors">
+      <div className="flex items-start gap-3">
+        {/* Checkbox with better styling */}
+        <div className="flex-shrink-0 mt-0.5">
+          <Checkbox
+            id={`check-${check.conditionId}`}
+            checked={check.passed}
+            onCheckedChange={(checked) => {
+              onChange({
+                ...check,
+                checked: true, // Always mark as checked when user interacts with it
+                passed: checked === true // Update the passed state based on checkbox
+              });
+            }}
+            className="h-4 w-4 border-primary/40 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+          />
         </div>
         
-        {/* Show details with appropriate badges */}
-        <div className="mt-1 flex flex-wrap gap-1">
-          {/* Indicator */}
-          {condition.indicator && (
-            <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Icons.analytics.activity className="h-3 w-3 mr-1" />
-              {condition.indicator}
-            </Badge>
-          )}
-          
-          {/* Timeframe */}
-          {condition.timeframe && (
-            <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Icons.general.clock className="h-3 w-3 mr-1" />
-              {condition.timeframe}
-            </Badge>
-          )}
-          
-          {/* Expected value */}
-          {condition.expectedValue && (
-            <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Icons.general.target className="h-3 w-3 mr-1" />
-              {condition.expectedValue}
-            </Badge>
-          )}
-        </div>
-        
-        {/* Description with better styling */}
-        {condition.description && (
-          <p className="text-xs text-foreground mt-1">
-            {condition.description}
-          </p>
-        )}
-        
-        {/* Notes field */}
-        {check.checked && check.passed && (
-          <div className="mt-1.5">
-            <Input
-              placeholder="Add notes..."
-              value={check.notes || ""}
-              onChange={(e) => onChange({ ...check, notes: e.target.value })}
-              className="text-xs h-6 px-2"
-            />
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between mb-1">
+            <label
+              htmlFor={`check-${check.conditionId}`}
+              className="text-sm font-medium cursor-pointer flex-1"
+            >
+              {condition.label || "Untitled condition"}
+            </label>
+            
+            {/* Passed status */}
+            {check.checked && (
+              <Badge 
+                variant={check.passed ? "default" : "outline"} 
+                className={`text-[10px] h-4 px-1.5 ml-2 ${check.passed 
+                  ? "bg-success/20 hover:bg-success/20 text-success border-success/20" 
+                  : "bg-destructive/10 hover:bg-destructive/10 text-destructive border-destructive/20"}`}
+              >
+                {check.passed 
+                  ? <span className="flex items-center"><Icons.ui.check className="h-2.5 w-2.5 mr-0.5" />Passed</span> 
+                  : <span className="flex items-center"><Icons.ui.x className="h-2.5 w-2.5 mr-0.5" />Failed</span>}
+              </Badge>
+            )}
           </div>
-        )}
+          
+          {/* Show details with improved badges */}
+          <div className="flex flex-wrap gap-1.5 mb-1.5">
+            {/* Indicator */}
+            {condition.indicator && (
+              <Badge variant="secondary" className="bg-primary/5 text-primary border-primary/20 text-[10px] h-5 px-1.5">
+                <Icons.analytics.activity className="h-2.5 w-2.5 mr-1" />
+                {condition.indicator}
+              </Badge>
+            )}
+            
+            {/* Timeframe */}
+            {condition.timeframe && (
+              <Badge variant="secondary" className="bg-muted/30 text-muted-foreground text-[10px] h-5 px-1.5">
+                <Icons.general.clock className="h-2.5 w-2.5 mr-1" />
+                {condition.timeframe}
+              </Badge>
+            )}
+            
+            {/* Expected value */}
+            {condition.expectedValue && (
+              <Badge variant="secondary" className="bg-muted/30 text-muted-foreground text-[10px] h-5 px-1.5">
+                <Icons.general.target className="h-2.5 w-2.5 mr-1" />
+                {condition.expectedValue}
+              </Badge>
+            )}
+          </div>
+          
+          {/* Description with better styling */}
+          {condition.description && (
+            <p className="text-xs text-muted-foreground bg-muted/5 p-1.5 rounded-md border border-border/30">
+              {condition.description}
+            </p>
+          )}
+          
+          {/* Notes field */}
+          {check.checked && check.passed && (
+            <div className="mt-2">
+              <Input
+                placeholder="Add notes about this condition..."
+                value={check.notes || ""}
+                onChange={(e) => onChange({ ...check, notes: e.target.value })}
+                className="text-xs h-7 px-2 border-primary/20 focus:border-primary"
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -216,14 +232,17 @@ export function StrategyChecklist({
 
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {showCompliance && (
-        <div className="bg-background border p-2 rounded-md mb-1">
+        <div className="bg-muted/5 border border-border/30 p-3 rounded-lg mb-2">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <div>
-                <h3 className="text-sm font-medium">Strategy Checklist</h3>
-                <p className="text-xs text-muted-foreground">
+                <h3 className="text-sm font-medium flex items-center">
+                  <Icons.ui.checkCircle className="h-3.5 w-3.5 mr-1.5 text-primary" />
+                  Strategy Checklist
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {value.filter(c => c.checked && c.passed).length} of {(strategy.rules?.length || 0) + (strategy.entryConditions?.length || 0)} conditions met
                 </p>
               </div>
@@ -232,59 +251,57 @@ export function StrategyChecklist({
         </div>  
       )}
       
-      <Accordion type="multiple" defaultValue={["rules", "entry"]} className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Strategy Rules */}
         {rulesWithChecks.length > 0 && (
-          <AccordionItem value="rules" className="border-b border-border/50">
-            <AccordionTrigger className="py-1.5 h-9 text-sm hover:bg-muted/20 px-2 rounded-md">
-              <div className="flex items-center">
-                <Icons.nav.analytics className="h-4 w-4 mr-1.5" />
-                <span className="font-medium">Strategy Rules</span>
-                <Badge variant="outline" className="ml-2 h-5 px-1.5 bg-background">
-                  {rulesWithChecks.filter(r => r.check.checked && r.check.passed).length}/{rulesWithChecks.length}
-                </Badge>
+          <div className="rounded-md border border-border/30 overflow-hidden bg-background/50">
+            <div className="flex items-center justify-between border-b border-border/30 bg-muted/5 px-3 py-2">
+              <div className="flex items-center gap-1.5">
+                <Icons.nav.analytics className="h-3.5 w-3.5 text-primary" />
+                <span className="text-sm font-medium">Strategy Rules</span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-1 pb-1 px-1">
-              <div className="space-y-0 rounded-md overflow-hidden border border-border/40">
-                {rulesWithChecks.map(({ condition, check }, index) => (
-                  <StrategyCheckItem
-                    key={`rule-${condition.id || index}`}
-                    condition={condition}
-                    check={check}
-                    onChange={handleCheckChange}
-                  />
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+              <Badge variant="outline" className="h-5 px-1.5 bg-primary/5 text-xs">
+                {rulesWithChecks.filter(r => r.check.checked && r.check.passed).length}/{rulesWithChecks.length}
+              </Badge>
+            </div>
+            <div className="divide-y divide-border/30">
+              {rulesWithChecks.map(({ condition, check }, index) => (
+                <StrategyCheckItem
+                  key={`rule-${condition.id || index}`}
+                  condition={condition}
+                  check={check}
+                  onChange={handleCheckChange}
+                />
+              ))}
+            </div>
+          </div>
         )}
         
+        {/* Entry Conditions */}
         {entryConditionsWithChecks.length > 0 && (
-          <AccordionItem value="entry" className="border-b border-border/50">
-            <AccordionTrigger className="py-1.5 h-9 text-sm hover:bg-muted/20 px-2 rounded-md">
-              <div className="flex items-center">
-                <Icons.trade.entry className="h-4 w-4 mr-1.5" />
-                <span className="font-medium">Entry Conditions</span>
-                <Badge variant="outline" className="ml-2 h-5 px-1.5 bg-background">
-                  {entryConditionsWithChecks.filter(r => r.check.checked && r.check.passed).length}/{entryConditionsWithChecks.length}
-                </Badge>
+          <div className="rounded-md border border-border/30 overflow-hidden bg-background/50">
+            <div className="flex items-center justify-between border-b border-border/30 bg-muted/5 px-3 py-2">
+              <div className="flex items-center gap-1.5">
+                <Icons.trade.entry className="h-3.5 w-3.5 text-primary" />
+                <span className="text-sm font-medium">Entry Conditions</span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent className="pt-1 pb-1 px-1">
-              <div className="space-y-0 rounded-md overflow-hidden border border-border/40">
-                {entryConditionsWithChecks.map(({ condition, check }, index) => (
-                  <StrategyCheckItem
-                    key={`entry-${condition.id || index}`}
-                    condition={condition}
-                    check={check}
-                    onChange={handleCheckChange}
-                  />
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+              <Badge variant="outline" className="h-5 px-1.5 bg-primary/5 text-xs">
+                {entryConditionsWithChecks.filter(r => r.check.checked && r.check.passed).length}/{entryConditionsWithChecks.length}
+              </Badge>
+            </div>
+            <div className="divide-y divide-border/30">
+              {entryConditionsWithChecks.map(({ condition, check }, index) => (
+                <StrategyCheckItem
+                  key={`entry-${condition.id || index}`}
+                  condition={condition}
+                  check={check}
+                  onChange={handleCheckChange}
+                />
+              ))}
+            </div>
+          </div>
         )}
-      </Accordion>
+      </div>
     </div>
   );
 }
