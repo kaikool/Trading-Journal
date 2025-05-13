@@ -140,7 +140,7 @@ export function TradeRiskReward({
               <Slider
                 value={[riskRewardRatio]}
                 min={0.1}
-                max={3}
+                max={10}
                 step={0.1}
                 disabled={!entryPrice || !stopLoss}
                 onValueChange={(values) => {
