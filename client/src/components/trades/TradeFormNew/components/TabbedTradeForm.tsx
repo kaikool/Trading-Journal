@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons/icons';
+import { useSwipeable } from 'react-swipeable';
 import { 
   TradeDetails,
   TradeRiskReward,
@@ -159,6 +160,28 @@ export function TabbedTradeForm({
     visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
   };
   
+  // Find the current tab index
+  const currentTabIndex = TRADE_FORM_TABS.findIndex(tab => tab.id === activeTab);
+  
+  // Handle swipe gestures
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      // Go to next tab if possible
+      if (currentTabIndex < TRADE_FORM_TABS.length - 1) {
+        setActiveTab(TRADE_FORM_TABS[currentTabIndex + 1].id);
+      }
+    },
+    onSwipedRight: () => {
+      // Go to previous tab if possible
+      if (currentTabIndex > 0) {
+        setActiveTab(TRADE_FORM_TABS[currentTabIndex - 1].id);
+      }
+    },
+    swipeDuration: 250,
+    preventScrollOnSwipe: true,
+    trackMouse: false
+  });
+  
   return (
     <Tabs 
       defaultValue="entry" 
@@ -167,15 +190,10 @@ export function TabbedTradeForm({
       className="w-full"
     >
       <div className="mb-4 relative">
-        {isMobile && (
-          <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
-            <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
-          </div>
-        )}
         <TabsList 
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
-            isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x" : "grid grid-cols-6 overflow-hidden"
+            isMobile ? "flex overflow-x-auto" : "grid grid-cols-6 overflow-hidden"
           )}
         >
           {TRADE_FORM_TABS.map((tab) => (
@@ -184,7 +202,7 @@ export function TabbedTradeForm({
               value={tab.id}
               className={cn(
                 "flex items-center justify-center gap-2 h-9 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-md transition-all",
-                isMobile ? "flex-shrink-0 px-3 min-w-[4rem] snap-start snap-always" : ""
+                isMobile ? "flex-shrink-0 px-3" : ""
               )}
             >
               {tab.icon}
@@ -199,6 +217,7 @@ export function TabbedTradeForm({
       </div>
       
       <motion.div
+        {...swipeHandlers}
         key={activeTab}
         initial="hidden"
         animate="visible"
