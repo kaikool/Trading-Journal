@@ -115,7 +115,6 @@ export default function TradePage() {
     riskRewardRatio,
     isCalculatingLotSize,
     isCalculatingTakeProfit,
-    canFetchPrice,
     calculateOptimalLotSize,
     calculateOptimalTakeProfit,
     
@@ -198,7 +197,6 @@ export default function TradePage() {
                 accountBalance={accountBalance}
                 riskPercentage={riskPercentage}
                 setRiskPercentage={setRiskPercentage}
-                canFetchPrice={canFetchPrice}
                 isEditMode={false}
                 calculateOptimalLotSize={calculateOptimalLotSize}
                 calculateOptimalTakeProfit={calculateOptimalTakeProfit}

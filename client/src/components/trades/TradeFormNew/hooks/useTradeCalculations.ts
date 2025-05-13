@@ -31,7 +31,6 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
   const [isCalculatingLotSize, setIsCalculatingLotSize] = useState(false);
   const [isCalculatingTakeProfit, setIsCalculatingTakeProfit] = useState(false);
   const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
-  const [canFetchPrice, setCanFetchPrice] = useState<boolean>(false);
   
   // Load user data on component mount
   useEffect(() => {
@@ -134,16 +133,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
         }
       }
       
-      // Check if price fetching is supported for the selected pair
-      if (name === 'pair') {
-        const pair = value.pair as string;
-        if (pair) {
-          const supported = isSymbolSupported(pair);
-          setCanFetchPrice(supported);
-        } else {
-          setCanFetchPrice(false);
-        }
-      }
+      // Không cần kiểm tra symbol hỗ trợ nữa, luôn cho phép lấy giá
     });
     
     return () => subscription.unsubscribe();
@@ -264,7 +254,6 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     isCalculatingLotSize,
     isCalculatingTakeProfit,
     isLoadingUserData,
-    canFetchPrice,
     calculateOptimalLotSize,
     calculateOptimalTakeProfit,
     calculatePreviewPips,

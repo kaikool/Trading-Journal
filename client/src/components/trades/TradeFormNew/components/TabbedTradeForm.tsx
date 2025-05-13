@@ -90,7 +90,6 @@ interface TabbedTradeFormProps {
   riskPercentage: number;
   setRiskPercentage: (value: number) => void;
   isEditMode: boolean;
-  canFetchPrice?: boolean;
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
   riskRewardRatio: number;
