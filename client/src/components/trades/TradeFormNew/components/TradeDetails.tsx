@@ -258,7 +258,23 @@ export function TradeDetails({
                       onChange={field.onChange}
                       onBlur={field.onBlur}
                       min={0}
-                      step={0.00001}
+                      step={
+                        !selectedPair ? 0.00001 :             // Default 5 decimal places
+                        selectedPair.includes('XAU') ? 0.01 : // Gold: 2 decimal places
+                        selectedPair.includes('JPY') ? 0.001 : // JPY pairs: 3 decimal places
+                        0.00001                               // Other forex pairs: 5 decimal places
+                      }
+                      decimalPlaces={
+                        !selectedPair ? 5 :                   // Default 5 decimal places
+                        selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
+                        selectedPair.includes('JPY') ? 3 :    // JPY pairs: 3 decimal places
+                        5                                     // Other forex pairs: 5 decimal places
+                      }
+                      formatOptions={{
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
+                                             selectedPair && selectedPair.includes('JPY') ? 3 : 5
+                      }}
                       className="h-9"
                     />
                   </FormControl>
@@ -289,7 +305,23 @@ export function TradeDetails({
                       onChange={field.onChange}
                       onBlur={field.onBlur}
                       min={0}
-                      step={0.00001}
+                      step={
+                        !selectedPair ? 0.00001 :             // Default 5 decimal places
+                        selectedPair.includes('XAU') ? 0.01 : // Gold: 2 decimal places
+                        selectedPair.includes('JPY') ? 0.001 : // JPY pairs: 3 decimal places
+                        0.00001                               // Other forex pairs: 5 decimal places
+                      }
+                      decimalPlaces={
+                        !selectedPair ? 5 :                   // Default 5 decimal places
+                        selectedPair.includes('XAU') ? 2 :    // Gold: 2 decimal places
+                        selectedPair.includes('JPY') ? 3 :    // JPY pairs: 3 decimal places
+                        5                                     // Other forex pairs: 5 decimal places
+                      }
+                      formatOptions={{
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: selectedPair && selectedPair.includes('XAU') ? 2 : 
+                                             selectedPair && selectedPair.includes('JPY') ? 3 : 5
+                      }}
                       className="h-9"
                     />
                   </FormControl>
