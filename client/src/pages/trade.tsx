@@ -189,23 +189,14 @@ export default function TradePage() {
               intensity="subtle" 
               direction="bottom-left" 
             />
-            <CardHeader className="pb-2 lg:pb-4 border-b border-border/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CardIcon color="primary" variant="soft">
-                    <Icons.trade.candlestick className="h-5 w-5" />
-                  </CardIcon>
-                  <CardTitle>Journal Entry</CardTitle>
-                </div>
-                
-                {/* Simple status indicator */}
-                {riskRewardRatio > 0 && (
-                  <span className="text-xs text-primary">
-                    Ready for submission
-                  </span>
-                )}
+            {/* Chỉ hiển thị indicator khi cần, không cần tiêu đề card */}
+            {riskRewardRatio > 0 && (
+              <div className="absolute top-3 right-3">
+                <span className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-md">
+                  Ready for submission
+                </span>
               </div>
-            </CardHeader>
+            )}
             
             <CardContent className="p-5 overflow-visible">
               <TabbedTradeForm
