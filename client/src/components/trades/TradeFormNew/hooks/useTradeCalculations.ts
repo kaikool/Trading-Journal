@@ -59,7 +59,9 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
             }
             
             if (userData.settings.defaultRiskRewardRatio) {
-              setDefaultRiskRewardRatio(userData.settings.defaultRiskRewardRatio);
+              const defaultRR = userData.settings.defaultRiskRewardRatio;
+              setDefaultRiskRewardRatio(defaultRR);
+              setRiskRewardRatio(defaultRR);
             }
           }
         }
@@ -86,8 +88,19 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
         const { entryPrice, stopLoss, takeProfit, direction } = form.getValues();
         
         if (entryPrice && stopLoss && takeProfit && direction) {
-          const ratio = calculateRiskRewardRatio(entryPrice, stopLoss, takeProfit, direction);
-          setRiskRewardRatio(ratio);
+          try {
+            const ratio = calculateRiskRewardRatio(
+              Number(entryPrice), 
+              Number(stopLoss), 
+              Number(takeProfit), 
+              direction as Direction
+            );
+            setRiskRewardRatio(ratio);
+          } catch (error) {
+            console.error('Error calculating risk reward ratio:', error);
+            // Use default risk reward ratio from settings if calculation fails
+            setRiskRewardRatio(defaultRiskRewardRatio);
+          }
         }
       }
       
@@ -150,6 +163,10 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
       if (!pair || !entryPrice || !stopLoss || !direction) {
         throw new Error('Please fill in pair, entry price, and stop loss before calculating take profit');
       }
+      
+      // Get risk:reward ratio from settings (defaultRiskRewardRatio)
+      // or use 1.5 as fallback if something goes wrong
+      const rr = defaultRiskRewardRatio || 1.5;
       
       // Calculate take profit based on risk:reward ratio
       const takeProfitPrice = calculateTakeProfitPrice({
