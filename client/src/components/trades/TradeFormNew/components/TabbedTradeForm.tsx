@@ -163,23 +163,53 @@ export function TabbedTradeForm({
   // Find the current tab index
   const currentTabIndex = TRADE_FORM_TABS.findIndex(tab => tab.id === activeTab);
   
-  // Handle swipe gestures
-  const swipeHandlers = useSwipeable({
+  // Handle swipe gestures for content
+  const contentSwipeHandlers = useSwipeable({
     onSwipedLeft: () => {
       // Go to next tab if possible
       if (currentTabIndex < TRADE_FORM_TABS.length - 1) {
-        setActiveTab(TRADE_FORM_TABS[currentTabIndex + 1].id);
+        const nextTabId = TRADE_FORM_TABS[currentTabIndex + 1].id;
+        console.log('Content Swiped Left - Moving to tab:', nextTabId);
+        setActiveTab(nextTabId);
       }
     },
     onSwipedRight: () => {
       // Go to previous tab if possible
       if (currentTabIndex > 0) {
-        setActiveTab(TRADE_FORM_TABS[currentTabIndex - 1].id);
+        const prevTabId = TRADE_FORM_TABS[currentTabIndex - 1].id;
+        console.log('Content Swiped Right - Moving to tab:', prevTabId);
+        setActiveTab(prevTabId);
       }
     },
     swipeDuration: 250,
     preventScrollOnSwipe: true,
-    trackMouse: false
+    trackMouse: false,
+    trackTouch: true
+  });
+  
+  // Handle swipe gestures for tabs - đảm bảo không ảnh hưởng đến việc cuộn ngang
+  const tabsSwipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      // Go to next tab if possible
+      if (currentTabIndex < TRADE_FORM_TABS.length - 1) {
+        const nextTabId = TRADE_FORM_TABS[currentTabIndex + 1].id;
+        console.log('Swiped Left - Moving to tab:', nextTabId);
+        setActiveTab(nextTabId);
+      }
+    },
+    onSwipedRight: () => {
+      // Go to previous tab if possible
+      if (currentTabIndex > 0) {
+        const prevTabId = TRADE_FORM_TABS[currentTabIndex - 1].id;
+        console.log('Swiped Right - Moving to tab:', prevTabId);
+        setActiveTab(prevTabId);
+      }
+    },
+    swipeDuration: 250,
+    preventScrollOnSwipe: false, // Cho phép cuộn bình thường trên TabsList
+    trackMouse: false,
+    delta: 50, // Tăng ngưỡng kích hoạt swipe để phân biệt với hành động cuộn
+    trackTouch: true // Đảm bảo theo dõi sự kiện touch
   });
   
   return (
@@ -189,7 +219,7 @@ export function TabbedTradeForm({
       onValueChange={setActiveTab}
       className="w-full"
     >
-      <div className="mb-4 relative">
+      <div className="mb-4 relative" {...(isMobile ? tabsSwipeHandlers : {})}>
         <TabsList 
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
@@ -217,7 +247,7 @@ export function TabbedTradeForm({
       </div>
       
       <motion.div
-        {...swipeHandlers}
+        {...contentSwipeHandlers}
         key={activeTab}
         initial="hidden"
         animate="visible"
