@@ -179,6 +179,7 @@ export function TradeDetails({
                       onBlur={field.onBlur}
                       min={0}
                       step={0.00001}
+                      decimalPlaces={selectedPair && selectedPair.includes('XAU') ? 2 : 5} /* Các cặp tiền tệ thông thường: 5 chữ số thập phân, Gold (XAU): 2 chữ số */
                       className="h-9 pr-9" /* Added padding-right for the button */
                     />
                     {canFetchPrice && (
