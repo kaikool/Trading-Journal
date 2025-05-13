@@ -25,7 +25,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getCachedImageUrl, invalidateImageCache } from '@/lib/image-cache-service';
-import { debug, logError } from '@/lib/debug';
+import { logError } from '@/lib/debug';
 
 interface UseCachedImageOptions {
   bypassCache?: boolean;     // Bỏ qua cache và tải trực tiếp từ Firebase
@@ -118,8 +118,6 @@ export function useCachedImage(
 
       // Xử lý thử lại nếu được bật
       if (retry && retries < retryCount) {
-        debug(`Retrying image load (${retries + 1}/${retryCount}) after delay...`);
-        
         // Thử lại sau một khoảng thời gian
         setTimeout(() => {
           setRetries(prev => prev + 1);
@@ -179,7 +177,7 @@ export function usePrefetchImages(paths: string[]) {
       const prefetchPromises = paths.map(path => 
         getCachedImageUrl(path, { forceRefresh: false })
           .catch(err => {
-            debug(`Error prefetching image ${path}:`, err);
+            logError(`Error prefetching image ${path}:`, err);
             return null; // Không làm dừng prefetch nếu một ảnh gặp lỗi
           })
       );

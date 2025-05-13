@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TradeFormValues, DRAFT_KEY_PREFIX, DRAFT_SAVE_DELAY } from '../types';
-import { debug, logError } from '@/lib/debug';
+import { logError } from '@/lib/debug';
 
 interface UseDraftManagementProps {
   form: UseFormReturn<TradeFormValues>;
