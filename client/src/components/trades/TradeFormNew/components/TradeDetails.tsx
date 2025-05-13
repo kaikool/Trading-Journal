@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
+import { CurrencyPair, getDecimalPlaces } from '@/lib/forex-calculator';
 
 /**
  * TradeDetails Component
@@ -199,7 +200,7 @@ export function TradeDetails({
                         min={0}
                         allowNegative={false}
                         step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                        decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
+                        decimalPlaces={getDecimalPlaces(selectedPair as CurrencyPair || "EURUSD")} // Làm cho số thập phân phù hợp với loại cặp tiền
                         className="h-9 pr-9" /* Added padding-right for the button */
                       />
                       {/* Luôn hiển thị nút fetch giá */}
