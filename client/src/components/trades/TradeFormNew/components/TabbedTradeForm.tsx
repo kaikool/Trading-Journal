@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons/icons';
@@ -184,32 +184,6 @@ export function TabbedTradeForm({
     delta: 10,
   });
   
-  // Reference to the tab list element
-  const tabListRef = React.useRef<HTMLDivElement>(null);
-  
-  // Function to check if scrolling is possible
-  const checkScrollability = useCallback(() => {
-    if (tabListRef.current) {
-      const { scrollWidth, clientWidth, scrollLeft } = tabListRef.current;
-      // Can scroll right if content width is greater than container width
-      // and we haven't scrolled all the way to the right yet
-      const canScroll = scrollWidth > clientWidth && scrollLeft < (scrollWidth - clientWidth);
-      setCanScrollRight(canScroll);
-    }
-  }, []);
-  
-  // Check scrollability on mount and window resize
-  useEffect(() => {
-    checkScrollability();
-    window.addEventListener('resize', checkScrollability);
-    return () => window.removeEventListener('resize', checkScrollability);
-  }, [checkScrollability]);
-  
-  // Check scrollability when tablist is scrolled
-  const handleScroll = useCallback(() => {
-    checkScrollability();
-  }, [checkScrollability]);
-  
   return (
     <Tabs 
       defaultValue="entry" 
@@ -218,14 +192,7 @@ export function TabbedTradeForm({
       className="w-full"
     >
       <div className="mb-4 relative">
-        {isMobile && canScrollRight && (
-          <div className="absolute -right-1 top-1/2 -translate-y-1/2 h-8 w-8 bg-gradient-to-l from-background to-transparent z-10 flex items-center justify-start pointer-events-none">
-            <Icons.ui.chevronRight className="h-4 w-4 text-muted-foreground/60" />
-          </div>
-        )}
         <TabsList 
-          ref={tabListRef}
-          onScroll={handleScroll}
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
             isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x" : "grid grid-cols-5 overflow-hidden"
