@@ -137,54 +137,49 @@ export function TradeRiskReward({
             </div>
             
             <div className="pt-1 pb-1">
-              {!entryPrice || !stopLoss ? (
-                <div className="flex items-center space-x-2 mt-1 mb-2">
-                  <div className="h-3 w-full rounded-md bg-muted/50 border border-muted"></div>
-                  <span className="text-xs text-muted-foreground">
-                    Nhập Entry và SL
-                  </span>
-                </div>
-              ) : (
-                <Slider
-                  value={[riskRewardRatio]}
-                  min={0.1}
-                  max={3}
-                  step={0.1}
-                  onValueChange={(values) => {
-                    // Lấy giá trị mới của Risk:Reward từ slider
-                    const newRR = values[0];
+              <Slider
+                value={[riskRewardRatio]}
+                min={0.1}
+                max={3}
+                step={0.1}
+                disabled={!entryPrice || !stopLoss}
+                onValueChange={(values) => {
+                  // Lấy giá trị mới của Risk:Reward từ slider
+                  const newRR = values[0];
+                  
+                  // Cập nhật state với giá trị mới
+                  if (setRiskRewardRatio) {
+                    setRiskRewardRatio(newRR);
+                  }
+                  
+                  // Tính toán Take Profit mới dựa trên Risk:Reward
+                  if (entryPrice && stopLoss) {
+                    const priceDiff = Math.abs(entryPrice - stopLoss);
+                    const direction = form.watch("direction");
                     
-                    // Cập nhật state với giá trị mới
-                    if (setRiskRewardRatio) {
-                      setRiskRewardRatio(newRR);
+                    let newTakeProfit = 0;
+                    if (direction === "BUY") {
+                      // Nếu BUY, TP = Entry + (Entry - SL) * RR
+                      newTakeProfit = entryPrice + (priceDiff * newRR);
+                    } else {
+                      // Nếu SELL, TP = Entry - (SL - Entry) * RR
+                      newTakeProfit = entryPrice - (priceDiff * newRR);
                     }
                     
-                    // Tính toán Take Profit mới dựa trên Risk:Reward
-                    if (entryPrice && stopLoss) {
-                      const priceDiff = Math.abs(entryPrice - stopLoss);
-                      const direction = form.watch("direction");
-                      
-                      let newTakeProfit = 0;
-                      if (direction === "BUY") {
-                        // Nếu BUY, TP = Entry + (Entry - SL) * RR
-                        newTakeProfit = entryPrice + (priceDiff * newRR);
-                      } else {
-                        // Nếu SELL, TP = Entry - (SL - Entry) * RR
-                        newTakeProfit = entryPrice - (priceDiff * newRR);
-                      }
-                      
-                      // Cập nhật form với giá trị Take Profit mới (chuyển về số)
-                      const formattedTP = parseFloat(newTakeProfit.toFixed(5));
-                      form.setValue("takeProfit", formattedTP, {
-                        shouldValidate: true,
-                        shouldDirty: true
-                      });
-                    }
-                  }}
-                  className="my-2 trade-risk-slider"
-                  aria-label="Risk reward ratio"
-                />
-              )}
+                    // Cập nhật form với giá trị Take Profit mới (chuyển về số)
+                    const formattedTP = parseFloat(newTakeProfit.toFixed(5));
+                    form.setValue("takeProfit", formattedTP, {
+                      shouldValidate: true,
+                      shouldDirty: true
+                    });
+                  }
+                }}
+                className={cn(
+                  "my-2 trade-risk-slider",
+                  !entryPrice || !stopLoss ? "opacity-50" : ""
+                )}
+                aria-label="Risk reward ratio"
+              />
             </div>
           </div>
         </div>
