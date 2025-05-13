@@ -133,9 +133,12 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           return;
         }
         
-        // QUAN TRỌNG: Cho phép nhập các ký tự đặc biệt trong quá trình nhập
-        // Người dùng có thể đang nhập một số chưa hoàn chỉnh
-        // Thêm regex cho phép nhiều số thập phân: dấu chấm/phẩy và số ở sau
+        // QUAN TRỌNG: Cho phép nhập số thực với dấu chấm hoặc dấu phẩy làm dấu thập phân
+        // Regex cho phép:
+        // 1. Dấu trừ tùy chọn (-) ở đầu
+        // 2. Một chuỗi chữ số tùy chọn ở phần nguyên
+        // 3. Một dấu chấm (.) HOẶC dấu phẩy (,) tùy chọn
+        // 4. Một chuỗi chữ số tùy chọn ở phần thập phân
         const validInput = /^-?[0-9]*[.,]?[0-9]*$/.test(val);
         if (!validInput) {
           return; // Bỏ qua nếu có ký tự không phải số, dấu phẩy hoặc chấm
@@ -169,6 +172,9 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           // Xử lý khi dấu chấm là dấu thập phân
           processedValue = processedValue.replace(/,/g, ""); // Xóa dấu phẩy (có thể là dấu phân nhóm)
         }
+        
+        // Log để debug
+        console.log("Original:", val, "Processed:", processedValue);
         
         // Chuyển đổi sang số
         const numericValue = parseFloat(processedValue);
@@ -268,7 +274,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           onBlur(e);
         }
       },
-      [decimalPlaces, formatOptions, locale, onChange, onBlur]
+      [decimalPlaces, formatOptions, onChange, onBlur]
     );
     
     // Xử lý khi focus vào input
