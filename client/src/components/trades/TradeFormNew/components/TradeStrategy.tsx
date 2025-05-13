@@ -290,68 +290,7 @@ export function TradeStrategy({
         </CardContent>
       </Card>
       
-      {/* Strategy checklist section */}
-      {selectedStrategy && strategyChecks.length > 0 && (
-        <Card className="border-border/30 shadow-sm overflow-hidden">
-          <div className="bg-muted/10 border-b border-border/40 py-2.5 px-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Icons.trade.listChecks className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm font-medium">Strategy Checklist</span>
-              </div>
-              <Badge variant="outline" className="h-5 px-1.5 bg-primary/5 text-xs">
-                {strategyChecks.filter(c => c.checked && c.passed).length}/{strategyChecks.length} met
-              </Badge>
-            </div>
-          </div>
-          
-          <CardContent className="px-4 py-4">
-            <StrategyChecklist
-              strategy={selectedStrategy}
-              value={strategyChecks}
-              onChange={(checks) => {
-                if (checks.length > 0) {
-                  // Update all checks based on the new value
-                  for (const check of checks) {
-                    handleStrategyCheckToggle(check.conditionId, check.checked);
-                  }
-                }
-              }}
-              showCompliance={false}
-            />
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Strategy checklist section */}
-      {selectedStrategy && strategyChecks.length > 0 && (
-        <Card className="border-border/30 shadow-sm">
-          <CardHeader className="pb-2 pt-4 px-4">
-            <CardTitle className="text-sm font-medium flex items-center gap-1.5">
-              <Icons.trade.listChecks className="h-3.5 w-3.5 text-primary" />
-              Strategy Checklist
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Review and confirm your strategy conditions
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent className="px-4 pb-4">
-            <StrategyChecklist
-              strategy={selectedStrategy}
-              value={strategyChecks}
-              onChange={(checks) => {
-                if (checks.length > 0) {
-                  // Update all checks based on the new value
-                  for (const check of checks) {
-                    handleStrategyCheckToggle(check.conditionId, check.checked);
-                  }
-                }
-              }}
-            />
-          </CardContent>
-        </Card>
-      )}
+
     </div>
   );
 }
