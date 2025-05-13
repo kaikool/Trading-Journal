@@ -7,6 +7,8 @@
     "noEmit": true,
     "module": "ESNext",
     "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "preserve",
     "esModuleInterop": true,

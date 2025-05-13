@@ -330,7 +330,7 @@ export interface TakeProfitCalculationParams {
 }
 
 export function calculateTakeProfitPrice(params: TakeProfitCalculationParams): number {
-  const { entryPrice, stopLossPrice, riskRewardRatio, direction } = params;
+  const { entryPrice, stopLossPrice, riskRewardRatio, direction, symbol } = params;
   
   if (direction === "BUY") {
     const risk = entryPrice - stopLossPrice;

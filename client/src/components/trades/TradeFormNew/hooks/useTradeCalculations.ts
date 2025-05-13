@@ -203,7 +203,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
       exitPrice: exitPriceNum,
       lotSize: lotSizeNum,
       direction: directionTyped,
-      accountCurrency: "USD"
+      accountCurrency: "USD" as Currency
     });
     
     return profit;
