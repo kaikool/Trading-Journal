@@ -133,12 +133,8 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           return;
         }
         
-        // QUAN TRỌNG: Cho phép nhập số thực với dấu chấm hoặc dấu phẩy làm dấu thập phân
-        // Regex cho phép:
-        // 1. Dấu trừ tùy chọn (-) ở đầu
-        // 2. Một chuỗi chữ số tùy chọn ở phần nguyên
-        // 3. Một dấu chấm (.) HOẶC dấu phẩy (,) tùy chọn
-        // 4. Một chuỗi chữ số tùy chọn ở phần thập phân
+        // QUAN TRỌNG: Cho phép nhập các ký tự đặc biệt trong quá trình nhập
+        // Người dùng có thể đang nhập một số chưa hoàn chỉnh
         const validInput = /^-?[0-9]*[.,]?[0-9]*$/.test(val);
         if (!validInput) {
           return; // Bỏ qua nếu có ký tự không phải số, dấu phẩy hoặc chấm
@@ -172,9 +168,6 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           // Xử lý khi dấu chấm là dấu thập phân
           processedValue = processedValue.replace(/,/g, ""); // Xóa dấu phẩy (có thể là dấu phân nhóm)
         }
-        
-        // Log để debug
-        console.log("Original:", val, "Processed:", processedValue);
         
         // Chuyển đổi sang số
         const numericValue = parseFloat(processedValue);
@@ -254,14 +247,8 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
               ...formatOptions
             };
             
-            // Cập nhật giá trị đã định dạng - luôn dùng dấu chấm làm dấu thập phân
-            let formatted = numValue.toFixed(
-              numValue % 1 === 0 ? 0 : // Nếu là số nguyên, không hiển thị số thập phân
-              Math.min(
-                String(numValue).split('.')[1]?.length || 0, // Giữ nguyên số chữ số thập phân người dùng nhập
-                decimalPlaces // Nhưng không vượt quá decimalPlaces
-              )
-            );
+            // Cập nhật giá trị đã định dạng
+            const formatted = new Intl.NumberFormat(locale, options).format(numValue);
             setFormattedValue(formatted);
             setInputValue(formatted);
           }
@@ -274,7 +261,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
           onBlur(e);
         }
       },
-      [decimalPlaces, formatOptions, onChange, onBlur]
+      [decimalPlaces, formatOptions, locale, onChange, onBlur]
     );
     
     // Xử lý khi focus vào input
