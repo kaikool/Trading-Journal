@@ -52,15 +52,9 @@ function useMediaQuery(query: string): boolean {
 const TRADE_FORM_TABS = [
   {
     id: 'entry',
-    label: 'Entry Details',
+    label: 'Entry & Risk',
     icon: <Icons.ui.arrowRightCircle className="h-4 w-4" />,
     mobileLabel: 'Entry',
-  },
-  {
-    id: 'risk',
-    label: 'Risk & Reward',
-    icon: <Icons.analytics.trendingUp className="h-4 w-4" />,
-    mobileLabel: 'Risk',
   },
   {
     id: 'strategy',
@@ -207,7 +201,7 @@ export function TabbedTradeForm({
         <TabsList 
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
-            isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x" : "grid grid-cols-6 overflow-hidden"
+            isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x" : "grid grid-cols-5 overflow-hidden"
           )}
         >
           {TRADE_FORM_TABS.map((tab) => (
@@ -239,23 +233,28 @@ export function TabbedTradeForm({
         className="min-h-[300px] overflow-visible touch-pan-y"
       >
         <TabsContent value="entry" className="mt-0 pt-2 overflow-visible">
-          <TradeDetails
-            isCalculatingLotSize={isCalculatingLotSize}
-            isCalculatingTakeProfit={isCalculatingTakeProfit}
-            canFetchPrice={canFetchPrice}
-            calculateOptimalLotSize={calculateOptimalLotSize}
-            calculateOptimalTakeProfit={calculateOptimalTakeProfit}
-            riskRewardRatio={riskRewardRatio}
-          />
-        </TabsContent>
-
-        <TabsContent value="risk" className="mt-0 pt-2 overflow-visible">
-          <TradeRiskReward
-            accountBalance={accountBalance}
-            riskPercentage={riskPercentage}
-            setRiskPercentage={setRiskPercentage}
-            riskRewardRatio={riskRewardRatio}
-          />
+          <div className="space-y-6">
+            {/* Entry details section */}
+            <TradeDetails
+              isCalculatingLotSize={isCalculatingLotSize}
+              isCalculatingTakeProfit={isCalculatingTakeProfit}
+              canFetchPrice={canFetchPrice}
+              calculateOptimalLotSize={calculateOptimalLotSize}
+              calculateOptimalTakeProfit={calculateOptimalTakeProfit}
+              riskRewardRatio={riskRewardRatio}
+            />
+            
+            {/* Risk reward section */}
+            <div className="mt-6 border-t border-border/30 pt-6">
+              <h3 className="text-lg font-medium mb-4 text-foreground/90">Risk & Reward Configuration</h3>
+              <TradeRiskReward
+                accountBalance={accountBalance}
+                riskPercentage={riskPercentage}
+                setRiskPercentage={setRiskPercentage}
+                riskRewardRatio={riskRewardRatio}
+              />
+            </div>
+          </div>
         </TabsContent>
         
         <TabsContent value="strategy" className="mt-0 pt-2 overflow-visible">
