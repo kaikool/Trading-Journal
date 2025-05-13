@@ -181,17 +181,17 @@ export function TradeDetails({
                       step={0.00001}
                       className="h-9 pr-9" /* Added padding-right for the button */
                     />
-                    {canFetchPrice && selectedPair && (
+                    {canFetchPrice && (
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                         <GetPriceButton
-                          symbol={selectedPair}
+                          symbol={selectedPair || "EURUSD"} /* Sử dụng EURUSD là giá trị mặc định nếu chưa chọn */
                           size="sm"
                           variant="ghost" /* Remove background */
                           onPriceReceived={(price) => {
                             form.setValue("entryPrice", price);
                             form.trigger("entryPrice");
                           }}
-                          tooltipText={`Get current ${selectedPair} price`}
+                          tooltipText={`Get current ${selectedPair || "EURUSD"} price`}
                           className="text-primary hover:text-primary/80" /* Styling for the button */
                         />
                       </div>
