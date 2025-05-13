@@ -314,16 +314,13 @@ export function TabbedTradeForm({
               riskRewardRatio={riskRewardRatio}
             />
             
-            {/* Risk reward section */}
-            <div className="mt-6 border-t border-border/30 pt-6">
-              <h3 className="text-lg font-medium mb-4 text-foreground/90">Risk & Reward Configuration</h3>
-              <TradeRiskReward
-                accountBalance={accountBalance}
-                riskPercentage={riskPercentage}
-                setRiskPercentage={setRiskPercentage}
-                riskRewardRatio={riskRewardRatio}
-              />
-            </div>
+            {/* Risk reward section - đơn giản hóa */}
+            <TradeRiskReward
+              accountBalance={accountBalance}
+              riskPercentage={riskPercentage}
+              setRiskPercentage={setRiskPercentage}
+              riskRewardRatio={riskRewardRatio}
+            />
           </div>
         </TabsContent>
         
