@@ -249,6 +249,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     riskPercentage,
     setRiskPercentage,
     riskRewardRatio,
+    setRiskRewardRatio,
     isCalculatingLotSize,
     isCalculatingTakeProfit,
     calculateOptimalLotSize,

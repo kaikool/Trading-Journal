@@ -92,6 +92,7 @@ interface TabbedTradeFormProps {
   calculateOptimalLotSize: () => void;
   calculateOptimalTakeProfit: () => void;
   riskRewardRatio: number;
+  setRiskRewardRatio: (value: number) => void;
   
   // Strategy props
   strategies: any[];
@@ -121,6 +122,7 @@ export function TabbedTradeForm({
   calculateOptimalLotSize,
   calculateOptimalTakeProfit,
   riskRewardRatio,
+  setRiskRewardRatio,
   
   // Strategy props
   strategies,
@@ -320,6 +322,7 @@ export function TabbedTradeForm({
               riskPercentage={riskPercentage}
               setRiskPercentage={setRiskPercentage}
               riskRewardRatio={riskRewardRatio}
+              setRiskRewardRatio={setRiskRewardRatio}
             />
           </div>
         </TabsContent>
