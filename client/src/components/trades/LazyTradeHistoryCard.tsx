@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, auth, getStrategyById } from '@/lib/firebase';
 import { 
   Card, 
   CardContent, 
@@ -28,6 +28,7 @@ import DirectionBadge from "./DirectionBadge";
 import axios from "axios";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
+import { TradingStrategy } from "@/types";
 
 interface TradeHistoryCardProps {
   trade: any;
@@ -60,6 +61,9 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
   const [showCloseForm, setShowCloseForm] = useState(false);
   // State cho dialog xem ảnh biểu đồ
   const [showChartDialog, setShowChartDialog] = useState(false);
+  // State cho strategy name
+  const [strategyName, setStrategyName] = useState<string>('');
+  const [isLoadingStrategy, setIsLoadingStrategy] = useState<boolean>(false);
   
   // Lấy giá trị từ trade một cách an toàn
   const {
@@ -159,6 +163,33 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
       setImageLoaded(true);
     }
   }, [cachedImageUrl, isImageLoading]);
+  
+  // Load strategy name from ID when component is in view
+  useEffect(() => {
+    const fetchStrategyName = async () => {
+      if (!inView || !strategy || strategy === 'Unknown') return;
+      
+      try {
+        setIsLoadingStrategy(true);
+        const user = auth.currentUser;
+        if (!user) return;
+        
+        const strategyData = await getStrategyById(user.uid, strategy);
+        if (strategyData && strategyData.name) {
+          setStrategyName(strategyData.name);
+        } else {
+          setStrategyName('Unknown Strategy');
+        }
+      } catch (error) {
+        console.error('Error fetching strategy:', error);
+        setStrategyName('Unknown Strategy');
+      } finally {
+        setIsLoadingStrategy(false);
+      }
+    };
+    
+    fetchStrategyName();
+  }, [inView, strategy]);
   
 
 
@@ -307,7 +338,12 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       <Icons.analytics.barChart className="h-3.5 w-3.5" />
                     </CardIcon>
                     <span className="text-sm ml-1.5 text-muted-foreground font-medium">
-                      {strategy}
+                      {isLoadingStrategy ? (
+                        <span className="flex items-center">
+                          <Icons.ui.spinner className="h-3 w-3 mr-1.5 animate-spin" />
+                          Loading...
+                        </span>
+                      ) : strategyName || strategy}
                     </span>
                   </div>
                 </div>
