@@ -359,6 +359,24 @@ export function formatPrice(price: number, pair: CurrencyPair): string {
 }
 
 /**
+ * Get the number of decimal places to display based on currency pair
+ * 
+ * XAUUSD: 2 decimal places
+ * USDJPY: 2 decimal places
+ * EURUSD and other pairs: 4 decimal places
+ * 
+ * @param pair Currency pair
+ * @returns Number of decimal places to display
+ */
+export function getDecimalPlaces(pair: CurrencyPair): number {
+  if (pair === "XAUUSD" || pair === "USDJPY") {
+    return 2; // 2 decimal places for gold and JPY pairs
+  } else {
+    return 4; // 4 decimal places for other pairs
+  }
+}
+
+/**
  * Calculate pips from entry and exit prices
  * 
  * QUAN TRỌNG: Định nghĩa về pip và chiều của pip

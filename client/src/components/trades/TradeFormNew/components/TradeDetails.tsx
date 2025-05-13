@@ -200,7 +200,7 @@ export function TradeDetails({
                         min={0}
                         allowNegative={false}
                         step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                        decimalPlaces={getDecimalPlaces(selectedPair as CurrencyPair || "EURUSD")} // Làm cho số thập phân phù hợp với loại cặp tiền
+                        decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4} // Định dạng theo cặp tiền
                         className="h-9 pr-9" /* Added padding-right for the button */
                       />
                       {/* Luôn hiển thị nút fetch giá */}
@@ -251,7 +251,7 @@ export function TradeDetails({
                       min={0}
                       allowNegative={false}
                       step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                      decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
+                      decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4} // Định dạng theo cặp tiền
                       className="h-9"
                     />
                   </FormControl>
@@ -284,7 +284,7 @@ export function TradeDetails({
                       min={0}
                       allowNegative={false}
                       step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                      decimalPlaces={5} // Cho phép nhập với số lẻ thập phân tối đa
+                      decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4} // Định dạng theo cặp tiền
                       className="h-9"
                     />
                   </FormControl>
