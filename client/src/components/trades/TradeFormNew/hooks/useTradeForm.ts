@@ -246,7 +246,15 @@ export function useTradeForm(props: TradeFormProps) {
     ...strategyManagement,
     
     // Trade calculations
-    ...calculations,
+    accountBalance: calculations.accountBalance,
+    riskPercentage: calculations.riskPercentage,
+    setRiskPercentage: calculations.setRiskPercentage,
+    riskRewardRatio: calculations.riskRewardRatio,
+    setRiskRewardRatio: calculations.setRiskRewardRatio,
+    isCalculatingLotSize: calculations.isCalculatingLotSize,
+    isCalculatingTakeProfit: calculations.isCalculatingTakeProfit,
+    calculateOptimalLotSize: calculations.calculateOptimalLotSize,
+    calculateOptimalTakeProfit: calculations.calculateOptimalTakeProfit,
     
     // Form submission
     onSubmit: form.handleSubmit(onSubmit)

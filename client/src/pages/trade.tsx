@@ -100,6 +100,7 @@ export default function TradePage() {
     riskPercentage,
     setRiskPercentage,
     riskRewardRatio,
+    setRiskRewardRatio,
     isCalculatingLotSize,
     isCalculatingTakeProfit,
     calculateOptimalLotSize,
@@ -186,6 +187,7 @@ export default function TradePage() {
                 calculateOptimalLotSize={calculateOptimalLotSize}
                 calculateOptimalTakeProfit={calculateOptimalTakeProfit}
                 riskRewardRatio={riskRewardRatio}
+                setRiskRewardRatio={setRiskRewardRatio}
                 
                 // Strategy props
                 strategies={strategies}
