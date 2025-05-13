@@ -152,16 +152,21 @@ export function TradeDetails({
                         <SelectValue placeholder="Select pair" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="EURUSD">EUR/USD</SelectItem>
-                      <SelectItem value="GBPUSD">GBP/USD</SelectItem>
-                      <SelectItem value="USDJPY">USD/JPY</SelectItem>
-                      <SelectItem value="AUDUSD">AUD/USD</SelectItem>
-                      <SelectItem value="USDCAD">USD/CAD</SelectItem>
-                      <SelectItem value="NZDUSD">NZD/USD</SelectItem>
-                      <SelectItem value="EURGBP">EUR/GBP</SelectItem>
-                      <SelectItem value="USDCHF">USD/CHF</SelectItem>
-                      <SelectItem value="XAUUSD">XAU/USD</SelectItem>
+                    <SelectContent 
+                      className="max-h-[200px] overflow-hidden"
+                      onCloseAutoFocus={(e) => e.preventDefault()}
+                    >
+                      <div className="flex flex-col">
+                        <SelectItem value="EURUSD">EUR/USD</SelectItem>
+                        <SelectItem value="GBPUSD">GBP/USD</SelectItem>
+                        <SelectItem value="USDJPY">USD/JPY</SelectItem>
+                        <SelectItem value="AUDUSD">AUD/USD</SelectItem>
+                        <SelectItem value="USDCAD">USD/CAD</SelectItem>
+                        <SelectItem value="NZDUSD">NZD/USD</SelectItem>
+                        <SelectItem value="EURGBP">EUR/GBP</SelectItem>
+                        <SelectItem value="USDCHF">USD/CHF</SelectItem>
+                        <SelectItem value="XAUUSD">XAU/USD</SelectItem>
+                      </div>
                     </SelectContent>
                   </Select>
                   <FormMessage />
