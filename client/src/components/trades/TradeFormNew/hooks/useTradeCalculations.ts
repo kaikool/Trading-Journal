@@ -23,11 +23,11 @@ interface UseTradeCalculationsProps {
 }
 
 export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps) {
-  // Calculation states
+  // Calculation states với giá trị mặc định theo user profile thông thường
   const [accountBalance, setAccountBalance] = useState<number>(DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE);
-  const [riskPercentage, setRiskPercentage] = useState<number>(1);
-  const [riskRewardRatio, setRiskRewardRatio] = useState<number>(0);
-  const [defaultRiskRewardRatio, setDefaultRiskRewardRatio] = useState<number>(1.5);
+  const [riskPercentage, setRiskPercentage] = useState<number>(0.5); // Mặc định là 0.5% theo chuẩn industry
+  const [riskRewardRatio, setRiskRewardRatio] = useState<number>(2); // Mặc định là 1:2
+  const [defaultRiskRewardRatio, setDefaultRiskRewardRatio] = useState<number>(2);
   const [isCalculatingLotSize, setIsCalculatingLotSize] = useState(false);
   const [isCalculatingTakeProfit, setIsCalculatingTakeProfit] = useState(false);
   const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
@@ -53,24 +53,17 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
           
           // Set risk and reward ratio defaults if available
           if (userData.settings) {
-            console.log("[DEBUG] User settings loaded:", userData.settings);
-            if (userData.settings.defaultRiskPercentage) {
-              console.log("[DEBUG] Setting default risk percentage:", userData.settings.defaultRiskPercentage);
-              setRiskPercentage(userData.settings.defaultRiskPercentage);
-            } else {
-              console.log("[DEBUG] No default risk percentage in settings, using:", riskPercentage);
+            // Thiết lập Risk per Trade từ settings (nếu có)
+            if (userData.settings.defaultRiskPerTrade) {
+              setRiskPercentage(userData.settings.defaultRiskPerTrade);
             }
             
+            // Thiết lập Risk:Reward ratio từ settings (nếu có)
             if (userData.settings.defaultRiskRewardRatio) {
               const defaultRR = userData.settings.defaultRiskRewardRatio;
-              console.log("[DEBUG] Setting default R:R ratio:", defaultRR);
               setDefaultRiskRewardRatio(defaultRR);
               setRiskRewardRatio(defaultRR);
-            } else {
-              console.log("[DEBUG] No default R:R ratio in settings, using:", riskRewardRatio);
             }
-          } else {
-            console.log("[DEBUG] No user settings found in userData:", userData);
           }
         }
       } catch (error) {
