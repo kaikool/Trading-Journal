@@ -51,7 +51,6 @@ export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckI
           {/* Indicator */}
           {condition.indicator && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Icons.analytics.activity className="h-3 w-3 mr-1" />
               {condition.indicator}
             </Badge>
           )}
@@ -59,7 +58,6 @@ export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckI
           {/* Timeframe */}
           {condition.timeframe && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Icons.general.clock className="h-3 w-3 mr-1" />
               {condition.timeframe}
             </Badge>
           )}
@@ -67,7 +65,6 @@ export function StrategyCheckItem({ condition, check, onChange }: StrategyCheckI
           {/* Expected value */}
           {condition.expectedValue && (
             <Badge variant="secondary" className="text-xs h-5 px-1.5">
-              <Icons.general.target className="h-3 w-3 mr-1" />
               {condition.expectedValue}
             </Badge>
           )}
@@ -236,10 +233,9 @@ export function StrategyChecklist({
         {rulesWithChecks.length > 0 && (
           <AccordionItem value="rules" className="border-b border-border/50">
             <AccordionTrigger className="py-1.5 h-9 text-sm hover:bg-muted/20 px-2 rounded-md">
-              <div className="flex items-center">
-                <Icons.nav.analytics className="h-4 w-4 mr-1.5" />
+              <div className="flex items-center justify-between w-full">
                 <span className="font-medium">Strategy Rules</span>
-                <Badge variant="outline" className="ml-2 h-5 px-1.5 bg-background">
+                <Badge variant="outline" className="h-5 px-1.5 bg-background">
                   {rulesWithChecks.filter(r => r.check.checked && r.check.passed).length}/{rulesWithChecks.length}
                 </Badge>
               </div>
@@ -262,10 +258,9 @@ export function StrategyChecklist({
         {entryConditionsWithChecks.length > 0 && (
           <AccordionItem value="entry" className="border-b border-border/50">
             <AccordionTrigger className="py-1.5 h-9 text-sm hover:bg-muted/20 px-2 rounded-md">
-              <div className="flex items-center">
-                <Icons.trade.entry className="h-4 w-4 mr-1.5" />
+              <div className="flex items-center justify-between w-full">
                 <span className="font-medium">Entry Conditions</span>
-                <Badge variant="outline" className="ml-2 h-5 px-1.5 bg-background">
+                <Badge variant="outline" className="h-5 px-1.5 bg-background">
                   {entryConditionsWithChecks.filter(r => r.check.checked && r.check.passed).length}/{entryConditionsWithChecks.length}
                 </Badge>
               </div>
