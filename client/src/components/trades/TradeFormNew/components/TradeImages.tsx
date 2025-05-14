@@ -3,6 +3,7 @@ import { ImageUpload } from './ImageUpload';
 import { ImageState } from '../types';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface TradeImagesProps {
   entryImage1: ImageState;
@@ -26,60 +27,58 @@ export function TradeImages({
   removeExitImage
 }: TradeImagesProps) {
   return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
-        {/* Entry Section */}
-        <div className="space-y-2">
-          <div className="flex items-center mb-0.5">
-            <Badge variant="secondary" className="px-2 py-0.5 text-xs">ENTRY</Badge>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <ImageUpload
-              title="H4"
-              subtitle="H4 timeframe"
-              imageState={entryImage1}
-              onImageChange={handleEntryImageChange(1)}
-              onRemoveImage={removeEntryImage(1)}
-              inputId="entryImage1"
-            />
-            
-            <ImageUpload
-              title="M15"
-              subtitle="M15 timeframe"
-              imageState={entryImage2}
-              onImageChange={handleEntryImageChange(2)}
-              onRemoveImage={removeEntryImage(2)}
-              inputId="entryImage2"
-            />
-          </div>
+    <div className="space-y-5">
+      {/* Entry Charts */}
+      <div>
+        <div className="flex items-center mb-2">
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 px-3 py-0.5">Entry Analysis</Badge>
         </div>
         
-        {/* Exit Section */}
-        <div className="space-y-2">
-          <div className="flex items-center mb-0.5">
-            <Badge variant="secondary" className="px-2 py-0.5 text-xs">EXIT</Badge>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <ImageUpload
+            title="H4"
+            subtitle="Higher Timeframe"
+            imageState={entryImage1}
+            onImageChange={handleEntryImageChange(1)}
+            onRemoveImage={removeEntryImage(1)}
+            inputId="entryImage1"
+          />
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <ImageUpload
-              title="H4"
-              subtitle="H4 timeframe"
-              imageState={exitImage1}
-              onImageChange={handleExitImageChange(1)}
-              onRemoveImage={removeExitImage(1)}
-              inputId="exitImage1"
-            />
-            
-            <ImageUpload
-              title="M15"
-              subtitle="M15 timeframe"
-              imageState={exitImage2}
-              onImageChange={handleExitImageChange(2)}
-              onRemoveImage={removeExitImage(2)}
-              inputId="exitImage2"
-            />
-          </div>
+          <ImageUpload
+            title="M15"
+            subtitle="Lower Timeframe"
+            imageState={entryImage2}
+            onImageChange={handleEntryImageChange(2)}
+            onRemoveImage={removeEntryImage(2)}
+            inputId="entryImage2"
+          />
+        </div>
+      </div>
+      
+      {/* Exit Charts */}
+      <div>
+        <div className="flex items-center mb-2">
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 px-3 py-0.5">Exit Analysis</Badge>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <ImageUpload
+            title="H4"
+            subtitle="Higher Timeframe"
+            imageState={exitImage1}
+            onImageChange={handleExitImageChange(1)}
+            onRemoveImage={removeExitImage(1)}
+            inputId="exitImage1"
+          />
+          
+          <ImageUpload
+            title="M15"
+            subtitle="Lower Timeframe"
+            imageState={exitImage2}
+            onImageChange={handleExitImageChange(2)}
+            onRemoveImage={removeExitImage(2)}
+            inputId="exitImage2"
+          />
         </div>
       </div>
     </div>
