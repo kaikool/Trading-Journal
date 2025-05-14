@@ -10,7 +10,12 @@ import { cn } from "@/lib/utils";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
-import { getTimestampMilliseconds as getTimestamp } from "@/lib/format-timestamp";
+import { 
+  getTimestampMilliseconds, 
+  parseTimestamp,
+  formatTimestamp,
+  DateFormat 
+} from "@/lib/format-timestamp";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -61,6 +66,11 @@ import { Badge } from "@/components/ui/badge";
 // Removed pagination imports
 
 export default function TradeHistory() {
+  // Định nghĩa hàm getTimestamp cục bộ để đảm bảo không bị lỗi
+  const getTimestamp = (date: any): number => {
+    return getTimestampMilliseconds(date);
+  };
+  
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
   const { userData, trades: cachedTrades } = useDataCache();
