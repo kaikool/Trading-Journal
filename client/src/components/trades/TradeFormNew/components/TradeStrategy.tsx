@@ -308,8 +308,7 @@ export function TradeStrategy({
       {hasSelections && (
         <Card className="border-border/30 shadow-sm bg-muted/5">
           <CardHeader className="pb-0 pt-3 px-4">
-            <CardTitle className="text-xs font-medium flex items-center gap-1.5">
-              <Icons.ui.circleCheck className="h-3.5 w-3.5 text-primary" />
+            <CardTitle className="text-xs font-medium">
               Selected Parameters
             </CardTitle>
           </CardHeader>
@@ -318,14 +317,12 @@ export function TradeStrategy({
             <div className="flex flex-wrap gap-2">
               {selectedStrategy && (
                 <Badge variant="outline" className="bg-primary/5 text-xs px-2 border-primary/20">
-                  <Icons.nav.analytics className="h-3 w-3 mr-1 text-primary" />
                   {selectedStrategy.name}
                 </Badge>
               )}
               
               {selectedOptions.pattern && (
                 <Badge variant="outline" className="bg-background text-xs px-2">
-                  <Icons.analytics.chartLine className="h-3 w-3 mr-1 text-muted-foreground" />
                   {selectedOptions.pattern}
                 </Badge>
               )}
@@ -356,8 +353,7 @@ export function TradeStrategy({
       {selectedStrategy && strategyChecks.length > 0 && (
         <Card className="border-border/30 shadow-sm bg-card/50">
           <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-sm font-medium flex items-center gap-1.5">
-              <Icons.trade.listChecks className="h-3.5 w-3.5 text-primary" />
+            <CardTitle className="text-sm font-medium">
               Strategy Checklist
             </CardTitle>
             <CardDescription className="text-xs">
