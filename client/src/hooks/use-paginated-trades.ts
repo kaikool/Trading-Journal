@@ -6,6 +6,7 @@ import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
 import { Timestamp } from "firebase/firestore";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { debug, logError } from "@/lib/debug";
+import { getTimeStamp } from "@/utils/timestamp";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
@@ -75,23 +76,7 @@ export function useTradeList(options: {
     // Thực hiện sắp xếp dựa trên sortBy
     console.log(`Sorting all ${trades.length} trades by ${sortBy}`);
     
-    // Logic sắp xếp
-    const getTimestamp = (date: any): number => {
-      if (!date) return 0;
-      
-      if (typeof date === 'object' && 'toDate' in date && typeof date.toDate === 'function') {
-        return date.toDate().getTime();
-      }
-      
-      if (typeof date === 'object' && date && 'seconds' in date && 
-          typeof date.seconds === 'number') {
-        return new Date(date.seconds * 1000).getTime();
-      }
-      
-      if (date instanceof Date) {
-        return date.getTime();
-      }
-      
+    // Logic sắp xếp sử dụng hàm chuẩn hóa từ utils/timestamp.ts
       return 0;
     };
     

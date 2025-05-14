@@ -552,9 +552,9 @@ export function useTradeList(options: {
           if (a.isOpen && !b.isOpen) return -1;
           if (!a.isOpen && b.isOpen) return 1;
           
-          // Lấy đúng thời gian dựa trên trạng thái đóng/mở - dùng getTimestamp đã có để tránh lỗi null
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
+          // Lấy đúng thời gian dựa trên trạng thái đóng/mở
+          const dateA = getTimeStamp(a.closeDate || a.createdAt);
+          const dateB = getTimeStamp(b.closeDate || b.createdAt);
           
           return dateA - dateB; // Cũ nhất lên đầu
         });
