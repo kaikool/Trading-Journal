@@ -7,7 +7,8 @@ import { Timestamp } from "firebase/firestore";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
-import { getTimestampMilliseconds, parseTimestamp } from "@/lib/format-timestamp";
+import { parseTimestamp } from "@/lib/format-timestamp";
+import { getTimeStamp } from "@/utils/timestamp";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
@@ -92,10 +93,7 @@ export function useTradeList(options: {
     // Thực hiện sắp xếp dựa trên sortBy
     debug(`Sorting all ${trades.length} trades by ${sortBy}`);
     
-    // Sử dụng hàm từ format-timestamp.ts với kiểm tra null an toàn
-    const getTimestamp = (date: any): number => {
-      return getTimestampMilliseconds(date);
-    };
+    // Sử dụng hàm chuẩn hóa từ utils/timestamp.ts
     
     // Sắp xếp tất cả các giao dịch dựa trên tiêu chí
     switch (sortBy) {
@@ -106,8 +104,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Sau đó là theo thời gian (mới nhất lên đầu)
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
+          const dateA = getTimeStamp(a.closeDate || a.createdAt);
+          const dateB = getTimeStamp(b.closeDate || b.createdAt);
           
           return dateB - dateA;
         });
@@ -120,8 +118,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Sau đó là theo thời gian (cũ nhất lên đầu)
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
+          const dateA = getTimeStamp(a.closeDate || a.createdAt);
+          const dateB = getTimeStamp(b.closeDate || b.createdAt);
           
           return dateA - dateB;
         });
@@ -189,8 +187,8 @@ export function useTradeList(options: {
           if (a.isOpen && !b.isOpen) return -1;
           if (!a.isOpen && b.isOpen) return 1;
           
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
+          const dateA = getTimeStamp(a.closeDate || a.createdAt);
+          const dateB = getTimeStamp(b.closeDate || b.createdAt);
           
           return dateB - dateA;
         });
@@ -542,8 +540,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Lấy đúng thời gian dựa trên trạng thái đóng/mở
-          const dateA = getTimestampMilliseconds(a.closeDate || a.createdAt);
-          const dateB = getTimestampMilliseconds(b.closeDate || b.createdAt);
+          const dateA = getTimeStamp(a.closeDate || a.createdAt);
+          const dateB = getTimeStamp(b.closeDate || b.createdAt);
           
           return dateB - dateA; // Mới nhất lên đầu
         });
