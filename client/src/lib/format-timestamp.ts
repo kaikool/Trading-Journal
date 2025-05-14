@@ -45,13 +45,17 @@ const DEFAULT_LOCALE = 'en';
 /**
  * Chuyển đổi bất kỳ dạng timestamp nào thành đối tượng Date.
  * Đây là hàm cốt lõi để xử lý tất cả các loại timestamp có thể có trong hệ thống.
+ * Bản cập nhật: Xử lý an toàn hơn với kiểm tra null cho seconds
  */
 export function parseTimestamp(timestamp: TimestampInput): Date | null {
   if (!timestamp) return null;
 
   try {
     // Xử lý định dạng Firebase Timestamp
-    if (typeof timestamp === 'object' && 'seconds' in timestamp && 'nanoseconds' in timestamp) {
+    if (typeof timestamp === 'object' && 
+        'seconds' in timestamp && 
+        timestamp.seconds !== null && 
+        timestamp.seconds !== undefined) {
       return new Date(timestamp.seconds * 1000);
     }
 
@@ -84,6 +88,50 @@ export function parseTimestamp(timestamp: TimestampInput): Date | null {
   } catch (error) {
     console.error('Error parsing timestamp:', error, timestamp);
     return null;
+  }
+}
+
+/**
+ * Trích xuất giá trị milliseconds từ bất kỳ dạng timestamp nào một cách an toàn.
+ * Hữu ích cho việc so sánh timestamp trong các hàm sắp xếp.
+ * 
+ * @param timestamp Bất kỳ dạng timestamp nào được hỗ trợ
+ * @returns milliseconds epoch hoặc 0 nếu không thể phân tích
+ */
+export function getTimestampMilliseconds(timestamp: TimestampInput): number {
+  if (!timestamp) return 0;
+  
+  try {
+    // Xử lý Firebase Timestamp
+    if (typeof timestamp === 'object' && 
+        'seconds' in timestamp && 
+        timestamp.seconds !== null &&
+        timestamp.seconds !== undefined) {
+      return timestamp.seconds * 1000;
+    }
+    
+    // Xử lý Date object
+    if (timestamp instanceof Date) {
+      if (isValid(timestamp)) return timestamp.getTime();
+      return 0;
+    }
+    
+    // Xử lý timestamp dạng số
+    if (typeof timestamp === 'number') {
+      if (timestamp > 1000000000000) return timestamp; // milliseconds
+      return timestamp * 1000; // seconds
+    }
+    
+    // Xử lý string
+    if (typeof timestamp === 'string') {
+      const date = parseTimestamp(timestamp);
+      return date ? date.getTime() : 0;
+    }
+    
+    return 0;
+  } catch (error) {
+    console.error('Error getting timestamp milliseconds:', error, timestamp);
+    return 0;
   }
 }
 

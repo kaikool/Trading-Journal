@@ -16,6 +16,10 @@ import {
   calculateProfitFactor,
   calculateAverageRiskRewardRatio
 } from "@/lib/forex-calculator";
+import {
+  parseTimestamp,
+  getTimestampMilliseconds
+} from "@/lib/format-timestamp";
 
 // Import UI components
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -78,7 +82,35 @@ export default function Dashboard() {
     // Filter and sort trades
     const sortedTrades = [...trades]
       .filter(trade => trade.status !== "OPEN" && trade.profitLoss !== undefined)
-      .sort((a, b) => a.createdAt - b.createdAt);
+      .sort((a, b) => {
+        // Xử lý an toàn khi so sánh các timestamp
+        let timeA = 0;
+        let timeB = 0;
+        
+        // Trích xuất thời gian từ a.createdAt
+        if (a.createdAt) {
+          if (typeof a.createdAt === 'object' && 'seconds' in a.createdAt) {
+            timeA = a.createdAt.seconds * 1000;
+          } else if (a.createdAt instanceof Date) {
+            timeA = a.createdAt.getTime();
+          } else if (typeof a.createdAt === 'number') {
+            timeA = a.createdAt;
+          }
+        }
+        
+        // Trích xuất thời gian từ b.createdAt
+        if (b.createdAt) {
+          if (typeof b.createdAt === 'object' && 'seconds' in b.createdAt) {
+            timeB = b.createdAt.seconds * 1000;
+          } else if (b.createdAt instanceof Date) {
+            timeB = b.createdAt.getTime();
+          } else if (typeof b.createdAt === 'number') {
+            timeB = b.createdAt;
+          }
+        }
+        
+        return timeA - timeB;
+      });
     
     // Đã loại bỏ devlog để cải thiện hiệu suất
     
@@ -97,7 +129,8 @@ export default function Dashboard() {
       // Check Firebase Timestamp format with seconds/nanoseconds
       if (sortedTrades[0].createdAt && 
           typeof sortedTrades[0].createdAt === 'object' && 
-          'seconds' in sortedTrades[0].createdAt) {
+          'seconds' in sortedTrades[0].createdAt &&
+          sortedTrades[0].createdAt.seconds !== null) {
         // Convert Firebase Timestamp manually
         firstTradeDate = new Date(sortedTrades[0].createdAt.seconds * 1000);
       }
@@ -142,7 +175,8 @@ export default function Dashboard() {
           // Handle Firebase Timestamp format with seconds/nanoseconds (JSON serialized)
           if (trade.createdAt && 
               typeof trade.createdAt === 'object' && 
-              'seconds' in trade.createdAt) {
+              'seconds' in trade.createdAt &&
+              trade.createdAt.seconds !== null) {
             // Convert Firebase Timestamp manually
             tradeDate = new Date(trade.createdAt.seconds * 1000);
           }
