@@ -9,9 +9,6 @@ import { debug, logError } from "@/lib/debug";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { getTimestampMilliseconds, parseTimestamp } from "@/lib/format-timestamp";
 
-// Export hàm getTimestampMilliseconds với tên mới để sử dụng trong các component
-export { getTimestampMilliseconds as getTimestamp };
-
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
  * 

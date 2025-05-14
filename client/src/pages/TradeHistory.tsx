@@ -4,13 +4,14 @@ import { TradeFilterOptions, Trade } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Timestamp } from "firebase/firestore";
 import { useLocation } from "wouter";
-import { useTradeList, getTimestamp } from "@/hooks/use-trade-list";
+import { useTradeList } from "@/hooks/use-trade-list";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { 
+  getTimestampMilliseconds as getTimestamp,
   parseTimestamp,
   formatTimestamp,
   DateFormat 
