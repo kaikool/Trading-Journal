@@ -5,6 +5,7 @@ import { Icons } from '@/components/icons/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ImageState } from '../types';
+import { Badge } from '@/components/ui/badge';
 
 interface ImageUploadProps {
   title: string;
@@ -32,15 +33,17 @@ export function ImageUpload({
   } = imageState;
   
   return (
-    <div className="space-y-3 overflow-visible">
-      <Label className="font-medium text-sm sm:text-base mb-1 inline-block">{title}</Label>
+    <div className="overflow-visible">
+      <div className="flex items-center mb-1.5">
+        <Badge variant="outline" className="bg-muted/30 px-2">{title}</Badge>
+      </div>
       
       {preview ? (
         <div className="relative rounded-md overflow-hidden border border-border group">
           <img 
             src={preview}
             alt={title}
-            className="w-full h-auto object-cover max-h-[300px]"
+            className="w-full h-auto object-cover max-h-[200px]"
           />
           
           {isUploading && (
@@ -54,10 +57,9 @@ export function ImageUpload({
               type="button"
               size="sm"
               variant="destructive"
-              className="flex items-center gap-1.5"
+              className="flex"
               onClick={onRemoveImage}
             >
-              <Icons.general.trash className="h-3 w-3" />
               <span>Remove</span>
             </Button>
           </div>
@@ -69,16 +71,15 @@ export function ImageUpload({
           )}
         </div>
       ) : (
-        <div className="border border-dashed border-border rounded-md p-4 text-center">
+        <div className="border border-dashed border-border rounded-md p-2 text-center">
           <Label 
             htmlFor={inputId}
-            className="w-full flex flex-col items-center justify-center gap-1 cursor-pointer py-4"
+            className="w-full flex flex-col items-center justify-center cursor-pointer py-2"
           >
-            <Icons.ui.simpleUpload className="h-10 w-10 text-muted-foreground/50 mb-3" />
-            <span className="text-primary font-medium text-sm sm:text-base text-center">
+            <span className="text-primary text-sm text-center">
               {subtitle}
             </span>
-            <p className="text-xs text-muted-foreground mt-1.5 text-center">
+            <p className="text-xs text-muted-foreground text-center">
               PNG, JPG up to 5MB
             </p>
           </Label>
@@ -93,8 +94,7 @@ export function ImageUpload({
       )}
       
       {error && (
-        <div className="text-sm text-destructive flex items-center gap-2 bg-destructive/5 px-3 py-2 rounded-md">
-          <Icons.ui.alertCircle className="h-4 w-4 flex-shrink-0" />
+        <div className="text-xs text-destructive flex items-center gap-1 mt-1 px-2 py-1 rounded-md">
           <span>{error}</span>
         </div>
       )}

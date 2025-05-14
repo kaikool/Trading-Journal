@@ -1,6 +1,8 @@
 import React from 'react';
 import { ImageUpload } from './ImageUpload';
 import { ImageState } from '../types';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 interface TradeImagesProps {
   entryImage1: ImageState;
@@ -24,54 +26,60 @@ export function TradeImages({
   removeExitImage
 }: TradeImagesProps) {
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold tracking-tight">Trade Charts</h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Entry Images */}
-        <div className="space-y-6">
-          <h4 className="text-sm font-medium uppercase text-muted-foreground tracking-wider">Entry Analysis</h4>
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        {/* Entry Section */}
+        <div className="space-y-3">
+          <div className="flex items-center mb-1">
+            <Badge variant="secondary" className="px-2.5 py-0.5">ENTRY</Badge>
+          </div>
           
-          <ImageUpload
-            title="H4 Chart Image"
-            subtitle="Select H4 timeframe image"
-            imageState={entryImage1}
-            onImageChange={handleEntryImageChange(1)}
-            onRemoveImage={removeEntryImage(1)}
-            inputId="entryImage1"
-          />
-          
-          <ImageUpload
-            title="M15 Chart Image"
-            subtitle="Select M15 timeframe image"
-            imageState={entryImage2}
-            onImageChange={handleEntryImageChange(2)}
-            onRemoveImage={removeEntryImage(2)}
-            inputId="entryImage2"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <ImageUpload
+              title="H4"
+              subtitle="H4 timeframe"
+              imageState={entryImage1}
+              onImageChange={handleEntryImageChange(1)}
+              onRemoveImage={removeEntryImage(1)}
+              inputId="entryImage1"
+            />
+            
+            <ImageUpload
+              title="M15"
+              subtitle="M15 timeframe"
+              imageState={entryImage2}
+              onImageChange={handleEntryImageChange(2)}
+              onRemoveImage={removeEntryImage(2)}
+              inputId="entryImage2"
+            />
+          </div>
         </div>
         
-        {/* Exit Images */}
-        <div className="space-y-6">
-          <h4 className="text-sm font-medium uppercase text-muted-foreground tracking-wider">Exit Analysis</h4>
+        {/* Exit Section */}
+        <div className="space-y-3">
+          <div className="flex items-center mb-1">
+            <Badge variant="secondary" className="px-2.5 py-0.5">EXIT</Badge>
+          </div>
           
-          <ImageUpload
-            title="Exit H4 Chart"
-            subtitle="Select H4 exit chart"
-            imageState={exitImage1}
-            onImageChange={handleExitImageChange(1)}
-            onRemoveImage={removeExitImage(1)}
-            inputId="exitImage1"
-          />
-          
-          <ImageUpload
-            title="Exit M15 Chart"
-            subtitle="Select M15 exit chart"
-            imageState={exitImage2}
-            onImageChange={handleExitImageChange(2)}
-            onRemoveImage={removeExitImage(2)}
-            inputId="exitImage2"
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <ImageUpload
+              title="H4"
+              subtitle="H4 timeframe"
+              imageState={exitImage1}
+              onImageChange={handleExitImageChange(1)}
+              onRemoveImage={removeExitImage(1)}
+              inputId="exitImage1"
+            />
+            
+            <ImageUpload
+              title="M15"
+              subtitle="M15 timeframe"
+              imageState={exitImage2}
+              onImageChange={handleExitImageChange(2)}
+              onRemoveImage={removeExitImage(2)}
+              inputId="exitImage2"
+            />
+          </div>
         </div>
       </div>
     </div>
