@@ -26,15 +26,15 @@ export function TradeImages({
   removeExitImage
 }: TradeImagesProps) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
         {/* Entry Section */}
-        <div className="space-y-3">
-          <div className="flex items-center mb-1">
-            <Badge variant="secondary" className="px-2.5 py-0.5">ENTRY</Badge>
+        <div className="space-y-2">
+          <div className="flex items-center mb-0.5">
+            <Badge variant="secondary" className="px-2 py-0.5 text-xs">ENTRY</Badge>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <ImageUpload
               title="H4"
               subtitle="H4 timeframe"
@@ -56,12 +56,12 @@ export function TradeImages({
         </div>
         
         {/* Exit Section */}
-        <div className="space-y-3">
-          <div className="flex items-center mb-1">
-            <Badge variant="secondary" className="px-2.5 py-0.5">EXIT</Badge>
+        <div className="space-y-2">
+          <div className="flex items-center mb-0.5">
+            <Badge variant="secondary" className="px-2 py-0.5 text-xs">EXIT</Badge>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <ImageUpload
               title="H4"
               subtitle="H4 timeframe"

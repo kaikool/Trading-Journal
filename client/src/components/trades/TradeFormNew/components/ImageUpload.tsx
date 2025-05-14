@@ -34,8 +34,8 @@ export function ImageUpload({
   
   return (
     <div className="overflow-visible">
-      <div className="flex items-center mb-1.5">
-        <Badge variant="outline" className="bg-muted/30 px-2">{title}</Badge>
+      <div className="flex items-center mb-1">
+        <Badge variant="outline" className="bg-muted/30 px-2 text-xs">{title}</Badge>
       </div>
       
       {preview ? (
@@ -71,16 +71,16 @@ export function ImageUpload({
           )}
         </div>
       ) : (
-        <div className="border border-dashed border-border rounded-md p-2 text-center">
+        <div className="border border-dashed border-border rounded-md p-1.5 text-center">
           <Label 
             htmlFor={inputId}
-            className="w-full flex flex-col items-center justify-center cursor-pointer py-2"
+            className="w-full flex flex-col items-center justify-center cursor-pointer py-1.5"
           >
-            <span className="text-primary text-sm text-center">
+            <span className="text-primary text-xs text-center">
               {subtitle}
             </span>
-            <p className="text-xs text-muted-foreground text-center">
-              PNG, JPG up to 5MB
+            <p className="text-xs text-muted-foreground text-center mt-0.5">
+              PNG, JPG
             </p>
           </Label>
           <input 
