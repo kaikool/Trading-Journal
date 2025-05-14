@@ -38,9 +38,7 @@ export const tradeFormSchema = z.object({
     required_error: "Trading strategy is required"
   }).min(1, { message: "Please select a trading strategy" }),
   techPattern: z.string().optional(),
-  emotion: z.string({
-    required_error: "Emotion is required" 
-  }).min(1, { message: "Please select your emotion" }),
+  emotion: z.string().optional(),
   followedPlan: z.boolean().default(true),
   enteredEarly: z.boolean().default(false),
   revenge: z.boolean().default(false),
