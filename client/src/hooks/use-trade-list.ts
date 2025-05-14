@@ -541,9 +541,9 @@ export function useTradeList(options: {
           if (a.isOpen && !b.isOpen) return -1;
           if (!a.isOpen && b.isOpen) return 1;
           
-          // Lấy đúng thời gian dựa trên trạng thái đóng/mở
-          const dateA = a.closeDate ? (a.closeDate as any).seconds : (a.createdAt as any).seconds;
-          const dateB = b.closeDate ? (b.closeDate as any).seconds : (b.createdAt as any).seconds;
+          // Lấy đúng thời gian dựa trên trạng thái đóng/mở - dùng getTimestamp đã có để tránh lỗi null
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateB - dateA; // Mới nhất lên đầu
         });
@@ -554,9 +554,9 @@ export function useTradeList(options: {
           if (a.isOpen && !b.isOpen) return -1;
           if (!a.isOpen && b.isOpen) return 1;
           
-          // Lấy đúng thời gian dựa trên trạng thái đóng/mở
-          const dateA = a.closeDate ? (a.closeDate as any).seconds : (a.createdAt as any).seconds;
-          const dateB = b.closeDate ? (b.closeDate as any).seconds : (b.createdAt as any).seconds;
+          // Lấy đúng thời gian dựa trên trạng thái đóng/mở - dùng getTimestamp đã có để tránh lỗi null
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateA - dateB; // Cũ nhất lên đầu
         });
