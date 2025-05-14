@@ -7,6 +7,7 @@ import { Timestamp } from "firebase/firestore";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
+import { getTimestampMilliseconds, parseTimestamp } from "@/lib/format-timestamp";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
@@ -91,24 +92,9 @@ export function useTradeList(options: {
     // Thực hiện sắp xếp dựa trên sortBy
     debug(`Sorting all ${trades.length} trades by ${sortBy}`);
     
-    // Logic sắp xếp
+    // Sử dụng hàm từ format-timestamp.ts với kiểm tra null an toàn
     const getTimestamp = (date: any): number => {
-      if (!date) return 0;
-      
-      if (typeof date === 'object' && 'toDate' in date && typeof date.toDate === 'function') {
-        return date.toDate().getTime();
-      }
-      
-      if (typeof date === 'object' && date && 'seconds' in date && 
-          typeof date.seconds === 'number') {
-        return new Date(date.seconds * 1000).getTime();
-      }
-      
-      if (date instanceof Date) {
-        return date.getTime();
-      }
-      
-      return 0;
+      return getTimestampMilliseconds(date);
     };
     
     // Sắp xếp tất cả các giao dịch dựa trên tiêu chí
@@ -314,24 +300,41 @@ export function useTradeList(options: {
         // Lấy dữ liệu thời gian từ trade theo loại Firebase Timestamp
         let tradeDate: Date;
         
-        // Hàm helper để chuyển đổi timestamp khác loại thành Date
+        // Viết lại hàm với kiểm tra null an toàn (không dùng import)
         const getDateFromTimestamp = (timestamp: any): Date => {
           if (!timestamp) return new Date();
           
-          if (typeof timestamp === 'object' && 'toDate' in timestamp && typeof timestamp.toDate === 'function') {
-            return timestamp.toDate();
+          try {
+            // Xử lý Firebase Timestamp
+            if (typeof timestamp === 'object' && 
+                'seconds' in timestamp && 
+                timestamp.seconds !== null && 
+                timestamp.seconds !== undefined) {
+              return new Date(timestamp.seconds * 1000);
+            }
+            
+            // Xử lý Firebase Timestamp với toDate
+            if (typeof timestamp === 'object' && 
+                'toDate' in timestamp && 
+                typeof timestamp.toDate === 'function') {
+              return timestamp.toDate();
+            }
+            
+            // Xử lý Date object
+            if (timestamp instanceof Date) {
+              return timestamp;
+            }
+            
+            // Xử lý string hoặc number
+            if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+              const date = new Date(timestamp);
+              return isNaN(date.getTime()) ? new Date() : date;
+            }
+            
+            return new Date();
+          } catch (error) {
+            return new Date();
           }
-          
-          if (typeof timestamp === 'object' && timestamp && 'seconds' in timestamp && 
-              typeof timestamp.seconds === 'number') {
-            return new Date(timestamp.seconds * 1000);
-          }
-          
-          if (timestamp instanceof Date) {
-            return timestamp;
-          }
-          
-          return new Date();
         };
         
         if (trade.closeDate) {
