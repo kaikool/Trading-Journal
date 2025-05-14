@@ -93,7 +93,9 @@ export function useTradeList(options: {
     debug(`Sorting all ${trades.length} trades by ${sortBy}`);
     
     // Sử dụng hàm từ format-timestamp.ts với kiểm tra null an toàn
-    // getTimestamp đã được export ở đầu file, không cần tạo lại
+    const getTimestamp = (date: any): number => {
+      return getTimestampMilliseconds(date);
+    };
     
     // Sắp xếp tất cả các giao dịch dựa trên tiêu chí
     switch (sortBy) {
