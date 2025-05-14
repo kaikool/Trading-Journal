@@ -9,6 +9,9 @@ import { debug, logError } from "@/lib/debug";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { getTimestampMilliseconds, parseTimestamp } from "@/lib/format-timestamp";
 
+// Export hàm getTimestampMilliseconds với tên mới để sử dụng trong các component
+export { getTimestampMilliseconds as getTimestamp };
+
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
  * 
@@ -93,9 +96,7 @@ export function useTradeList(options: {
     debug(`Sorting all ${trades.length} trades by ${sortBy}`);
     
     // Sử dụng hàm từ format-timestamp.ts với kiểm tra null an toàn
-    const getTimestamp = (date: any): number => {
-      return getTimestampMilliseconds(date);
-    };
+    // getTimestamp đã được export ở đầu file, không cần tạo lại
     
     // Sắp xếp tất cả các giao dịch dựa trên tiêu chí
     switch (sortBy) {
@@ -541,9 +542,9 @@ export function useTradeList(options: {
           if (a.isOpen && !b.isOpen) return -1;
           if (!a.isOpen && b.isOpen) return 1;
           
-          // Lấy đúng thời gian dựa trên trạng thái đóng/mở - dùng getTimestamp đã có để tránh lỗi null
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
+          // Lấy đúng thời gian dựa trên trạng thái đóng/mở
+          const dateA = getTimestampMilliseconds(a.closeDate || a.createdAt);
+          const dateB = getTimestampMilliseconds(b.closeDate || b.createdAt);
           
           return dateB - dateA; // Mới nhất lên đầu
         });

@@ -4,14 +4,13 @@ import { TradeFilterOptions, Trade } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Timestamp } from "firebase/firestore";
 import { useLocation } from "wouter";
-import { useTradeList } from "@/hooks/use-trade-list";
+import { useTradeList, getTimestamp } from "@/hooks/use-trade-list";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { 
-  getTimestampMilliseconds, 
   parseTimestamp,
   formatTimestamp,
   DateFormat 
@@ -66,11 +65,6 @@ import { Badge } from "@/components/ui/badge";
 // Removed pagination imports
 
 export default function TradeHistory() {
-  // Định nghĩa hàm getTimestamp cục bộ để đảm bảo không bị lỗi
-  const getTimestamp = (date: any): number => {
-    return getTimestampMilliseconds(date);
-  };
-  
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
   const { userData, trades: cachedTrades } = useDataCache();
