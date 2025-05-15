@@ -1025,14 +1025,19 @@ export default function TradeHistory() {
     // Update UI immediately before actual deletion
     setDeletingTradeIds(prev => [...prev, tradeId]);
     
-    // Then delete from Firebase
+    // Import thông qua dynamic import để tối ưu code-splitting
     import("@/lib/firebase").then(({ deleteTrade }) => {
+      // Sử dụng deleteTrade từ firebase.ts
+      // Lưu ý: deleteTrade đã được tích hợp với TradeUpdateService để thông báo UI updates
+      // thông qua tradeUpdateService.notifyTradeDeleted trong firebase.ts
       deleteTrade(userId, tradeId)
         .then(() => {
           toast({
             title: "Trade deleted",
             description: "The trade has been successfully deleted"
           });
+          // Không cần cập nhật UI thủ công vì TradeUpdateService đã xử lý
+          // UI sẽ được cập nhật thông qua các observer đã đăng ký
         })
         .catch((error) => {
           // If deletion fails, restore UI by removing tradeId from deletingTradeIds

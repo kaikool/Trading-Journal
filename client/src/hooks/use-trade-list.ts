@@ -34,19 +34,18 @@ export function useTradeList(options: {
   
   // Effect để cập nhật sortBy khi initialSortBy thay đổi
   const lastSortByRef = useRef(initialSortBy);
+  const [needsRefetch, setNeedsRefetch] = useState(false);
+  
   useEffect(() => {
     if (initialSortBy !== lastSortByRef.current) {
       debug("useTradeList: Updating sortBy from initialSortBy:", initialSortBy);
       lastSortByRef.current = initialSortBy;
       setSortBy(initialSortBy);
       
-      // Không cần invalidateQueries trực tiếp
-      // Chỉ cần refetch khi sortBy thay đổi để lấy dữ liệu đã sắp xếp
-      if (refetch) {
-        setTimeout(() => refetch(), 0);
-      }
+      // Đánh dấu cần refetch
+      setNeedsRefetch(true);
     }
-  }, [initialSortBy, userId, setSortBy, refetch]);
+  }, [initialSortBy, userId, setSortBy]);
   
   // Cache kết quả truy vấn để tối ưu
   const allTradesRef = useRef<Trade[]>([]);
@@ -214,6 +213,17 @@ export function useTradeList(options: {
     refetchOnWindowFocus: false, // Tắt refetch khi focus window
     refetchOnMount: true       // Bật refetch khi component mount để đảm bảo dữ liệu được cập nhật
   });
+  
+  // Xử lý refetch khi cần thiết (sau khi refetch đã được khai báo)
+  useEffect(() => {
+    if (needsRefetch && refetch) {
+      debug("[TradeList] Performing refetch due to sortBy change");
+      setTimeout(() => {
+        refetch();
+        setNeedsRefetch(false);
+      }, 0);
+    }
+  }, [needsRefetch, refetch]);
   
   // Sử dụng thời gian trễ cho việc cập nhật
   const lastTradesUpdateRef = useRef(0);
