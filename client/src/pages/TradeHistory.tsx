@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { useTradeList } from "@/hooks/use-trade-list";
 import { cn } from "@/lib/utils";
-import { useDataCache } from "@/contexts/DataCacheContext";
+import { useUserDataQuery } from "@/hooks/use-user-data-query";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";

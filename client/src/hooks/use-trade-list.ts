@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import * as firebase from "@/lib/firebase";
 import { TradeFilterOptions, Trade } from "@/types";
-import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { getTimeStamp } from "@/utils/timestamp";
+import { useTradesQuery } from "./use-trades-query";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
@@ -54,8 +54,8 @@ export function useTradeList(options: {
   // Tạo query key bao gồm tất cả các tham số
   const queryKey = ['trades', userId, sortBy, JSON.stringify(filters)];
   
-  // Lấy cache context
-  const { trades: cachedTrades } = useDataCache();
+  // Lấy dữ liệu từ useTradesQuery thay vì useDataCache
+  const { trades: cachedTrades } = useTradesQuery();
   
   // Hàm lấy tất cả dữ liệu từ Firestore hoặc từ cache
   const fetchAllTrades = useCallback(async () => {
