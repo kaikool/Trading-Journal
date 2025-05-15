@@ -261,7 +261,7 @@ class LocalStorageCache {
     try {
       // Sử dụng TextEncoder để tính kích thước chính xác
       return new TextEncoder().encode(str).length;
-    } catch (err) {
+    } catch (_) {
       // Fallback nếu TextEncoder không được hỗ trợ
       return new Blob([str]).size;
     }

@@ -16,6 +16,8 @@ const TRADE_QUERY_ROOT_KEY = 'trades';
 
 // Interface chung cho các observers
 export interface TradeChangeObserver {
+  // Parameters are used in implementations of this interface
+  // eslint-disable-next-line no-unused-vars
   onTradesChanged: (action: 'create' | 'update' | 'delete' | 'close', tradeId?: string) => void;
 }
 
