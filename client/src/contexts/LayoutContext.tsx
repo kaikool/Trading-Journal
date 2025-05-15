@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 // Layout constants
+// NOTE: SIDEBAR_WIDTH is defined here but is being overridden in sidebar.tsx component
 export const SIDEBAR_WIDTH = "16rem"; // 256px = 16rem
+// NOTE: SIDEBAR_COLLAPSED_WIDTH is not currently used in the codebase
 export const SIDEBAR_COLLAPSED_WIDTH = "4.5rem"; // 72px for collapsed state
 
 // Layout context type
