@@ -874,38 +874,14 @@ export const defineAchievements = (): Achievement[] => {
 
 // calculateAchievementTotalPoints function removed - not used in the project
 
-// Calculate user level based on total points
-export function calculateUserLevel(totalPoints: number): number {
-  // Updated thresholds for 9 levels
-  const levelThresholds = [0, 50, 150, 300, 500, 800, 1200, 1700, 2500];
-  let level = 1;
-  
-  for (let i = 1; i < levelThresholds.length; i++) {
-    if (totalPoints >= levelThresholds[i]) {
-      level = i + 1;
-    } else {
-      break;
-    }
-  }
-  
-  return level;
-}
+// Function calculateUserLevel removed from here - duplicate of the function in achievements-service.ts
+// This was causing issues as it had different level thresholds compared to the 
+// function in achievements-service.ts
 
-// Calculate level progress percentage
-export function calculateLevelProgress(totalPoints: number): number {
-  const level = calculateUserLevel(totalPoints);
-  // One more threshold for calculating progress of the last level
-  const levelThresholds = [0, 50, 150, 300, 500, 800, 1200, 1700, 2500, 3500];
-  
-  if (level >= 9) return 100; // Max level is 9
-  
-  const currentLevelThreshold = levelThresholds[level - 1];
-  const nextLevelThreshold = levelThresholds[level];
-  const pointsForNextLevel = nextLevelThreshold - currentLevelThreshold;
-  const pointsProgress = totalPoints - currentLevelThreshold;
-  
-  return Math.min(100, Math.floor((pointsProgress / pointsForNextLevel) * 100));
-}
+// Function calculateLevelProgress removed from here
+// It was using the local calculateUserLevel function with different thresholds
+// than the ones in achievements-service.ts
+// This could lead to inconsistencies in level calculations
 
 // Convert achievement level to display label
 export function achievementLevelLabel(level: string): string {
