@@ -308,26 +308,4 @@ export function compareTimestamps(a: TimestampInput, b: TimestampInput): number 
   return dateA.getTime() - dateB.getTime();
 }
 
-/**
- * Kiểm tra xem hai timestamps có cùng ngày hay không
- */
-export function isSameDay(a: TimestampInput, b: TimestampInput): boolean {
-  const dateA = parseTimestamp(a);
-  const dateB = parseTimestamp(b);
-  
-  if (!dateA || !dateB) return false;
-  
-  return format(dateA, 'yyyy-MM-dd') === format(dateB, 'yyyy-MM-dd');
-}
-
-/**
- * Kiểm tra xem hai timestamps có cùng tháng hay không
- */
-export function isSameMonth(a: TimestampInput, b: TimestampInput): boolean {
-  const dateA = parseTimestamp(a);
-  const dateB = parseTimestamp(b);
-  
-  if (!dateA || !dateB) return false;
-  
-  return format(dateA, 'yyyy-MM') === format(dateB, 'yyyy-MM');
-}
+// isSameDay and isSameMonth functions removed - not used in the project

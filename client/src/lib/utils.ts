@@ -83,14 +83,4 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-/**
- * Điều hướng đến một tab cụ thể trong trang Settings
- * @param tab Tên tab cần mở (ví dụ: 'general', 'trading', 'strategies', 'achievements', 'security')
- */
-export function navigateToSettingsTab(tab: string) {
-  // Đầu tiên, điều hướng đến trang settings
-  window.location.href = "/settings";
-  
-  // Lưu tab cần mở vào sessionStorage
-  sessionStorage.setItem('settings_active_tab', tab);
-}
+// navigateToSettingsTab function removed - not used in the project
