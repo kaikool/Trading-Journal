@@ -356,7 +356,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
             )}
           </div>
           <div className="flex items-center gap-1.5 pt-0.5 mt-0.5 border-t border-muted">
-            <span className="text-primary">{winRate}% win rate</span>
+            <span className="text-primary">{formatPercentage(winRate)} win rate</span>
             <span className="text-muted-foreground text-[10px]">({data.trades} trades)</span>
           </div>
         </div>
@@ -649,7 +649,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                           </div>
                           <div className="flex justify-between gap-4">
                             <span className="text-xs text-muted-foreground">Win Rate:</span>
-                            <span className="font-medium">{data.winRate?.toFixed(0) || 0}%</span>
+                            <span className="font-medium">{data.winRate ? formatPercentage(data.winRate) : '0%'}</span>
                           </div>
                         </div>
                       );
@@ -660,7 +660,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                     formatter={(value) => {
                       const dataItem = topPerformingPairs.find(item => item.name === value);
                       if (!dataItem) return value;
-                      return `${value} (${dataItem.winRate?.toFixed(0) || 0}%)`;
+                      return `${value} (${dataItem.winRate ? formatPercentage(dataItem.winRate) : '0%'})`;
                     }}
                     layout="horizontal"
                     verticalAlign="bottom"

@@ -98,7 +98,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
           type: 'positive',
           icon: <Icons.analytics.award className="h-4 w-4" />,
           title: 'Best Performing Strategy',
-          description: `"${bestStrategy.strategy}" has your highest win rate at ${bestStrategy.winRate.toFixed(1)}% over ${bestStrategy.trades} trades.`
+          description: `"${bestStrategy.strategy}" has your highest win rate at ${formatPercentage(bestStrategy.winRate)} over ${bestStrategy.trades} trades.`
         });
       }
     }
@@ -126,7 +126,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
         type: 'warning',
         icon: <Icons.analytics.lightbulb className="h-4 w-4" />,
         title: 'Strategy Optimization Needed',
-        description: `"${worstStrategy.strategy}" has a low win rate of ${worstStrategy.winRate.toFixed(1)}% over ${worstStrategy.trades} trades. Consider reviewing or abandoning this approach.`
+        description: `"${worstStrategy.strategy}" has a low win rate of ${formatPercentage(worstStrategy.winRate)} over ${worstStrategy.trades} trades. Consider reviewing or abandoning this approach.`
       });
     }
     
