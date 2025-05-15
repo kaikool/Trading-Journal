@@ -157,10 +157,10 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
       if (!disciplineItem) return null;
       
       const total = disciplineItem.total;
-      const percentage = total > 0 ? ((data.value / total) * 100).toFixed(1) : '0.0';
+      const percentage = total > 0 ? formatPercentage((data.value / total) * 100) : '0.0%';
       const winRate = data.name === "Yes" 
-        ? disciplineItem.winRateYes.toFixed(1)
-        : disciplineItem.winRateNo.toFixed(1);
+        ? formatPercentage(disciplineItem.winRateYes)
+        : formatPercentage(disciplineItem.winRateNo);
       
       return (
         <div className="bg-background/95 border border-muted shadow-sm rounded-md p-1.5 text-xs backdrop-blur-sm">
@@ -206,7 +206,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         type: 'positive',
         icon: <Icons.achievement.award className="h-4 w-4" />,
         title: 'Plan Adherence Success',
-        description: `Following your trading plan improves win rate by ${followPlanImpact.toFixed(1)}%. Continue this disciplined approach for consistent results.`
+        description: `Following your trading plan improves win rate by ${formatPercentage(followPlanImpact)}. Continue this disciplined approach for consistent results.`
       });
     }
     
@@ -216,7 +216,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         type: 'warning',
         icon: <Icons.achievement.target className="h-4 w-4" />,
         title: 'Improve Plan Adherence',
-        description: `You win ${followPlanImpact.toFixed(1)}% more often when following your plan, but only do so ${((disciplineMetrics.followedPlan.yes / totalTradesCount) * 100).toFixed(1)}% of the time. Focus on discipline.`
+        description: `You win ${formatPercentage(followPlanImpact)} more often when following your plan, but only do so ${formatPercentage((disciplineMetrics.followedPlan.yes / totalTradesCount) * 100)} of the time. Focus on discipline.`
       });
     }
     
@@ -226,7 +226,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         type: 'warning',
         icon: <Icons.ui.alertTriangle className="h-4 w-4" />,
         title: 'Early Entry Warning',
-        description: `Entering trades prematurely reduces your win rate by ${enterEarlyImpact.toFixed(1)}%. Wait for proper confirmation signals before executing.`
+        description: `Entering trades prematurely reduces your win rate by ${formatPercentage(enterEarlyImpact)}. Wait for proper confirmation signals before executing.`
       });
     }
     
@@ -236,7 +236,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         type: 'warning',
         icon: <Icons.ui.xCircle className="h-4 w-4" />,
         title: 'Avoid Revenge Trading',
-        description: `Revenge trading decreases your win rate by ${revengeImpact.toFixed(1)}%. Take breaks after losses to maintain emotional balance.`
+        description: `Revenge trading decreases your win rate by ${formatPercentage(revengeImpact)}. Take breaks after losses to maintain emotional balance.`
       });
     }
     
@@ -247,7 +247,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
         type: 'positive',
         icon: <Icons.ui.circleCheck className="h-4 w-4" />,
         title: 'Strong Discipline Edge',
-        description: `Your discipline factors collectively improve performance by ~${combinedDisciplineImpact.toFixed(1)}%. Trading psychology appears to be a significant strength in your strategy.`
+        description: `Your discipline factors collectively improve performance by ~${formatPercentage(combinedDisciplineImpact)}. Trading psychology appears to be a significant strength in your strategy.`
       });
     }
     
@@ -452,7 +452,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   <p className="font-semibold text-success">Yes: {item.yes}</p>
                   <p className="text-muted-foreground">
                     {item.total > 0 
-                      ? `${((item.yes / item.total) * 100).toFixed(1)}% of trades`
+                      ? `${formatPercentage((item.yes / item.total) * 100)} of trades`
                       : '0.0% of trades'}
                   </p>
                 </div>
@@ -460,7 +460,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   <p className="font-semibold text-destructive">No: {item.no}</p>
                   <p className="text-muted-foreground">
                     {item.total > 0 
-                      ? `${((item.no / item.total) * 100).toFixed(1)}% of trades`
+                      ? `${formatPercentage((item.no / item.total) * 100)} of trades`
                       : '0.0% of trades'}
                   </p>
                 </div>
@@ -498,7 +498,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>
                     {item.total > 0 
-                      ? `${((item.yes / item.total) * 100).toFixed(1)}%`
+                      ? formatPercentage((item.yes / item.total) * 100)
                       : '0.0%'}
                   </TableCell>
                   <TableCell className="text-center">{item.winRateYes.toFixed(1)}%</TableCell>
