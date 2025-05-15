@@ -38,7 +38,13 @@ export function useTradesQuery() {
     const unsubscribe = tradeUpdateService.registerObserver({
       onTradesChanged: (action, tradeId) => {
         debug(`Trade changed via TradeUpdateService (${action}, ID: ${tradeId || 'unknown'}), triggering refetch`);
-        refetch();
+        
+        // Đảm bảo refetch được gọi sau khi invalidateQueries (đã thực hiện trong tradeUpdateService)
+        // bằng cách đẩy refetch vào cuối event loop
+        Promise.resolve().then(() => {
+          // Sử dụng options để tránh rơi vào stale time, đảm bảo luôn lấy dữ liệu mới nhất
+          refetch({ cancelRefetch: false, throwOnError: false });
+        });
       }
     });
     

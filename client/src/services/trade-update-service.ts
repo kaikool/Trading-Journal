@@ -55,8 +55,12 @@ class TradeUpdateService {
    */
   public notifyTradeCreated(userId: string, tradeId?: string) {
     debug(`TradeUpdateService: Trade created notification (ID: ${tradeId || 'unknown'})`);
+    // Đảm bảo invalidation xong trước khi thông báo cho observers
     this._invalidateTradeQueries(userId);
-    this._notifyObservers('create', tradeId);
+    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
+    setTimeout(() => {
+      this._notifyObservers('create', tradeId);
+    }, 0);
   }
   
   /**
@@ -68,7 +72,10 @@ class TradeUpdateService {
   public notifyTradeUpdated(userId: string, tradeId: string) {
     debug(`TradeUpdateService: Trade updated notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    this._notifyObservers('update', tradeId);
+    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
+    setTimeout(() => {
+      this._notifyObservers('update', tradeId);
+    }, 0);
   }
   
   /**
@@ -80,7 +87,10 @@ class TradeUpdateService {
   public notifyTradeDeleted(userId: string, tradeId: string) {
     debug(`TradeUpdateService: Trade deleted notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    this._notifyObservers('delete', tradeId);
+    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
+    setTimeout(() => {
+      this._notifyObservers('delete', tradeId);
+    }, 0);
   }
   
   /**
@@ -92,7 +102,10 @@ class TradeUpdateService {
   public notifyTradeClosed(userId: string, tradeId: string) {
     debug(`TradeUpdateService: Trade closed notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    this._notifyObservers('close', tradeId);
+    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
+    setTimeout(() => {
+      this._notifyObservers('close', tradeId);
+    }, 0);
   }
   
   /**
@@ -119,21 +132,45 @@ class TradeUpdateService {
     }
     
     try {
+      // Vô hiệu hóa truy vấn trade chính từ useTradesQuery
+      queryClientInstance.invalidateQueries({ 
+        queryKey: [`/trades/${userId}`],
+        exact: true,
+        refetchType: 'active',
+      });
+      
       // Vô hiệu hóa tất cả các truy vấn liên quan đến giao dịch cho người dùng này
       // Sử dụng cấu trúc phân cấp để bắt tất cả các truy vấn con
       queryClientInstance.invalidateQueries({ 
         queryKey: [TRADE_QUERY_ROOT_KEY, userId],
+        refetchType: 'active',
       });
       
       // Vô hiệu hóa các truy vấn liên quan đến phân tích và thống kê
       queryClientInstance.invalidateQueries({ 
         queryKey: ['analytics', userId],
+        refetchType: 'active',
       });
       
       // Vô hiệu hóa các truy vấn liên quan đến mục tiêu
       queryClientInstance.invalidateQueries({ 
         queryKey: ['goals', userId],
+        refetchType: 'active',
       });
+      
+      // Vô hiệu hóa các truy vấn cụ thể của từng trade (cho ViewTrade)
+      if (userId) {
+        queryClientInstance.invalidateQueries({
+          predicate: (query) => {
+            const key = query.queryKey;
+            return Array.isArray(key) && 
+                  key.length > 1 && 
+                  key[0] === 'trade' && 
+                  key[1].includes(userId);
+          },
+          refetchType: 'active',
+        });
+      }
       
       debug(`TradeUpdateService: Invalidated all trade related queries for user ${userId}`);
     } catch (error) {
