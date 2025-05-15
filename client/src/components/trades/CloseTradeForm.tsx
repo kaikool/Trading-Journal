@@ -294,9 +294,9 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       // Lưu ý: Hàm updateTrade đã được tích hợp với TradeUpdateService để thông báo
       // tới tất cả các component đang theo dõi giao dịch (tham khảo trong firebase.ts)
       // Tham số option sử dụng để đảm bảo hành vi đóng giao dịch hoạt động đúng
+      // updateTrade tự động phát hiện đây là thao tác đóng giao dịch và gọi notifyTradeClosed
       await updateTrade(trade.userId, trade.id, updateData, {
-        useBatch: true, // Force sử dụng batch operation để bảo đảm cập nhật đồng bộ với balances
-        notifyType: 'close' // Xác định đây là thao tác đóng giao dịch để thông báo đúng
+        useBatch: true // Force sử dụng batch operation để bảo đảm cập nhật đồng bộ với balances
       });
       
       // Log kết quả đóng giao dịch 

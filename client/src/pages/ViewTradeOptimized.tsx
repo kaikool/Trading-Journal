@@ -54,10 +54,13 @@ export default function ViewTradeOptimized() {
   }, [tradeId, userId]);
   
   // Đăng ký observer để lắng nghe sự thay đổi của trade
+  // Sử dụng TradeUpdateService làm trung tâm thông báo thay vì sử dụng cơ chế revalidate
+  // hoặc invalidate trực tiếp từ queryClient (cách tiếp cận chuẩn hóa toàn bộ ứng dụng)
   useEffect(() => {
     if (!userId || !tradeId) return;
     
-    // Tạo observer để cập nhật UI khi trade thay đổi
+    // Tạo observer để cập nhật UI khi trade thay đổi - pattern Observer
+    // Interface TradeChangeObserver được định nghĩa trong trade-update-service.ts
     const observer: TradeChangeObserver = {
       onTradesChanged: async (action, changedTradeId) => {
         // Chỉ cập nhật khi thao tác liên quan đến trade hiện tại
@@ -75,6 +78,8 @@ export default function ViewTradeOptimized() {
           }
           
           try {
+            // Lấy dữ liệu mới nhất sau khi cập nhật
+            // Không cần gọi queryClient.invalidateQueries vì TradeUpdateService đã xử lý
             const updatedTrade = await getTradeById(userId, tradeId);
             if (updatedTrade) {
               setTrade(updatedTrade as Trade);
@@ -86,7 +91,8 @@ export default function ViewTradeOptimized() {
       }
     };
     
-    // Đăng ký observer với service
+    // Đăng ký observer với TradeUpdateService để nhận thông báo cập nhật
+    // tradeUpdateService là singleton nên tất cả các component dùng chung một instance
     const unregister = tradeUpdateService.registerObserver(observer);
     
     // Hủy đăng ký khi component unmount
