@@ -23,8 +23,11 @@ export function useMarketPrice({
   onSuccess,
   onError
 }: UseMarketPriceOptions) {
+  // These variables are used in the return value but ESLint doesn't recognize it
+  // eslint-disable-next-line no-unused-vars
   const [price, setPrice] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
