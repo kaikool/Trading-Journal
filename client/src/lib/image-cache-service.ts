@@ -404,44 +404,7 @@ export function invalidateImageCache(path: string): void {
   }
 }
 
-/**
- * Preload hình ảnh vào cache 
- * @param paths Mảng đường dẫn ảnh cần preload
- */
-export async function preloadImagesToCache(paths: string[]): Promise<void> {
-  try {
-    debug(`Preloading ${paths.length} images to cache`);
-    
-    // Tạo một mảng các promises
-    const preloadPromises = paths.map(path => 
-      getCachedImageUrl(path, { forceRefresh: false, expiryTime: DEFAULT_CACHE_EXPIRATION })
-    );
-    
-    // Chờ tất cả hoàn thành
-    await Promise.all(preloadPromises);
-    
-    debug(`Successfully preloaded ${paths.length} images to cache`);
-  } catch (error) {
-    logError('Error preloading images to cache:', error);
-  }
-}
-
-/**
- * Xóa tất cả bộ đệm hình ảnh 
- */
-export function clearAllImageCache(): void {
-  try {
-    // Xóa memory cache
-    memoryCache.clear();
-    
-    // Xóa localStorage cache
-    localStorageCache.clear();
-    
-    debug('All image caches cleared');
-  } catch (error) {
-    logError('Error clearing all image caches:', error);
-  }
-}
+// Các hàm preloadImagesToCache và clearAllImageCache đã bị loại bỏ vì không được sử dụng
 
 /**
  * Dọn dẹp các mục hết hạn trong bộ đệm
