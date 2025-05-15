@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { tradeUpdateService } from "@/services/trade-update-service";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -62,6 +63,9 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// Khởi tạo TradeUpdateService với queryClient
+tradeUpdateService.setQueryClient(queryClient);
 
 // Cập nhật cấu hình QueryClient dựa trên hiệu năng thiết bị
 export async function updateQueryClientConfig() {
