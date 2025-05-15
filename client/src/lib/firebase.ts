@@ -347,98 +347,18 @@ async function getTrades(userId: string) {
   }));
 }
 
-// Add function to monitor trades in realtime
+// Chức năng theo dõi trades realtime đã được di chuyển sang FirebaseListenerService
+// Xem: client/src/services/firebase-listener-service.ts
+
 /**
- * Tạo một listeners Firebase được tối ưu cho hiệu suất
+ * Lưu ý: Chức năng lắng nghe thay đổi trên Firebase không nên gọi trực tiếp từ component.
+ * Thay vào đó, nên:
+ * 1. Sử dụng FirebaseListenerService.onTradesSnapshot để quản lý các listeners Firebase
+ * 2. Đăng ký với TradeUpdateService để nhận thông báo khi có thay đổi
  * 
- * Cải tiến:
- * 1. Cache control để tránh xử lý callback trễ
- * 2. Debounce để giảm số lần render không cần thiết
- * 3. Bỏ qua các thay đổi metadata
- * 4. Memoization kết quả truy vấn
- * 5. Xử lý lỗi toàn diện
- * 
- * @param userId ID của người dùng cần theo dõi trades
- * @param callback Hàm xử lý khi có dữ liệu mới
- * @param errorCallback Hàm xử lý khi có lỗi (tùy chọn)
- * @returns Hàm unsubscribe
- * @deprecated Sử dụng FirebaseListenerService.onTradesSnapshot thay thế.
- * FirebaseListenerService cung cấp quản lý tập trung cho các Firebase listeners.
+ * TradeUpdateService cung cấp điểm trung tâm duy nhất cho việc cập nhật UI
+ * khi dữ liệu giao dịch thay đổi, sử dụng TanStack Query để quản lý cache.
  */
-function onTradesSnapshot(
-  userId: string, 
-  callback: (trades: any[]) => void,
-  errorCallback?: (error: Error) => void
-) {
-  if (!userId) return () => {}; // Return noop function if userId is not provided
-  
-  // Sử dụng tham chiếu bộ sưu tập
-  const tradesRef = collection(db, "users", userId, "trades");
-  
-  // Tạo truy vấn với điều kiện sắp xếp và limit để tối ưu
-  // Tăng limit nếu cần nhưng việc giới hạn số lượng docs ban đầu giúp cải thiện hiệu suất
-  const q = query(tradesRef, orderBy("createdAt", "desc"));
-  
-  // Biến version theo dõi trạng thái listener
-  let listenerActive = true;
-  let cacheVersion = 0;
-  const currentCacheVersion = cacheVersion;
-  
-  // Debug info cho biết snapshot đang được theo dõi
-  debug(`Setting up trades snapshot listener for user ${userId}`);
-  
-  // Sử dụng onSnapshot để lắng nghe thay đổi trong collection
-  const unsubscribe = onSnapshot(q, 
-    (snapshot) => {
-      // Kiểm tra xem listener có còn active không
-      if (!listenerActive || currentCacheVersion !== cacheVersion) {
-        debug("Trades snapshot received, but listener no longer active or cache version changed");
-        return;
-      }
-      
-      try {
-        debug(`Received ${snapshot.docs.length} trades from snapshot`);
-        
-        // Chuyển đổi dữ liệu thành mảng
-        const trades = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        
-        // Gửi dữ liệu thông qua callback
-        callback(trades);
-      } catch (error) {
-        debug("Error in trades snapshot callback:", error);
-        
-        // Gửi lỗi tới errorCallback nếu được cung cấp
-        if (errorCallback) {
-          errorCallback(error as Error);
-        }
-      }
-    },
-    (error) => {
-      // Xử lý lỗi từ Firebase
-      logError("Error in trades snapshot listener:", error);
-      
-      // Gửi lỗi tới errorCallback nếu được cung cấp
-      if (errorCallback) {
-        errorCallback(error);
-      }
-    }
-  );
-  
-  // Trả về hàm unsubscribe cải tiến đóng cả listener và đặt flag
-  return () => {
-    debug("Trades snapshot listener unsubscribed and cleaned up");
-    
-    // Đặt flag không active trước khi unsubscribe để tránh race condition
-    listenerActive = false;
-    cacheVersion++;
-    
-    // Gọi hàm unsubscribe thực tế của Firebase
-    unsubscribe();
-  };
-}
 
 /**
  * Lấy tất cả giao dịch của người dùng từ Firestore

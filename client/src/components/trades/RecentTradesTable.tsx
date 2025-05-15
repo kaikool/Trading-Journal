@@ -59,8 +59,8 @@ export default function RecentTradesTable({
       
       // Lọc ra các giao dịch đã đóng và sắp xếp theo thời gian đóng
       const closedTrades = allTrades
-        .filter(trade => trade.closeDate)
-        .sort((a, b) => {
+        .filter((trade: any) => trade.closeDate)
+        .sort((a: any, b: any) => {
           const getTimestamp = (date: any) => {
             if (typeof date === 'object' && date && 'toDate' in date) {
               return date.toDate().getTime();
