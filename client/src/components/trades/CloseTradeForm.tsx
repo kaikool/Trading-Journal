@@ -26,7 +26,8 @@ import { calculateProfit, calculatePips, formatPrice } from "@/lib/forex-calcula
 import { uploadTradeImage } from "@/lib/api-service";
 import { Timestamp } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { formatCurrency, formatPips, formatProfitLoss } from "@/utils/format-number";
 import { TradeStatus } from "@/lib/trade-status-config";
 import TradeStatusBadge from "./TradeStatusBadge";
 // Lưu ý: Component này không cần import trực tiếp tradeUpdateService
@@ -328,22 +329,14 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   };
   
   // Format functions
-  const formatProfitLoss = (value?: number) => {
+  const formatTradeProfit = (value?: number) => {
     if (value === undefined || value === null) return "+$0.00";
-    
-    // Giá trị đã được chuẩn hóa, không cần sửa đổi
-    let formattedValue = value;
-    
-    return formattedValue >= 0 ? `+${formatCurrency(formattedValue)}` : formatCurrency(formattedValue);
+    return formatProfitLoss(value, { showPlusSign: true });
   };
 
-  const formatPips = (pips?: number) => {
+  const formatTradePips = (pips?: number) => {
     if (pips === undefined || pips === null) return "+0.0";
-    
-    // Giá trị đã được chuẩn hóa, không cần sửa đổi
-    let formattedPips = pips;
-    
-    return formattedPips >= 0 ? `+${formattedPips.toFixed(1)}` : formattedPips.toFixed(1);
+    return formatPips(pips, { showPlusSign: true });
   };
 
   // Get header class based on trade direction

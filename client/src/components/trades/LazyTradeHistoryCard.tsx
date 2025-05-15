@@ -467,7 +467,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                            pips < 0 ? 'bg-destructive/10 text-destructive' : 'bg-muted/20 text-muted-foreground') :
                           (pips > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive')
                       )}>
-                        {pips > 0 ? '+' : ''}{pips} pips
+                        {formatPips(pips, { includeUnit: true, showPlusSign: pips > 0 })}
                       </div>
                     )}
                   </div>

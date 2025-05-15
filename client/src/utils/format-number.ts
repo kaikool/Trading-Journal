@@ -114,6 +114,7 @@ export function formatPips(
     minimumFractionDigits?: number;
     maximumFractionDigits?: number;
     includeUnit?: boolean;
+    showPlusSign?: boolean;
     locale?: string;
   } = {}
 ): string {
@@ -121,16 +122,20 @@ export function formatPips(
     minimumFractionDigits = UI_CONFIG.NUMBER_FORMAT.PIPS_DECIMAL_PLACES,
     maximumFractionDigits = UI_CONFIG.NUMBER_FORMAT.PIPS_DECIMAL_PLACES,
     includeUnit = false,
+    showPlusSign = false,
     locale = UI_CONFIG.NUMBER_FORMAT.LOCALE
   } = options;
 
-  const formattedValue = formatNumber(value, {
+  const formattedValue = formatNumber(Math.abs(value), {
     minimumFractionDigits,
     maximumFractionDigits,
     locale
   });
 
-  return includeUnit ? `${formattedValue} pips` : formattedValue;
+  const signPrefix = value > 0 && showPlusSign ? '+' : value < 0 ? '-' : '';
+  const formattedWithSign = `${signPrefix}${formattedValue}`;
+  
+  return includeUnit ? `${formattedWithSign} pips` : formattedWithSign;
 }
 
 /**
