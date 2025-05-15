@@ -209,10 +209,10 @@ export function useTradeList(options: {
   } = useQuery({
     queryKey,
     queryFn: fetchAllTrades,
-    staleTime: 10 * 60 * 1000, // Tăng lên 10 phút để giảm refetch không cần thiết
-    gcTime: 30 * 60 * 1000,    // Tăng thời gian garbage collection
+    staleTime: 30 * 1000,      // Giảm xuống 30 giây để đảm bảo refetch khi invalidate
+    gcTime: 10 * 60 * 1000,    // Giữ trong cache 10 phút
     refetchOnWindowFocus: false, // Tắt refetch khi focus window
-    refetchOnMount: false      // Không refetch khi component mount nếu data vẫn còn hạn
+    refetchOnMount: true       // Bật refetch khi component mount để đảm bảo dữ liệu được cập nhật
   });
   
   // Sử dụng thời gian trễ cho việc cập nhật
@@ -231,7 +231,8 @@ export function useTradeList(options: {
         const now = Date.now();
         const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
         
-        if (timeSinceLastUpdate < 100) {
+        if (timeSinceLastUpdate < 100 && action !== 'close') {
+          // Bỏ qua debounce cho các sự kiện đóng giao dịch để đảm bảo phản hồi ngay lập tức
           debug("[TradeList] Debouncing update, too frequent");
           return;
         }
@@ -240,9 +241,17 @@ export function useTradeList(options: {
         
         debug(`[TradeList] Trade changed (${action}), refreshing data`);
         
-        // Không cần phải invalidate vì tradeUpdateService đã làm việc này
-        // Chỉ cần refetch để lấy dữ liệu mới
-        refetch();
+        // Xử lý đặc biệt cho sự kiện 'close'
+        if (action === 'close') {
+          // Force refetch ngay lập tức khi đóng giao dịch
+          debug("[TradeList] Closing trade, forcing immediate refetch");
+          queryClient.resetQueries({ queryKey: queryKey });
+          refetch();
+        } else {
+          // Không cần phải invalidate vì tradeUpdateService đã làm việc này
+          // Chỉ cần refetch để lấy dữ liệu mới
+          refetch();
+        }
       }
     };
     
