@@ -104,8 +104,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Sau đó là theo thời gian (cũ nhất lên đầu)
-          const dateA = getTimeStamp(a.closeDate || a.createdAt);
-          const dateB = getTimeStamp(b.closeDate || b.createdAt);
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateA - dateB;
         });
@@ -173,8 +173,8 @@ export function useTradeList(options: {
           if (a.isOpen && !b.isOpen) return -1;
           if (!a.isOpen && b.isOpen) return 1;
           
-          const dateA = getTimeStamp(a.closeDate || a.createdAt);
-          const dateB = getTimeStamp(b.closeDate || b.createdAt);
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateB - dateA;
         });
@@ -201,36 +201,45 @@ export function useTradeList(options: {
     staleTime: 5 * 60 * 1000 // 5 phút - dữ liệu không thay đổi thường xuyên
   });
   
-  // Nếu bật realtime, thêm listener để cập nhật khi có thay đổi
+  // Sử dụng TradeUpdateService để lắng nghe các thay đổi giao dịch
   useEffect(() => {
     if (!userId || !enableRealtime) return;
     
-    // Sử dụng FirebaseListenerService
-    const unsubscribe = firebaseListenerService.onTradesSnapshot(
+    debug("[PaginatedTrades] Registering with TradeUpdateService");
+    
+    // Tạo observer để nhận thông báo khi có thay đổi
+    const observer: TradeChangeObserver = {
+      onTradesChanged: (action, tradeId) => {
+        debug(`[PaginatedTrades] Trade changed (${action}, ID: ${tradeId || 'unknown'}), refreshing data`);
+        
+        // Không cần phải invalidate vì tradeUpdateService đã làm việc này
+        // Chỉ cần refetch để lấy dữ liệu mới
+        refetch();
+      }
+    };
+    
+    // Đăng ký observer với TradeUpdateService
+    const unregister = tradeUpdateService.registerObserver(observer);
+    
+    // Vẫn giữ lại Firebase listener cho backward compatibility
+    const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
       userId,
       {
         callback: (updatedTrades) => {
-          debug("Realtime trades update received:", updatedTrades.length);
-          
-          // Cập nhật danh sách trades trong cache
+          // Cập nhật references để đảm bảo các phần khác vẫn hoạt động
           allTradesRef.current = updatedTrades as Trade[];
           totalTradesCountRef.current = updatedTrades.length;
-          
-          // Cập nhật cache của React Query
-          queryClient.invalidateQueries({ queryKey: ['trades', userId] });
-          
-          // Fetch lại dữ liệu hiện tại nếu có thay đổi
-          refetch();
         },
         errorCallback: (error) => {
-          logError("Error in trades snapshot:", error);
+          logError("[PaginatedTrades] Error in Firebase snapshot:", error);
         }
       }
     );
     
     return () => {
-      debug("Unsubscribing from trades snapshot");
-      unsubscribe(); // Hủy đăng ký listener khi unmount
+      debug("[PaginatedTrades] Unregistering from TradeUpdateService");
+      unregister();
+      firebaseUnsubscribe();
     };
   }, [userId, enableRealtime, queryClient, refetch]);
   
@@ -464,8 +473,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Then sort by date (newest first)
-          const dateA = getTimeStamp(a.closeDate || a.createdAt);
-          const dateB = getTimeStamp(b.closeDate || b.createdAt);
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateB - dateA; // Mới nhất lên đầu
         });
@@ -479,8 +488,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Then sort by date (oldest first)
-          const dateA = getTimeStamp(a.closeDate || a.createdAt);
-          const dateB = getTimeStamp(b.closeDate || b.createdAt);
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateA - dateB; // Cũ nhất lên đầu
         });
@@ -540,8 +549,8 @@ export function useTradeList(options: {
           if (!a.isOpen && b.isOpen) return 1;
           
           // Then sort by date (newest first)
-          const dateA = getTimeStamp(a.closeDate || a.createdAt);
-          const dateB = getTimeStamp(b.closeDate || b.createdAt);
+          const dateA = getTimestamp(a.closeDate || a.createdAt);
+          const dateB = getTimestamp(b.closeDate || b.createdAt);
           
           return dateB - dateA; // Mới nhất lên đầu
         });
