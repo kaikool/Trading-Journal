@@ -42,9 +42,8 @@ interface DataPoint {
 
 export default function Dashboard() {
   // Sử dụng DataCache thay vì local state
-  const { trades, userData, isLoading, userId } = useDataCache();
-  const [_, setLocation] = useLocation();
-  const { toast } = useToast();
+  const { trades, userData } = useDataCache();
+  // Removed unused variables: isLoading, userId, setLocation, toast
   
   // Logs only in development environment - using debug utility
   const devLog = (message: string, data?: any) => {
@@ -147,7 +146,7 @@ export default function Dashboard() {
       else {
         firstTradeDate = new Date();
       }
-    } catch (error) {
+    } catch {
       firstTradeDate = new Date(); // Fallback
     }
       
@@ -194,7 +193,7 @@ export default function Dashboard() {
           if (isNaN(tradeDate.getTime())) {
             tradeDate = new Date(); // Fallback to current date
           }
-        } catch (error) {
+        } catch {
           tradeDate = new Date(); // Fallback to current date
         }
           

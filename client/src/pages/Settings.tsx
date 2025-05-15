@@ -44,9 +44,8 @@ import { lazy } from "react";
 import { Icons } from "@/components/icons/icons";
 import type { ComponentType } from "react";
 
-// Áp dụng lazy loading cho các tab components
-const StrategiesManagement = lazy(() => import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement })));
-const AchievementsTab = lazy(() => import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab })));
+// Những component không được sử dụng đã bị xóa
+// StrategiesManagement và AchievementsTab đã được xóa vì không sử dụng
 
 interface SettingsSectionProps {
   title: string;
@@ -56,7 +55,7 @@ interface SettingsSectionProps {
   rightElement?: React.ReactNode;
 }
 
-function SettingsSection({ title, description, icon: Icon, children, rightElement }: SettingsSectionProps) {
+function SettingsSection({ title, description, children, rightElement }: SettingsSectionProps) {
   return (
     <Card className="border border-border/40 shadow-sm overflow-hidden">
       <div className="p-4 sm:p-6">
