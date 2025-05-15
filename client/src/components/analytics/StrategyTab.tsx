@@ -38,7 +38,7 @@ interface StrategyTabProps {
 }
 
 export default function StrategyTab({ data }: StrategyTabProps) {
-  const { strategyPerformance, trades } = data;
+  const { strategyPerformance } = data; // trades không được sử dụng
   
   // Sort strategies by win rate for visualization
   const sortedStrategies = useMemo(() => {
@@ -329,8 +329,8 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                   isAnimationActive={false}
                   animationDuration={0}
                   className="hover:opacity-100"
-                  onMouseOver={(data, index) => {}}
-                  onMouseOut={(data, index) => {}}
+                  onMouseOver={() => {}}
+                  onMouseOut={() => {}}
                   label={props => {
                     const { x, y, width, height, value, index } = props;
                     const item = winRateData[index];
@@ -466,8 +466,8 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                     isAnimationActive={false}
                     animationDuration={0}
                     className="hover:opacity-100"
-                    onMouseOver={(data, index) => {}}
-                    onMouseOut={(data, index) => {}}
+                    onMouseOver={() => {}}
+                    onMouseOut={() => {}}
                     label={props => {
                       const { x, y, width, height, value, index } = props;
                       const item = profitData[index];
@@ -619,8 +619,8 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                     isAnimationActive={false}
                     animationDuration={0}
                     className="hover:opacity-100"
-                    onMouseOver={(data, index) => {}}
-                    onMouseOut={(data, index) => {}}
+                    onMouseOver={() => {}}
+                    onMouseOut={() => {}}
                   />
                   <Bar 
                     yAxisId="right"
@@ -631,8 +631,8 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                     isAnimationActive={false}
                     animationDuration={0}
                     className="hover:opacity-100"
-                    onMouseOver={(data, index) => {}}
-                    onMouseOut={(data, index) => {}}
+                    onMouseOver={() => {}}
+                    onMouseOut={() => {}}
                   />
                   <Line 
                     yAxisId="left"

@@ -753,8 +753,8 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                   isAnimationActive={false}
                   animationDuration={0}
                   className="hover:opacity-100"
-                  onMouseOver={(data, index) => {}}
-                  onMouseOut={(data, index) => {}}
+                  onMouseOver={() => {}}
+                  onMouseOut={() => {}}
                 />
                 <Bar 
                   dataKey="losses" 
@@ -766,8 +766,8 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                   isAnimationActive={false}
                   animationDuration={0}
                   className="hover:opacity-100"
-                  onMouseOver={(data, index) => {}}
-                  onMouseOut={(data, index) => {}}
+                  onMouseOver={() => {}}
+                  onMouseOut={() => {}}
                 />
               </BarChart>
             </ResponsiveContainer>
