@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect, useContext, ReactNode, useMemo, useCallback } from 'react';
-import { auth, getUserData } from '@/lib/firebase';
+import { auth, getUserData, getTrades } from '@/lib/firebase';
 import { debug, logError } from '@/lib/debug';
-import { firebaseListenerService } from '@/services/firebase-listener-service';
 import { tradeUpdateService, TradeChangeObserver } from '@/services/trade-update-service';
 
 interface CachedData {
@@ -211,100 +210,82 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
     let unsubscribed = false;
     
     try {
-      debug('[DataCache] Setting up trades snapshot listener');
+      debug('[DataCache] Setting up trades data and listeners');
       
-      // Sử dụng FirebaseListenerService thay vì gọi trực tiếp đến Firebase
-      const unsubscribe = firebaseListenerService.onTradesSnapshot(
-        userId,
-        {
-          callback: (fetchedTrades: any[]) => {
-            debug(`[DataCache] Received ${fetchedTrades.length} trades from snapshot`);
+      // Tải dữ liệu giao dịch ban đầu
+      const fetchTrades = async () => {
+        try {
+          const fetchedTrades = await getTrades(userId);
+          debug(`[DataCache] Fetched ${fetchedTrades.length} trades initially`);
+          
+          setDataState(prevState => {
+            // PERFORMANCE OPTIMIZATION: Avoid expensive JSON.stringify for deep comparison
+            // Instead use a simpler length check with sample validation
+            let tradesChanged = fetchedTrades.length !== prevState.trades.length;
             
-            setDataState(prevState => {
-              // PERFORMANCE OPTIMIZATION: Avoid expensive JSON.stringify for deep comparison
-              // Instead use a simpler length check with sample validation
-              let tradesChanged = fetchedTrades.length !== prevState.trades.length;
-              
-              // If lengths are the same, only check a few key trades
-              if (!tradesChanged && fetchedTrades.length > 0) {
-                // Check the first trade which is usually the most recent
-                if (fetchedTrades[0]?.id !== prevState.trades[0]?.id) {
-                  tradesChanged = true;
-                }
-                // Check another random trade if we have at least 3
-                else if (fetchedTrades.length >= 3) {
-                  const randomIndex = Math.floor(Math.random() * fetchedTrades.length);
-                  const newTrade = fetchedTrades[randomIndex];
-                  const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
-                  
-                  // If we can't find the trade or its timestamp changed
-                  // Safely check for Firestore Timestamp objects vs serialized dates
-                  if (!oldTrade || 
-                      // Handle both Firestore Timestamp and serialized dates
-                      (typeof newTrade.updatedAt?.toDate === 'function' && 
-                       typeof oldTrade.updatedAt?.toDate !== 'function') ||
-                      // Handle string comparison for cache objects
-                      (typeof newTrade.updatedAt === 'string' && 
-                       newTrade.updatedAt !== oldTrade.updatedAt)) {
-                    tradesChanged = true;
-                  }
-                }
+            // If lengths are the same, only check a few key trades
+            if (!tradesChanged && fetchedTrades.length > 0) {
+              // Check the first trade which is usually the most recent
+              if (fetchedTrades[0]?.id !== prevState.trades[0]?.id) {
+                tradesChanged = true;
               }
-              
-              // Check if any trades were closed in this update (for debugging)
-              const newlyClosedTrades = fetchedTrades.filter((newTrade: any) => {
-                // Find corresponding trade in previous state
+              // Check another random trade if we have at least 3
+              else if (fetchedTrades.length >= 3) {
+                const randomIndex = Math.floor(Math.random() * fetchedTrades.length);
+                const newTrade = fetchedTrades[randomIndex];
                 const oldTrade = prevState.trades.find(t => t.id === newTrade.id);
                 
-                // Check if trade was just closed (isOpen changed from true to false)
-                return oldTrade && 
-                       oldTrade.isOpen === true && 
-                       newTrade.isOpen === false;
-              });
-              
-              // Log closed trades for debugging
-              if (newlyClosedTrades.length > 0) {
-                debug(`[DataCache] Detected ${newlyClosedTrades.length} newly closed trades`);
+                // If we can't find the trade or its timestamp changed
+                // Safely check for Firestore Timestamp objects vs serialized dates
+                if (!oldTrade || 
+                    // Handle both Firestore Timestamp and serialized dates
+                    (typeof newTrade.updatedAt?.toDate === 'function' && 
+                     typeof oldTrade.updatedAt?.toDate !== 'function') ||
+                    // Handle string comparison for cache objects
+                    (typeof newTrade.updatedAt === 'string' && 
+                     newTrade.updatedAt !== oldTrade.updatedAt)) {
+                  tradesChanged = true;
+                }
               }
-              
-              if (tradesChanged) {
-                debug('[DataCache] Trades changed, updating cache');
-                // Use queueMicrotask instead of setTimeout for better performance
-                queueMicrotask(() => {
-                  updateCache({ 
-                    trades: fetchedTrades, 
-                    userData: prevState.userData, 
-                    lastUpdated: Date.now()
-                  });
-                  
-                  // Cache updated, can add logic here if needed
-                });
-              } else {
-                debug('[DataCache] Trades unchanged, avoiding cache update');
-              }
-              
-              return {
-                ...prevState,
-                trades: fetchedTrades,
-                isTradesLoaded: true
-              };
-            });
+            }
             
-            setIsLoading(false);
-          },
-          errorCallback: (error: Error) => {
-            logError("[DataCache] Error fetching trades:", error);
-            setIsLoading(false);
-          }
+            if (tradesChanged) {
+              debug('[DataCache] Trades changed, updating cache');
+              // Use queueMicrotask instead of setTimeout for better performance
+              queueMicrotask(() => {
+                updateCache({ 
+                  trades: fetchedTrades, 
+                  userData: prevState.userData, 
+                  lastUpdated: Date.now()
+                });
+              });
+            } else {
+              debug('[DataCache] Trades unchanged, avoiding cache update');
+            }
+            
+            return {
+              ...prevState,
+              trades: fetchedTrades,
+              isTradesLoaded: true
+            };
+          });
+          
+          setIsLoading(false);
+        } catch (error) {
+          logError("[DataCache] Error fetching trades:", error);
+          setIsLoading(false);
         }
-      );
+      };
+      
+      // Tải dữ liệu ban đầu
+      fetchTrades();
       
       // Đăng ký với TradeUpdateService để nhận thông báo khi có thay đổi
       const observer: TradeChangeObserver = {
         onTradesChanged: (action, tradeId) => {
           debug(`[DataCache] Trade changed via TradeUpdateService (${action}, ID: ${tradeId || 'unknown'})`);
-          // Không cần phải invalidate vì firebaseListenerService sẽ tự động cập nhật
-          // Trong tương lai, chúng ta có thể loại bỏ firebaseListenerService và chỉ dùng TradeUpdateService
+          // Tải lại dữ liệu giao dịch khi có thông báo từ TradeUpdateService
+          fetchTrades();
         }
       };
       
@@ -316,8 +297,7 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
       return () => {
         try {
           if (!unsubscribed) {
-            debug('[DataCache] Unsubscribing from trades snapshot and TradeUpdateService');
-            unsubscribe();
+            debug('[DataCache] Unsubscribing from TradeUpdateService');
             tradeUpdateServiceUnsubscribe();
             unsubscribed = true;
           }
