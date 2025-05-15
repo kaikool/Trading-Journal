@@ -6,7 +6,6 @@ import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
 import { Timestamp } from "firebase/firestore";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
-import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { parseTimestamp } from "@/lib/format-timestamp";
 import { getTimeStamp } from "@/utils/timestamp";
@@ -253,23 +252,11 @@ export function useTradeList(options: {
     // Đăng ký observer
     const unregister = tradeUpdateService.registerObserver(observer);
     
-    // Vẫn giữ lại Firebase listener cho backward compatibility
-    const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
-      userId,
-      {
-        callback: () => {
-          // Không làm gì - các cập nhật sẽ được xử lý qua TradeUpdateService
-        },
-        errorCallback: (error) => {
-          logError("[TradeList] Error in Firebase snapshot:", error);
-        }
-      }
-    );
+    // Không còn sử dụng Firebase listener nữa, chỉ dùng TradeUpdateService
     
     return () => {
       debug("[TradeList] Unregistering from TradeUpdateService");
       unregister();
-      firebaseUnsubscribe();
     };
   }, [userId, enableRealtime, refetch]);
   

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { collection, query, where, orderBy, limit } from "firebase/firestore";
 import { db, getTrades } from "@/lib/firebase";
-import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { debug, logError } from "@/lib/debug";
 import { useLocation } from "wouter";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -112,25 +111,12 @@ export default function RecentTradesTable({
     // Đăng ký observer
     const unregister = tradeUpdateService.registerObserver(observer);
     
-    // Vẫn duy trì Firebase listener để đồng bộ với phần còn lại của ứng dụng
-    // Nhưng không sử dụng callback để tránh cập nhật dữ liệu khi không cần thiết
-    const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
-      userId,
-      {
-        callback: () => {
-          // Không làm gì, cập nhật sẽ được xử lý qua TradeUpdateService
-        },
-        errorCallback: (error) => {
-          logError("Error in Firebase listener:", error);
-        }
-      }
-    );
+    // Không còn sử dụng Firebase listener nữa, chỉ dùng TradeUpdateService
     
-    // Cleanup function - hủy đăng ký cả hai listeners
+    // Cleanup function - hủy đăng ký listener từ TradeUpdateService
     return () => {
       unregister();
-      firebaseUnsubscribe();
-      debug(`[RecentTradesTable] Unsubscribed from TradeUpdateService and Firebase`);
+      debug(`[RecentTradesTable] Unsubscribed from TradeUpdateService`);
     };
   }, [userId, tradeLimit]);
 

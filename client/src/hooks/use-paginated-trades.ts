@@ -3,7 +3,6 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import * as firebase from "@/lib/firebase";
 import { TradeFilterOptions, Trade } from "@/types";
 import { Timestamp } from "firebase/firestore";
-import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { debug, logError } from "@/lib/debug";
 import { getTimeStamp } from "@/utils/timestamp";
@@ -126,23 +125,11 @@ export function usePaginatedTrades(options: {
     // Đăng ký observer với TradeUpdateService
     const unregister = tradeUpdateService.registerObserver(observer);
     
-    // Vẫn giữ lại Firebase listener cho backward compatibility
-    const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
-      userId,
-      {
-        callback: () => {
-          // Không cần làm gì ở đây, TradeUpdateService sẽ xử lý thông báo
-        },
-        errorCallback: (error) => {
-          logError("[PaginatedTrades] Error in Firebase snapshot:", error);
-        }
-      }
-    );
+    // Không còn sử dụng Firebase listener nữa, chỉ dùng TradeUpdateService
     
     return () => {
       debug("[PaginatedTrades] Unregistering from TradeUpdateService");
       unregister();
-      firebaseUnsubscribe();
     };
   }, [userId, enableRealtime, refetch]);
   
