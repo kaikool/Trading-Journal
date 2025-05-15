@@ -30,7 +30,8 @@ import {
 import { 
   LazyPerformanceChart, 
   LazyRecentTradesCard,
-  LoadingFallback 
+  AppSkeleton, 
+  SkeletonLevel 
 } from "@/components/dynamic";
 
 // Define types
