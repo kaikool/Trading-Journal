@@ -8,8 +8,10 @@ import { useStrategyManagement } from './useStrategyManagement';
 import { useTradeCalculations } from './useTradeCalculations';
 import { addTrade, updateTrade } from '@/lib/firebase';
 import { serverTimestamp } from 'firebase/firestore';
-import { logError } from '@/lib/debug';
+import { logError, debug } from '@/lib/debug';
 import { format } from "date-fns";
+// Thêm TradeUpdateService để thống nhất cách xử lý trade
+import { tradeUpdateService } from '@/services/trade-update-service';
 
 export function useTradeForm(props: TradeFormProps) {
   const { userId, onSubmitting, onSuccess, onError } = props;
@@ -143,10 +145,16 @@ export function useTradeForm(props: TradeFormProps) {
       
       let result;
       if (isEditMode && initialValues?.id) {
-        // Update existing trade
+        // Update existing trade through TradeUpdateService
+        debug(`[TradeForm] Updating trade ${initialValues.id} via centralized service`);
+        // Vẫn sử dụng updateTrade nhưng lưu ý rằng updateTrade sẽ thông báo
+        // cho tradeUpdateService (đã được triển khai trong firebase.ts)
         result = await updateTrade(userId, initialValues.id, tradeData);
       } else {
-        // Create new trade
+        // Create new trade through TradeUpdateService
+        debug(`[TradeForm] Creating new trade via centralized service`);
+        // Vẫn sử dụng addTrade nhưng lưu ý rằng addTrade sẽ thông báo
+        // cho tradeUpdateService (đã được triển khai trong firebase.ts)
         result = await addTrade(userId, tradeData);
       }
       

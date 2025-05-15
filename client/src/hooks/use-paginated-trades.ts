@@ -10,198 +10,104 @@ import { debug, logError } from "@/lib/debug";
 import { getTimeStamp } from "@/utils/timestamp";
 
 /**
- * Hook tùy chỉnh để lấy và xử lý danh sách tất cả giao dịch
+ * Hook tùy chỉnh để lấy và xử lý danh sách giao dịch theo trang
  * 
- * @param options Các tùy chọn lọc và sắp xếp
- * @returns Tất cả dữ liệu giao dịch đã được sắp xếp và lọc
+ * @param options Các tùy chọn lọc và phân trang
+ * @returns Dữ liệu giao dịch đã phân trang và các hàm điều khiển
  */
-export function useTradeList(options: {
-  initialFilters?: TradeFilterOptions;
-  initialSortBy?: "newest" | "oldest" | "profit" | "loss";
+export function usePaginatedTrades(options: {
+  pageSize?: number;
+  sortOption?: string;
+  filters?: TradeFilterOptions;
   enableRealtime?: boolean;
 }) {
   const {
-    initialFilters = {},
-    initialSortBy = "newest",
+    pageSize = 10,
+    sortOption = 'newest',
+    filters = {},
     enableRealtime = true
   } = options;
 
   const userId = firebase.auth.currentUser?.uid;
   const queryClient = useQueryClient();
   
-  // State cho lọc và sắp xếp
-  const initialFiltersRef = useRef(initialFilters);
-  const [filters, setFilters] = useState<TradeFilterOptions>(initialFilters);
-  const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">(initialSortBy);
+  // State cho dữ liệu và phân trang
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
   
-  // Effect để cập nhật sortBy khi initialSortBy thay đổi
-  useEffect(() => {
-    if (initialSortBy !== sortBy) {
-      console.log("useTradeList: Updating sortBy from initialSortBy:", initialSortBy);
-      setSortBy(initialSortBy);
-      
-      // Khi thay đổi sắp xếp, vô hiệu hóa tất cả các truy vấn liên quan để buộc refetch
-      queryClient.invalidateQueries({ queryKey: ['trades', userId] });
-    }
-  }, [initialSortBy, sortBy, userId, queryClient]);
+  // Tạo query key bao gồm tất cả tham số
+  const queryKey = ['paginatedTrades', userId, sortOption, pageSize, currentPage, JSON.stringify(filters)];
   
-  // Cache kết quả truy vấn để tối ưu
-  const allTradesRef = useRef<Trade[]>([]);
-  const totalTradesCountRef = useRef<number | null>(null);
-  
-  // Tạo query key bao gồm tất cả các tham số
-  const queryKey = ['trades', userId, sortBy, JSON.stringify(filters)];
-  
-  // Hàm lấy tất cả dữ liệu từ Firestore
-  const fetchAllTrades = useCallback(async () => {
-    if (!userId) return { trades: [], totalCount: 0 };
+  // Lấy dữ liệu phân trang từ Firebase
+  const fetchPaginatedTrades = useCallback(async () => {
+    if (!userId) return { trades: [], lastDoc: null, totalCount: 0, hasMore: false };
     
-    console.log(`Fetching all trades with sortBy=${sortBy}`);
+    debug(`[PaginatedTrades] Fetching page ${currentPage}, pageSize=${pageSize}, sort=${sortOption}`);
     
     try {
-      // Sử dụng getAllTrades để lấy toàn bộ giao dịch
-      const allTrades = await firebase.getAllTrades(userId);
-      // Ép kiểu để tránh lỗi TypeScript
-      allTradesRef.current = allTrades as Trade[];
-      totalTradesCountRef.current = allTrades.length;
+      // Lấy dữ liệu phân trang từ Firebase
+      const result = await firebase.getPaginatedTrades(
+        userId,
+        pageSize,
+        currentPage === 1 ? null : lastDoc,
+        sortOption,
+        filters
+      );
       
-      console.log(`Total trades fetched: ${allTrades.length}`);
+      debug(`[PaginatedTrades] Fetched ${result.trades.length} trades, total=${result.totalCount}`);
+      
+      // Trả về kết quả chuẩn
+      return {
+        trades: result.trades as Trade[],
+        lastDoc: result.lastDoc,
+        totalCount: result.totalCount,
+        hasMore: result.hasMore
+      };
     } catch (error) {
-      console.error("Error fetching all trades:", error);
+      logError('[PaginatedTrades] Error fetching paginated trades:', error);
       throw error;
     }
-    
-    // Tạo một bản sao để không thay đổi dữ liệu gốc
-    const trades = [...allTradesRef.current];
-    
-    // Thực hiện sắp xếp dựa trên sortBy
-    console.log(`Sorting all ${trades.length} trades by ${sortBy}`);
-    
-    // Logic sắp xếp sử dụng hàm chuẩn hóa từ utils/timestamp.ts
-      return 0;
-    };
-    
-    // Sắp xếp tất cả các giao dịch dựa trên tiêu chí
-    switch (sortBy) {
-      case "newest":
-        trades.sort((a, b) => {
-          // Lệnh mở luôn lên đầu
-          if (a.isOpen && !b.isOpen) return -1;
-          if (!a.isOpen && b.isOpen) return 1;
-          
-          // Sau đó là theo thời gian (mới nhất lên đầu)
-          const dateA = getTimeStamp(a.closeDate || a.createdAt);
-          const dateB = getTimeStamp(b.closeDate || b.createdAt);
-          
-          return dateB - dateA;
-        });
-        break;
-        
-      case "oldest":
-        trades.sort((a, b) => {
-          // Lệnh mở luôn lên đầu
-          if (a.isOpen && !b.isOpen) return -1;
-          if (!a.isOpen && b.isOpen) return 1;
-          
-          // Sau đó là theo thời gian (cũ nhất lên đầu)
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
-          
-          return dateA - dateB;
-        });
-        break;
-        
-      case "profit":
-        // Lọc ra các lệnh mở (luôn ở đầu)
-        const openTradesProfit = trades.filter(trade => trade.isOpen);
-        console.log(`Open trades (shown first): ${openTradesProfit.length}`);
-        
-        // Lệnh đóng được sắp xếp theo lợi nhuận cao nhất
-        const closedTradesProfit = trades
-          .filter(trade => !trade.isOpen && trade.profitLoss !== undefined)
-          .sort((a, b) => (b.profitLoss || 0) - (a.profitLoss || 0));
-        console.log(`Closed trades sorted by profit: ${closedTradesProfit.length}`);
-        
-        // Log kiểm tra các giao dịch lợi nhuận cao nhất
-        if (closedTradesProfit.length > 0) {
-          console.log("Top 3 trades by profit:", 
-            closedTradesProfit.slice(0, Math.min(3, closedTradesProfit.length))
-            .map(t => ({ id: t.id, profit: t.profitLoss }))
-          );
-        }
-        
-        // Kết hợp: lệnh mở trước, sau đó lệnh đóng theo lợi nhuận
-        const sortedProfitTrades = [...openTradesProfit, ...closedTradesProfit];
-        
-        // Gán lại cho mảng gốc
-        return {
-          trades: sortedProfitTrades,
-          totalCount: sortedProfitTrades.length
-        };
-        
-      case "loss":
-        // Lọc ra các lệnh mở (luôn ở đầu)
-        const openTradesLoss = trades.filter(trade => trade.isOpen);
-        console.log(`Open trades (shown first): ${openTradesLoss.length}`);
-        
-        // Lệnh đóng được sắp xếp theo thua lỗ cao nhất
-        const closedTradesLoss = trades
-          .filter(trade => !trade.isOpen && trade.profitLoss !== undefined)
-          .sort((a, b) => (a.profitLoss || 0) - (b.profitLoss || 0));
-        console.log(`Closed trades sorted by loss: ${closedTradesLoss.length}`);
-        
-        // Log kiểm tra các giao dịch thua lỗ cao nhất
-        if (closedTradesLoss.length > 0) {
-          console.log("Top 3 trades by loss:", 
-            closedTradesLoss.slice(0, Math.min(3, closedTradesLoss.length))
-            .map(t => ({ id: t.id, profit: t.profitLoss }))
-          );
-        }
-        
-        // Kết hợp: lệnh mở trước, sau đó lệnh đóng theo thua lỗ
-        const sortedLossTrades = [...openTradesLoss, ...closedTradesLoss];
-        
-        // Trả về kết quả
-        return {
-          trades: sortedLossTrades,
-          totalCount: sortedLossTrades.length
-        };
-        
-      default:
-        // Mặc định như newest
-        trades.sort((a, b) => {
-          if (a.isOpen && !b.isOpen) return -1;
-          if (!a.isOpen && b.isOpen) return 1;
-          
-          const dateA = getTimestamp(a.closeDate || a.createdAt);
-          const dateB = getTimestamp(b.closeDate || b.createdAt);
-          
-          return dateB - dateA;
-        });
-    }
-    
-    // Trả về toàn bộ dữ liệu đã được sắp xếp
-    return {
-      trades,
-      totalCount: trades.length
-    };
-  }, [userId, sortBy]);
+  }, [userId, pageSize, currentPage, lastDoc, sortOption, filters]);
   
-  // Sử dụng react-query để lấy dữ liệu
+  // Sử dụng React Query
   const { 
     data, 
-    isLoading, 
-    isError, 
-    error, 
-    isFetching,
+    isFetching: isQueryFetching,
+    isError: isQueryError,
+    error: queryError,
     refetch
   } = useQuery({
     queryKey,
-    queryFn: fetchAllTrades,
-    staleTime: 5 * 60 * 1000 // 5 phút - dữ liệu không thay đổi thường xuyên
+    queryFn: fetchPaginatedTrades,
+    staleTime: 5 * 60 * 1000, // 5 phút
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false
   });
   
-  // Sử dụng TradeUpdateService để lắng nghe các thay đổi giao dịch
+  // Cập nhật state khi có dữ liệu mới
+  useEffect(() => {
+    if (data) {
+      setTrades(data.trades);
+      setLastDoc(data.lastDoc);
+      setTotalCount(data.totalCount);
+      setHasNextPage(data.hasMore);
+    }
+    
+    setIsLoading(isQueryFetching);
+    
+    if (isQueryError && queryError) {
+      setError(queryError as Error);
+    } else {
+      setError(null);
+    }
+  }, [data, isQueryFetching, isQueryError, queryError]);
+  
+  // Đăng ký với TradeUpdateService để nhận thông báo khi có thay đổi
   useEffect(() => {
     if (!userId || !enableRealtime) return;
     
@@ -225,10 +131,8 @@ export function useTradeList(options: {
     const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
       userId,
       {
-        callback: (updatedTrades) => {
-          // Cập nhật references để đảm bảo các phần khác vẫn hoạt động
-          allTradesRef.current = updatedTrades as Trade[];
-          totalTradesCountRef.current = updatedTrades.length;
+        callback: () => {
+          // Không cần làm gì ở đây, TradeUpdateService sẽ xử lý thông báo
         },
         errorCallback: (error) => {
           logError("[PaginatedTrades] Error in Firebase snapshot:", error);
@@ -241,221 +145,53 @@ export function useTradeList(options: {
       unregister();
       firebaseUnsubscribe();
     };
-  }, [userId, enableRealtime, queryClient, refetch]);
+  }, [userId, enableRealtime, refetch]);
   
-  // Lọc dữ liệu dựa trên các filter
-  const applyFilters = useCallback((trades: any[]) => {
-    if (!trades || trades.length === 0) return [];
-    
-    // Log để debug filters
-    console.log("Current filters:", JSON.stringify(filters, null, 2));
-    console.log("Current sort by:", sortBy);
-    console.log("Initial trades count:", trades.length);
-    
-    // Log first trade to see structure
-    if (trades.length > 0) {
-      try {
-        // Tạo phiên bản an toàn của trade không có tham chiếu vòng tròn
-        const safeTradeInfo = { ...trades[0] };
-        // Loại bỏ các tham chiếu có thể gây lỗi
-        delete safeTradeInfo._events;
-        delete safeTradeInfo._eventsCount;
-        delete safeTradeInfo._maxListeners;
-        
-        console.log("First trade structure:", JSON.stringify(safeTradeInfo, null, 2));
-      } catch (error) {
-        console.error("Error stringifying trade:", error);
-        console.log("First trade ID:", trades[0]?.id || "Unknown");
-      }
+  // Hàm chuyển trang
+  const goToPage = useCallback((page: number) => {
+    if (page < 1) page = 1;
+    setCurrentPage(page);
+  }, []);
+  
+  // Trang trước
+  const goToPreviousPage = useCallback(() => {
+    setCurrentPage(prev => Math.max(1, prev - 1));
+  }, []);
+  
+  // Trang sau
+  const goToNextPage = useCallback(() => {
+    if (hasNextPage) {
+      setCurrentPage(prev => prev + 1);
     }
+  }, [hasNextPage]);
+  
+  // Tính tổng số trang
+  const totalPages = Math.ceil(totalCount / pageSize);
+  
+  // Public API
+  return {
+    // Dữ liệu
+    trades,
+    totalCount,
+    currentPage,
+    totalPages,
+    hasNextPage,
     
-    let result = [...trades] as Trade[];
+    // Điều khiển phân trang
+    goToPage,
+    goToPreviousPage,
+    goToNextPage,
+    
+    // Trạng thái
+    isLoading,
+    isError: !!error,
+    error,
+    
+    // Thủ công
+    refetch
+  };
+}
 
-    // Logic lọc - giống logic trong TradeHistory.tsx
-    if (filters.startDate || filters.endDate) {
-      result = result.filter(trade => {
-        // Lấy dữ liệu thời gian từ trade theo loại Firebase Timestamp
-        let tradeDate: Date;
-        
-        // Hàm helper để chuyển đổi timestamp khác loại thành Date
-        const getDateFromTimestamp = (timestamp: any): Date => {
-          if (!timestamp) return new Date();
-          
-          if (typeof timestamp === 'object' && 'toDate' in timestamp && typeof timestamp.toDate === 'function') {
-            return timestamp.toDate();
-          }
-          
-          if (typeof timestamp === 'object' && timestamp && 'seconds' in timestamp && 
-              typeof timestamp.seconds === 'number') {
-            return new Date(timestamp.seconds * 1000);
-          }
-          
-          if (timestamp instanceof Date) {
-            return timestamp;
-          }
-          
-          return new Date();
-        };
-        
-        if (trade.closeDate) {
-          tradeDate = getDateFromTimestamp(trade.closeDate);
-        } else if (trade.createdAt) {
-          tradeDate = getDateFromTimestamp(trade.createdAt);
-        } else {
-          // Không có dữ liệu thời gian - hiếm gặp nhưng an toàn
-          tradeDate = new Date();
-        }
-        
-        if (filters.startDate && tradeDate < filters.startDate) return false;
-        if (filters.endDate) {
-          // Set end of day for the end date
-          const endDate = new Date(filters.endDate);
-          endDate.setHours(23, 59, 59, 999);
-          if (tradeDate > endDate) return false;
-        }
-        
-        return true;
-      });
-    }
-
-    if (filters.pair && filters.pair.length > 0) {
-      result = result.filter(trade => {
-        // Debug log
-        console.log("Trade pair check:", trade.id, trade.pair, typeof trade.pair);
-        
-        // Kiểm tra trường pair có tồn tại và được định nghĩa
-        if (!trade.pair) {
-          console.log("Trade has no pair field:", trade.id);
-          return false;
-        }
-        
-        // Chuẩn hóa pair thành chữ hoa để so sánh
-        const normalizedPair = String(trade.pair).toUpperCase();
-        const normalizedFilter = filters.pair ? 
-          filters.pair.map(p => String(p).toUpperCase()) : 
-          [];
-        
-        console.log("Pair comparison:", normalizedPair, normalizedFilter);
-        
-        return normalizedFilter.includes(normalizedPair);
-      });
-    }
-
-    if (filters.direction && filters.direction.length > 0) {
-      result = result.filter(trade => {
-        // Debug log
-        console.log("Trade direction check:", trade.id, trade.direction, typeof trade.direction);
-        
-        // Kiểm tra trường direction có tồn tại và được định nghĩa
-        if (!trade.direction) {
-          console.log("Trade has no direction field:", trade.id);
-          return false;
-        }
-        
-        // Chuẩn hóa direction thành chữ hoa để so sánh
-        const normalizedDirection = String(trade.direction).toUpperCase();
-        const normalizedFilter = filters.direction ? 
-          filters.direction.map(d => String(d).toUpperCase()) : 
-          [];
-        
-        console.log("Direction comparison:", normalizedDirection, normalizedFilter);
-        
-        return normalizedFilter.includes(normalizedDirection);
-      });
-    }
-
-    if (filters.result && filters.result.length > 0) {
-      result = result.filter(trade => {
-        if (!trade.result) return false;
-        
-        const normalizedResult = String(trade.result).toUpperCase();
-        const normalizedFilter = filters.result ? 
-          filters.result.map(r => String(r).toUpperCase()) : 
-          [];
-        
-        return normalizedFilter.includes(normalizedResult);
-      });
-    }
-
-    if (filters.strategy && filters.strategy.length > 0) {
-      result = result.filter(trade => {
-        if (!trade.strategy) return false;
-        
-        const normalizedStrategy = String(trade.strategy).toLowerCase();
-        const normalizedFilter = filters.strategy ? 
-          filters.strategy.map(s => String(s).toLowerCase()) : 
-          [];
-        
-        return normalizedFilter.includes(normalizedStrategy);
-      });
-    }
-    
-    // Filter by discipline conditions
-    if (filters.hasFollowedPlan !== undefined) {
-      console.log("Applying followedPlan filter:", filters.hasFollowedPlan);
-      result = result.filter(trade => {
-        if (trade.discipline && 'followedPlan' in trade.discipline) {
-          return trade.discipline.followedPlan === filters.hasFollowedPlan;
-        } else if ('followedPlan' in trade) {
-          return trade.followedPlan === filters.hasFollowedPlan;
-        }
-        return false;
-      });
-    }
-    
-    if (filters.hasEnteredEarly !== undefined) {
-      console.log("Applying enteredEarly filter:", filters.hasEnteredEarly);
-      result = result.filter(trade => {
-        if (trade.discipline && 'enteredEarly' in trade.discipline) {
-          return trade.discipline.enteredEarly === filters.hasEnteredEarly;
-        } else if ('enteredEarly' in trade) {
-          return trade.enteredEarly === filters.hasEnteredEarly;
-        }
-        return false;
-      });
-    }
-    
-    if (filters.hasRevenge !== undefined) {
-      console.log("Applying revenge filter:", filters.hasRevenge);
-      result = result.filter(trade => {
-        if (trade.discipline && 'revenge' in trade.discipline) {
-          return trade.discipline.revenge === filters.hasRevenge;
-        } else if ('revenge' in trade) {
-          return trade.revenge === filters.hasRevenge;
-        }
-        return false;
-      });
-    }
-    
-    if (filters.hasMovedSL !== undefined) {
-      console.log("Applying movedStopLoss filter:", filters.hasMovedSL);
-      result = result.filter(trade => {
-        if (trade.discipline && 'movedStopLoss' in trade.discipline) {
-          return trade.discipline.movedStopLoss === filters.hasMovedSL;
-        } else if ('movedStopLoss' in trade) {
-          return trade.movedStopLoss === filters.hasMovedSL;
-        }
-        return false;
-      });
-    }
-    
-    if (filters.hasOverLeveraged !== undefined) {
-      console.log("Applying overLeveraged filter:", filters.hasOverLeveraged);
-      result = result.filter(trade => {
-        if (trade.discipline && 'overLeveraged' in trade.discipline) {
-          return trade.discipline.overLeveraged === filters.hasOverLeveraged;
-        } else if ('overLeveraged' in trade) {
-          return trade.overLeveraged === filters.hasOverLeveraged;
-        }
-        return false;
-      });
-    }
-
-    // Sử dụng hàm chuẩn hóa từ utils/timestamp.ts thay vì định nghĩa lại
-    
-    // Mặc định: sắp xếp theo lệnh mở trước, sau đó theo từng tiêu chí
-    // Log thông tin trước khi sắp xếp
-    console.log("Applying sort:", sortBy, "on", result.length, "trades");
     
     // Kiểm tra xem các trades có thông tin profitLoss không
     if (sortBy === "profit" || sortBy === "loss") {
