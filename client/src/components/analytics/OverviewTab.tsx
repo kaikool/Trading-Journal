@@ -27,11 +27,12 @@ import {
   Legend,
 } from "recharts";
 import { Icons } from "@/components/icons/icons";
-import { formatCurrency, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { subDays, isAfter } from "date-fns";
 import { CHART_CONFIG, COLOR_CONFIG } from "@/lib/config";
 import { useTimestamp, DateFormat } from "@/hooks/use-timestamp";
 import { calculateWinRate, calculateProfitFactor } from "@/lib/forex-calculator";
+import { formatCurrency, formatPercentage, formatPips, formatNumber } from "@/utils/format-number";
 
 interface KPICardProps {
   title: string;
@@ -231,10 +232,10 @@ function OverviewTabContent({ data }: OverviewTabProps) {
       
       if (percentageChange > 0) {
         direction = 'up';
-        value = `+${percentageChange.toFixed(1)}%`;
+        value = `+${formatPercentage(percentageChange)}`;
       } else if (percentageChange < 0) {
         direction = 'down';
-        value = `${percentageChange.toFixed(1)}%`;
+        value = formatPercentage(percentageChange);
       }
     } else if (last7DaysProfit > 0) {
       direction = 'up';
@@ -337,7 +338,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
       ...Array(data.losses).fill({ pips: -1 }),    // Trades thua
       ...Array(data.breakEven || data.trades - data.wins - data.losses).fill({ pips: 0 }) // Trades hòa
     ];
-    const winRate = calculateWinRate(tempTrades).toFixed(0);
+    const winRate = calculateWinRate(tempTrades);
     
     return (
       <div className="bg-background/95 border border-muted shadow-sm rounded-md p-1.5 text-xs backdrop-blur-sm">
@@ -374,13 +375,13 @@ function OverviewTabContent({ data }: OverviewTabProps) {
           icon={<Icons.trade.price className="h-5 w-5" />}
           trend={{
             direction: netProfit >= 0 ? 'up' as const : 'down' as const,
-            value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${profitLossPercentage.toFixed(1)}%)`
+            value: `${netProfit >= 0 ? '+' : ''}${formattedProfit} (${netProfit >= 0 ? '+' : ''}${formatPercentage(profitLossPercentage)})`
           }}
         />
         
         <KPICard
           title="Win Rate"
-          value={`${winRate.toFixed(1)}%`}
+          value={formatPercentage(winRate)}
           description={`${winningTrades} wins, ${losingTrades} losses, ${totalTrades - winningTrades - losingTrades} BE`}
           icon={<Icons.analytics.trendingUp className="h-5 w-5" />}
           trend={recentPerformanceTrend}
@@ -407,7 +408,10 @@ function OverviewTabContent({ data }: OverviewTabProps) {
               return '∞';
             }
             
-            return profitFactor.toFixed(2);
+            return formatNumber(profitFactor, { 
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
           })()}
           description="Ratio of gross profit to gross loss"
           icon={<Icons.analytics.trendingUp className="h-5 w-5" />}
@@ -436,7 +440,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                     {netProfit >= 0 ? 
                       <Icons.analytics.trendingUp className="h-3.5 w-3.5 mr-1.5" /> : 
                       <Icons.analytics.trendingDown className="h-3.5 w-3.5 mr-1.5" />}
-                    {netProfit >= 0 ? "+" : ""}{profitLossPercentage.toFixed(1)}%
+                    {netProfit >= 0 ? "+" : ""}{formatPercentage(profitLossPercentage)}
                   </div>
                 )}
               </div>
@@ -530,7 +534,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                         y={item.balance}
                         stroke="transparent"
                         label={{
-                          value: `${formatCurrency(item.balance, true)}`,
+                          value: `${formatCurrency(item.balance, { minimumFractionDigits: 0 })}`,
                           position,
                           offset: 15,
                           fill: 'hsl(var(--foreground))',
