@@ -210,25 +210,7 @@ export function calculateLotSize(params: RiskCalculationParams): number {
   return Math.floor(lotSize * 100) / 100;
 }
 
-/**
- * Get current price for a currency pair
- * In a real application, this would be fetched from an API
- */
-function getQuote(pair: CurrencyPair): number {
-  // Sample values, in a real application these would be fetched from API
-  const mockQuotes: Record<CurrencyPair, number> = {
-    EURUSD: 1.0820,
-    GBPUSD: 1.2650,
-    AUDUSD: 0.6550,
-    NZDUSD: 0.6050,
-    USDJPY: 151.50,
-    USDCAD: 1.3650,
-    USDCHF: 0.9050,
-    XAUUSD: 2300.00
-  };
-  
-  return mockQuotes[pair] || 1.0;
-}
+// getQuote function removed - not used in the project
 
 /**
  * Calculate risk/reward ratio
