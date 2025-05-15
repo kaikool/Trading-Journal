@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import { formatTimestamp } from "@/lib/format-timestamp";
 import { cn } from "@/lib/utils";
-import { formatCurrency, formatPriceForPair } from "@/utils/format-number";
+import { formatCurrency, formatPriceForPair, formatPips, formatProfitLoss } from "@/utils/format-number";
 import { TradeStatus } from "@/lib/trade-status-config";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -209,7 +209,7 @@ export function LazyTradeViewEdit({
               status={Number(trade.pips) > 0 ? 'success' : Number(trade.pips) < 0 ? 'danger' : 'neutral'}
               trend={Number(trade.pips) > 0 ? 'up' : Number(trade.pips) < 0 ? 'down' : 'neutral'}
             >
-              {Number(trade.pips) >= 0 ? '+' : ''}{trade.pips}
+              {formatPips(Number(trade.pips), { showPlusSign: true })}
             </CardValue>
           </div>
           <div className="flex flex-col">
@@ -219,7 +219,7 @@ export function LazyTradeViewEdit({
               status={Number(trade.profitLoss) > 0 ? 'success' : Number(trade.profitLoss) < 0 ? 'danger' : 'neutral'}
               trend={Number(trade.profitLoss) > 0 ? 'up' : Number(trade.profitLoss) < 0 ? 'down' : 'neutral'}
             >
-              {Number(trade.profitLoss) >= 0 ? '+' : ''}{formatCurrency(Number(trade.profitLoss))}
+              {formatProfitLoss(Number(trade.profitLoss), { showPlusSign: true })}
             </CardValue>
           </div>
         </div>
