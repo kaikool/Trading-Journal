@@ -53,11 +53,10 @@ import { Badge } from "@/components/ui/badge";
 export default function TradeHistory() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
-  const { userData, trades: cachedTrades } = useDataCache();
+  const { userData } = useDataCache();
   const userId = auth?.currentUser?.uid;
   const [filters, setFilters] = useState<TradeFilterOptions>({});
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">("newest");
-  const [filteredTrades, setFilteredTrades] = useState<Trade[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   // State để theo dõi các giao dịch đang được xóa - cải thiện trải nghiệm người dùng
   const [deletingTradeIds, setDeletingTradeIds] = useState<string[]>([]);

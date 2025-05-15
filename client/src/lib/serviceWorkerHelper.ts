@@ -58,28 +58,4 @@ export async function clearAssetsCache(): Promise<boolean> {
 
 
 
-/**
- * Yêu cầu service worker cập nhật và kích hoạt ngay lập tức
- */
-export function updateServiceWorker(): Promise<void> {
-  if (!('serviceWorker' in navigator)) {
-    return Promise.resolve();
-  }
-  
-  return navigator.serviceWorker.getRegistration()
-    .then(registration => {
-      if (registration) {
-        // Kiểm tra cập nhật
-        return registration.update()
-          .then(() => {
-            if (registration.waiting) {
-              // Nếu có phiên bản mới đang chờ, kích hoạt nó
-              registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-            }
-          });
-      }
-    })
-    .catch(error => {
-      console.error('Error updating service worker:', error);
-    });
-}
+// updateServiceWorker function was removed during cleanup - replaced by applyUpdate in pwa-helper.ts
