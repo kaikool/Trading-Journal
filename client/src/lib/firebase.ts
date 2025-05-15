@@ -2033,7 +2033,6 @@ export {
   
   // Helper functions
   updateAccountBalance,
-  onTradesSnapshot,
   
   // Strategy functions
   getStrategies,
