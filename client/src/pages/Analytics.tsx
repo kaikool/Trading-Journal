@@ -1,4 +1,4 @@
-import { useMemo, lazy, Suspense } from "react";
+import { useMemo, lazy, Suspense, useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
@@ -6,7 +6,9 @@ import { useDataCache } from "@/contexts/DataCacheContext";
 import { getClosedTrades, calculateCurrentBalance } from "@/lib/balance-calculation-rules";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
-import { debug } from "@/lib/debug";
+import { debug, logError } from "@/lib/debug";
+import { getStrategies } from "@/lib/firebase";
+import { TradingStrategy } from "@/types";
 
 // Áp dụng lazy loading cho các tab components
 const OverviewTab = lazy(() => import("@/components/analytics/OverviewTab"));
