@@ -248,8 +248,6 @@ export default function TradeHistory() {
 
   // Sử dụng dữ liệu động cho các filter options
   const [pairOptions, setPairOptions] = useState<CurrencyPair[]>([]);
-  const [directionOptions, setDirectionOptions] = useState<Direction[]>([]);
-  const [resultOptions, setResultOptions] = useState<TradeResult[]>([]);
   const [strategyOptions, setStrategyOptions] = useState<string[]>([]);
   const [emotionOptions, setEmotionOptions] = useState<string[]>([]);
   const [sessionOptions, setSessionOptions] = useState<string[]>([]);
