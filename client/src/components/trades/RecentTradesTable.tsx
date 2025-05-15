@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { getTrades } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { useLocation } from "wouter";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
+import { formatCurrency, formatProfitLoss, formatPriceForPair } from "@/utils/format-number";
 import { Direction } from "@/lib/forex-calculator";
 import { Trade } from "@/types";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
@@ -214,8 +215,8 @@ export default function RecentTradesTable({
                       {renderDirectionBadge(trade.direction as Direction)}
                     </TableCell>
                     <TableCell>{trade.lotSize}</TableCell>
-                    <TableCell>{trade.entryPrice}</TableCell>
-                    <TableCell>{trade.exitPrice}</TableCell>
+                    <TableCell>{trade.entryPrice ? formatPriceForPair(trade.entryPrice, trade.pair) : '-'}</TableCell>
+                    <TableCell>{trade.exitPrice ? formatPriceForPair(trade.exitPrice, trade.pair) : '-'}</TableCell>
                     <TableCell className={cn(
                       "font-medium",
                       trade.profitLoss && trade.profitLoss > 0 
@@ -224,7 +225,7 @@ export default function RecentTradesTable({
                           ? "text-destructive" 
                           : ""
                     )}>
-                      {trade.profitLoss ? formatCurrency(trade.profitLoss) : '-'}
+                      {trade.profitLoss ? formatProfitLoss(trade.profitLoss) : '-'}
                     </TableCell>
                     <TableCell>
                       <TradeStatusBadge status={determineTradeStatus(trade)} />
