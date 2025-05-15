@@ -30,12 +30,30 @@ export default function Analytics() {
   // Sử dụng DataCache thay vì local state
   const { trades, userData, isLoading, userId } = useDataCache();
   const { toast } = useToast();
+  // State để lưu danh sách chiến lược
+  const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
 
   // Logs only in development environment using debug utility
   const devLog = (message: string, data?: any) => {
     // debug() already checks for environment
     debug(message, data);
   };
+  
+  // Lấy danh sách chiến lược khi component mount
+  useEffect(() => {
+    const fetchStrategies = async () => {
+      if (!userId) return;
+      
+      try {
+        const userStrategies = await getStrategies(userId);
+        setStrategies(userStrategies);
+      } catch (error) {
+        logError("Error loading strategies for analytics:", error);
+      }
+    };
+    
+    fetchStrategies();
+  }, [userId]);
 
   // Aggregate analytics data - optimized version with memoization
   const analyticsData = useMemo(() => {
@@ -130,16 +148,19 @@ export default function Analytics() {
       pairData[pair].netProfit += profitLoss;
       
       // Phân tích theo chiến lược - sử dụng pip theo forex-calculator.ts
-      const strategy = trade.strategy || 'Unknown';
-      if (!strategyData[strategy]) {
-        strategyData[strategy] = { strategy, trades: 0, wins: 0, losses: 0, breakEven: 0, netProfit: 0 };
+      const strategyId = trade.strategy || 'Unknown';
+      // Lấy tên chiến lược từ ID
+      const strategy = strategies.find(s => s.id === strategyId)?.name || strategyId;
+      
+      if (!strategyData[strategyId]) {
+        strategyData[strategyId] = { strategy, trades: 0, wins: 0, losses: 0, breakEven: 0, netProfit: 0 };
       }
-      strategyData[strategy].trades++;
+      strategyData[strategyId].trades++;
       // Công thức từ forex-calculator.ts: pip > 0 là thắng, pip < 0 là thua, pip = 0 là hòa
-      if (pips > 0) strategyData[strategy].wins++;
-      else if (pips < 0) strategyData[strategy].losses++;
-      else if (pips === 0) strategyData[strategy].breakEven = (strategyData[strategy].breakEven || 0) + 1;
-      strategyData[strategy].netProfit += profitLoss;
+      if (pips > 0) strategyData[strategyId].wins++;
+      else if (pips < 0) strategyData[strategyId].losses++;
+      else if (pips === 0) strategyData[strategyId].breakEven = (strategyData[strategyId].breakEven || 0) + 1;
+      strategyData[strategyId].netProfit += profitLoss;
       
       // Phân tích theo cảm xúc - sử dụng pip theo forex-calculator.ts
       const emotion = trade.emotion || 'Neutral';
