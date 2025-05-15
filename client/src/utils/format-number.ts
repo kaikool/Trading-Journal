@@ -68,57 +68,9 @@ export function formatCurrency(
 // because it is used in the project. There seems to be another formatPercentage function
 // in lib/utils.ts that is also being used.
 
-/**
- * Định dạng số thành chuỗi pips
- * 
- * @param value Giá trị pips
- * @param options Tùy chọn định dạng
- * @returns Chuỗi pips đã được định dạng
- */
-export function formatPips(
-  value: number,
-  options: {
-    includeSign?: boolean;
-    includeUnit?: boolean;
-    minimumFractionDigits?: number;
-    maximumFractionDigits?: number;
-    locale?: string;
-  } = {}
-): string {
-  const {
-    includeSign = false,
-    includeUnit = true,
-    minimumFractionDigits = 1,
-    maximumFractionDigits = 1,
-    locale = UI_CONFIG.NUMBER_FORMAT.LOCALE
-  } = options;
+// formatPips function removed - not used in the project (local implementations are used instead)
 
-  const formattedValue = formatNumber(Math.abs(value), {
-    minimumFractionDigits,
-    maximumFractionDigits,
-    locale
-  });
-  
-  // Add sign if requested and value is not zero
-  const sign = includeSign && value > 0 ? '+' : value < 0 ? '-' : '';
-  const unit = includeUnit ? ' pips' : '';
-  
-  return `${sign}${formattedValue}${unit}`;
-}
-
-/**
- * Định dạng tỷ lệ risk/reward
- * 
- * @param risk Giá trị rủi ro
- * @param reward Giá trị phần thưởng
- * @returns Chuỗi đã được định dạng (ví dụ: "1:3")
- */
-export function formatRiskReward(risk: number, reward: number): string {
-  if (risk <= 0) return 'N/A';
-  
-  const ratio = reward / risk;
-  return `1:${ratio.toFixed(1)}`;
-}
+// formatRiskReward function removed - not used in the project
 
 /**
  * Định dạng giá theo cặp tiền tệ
