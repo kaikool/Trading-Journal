@@ -16,7 +16,7 @@ import { PWAContainer } from "@/components/pwa/PWAContainer";
 import { preloadRoute } from "@/lib/preload";
 import { withErrorBoundary } from "@/components/ui/error-boundary";
 import AchievementNotificationContainer from "@/components/achievements/AchievementNotificationContainer";
-import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";
+import { LayoutProvider } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DataCacheProvider } from "@/contexts/DataCacheContext";
 import { DialogProvider } from "@/contexts/DialogContext";
