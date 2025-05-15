@@ -290,9 +290,13 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
         updateData.exitImageM15 = exitImageM15Url;
       }
       
-      // Update trade in database - sử dụng tham số option để đảm bảo hành vi đóng giao dịch hoạt động đúng
+      // Cập nhật giao dịch trong database thông qua firebase.updateTrade
+      // Lưu ý: Hàm updateTrade đã được tích hợp với TradeUpdateService để thông báo
+      // tới tất cả các component đang theo dõi giao dịch (tham khảo trong firebase.ts)
+      // Tham số option sử dụng để đảm bảo hành vi đóng giao dịch hoạt động đúng
       await updateTrade(trade.userId, trade.id, updateData, {
-        useBatch: true, // Force sử dụng batch operation để bảo đảm cập nhật đồng bộ
+        useBatch: true, // Force sử dụng batch operation để bảo đảm cập nhật đồng bộ với balances
+        notifyType: 'close' // Xác định đây là thao tác đóng giao dịch để thông báo đúng
       });
       
       // Log kết quả đóng giao dịch 

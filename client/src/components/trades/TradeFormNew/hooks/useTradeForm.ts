@@ -9,7 +9,8 @@ import { useTradeCalculations } from './useTradeCalculations';
 import { addTrade, updateTrade } from '@/lib/firebase';
 import { serverTimestamp } from 'firebase/firestore';
 import { logError, debug } from '@/lib/debug';
-// Thêm TradeUpdateService để thống nhất cách xử lý trade
+// Lưu ý: Đã có TradeUpdateService để thống nhất cập nhật UI
+// addTrade và updateTrade đã tích hợp với TradeUpdateService trong file firebase.ts
 
 export function useTradeForm(props: TradeFormProps) {
   const { userId, onSubmitting, onSuccess, onError } = props;
