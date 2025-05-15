@@ -7,7 +7,7 @@ import { useTradesQuery } from "@/hooks/use-trades-query";
 import { useAuth } from "@/hooks/use-auth";
 import { getClosedTrades, calculateCurrentBalance } from "@/lib/balance-calculation-rules";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
-import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { debug, logError } from "@/lib/debug";
 import { getStrategies } from "@/lib/firebase";
 import { TradingStrategy } from "@/types";
@@ -468,7 +468,7 @@ export default function Analytics() {
       
       {/* Main content */}
       {!userData ? (
-        <LoadingFallback height={400} showSpinner={false} />
+        <AppSkeleton level={SkeletonLevel.PAGE} height={400} />
       ) : analyticsData.totalTrades === 0 ? (
         <EmptyState />
       ) : (
@@ -503,31 +503,31 @@ export default function Analytics() {
           
           {/* Tabs content với Suspense cho dynamic import */}
             <TabsContent value="overview">
-              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
                 <OverviewTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="strategy">
-              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
                 <StrategyTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="discipline">
-              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
                 <DisciplineTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="emotion">
-              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
                 <EmotionTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="advanced">
-              <Suspense fallback={<LoadingFallback height={300} showSpinner={true} />}>
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>

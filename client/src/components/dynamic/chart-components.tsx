@@ -80,7 +80,7 @@ export function LazyChart({
   };
 
   return (
-    <Suspense fallback={<LoadingFallback height={height as number} showSpinner={true} />}>
+    <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={height as number} />}>
       <ResponsiveContainer width={width} height={height}>
         {renderChart()}
       </ResponsiveContainer>
