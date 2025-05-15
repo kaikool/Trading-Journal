@@ -291,32 +291,7 @@ export function groupTradesByMonth<T extends Record<string, any>>(
   return result;
 }
 
-/**
- * Lấy ngày đầu tiên và cuối cùng của một tháng từ chuỗi tháng
- * Ví dụ: "Jan 2023" -> { firstDay: Date, lastDay: Date }
- */
-export function getMonthBoundaries(monthStr: string): { firstDay: Date, lastDay: Date } | null {
-  try {
-    const [month, yearStr] = monthStr.split(' ');
-    const monthMap: Record<string, number> = {
-      Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-      Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-    };
-    
-    if (!month || !yearStr || !(month in monthMap)) {
-      throw new Error(`Invalid month string: ${monthStr}`);
-    }
-    
-    const year = yearStr.length === 2 ? 2000 + parseInt(yearStr, 10) : parseInt(yearStr, 10);
-    const firstDay = new Date(year, monthMap[month], 1);
-    const lastDay = new Date(year, monthMap[month] + 1, 0);
-    
-    return { firstDay, lastDay };
-  } catch (error) {
-    console.error('Error parsing month string:', error, monthStr);
-    return null;
-  }
-}
+// Hàm getMonthBoundaries đã bị loại bỏ vì không được sử dụng
 
 /**
  * So sánh hai timestamps

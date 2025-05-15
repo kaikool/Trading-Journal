@@ -39,67 +39,6 @@ export const CLOUDINARY_CONFIG = {
   }
 };
 
-/**
- * Tạo URL cho transformation Cloudinary
- * 
- * @param originalUrl URL gốc của ảnh Cloudinary
- * @param transformationType Tên transformation từ CLOUDINARY_CONFIG.transformations
- * @returns URL đã được biến đổi
- */
-export function getTransformedUrl(
-  originalUrl: string, 
-  transformationType: keyof typeof CLOUDINARY_CONFIG.transformations
-): string {
-  // Kiểm tra xem URL có phải là URL Cloudinary hợp lệ không
-  if (!originalUrl || !originalUrl.includes('cloudinary.com')) {
-    return originalUrl;
-  }
-  
-  const transformation = CLOUDINARY_CONFIG.transformations[transformationType];
-  if (!transformation) {
-    console.warn(`Transformation không hợp lệ: ${transformationType}`);
-    return originalUrl;
-  }
-  
-  // Phân tích URL Cloudinary
-  const parts = originalUrl.split('/upload/');
-  if (parts.length !== 2) {
-    return originalUrl;
-  }
-  
-  // Tạo URL mới với transformation
-  return `${parts[0]}/upload/${transformation}/${parts[1]}`;
-}
-
-/**
- * Lấy public ID từ URL Cloudinary
- * 
- * @param url URL Cloudinary
- * @returns Public ID hoặc null nếu không phải URL Cloudinary
- */
-export function getPublicIdFromUrl(url: string): string | null {
-  if (!url || !url.includes('cloudinary.com')) {
-    return null;
-  }
-
-  // URL Cloudinary có dạng: https://res.cloudinary.com/cloud-name/image/upload/[transformations]/public-id
-  const urlParts = url.split('/upload/');
-  if (urlParts.length !== 2) {
-    return null;
-  }
-
-  // Phần sau upload/ có thể có transformations, nên cần tách từ sau dấu /
-  let parts = urlParts[1].split('/');
-  // Phần cuối cùng chứa public_id
-  const publicIdWithExtension = parts[parts.length - 1];
-  
-  // Loại bỏ extension nếu có
-  const dotIndex = publicIdWithExtension.lastIndexOf('.');
-  const publicId = dotIndex > 0 
-    ? publicIdWithExtension.substring(0, dotIndex) 
-    : publicIdWithExtension;
-  
-  return publicId;
-}
+// Các hàm transformation đã chuyển sang server/cloudinary-service.ts
 
 export default CLOUDINARY_CONFIG;
