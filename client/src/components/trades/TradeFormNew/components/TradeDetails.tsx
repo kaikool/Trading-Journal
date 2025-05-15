@@ -3,7 +3,6 @@ import { useFormContext } from "react-hook-form";
 import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
-import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons/icons';
 import { GetPriceButton } from '../../GetPriceButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
-import { CurrencyPair, getDecimalPlaces } from '@/lib/forex-calculator';
 
 /**
  * TradeDetails Component

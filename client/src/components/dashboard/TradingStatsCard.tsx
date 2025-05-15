@@ -11,7 +11,6 @@ import { Icons } from "@/components/icons/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatProfitFactor } from "@/lib/balance-calculation-rules";
-import { calculateWinRate } from "@/lib/forex-calculator";
 
 interface TradingStatsCardProps {
   totalTrades: number;

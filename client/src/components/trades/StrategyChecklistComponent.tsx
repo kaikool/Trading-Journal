@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 
-import { Icons } from "@/components/icons/icons";
 
 interface StrategyCheckItemProps {
   condition: StrategyCondition;

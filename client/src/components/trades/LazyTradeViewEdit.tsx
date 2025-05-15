@@ -22,7 +22,7 @@ import {
 import { formatTimestamp } from "@/lib/format-timestamp";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatPriceForPair } from "@/utils/format-number";
-import { getTradeStatusConfig, TradeStatus } from "@/lib/trade-status-config";
+import { TradeStatus } from "@/lib/trade-status-config";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartImageDialog } from "./ChartImageDialog";

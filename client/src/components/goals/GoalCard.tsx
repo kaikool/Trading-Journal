@@ -1,9 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useUserData } from '@/hooks/use-user-data';
 import { useGoalData } from '@/hooks/use-goal-data';
-import { formatDistanceToNow, isAfter } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { isAfter } from 'date-fns';
 import {
   Card,
   CardContent,
@@ -22,7 +20,6 @@ import {
   Calendar, 
   AlertCircle, 
   TrendingUp, 
-  MoreHorizontal, 
   Plus, 
   RefreshCw 
 } from 'lucide-react';
@@ -32,14 +29,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
+
 
 interface GoalCardProps {
   goal: {

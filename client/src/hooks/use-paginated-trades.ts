@@ -1,11 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import * as firebase from "@/lib/firebase";
 import { TradeFilterOptions, Trade } from "@/types";
-import { Timestamp } from "firebase/firestore";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { debug, logError } from "@/lib/debug";
-import { getTimeStamp } from "@/utils/timestamp";
 
 /**
  * Hook tùy chỉnh để lấy và xử lý danh sách giao dịch theo trang

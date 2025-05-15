@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, type User, signOut, updateProfile, createUserWithEmailAndPassword, signInAnonymously } from "firebase/auth";
+import { getAuth, signOut, updateProfile, createUserWithEmailAndPassword, signInAnonymously } from "firebase/auth";
 import { calculatePips, calculateProfit } from './forex-calculator';
 import { DASHBOARD_CONFIG } from './config';
 import { debug, logError, logWarning } from './debug';

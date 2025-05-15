@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchRealTimePrice } from '@/lib/market-price-service';
-import { debug, logError } from '@/lib/debug';
+import { debug } from '@/lib/debug';
 import { toast } from '@/hooks/use-toast';
 
 interface UseMarketPriceOptions {

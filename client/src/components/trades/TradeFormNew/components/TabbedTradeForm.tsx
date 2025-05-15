@@ -13,7 +13,6 @@ import {
 } from './';
 import { cn } from '@/lib/utils';
 import { ImageState } from '../types';
-import { debug } from '@/lib/debug';
 
 /**
  * Custom hook for responsive design

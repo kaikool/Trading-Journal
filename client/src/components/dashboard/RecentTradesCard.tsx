@@ -1,5 +1,5 @@
 import { Icons } from "@/components/icons/icons";
-import { useState, useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { 
   Card, 
   CardContent, 
@@ -12,17 +12,14 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { getTradeStatusConfig } from "@/lib/trade-status-config";
-import { formatPrice, CurrencyPair, Direction, calculateWinRate } from "@/lib/forex-calculator";
-import { UI_CONFIG } from "@/lib/config";
 import { format } from "date-fns";
 import { useLocation } from "wouter";
 import { determineTradeStatus } from "@/lib/trade-status-helpers";
 import { Trade as AppTrade } from "@/types";
 import DirectionBadge from "../trades/DirectionBadge";
-import { memoWithPerf, useMemoWithPerf } from "@/lib/performance";
+import { useMemoWithPerf } from "@/lib/performance";
 
 // Define the types for the trade data
 interface Trade {

@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { calculateWinRate } from "@/lib/forex-calculator";
 import {
   AreaChart,
   Area,
@@ -26,8 +25,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
-import { format, parseISO } from "date-fns";
-import { formatCurrency } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface EmotionTabProps {
   data: {

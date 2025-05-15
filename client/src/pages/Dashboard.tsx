@@ -1,7 +1,6 @@
-import { useMemo, useCallback, Suspense } from "react";
+import { useMemo, Suspense } from "react";
 import { useLocation } from "wouter";
 import { format } from "date-fns";
-import { DASHBOARD_CONFIG } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug } from "@/lib/debug";
@@ -16,14 +15,10 @@ import {
   calculateProfitFactor,
   calculateAverageRiskRewardRatio
 } from "@/lib/forex-calculator";
-import {
-  parseTimestamp,
-  getTimestampMilliseconds
-} from "@/lib/format-timestamp";
+
+
 
 // Import UI components
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 
 // Import regular components
 import { 

@@ -1,14 +1,9 @@
-import { db, auth } from './firebase';
+import { db } from './firebase';
 import { 
-  collection, 
   doc, 
   setDoc, 
   getDoc, 
   updateDoc,
-  getDocs,
-  query,
-  where,
-  arrayUnion,
   serverTimestamp
 } from 'firebase/firestore';
 import { Achievement } from '@/types';

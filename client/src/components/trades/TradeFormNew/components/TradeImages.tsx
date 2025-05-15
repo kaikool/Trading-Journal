@@ -2,8 +2,6 @@ import React from 'react';
 import { ImageUpload } from './ImageUpload';
 import { ImageState } from '../types';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface TradeImagesProps {
   entryImage1: ImageState;

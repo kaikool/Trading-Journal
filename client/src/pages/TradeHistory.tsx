@@ -2,20 +2,14 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
 import { TradeFilterOptions, Trade } from "@/types";
 import { useToast } from "@/hooks/use-toast";
-import { Timestamp } from "firebase/firestore";
 import { useLocation } from "wouter";
 import { useTradeList } from "@/hooks/use-trade-list";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
-import { 
-  getTimestampMilliseconds as getTimestamp,
-  parseTimestamp,
-  formatTimestamp,
-  DateFormat 
-} from "@/lib/format-timestamp";
+
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -32,13 +26,8 @@ import LazyTradeHistoryCard from "@/components/trades/LazyTradeHistoryCard";
 import { FilterTags } from "@/components/trades/FilterTags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
+
+
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Icons } from "@/components/icons/icons";
 import {
@@ -55,12 +44,8 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 // Removed pagination imports

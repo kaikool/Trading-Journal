@@ -5,7 +5,7 @@ import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, getGoals } from
 import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
 import { auth } from '@/lib/firebase';
 import { useEffect, useState, useCallback } from 'react';
-import { debug, logError } from '@/lib/debug';
+import { debug } from '@/lib/debug';
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];

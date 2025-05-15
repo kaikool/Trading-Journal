@@ -7,7 +7,6 @@
 
 import { debug, logError } from '@/lib/debug';
 import { QueryClient } from '@tanstack/react-query';
-import { Trade } from '@/types';
 
 // Singleton instance
 let queryClientInstance: QueryClient | null = null;

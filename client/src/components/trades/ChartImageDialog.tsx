@@ -1,13 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  Dialog,
+import {
   DialogContent, 
   DialogTitle, 
   DialogDescription,
   DialogWithContext
 } from '@/components/ui/dialog';
-import { useDialog } from '@/contexts/DialogContext';
-import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons/icons';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';

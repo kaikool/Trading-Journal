@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { collection, query, where, orderBy, limit } from "firebase/firestore";
-import { db, getTrades } from "@/lib/firebase";
+import { getTrades } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
 import { useLocation } from "wouter";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { CurrencyPair, Direction } from "@/lib/forex-calculator";
+import { Direction } from "@/lib/forex-calculator";
 import { Trade } from "@/types";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 

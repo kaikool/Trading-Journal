@@ -2,19 +2,16 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { TradingStrategy, StrategyCondition } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { auth, getStrategies, addStrategy, updateStrategy, deleteStrategy } from "@/lib/firebase";
-import { Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import {
   StrategyConditionList,
 } from "./StrategyConditionInput";
 
 import {
-  Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose,
   DialogWithContext
 } from "@/components/ui/dialog";
@@ -38,7 +35,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,

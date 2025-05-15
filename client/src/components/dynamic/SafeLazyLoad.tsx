@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { debug } from '@/lib/debug';
-import { isPwaMode, clearAssetsCache, updateServiceWorker } from '@/lib/serviceWorkerHelper';
+import { isPwaMode, clearAssetsCache } from '@/lib/serviceWorkerHelper';
 
 interface SafeLazyLoadProps {
   moduleLoader: () => Promise<any>;

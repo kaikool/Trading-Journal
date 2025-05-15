@@ -13,7 +13,7 @@ import {
 } from "@/lib/firebase";
 // Removed direct Lucide imports in favor of centralized icon system
 // Removed import for API key management
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
@@ -22,7 +22,7 @@ import { evaluateDevicePerformance } from "@/lib/performance";
 import { useTheme } from "@/contexts/ThemeContext";
 import { DASHBOARD_CONFIG } from "@/lib/config";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,8 +40,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { lazy, Suspense } from "react";
-import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
+import { lazy } from "react";
 import { Icons } from "@/components/icons/icons";
 import type { ComponentType } from "react";
 

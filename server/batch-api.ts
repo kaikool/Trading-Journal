@@ -2,9 +2,7 @@
  * Batch API Endpoint - Giúp giảm số lượng API calls
  */
 
-import express, { Express, Request, Response } from 'express';
-import { admin, db } from './firebase-admin';
-import { log } from './vite';
+import { Express } from 'express';
 
 /**
  * Đăng ký batch endpoints

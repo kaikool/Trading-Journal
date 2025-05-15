@@ -11,9 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { UI_CONFIG } from "@/lib/config";
-import { CurrencyPair } from "@/lib/forex-calculator";
-import { formatCurrency, formatNumber, formatPercentage } from "@/utils/format-number";
+import { formatCurrency, formatNumber } from "@/utils/format-number";
 
 interface AccountSummaryCardProps {
   currentBalance: number;

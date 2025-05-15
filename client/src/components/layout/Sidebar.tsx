@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
@@ -10,7 +10,6 @@ import { auth } from "@/lib/firebase";
 import { logoutUser } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile, isPWA } from "@/hooks/use-mobile";
-import { useScrollDirection } from "@/hooks/use-scroll-direction";
 import { useUserActivity } from "@/hooks/use-user-activity";
 import { SidebarHint } from "./SidebarHint";
 

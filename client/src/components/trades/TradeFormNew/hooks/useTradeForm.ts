@@ -9,9 +9,7 @@ import { useTradeCalculations } from './useTradeCalculations';
 import { addTrade, updateTrade } from '@/lib/firebase';
 import { serverTimestamp } from 'firebase/firestore';
 import { logError, debug } from '@/lib/debug';
-import { format } from "date-fns";
 // Thêm TradeUpdateService để thống nhất cách xử lý trade
-import { tradeUpdateService } from '@/services/trade-update-service';
 
 export function useTradeForm(props: TradeFormProps) {
   const { userId, onSubmitting, onSuccess, onError } = props;

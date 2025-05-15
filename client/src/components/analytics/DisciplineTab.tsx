@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { calculateWinRate } from "@/lib/forex-calculator";
 import {
   BarChart,
   Bar,
@@ -22,8 +21,7 @@ import {
 } from "recharts";
 import { Icons } from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
-import { formatCurrency } from "@/lib/utils";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
 interface DisciplineTabProps {

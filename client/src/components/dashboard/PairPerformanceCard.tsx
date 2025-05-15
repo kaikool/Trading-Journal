@@ -1,10 +1,9 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { CHART_CONFIG } from "@/lib/config";
-import { calculateWinRate } from "@/lib/forex-calculator";
 
 // Define the types for the pair performance data
 interface PairPerformanceData {

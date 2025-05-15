@@ -2,12 +2,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import * as firebase from "@/lib/firebase";
 import { TradeFilterOptions, Trade } from "@/types";
-import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
-import { Timestamp } from "firebase/firestore";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
-import { parseTimestamp } from "@/lib/format-timestamp";
 import { getTimeStamp } from "@/utils/timestamp";
 
 /**

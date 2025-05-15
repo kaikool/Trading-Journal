@@ -1,6 +1,5 @@
 import express, { type Express } from "express";
 import { createServer, type Server } from "http";
-import path from "path";
 import { storage } from "./storage";
 import { z } from "zod";
 import { 
@@ -8,9 +7,7 @@ import {
   insertTradeSchema
 } from "@shared/schema";
 import { registerBatchEndpoints } from "./batch-api";
-import { log } from "./vite";
 
-import { admin, db } from "./firebase-admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Phục vụ các tập tin tĩnh từ thư mục public với content-type phù hợp

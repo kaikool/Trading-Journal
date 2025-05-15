@@ -3,7 +3,6 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Icons } from '@/components/icons/icons';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import { ImageState } from '../types';
 import { Badge } from '@/components/ui/badge';
 

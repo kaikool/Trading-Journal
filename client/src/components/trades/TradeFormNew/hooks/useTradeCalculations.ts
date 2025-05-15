@@ -10,7 +10,6 @@ import {
   calculatePips, 
   calculateProfit, 
   calculateTakeProfitPrice,
-  formatPrice,
   CurrencyPair,
   Direction,
   Currency

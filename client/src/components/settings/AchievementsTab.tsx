@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useMemoWithPerf } from "@/lib/performance";
 import { useQuery } from "@tanstack/react-query";
 import { auth } from "@/lib/firebase";
-import { Achievement, UserAchievements } from "@/types";
+import { Achievement } from "@/types";
 import { 
   getUserAchievements, 
   processUserAchievements,
@@ -33,9 +33,8 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 

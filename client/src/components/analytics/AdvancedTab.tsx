@@ -9,8 +9,6 @@ import {
 import { calculateWinRate } from "@/lib/forex-calculator";
 import { Badge } from "@/components/ui/badge";
 import {
-  LineChart as RechartsLineChart,
-  Line,
   AreaChart,
   Area,
   BarChart,
@@ -20,15 +18,12 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
-  Legend,
   ScatterChart,
   Scatter as RechartsScatter,
-  ZAxis,
 } from "recharts";
 import { Icons } from "@/components/icons/icons";
-import { format, subDays, parseISO, differenceInDays } from "date-fns";
 import { formatCurrency } from "@/lib/utils";
-import { CHART_CONFIG, UI_CONFIG } from "@/lib/config";
+import { CHART_CONFIG } from "@/lib/config";
 import { useTimestamp } from "@/hooks/use-timestamp";
 
 interface AdvancedTabProps {

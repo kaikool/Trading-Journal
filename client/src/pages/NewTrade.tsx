@@ -6,10 +6,7 @@ import TradeFormNew from "@/components/trades/TradeFormNew";
 import { 
   Card, 
   CardContent, 
-  CardGradient, 
-  CardHeader, 
-  CardTitle, 
-  CardIcon 
+  CardGradient 
 } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
 

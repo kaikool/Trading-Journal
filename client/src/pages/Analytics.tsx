@@ -3,11 +3,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
 import { useDataCache } from "@/contexts/DataCacheContext";
-import { hasClosedTrades, getClosedTrades, calculateCurrentBalance, calculatePnL } from "@/lib/balance-calculation-rules";
-import { UI_CONFIG, DASHBOARD_CONFIG } from "@/lib/config";
+import { getClosedTrades, calculateCurrentBalance } from "@/lib/balance-calculation-rules";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
-import { debug, logError } from "@/lib/debug";
+import { debug } from "@/lib/debug";
 
 // Áp dụng lazy loading cho các tab components
 const OverviewTab = lazy(() => import("@/components/analytics/OverviewTab"));

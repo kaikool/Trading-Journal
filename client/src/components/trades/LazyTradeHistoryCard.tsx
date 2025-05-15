@@ -1,16 +1,12 @@
-import { useState, useEffect, useRef, memo, useMemo } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db, auth, getStrategyById } from '@/lib/firebase';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { auth, getStrategyById } from '@/lib/firebase';
 import { 
   Card, 
   CardContent, 
   CardIcon, 
   CardGradient,
-  CardImage,
   CardValue
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons/icons";
 import { OptimizedImage } from "@/components/ui/optimized-image";
@@ -19,15 +15,12 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-number";
 import { formatPriceForPair } from "@/utils/format-number";
-import { CurrencyPair } from "@/lib/forex-calculator";
 import { formatTimestamp } from "@/lib/format-timestamp";
 import { useInView } from "react-intersection-observer";
 import LazyCloseTradeForm from "./LazyCloseTradeForm";
-import { TradeStatus, getTradeStatusConfig, getTradeStatusColorClasses } from "@/lib/trade-status-config";
-import { determineTradeStatus } from "@/lib/trade-status-helpers";
+import { TradeStatus } from "@/lib/trade-status-config";
 import TradeStatusBadge from "./TradeStatusBadge";
 import DirectionBadge from "./DirectionBadge";
-import axios from "axios";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";

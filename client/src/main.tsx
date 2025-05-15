@@ -3,7 +3,6 @@ import App from "./App";
 import "./index.css";
 import { registerServiceWorker } from "./lib/pwa-helper";
 import { preloadCriticalResources } from "./lib/preload";
-import { DataCacheProvider } from './contexts/DataCacheContext';
 
 // Preload critical resources
 preloadCriticalResources();

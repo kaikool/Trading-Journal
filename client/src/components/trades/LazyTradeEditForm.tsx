@@ -1,8 +1,6 @@
 import React from 'react';
 import { Trade } from '@/types';
-import { lazy, Suspense } from 'react';
-import { Icons } from '@/components/icons/icons';
-import { Button } from "@/components/ui/button";
+import { lazy } from 'react';
 
 // Lazy load the main form component
 const TradeFormNew = lazy(() => import('./TradeFormNew'));

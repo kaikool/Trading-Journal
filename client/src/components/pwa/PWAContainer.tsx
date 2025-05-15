@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { InstallPrompt } from './InstallPrompt';
 import { OfflineIndicator } from './OfflineIndicator';
 import { UpdatePrompt } from './UpdatePrompt';
-import { PWA_NETWORK_STATUS_EVENT, isPWA } from '@/lib/pwa-helper';
+import { PWA_NETWORK_STATUS_EVENT } from '@/lib/pwa-helper';
 
 /**
  * Container for all PWA-related components

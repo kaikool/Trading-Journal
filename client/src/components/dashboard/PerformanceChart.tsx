@@ -4,11 +4,10 @@ import {
   CardHeader, 
   CardTitle, 
   CardIcon,
-  CardGradient,
-  CardValue
+  CardGradient
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AreaChart, Area, XAxis, YAxis, ReferenceArea, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
 import { Icons } from "@/components/icons/icons";
 import { UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
 import { cn } from "@/lib/utils";

@@ -5,8 +5,6 @@ import fs from 'fs';
 import os from 'os';
 import { log } from './vite';
 import admin from 'firebase-admin';
-import { getAuth } from 'firebase-admin/auth';
-import { uploadImage, generateThumbnailUrl, deleteImage, getPublicIdFromUrl } from './cloudinary-service';
 
 // Đảm bảo thư mục upload tạm tồn tại để lưu trữ tạm thời
 const uploadTempDir = path.join(os.tmpdir(), 'uploads_temp');

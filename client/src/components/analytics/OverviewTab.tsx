@@ -22,7 +22,6 @@ import {
   YAxis,
   CartesianGrid,
   ReferenceLine,
-  ReferenceArea,
   ResponsiveContainer,
   Tooltip,
   Legend,
@@ -30,7 +29,7 @@ import {
 import { Icons } from "@/components/icons/icons";
 import { formatCurrency, cn } from "@/lib/utils";
 import { subDays, isAfter } from "date-fns";
-import { CHART_CONFIG, UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
+import { CHART_CONFIG, COLOR_CONFIG } from "@/lib/config";
 import { useTimestamp, DateFormat } from "@/hooks/use-timestamp";
 import { calculateWinRate, calculateProfitFactor } from "@/lib/forex-calculator";
 

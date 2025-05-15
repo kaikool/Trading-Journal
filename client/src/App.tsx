@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, Suspense, useContext, useRef } from "react";
+import { useEffect, useState, useCallback, lazy, Suspense } from "react";
 import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ import { User } from "firebase/auth";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PWAContainer } from "@/components/pwa/PWAContainer";
-import { preloadRoute, preloadCommonRoutes } from "@/lib/preload";
+import { preloadRoute } from "@/lib/preload";
 import { withErrorBoundary } from "@/components/ui/error-boundary";
 import AchievementNotificationContainer from "@/components/achievements/AchievementNotificationContainer";
 import { LayoutProvider, useLayout } from "@/contexts/LayoutContext";

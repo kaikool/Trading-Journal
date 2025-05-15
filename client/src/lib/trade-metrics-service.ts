@@ -6,7 +6,7 @@
  * từ dữ liệu giao dịch của người dùng.
  */
 
-import { db, auth } from './firebase';
+import { db } from './firebase';
 import { 
   collection, 
   doc, 
