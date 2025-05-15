@@ -501,8 +501,8 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                       ? formatPercentage((item.yes / item.total) * 100)
                       : '0.0%'}
                   </TableCell>
-                  <TableCell className="text-center">{item.winRateYes.toFixed(1)}%</TableCell>
-                  <TableCell className="text-center">{item.winRateNo.toFixed(1)}%</TableCell>
+                  <TableCell className="text-center">{formatPercentage(item.winRateYes)}</TableCell>
+                  <TableCell className="text-center">{formatPercentage(item.winRateNo)}</TableCell>
                   <TableCell className="text-right">
                     <Badge className={
                       (item.name === "Followed Trading Plan" && item.impact > 0) || 
@@ -510,7 +510,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                         ? 'bg-success/20 text-success border-success/30'
                         : 'bg-destructive/20 text-destructive border-destructive/30'
                     }>
-                      {item.impact > 0 ? '+' : ''}{item.impact.toFixed(1)}%
+                      {item.impact > 0 ? '+' : ''}{formatPercentage(item.impact)}
                     </Badge>
                   </TableCell>
                 </TableRow>

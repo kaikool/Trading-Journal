@@ -22,8 +22,8 @@ import {
   Scatter as RechartsScatter,
 } from "recharts";
 import { Icons } from "@/components/icons/icons";
-import { formatCurrency } from "@/lib/utils";
 import { CHART_CONFIG } from "@/lib/config";
+import { formatCurrency, formatPercentage, formatNumber } from "@/utils/format-number";
 import { useTimestamp } from "@/hooks/use-timestamp";
 
 interface AdvancedTabProps {
@@ -85,7 +85,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         balance: runningBalance,
         profitLoss: trade.profitLoss || 0,
         drawdown: currentDrawdown,
-        drawdownPercent: currentDrawdownPercent.toFixed(2)
+        drawdownPercent: formatPercentage(currentDrawdownPercent, 2)
       };
     });
     
