@@ -5,6 +5,7 @@ import { TradeFilterOptions, Trade } from "@/types";
 import { CurrencyPair, Direction, TradeResult } from "@/lib/forex-calculator";
 import { Timestamp } from "firebase/firestore";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
+import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { debug, logError } from "@/lib/debug";
 import { getTimeStamp } from "@/utils/timestamp";
 

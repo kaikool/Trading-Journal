@@ -7,6 +7,7 @@ import { Timestamp } from "firebase/firestore";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug, logError } from "@/lib/debug";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
+import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { parseTimestamp } from "@/lib/format-timestamp";
 import { getTimeStamp } from "@/utils/timestamp";
 
@@ -218,69 +219,59 @@ export function useTradeList(options: {
     refetchOnMount: false      // Không refetch khi component mount nếu data vẫn còn hạn
   });
   
-  // Nếu bật realtime, thêm listener để cập nhật khi có thay đổi
-  // Sử dụng ref để theo dõi và phòng ngừa re-renders không cần thiết
+  // Sử dụng thời gian trễ cho việc cập nhật
   const lastTradesUpdateRef = useRef(0);
-  const lastTradesDataRef = useRef<string>('');
   
+  // Đăng ký observer với TradeUpdateService để cập nhật UI khi có thay đổi
   useEffect(() => {
     if (!userId || !enableRealtime) return;
     
-    debug("[DataCache] Trades snapshot listener setup");
-    const unsubscribe = firebaseListenerService.onTradesSnapshot(
+    debug("[TradeList] Registering with TradeUpdateService");
+    
+    // Tạo observer
+    const observer: TradeChangeObserver = {
+      onTradesChanged: (action, tradeId) => {
+        // Thêm debounce đơn giản để tránh cập nhật quá nhanh
+        const now = Date.now();
+        const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
+        
+        if (timeSinceLastUpdate < 100) {
+          debug("[TradeList] Debouncing update, too frequent");
+          return;
+        }
+        
+        lastTradesUpdateRef.current = now;
+        
+        debug(`[TradeList] Trade changed (${action}), refreshing data`);
+        
+        // Không cần phải invalidate vì tradeUpdateService đã làm việc này
+        // Chỉ cần refetch để lấy dữ liệu mới
+        refetch();
+      }
+    };
+    
+    // Đăng ký observer
+    const unregister = tradeUpdateService.registerObserver(observer);
+    
+    // Vẫn giữ lại Firebase listener cho backward compatibility
+    const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
       userId,
       {
-        callback: (updatedTrades) => {
-          // Kiểm tra xem dữ liệu có thay đổi thực sự hay không để tránh re-render
-          try {
-            const newTradesData = JSON.stringify(updatedTrades.map(t => ({ id: t.id, updatedAt: t.updatedAt })));
-            if (newTradesData === lastTradesDataRef.current) {
-              debug("[DataCache] Trades snapshot unchanged, avoiding update");
-              return;
-            }
-            lastTradesDataRef.current = newTradesData;
-          } catch (error) {
-            // Nếu có lỗi khi so sánh JSON, vẫn tiếp tục cập nhật
-            logError("[DataCache] Error comparing trades data:", error);
-          }
-          
-          const now = Date.now();
-          const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
-          
-          // Thêm debounce để tránh cập nhật quá nhanh, nhưng với thời gian ngắn hơn
-          // Thời gian debounce ngắn hơn giúp UI cập nhật nhanh hơn khi xóa giao dịch
-          if (timeSinceLastUpdate < 100) {
-            debug("[DataCache] Debouncing trades update, too frequent");
-            return;
-          }
-          
-          debug("Realtime trades update received:", updatedTrades.length);
-          lastTradesUpdateRef.current = now;
-          
-          // Cập nhật danh sách trades trong cache
-          allTradesRef.current = updatedTrades as Trade[];
-          totalTradesCountRef.current = updatedTrades.length;
-          
-          // Cập nhật cache của React Query - chỉ invalidate query hiện tại
-          queryClient.invalidateQueries({ 
-            queryKey: ['trades', userId, sortBy, JSON.stringify(filters)],
-            exact: true
-          });
-          
-          // Fetch lại dữ liệu hiện tại nếu có thay đổi
-          refetch();
+        callback: () => {
+          // Không làm gì - các cập nhật sẽ được xử lý qua TradeUpdateService
         },
         errorCallback: (error) => {
-          logError("[TradeList] Error in trades snapshot:", error);
+          logError("[TradeList] Error in Firebase snapshot:", error);
         }
       }
     );
     
     return () => {
-      debug("[DataCache] Trades snapshot listener unsubscribed and cleaned up");
-      unsubscribe(); // Hủy đăng ký listener khi unmount
+      debug("[TradeList] Unregistering from TradeUpdateService");
+      unregister();
+      firebaseUnsubscribe();
     };
-  }, [userId, enableRealtime, queryClient, refetch, sortBy, filters]);
+  }, [userId, enableRealtime, refetch]);
   
   // Lọc dữ liệu dựa trên các filter
   // Sử dụng memozied function cho applyFilters để tránh tính toán lại khi re-render
