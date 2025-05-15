@@ -1114,10 +1114,43 @@ async function updateStrategy(userId: string, strategyId: string, strategyData: 
   try {
     const strategyRef = doc(db, "users", userId, "strategies", strategyId);
     
-    // Add last updated timestamp
-    strategyData.updatedAt = serverTimestamp();
+    // Tạo bản sao dữ liệu để tránh biến đổi dữ liệu gốc
+    const cleanData = { ...strategyData };
     
-    await updateDoc(strategyRef, strategyData);
+    // Xóa bỏ trường updatedAt hiện tại (nếu có)
+    delete cleanData.updatedAt;
+    
+    // Thêm server timestamp
+    cleanData.updatedAt = serverTimestamp();
+    
+    // Xử lý các trường Timestamp.now() nếu có
+    // Chuyển đổi tất cả các Timestamp.now() thành null để serverTimestamp() xử lý
+    Object.keys(cleanData).forEach(key => {
+      const value = cleanData[key];
+      
+      // Xóa giá trị undefined vì Firestore không chấp nhận
+      if (value === undefined) {
+        delete cleanData[key];
+      }
+      
+      // Xóa functions
+      if (typeof value === 'function') {
+        delete cleanData[key];
+      }
+      
+      // Xử lý giá trị là Timestamp (không phải serverTimestamp)
+      if (value instanceof Timestamp && typeof value.toDate === 'function') {
+        // Giữ nguyên các timestamp từ DB, chỉ thay đổi các timestamp mới tạo
+        if (key !== 'createdAt') {
+          // Chỉ log để debug
+          console.log(`Converting client timestamp to server timestamp for field: ${key}`);
+          cleanData[key] = serverTimestamp();
+        }
+      }
+    });
+    
+    // Thực hiện cập nhật
+    await updateDoc(strategyRef, cleanData);
     
     return {
       ...strategyData,
@@ -1125,6 +1158,7 @@ async function updateStrategy(userId: string, strategyId: string, strategyData: 
     };
   } catch (error) {
     logError("Error updating strategy:", error);
+    console.error("Strategy update failed:", error);
     throw error;
   }
 }

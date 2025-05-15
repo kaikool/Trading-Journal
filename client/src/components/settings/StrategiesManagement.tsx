@@ -126,10 +126,12 @@ const fixMultipleDefaultStrategies = async (strategies: TradingStrategy[]): Prom
   for (const strategy of defaultStrategies) {
     if (strategy.id !== mostRecentDefault.id) {
       try {
+        const updateData = { ...strategy };
+        delete updateData.updatedAt; // Let server handle this consistently
+        
         await updateStrategy(userId, strategy.id, {
-          ...strategy,
-          isDefault: false,
-          updatedAt: Timestamp.now()
+          ...updateData,
+          isDefault: false
         });
       } catch (error) {
         console.error(`Error updating strategy ${strategy.id}:`, error);
@@ -657,13 +659,18 @@ export function StrategiesManagement() {
       // First, make sure no other strategy is set as default
       const promises = strategies
         .filter(s => s.isDefault && s.id !== strategy.id)
-        .map(s => updateStrategy(userId, s.id, { ...s, isDefault: false, updatedAt: Timestamp.now() }));
+        .map(s => {
+          const otherStrategy = { ...s };
+          delete otherStrategy.updatedAt; // Let server handle timestamp
+          return updateStrategy(userId, s.id, { ...otherStrategy, isDefault: false });
+        });
       
       // Then set this strategy as default
+      const updateData = { ...strategy };
+      delete updateData.updatedAt; // Let server handle timestamp
       promises.push(updateStrategy(userId, strategy.id, { 
-        ...strategy, 
-        isDefault: true,
-        updatedAt: Timestamp.now()
+        ...updateData, 
+        isDefault: true
       }));
       
       await Promise.all(promises);
@@ -697,32 +704,36 @@ export function StrategiesManagement() {
       setIsSaving(true);
       const userId = auth.currentUser.uid;
       
-      // Update with current timestamp
-      const updatedStrategy = {
-        ...strategy,
-        updatedAt: Timestamp.now()
-      };
+      // Create a clean copy without modifying the original
+      const updatedStrategy = { ...strategy };
+      
+      // Don't set timestamp here, let the updateStrategy function use serverTimestamp()
+      delete updatedStrategy.updatedAt;
       
       // Special handling for default flag
       if (updatedStrategy.isDefault) {
         // Remove default flag from other strategies
         const promises = strategies
           .filter(s => s.isDefault && s.id !== strategy.id)
-          .map(s => updateStrategy(userId, s.id, { ...s, isDefault: false, updatedAt: Timestamp.now() }));
+          .map(s => {
+            const otherStrategy = { ...s };
+            delete otherStrategy.updatedAt; // Let updateStrategy handle this
+            return updateStrategy(userId, s.id, { ...otherStrategy, isDefault: false });
+          });
         
         await Promise.all(promises);
       }
       
       // Update this strategy
-      await updateStrategy(userId, strategy.id, updatedStrategy);
+      const updatedData = await updateStrategy(userId, strategy.id, updatedStrategy);
       
       // Update local state
       setStrategies(prev => {
         const newStrategies = prev.map(s => {
           if (s.id === strategy.id) {
-            return updatedStrategy;
+            return updatedData;
           }
-          if (updatedStrategy.isDefault && s.isDefault) {
+          if (updatedData.isDefault && s.isDefault) {
             return { ...s, isDefault: false };
           }
           return s;
