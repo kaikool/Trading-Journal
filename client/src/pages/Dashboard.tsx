@@ -1,7 +1,6 @@
 import { useMemo, Suspense } from "react";
-import { useLocation } from "wouter";
 import { format } from "date-fns";
-import { useToast } from "@/hooks/use-toast";
+// Removed unused imports: useLocation, useToast
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { debug } from "@/lib/debug";
 import { 
