@@ -24,12 +24,7 @@ export function formatPercentage(value: number): string {
   }).format(value / 100);
 }
 
-export function formatNumber(value: number, decimals = 0): string {
-  return new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(value);
-}
+// formatNumber function removed - not used in the project
 
 export function formatDate(date: Date | string | number | null): string {
   if (!date) return "N/A";
@@ -42,35 +37,11 @@ export function formatDate(date: Date | string | number | null): string {
   }).format(dateObj);
 }
 
-export function formatTime(date: Date | string | number | null): string {
-  if (!date) return "N/A";
-  
-  const dateObj = typeof date === "object" ? date : new Date(date);
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  }).format(dateObj);
-}
+// formatTime function removed - not used in the project
 
-export function formatDateTime(date: Date | string | number | null): string {
-  if (!date) return "N/A";
-  
-  const dateObj = typeof date === "object" ? date : new Date(date);
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  }).format(dateObj);
-}
+// formatDateTime function removed - not used in the project
 
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return `${text.slice(0, maxLength)}...`;
-}
+// truncateText function removed - not used in the project
 
 export function getRelativeTime(date: Date | string | number | null): string {
   if (!date) return "N/A";
@@ -91,14 +62,9 @@ export function getRelativeTime(date: Date | string | number | null): string {
   return formatDate(dateObj);
 }
 
-export function getRandomId(): string {
-  return Math.random().toString(36).substring(2, 10);
-}
+// getRandomId function removed - not used in the project
 
-export function calculateWinRate(wins: number, losses: number): number {
-  if (wins + losses === 0) return 0;
-  return Math.round((wins / (wins + losses)) * 100);
-}
+// calculateWinRate function removed - not used in the project
 
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
