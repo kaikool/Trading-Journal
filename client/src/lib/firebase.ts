@@ -1112,53 +1112,84 @@ async function addStrategy(userId: string, strategyData: any) {
 
 async function updateStrategy(userId: string, strategyId: string, strategyData: any) {
   try {
+    // Lấy tham chiếu đến document trong Firestore
     const strategyRef = doc(db, "users", userId, "strategies", strategyId);
     
     // Tạo bản sao dữ liệu để tránh biến đổi dữ liệu gốc
     const cleanData = { ...strategyData };
     
-    // Xóa bỏ trường updatedAt hiện tại (nếu có)
+    // Xóa trường updatedAt cũ và sử dụng serverTimestamp
     delete cleanData.updatedAt;
     
     // Thêm server timestamp
     cleanData.updatedAt = serverTimestamp();
     
-    // Xử lý các trường Timestamp.now() nếu có
-    // Chuyển đổi tất cả các Timestamp.now() thành null để serverTimestamp() xử lý
+    // Xử lý dữ liệu trước khi cập nhật
+    // Xóa bỏ các trường có thể gây lỗi khi lưu vào Firestore
+    
+    // 1. Xóa id nếu có vì id đã được lưu ở docId
+    delete cleanData.id;
+    
+    // 2. Xử lý các mảng - đảm bảo toàn bộ dữ liệu trong mảng đều hợp lệ
+    if (Array.isArray(cleanData.rules)) {
+      cleanData.rules = cleanData.rules.map((rule: any) => ({
+        id: typeof rule.id === 'string' ? rule.id : `rule-${Math.random().toString(36).substr(2, 9)}`,
+        label: typeof rule.label === 'string' ? rule.label : "",
+        order: typeof rule.order === 'number' ? rule.order : 0,
+        ...(rule.indicator && { indicator: rule.indicator }),
+        ...(rule.timeframe && { timeframe: rule.timeframe }),
+        ...(rule.expectedValue && { expectedValue: rule.expectedValue }),
+        ...(rule.description && { description: rule.description })
+      }));
+    }
+    
+    if (Array.isArray(cleanData.entryConditions)) {
+      cleanData.entryConditions = cleanData.entryConditions.map((condition: any) => ({
+        id: typeof condition.id === 'string' ? condition.id : `entry-${Math.random().toString(36).substr(2, 9)}`,
+        label: typeof condition.label === 'string' ? condition.label : "",
+        order: typeof condition.order === 'number' ? condition.order : 0,
+        ...(condition.indicator && { indicator: condition.indicator }),
+        ...(condition.timeframe && { timeframe: condition.timeframe }),
+        ...(condition.expectedValue && { expectedValue: condition.expectedValue }),
+        ...(condition.description && { description: condition.description })
+      }));
+    }
+    
+    if (Array.isArray(cleanData.exitConditions)) {
+      cleanData.exitConditions = cleanData.exitConditions.map((condition: any) => ({
+        id: typeof condition.id === 'string' ? condition.id : `exit-${Math.random().toString(36).substr(2, 9)}`,
+        label: typeof condition.label === 'string' ? condition.label : "",
+        order: typeof condition.order === 'number' ? condition.order : 0,
+        ...(condition.indicator && { indicator: condition.indicator }),
+        ...(condition.timeframe && { timeframe: condition.timeframe }),
+        ...(condition.expectedValue && { expectedValue: condition.expectedValue }),
+        ...(condition.description && { description: condition.description })
+      }));
+    }
+    
+    // Đảm bảo không có undefined trong đối tượng
     Object.keys(cleanData).forEach(key => {
-      const value = cleanData[key];
-      
-      // Xóa giá trị undefined vì Firestore không chấp nhận
-      if (value === undefined) {
+      if (cleanData[key] === undefined) {
         delete cleanData[key];
-      }
-      
-      // Xóa functions
-      if (typeof value === 'function') {
-        delete cleanData[key];
-      }
-      
-      // Xử lý giá trị là Timestamp (không phải serverTimestamp)
-      if (value instanceof Timestamp && typeof value.toDate === 'function') {
-        // Giữ nguyên các timestamp từ DB, chỉ thay đổi các timestamp mới tạo
-        if (key !== 'createdAt') {
-          // Chỉ log để debug
-          console.log(`Converting client timestamp to server timestamp for field: ${key}`);
-          cleanData[key] = serverTimestamp();
-        }
       }
     });
     
     // Thực hiện cập nhật
     await updateDoc(strategyRef, cleanData);
     
+    // Trả về đối tượng đã cập nhật
     return {
       ...strategyData,
       id: strategyId
     };
   } catch (error) {
     logError("Error updating strategy:", error);
-    console.error("Strategy update failed:", error);
+    
+    // Hiển thị lỗi chi tiết giúp phát hiện vấn đề
+    if (error instanceof Error) {
+      console.error(`Error type: ${error.name}, message: ${error.message}`);
+    }
+    
     throw error;
   }
 }

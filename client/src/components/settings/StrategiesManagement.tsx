@@ -817,25 +817,28 @@ export function StrategiesManagement() {
       
       const userId = auth.currentUser.uid;
       
-      // Add creation timestamp
-      const strategyWithTimestamp = {
+      // Prepare strategy data (không đặt timestamp client-side)
+      const strategyData = {
         ...newStrategy,
         userId,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
+        // Để hàm addStrategy đặt timestamp
       };
       
       // If this is set as default, need to update other strategies
-      if (strategyWithTimestamp.isDefault) {
+      if (strategyData.isDefault) {
         const promises = strategies
           .filter(s => s.isDefault)
-          .map(s => updateStrategy(userId, s.id, { ...s, isDefault: false, updatedAt: Timestamp.now() }));
+          .map(s => {
+            const otherStrategy = { ...s };
+            delete otherStrategy.updatedAt; // Let server handle timestamp
+            return updateStrategy(userId, s.id, { ...otherStrategy, isDefault: false });
+          });
         
         await Promise.all(promises);
       }
       
       // Create the new strategy
-      const result = await addStrategy(userId, strategyWithTimestamp as TradingStrategy);
+      const result = await addStrategy(userId, strategyData as TradingStrategy);
       
       // Extract proper ID from result - addStrategy returns {id: string} object or string
       const newStrategyId = typeof result === 'object' && result !== null && 'id' in result 
@@ -844,7 +847,7 @@ export function StrategiesManagement() {
       
       // Create a properly typed strategy object with the correct ID structure
       const completeStrategy: TradingStrategy = {
-        ...strategyWithTimestamp as TradingStrategy, 
+        ...strategyData as TradingStrategy, 
         id: newStrategyId
       };
       
