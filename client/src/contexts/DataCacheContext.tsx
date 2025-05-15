@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext, ReactNode, useMemo, use
 import { auth, getUserData } from '@/lib/firebase';
 import { debug, logError } from '@/lib/debug';
 import { firebaseListenerService } from '@/services/firebase-listener-service';
+import { tradeUpdateService, TradeChangeObserver } from '@/services/trade-update-service';
 
 interface CachedData {
   trades: any[];
@@ -298,17 +299,30 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
         }
       );
       
+      // Đăng ký với TradeUpdateService để nhận thông báo khi có thay đổi
+      const observer: TradeChangeObserver = {
+        onTradesChanged: (action, tradeId) => {
+          debug(`[DataCache] Trade changed via TradeUpdateService (${action}, ID: ${tradeId || 'unknown'})`);
+          // Không cần phải invalidate vì firebaseListenerService sẽ tự động cập nhật
+          // Trong tương lai, chúng ta có thể loại bỏ firebaseListenerService và chỉ dùng TradeUpdateService
+        }
+      };
+      
+      // Đăng ký observer với TradeUpdateService
+      const tradeUpdateServiceUnsubscribe = tradeUpdateService.registerObserver(observer);
+      
       fetchUserData();
       
       return () => {
         try {
           if (!unsubscribed) {
-            debug('[DataCache] Unsubscribing from trades snapshot');
+            debug('[DataCache] Unsubscribing from trades snapshot and TradeUpdateService');
             unsubscribe();
+            tradeUpdateServiceUnsubscribe();
             unsubscribed = true;
           }
         } catch (err) {
-          logError("[DataCache] Error unsubscribing from trades snapshot:", err);
+          logError("[DataCache] Error unsubscribing from listeners:", err);
         }
       };
     } catch (error) {
