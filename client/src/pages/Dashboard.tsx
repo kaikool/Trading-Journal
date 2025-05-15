@@ -435,7 +435,11 @@ export default function Dashboard() {
             hasTrades={hasTrades}
           />
         ) : (
-          <LoadingFallback height={160} showSpinner={false} />
+          <AppSkeleton 
+            level={SkeletonLevel.STATS} 
+            height={160}
+            customProps={{ showProgress: true, showFooterText: true }} 
+          />
         )}
         
         {/* Second row: Trading Stats */}
@@ -450,33 +454,37 @@ export default function Dashboard() {
             totalLoss={statsValues.totalLoss}
           />
         ) : (
-          <LoadingFallback height={160} showSpinner={false} />
+          <AppSkeleton 
+            level={SkeletonLevel.STATS} 
+            height={160}
+            className="p-4"
+          />
         )}
         
         {/* Third row: Performance Chart - Lazy loaded */}
         <div className="suspense-boundary">
-          <Suspense fallback={<LoadingFallback showSpinner={false} />}>
+          <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} />}>
             {userData ? (
               <LazyPerformanceChart 
                 data={performanceData}
                 isLoading={false} // Không cần hiện loading vì đã có userData
               />
             ) : (
-              <LoadingFallback showSpinner={false} />
+              <AppSkeleton level={SkeletonLevel.CHART} />
             )}
           </Suspense>
         </div>
         
         {/* Fourth row: Recent Trades - Lazy loaded */}
         <div className="suspense-boundary">
-          <Suspense fallback={<LoadingFallback showSpinner={false} />}>
+          <Suspense fallback={<AppSkeleton level={SkeletonLevel.LIST} />}>
             {userData ? (
               <LazyRecentTradesCard 
                 trades={trades.slice(0, 5)}
                 isLoading={false} // Không cần hiện loading vì đã có dữ liệu
               />
             ) : (
-              <LoadingFallback height={400} showSpinner={false} />
+              <AppSkeleton level={SkeletonLevel.LIST} height={400} />
             )}
           </Suspense>
         </div>
