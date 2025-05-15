@@ -120,5 +120,17 @@ export function calculatePnL(initialBalance: number, currentBalance: number, tra
   };
 }
 
-// Các hàm tính Profit Factor đã chuyển sang forex-calculator.ts
-// Không còn dùng ở đây nữa để tránh trùng lặp
+// Định dạng hiển thị cho Profit Factor
+// Được giữ lại để đảm bảo tương thích
+export function formatProfitFactor(profitFactor: number): string {
+  if (profitFactor === Infinity) {
+    return "∞"; // Sử dụng ký hiệu vô cùng khi không có giao dịch thua
+  }
+  
+  if (profitFactor >= 100) {
+    return profitFactor.toFixed(0);
+  }
+  
+  // Làm tròn đến 2 chữ số thập phân
+  return profitFactor.toFixed(2);
+}
