@@ -83,9 +83,9 @@ export default function Analytics() {
         lastUpdateTimeRef.current = now;
         debug(`[Analytics] Received trade update notification (${action})`);
         
-        // Lưu ý: Không cần refetch vì Analytics.tsx sử dụng useDataCache
-        // useDataCache đã được cập nhật thông qua cơ chế cache invalidation
-        // trong TradeUpdateService._invalidateTradeQueries
+        // Lưu ý: Không cần gọi refetch() thủ công ở đây vì useTradesQuery 
+        // đã được thiết lập để tự động cập nhật thông qua observer trong useEffect
+        // Nó sẽ tự động cập nhật khi TradeUpdateService thông báo thay đổi
       }
     };
     

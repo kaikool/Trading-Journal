@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserData } from "@/lib/firebase";
 import { DASHBOARD_CONFIG } from "@/lib/config";
 import { debug } from "@/lib/debug";
+import { useUserDataQuery } from "./use-user-data-query";
 
 export function useUserData() {
   // Để hỗ trợ các component cũ chưa update
