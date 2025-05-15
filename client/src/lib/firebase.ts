@@ -308,7 +308,7 @@ async function updateUserData(userId: string, data: any) {
 // Trade functions
 async function addTrade(userId: string, tradeData: any) {
   try {
-    debug("Adding new trade to Firestore", { userId, tradeData });
+    debug("Adding new trade to Firestore", { userId });
     const tradesRef = collection(db, "users", userId, "trades");
     
     // Add document to Firestore
@@ -319,10 +319,11 @@ async function addTrade(userId: string, tradeData: any) {
     
     debug("Trade added successfully with ID:", docRef.id);
     
-    // Cải tiến hiệu suất: Sử dụng debounce để xử lý thành tích
-    // Không cần await - việc xử lý diễn ra ở background
+    // Cải tiến hiệu suất: Sử dụng debounce để xử lý thành tích (vẫn giữ lại để tương thích)
     processTradeTrigger(userId, 'create');
-    debug("Achievement processing queued (debounced) for new trade");
+    
+    // Sử dụng TradeUpdateService để thông báo cập nhật UI đồng bộ
+    tradeUpdateService.notifyTradeCreated(userId, docRef.id);
     
     // Return success response with id for easier access
     return {
@@ -790,28 +791,27 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any, opti
       await updateDoc(tradeRef, tradeData);
     }
     
-    // Cập nhật thành tích nếu không bị bỏ qua 
-    // Cải tiến hiệu suất: Sử dụng debounce để trì hoãn xử lý thành tích
-    // Đặc biệt quan trọng khi đóng giao dịch để tránh block UI
+    // Cập nhật thành tích nếu không bị bỏ qua (vẫn giữ lại để tương thích)
     if (!options.skipAchievements) {
-      // Không cần await vì đã chuyển sang debounced
       processTradeTrigger(userId, 'update');
-      debug("Achievement processing queued (debounced) for trade update");
     }
     
-    // Tự động tính toán lại tiến độ mục tiêu khi cập nhật giao dịch, đặc biệt quan trọng khi đóng giao dịch
-    // Tính toán này bị trì hoãn nhẹ để cho phép các thao tác UI khác được ưu tiên
+    // Tự động tính toán lại tiến độ mục tiêu khi cập nhật giao dịch (vẫn giữ lại để tương thích)
     if (!options.skipGoalsRecalculation) {
-      // Sử dụng setTimeout để tránh block UI
       setTimeout(async () => {
         try {
           await calculateAllGoalsProgress(userId);
-          debug("Goals progress recalculated after trade update");
         } catch (error) {
           logError("Error recalculating goals after trade update:", error);
-          // Không throw error để không ảnh hưởng đến luồng chính
         }
       }, 1000);
+    }
+    
+    // Sử dụng TradeUpdateService để thông báo cập nhật UI đồng bộ
+    if (isClosingTrade) {
+      tradeUpdateService.notifyTradeClosed(userId, tradeId);
+    } else {
+      tradeUpdateService.notifyTradeUpdated(userId, tradeId);
     }
     
     return {
@@ -836,7 +836,7 @@ async function deleteTrade(userId: string, tradeId: string) {
     }
     
     const tradeData = tradeDoc.data();
-    debug(`Deleting trade ${tradeId} with data:`, tradeData);
+    debug(`Deleting trade ${tradeId}`);
     
     // Danh sách các trường có thể chứa ảnh
     const imageFields = [
@@ -882,22 +882,20 @@ async function deleteTrade(userId: string, tradeId: string) {
     // Cập nhật số dư tài khoản sau khi xóa giao dịch
     await updateAccountBalance(userId);
     
-    // Cải tiến hiệu suất: Sử dụng debounce cho xử lý thành tích khi xóa
-    // Không cần await, nâng cao trải nghiệm người dùng
+    // Xử lý thành tích (vẫn giữ lại để tương thích)
     processTradeTrigger(userId, 'delete');
-    debug("Achievement processing queued (debounced) for trade deletion");
     
-    // Tự động tính toán lại tiến độ mục tiêu khi xóa giao dịch
-    // Tính toán này bị trì hoãn nhẹ để cho phép các thao tác UI khác được ưu tiên
+    // Tính toán lại tiến độ mục tiêu (vẫn giữ lại để tương thích)
     setTimeout(async () => {
       try {
         await calculateAllGoalsProgress(userId);
-        debug("Goals progress recalculated after trade deletion");
       } catch (error) {
         logError("Error recalculating goals after trade deletion:", error);
-        // Không throw error để không ảnh hưởng đến luồng chính
       }
     }, 1000);
+    
+    // Sử dụng TradeUpdateService để thông báo cập nhật UI đồng bộ
+    tradeUpdateService.notifyTradeDeleted(userId, tradeId);
     
     return true;
   } catch (error) {

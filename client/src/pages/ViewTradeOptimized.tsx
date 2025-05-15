@@ -9,6 +9,7 @@ import { Trade } from "@/types";
 import { useLocation } from "wouter";
 import { LazyTradeViewEdit } from "@/components/trades/LazyTradeViewEdit";
 import { debug, logError } from "@/lib/debug";
+import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 
 export default function ViewTradeOptimized() {
   const { tradeId } = useParams();
@@ -51,6 +52,46 @@ export default function ViewTradeOptimized() {
 
     fetchTrade();
   }, [tradeId, userId]);
+  
+  // Đăng ký observer để lắng nghe sự thay đổi của trade
+  useEffect(() => {
+    if (!userId || !tradeId) return;
+    
+    // Tạo observer để cập nhật UI khi trade thay đổi
+    const observer: TradeChangeObserver = {
+      onTradesChanged: async (action, changedTradeId) => {
+        // Chỉ cập nhật khi thao tác liên quan đến trade hiện tại
+        if (changedTradeId === tradeId) {
+          debug(`Trade ${tradeId} changed, action: ${action}, refreshing view`);
+          
+          if (action === 'delete') {
+            // Trở về trang lịch sử nếu trade bị xóa
+            toast({
+              title: "Trade deleted",
+              description: "This trade has been deleted"
+            });
+            navigate("/trade/history");
+            return;
+          }
+          
+          try {
+            const updatedTrade = await getTradeById(userId, tradeId);
+            if (updatedTrade) {
+              setTrade(updatedTrade as Trade);
+            }
+          } catch (error) {
+            logError("Failed to refresh trade after update:", error);
+          }
+        }
+      }
+    };
+    
+    // Đăng ký observer với service
+    const unregister = tradeUpdateService.registerObserver(observer);
+    
+    // Hủy đăng ký khi component unmount
+    return unregister;
+  }, [userId, tradeId, navigate, toast]);
 
   // Navigate back
   const handleBack = () => {
@@ -88,14 +129,7 @@ export default function ViewTradeOptimized() {
       title: "Trade updated",
       description: "Your trade has been updated successfully",
     });
-    // Refresh data after edit
-    if (userId && tradeId) {
-      getTradeById(userId, tradeId).then(updatedTrade => {
-        if (updatedTrade) {
-          setTrade(updatedTrade as Trade);
-        }
-      });
-    }
+    // Không cần refresh thủ công - TradeUpdateService sẽ xử lý
   };
 
   // Handle edit error
