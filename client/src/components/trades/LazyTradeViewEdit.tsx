@@ -196,11 +196,11 @@ export function LazyTradeViewEdit({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm app-accordion-content-section">
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Stop Loss</span>
-            <span className="font-medium">{trade.stopLoss}</span>
+            <span className="font-medium">{formatPriceForPair(trade.stopLoss, trade.pair)}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Take Profit</span>
-            <span className="font-medium">{trade.takeProfit}</span>
+            <span className="font-medium">{formatPriceForPair(trade.takeProfit, trade.pair)}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-xs text-muted-foreground card-label">Pips</span>
