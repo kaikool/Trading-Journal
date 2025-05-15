@@ -135,47 +135,4 @@ export const EVENT_NAMES = {
   ACHIEVEMENTS_UPDATED: 'achievements:updated'
 };
 
-// Tạo helper utilities
-export function debounce<F extends (...args: any[]) => any>(
-  func: F,
-  waitFor: number
-): (...args: Parameters<F>) => void {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  
-  return function(...args: Parameters<F>) {
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-    
-    timeout = setTimeout(() => func(...args), waitFor);
-  };
-}
-
-export function throttle<F extends (...args: any[]) => any>(
-  func: F,
-  waitFor: number
-): (...args: Parameters<F>) => void {
-  let lastExec = 0;
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  
-  return function(...args: Parameters<F>) {
-    const now = Date.now();
-    const timeSinceLastExec = now - lastExec;
-    
-    if (timeSinceLastExec >= waitFor) {
-      lastExec = now;
-      func(...args);
-    } else {
-      if (timeout !== null) {
-        clearTimeout(timeout);
-      }
-      
-      timeout = setTimeout(() => {
-        lastExec = Date.now();
-        func(...args);
-      }, waitFor - timeSinceLastExec);
-    }
-  };
-}
-
 export default eventBus;
