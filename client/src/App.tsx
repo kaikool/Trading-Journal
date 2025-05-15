@@ -75,9 +75,8 @@ function useReducedMotion() {
 function MainContent() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [location, setLocation] = useLocation();
+  const [location] = useLocation();
   const prefersReducedMotion = useReducedMotion();
-  const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const currentRoute = location;
   

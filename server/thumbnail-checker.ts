@@ -5,14 +5,10 @@ import { log } from './vite';
  * Tạo URL thumbnail từ URL gốc
  * 
  * @param originalUrl - URL gốc của ảnh
- * @param width - Chiều rộng của thumbnail (mặc định: 200) - không sử dụng
- * @param height - Chiều cao của thumbnail (mặc định: 200) - không sử dụng
  * @returns URL thumbnail đã được tạo
  */
 export function getThumbnailUrl(
-  originalUrl: string, 
-  width: number = 200, 
-  height: number = 200
+  originalUrl: string
 ): string {
   // Trả về URL gốc vì không còn hỗ trợ dịch vụ chuyển đổi hình ảnh
   log(`Trả về URL gốc cho thumbnail: ${originalUrl}`, 'thumbnail-checker');
@@ -33,7 +29,7 @@ export async function checkThumbnail(url: string): Promise<boolean> {
 
   try {
     // Gửi yêu cầu HEAD đến URL để kiểm tra khả năng truy cập
-    const response = await axios.head(url, {
+    await axios.head(url, {
       timeout: 5000, // Timeout 5 giây
       validateStatus: status => status === 200, // Chỉ chấp nhận status code 200
     });
