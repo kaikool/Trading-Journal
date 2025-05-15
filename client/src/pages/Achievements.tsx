@@ -2,10 +2,11 @@ import { lazy, Suspense, useState, useEffect } from "react";
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { useQuery } from "@tanstack/react-query";
 import { Icons } from "@/components/icons/icons";
-import { auth, db } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { AppSettings } from "@/types";
-import { useDataCache } from "@/contexts/DataCacheContext";
+import { useAuth } from "@/hooks/use-auth";
+import { useUserDataQuery } from "@/hooks/use-user-data-query";
 
 // Lazy load the component
 const AchievementsTab = lazy(() => 
@@ -13,8 +14,8 @@ const AchievementsTab = lazy(() =>
 );
 
 export default function AchievementsPage() {
-  const { userData: cachedUserData, isLoading } = useDataCache();
-  const userId = auth.currentUser?.uid;
+  const { userData: cachedUserData, isLoading } = useUserDataQuery();
+  const { userId } = useAuth();
   const [showNotifications, setShowNotifications] = useState(true);
   
   // Fetch user settings to get achievement notification preference

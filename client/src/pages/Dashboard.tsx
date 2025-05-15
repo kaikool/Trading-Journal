@@ -1,7 +1,8 @@
 import { useMemo, Suspense } from "react";
 import { format } from "date-fns";
 // Removed unused imports: useLocation, useToast
-import { useDataCache } from "@/contexts/DataCacheContext";
+import { useUserDataQuery } from "@/hooks/use-user-data-query";
+import { useTradesQuery } from "@/hooks/use-trades-query";
 import { debug } from "@/lib/debug";
 import { 
   hasClosedTrades, 
@@ -40,8 +41,9 @@ interface DataPoint {
 }
 
 export default function Dashboard() {
-  // Sử dụng DataCache thay vì local state
-  const { trades, userData } = useDataCache();
+  // Sử dụng React Query hooks thay vì useDataCache
+  const { userData } = useUserDataQuery();
+  const { trades } = useTradesQuery();
   // Removed unused variables: isLoading, userId, setLocation, toast
   
   // Logs only in development environment - using debug utility

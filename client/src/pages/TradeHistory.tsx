@@ -6,7 +6,7 @@ import { useLocation } from "wouter";
 import { useTradeList } from "@/hooks/use-trade-list";
 import { cn } from "@/lib/utils";
 import { useUserDataQuery } from "@/hooks/use-user-data-query";
-import { auth } from "@/lib/firebase";
+import { useAuth } from "@/hooks/use-auth";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 
@@ -54,8 +54,8 @@ import { Badge } from "@/components/ui/badge";
 export default function TradeHistory() {
   const [, setLocation] = useLocation(); // Sử dụng dấu phẩy để bỏ biến đầu tiên không sử dụng
   const { toast } = useToast();
-  const { userData } = useDataCache();
-  const userId = auth?.currentUser?.uid;
+  const { userData } = useUserDataQuery();
+  const { userId } = useAuth();
   const [filters, setFilters] = useState<TradeFilterOptions>({});
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">("newest");
   const [showFilters, setShowFilters] = useState(false);
