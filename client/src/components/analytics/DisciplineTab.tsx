@@ -23,6 +23,7 @@ import { Icons } from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { formatPercentage } from "@/utils/format-number";
 
 interface DisciplineTabProps {
   data: {
@@ -133,7 +134,7 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                 className="flex items-center gap-1.5"
               >
                 <span className={entry.name === "With Discipline" ? "text-success" : "text-destructive"}>
-                  {entry.value.toFixed(1)}%
+                  {formatPercentage(entry.value)}
                 </span>
                 <span className="text-muted-foreground text-[10px]">
                   {entry.name}

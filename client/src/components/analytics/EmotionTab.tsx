@@ -534,7 +534,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                                 fontWeight="500"
                                 fill="white"
                               >
-                                {value.toFixed(1)}%
+                                {formatPercentage(value)}
                               </text>
                             )}
                           </g>
@@ -583,8 +583,8 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       cy="50%"
                       labelLine={{ stroke: 'hsl(var(--muted-foreground)/40)', strokeWidth: 1 }}
                       label={({ percent }) => {
-                        const value = (percent * 100).toFixed(1);
-                        return parseFloat(value) > 5 ? `${value}%` : '';
+                        const percentValue = percent * 100;
+                        return percentValue > 5 ? formatPercentage(percentValue) : '';
                       }}
                       outerRadius={80}
                       fill="#8884d8"
@@ -725,7 +725,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                       <TableCell className="text-center">{emotion.trades}</TableCell>
                       <TableCell className="text-center">
                         <span className={emotion.winRate >= 50 ? 'text-success' : 'text-destructive'}>
-                          {emotion.winRate.toFixed(1)}%
+                          {formatPercentage(emotion.winRate)}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
@@ -736,7 +736,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                               ? 'bg-destructive/20 text-destructive border-destructive/30'
                               : 'bg-muted text-muted-foreground'
                         }>
-                          {performanceDiff > 0 ? '+' : ''}{performanceDiff.toFixed(1)}%
+                          {performanceDiff > 0 ? '+' : ''}{formatPercentage(performanceDiff)}
                         </Badge>
                       </TableCell>
                     </TableRow>
