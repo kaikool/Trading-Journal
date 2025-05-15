@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useUserData } from './use-user-data';
+import { useUserDataQuery } from './use-user-data-query';
+import { useAuth } from './use-auth';
 import { useToast } from './use-toast';
 import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, getGoals } from '@/lib/firebase'; 
 import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
-import { auth } from '@/lib/firebase';
 import { useEffect, useState, useCallback } from 'react';
 import { debug } from '@/lib/debug';
 
@@ -50,8 +50,8 @@ type GoalProgressItem = {
 export function useGoalData() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { userData } = useUserData();
-  const firebaseUserId = auth.currentUser?.uid;
+  const { userData } = useUserDataQuery();
+  const { userId: firebaseUserId } = useAuth();
 
   // State for goal data from Firebase
   const [goalsData, setGoalsData] = useState<any[]>([]);

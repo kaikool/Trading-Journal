@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
-import { useDataCache } from "@/contexts/DataCacheContext";
+import { useUserDataQuery } from "@/hooks/use-user-data-query";
 import { Icons } from "@/components/icons/icons";
 
 // Lazy load the component
@@ -9,7 +9,7 @@ const StrategiesManagement = lazy(() =>
 );
 
 export default function StrategiesPage() {
-  const { isLoading } = useDataCache(); // Removed unused: userData
+  const { isLoading } = useUserDataQuery(); // Removed unused: userData
   
   // Empty state component đã được xóa vì không sử dụng
   
