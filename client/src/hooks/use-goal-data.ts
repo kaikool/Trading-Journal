@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUserData } from './use-user-data';
 import { useToast } from './use-toast';
-import { addGoal, updateGoal, deleteGoal, calculateGoalProgress } from '@/lib/firebase'; 
+import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, getGoals } from '@/lib/firebase'; 
 import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
 import { auth } from '@/lib/firebase';
-import { useEffect, useState } from 'react';
-import { debug } from '@/lib/debug';
-import { firebaseListenerService } from '@/services/firebase-listener-service';
+import { useEffect, useState, useCallback } from 'react';
+import { debug, logError } from '@/lib/debug';
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
@@ -64,8 +63,8 @@ export function useGoalData() {
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [progressError, setProgressError] = useState<Error | null>(null);
 
-  // Effect to fetch goal data from Firebase
-  useEffect(() => {
+  // Hàm để lấy dữ liệu mục tiêu từ Firebase
+  const fetchGoalData = useCallback(async () => {
     if (!firebaseUserId) {
       setIsLoadingGoals(false);
       return;
@@ -73,28 +72,40 @@ export function useGoalData() {
 
     setIsLoadingGoals(true);
     
-    // Register listener to monitor goal changes in real-time using FirebaseListenerService
-    const unsubscribe = firebaseListenerService.onGoalsSnapshot(
-      firebaseUserId,
-      {
-        callback: (goals: any[]) => {
-          debug(`Received ${goals.length} goals from Firebase`);
-          setGoalsData(goals);
-          setIsLoadingGoals(false);
-          
-          // When new goal data is received, calculate progress data
-          calculateGoalProgressData(goals);
-        },
-        errorCallback: (error: Error) => {
-          debug("Error fetching goals:", error);
-          setGoalsError(error);
-          setIsLoadingGoals(false);
-        }
-      }
-    );
+    try {
+      // Lấy dữ liệu mục tiêu từ Firebase trực tiếp
+      const goals = await getGoals(firebaseUserId);
+      debug(`Received ${goals.length} goals from Firebase`);
+      setGoalsData(goals);
+      setIsLoadingGoals(false);
+      
+      // Khi có dữ liệu mục tiêu mới, tính toán dữ liệu tiến độ
+      calculateGoalProgressData(goals);
+    } catch (error) {
+      debug("Error fetching goals:", error);
+      setGoalsError(error as Error);
+      setIsLoadingGoals(false);
+    }
+  }, [firebaseUserId]);
 
-    // Cleanup when component unmounts
-    return () => unsubscribe();
+  // Effect để tải dữ liệu ban đầu và thiết lập polling cập nhật
+  useEffect(() => {
+    if (!firebaseUserId) {
+      setIsLoadingGoals(false);
+      return;
+    }
+
+    // Tải dữ liệu ban đầu
+    fetchGoalData();
+    
+    // Thiết lập polling cập nhật mỗi 30 giây
+    // Đây là giải pháp tạm thời thay thế cho FirebaseListenerService
+    const intervalId = setInterval(() => {
+      fetchGoalData();
+    }, 30000);
+    
+    // Cleanup khi component unmounts
+    return () => clearInterval(intervalId);
   }, [firebaseUserId]);
 
   // Function to calculate goal progress data
