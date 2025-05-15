@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Icons } from "@/components/icons/icons";
 import { FcGoogle } from "react-icons/fc";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -155,14 +156,7 @@ export default function Register() {
               disabled={isLoading}
               size="lg"
             >
-              {isLoading ? (
-                <>
-                  <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
-                </>
-              ) : (
-                "Create account"
-              )}
+              {isLoading ? "Please wait..." : "Create account"}
             </Button>
           </form>
         </Form>
@@ -212,10 +206,12 @@ export default function Register() {
           }}
           disabled={isLoading}
         >
-          <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
-            <FcGoogle className="h-4 w-4" />
-          </div>
-          <span>Sign up with Google</span>
+          {!isLoading && (
+            <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
+              <FcGoogle className="h-4 w-4" />
+            </div>
+          )}
+          <span>{isLoading ? "Please wait..." : "Sign up with Google"}</span>
         </Button>
         
         <p className="text-center text-xs text-muted-foreground mt-6">
