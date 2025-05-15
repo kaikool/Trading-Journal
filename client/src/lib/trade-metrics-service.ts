@@ -667,7 +667,7 @@ class TradeMetricsService {
       const notEnteredEarlyStreak = await this.calculateNotEnteredEarlyStreak(userId);
       const notMovedStopLossStreak = await this.calculateNotMovedStopLossStreak(userId);
       const { current: winningStreak, longest: longestWinningStreak } = await this.calculateWinningStreak(userId);
-      const { adherencePercent, minTrades } = await this.calculatePlanAdherence(userId);
+      const { adherencePercent } = await this.calculatePlanAdherence(userId); // Removed unused: minTrades
       const totalProfitPercent = await this.calculateTotalProfitPercentage(userId);
       const tradesWithNotesStreak = await this.calculateTradesWithNotesStreak(userId);
       const perfectEmotionalControlStreak = await this.calculatePerfectEmotionalControlStreak(userId);

@@ -51,7 +51,7 @@ import { Badge } from "@/components/ui/badge";
 // Removed pagination imports
 
 export default function TradeHistory() {
-  const [_, setLocation] = useLocation();
+  const [, setLocation] = useLocation(); // Sử dụng dấu phẩy để bỏ biến đầu tiên không sử dụng
   const { toast } = useToast();
   const { userData } = useDataCache();
   const userId = auth?.currentUser?.uid;
