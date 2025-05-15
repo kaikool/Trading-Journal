@@ -68,19 +68,21 @@ export function evaluateDevicePerformance(): Promise<'high' | 'medium' | 'low'> 
 }
 
 /**
- * Detect if user has enabled reduced motion setting
+ * Note: This function was previously used to detect reduced motion settings
+ * but has been removed as part of code cleanup. App.tsx now uses a custom
+ * useReducedMotion hook instead.
  */
-export function detectReducedMotion(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
 
 /**
  * Return optimal UI configuration based on device performance and user preferences
  */
 export async function getOptimalUiConfig() {
-  const prefersReducedMotion = detectReducedMotion();
+  // Get device performance
   const devicePerformance = await evaluateDevicePerformance();
+  
+  // Get reduced motion preference directly from media query
+  const prefersReducedMotion = typeof window !== 'undefined' && 
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
   // Configuration for each performance level
   return {
@@ -157,17 +159,10 @@ export function useMemoWithPerf<T>(
 }
 
 /**
- * Helper to determine if a list should use virtualization based on device performance
- * @param listLength The number of items in the list
- * @returns Boolean indicating whether virtualization should be used
+ * This function was previously used to determine if a list should use virtualization
+ * based on device performance and list length.
+ * 
+ * It has been removed as part of code cleanup since it wasn't being used anywhere
+ * in the codebase. The useVirtualization setting in getOptimalUiConfig() is used 
+ * directly instead.
  */
-export function shouldUseVirtualization(listLength: number): boolean {
-  // Always virtualize large lists
-  if (listLength > 100) return true;
-  
-  // For medium lists, virtualize on low/medium performance devices
-  if (listLength > 30 && cachedPerformanceRating !== 'high') return true;
-  
-  // Don't virtualize small lists
-  return false;
-}
