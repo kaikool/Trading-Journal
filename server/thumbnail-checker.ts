@@ -1,19 +1,6 @@
 import axios from 'axios';
 import { log } from './vite';
 
-/**
- * Tạo URL thumbnail từ URL gốc
- * 
- * @param originalUrl - URL gốc của ảnh
- * @returns URL thumbnail đã được tạo
- */
-export function getThumbnailUrl(
-  originalUrl: string
-): string {
-  // Trả về URL gốc vì không còn hỗ trợ dịch vụ chuyển đổi hình ảnh
-  log(`Trả về URL gốc cho thumbnail: ${originalUrl}`, 'thumbnail-checker');
-  return originalUrl;
-}
 
 /**
  * Kiểm tra xem một URL thumbnail có thể truy cập được không
