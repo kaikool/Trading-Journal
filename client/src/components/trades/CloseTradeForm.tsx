@@ -29,6 +29,9 @@ import { useToast } from "@/hooks/use-toast";
 import { cn, formatCurrency } from "@/lib/utils";
 import { TradeStatus } from "@/lib/trade-status-config";
 import TradeStatusBadge from "./TradeStatusBadge";
+// Lưu ý: Component này không cần import trực tiếp tradeUpdateService
+// vì updateTrade từ firebase.ts đã tích hợp thông báo tới TradeUpdateService
+// khi đóng giao dịch (isClosingTrade = true trong updateTrade)
 
 // Schema validation for trade closing form
 const closeTradeSchema = z.object({

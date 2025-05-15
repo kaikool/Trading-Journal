@@ -32,7 +32,7 @@ export function useTradeList(options: {
   const [filters, setFilters] = useState<TradeFilterOptions>(initialFilters);
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">(initialSortBy);
   
-  // Effect để cập nhật sortBy khi initialSortBy thay đổi - tối ưu để tránh invalidate liên tục
+  // Effect để cập nhật sortBy khi initialSortBy thay đổi
   const lastSortByRef = useRef(initialSortBy);
   useEffect(() => {
     if (initialSortBy !== lastSortByRef.current) {
@@ -40,13 +40,13 @@ export function useTradeList(options: {
       lastSortByRef.current = initialSortBy;
       setSortBy(initialSortBy);
       
-      // Chỉ invalidate khi cần thiết, sử dụng exact match để tối ưu hóa
-      queryClient.invalidateQueries({ 
-        queryKey: ['trades', userId, sortBy],
-        exact: true
-      });
+      // Không cần invalidateQueries trực tiếp
+      // Chỉ cần refetch khi sortBy thay đổi để lấy dữ liệu đã sắp xếp
+      if (refetch) {
+        setTimeout(() => refetch(), 0);
+      }
     }
-  }, [initialSortBy, userId, queryClient, setSortBy]);
+  }, [initialSortBy, userId, setSortBy, refetch]);
   
   // Cache kết quả truy vấn để tối ưu
   const allTradesRef = useRef<Trade[]>([]);
@@ -224,7 +224,7 @@ export function useTradeList(options: {
     
     debug("[TradeList] Registering with TradeUpdateService");
     
-    // Tạo observer
+    // Tạo observer theo chuẩn TradeChangeObserver
     const observer: TradeChangeObserver = {
       onTradesChanged: (action, tradeId) => {
         // Thêm debounce đơn giản để tránh cập nhật quá nhanh
@@ -241,17 +241,10 @@ export function useTradeList(options: {
         
         debug(`[TradeList] Trade changed (${action}), refreshing data`);
         
-        // Xử lý đặc biệt cho sự kiện 'close'
-        if (action === 'close') {
-          // Force refetch ngay lập tức khi đóng giao dịch
-          debug("[TradeList] Closing trade, forcing immediate refetch");
-          queryClient.resetQueries({ queryKey: queryKey });
-          refetch();
-        } else {
-          // Không cần phải invalidate vì tradeUpdateService đã làm việc này
-          // Chỉ cần refetch để lấy dữ liệu mới
-          refetch();
-        }
+        // Luôn sử dụng chung một cách tiếp cận nhất quán
+        // TradeUpdateService đã thực hiện invalidateQueries, chỉ cần gọi refetch
+        // để lấy dữ liệu mới nhất từ backend
+        refetch();
       }
     };
     
