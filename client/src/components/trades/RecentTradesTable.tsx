@@ -19,6 +19,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { cn } from "@/lib/utils";
 import TradeStatusBadge from "./TradeStatusBadge";
 import DirectionBadge from "./DirectionBadge";
@@ -140,36 +141,11 @@ export default function RecentTradesTable({
           <Skeleton className="h-8 w-24" />
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Pair</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Lot Size</TableHead>
-                  <TableHead>Entry</TableHead>
-                  <TableHead>Exit</TableHead>
-                  <TableHead>Profit/Loss</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <TableRow key={i}>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-10" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                    <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <AppSkeleton 
+            level={SkeletonLevel.TABLE} 
+            count={5}
+            customProps={{ showPagination: false }}
+          />
         </CardContent>
       </Card>
     );

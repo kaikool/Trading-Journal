@@ -947,12 +947,12 @@ export default function TradeHistory() {
 
       <div className="w-full space-y-5 overflow-hidden">
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full overflow-hidden">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-[320px] w-full">
-                <Skeleton className="h-full w-full rounded-lg" />
-              </div>
-            ))}
+          <div className="w-full">
+            <AppSkeleton 
+              level={SkeletonLevel.LIST_ITEM} 
+              count={6}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            />
           </div>
         ) : trades.length > 0 ? (
           <>

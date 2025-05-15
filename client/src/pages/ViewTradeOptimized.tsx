@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { Trade } from "@/types";
 import { useLocation } from "wouter";
 import { LazyTradeViewEdit } from "@/components/trades/LazyTradeViewEdit";
@@ -166,9 +167,11 @@ export default function ViewTradeOptimized() {
       </div>
       
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
-        </div>
+        <AppSkeleton 
+          level={SkeletonLevel.FORM} 
+          className="py-4"
+          count={1}
+        />
       ) : error ? (
         <Card className="mb-4 overflow-hidden">
           <CardContent className="py-8 px-4 sm:p-6 text-center">
