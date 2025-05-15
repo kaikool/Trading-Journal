@@ -872,20 +872,7 @@ export const defineAchievements = (): Achievement[] => {
   ];
 };
 
-// Hàm tính điểm thành tích đạt được
-export function calculateAchievementTotalPoints(
-  achievements: Achievement[],
-  userAchievements: {
-    [achievementId: string]: { isComplete: boolean }
-  }
-): number {
-  return achievements.reduce((total, achievement) => {
-    if (userAchievements[achievement.id]?.isComplete) {
-      return total + achievement.points;
-    }
-    return total;
-  }, 0);
-}
+// calculateAchievementTotalPoints function removed - not used in the project
 
 // Calculate user level based on total points
 export function calculateUserLevel(totalPoints: number): number {
