@@ -8,12 +8,7 @@
 import { debug, logError, logWarning } from './debug';
 import axios from 'axios';
 
-// Kiểu dữ liệu trả về từ TwelveData API
-interface TwelveDataPrice {
-  symbol: string;        // Ví dụ: "EURUSD"
-  price: number;         // Ví dụ: 1.0871
-  timestamp: number;     // Unix timestamp
-}
+// Kiểu dữ liệu trả về từ TwelveData API đã được xóa vì không sử dụng
 
 interface PriceCache {
   [symbol: string]: {
