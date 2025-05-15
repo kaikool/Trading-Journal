@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/icons/icons";
 import { CHART_CONFIG } from "@/lib/config";
 import { format } from "date-fns";
+import { formatPercentage, formatNumber } from "@/utils/format-number";
 
 interface EmotionTabProps {
   data: {
@@ -176,7 +177,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         type: 'positive',
         icon: <Icons.ui.circleCheck className="h-4 w-4" />,
         title: 'Best Emotional State',
-        description: `Trading while feeling "${bestEmotion.emotion}" yields your highest win rate at ${bestEmotion.winRate.toFixed(1)}%. Consider journaling what conditions help you achieve this state.`
+        description: `Trading while feeling "${bestEmotion.emotion}" yields your highest win rate at ${formatPercentage(bestEmotion.winRate)}. Consider journaling what conditions help you achieve this state.`
       });
     }
     
@@ -186,7 +187,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         type: 'warning',
         icon: <Icons.ui.xCircle className="h-4 w-4" />,
         title: 'Worst Emotional State',
-        description: `Trading while feeling "${worstEmotion.emotion}" produces your lowest win rate at ${worstEmotion.winRate.toFixed(1)}%. Consider taking a break when experiencing this emotion.`
+        description: `Trading while feeling "${worstEmotion.emotion}" produces your lowest win rate at ${formatPercentage(worstEmotion.winRate)}. Consider taking a break when experiencing this emotion.`
       });
     }
     
@@ -212,7 +213,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
           type: 'suggestion',
           icon: <Icons.general.heart className="h-4 w-4" />,
           title: 'Significant Emotional Impact',
-          description: `There's a ${difference.toFixed(1)}% win rate difference between your best and worst emotional states. Focus on trading in optimal emotional conditions.`
+          description: `There's a ${formatPercentage(difference)} win rate difference between your best and worst emotional states. Focus on trading in optimal emotional conditions.`
         });
       }
     }
@@ -314,7 +315,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
         <div className="bg-background/95 border border-muted shadow-sm rounded-md p-1.5 text-xs backdrop-blur-sm">
           <p className="font-medium">{label}</p>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-primary">{payload[0].value.toFixed(1)}%</span>
+            <span className="text-primary">{formatPercentage(payload[0].value)}</span>
             <span className="text-muted-foreground text-[10px]">
               ({winRateByEmotionData.find(item => item.name === label)?.trades || 0} trades)
             </span>
@@ -337,12 +338,12 @@ export default function EmotionTab({ data }: EmotionTabProps) {
           <p className="font-medium">{data.name}</p>
           <div className="flex flex-col gap-0.5 mt-0.5">
             <div className="flex items-center gap-1.5">
-              <span className="text-primary">{((data.value / totalTrades) * 100).toFixed(1)}%</span>
+              <span className="text-primary">{formatPercentage((data.value / totalTrades) * 100)}</span>
               <span className="text-muted-foreground text-[10px]">({data.value} trades)</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className={winRate >= 50 ? 'text-success' : 'text-destructive'}>
-                {winRate.toFixed(1)}% win rate
+                {formatPercentage(winRate)} win rate
               </span>
             </div>
           </div>
@@ -519,7 +520,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
                               fontSize={10}
                               fill={showTextInside && !showOnRight ? "white" : "hsl(var(--foreground))"}
                             >
-                              {showOnRight ? `${displayName} (${value.toFixed(1)}%)` : displayName}
+                              {showOnRight ? `${displayName} (${formatPercentage(value)})` : displayName}
                             </text>
                             
                             {/* Hiển thị giá trị ở cuối thanh khi thanh đủ dài */}
