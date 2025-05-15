@@ -21,7 +21,7 @@ import {
 } from "recharts";
 import { Icons } from "@/components/icons/icons";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatPercentage, formatProfitLoss } from "@/utils/format-number";
 import { CHART_CONFIG } from "@/lib/config";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 

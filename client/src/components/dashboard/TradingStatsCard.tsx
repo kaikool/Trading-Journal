@@ -11,6 +11,7 @@ import { Icons } from "@/components/icons/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatProfitFactor } from "@/lib/balance-calculation-rules";
+import { formatPercentage, formatRiskReward } from "@/utils/format-number";
 
 interface TradingStatsCardProps {
   totalTrades: number;
@@ -112,7 +113,7 @@ export function TradingStatsCard({
     },
     { 
       label: "Win Rate", 
-      value: `${winRate.toFixed(1)}%`, 
+      value: formatPercentage(winRate), 
       icon: isGoodWinRate !== null ? (isGoodWinRate ? Icons.ui.circleCheck : Icons.analytics.percent) : Icons.analytics.percent,
       tooltip: "Percentage of profitable trades",
       color: isGoodWinRate !== null 
@@ -136,7 +137,7 @@ export function TradingStatsCard({
     },
     { 
       label: "R:R Ratio", 
-      value: avgRiskRewardRatio.toFixed(2), 
+      value: formatRiskReward(avgRiskRewardRatio), 
       icon: Icons.ui.slidersHorizontal,
       tooltip: "Average profit per trade to average loss per trade",
       color: isGoodRR !== null
