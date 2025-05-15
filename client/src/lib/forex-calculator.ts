@@ -250,13 +250,7 @@ export function calculateRiskRewardRatio(
   }
 }
 
-/**
- * Format risk/reward ratio
- */
-export function formatRiskRewardRatio(ratio: number): string {
-  if (ratio <= 0) return "N/A";
-  return `1:${ratio.toFixed(1)}`;
-}
+// Hàm formatRiskRewardRatio đã bị loại bỏ vì không được sử dụng
 
 /**
  * Tính toán tỷ lệ thắng chuẩn xác theo cách đã định nghĩa trong phần PHÂN LOẠI THẮNG/THUA
@@ -285,38 +279,7 @@ export function calculateWinRate(trades: any[], pipField: string = "pips"): numb
   return nonBreakEvenTrades > 0 ? (winningTrades.length / nonBreakEvenTrades) * 100 : 0;
 }
 
-/**
- * Calculate stop loss price based on risk percentage
- */
-export function calculateStopLossPrice(
-  entryPrice: number,
-  accountBalance: number,
-  riskPercentage: number,
-  lotSize: number,
-  direction: Direction,
-  pair: CurrencyPair,
-  accountCurrency: Currency
-): number {
-  // Calculate risk amount
-  const riskAmount = accountBalance * (riskPercentage / 100);
-  
-  // Calculate pip value
-  const pipValue = calculatePipValue({ 
-    pair, 
-    lotSize, 
-    accountCurrency 
-  });
-  
-  // Calculate required pip distance
-  const pipDistance = riskAmount / pipValue;
-  
-  // Calculate stop loss price
-  if (direction === "BUY") {
-    return entryPrice - (pipDistance * PIP_SIZE[pair]);
-  } else {
-    return entryPrice + (pipDistance * PIP_SIZE[pair]);
-  }
-}
+// Hàm calculateStopLossPrice đã bị loại bỏ vì không được sử dụng
 
 /**
  * Calculate take profit price based on risk/reward ratio
