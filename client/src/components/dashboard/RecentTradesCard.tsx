@@ -20,6 +20,7 @@ import { determineTradeStatus } from "@/lib/trade-status-helpers";
 import { Trade as AppTrade } from "@/types";
 import DirectionBadge from "../trades/DirectionBadge";
 import { useMemoWithPerf } from "@/lib/performance";
+import { formatCurrency, formatProfitLoss } from "@/utils/format-number";
 
 // Define the types for the trade data
 interface Trade {
@@ -138,17 +139,10 @@ export function RecentTradesCard({
                   (trade.pips || 0) > 0 ? "text-success" : 
                   (trade.pips || 0) < 0 ? "text-destructive" : "text-muted-foreground"
                 )}>
-                  {trade.profitLoss > 0 ? "+" : ""}
-                  {(() => {
-                    // Lấy giá trị profitLoss trực tiếp - không cần sửa đổi nữa
-                    let value = trade.profitLoss;
-                    
-                    return value !== undefined ? 
-                      "$" + new Intl.NumberFormat('en-US', { 
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      }).format(value) : "$0.00";
-                  })()}
+                  {formatProfitLoss(trade.profitLoss || 0, {
+                    showPlusSign: true,
+                    includeSymbol: true
+                  })}
                 </div>
               )}
               

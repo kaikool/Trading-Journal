@@ -3,11 +3,10 @@ import { useFormContext } from "react-hook-form";
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import { TradeFormValues } from '../types';
 import { Icons } from '@/components/icons/icons';
 import { CurrencyPair, PIP_SIZE } from '@/lib/forex-calculator';
-import { formatPips, formatCurrency, formatPercentage, formatRiskReward } from '@/utils/format-number';
 
 /**
  * TradeRiskReward Component - Tối giản hóa
@@ -87,7 +86,7 @@ export function TradeRiskReward({
               <Label className="text-sm font-medium">Risk per Trade</Label>
               <div className="flex flex-col items-end">
                 <span className={cn("text-sm font-semibold", getRiskColor(riskPercentage))}>
-                  {formatPercentage(riskPercentage * 10)}
+                  {`${riskPercentage.toFixed(1)}%`}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   {formatCurrency(riskAmount)}
@@ -115,12 +114,12 @@ export function TradeRiskReward({
             {/* Hiển thị cô đọng pips at risk và potential profit */}
             <div className="flex flex-col">
               <span className="text-sm text-muted-foreground mb-0.5">Pips at Risk</span>
-              <span className="text-base font-medium">{formatPips(pipsAtRisk)}</span>
+              <span className="text-base font-medium">{pipsAtRisk.toFixed(1)}</span>
             </div>
             
             <div className="flex flex-col">
               <span className="text-sm text-muted-foreground mb-0.5">Potential Profit</span>
-              <span className="text-base font-medium text-emerald-500">{formatPips(potentialProfitPips, { includeUnit: true })}</span>
+              <span className="text-base font-medium text-emerald-500">{`${potentialProfitPips.toFixed(1)} pips`}</span>
             </div>
           </div>
           
@@ -132,7 +131,7 @@ export function TradeRiskReward({
                 "text-sm font-medium", 
                 entryPrice && stopLoss ? getRRColor(riskRewardRatio) : "text-muted-foreground/70"
               )}>
-                {formatRiskReward(riskRewardRatio, { formatAsRatio: true })}
+                {`1:${riskRewardRatio.toFixed(2)}`}
               </span>
             </div>
             
