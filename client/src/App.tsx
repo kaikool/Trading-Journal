@@ -18,7 +18,6 @@ import { withErrorBoundary } from "@/components/ui/error-boundary";
 import AchievementNotificationContainer from "@/components/achievements/AchievementNotificationContainer";
 import { LayoutProvider } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { DataCacheProvider } from "@/contexts/DataCacheContext";
 import { DialogProvider } from "@/contexts/DialogContext";
 
 // Improved dynamic imports with proper code splitting
@@ -312,14 +311,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LayoutProvider>
-          <DataCacheProvider>
-            <DialogProvider>
-              <MainContent />
-              <Toaster />
-              <PWAContainer />
-              <AchievementNotificationContainer />
-            </DialogProvider>
-          </DataCacheProvider>
+          <DialogProvider>
+            <MainContent />
+            <Toaster />
+            <PWAContainer />
+            <AchievementNotificationContainer />
+          </DialogProvider>
         </LayoutProvider>
       </ThemeProvider>
     </QueryClientProvider>

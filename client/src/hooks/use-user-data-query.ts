@@ -1,34 +1,31 @@
 /**
- * Hook React Query để quản lý dữ liệu người dùng
- * Thay thế hoàn toàn cho useDataCache.userData
+ * Hook React Query đơn giản cho dữ liệu người dùng
+ * Thay thế hoàn toàn DataCacheContext với React Query
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { auth, getUserData } from "@/lib/firebase";
+import { getUserData } from "@/lib/firebase";
 import { debug } from "@/lib/debug";
+import { useAuth } from "./use-auth";
 
 export function useUserDataQuery() {
-  const userId = auth.currentUser?.uid;
-
-  const query = useQuery({
-    queryKey: ['userData', userId],
+  const { userId } = useAuth();
+  
+  const { data: userData, isLoading, error } = useQuery({
+    queryKey: [`/users/${userId}`],
     queryFn: async () => {
       if (!userId) return null;
+      
       debug(`Fetching user data for ${userId}`);
       return await getUserData(userId);
     },
     enabled: !!userId,
-    staleTime: 5 * 60 * 1000, // 5 phút
-    gcTime: 10 * 60 * 1000,   // 10 phút
-    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes - longer than trades data
   });
-
+  
   return {
-    userData: query.data,
-    isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error,
-    refetch: query.refetch,
-    userId,
+    userData,
+    isLoading,
+    error,
   };
 }

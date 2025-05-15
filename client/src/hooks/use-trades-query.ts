@@ -1,51 +1,54 @@
 /**
- * Hook React Query để quản lý dữ liệu giao dịch
- * Thay thế hoàn toàn cho useDataCache.trades
+ * Hook React Query cho dữ liệu giao dịch
+ * Thay thế hoàn toàn DataCacheContext và quản lý cache qua React Query
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { auth, getTrades } from "@/lib/firebase";
+import { getTrades } from "@/lib/firebase";
 import { debug } from "@/lib/debug";
-import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
+import { useAuth } from "./use-auth";
+import { tradeUpdateService } from "@/services/trade-update-service";
 import { useEffect } from "react";
 
 export function useTradesQuery() {
-  const userId = auth.currentUser?.uid;
-
-  const query = useQuery({
-    queryKey: ['trades', userId],
+  const { userId } = useAuth();
+  
+  const { 
+    data: trades = [], 
+    isLoading, 
+    error,
+    refetch 
+  } = useQuery({
+    queryKey: [`/trades/${userId}`],
     queryFn: async () => {
       if (!userId) return [];
+      
       debug(`Fetching all trades for ${userId}`);
       return await getTrades(userId);
     },
     enabled: !!userId,
-    staleTime: 5 * 60 * 1000, // 5 phút
-    gcTime: 10 * 60 * 1000,   // 10 phút
-    refetchOnWindowFocus: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
-
-  // Đăng ký lắng nghe thay đổi trades qua TradeUpdateService
+  
+  // Register for trade changes - we still need this since firebase updates
+  // can happen from multiple sources
   useEffect(() => {
     if (!userId) return;
     
-    const observer: TradeChangeObserver = {
+    const unsubscribe = tradeUpdateService.registerObserver({
       onTradesChanged: (action, tradeId) => {
-        debug(`[useTradesQuery] Trade changed (${action}), refreshing data`);
-        query.refetch();
+        debug(`Trade changed via TradeUpdateService (${action}, ID: ${tradeId || 'unknown'}), triggering refetch`);
+        refetch();
       }
-    };
+    });
     
-    const unregister = tradeUpdateService.registerObserver(observer);
-    return () => unregister();
-  }, [userId, query.refetch]);
-
+    return () => unsubscribe();
+  }, [userId, refetch]);
+  
   return {
-    trades: query.data || [],
-    isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error,
-    refetch: query.refetch,
-    userId,
+    trades,
+    isLoading,
+    error,
+    refetch
   };
 }

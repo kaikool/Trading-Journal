@@ -2,7 +2,9 @@ import { useMemo, lazy, Suspense, useState, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
-import { useDataCache } from "@/contexts/DataCacheContext";
+import { useUserDataQuery } from "@/hooks/use-user-data-query";
+import { useTradesQuery } from "@/hooks/use-trades-query";
+import { useAuth } from "@/hooks/use-auth";
 import { getClosedTrades, calculateCurrentBalance } from "@/lib/balance-calculation-rules";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
 import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
@@ -28,9 +30,12 @@ declare global {
 
 
 export default function Analytics() {
-  // Sử dụng DataCache thay vì local state
-  const { trades, userData, isLoading, userId } = useDataCache();
+  // Sử dụng React Query hooks thay vì DataCache
+  const { trades, isLoading: tradesLoading } = useTradesQuery();
+  const { userData, isLoading: userLoading } = useUserDataQuery();
+  const { userId } = useAuth();
   const { toast } = useToast();
+  const isLoading = userLoading || tradesLoading;
   // State để lưu danh sách chiến lược
   const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
 
