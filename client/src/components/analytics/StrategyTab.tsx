@@ -21,9 +21,20 @@ import {
 } from "recharts";
 import { Icons } from "@/components/icons/icons";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, formatPercentage, formatProfitLoss } from "@/utils/format-number";
+import { formatCurrency, formatPercentage, formatProfitLoss, formatNumber } from "@/utils/format-number";
 import { CHART_CONFIG } from "@/lib/config";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+/**
+ * Helper function for compact currency formatting
+ * Used to replace instances of formatCompactCurrency(value)
+ */
+const formatCompactCurrency = (value: number) => {
+  return formatCurrency(value, { 
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  });
+};
 
 interface StrategyTabProps {
   data: {
@@ -442,7 +453,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                   />
                   <XAxis 
                     type="number"
-                    tickFormatter={(value) => formatCurrency(value, true)}
+                    tickFormatter={(value) => formatCompactCurrency(value)}
                     tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={{ stroke: 'hsl(var(--muted-foreground)/20)' }}
@@ -513,7 +524,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                             fontSize={10}
                             fill={showTextInside && !showOnRight ? "white" : "hsl(var(--foreground))"}
                           >
-                            {showOnRight ? `${displayName} (${formatCurrency(value, true)})` : displayName}
+                            {showOnRight ? `${displayName} (${formatCompactCurrency(value)})` : displayName}
                           </text>
                           
                           {/* Hiển thị giá trị ở cuối thanh khi thanh đủ dài */}
@@ -527,7 +538,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                               fontWeight="500"
                               fill="white"
                             >
-                              {formatCurrency(value, true)}
+                              {formatCompactCurrency(value)}
                             </text>
                           )}
                         </g>
@@ -593,7 +604,7 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                   <YAxis 
                     yAxisId="right"
                     orientation="right"
-                    tickFormatter={(value) => formatCurrency(value, true)}
+                    tickFormatter={(value) => formatCompactCurrency(value)}
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                     tickLine={false}
                     axisLine={false}
@@ -692,14 +703,14 @@ export default function StrategyTab({ data }: StrategyTabProps) {
                         strategy.winRate > 40 ? 'bg-warning/20 text-warning border-warning/30' :
                         'bg-destructive/20 text-destructive border-destructive/30'
                       }`}>
-                        {strategy.winRate.toFixed(1)}%
+                        {formatPercentage(strategy.winRate)}
                       </Badge>
                     </TableCell>
                     <TableCell className={`text-right text-sm ${strategy.netProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
-                      {formatCurrency(strategy.netProfit, true)}
+                      {formatCompactCurrency(strategy.netProfit)}
                     </TableCell>
                     <TableCell className={`text-right text-sm ${(strategy.netProfit / strategy.trades) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                      {formatCurrency(strategy.netProfit / strategy.trades, true)}
+                      {formatCompactCurrency(strategy.netProfit / strategy.trades)}
                     </TableCell>
                   </TableRow>
                 ))}
