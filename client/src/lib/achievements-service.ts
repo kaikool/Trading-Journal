@@ -484,6 +484,15 @@ class AchievementsService {
 
 export const achievementsService = new AchievementsService();
 
+/**
+ * Calculate level progress percentage
+ * @param totalPoints - Total achievement points
+ * @returns Percentage progress to next level (0-100)
+ */
+export function calculateLevelProgress(totalPoints: number): number {
+  return calculatePointsForNextLevel(totalPoints).progress;
+}
+
 // Export directly for backward compatibility with existing code
 export const getUserAchievements = (userId: string) => achievementsService.getUserAchievements(userId);
 export const processUserAchievements = (userId: string, forceRefresh: boolean = false) => 

@@ -7,15 +7,15 @@ import {
   getUserAchievements, 
   processUserAchievements,
   getEnhancedAchievements,
-  processTradeTrigger 
+  processTradeTrigger,
+  calculateLevelProgress 
 } from "@/lib/achievements-service";
-import { defineAchievements } from "@/lib/achievements-data";
 import { 
+  defineAchievements,
   getIconByName, 
   achievementLevelColors, 
   achievementCategoryColors, 
   achievementLevelLabel, 
-  calculateLevelProgress, 
   achievementLevelRank 
 } from "@/lib/achievements-data";
 import { cn } from "@/lib/utils";
