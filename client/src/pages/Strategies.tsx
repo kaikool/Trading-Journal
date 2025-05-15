@@ -9,7 +9,7 @@ const StrategiesManagement = lazy(() =>
 );
 
 export default function StrategiesPage() {
-  const { userData, isLoading } = useDataCache();
+  const { isLoading } = useDataCache(); // Removed unused: userData
   
   // Empty state component
   const EmptyState = () => (
