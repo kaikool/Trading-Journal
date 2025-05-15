@@ -161,9 +161,13 @@ export function TradeStrategy({
         </CardHeader>
         <CardContent className="px-4 pb-4">
           {isLoadingStrategies ? (
-            <div className="flex items-center justify-center py-3">
-              <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Loading...</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {[1, 2, 3, 4].map(i => (
+                <div 
+                  key={i} 
+                  className="h-10 rounded-md bg-muted/50 animate-pulse"
+                />
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
