@@ -64,43 +64,9 @@ export function formatCurrency(
   })}`;
 }
 
-/**
- * Định dạng số thành chuỗi phần trăm
- * 
- * @param value Giá trị số cần định dạng (0.15 = 15%)
- * @param options Tùy chọn định dạng (có thể ghi đè cấu hình mặc định)
- * @returns Chuỗi phần trăm đã được định dạng
- */
-export function formatPercentage(
-  value: number,
-  options: {
-    includeSign?: boolean;
-    minimumFractionDigits?: number;
-    maximumFractionDigits?: number;
-    locale?: string;
-  } = {}
-): string {
-  const {
-    includeSign = false,
-    minimumFractionDigits = UI_CONFIG.NUMBER_FORMAT.PERCENTAGE_DECIMAL_PLACES,
-    maximumFractionDigits = UI_CONFIG.NUMBER_FORMAT.PERCENTAGE_DECIMAL_PLACES,
-    locale = UI_CONFIG.NUMBER_FORMAT.LOCALE
-  } = options;
-
-  // Convert decimal to percentage (e.g., 0.15 to 15)
-  const percentValue = value * 100;
-  
-  const formattedValue = formatNumber(Math.abs(percentValue), {
-    minimumFractionDigits,
-    maximumFractionDigits,
-    locale
-  });
-  
-  // Add sign if requested and value is not zero
-  const sign = includeSign && percentValue > 0 ? '+' : percentValue < 0 ? '-' : '';
-  
-  return `${sign}${formattedValue}%`;
-}
+// NOTE: formatPercentage function is not removed even though it appears in ts-prune results
+// because it is used in the project. There seems to be another formatPercentage function
+// in lib/utils.ts that is also being used.
 
 /**
  * Định dạng số thành chuỗi pips

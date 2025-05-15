@@ -18,8 +18,4 @@ export function getTimeStamp(timestamp: TimestampInput): number {
   return getTimestampMilliseconds(timestamp);
 }
 
-/**
- * Tên cũ (không sử dụng trực tiếp) - chỉ để tương thích ngược
- * @deprecated Sử dụng getTimeStamp thay thế
- */
-export const getTimeStampMilionSecond = getTimeStamp;
+// getTimeStampMilionSecond function removed - not used in the project
