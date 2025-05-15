@@ -54,7 +54,7 @@ export function FormActions({
         >
           {isFormSubmitting ? (
             <>
-              <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
+              <span className="mr-2 h-4 w-4 bg-background/80 rounded animate-pulse"></span>
               Saving...
             </>
           ) : (

@@ -9,6 +9,7 @@ import {
   CardGradient 
 } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
 export default function NewTrade() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,14 +48,15 @@ export default function NewTrade() {
             intensity="subtle"
             direction="top-right"
           />
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="rounded-full bg-primary/10 p-6 mb-5">
-              <Icons.ui.spinner className="h-10 w-10 animate-spin text-primary" />
-            </div>
-            <h3 className="text-lg font-semibold">Saving your trade...</h3>
-            <p className="text-muted-foreground mt-2 max-w-md">
-              Please wait while we record your trade details and process any uploaded images.
-            </p>
+          <CardContent className="py-8">
+            <AppSkeleton 
+              level={SkeletonLevel.FORM}
+              className="py-4"
+              customProps={{
+                title: "Saving your trade...",
+                description: "Please wait while we record your trade details and process any uploaded images."
+              }}
+            />
           </CardContent>
         </Card>
       ) : (

@@ -13,6 +13,7 @@ import {
   CardGradient
 } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
 // Trade Form Components
 import {
@@ -124,14 +125,15 @@ export default function TradePage() {
               intensity="subtle"
               direction="top-right"
             />
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="rounded-full bg-primary/10 p-5 mb-4">
-                <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
-              </div>
-              <h3 className="text-lg font-semibold">Saving trade...</h3>
-              <p className="text-muted-foreground mt-2 max-w-md">
-                Recording your trade details and processing uploaded images
-              </p>
+            <CardContent className="py-8">
+              <AppSkeleton 
+                level={SkeletonLevel.FORM}
+                className="py-4"
+                customProps={{
+                  title: "Saving trade...",
+                  description: "Recording your trade details and processing uploaded images"
+                }}
+              />
             </CardContent>
           </Card>
         </motion.div>
