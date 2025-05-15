@@ -159,15 +159,4 @@ export function isAppInstalled(): boolean {
  * Alias for isAppInstalled to ensure consistent naming across the app
  * This matches the function in use-mobile.tsx
  */
-export function isPWA(): boolean {
-  return isAppInstalled();
-}
-
-/**
- * Shows installation promotion based on browser support
- * 
- * @returns Boolean indicating if installation promotion is available
- */
-export function canPromptInstall(): boolean {
-  return !isAppInstalled() && 'BeforeInstallPromptEvent' in window;
-}
+// Functions below were removed during cleanup as they were not used in the project

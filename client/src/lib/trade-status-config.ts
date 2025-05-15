@@ -75,30 +75,4 @@ export function getTradeStatusConfig(status: TradeStatus): TradeStatusConfig {
   return TRADE_STATUS_CONFIG[status];
 }
 
-/**
- * Get a styled badge component classes for a trade status
- */
-export function getTradeStatusClasses(status: TradeStatus): {
-  badgeClasses: string;
-  iconClasses: string;
-} {
-  const config = getTradeStatusConfig(status);
-  return {
-    badgeClasses: `${config.bgColor} hover:${config.bgColor}`,
-    iconClasses: "h-3.5 w-3.5 mr-1"
-  };
-}
-
-/**
- * Get the appropriate color classes for a trade status in different contexts
- */
-export function getTradeStatusColorClasses(status: TradeStatus, type: 'text' | 'bg' | 'lightBg' | 'border' = 'text'): string {
-  const config = getTradeStatusConfig(status);
-  switch (type) {
-    case 'text': return config.color;
-    case 'bg': return config.bgColor;
-    case 'lightBg': return config.lightBgColor;
-    case 'border': return config.borderColor;
-    default: return config.color;
-  }
-}
+// Functions below have been removed by cleanup as they were not used in the project

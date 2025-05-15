@@ -331,13 +331,7 @@ export function formatPrice(price: number, pair: CurrencyPair): string {
  * @param pair Currency pair
  * @returns Number of decimal places to display
  */
-export function getDecimalPlaces(pair: CurrencyPair): number {
-  if (pair === "XAUUSD" || pair === "USDJPY") {
-    return 2; // 2 decimal places for gold and JPY pairs
-  } else {
-    return 4; // 4 decimal places for other pairs
-  }
-}
+// getDecimalPlaces function removed in cleanup - not used in the project
 
 /**
  * Calculate pips from entry and exit prices
