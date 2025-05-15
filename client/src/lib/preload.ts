@@ -174,8 +174,3 @@ export const preloadCriticalResources = (): void => {
   }
 };
 
-export default {
-  preloadRoute,
-  preloadCommonRoutes,
-  preloadCriticalResources,
-};

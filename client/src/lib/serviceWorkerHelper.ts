@@ -13,23 +13,7 @@ export function isPwaMode(): boolean {
          document.referrer.includes('android-app://');
 }
 
-/**
- * Kiểm tra xem service worker có đang hoạt động không
- * @returns Promise<boolean> - true nếu service worker đang hoạt động
- */
-export async function isServiceWorkerActive(): Promise<boolean> {
-  if (!('serviceWorker' in navigator)) {
-    return false;
-  }
-  
-  try {
-    const registration = await navigator.serviceWorker.getRegistration();
-    return !!registration && !!registration.active;
-  } catch (error) {
-    console.error('Error checking service worker status:', error);
-    return false;
-  }
-}
+
 
 /**
  * Gửi yêu cầu xóa cache cho các tài nguyên JavaScript
@@ -72,46 +56,7 @@ export async function clearAssetsCache(): Promise<boolean> {
   });
 }
 
-/**
- * Kiểm tra và lấy phiên bản hiện tại của service worker
- * @returns Promise<string|null> - phiên bản của service worker hoặc null
- */
-export async function getServiceWorkerVersion(): Promise<string | null> {
-  if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller) {
-    return null;
-  }
-  
-  return new Promise((resolve) => {
-    // Tạo channel để nhận phản hồi từ service worker
-    const messageChannel = new MessageChannel();
-    
-    // Xử lý phản hồi
-    messageChannel.port1.onmessage = (event) => {
-      if (event.data && event.data.version) {
-        resolve(event.data.version);
-      } else {
-        resolve(null);
-      }
-    };
-    
-    // Gửi yêu cầu đến service worker
-    const controller = navigator.serviceWorker.controller;
-    if (controller) {
-      controller.postMessage(
-        {
-          type: 'CHECK_VERSION',
-          timestamp: Date.now()
-        }, 
-        [messageChannel.port2]
-      );
-    } else {
-      resolve(null);
-    }
-    
-    // Timeout sau 2 giây
-    setTimeout(() => resolve(null), 2000);
-  });
-}
+
 
 /**
  * Yêu cầu service worker cập nhật và kích hoạt ngay lập tức
