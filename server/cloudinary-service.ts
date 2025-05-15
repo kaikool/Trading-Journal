@@ -128,33 +128,7 @@ export function generateThumbnailUrl(originalUrl: string, width: number = 200, h
   }
 }
 
-/**
- * Tạo biến thể khác nhau của một URL Cloudinary (chẳng hạn như thay đổi kích thước, cắt, v.v.)
- * 
- * @param originalUrl - URL gốc của ảnh Cloudinary
- * @param transformations - Chuỗi hoặc mảng các biến đổi cloudinary
- * @returns URL đã biến đổi
- */
-export function transformImageUrl(originalUrl: string, transformations: string) {
-  try {
-    if (!originalUrl.includes('cloudinary.com')) {
-      return originalUrl;
-    }
 
-    // Phân tích URL cloudinary
-    const urlParts = originalUrl.split('/upload/');
-    if (urlParts.length !== 2) {
-      return originalUrl;
-    }
-
-    // Tạo đường dẫn mới với tham số biến đổi
-    const transformedUrl = `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`;
-    return transformedUrl;
-  } catch (error) {
-    log(`Error transforming image URL: ${error instanceof Error ? error.message : String(error)}`, 'cloudinary-service');
-    return originalUrl;
-  }
-}
 
 /**
  * Lấy public ID từ URL Cloudinary
@@ -199,27 +173,3 @@ export function getPublicIdFromUrl(url: string): string | null {
   }
 }
 
-/**
- * Kiểm tra tình trạng kết nối với Cloudinary
- * 
- * @returns Thông tin về kết nối
- */
-export async function checkCloudinaryConnection() {
-  try {
-    // Ping Cloudinary API
-    const result = await cloudinary.api.ping();
-    return {
-      connected: true,
-      status: result.status,
-      cloudinaryVersion: result.version
-    };
-  } catch (error) {
-    log(`Cloudinary connection error: ${error instanceof Error ? error.message : String(error)}`, 'cloudinary-service');
-    return {
-      connected: false,
-      error: error instanceof Error ? error.message : String(error)
-    };
-  }
-}
-
-export default cloudinary;

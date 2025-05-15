@@ -51,25 +51,5 @@ export async function checkThumbnail(url: string): Promise<boolean> {
   }
 }
 
-/**
- * Hàm kiểm tra đầy đủ - tạo thumbnail URL và kiểm tra khả năng truy cập
- * 
- * @param originalUrl - URL gốc của ảnh
- * @param width - Chiều rộng thumbnail (tùy chọn)
- * @param height - Chiều cao thumbnail (tùy chọn)
- * @returns Promise<{url: string, accessible: boolean}> - Kết quả kiểm tra
- */
-export async function verifyThumbnail(
-  originalUrl: string,
-  width?: number,
-  height?: number
-): Promise<{url: string, accessible: boolean}> {
-  const thumbnailUrl = getThumbnailUrl(originalUrl, width, height);
-  const accessible = await checkThumbnail(thumbnailUrl);
-  
-  return {
-    url: thumbnailUrl,
-    accessible
-  };
-}
+
 
