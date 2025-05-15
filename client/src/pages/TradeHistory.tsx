@@ -273,8 +273,6 @@ export default function TradeHistory() {
     
     // Sử dụng Set để loại bỏ các giá trị trùng lặp
     const uniquePairs = new Set<CurrencyPair>();
-    const uniqueDirections = new Set<Direction>();
-    const uniqueResults = new Set<TradeResult>();
     const uniqueStrategies = new Set<string>();
     const uniqueEmotions = new Set<string>();
     const uniqueSessions = new Set<string>();
@@ -283,8 +281,6 @@ export default function TradeHistory() {
     trades.forEach((trade: Trade) => {
       // Đảm bảo chỉ thêm giá trị hợp lệ
       if (trade.pair) uniquePairs.add(String(trade.pair).toUpperCase() as CurrencyPair);
-      if (trade.direction) uniqueDirections.add(String(trade.direction).toUpperCase() as Direction);
-      if (trade.result) uniqueResults.add(String(trade.result).toUpperCase() as TradeResult);
       if (trade.strategy) uniqueStrategies.add(trade.strategy);
       if (trade.emotion) uniqueEmotions.add(trade.emotion);
       if (trade.sessionType) uniqueSessions.add(trade.sessionType);
@@ -292,24 +288,18 @@ export default function TradeHistory() {
     
     // Chuyển đổi Set thành Array
     const newPairs = Array.from(uniquePairs);
-    const newDirections = Array.from(uniqueDirections);
-    const newResults = Array.from(uniqueResults);
     const newStrategies = Array.from(uniqueStrategies);
     const newEmotions = Array.from(uniqueEmotions);
     const newSessions = Array.from(uniqueSessions);
     
     // Cập nhật state cho tất cả các tùy chọn một lần duy nhất
     setPairOptions(newPairs);
-    setDirectionOptions(newDirections);
-    setResultOptions(newResults);
     setStrategyOptions(newStrategies); 
     setEmotionOptions(newEmotions);
     setSessionOptions(newSessions);
     
     debug("Dynamic filter options updated:", {
       pairs: newPairs,
-      directions: newDirections,
-      results: newResults,
       strategies: newStrategies,
       emotions: newEmotions,
       sessions: newSessions
