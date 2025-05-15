@@ -1,11 +1,11 @@
 import React, { lazy, Suspense, useState, useEffect } from 'react';
-import { LoadingFallback } from './LoadingFallback';
 import ErrorBoundary from '@/components/ui/error-boundary';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { debug } from '@/lib/debug';
 import { isPwaMode, clearAssetsCache } from '@/lib/serviceWorkerHelper';
+import { AppSkeleton, SkeletonLevel } from '@/components/ui/app-skeleton';
 
 interface SafeLazyLoadProps {
   moduleLoader: () => Promise<any>;
@@ -135,7 +135,13 @@ export function SafeLazyLoad({
   }
 
   // Still loading
-  return fallback || <LoadingFallback height={typeof height === 'number' ? height : undefined} showSpinner={true} />;
+  return fallback || (
+    <AppSkeleton
+      level={SkeletonLevel.CARD}
+      height={typeof height === 'number' ? height : 300}
+      customProps={{ showProgress: true }}
+    />
+  );
 }
 
 /**
@@ -216,7 +222,13 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
           // Chúng ta đã xử lý lỗi MIME type ngay trong fallback
         }}
       >
-        <Suspense fallback={fallback || <LoadingFallback height={height || 300} showSpinner={true} />}>
+        <Suspense fallback={fallback || (
+          <AppSkeleton
+            level={SkeletonLevel.CARD}
+            height={typeof height === 'number' ? height : 300}
+            customProps={{ showProgress: true }}
+          />
+        )}>
           <LazyComponent {...componentProps} />
         </Suspense>
       </ErrorBoundary>

@@ -212,10 +212,16 @@ function MainContent() {
 
   if (loading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-primary/20 mb-4"></div>
-          <div className="h-4 w-24 bg-muted rounded"></div>
+      <div className="h-screen w-full flex items-center justify-center p-6">
+        <div className="w-full max-w-4xl">
+          <AppSkeleton
+            level={SkeletonLevel.PAGE}
+            className="py-6"
+            customProps={{ 
+              showTabs: true, 
+              tabCount: 3 
+            }}
+          />
         </div>
       </div>
     );
@@ -235,11 +241,18 @@ function MainContent() {
         transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
       }}
     >
-      {/* Hiển thị mini loader khi trang đang chuyển - chỉ thanh nhỏ ở trên cùng */}
-      {!isPageReady && !prefersReducedMotion && (
-        <div className="fixed inset-x-0 top-0 z-50 h-0.5 overflow-hidden">
-          <div className="w-full h-full bg-primary/10 relative">
-            <div className="absolute inset-y-0 left-0 bg-primary animate-indeterminate-progress w-full"></div>
+      {/* Hiển thị skeleton loader khi trang đang chuyển */}
+      {!isPageReady && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 flex items-center justify-center">
+          <div className="w-full max-w-4xl p-6">
+            <AppSkeleton
+              level={SkeletonLevel.PAGE}
+              className="py-6"
+              customProps={{ 
+                showTabs: true, 
+                tabCount: 3 
+              }}
+            />
           </div>
         </div>
       )}
