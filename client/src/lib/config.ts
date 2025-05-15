@@ -104,6 +104,16 @@ export const UI_CONFIG = {
     DECIMAL_PLACES: 2,
     CURRENCY_DECIMAL_PLACES: 2,
     PERCENTAGE_DECIMAL_PLACES: 1,
+    PIPS_DECIMAL_PLACES: 1,
+    PROFIT_LOSS_DECIMAL_PLACES: 2,
+    RISK_REWARD_DECIMAL_PLACES: 2,
+    // Specific formatting for price by currency pair
+    PRICE_DECIMAL_PLACES: {
+      DEFAULT: 5,      // Default for most forex pairs
+      XAUUSD: 2,       // Gold
+      USDJPY: 3,       // JPY pairs
+      JPY_PAIRS: 3,    // Other JPY pairs
+    },
   },
   // Text strings
   TEXT: {
