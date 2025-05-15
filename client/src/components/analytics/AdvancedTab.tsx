@@ -85,7 +85,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
         balance: runningBalance,
         profitLoss: trade.profitLoss || 0,
         drawdown: currentDrawdown,
-        drawdownPercent: formatPercentage(currentDrawdownPercent, 2)
+        drawdownPercent: formatPercentage(currentDrawdownPercent, { maximumFractionDigits: 2 })
       };
     });
     
