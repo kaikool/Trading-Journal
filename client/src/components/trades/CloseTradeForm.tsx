@@ -508,7 +508,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                         previewResult.profitLoss < 0 ? "text-destructive" : "",
                         previewResult.profitLoss === 0 ? "text-warning" : ""
                       )}>
-                        {formatPips(previewResult.pips)}
+                        {formatTradePips(previewResult.pips)}
                       </div>
                     )}
                   </div>
@@ -555,7 +555,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                             previewResult.profitLoss < 0 ? "text-destructive" : "",
                             previewResult.profitLoss === 0 ? "text-warning" : ""
                           )}>
-                            {formatProfitLoss(previewResult.profitLoss)}
+                            {formatTradeProfit(previewResult.profitLoss)}
                           </div>
                         </div>
 
@@ -570,7 +570,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                             previewResult.profitLoss < 0 ? "text-destructive" : "",
                             previewResult.profitLoss === 0 ? "text-warning" : ""
                           )}>
-                            {formatPips(previewResult.pips)}
+                            {formatTradePips(previewResult.pips)}
                           </div>
                         </div>
                       </div>
