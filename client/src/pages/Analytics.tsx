@@ -166,7 +166,7 @@ export default function Analytics() {
       console.log("Kết quả ánh xạ:", { strategyId, mappedName: strategy });
       
       if (!strategyData[strategyId]) {
-        strategyData[strategyId] = { strategy, trades: 0, wins: 0, losses: 0, breakEven: 0, netProfit: 0 };
+        strategyData[strategyId] = { strategyId, strategy, trades: 0, wins: 0, losses: 0, breakEven: 0, netProfit: 0 };
       }
       strategyData[strategyId].trades++;
       // Công thức từ forex-calculator.ts: pip > 0 là thắng, pip < 0 là thua, pip = 0 là hòa
@@ -241,8 +241,16 @@ export default function Analytics() {
         ...Array(data.breakEven || 0).fill({ pips: 0 }) // Trades hòa (pip = 0)
       ];
       
+      // Tìm tên chiến lược từ danh sách strategies đã tải
+      const strategyName = strategies.find(s => s.id === data.strategyId)?.name;
+      
       return {
-        ...data,
+        strategy: strategyName || data.strategy, // Ưu tiên tên từ danh sách strategies
+        trades: data.trades,
+        wins: data.wins,
+        losses: data.losses,
+        breakEven: data.breakEven || 0,
+        netProfit: data.netProfit,
         // Sử dụng hàm calculateWinRate từ forex-calculator.ts cho tính nhất quán
         winRate: calculateWinRate(tempTrades),
         value: Math.abs(data.netProfit) // Cho biểu đồ
@@ -351,7 +359,7 @@ export default function Analytics() {
       disciplineMetrics,
       trades: closedTrades
     };
-  }, [trades, userData]);
+  }, [trades, userData, strategies]);
 
   // Sử dụng hàm calculateWinRate đã được định nghĩa trong forex-calculator.ts
   // Không định nghĩa lại ở đây để đảm bảo tính nhất quán
