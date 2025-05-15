@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
+import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -244,11 +246,13 @@ function MainContent() {
       
       <ErrorBoundary>
         <Suspense fallback={
-          <div className="flex items-center justify-center h-[70vh]">
-            <div className="flex flex-col items-center gap-2">
-              <Icons.ui.spinner className="h-7 w-7 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Đang tải...</p>
-            </div>
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-8">
+            <AppSkeleton 
+              level={SkeletonLevel.PAGE}
+              height={600}
+              className="py-6"
+              customProps={{ showTabs: true, tabCount: 4 }}
+            />
           </div>
         }>
           <Switch>
