@@ -88,13 +88,7 @@ export const CHART_CONFIG = {
   }
 }
 
-// Cache configuration
-export const CACHE_CONFIG = {
-  // Default garbage collection time (5 minutes)
-  DEFAULT_GC_TIME: 5 * 60 * 1000,
-  // Default stale time (1 minute)
-  DEFAULT_STALE_TIME: 60 * 1000,
-}
+// Cache configuration đã được di chuyển vào lib/queryClient.ts
 
 // UI configuration
 export const UI_CONFIG = {

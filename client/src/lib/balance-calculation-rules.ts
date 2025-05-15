@@ -120,38 +120,5 @@ export function calculatePnL(initialBalance: number, currentBalance: number, tra
   };
 }
 
-/**
- * Tính Profit Factor dựa trên danh sách giao dịch
- * @param trades Danh sách giao dịch
- * @returns Profit Factor
- */
-export function calculateProfitFactor(trades: any[]): number {
-  // Chỉ tính profit factor trên các giao dịch đã đóng
-  const closedTrades = getClosedTrades(trades);
-  
-  if (closedTrades.length === 0) return 0;
-  
-  const winningTrades = closedTrades.filter(trade => (trade.profitLoss || 0) > 0);
-  const losingTrades = closedTrades.filter(trade => (trade.profitLoss || 0) < 0);
-  
-  const totalProfit = winningTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0);
-  const totalLoss = Math.abs(losingTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0));
-  
-  // Xử lý trường hợp đặc biệt: không có giao dịch thua
-  if (totalLoss === 0) {
-    return totalProfit > 0 ? Number.POSITIVE_INFINITY : 0;
-  }
-  
-  return totalProfit / totalLoss;
-}
-
-/**
- * Định dạng Profit Factor cho hiển thị
- * @param profitFactor Giá trị Profit Factor
- * @returns Chuỗi đã định dạng
- */
-export function formatProfitFactor(profitFactor: number): string {
-  if (!Number.isFinite(profitFactor)) return '∞';
-  if (profitFactor > 999.99) return '>999.99';
-  return profitFactor.toFixed(2);
-}
+// Các hàm tính Profit Factor đã chuyển sang forex-calculator.ts
+// Không còn dùng ở đây nữa để tránh trùng lặp
