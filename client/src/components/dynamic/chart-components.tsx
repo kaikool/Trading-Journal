@@ -6,7 +6,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-import { LoadingFallback } from './LoadingFallback';
+import { AppSkeleton, SkeletonLevel } from '@/components/ui/app-skeleton';
 
 // Các component trực tiếp từ recharts
 export { LineChart, AreaChart, BarChart, PieChart, ComposedChart };
