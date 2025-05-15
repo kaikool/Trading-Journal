@@ -135,4 +135,3 @@ export const EVENT_NAMES = {
   ACHIEVEMENTS_UPDATED: 'achievements:updated'
 };
 
-export default eventBus;

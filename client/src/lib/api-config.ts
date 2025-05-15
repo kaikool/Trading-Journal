@@ -14,4 +14,3 @@ export const ApiEndpoints = {
   base: API_BASE,
 };
 
-export default ApiEndpoints;
