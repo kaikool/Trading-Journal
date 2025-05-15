@@ -287,8 +287,12 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
         updateData.exitImageM15 = exitImageM15Url;
       }
       
-      // Update trade in database
-      await updateTrade(trade.userId, trade.id, updateData);
+      // Update trade in database - sử dụng tham số option để đảm bảo hành vi đóng giao dịch hoạt động đúng
+      await updateTrade(trade.userId, trade.id, updateData, {
+        useBatch: true, // Force sử dụng batch operation để bảo đảm cập nhật đồng bộ
+      });
+      
+      // Log kết quả đóng giao dịch 
       console.log(`Trade closed with result: ${data.result}, pips: ${pips}, P/L: ${profitLoss}`);
       
       // Success notification

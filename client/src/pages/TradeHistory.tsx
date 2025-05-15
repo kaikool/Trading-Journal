@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useDataCache } from "@/contexts/DataCacheContext";
 import { auth } from "@/lib/firebase";
 import { debug, logError } from "@/lib/debug";
+import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 
 
 import { motion, AnimatePresence } from "framer-motion";
