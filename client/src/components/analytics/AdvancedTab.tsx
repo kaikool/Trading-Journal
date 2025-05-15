@@ -179,7 +179,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
       return {
         id: trade.id,
         pair: trade.pair,
-        ratio: parseFloat(ratio.toFixed(2)),
+        ratio: Number(ratio.toFixed(2)), // Giữ nguyên giá trị số cho biểu đồ
         result: (trade.profitLoss || 0) > 0 ? 'win' : 'loss',
         profitLoss: trade.profitLoss || 0
       };
@@ -187,7 +187,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
     
     // Calculate average risk:reward ratio
     const totalRatio = scatterData.reduce((sum, item) => sum + item.ratio, 0);
-    const averageRatio = parseFloat((totalRatio / scatterData.length).toFixed(2));
+    const averageRatio = Number((totalRatio / scatterData.length).toFixed(2)); // Giữ số thập phân hợp lý cho tính toán
     
     return { scatterData, averageRatio };
   }, [trades, timestamp]);
@@ -221,7 +221,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
           type: 'positive',
           icon: <Icons.ui.success className="h-4 w-4" />,
           title: 'Most Profitable Trading Day',
-          description: `${bestDay.day} shows your highest win rate at ${bestDay.winRate.toFixed(1)}%. Consider allocating more capital or taking more setups on this day.`
+          description: `${bestDay.day} shows your highest win rate at ${formatPercentage(bestDay.winRate)}. Consider allocating more capital or taking more setups on this day.`
         });
       }
       
@@ -230,7 +230,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
           type: 'warning',
           icon: <Icons.ui.warning className="h-4 w-4" />,
           title: 'Least Profitable Trading Day',
-          description: `Your performance on ${worstDay.day} is significantly below average with ${worstDay.winRate.toFixed(1)}% win rate. Consider reducing position sizes or avoiding trading on this day.`
+          description: `Your performance on ${worstDay.day} is significantly below average with ${formatPercentage(worstDay.winRate)} win rate. Consider reducing position sizes or avoiding trading on this day.`
         });
       }
       
@@ -257,14 +257,14 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
           type: 'warning',
           icon: <Icons.trade.entry className="h-4 w-4" />,
           title: 'Significant Drawdown Risk',
-          description: `Your maximum drawdown of ${cumulativePnLData.maxDrawdownPercent.toFixed(1)}% exceeds recommended limits. Consider reducing position sizes and implementing stricter stop-loss discipline.`
+          description: `Your maximum drawdown of ${formatPercentage(cumulativePnLData.maxDrawdownPercent)} exceeds recommended limits. Consider reducing position sizes and implementing stricter stop-loss discipline.`
         });
       } else if (cumulativePnLData.maxDrawdownPercent < 10 && trades.length >= 15) {
         insights.push({
           type: 'positive',
           icon: <Icons.ui.shieldCheck className="h-4 w-4" />,
           title: 'Effective Risk Management',
-          description: `You've maintained a reasonable maximum drawdown of ${cumulativePnLData.maxDrawdownPercent.toFixed(1)}%, indicating good risk management practices. Continue your disciplined approach.`
+          description: `You've maintained a reasonable maximum drawdown of ${formatPercentage(cumulativePnLData.maxDrawdownPercent)}, indicating good risk management practices. Continue your disciplined approach.`
         });
       }
     }
@@ -317,7 +317,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
             type: 'suggestion',
             icon: <Icons.analytics.lightbulb className="h-4 w-4" />,
             title: 'Higher R:R Trade Management',
-            description: `Your win rate on trades with R:R above 1:2 is ${highRRWinRate.toFixed(1)}%, which is lower than on your smaller target trades. Consider using partial profit taking to secure more wins on these trades.`
+            description: `Your win rate on trades with R:R above 1:2 is ${formatPercentage(highRRWinRate)}, which is lower than on your smaller target trades. Consider using partial profit taking to secure more wins on these trades.`
           });
         }
       }
@@ -404,7 +404,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
           </p>
           <p className="text-xs flex items-center justify-between gap-2">
             <span className="text-muted-foreground">Win Rate:</span>
-            <span className="font-medium">{data.winRate.toFixed(1)}%</span>
+            <span className="font-medium">{formatPercentage(data.winRate)}</span>
           </p>
           <p className={`text-xs flex items-center justify-between gap-2 ${data.profitLoss >= 0 ? 'text-success' : 'text-destructive'}`}>
             <span className="text-muted-foreground">Net P/L:</span>
@@ -523,7 +523,7 @@ export default function AdvancedTab({ data }: AdvancedTabProps) {
             </CardTitle>
             
             <Badge variant="outline" className="px-3 py-1 bg-primary/5 text-xs font-medium">
-              Max DD: {cumulativePnLData.maxDrawdownPercent.toFixed(1)}%
+              Max DD: {formatPercentage(cumulativePnLData.maxDrawdownPercent)}
             </Badge>
           </div>
           <CardDescription>
