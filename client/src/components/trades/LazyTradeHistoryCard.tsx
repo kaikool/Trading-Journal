@@ -13,8 +13,7 @@ import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/utils/format-number";
-import { formatPriceForPair } from "@/utils/format-number";
+import { formatCurrency, formatPriceForPair, formatPips, formatProfitLoss } from "@/utils/format-number";
 import { formatTimestamp } from "@/lib/format-timestamp";
 import { useInView } from "react-intersection-observer";
 import LazyCloseTradeForm from "./LazyCloseTradeForm";
@@ -455,7 +454,7 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                           (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> :
                            <Icons.analytics.trendingDown className="h-3.5 w-3.5" />)
                         }
-                        {formatCurrency(profitLoss)}
+                        {formatProfitLoss(profitLoss, { showPlusSign: true })}
                       </CardValue>
                     )}
                     

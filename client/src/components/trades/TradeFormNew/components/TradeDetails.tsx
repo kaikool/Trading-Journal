@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
+import { formatRiskReward } from '@/utils/format-number';
 
 /**
  * TradeDetails Component
@@ -44,8 +45,10 @@ export function TradeDetails({
   // Get pair from form for price button
   const selectedPair = form.watch("pair");
   
-  // Format risk:reward ratio for display
-  const formattedRatio = riskRewardRatio !== undefined ? `${riskRewardRatio.toFixed(2)}:1` : "0:1";
+  // Format risk:reward ratio for display using formatRiskReward utility
+  const formattedRatio = riskRewardRatio !== undefined 
+    ? formatRiskReward(riskRewardRatio, { formatAsRatio: true, minimumFractionDigits: 2 }) 
+    : "1:0";
   
   // Animation variants
   const containerAnimation = {
