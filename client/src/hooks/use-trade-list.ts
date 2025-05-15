@@ -237,24 +237,20 @@ export function useTradeList(options: {
     // Tạo observer theo chuẩn TradeChangeObserver
     const observer: TradeChangeObserver = {
       onTradesChanged: (action, tradeId) => {
-        // Thêm debounce đơn giản để tránh cập nhật quá nhanh
+        // Loại bỏ debounce để đảm bảo cập nhật ngay lập tức cho mọi hành động
+        // Chỉ giữ lại logging để theo dõi
         const now = Date.now();
-        const timeSinceLastUpdate = now - lastTradesUpdateRef.current;
-        
-        if (timeSinceLastUpdate < 100 && action !== 'close') {
-          // Bỏ qua debounce cho các sự kiện đóng giao dịch để đảm bảo phản hồi ngay lập tức
-          debug("[TradeList] Debouncing update, too frequent");
-          return;
-        }
-        
         lastTradesUpdateRef.current = now;
         
-        debug(`[TradeList] Trade changed (${action}), refreshing data`);
+        debug(`[TradeList] Trade changed (${action}), refreshing data immediately`);
         
-        // Luôn sử dụng chung một cách tiếp cận nhất quán
-        // TradeUpdateService đã thực hiện invalidateQueries, chỉ cần gọi refetch
-        // để lấy dữ liệu mới nhất từ backend
-        refetch();
+        // Sử dụng Promise.resolve().then để đảm bảo thực hiện vào cuối event loop
+        // Điều này giúp giải quyết vấn đề racing condition giữa invalidation và refetch
+        Promise.resolve().then(() => {
+          // TradeUpdateService đã thực hiện invalidateQueries, nhưng chúng ta cần đảm bảo
+          // refetch được gọi sau khi invalidation đã hoàn tất
+          refetch();
+        });
       }
     };
     
