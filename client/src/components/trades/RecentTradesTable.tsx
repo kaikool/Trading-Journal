@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { collection, query, where, orderBy, limit } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, getTrades } from "@/lib/firebase";
 import { firebaseListenerService } from "@/services/firebase-listener-service";
 import { debug, logError } from "@/lib/debug";
 import { useLocation } from "wouter";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { CurrencyPair, Direction } from "@/lib/forex-calculator";
 import { Trade } from "@/types";
+import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,80 +44,94 @@ export default function RecentTradesTable({
   // Kết hợp giữa loading prop được truyền vào và local loading state
   const isLoading = initialLoading || localLoading;
 
+  // Dùng ref để giảm thiểu số lần cập nhật không cần thiết
+  const lastUpdateRef = useRef(0);
+  
+  // Hàm để tải giao dịch đã đóng gần đây
+  const fetchRecentClosedTrades = async () => {
+    if (!userId) return;
+    
+    try {
+      setLocalLoading(true);
+      
+      // Sử dụng hàm getTrades từ firebase.ts
+      const allTrades = await getTrades(userId);
+      
+      // Lọc ra các giao dịch đã đóng và sắp xếp theo thời gian đóng
+      const closedTrades = allTrades
+        .filter(trade => trade.closeDate)
+        .sort((a, b) => {
+          const getTimestamp = (date: any) => {
+            if (typeof date === 'object' && date && 'toDate' in date) {
+              return date.toDate().getTime();
+            }
+            return new Date(date).getTime();
+          };
+          
+          return getTimestamp(b.closeDate) - getTimestamp(a.closeDate);
+        })
+        .slice(0, tradeLimit) as Trade[];
+      
+      debug(`RecentTradesTable: Fetched ${closedTrades.length} recent closed trades`);
+      setTrades(closedTrades);
+      setLocalLoading(false);
+    } catch (error) {
+      logError("Error fetching recent closed trades:", error);
+      setLocalLoading(false);
+    }
+  };
+  
   useEffect(() => {
     if (!userId) {
       setLocalLoading(false);
       return;
     }
     
-    try {
-      // Sử dụng memoization và giới hạn truy vấn để giảm tải Firebase
-      const tradesRef = collection(db, "users", userId, "trades");
-      const q = query(
-        tradesRef,
-        where("closeDate", "!=", null),
-        orderBy("closeDate", "desc"),
-        limit(tradeLimit)
-      );
-      
-      // Cải thiện hiệu suất với việc giảm tần suất cập nhật UI
-      // Nó sẽ hạn chế hiển thị những cập nhật không cần thiết
-      let debounceTimeout: NodeJS.Timeout | null = null;
-      
-      // Sử dụng onTradesSnapshot từ FirebaseListenerService
-      // Tạo một random ID cho listener này để tránh xung đột
-      const listenerId = `recent_closed_trades_${userId}_${tradeLimit}_${Date.now()}`;
-      
-      // Thay vì thiết lập query trực tiếp, sử dụng helper method
-      const unsubscribe = firebaseListenerService.onTradesSnapshot(
-        userId,
-        {
-          callback: (trades) => {
-            // Clear timeout trước đó nếu có
-            if (debounceTimeout) clearTimeout(debounceTimeout);
-            
-            // Lọc ra các giao dịch đã đóng và sắp xếp theo thời gian đóng
-            const closedTrades = trades
-              .filter(trade => trade.closeDate)
-              .sort((a, b) => {
-                const getTimestamp = (date: any) => {
-                  if (typeof date === 'object' && date && 'toDate' in date) {
-                    return date.toDate().getTime();
-                  }
-                  return new Date(date).getTime();
-                };
-                
-                return getTimestamp(b.closeDate) - getTimestamp(a.closeDate);
-              })
-              .slice(0, tradeLimit) as Trade[];
-            
-            // Debounce để tránh render quá thường xuyên khi có nhiều sự kiện liên tiếp
-            debounceTimeout = setTimeout(() => {
-              debug("RecentTradesTable: Realtime update received, trades:", closedTrades.length);
-              setTrades(closedTrades);
-              setLocalLoading(false);
-            }, 150); // Debounce 150ms
-          },
-          errorCallback: (error) => {
-            logError("Error listening to recent trades:", error);
-            setLocalLoading(false);
-          }
+    // Tải dữ liệu ban đầu
+    fetchRecentClosedTrades();
+    
+    // Đăng ký observer với TradeUpdateService
+    const observer: TradeChangeObserver = {
+      onTradesChanged: (action, tradeId) => {
+        // Sử dụng ref để debounce các cập nhật quá nhanh
+        const now = Date.now();
+        if (now - lastUpdateRef.current < 200) {
+          debug("[RecentTradesTable] Debouncing update, too frequent");
+          return;
         }
-      );
-      
-      // Cleanup function đơn giản hơn với FirebaseListenerService
-      return () => {
-        // Clear timeout nếu có
-        if (debounceTimeout) clearTimeout(debounceTimeout);
         
-        // Hủy đăng ký listener
-        unsubscribe();
-        debug(`Unsubscribed from listener ${listenerId}`);
-      };
-    } catch (error) {
-      console.error("Error setting up recent trades listener:", error);
-      setLocalLoading(false);
-    }
+        lastUpdateRef.current = now;
+        debug(`[RecentTradesTable] Received update notification (${action}), refreshing data`);
+        
+        // Chỉ tải lại dữ liệu khi có tác động đến giao dịch đã đóng
+        // Đặc biệt quan tâm đến việc đóng giao dịch ('close')
+        fetchRecentClosedTrades();
+      }
+    };
+    
+    // Đăng ký observer
+    const unregister = tradeUpdateService.registerObserver(observer);
+    
+    // Vẫn duy trì Firebase listener để đồng bộ với phần còn lại của ứng dụng
+    // Nhưng không sử dụng callback để tránh cập nhật dữ liệu khi không cần thiết
+    const firebaseUnsubscribe = firebaseListenerService.onTradesSnapshot(
+      userId,
+      {
+        callback: () => {
+          // Không làm gì, cập nhật sẽ được xử lý qua TradeUpdateService
+        },
+        errorCallback: (error) => {
+          logError("Error in Firebase listener:", error);
+        }
+      }
+    );
+    
+    // Cleanup function - hủy đăng ký cả hai listeners
+    return () => {
+      unregister();
+      firebaseUnsubscribe();
+      debug(`[RecentTradesTable] Unsubscribed from TradeUpdateService and Firebase`);
+    };
   }, [userId, tradeLimit]);
 
   // Đã xóa hàm getStatusBadgeStyle thừa vì đã sử dụng TradeStatusBadge
