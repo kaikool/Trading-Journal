@@ -48,6 +48,7 @@ import {
 
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { Badge } from "@/components/ui/badge";
 // Removed pagination imports
 
