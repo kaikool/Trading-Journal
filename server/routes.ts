@@ -6,7 +6,6 @@ import {
   insertUserSchema, 
   insertTradeSchema
 } from "@shared/schema";
-import { registerBatchEndpoints } from "./batch-api";
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -210,10 +209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  // Batch API endpoints removed as they were not implemented
 
-  // Đăng ký batch API endpoints
-  registerBatchEndpoints(app);
-  
   const httpServer = createServer(app);
   return httpServer;
 }

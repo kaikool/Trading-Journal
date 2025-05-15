@@ -25,49 +25,14 @@ function loadEnvironmentVariables() {
       log("No .env files found. Using existing environment variables.", "startup");
     }
     
-    // Kiểm tra các biến môi trường quan trọng
-    verifyEnvironment();
+    // Không cần kiểm tra API keys nữa
   } catch (error) {
     log(`Error loading environment: ${error instanceof Error ? error.message : String(error)}`, "startup");
     // Tiếp tục chạy với biến môi trường mặc định
   }
 }
 
-// Kiểm tra và log các cảnh báo về cấu hình thiếu
-function verifyEnvironment() {
-  const requiredApiKeys = {
-    // Đã xóa GEMINI_API_KEY theo yêu cầu
-  };
-  
-  const optionalApiKeys = {
-    // Để trống, không còn phụ thuộc vào API keys bên ngoài
-  };
-  
-  // Kiểm tra các API key bắt buộc
-  let missingRequired = false;
-  Object.entries(requiredApiKeys).forEach(([key, feature]) => {
-    if (!process.env[key]) {
-      log(`⚠️ MISSING REQUIRED API KEY: ${key} for ${feature}. Some features will not work.`, "startup");
-      missingRequired = true;
-    }
-  });
-  
-  // Kiểm tra các API key tùy chọn
-  const missingOptionalKeys: string[] = [];
-  Object.entries(optionalApiKeys).forEach(([key, _feature]) => {
-    if (!process.env[key]) {
-      missingOptionalKeys.push(key);
-    }
-  });
-  
-  // Không cần kiểm tra API keys bên ngoài nữa
-  
-  // Hướng dẫn thiết lập trong môi trường phát triển
-  if (missingRequired && process.env.NODE_ENV !== 'production') {
-    log("\n👉 Please run 'node scripts/setup-api-keys.js' to configure your API keys.", "startup");
-    log("👉 Or see HUONG-DAN-CAI-DAT-API.md for manual setup instructions.\n", "startup");
-  }
-}
+// Ứng dụng không còn phụ thuộc vào API keys bên ngoài nữa
 
 // Tải biến môi trường trước khi bắt đầu ứng dụng
 loadEnvironmentVariables();

@@ -152,13 +152,7 @@ const storage = {
 // Tạo instance MemoryFirestore để thay thế Firestore
 const db = new MemoryFirestore();
 
-// Hàm khởi tạo dữ liệu mẫu
-async function initializeSampleData() {
-  // Không cần khởi tạo dữ liệu mẫu cho AI nữa
-}
-
-// Chạy initialization
-initializeSampleData().catch(console.error);
+// MemoryFirestore không cần dữ liệu mẫu nữa
 
 
 

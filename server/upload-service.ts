@@ -93,22 +93,6 @@ const verifyFirebaseToken = async (req: express.Request, res: express.Response, 
   }
 };
 
-// Legacy Firebase Admin initialization - giữ lại để hỗ trợ Firebase Auth
-function initFirebaseAuth() {
-  try {
-    if (!admin.apps.length) {
-      admin.initializeApp({
-        credential: admin.credential.applicationDefault()
-      });
-      log('Firebase Admin initialized for authentication', 'upload-service');
-    } else {
-      log('Firebase Admin already initialized, reusing existing instance', 'upload-service');
-    }
-    return true;
-  } catch (error) {
-    log(`ERROR: Firebase Admin initialization failed: ${error instanceof Error ? error.message : String(error)}`, 'upload-service');
-    return false;
-  }
-}
+// Firebase Admin đã được khởi tạo trong firebase-admin.ts
 
-export { initFirebaseAuth, upload, verifyFirebaseToken };
+export { upload, verifyFirebaseToken };
