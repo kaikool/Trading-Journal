@@ -411,34 +411,14 @@ export default function Analytics() {
       {/* KPI Row Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="border rounded-lg p-4 shadow-sm h-[120px] animate-pulse">
-            <div className="flex items-center justify-between">
-              <div className="h-4 w-24 bg-muted rounded mb-3"></div>
-              <div className="h-8 w-8 rounded-full bg-muted"></div>
-            </div>
-            <div className="h-6 w-20 bg-muted rounded mt-2 mb-4"></div>
-            <div className="h-3 w-32 bg-muted/50 rounded"></div>
-          </div>
+          <AppSkeleton key={i} level={SkeletonLevel.STATS} height={120} />
         ))}
       </div>
       
       {/* Chart Skeletons */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="border rounded-lg p-5 shadow-sm animate-pulse">
-          <div className="h-5 w-36 bg-muted rounded mb-2"></div>
-          <div className="h-3 w-48 bg-muted/50 rounded mb-6"></div>
-          <div className="h-[220px] bg-muted/30 rounded-lg flex items-center justify-center">
-            <Icons.ui.spinner className="h-6 w-6 animate-spin text-muted-foreground/40" />
-          </div>
-        </div>
-        
-        <div className="border rounded-lg p-5 shadow-sm animate-pulse">
-          <div className="h-5 w-36 bg-muted rounded mb-2"></div>
-          <div className="h-3 w-48 bg-muted/50 rounded mb-6"></div>
-          <div className="h-[220px] bg-muted/30 rounded-lg flex items-center justify-center">
-            <Icons.ui.spinner className="h-6 w-6 animate-spin text-muted-foreground/40" />
-          </div>
-        </div>
+        <AppSkeleton level={SkeletonLevel.CHART} height={220} customProps={{ showControls: true }} />
+        <AppSkeleton level={SkeletonLevel.CHART} height={220} customProps={{ showControls: true }} />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useUserDataQuery } from "@/hooks/use-user-data-query";
 import { Icons } from "@/components/icons/icons";
 
@@ -17,10 +17,10 @@ export default function StrategiesPage() {
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6">
       {/* Main content */}
       {isLoading ? (
-        <LoadingFallback height={400} simple showSpinner={true} />
+        <AppSkeleton level={SkeletonLevel.PAGE} height={400} />
       ) : (
         <div className="space-y-8">
-          <Suspense fallback={<LoadingFallback height={400} showSpinner={true} />}>
+          <Suspense fallback={<AppSkeleton level={SkeletonLevel.CARD} height={400} />}>
             <StrategiesManagement />
           </Suspense>
         </div>

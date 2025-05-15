@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from "react";
-import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { Icons } from "@/components/icons/icons";
 import { db } from "@/lib/firebase";
@@ -71,10 +71,10 @@ export default function AchievementsPage() {
       
       {/* Main content */}
       {isLoading ? (
-        <LoadingFallback height={400} simple showSpinner={true} />
+        <AppSkeleton level={SkeletonLevel.PAGE} height={400} />
       ) : (
         <div className="space-y-8">
-          <Suspense fallback={<LoadingFallback height={400} showSpinner={true} />}>
+          <Suspense fallback={<AppSkeleton level={SkeletonLevel.LIST_ITEM} height={400} />}>
             <AchievementsTab
               showNotifications={showNotifications}
               onToggleNotifications={setShowNotifications}
