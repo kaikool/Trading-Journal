@@ -211,8 +211,8 @@ function MainContent() {
 
   if (loading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center p-6">
-        <div className="w-full max-w-4xl">
+      <div className="h-screen w-full flex items-center justify-center">
+        <div className="w-full max-w-5xl">
           <AppSkeleton
             level={SkeletonLevel.PAGE}
             className="py-6"
@@ -243,7 +243,7 @@ function MainContent() {
       {/* Hiển thị skeleton loader khi trang đang chuyển */}
       {!isPageReady && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 flex items-center justify-center">
-          <div className="w-full max-w-4xl p-6">
+          <div className="w-full max-w-5xl">
             <AppSkeleton
               level={SkeletonLevel.PAGE}
               className="py-6"

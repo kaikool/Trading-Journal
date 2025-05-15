@@ -154,7 +154,7 @@ export function AppSkeleton({
 
   // Page Skeleton (toàn trang)
   const renderPageSkeleton = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 px-6 sm:px-8 md:px-10 safe-area-x">
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">
         <div>
