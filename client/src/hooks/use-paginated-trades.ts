@@ -60,11 +60,12 @@ export function usePaginatedTrades(options: {
       debug(`[PaginatedTrades] Fetched ${result.trades.length} trades, total=${result.totalCount}`);
       
       // Trả về kết quả chuẩn
+      const hasMorePages = result.trades.length === pageSize;
       return {
         trades: result.trades as Trade[],
         lastDoc: result.lastDoc,
         totalCount: result.totalCount,
-        hasMore: result.hasMore
+        hasMore: hasMorePages
       };
     } catch (error) {
       logError('[PaginatedTrades] Error fetching paginated trades:', error);

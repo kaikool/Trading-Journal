@@ -238,12 +238,8 @@ export function DataCacheProvider({ children }: { children: ReactNode }) {
                 // If we can't find the trade or its timestamp changed
                 // Safely check for Firestore Timestamp objects vs serialized dates
                 if (!oldTrade || 
-                    // Handle both Firestore Timestamp and serialized dates
-                    (typeof newTrade.updatedAt?.toDate === 'function' && 
-                     typeof oldTrade.updatedAt?.toDate !== 'function') ||
-                    // Handle string comparison for cache objects
-                    (typeof newTrade.updatedAt === 'string' && 
-                     newTrade.updatedAt !== oldTrade.updatedAt)) {
+                    // Handle id mismatch - this should catch most changes
+                    newTrade.id !== oldTrade.id) {
                   tradesChanged = true;
                 }
               }
