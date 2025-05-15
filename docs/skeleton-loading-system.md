@@ -1,71 +1,44 @@
-# Hệ Thống Skeleton Loading Chuẩn Hóa
+# Hệ Thống Skeleton Loading UI
 
-## 1. Giới thiệu
+## Giới thiệu
 
-Tài liệu này mô tả về hệ thống loading mới dựa trên Skeleton đã được chuẩn hóa trong Forex Trading Journal. Hệ thống được thiết kế để loại bỏ việc sử dụng nhiều loại loading (spinner, text, shimmer...) khác nhau và thống nhất trải nghiệm người dùng khi loading.
+Tài liệu này mô tả việc áp dụng và sử dụng hệ thống Skeleton Loading UI chuẩn hóa trong ứng dụng Forex Trading Journal. Hệ thống này được thiết kế để thay thế tất cả các loại loading indicators hiện có bằng một giải pháp nhất quán, dễ bảo trì và cải thiện trải nghiệm người dùng.
 
-## 2. Nguyên tắc thiết kế
+## Tổng quan về hệ thống
 
-1. **Thống nhất**: Chỉ sử dụng Skeleton component, loại bỏ hoàn toàn spinner, text "Loading..." và các animation khác không nhất quán.
-2. **Cấu trúc**: Sử dụng các cấp độ skeleton (levels) để phù hợp với từng use case.
-3. **Tái sử dụng**: Thiết kế để có thể tái sử dụng tối đa, hạn chế việc tạo skeleton riêng cho từng component.
-4. **Tính linh hoạt**: Hỗ trợ tùy chỉnh qua props, cho phép điều chỉnh theo ngữ cảnh.
-5. **UX/UI**: Skeleton giữ layout và spacing đúng với thiết kế, tránh shift layout khi chuyển từ skeleton sang dữ liệu thực.
+### AppSkeleton Component
 
-## 3. Cấu trúc hệ thống
+`AppSkeleton` là component trung tâm của hệ thống loading mới. Nó cung cấp một giao diện thống nhất cho tất cả các trường hợp loading UI trong ứng dụng.
 
-### 3.1. Core Components
+Các đặc điểm chính:
+- **Enum-based level system**: Cung cấp các skeleton khác nhau cho các ngữ cảnh khác nhau
+- **Consistent styling**: Sử dụng Tailwind CSS với animation chuẩn hóa
+- **Customizable**: Hỗ trợ tùy chỉnh kích thước, số lượng và các thuộc tính khác
+- **Contextual**: Mỗi level skeleton được thiết kế phù hợp với loại nội dung cụ thể
 
-- **Skeleton (base)**: Component cơ bản từ UI library, sử dụng animation `animate-pulse`.
-- **AppSkeleton**: Component chuẩn hóa, hỗ trợ các cấp độ skeleton khác nhau.
+### Các level skeleton hiện có
 
-### 3.2. Cấp độ Skeleton (SkeletonLevel)
-
-Hệ thống sử dụng một enum để xác định cấp độ skeleton:
-
-```typescript
+```tsx
 export enum SkeletonLevel {
-  LIST_ITEM = "list_item",  // Dành cho item trong danh sách 
-  CARD = "card",            // Dành cho card hoặc component nhỏ
-  FORM = "form",            // Dành cho form
-  PAGE = "page",            // Dành cho toàn trang
-  CHART = "chart",          // Dành cho biểu đồ
-  TABLE = "table",          // Dành cho bảng dữ liệu
-  STATS = "stats",          // Dành cho thống kê
-  AVATAR = "avatar",        // Dành cho avatar và hình ảnh
+  LIST_ITEM = "list_item",  // Cho các item trong danh sách
+  CARD = "card",            // Cho các card UI
+  FORM = "form",            // Cho các form dữ liệu
+  PAGE = "page",            // Cho toàn trang
+  CHART = "chart",          // Cho biểu đồ và đồ thị
+  TABLE = "table",          // Cho bảng dữ liệu
+  STATS = "stats",          // Cho thống kê số liệu
+  AVATAR = "avatar",        // Cho avatar và hình ảnh profile
 }
 ```
 
-### 3.3. Cách sử dụng
+## Hướng dẫn sử dụng
 
-```jsx
-// Cơ bản với cấp độ
-<AppSkeleton level={SkeletonLevel.CARD} />
+### Cách triển khai cơ bản
 
-// Với tùy chỉnh chiều cao
-<AppSkeleton level={SkeletonLevel.PAGE} height={600} />
+```tsx
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
-// Với các tùy chỉnh đặc thù cho loại skeleton
-<AppSkeleton 
-  level={SkeletonLevel.CHART} 
-  customProps={{ 
-    showControls: true 
-  }} 
-/>
-
-// Với số lượng items (cho LIST_ITEM và TABLE)
-<AppSkeleton 
-  level={SkeletonLevel.LIST_ITEM} 
-  count={5} 
-/>
-```
-
-## 4. Use Cases và Best Practices
-
-### 4.1. React Query Loading
-
-```jsx
-// Trong component sử dụng React Query
+// Trong component của bạn
 function MyComponent() {
   const { data, isLoading } = useQuery({ ... });
   
@@ -73,116 +46,238 @@ function MyComponent() {
     return <AppSkeleton level={SkeletonLevel.CARD} />;
   }
   
-  return <div>{data}</div>;
+  return (
+    // Nội dung thực
+  );
 }
 ```
 
-### 4.2. Route-Level Loading
+### Sử dụng với Suspense
 
-```jsx
-// Trong App.tsx
-<Suspense fallback={
-  <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-8">
-    <AppSkeleton level={SkeletonLevel.PAGE} />
-  </div>
-}>
-  <Route ... />
-</Suspense>
+```tsx
+import { Suspense } from "react";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
+
+// Trong component cha
+function ParentComponent() {
+  return (
+    <Suspense fallback={<AppSkeleton level={SkeletonLevel.PAGE} />}>
+      <LazyLoadedComponent />
+    </Suspense>
+  );
+}
 ```
 
-### 4.3. Lazy Loading Components
+### Tùy chỉnh skeleton
 
-```jsx
-// Với React.lazy và Suspense
-const LazyComponent = lazy(() => import('./MyComponent'));
+```tsx
+// Đặt chiều cao cụ thể
+<AppSkeleton level={SkeletonLevel.CHART} height={400} />
 
-function MyContainer() {
+// Hiển thị nhiều items
+<AppSkeleton level={SkeletonLevel.LIST_ITEM} count={5} />
+
+// Thêm class CSS
+<AppSkeleton level={SkeletonLevel.CARD} className="border-2 rounded-xl" />
+
+// Các tùy chọn nâng cao
+<AppSkeleton 
+  level={SkeletonLevel.PAGE} 
+  customProps={{ 
+    showTabs: true, 
+    tabCount: 3,
+    showControls: true 
+  }} 
+/>
+```
+
+## Các Pattern loading phổ biến
+
+### 1. Component loading với React Query
+
+```tsx
+function DataComponent() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['data'],
+    queryFn: fetchData
+  });
+  
+  if (isLoading) {
+    return <AppSkeleton level={SkeletonLevel.CARD} />;
+  }
+  
+  if (error) {
+    return <ErrorComponent error={error} />;
+  }
+  
+  return <DataDisplay data={data} />;
+}
+```
+
+### 2. Form loading
+
+```tsx
+function MyForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  if (isSubmitting) {
+    return <AppSkeleton level={SkeletonLevel.FORM} count={3} />;
+  }
+  
   return (
-    <Suspense fallback={
-      <AppSkeleton level={SkeletonLevel.CARD} height={300} />
-    }>
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+    </form>
+  );
+}
+```
+
+### 3. Lazy loading
+
+```tsx
+const LazyComponent = lazy(() => import('./HeavyComponent'));
+
+function MyComponent() {
+  return (
+    <Suspense fallback={<AppSkeleton level={SkeletonLevel.PAGE} />}>
       <LazyComponent />
     </Suspense>
   );
 }
 ```
 
-### 4.4. Form Loading
+### 4. Conditionally show skeleton dựa trên dữ liệu
 
-```jsx
-// Trong form khi submitting
-{isSubmitting && (
-  <AppSkeleton 
-    level={SkeletonLevel.FORM} 
-    count={formFieldCount} 
-  />
-)}
+```tsx
+function DataList({ data, isLoading }) {
+  // Showing skeleton when loading or when data is empty
+  if (isLoading || !data || data.length === 0) {
+    return <AppSkeleton level={SkeletonLevel.LIST_ITEM} count={5} />;
+  }
+  
+  return (
+    <ul>
+      {data.map(item => (
+        <li key={item.id}>{item.name}</li>
+      ))}
+    </ul>
+  );
+}
 ```
 
-## 5. Chuyển Đổi từ Hệ Thống Cũ
+## Các trường hợp đặc biệt
 
-### 5.1. Từ Spinner sang Skeleton
+### Progress indicators
 
-**Trước:**
-```jsx
-{isLoading && (
-  <div className="flex items-center justify-center">
-    <Icons.ui.spinner className="h-6 w-6 animate-spin" />
-    <span>Loading...</span>
-  </div>
-)}
+Trong một số trường hợp, progress indicator vẫn có giá trị hơn skeleton:
+
+```tsx
+function FileUploader() {
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  
+  if (isUploading) {
+    return (
+      <div>
+        <Progress value={progress} max={100} />
+        <p>Uploading: {progress}%</p>
+      </div>
+    );
+  }
+  
+  return <UploadForm onUpload={handleUpload} />;
+}
 ```
 
-**Sau:**
-```jsx
-{isLoading && (
-  <AppSkeleton level={SkeletonLevel.CARD} />
-)}
+### Form submit button loading
+
+Trạng thái loading trong button nên giữ lại để cung cấp phản hồi trực tiếp:
+
+```tsx
+function SubmitButton({ isSubmitting }) {
+  return (
+    <Button disabled={isSubmitting}>
+      {isSubmitting ? (
+        <>
+          <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
+          Submitting...
+        </>
+      ) : (
+        "Submit"
+      )}
+    </Button>
+  );
+}
 ```
 
-### 5.2. Từ LoadingFallback sang AppSkeleton
+## Hướng dẫn chuyển đổi từ loading indicators hiện tại
 
-**Trước:**
-```jsx
-<LoadingFallback simple={true} height={200} />
+### Thay thế LoadingFallback
+
+**Trước đây:**
+```tsx
+import { LoadingFallback } from '@/components/dynamic/LoadingFallback';
+
+if (isLoading) {
+  return <LoadingFallback height={400} />;
+}
 ```
 
-**Sau:**
-```jsx
-<AppSkeleton level={SkeletonLevel.AVATAR} height={200} />
+**Hiện tại:**
+```tsx
+import { AppSkeleton, SkeletonLevel } from '@/components/ui/app-skeleton';
+
+if (isLoading) {
+  return <AppSkeleton level={SkeletonLevel.PAGE} height={400} />;
+}
 ```
 
-### 5.3. Từ Custom Skeleton sang AppSkeleton
+### Thay thế Spinner
 
-**Trước:**
-```jsx
-<div className="animate-pulse space-y-4">
-  <div className="h-4 w-24 bg-muted rounded"></div>
-  <div className="h-10 w-full bg-muted rounded"></div>
-  <div className="h-20 w-full bg-muted rounded"></div>
-</div>
+**Trước đây:**
+```tsx
+if (isLoading) {
+  return (
+    <div className="flex items-center justify-center h-40">
+      <Icons.ui.spinner className="h-6 w-6 animate-spin" />
+    </div>
+  );
+}
 ```
 
-**Sau:**
-```jsx
-<AppSkeleton level={SkeletonLevel.FORM} count={3} />
+**Hiện tại:**
+```tsx
+if (isLoading) {
+  return <AppSkeleton level={SkeletonLevel.CARD} height={160} />;
+}
 ```
 
-## 6. Hiệu năng và Accessibility
+### Thay thế Custom Skeleton
 
-- Animation được thiết kế để hoạt động tốt trên cả thiết bị yếu.
-- Hỗ trợ `prefers-reduced-motion` để tăng tính truy cập.
-- Tất cả skeleton đều có các thuộc tính ARIA phù hợp để screen readers có thể đọc.
+**Trước đây:**
+```tsx
+if (isLoading) {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+  );
+}
+```
 
-## 7. Kiểm tra và QA
+**Hiện tại:**
+```tsx
+if (isLoading) {
+  return <AppSkeleton level={SkeletonLevel.AVATAR} customProps={{ showText: true }} />;
+}
+```
 
-Đảm bảo kiểm tra các trường hợp sau:
-- Loading ban đầu của trang
-- Chuyển đổi giữa các route
-- Lazy loading components
-- Submitting forms
-- API calls với React Query
+## Kết luận
 
-## 8. Tổng kết
+Hệ thống AppSkeleton cung cấp một phương pháp chuẩn hóa và nhất quán để hiển thị loading states trong ứng dụng. Với tư duy "component đầu tiên", mỗi skeleton được thiết kế để phản ánh cấu trúc thực của dữ liệu sẽ được hiển thị, giảm thiểu layout shift và cải thiện trải nghiệm người dùng.
 
-Hệ thống Skeleton Loading chuẩn hóa giúp tạo ra trải nghiệm nhất quán và chuyên nghiệp hơn cho người dùng trong khi giữ cho codebase dễ bảo trì và mở rộng. Việc sử dụng một hệ thống thống nhất giảm thiểu code trùng lặp và làm cho ứng dụng dễ dự đoán hơn.
+Mục tiêu cuối cùng là đạt được sự nhất quán hoàn toàn trong toàn bộ ứng dụng, giúp người dùng cảm thấy ứng dụng load nhanh hơn và phản hồi tốt hơn, ngay cả khi thời gian tải thực tế không thay đổi.

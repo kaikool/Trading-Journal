@@ -5,13 +5,13 @@ Tài liệu này tổng hợp kết quả rà soát toàn bộ hệ thống Load
 
 ## Tóm tắt chung
 Ứng dụng hiện tại đang sử dụng nhiều cơ chế loading khác nhau, bao gồm:
-- Spinner (loading icon xoay)
-- Skeleton UI (khung nội dung mờ)
-- Text placeholders (vd: "Loading...")
-- State conditionals (hiển thị/ẩn nội dung dựa trên `isLoading`)
-- Suspense fallback (React.Suspense)
+- **Spinner (loading icon xoay)**: Sử dụng `Icons.ui.spinner` với animation `animate-spin`
+- **Skeleton UI (khung nội dung mờ)**: Thông qua `Skeleton` component và `AppSkeleton` mới
+- **Text placeholders (vd: "Loading...")**: Chủ yếu trong các form và login UI
+- **Progress indicators**: Trong upload image và app-level loading
+- **Suspense fallback (React.Suspense)**: Cho lazy loading và code splitting
 
-Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không nhất quán và khó bảo trì.
+Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không nhất quán và khó bảo trì. Gần đây đã thực hiện việc chuyển đổi một số component quan trọng sang sử dụng `AppSkeleton` với các level khác nhau, nhưng vẫn còn nhiều phần cần được cập nhật.
 
 ## Phân loại và chi tiết
 
@@ -78,6 +78,18 @@ Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không 
 **Vấn đề**:
 - Đã được cập nhật, đang hoạt động tốt
 
+#### 1.7. Auth Pages
+**Component**: `Login.tsx` và `Register.tsx`  
+**Cơ chế loading**:
+- Spinner kết hợp với text trong button
+- Disabled state trên các input form
+- Không có skeleton UI cho form fields
+
+**Vấn đề**:
+- Thiếu visual feedback khi đang xử lý đăng nhập/đăng ký
+- Không có custom placeholders khi loading
+- Không nhất quán với UI skeleton ở các phần khác của app
+
 ### 2. Components cấp thấp
 
 #### 2.1. ChartComponents
@@ -87,6 +99,16 @@ Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không 
 
 **Vấn đề**:
 - Đã được cập nhật, đang hoạt động tốt
+
+#### 2.2. PerformanceChart
+**Component**: `components/dashboard/PerformanceChart.tsx`  
+**Cơ chế loading**:
+- Sử dụng multiple Skeleton elements
+- Logic custom để xác định effectiveIsLoading (empty data cũng được coi là loading)
+
+**Vấn đề**:
+- Phức tạp, sử dụng nhiều Skeleton elements cá nhân thay vì dùng AppSkeleton
+- Không nhất quán với hệ thống AppSkeleton mới
 
 #### 2.2. TradeForm
 **Component**: `components/trades/TradeForm.tsx`  
@@ -120,6 +142,18 @@ Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không 
 **Vấn đề**:
 - Layout shift khi biểu đồ hiển thị
 - Cần skeleton cho biểu đồ
+
+#### 2.5. App-level Loading
+**Component**: `App.tsx`  
+**Cơ chế loading**:
+- Initial loading state với một animated pulse div
+- Route transition loading với progress bar ở trên cùng (`animate-indeterminate-progress`)
+- Suspense fallback với AppSkeleton cho lazy routes
+
+**Vấn đề**:
+- Nhiều loại loading khác nhau (progress, skeleton, pulse animation)
+- Cơ chế quản lý loading state khá phức tạp với nhiều tham số theo dõi
+- Đã tích hợp AppSkeleton cho route-level loading
 
 ### 3. Các hooks và providers
 
@@ -156,24 +190,55 @@ Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không 
    - TradeForm, TradeHistory, TradeDetail
    - Nhiều API calls đồng thời khi tạo/sửa giao dịch
    - Upload ảnh đến Firebase Storage
+   - Các form xử lý closing trades
 
 2. **Dashboard và Analytics**:
    - Tải nhiều dữ liệu cùng lúc
    - Lazy-loaded charts và components
    - Tính toán phức tạp từ dữ liệu
+   - Performance charts với dữ liệu thời gian
 
 3. **User Authentication**:
    - Login/Signup forms
    - Profile loading
    - Session management
 
+4. **App-level routing**:
+   - Chuyển đổi giữa các trang
+   - Lazy loading các route
+   - Preloading code
+
+## Phân loại theo mức độ nhất quán
+
+### Đã chuyển đổi sang AppSkeleton
+- Dashboard.tsx
+- Analytics.tsx
+- Achievements.tsx
+- Strategies.tsx
+- App.tsx (Route Suspense fallback)
+- ChartComponents
+
+### Cần chuyển đổi sang AppSkeleton
+- TradeHistory.tsx (sử dụng Skeleton nhưng chưa dùng AppSkeleton)
+- TradeDetail.tsx
+- PerformanceChart.tsx
+- TradeForm/CloseTradeForm (sử dụng spinner và text)
+- Login/Register (sử dụng spinner trong button)
+- PriceChart
+- TradeImageManager
+
+### Cơ chế cần giữ lại
+- Progress indicator khi upload ảnh (visual feedback)
+- Disabled state cho buttons khi form đang submit
+
 ## Đề xuất chuyển sang Skeleton
 
 ### Nguyên tắc chung
 1. Sử dụng AppSkeleton component thống nhất cho tất cả trường hợp loading
 2. Sử dụng SkeletonLevel phù hợp với loại nội dung
-3. Loại bỏ hoàn toàn spinners, text fallbacks, và các cơ chế loading khác
-4. Đảm bảo skeleton có kích thước tương đương với nội dung thật
+3. Loại bỏ gần như toàn bộ spinners, text fallbacks, và các cơ chế loading khác
+4. Chỉ giữ lại progress indicators cho upload tasks
+5. Đảm bảo skeleton có kích thước tương đương với nội dung thật
 
 ### Ưu tiên cập nhật
 1. **Ưu tiên cao**:
@@ -190,6 +255,26 @@ Việc sử dụng nhiều cơ chế khác nhau tạo ra trải nghiệm không 
    - Các phần ít hiển thị loading
 
 ## Kết luận
-Hệ thống loading UI hiện tại không nhất quán và sử dụng nhiều cơ chế khác nhau. Việc chuyển sang một hệ thống skeleton thống nhất sẽ cải thiện đáng kể trải nghiệm người dùng và tính bảo trì của code.
 
-Việc AppSkeleton đã được triển khai ở một số nơi quan trọng là bước tiến tốt, cần tiếp tục mở rộng sang các khu vực còn lại.
+### Tổng kết hiện trạng
+1. Hệ thống loading UI trong ứng dụng hiện đang ở trạng thái chuyển đổi:
+   - Một số khu vực đã sử dụng AppSkeleton với các level phù hợp
+   - Một số khu vực vẫn sử dụng các phương pháp cũ (Spinner, text, etc.)
+   - Tồn tại nhiều cách tiếp cận khác nhau cho cùng một vấn đề
+
+2. AppSkeleton đã chứng minh hiệu quả trong các component đã được cập nhật:
+   - Tạo trải nghiệm nhất quán
+   - Cung cấp visual feedback phù hợp với context
+   - Giảm thiểu layout shift khi data được load
+
+3. Các đặc điểm của UX loading cần được chuẩn hóa:
+   - Kích thước và tỷ lệ của skeleton phải phù hợp với nội dung thật
+   - Animation nhất quán (animate-pulse từ Tailwind)
+   - Thời gian hiển thị hợp lý
+
+### Lộ trình tiếp theo
+1. **Giai đoạn 1**: Cập nhật các component ưu tiên cao (TradeHistory, TradeDetail, TradeForm)
+2. **Giai đoạn 2**: Cập nhật các component bậc trung (PerformanceChart, Login/Register forms)
+3. **Giai đoạn 3**: Tối ưu hóa các trường hợp đặc biệt (upload image, app-level loading)
+
+Việc AppSkeleton đã được triển khai ở một số nơi quan trọng là bước tiến tốt, cần tiếp tục mở rộng sang các khu vực còn lại để đạt được sự nhất quán hoàn toàn trong toàn bộ ứng dụng.
