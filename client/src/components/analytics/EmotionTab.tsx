@@ -380,38 +380,8 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     return null;
   };
 
-  // Insufficient data state
-  const InsufficientDataCard = () => (
-    <Card className="border-primary/20 bg-primary/5">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold flex items-center">
-          <Icons.general.database className="h-5 w-5 mr-2 text-primary" />
-          More Trading Data Needed
-        </CardTitle>
-        <CardDescription>
-          Continue recording emotions with your trades to unlock insights
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="px-4 sm:px-6 pb-4">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 p-1.5 rounded-full bg-primary/10 text-primary">
-            <Icons.general.lightbulb className="h-4 w-4" />
-          </div>
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
-              To get meaningful emotional insights, continue recording your emotional state during trading. 
-              We recommend at least 10-15 trades with emotional data for reliable analysis.
-            </p>
-            <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-4">
-              <li>Record a variety of emotions to identify patterns</li>
-              <li>Be consistent and honest about your emotional states</li>
-              <li>Try using a standardized emotion vocabulary</li>
-            </ul>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+  // No longer using InsufficientDataCard component
+  // Removed unused component as part of code cleanup
 
   return (
     <div className="space-y-6">

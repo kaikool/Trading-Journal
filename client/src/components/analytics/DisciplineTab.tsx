@@ -387,8 +387,8 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   isAnimationActive={false}
                   animationDuration={0}
                   className="hover:opacity-100"
-                  onMouseOver={(data, index) => {}}
-                  onMouseOut={(data, index) => {}}
+                  onMouseOver={() => {}}
+                  onMouseOut={() => {}}
                 />
                 <Bar 
                   dataKey="Without Discipline" 
@@ -398,8 +398,8 @@ export default function DisciplineTab({ data }: DisciplineTabProps) {
                   isAnimationActive={false}
                   animationDuration={0}
                   className="hover:opacity-100"
-                  onMouseOver={(data, index) => {}}
-                  onMouseOut={(data, index) => {}}
+                  onMouseOver={() => {}}
+                  onMouseOut={() => {}}
                 />
               </BarChart>
             </ResponsiveContainer>
