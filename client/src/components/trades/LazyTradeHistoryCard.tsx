@@ -24,6 +24,8 @@ import DirectionBadge from "./DirectionBadge";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
+// Lưu ý: Component này không gọi trực tiếp TradeUpdateService
+// nhưng được cập nhật thông qua TradeHistory.tsx và cơ chế cập nhật của useTradeList
 
 interface TradeHistoryCardProps {
   trade: any;

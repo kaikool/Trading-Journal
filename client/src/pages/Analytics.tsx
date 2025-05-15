@@ -1,4 +1,4 @@
-import { useMemo, lazy, Suspense, useState, useEffect } from "react";
+import { useMemo, lazy, Suspense, useState, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +9,7 @@ import { LoadingFallback } from "@/components/dynamic/LoadingFallback";
 import { debug, logError } from "@/lib/debug";
 import { getStrategies } from "@/lib/firebase";
 import { TradingStrategy } from "@/types";
+import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 
 // Áp dụng lazy loading cho các tab components
 const OverviewTab = lazy(() => import("@/components/analytics/OverviewTab"));
@@ -55,6 +56,41 @@ export default function Analytics() {
     };
     
     fetchStrategies();
+  }, [userId]);
+  
+  // Reference cho thời gian cập nhật cuối cùng để tránh quá nhiều cập nhật
+  const lastUpdateTimeRef = useRef(0);
+  
+  // Đăng ký observer với TradeUpdateService để cập nhật phân tích khi có thay đổi giao dịch
+  useEffect(() => {
+    if (!userId) return;
+    
+    // Tạo observer theo chuẩn TradeChangeObserver
+    const observer: TradeChangeObserver = {
+      onTradesChanged: (action) => {
+        // Chỉ cập nhật tối đa mỗi 500ms để tránh cập nhật quá nhiều
+        const now = Date.now();
+        if (now - lastUpdateTimeRef.current < 500) {
+          debug("[Analytics] Debouncing update, too frequent");
+          return;
+        }
+        
+        lastUpdateTimeRef.current = now;
+        debug(`[Analytics] Received trade update notification (${action})`);
+        
+        // Lưu ý: Không cần refetch vì Analytics.tsx sử dụng useDataCache
+        // useDataCache đã được cập nhật thông qua cơ chế cache invalidation
+        // trong TradeUpdateService._invalidateTradeQueries
+      }
+    };
+    
+    // Đăng ký observer
+    const unregister = tradeUpdateService.registerObserver(observer);
+    
+    // Cleanup khi component unmount
+    return () => {
+      unregister();
+    };
   }, [userId]);
 
   // Aggregate analytics data - optimized version with memoization

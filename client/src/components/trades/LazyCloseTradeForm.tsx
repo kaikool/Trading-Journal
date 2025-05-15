@@ -2,7 +2,13 @@ import { lazy, Suspense } from "react";
 import type { Trade } from "@/types";
 import { Icons } from "@/components/icons/icons";
 
-// Lazy load the CloseTradeForm component
+/**
+ * Lazy load the CloseTradeForm component
+ * 
+ * CloseTradeForm sử dụng TradeUpdateService để thông báo cập nhật UI
+ * thông qua firebase.updateTrade sau khi đóng giao dịch. Điều này đảm bảo
+ * tất cả các components đăng ký với TradeUpdateService sẽ được cập nhật đồng bộ.
+ */
 const CloseTradeFormComponent = lazy(() => import("./CloseTradeForm").then(module => ({
   default: module.default
 })));
