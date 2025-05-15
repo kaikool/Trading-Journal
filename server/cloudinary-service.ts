@@ -154,11 +154,8 @@ export function getPublicIdFromUrl(url: string): string | null {
     const publicIdWithExt = parts[parts.length - 1];
     
     // Loại bỏ phần extension để lấy public_id gốc
-    let publicId = publicIdWithExt;
+    // Note: không sử dụng biến publicId này nữa, chỉ sử dụng fullPublicId
     const extIndex = publicIdWithExt.lastIndexOf('.');
-    if (extIndex !== -1) {
-      publicId = publicIdWithExt.substring(0, extIndex);
-    }
 
     // Nếu còn transformations, phần public ID sẽ nằm sau phần transform
     // Ví dụ: v1234/folder/public_id.jpg

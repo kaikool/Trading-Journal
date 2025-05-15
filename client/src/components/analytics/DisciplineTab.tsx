@@ -51,7 +51,7 @@ interface DisciplineTabProps {
 }
 
 export default function DisciplineTab({ data }: DisciplineTabProps) {
-  const { disciplineMetrics, trades } = data;
+  const { disciplineMetrics } = data;
   
   // Chart colors
   const COLORS = CHART_CONFIG.COLORS;

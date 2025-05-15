@@ -54,7 +54,7 @@ function verifyEnvironment() {
   
   // Kiểm tra các API key tùy chọn
   const missingOptionalKeys: string[] = [];
-  Object.entries(optionalApiKeys).forEach(([key, feature]) => {
+  Object.entries(optionalApiKeys).forEach(([key, _feature]) => {
     if (!process.env[key]) {
       missingOptionalKeys.push(key);
     }
