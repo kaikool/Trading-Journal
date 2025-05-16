@@ -25,7 +25,8 @@ function isMIMETypeError(error: Error): boolean {
   return errorMessage.includes('MIME type') || 
          errorMessage.includes('Unexpected token') ||
          errorMessage.includes('module') ||
-         errorMessage.includes('Failed to fetch dynamically imported module');
+         errorMessage.includes('Failed to fetch dynamically imported module') ||
+         errorMessage.includes('Importing a module script failed');
 }
 
 /**
