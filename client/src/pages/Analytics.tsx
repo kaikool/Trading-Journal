@@ -53,8 +53,6 @@ export default function Analytics() {
       try {
         const userStrategies = await getStrategies(userId);
         setStrategies(userStrategies);
-        // Debug log
-        console.log("Loaded strategies:", userStrategies);
       } catch (error) {
         logError("Error loading strategies for analytics:", error);
       }
@@ -193,18 +191,9 @@ export default function Analytics() {
       // Phân tích theo chiến lược - sử dụng pip theo forex-calculator.ts
       const strategyId = trade.strategy || 'Unknown';
       
-      // Kiểm tra dữ liệu vào trong console
-      console.log("Xử lý chiến lược:", {
-        id: strategyId,
-        availableStrategies: strategies.map(s => ({ id: s.id, name: s.name }))
-      });
-      
       // Lấy tên chiến lược từ ID
       const strategyObj = strategies.find(s => s.id === strategyId);
       const strategy = strategyObj ? strategyObj.name : (strategyId === 'Unknown' ? 'Không xác định' : strategyId);
-      
-      // Log kết quả mapping
-      console.log("Kết quả ánh xạ:", { strategyId, mappedName: strategy });
       
       if (!strategyData[strategyId]) {
         strategyData[strategyId] = { strategyId, strategy, trades: 0, wins: 0, losses: 0, breakEven: 0, netProfit: 0 };
