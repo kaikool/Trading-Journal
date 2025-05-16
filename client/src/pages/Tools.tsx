@@ -9,71 +9,69 @@ export default function Tools() {
 
   // Dynamically inject TradingView widget script for calendar
   useEffect(() => {
-    // Function to create the calendar widget
-    const createCalendarWidget = () => {
-      // Check for existing events widget script and remove if found
-      const existingEventsScript = document.getElementById("tradingview-events-script");
-      if (existingEventsScript) {
-        existingEventsScript.remove();
-      }
-
-      // Create new script element for events widget
-      const script = document.createElement("script");
-      script.id = "tradingview-events-script";
-      script.type = "text/javascript";
-      script.async = true;
-      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
+    // Function to initialize the economic calendar widget
+    const initializeCalendarWidget = () => {
+      const widgetContainer = document.getElementById("tradingview-calendar-container");
+      if (!widgetContainer) return;
       
-      // Configure widget options based on current theme
-      const widgetConfig = {
+      // Clear existing content
+      widgetContainer.innerHTML = "";
+      
+      // Create widget container div
+      const widgetDiv = document.createElement("div");
+      widgetDiv.className = "tradingview-widget-container__widget";
+      widgetDiv.style.height = "calc(100% - 24px)";
+      widgetDiv.style.width = "100%";
+      
+      // Create copyright div
+      const copyrightDiv = document.createElement("div");
+      copyrightDiv.className = "tradingview-widget-copyright p-1 text-xs text-muted-foreground";
+      copyrightDiv.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" class="text-primary font-medium">Powered by TradingView</a>';
+      
+      // Append to container
+      widgetContainer.appendChild(widgetDiv);
+      widgetContainer.appendChild(copyrightDiv);
+      
+      // Create the script element with proper configuration
+      const script = document.createElement("script");
+      script.id = "tradingview-widget-script";
+      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
+      script.async = true;
+      
+      // Simple string-based setup to avoid JSON stringify issues
+      script.textContent = JSON.stringify({
         "width": "100%",
         "height": "100%",
         "colorTheme": isDarkMode ? "dark" : "light",
         "isTransparent": false,
         "locale": "en",
         "importanceFilter": "0,1",
-        "countryFilter": "us"
-      };
+        "currencyFilter": "USD,EUR,JPY,GBP,AUD,CAD,CHF,CNY",
+        "countryFilter": "us,eu,uk,jp,ca,au,ch,cn"
+      });
       
-      script.innerHTML = JSON.stringify(widgetConfig);
-      
-      return script;
+      // Append script to widget container
+      widgetDiv.appendChild(script);
     };
 
-    // Add calendar script when forex-calendar tab is selected
+    // Handle tab change to initialize widget when forex-calendar tab is selected
     const handleTabChange = () => {
       const calendarTab = document.querySelector('[data-state="active"][value="forex-calendar"]');
       if (calendarTab) {
-        const widgetContainer = document.getElementById("tradingview-calendar-container");
-        if (widgetContainer) {
-          // Clear existing widget content
-          widgetContainer.innerHTML = "";
-          
-          // Create widget div
-          const widgetDiv = document.createElement("div");
-          widgetDiv.className = "tradingview-widget-container__widget";
-          widgetDiv.style.height = "calc(100% - 24px)";
-          widgetDiv.style.width = "100%";
-          
-          // Create copyright div
-          const copyrightDiv = document.createElement("div");
-          copyrightDiv.className = "tradingview-widget-copyright p-1 text-xs text-muted-foreground";
-          copyrightDiv.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" class="text-primary font-medium">Powered by TradingView</a>';
-          
-          // Append to container
-          widgetContainer.appendChild(widgetDiv);
-          widgetContainer.appendChild(copyrightDiv);
-          
-          // Add script 
-          widgetContainer.appendChild(createCalendarWidget());
-        }
+        // Initialize widget with a slight delay to ensure DOM is ready
+        setTimeout(initializeCalendarWidget, 100);
       }
     };
     
-    // Run once on mount
-    setTimeout(handleTabChange, 500);
+    // Run once on mount with a delay to ensure proper rendering
+    setTimeout(() => {
+      const calendarTab = document.querySelector('[data-state="active"][value="forex-calendar"]');
+      if (calendarTab) {
+        initializeCalendarWidget();
+      }
+    }, 800);
     
-    // Setup tab change listener
+    // Set up tab change listener
     const tabsList = document.querySelector('[role="tabslist"]');
     if (tabsList) {
       tabsList.addEventListener('click', handleTabChange);
@@ -83,11 +81,6 @@ export default function Tools() {
     return () => {
       if (tabsList) {
         tabsList.removeEventListener('click', handleTabChange);
-      }
-      
-      const existingScript = document.getElementById("tradingview-events-script");
-      if (existingScript && existingScript.parentNode) {
-        existingScript.parentNode.removeChild(existingScript);
       }
     };
   }, [isDarkMode]);
