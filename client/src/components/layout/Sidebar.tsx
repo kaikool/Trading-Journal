@@ -33,45 +33,66 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   
   // Handle theme toggle with smooth transition
   const toggleTheme = () => {
-    // Toggle between light and dark, or use system as fallback
-    const newTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+    // Chỉ toggle giữa light và dark mode
+    const newTheme = isDarkMode ? 'light' : 'dark';
     setTheme(newTheme);
   };
   
-  // Determine which icon to show based on current theme
+  // Determine which icon to show based on current dark mode state
   const getThemeIcon = () => {
-    if (theme === 'system') {
-      return <Icons.ui.monitor className="h-5 w-5" />;
-    } else if (theme === 'dark' || isDarkMode) {
-      return <Icons.ui.moon className="h-5 w-5" />;
-    } else {
-      return <Icons.ui.sun className="h-5 w-5" />;
-    }
+    return isDarkMode 
+      ? <Icons.ui.moon className="h-5 w-5" />
+      : <Icons.ui.sun className="h-5 w-5" />;
   };
   
   // Get theme text label
   const getThemeLabel = () => {
-    if (theme === 'system') return 'System';
-    if (theme === 'dark') return 'Dark';
-    return 'Light';
+    return isDarkMode ? 'Dark' : 'Light';
   };
   
-  return (
-    <Button
-      onClick={toggleTheme}
-      variant="ghost"
-      size={collapsed ? "icon" : "default"}
-      className={cn(
-        "h-10 transition-all",
-        collapsed ? "w-10 justify-center rounded-full" : "w-full justify-start text-sm font-normal"
-      )}
-      aria-label="Toggle theme"
-    >
-      <span className="w-5 h-5 flex items-center justify-center">
+  if (collapsed) {
+    return (
+      <Button
+        onClick={toggleTheme}
+        variant="outline"
+        size="icon"
+        className="w-10 h-10 rounded-full transition-all"
+        aria-label="Toggle theme"
+      >
         {getThemeIcon()}
-      </span>
-      {!collapsed && <span className="ml-3">{getThemeLabel()} Mode</span>}
-    </Button>
+      </Button>
+    );
+  }
+  
+  return (
+    <div className="rounded-full border border-border h-9 p-0.5 flex items-center bg-muted/40">
+      <Button
+        onClick={toggleTheme}
+        variant={isDarkMode ? "ghost" : "default"}
+        size="sm"
+        className={cn(
+          "relative h-8 rounded-full transition-all flex items-center gap-2 px-3",
+          isDarkMode ? "hover:text-foreground" : "text-primary-foreground"
+        )}
+        aria-label="Toggle theme"
+      >
+        <Icons.ui.sun className="h-4 w-4" />
+        <span className="text-xs font-medium">Light</span>
+      </Button>
+      <Button
+        onClick={toggleTheme}
+        variant={isDarkMode ? "default" : "ghost"}
+        size="sm"
+        className={cn(
+          "relative h-8 rounded-full transition-all flex items-center gap-2 px-3",
+          isDarkMode ? "text-primary-foreground" : "hover:text-foreground"
+        )}
+        aria-label="Toggle theme"
+      >
+        <Icons.ui.moon className="h-4 w-4" />
+        <span className="text-xs font-medium">Dark</span>
+      </Button>
+    </div>
   );
 }
 
@@ -317,8 +338,8 @@ export function Sidebar({ className }: { className?: string }) {
             </nav>
           </div>
           
-          {/* Theme toggle button */}
-          <div className="border-t border-border p-4">
+          {/* Theme toggle button - tối ưu padding cho mobile */}
+          <div className="border-t border-border px-4 py-5">
             <ThemeToggle />
           </div>
           
