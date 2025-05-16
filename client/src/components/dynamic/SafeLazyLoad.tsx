@@ -152,7 +152,19 @@ export function SafeLazyLoad({
  * @returns A lazy-loaded component wrapped with error handling
  */
 export function createSafeLazyComponent<T>(factory: () => Promise<{ default: React.ComponentType<T> }>) {
-  const LazyComponent = lazy(factory);
+  // Create a wrapped factory that handles potential errors
+  const wrappedFactory = () => {
+    return factory().catch(error => {
+      console.error("Error loading module:", error);
+      // Re-throw the error with additional context to help diagnose
+      if (error.message.includes('Importing a module script failed')) {
+        throw new Error("Module loading failed. This may be caused by a MIME type issue or network problem.");
+      }
+      throw error;
+    });
+  };
+  
+  const LazyComponent = lazy(wrappedFactory);
   
   return function SafeLazyComponent(props: T & { fallback?: React.ReactNode; height?: number | string }) {
     const { fallback, height, ...componentProps } = props as any;
