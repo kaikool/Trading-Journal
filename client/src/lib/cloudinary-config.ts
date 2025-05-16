@@ -39,6 +39,6 @@ export const CLOUDINARY_CONFIG = {
   }
 };
 
-// Các hàm transformation đã chuyển sang server/cloudinary-service.ts
+// Các hàm transformation có ở server/cloudinary-service.ts
 
 export default CLOUDINARY_CONFIG;

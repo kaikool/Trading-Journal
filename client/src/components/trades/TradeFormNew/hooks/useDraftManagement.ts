@@ -31,7 +31,7 @@ export function useDraftManagement({
   const draftSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Removed unused debug helper function
+
 
   // Load draft from localStorage
   const loadDraftFromLocalStorage = useCallback((userId: string): { formData: any, imageUrls: any, timestamp: string } | null => {
