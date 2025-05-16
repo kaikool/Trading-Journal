@@ -41,13 +41,8 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   // Determine which icon to show based on current dark mode state
   const getThemeIcon = () => {
     return isDarkMode 
-      ? <Icons.ui.moon className="h-5 w-5" />
-      : <Icons.ui.sun className="h-5 w-5" />;
-  };
-  
-  // Get theme text label
-  const getThemeLabel = () => {
-    return isDarkMode ? 'Dark' : 'Light';
+      ? <Icons.ui.moon className="h-4 w-4" />
+      : <Icons.ui.sun className="h-4 w-4" />;
   };
   
   if (collapsed) {
@@ -65,35 +60,30 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   }
   
   return (
-    <div className="flex items-center bg-transparent">
-      <div className="flex items-center rounded-full border border-border overflow-hidden shadow-sm">
-        <button
-          onClick={() => !isDarkMode || toggleTheme()}
-          className={cn(
-            "h-7 px-2.5 flex items-center justify-center gap-1.5 text-xs font-medium transition-all duration-150",
-            isDarkMode 
-              ? "bg-transparent hover:bg-background/70 text-foreground/80" 
-              : "bg-primary text-primary-foreground"
-          )}
-          aria-label="Light mode"
-        >
-          <Icons.ui.sun className="h-3.5 w-3.5" />
-          <span>Light</span>
-        </button>
-        <button
-          onClick={() => isDarkMode || toggleTheme()}
-          className={cn(
-            "h-7 px-2.5 flex items-center justify-center gap-1.5 text-xs font-medium transition-all duration-150",
-            isDarkMode 
-              ? "bg-primary text-primary-foreground" 
-              : "bg-transparent hover:bg-background/70 text-foreground/80"
-          )}
-          aria-label="Dark mode"
-        >
-          <Icons.ui.moon className="h-3.5 w-3.5" />
-          <span>Dark</span>
-        </button>
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <Icons.ui.moon className="h-4 w-4 text-foreground/70" />
+        <span className="text-xs font-medium text-foreground/70">Dark Mode</span>
       </div>
+      
+      <button
+        onClick={toggleTheme}
+        className={cn(
+          "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out",
+          isDarkMode ? "bg-primary" : "bg-muted"
+        )}
+        role="switch"
+        aria-checked={isDarkMode}
+      >
+        <span className="sr-only">Toggle dark mode</span>
+        <span
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
+            isDarkMode ? "translate-x-4" : "translate-x-0"
+          )}
+        />
+      </button>
     </div>
   );
 }
