@@ -1,0 +1,39 @@
+[DEBUG] TradeUpdateService initialized
+debug.ts:71 [DEBUG] TradeUpdateService: QueryClient đã được đặt
+debug.ts:69 [DEBUG] Firebase config: {projectId: 'trading-journal-b83e9', storageBucket: 'trading-journal-b83e9.appspot.com'}
+debug.ts:71 [DEBUG] Firebase has been initialized:
+debug.ts:69 [DEBUG] - Auth Domain: trading-journal-b83e9.firebaseapp.com
+debug.ts:69 [DEBUG] - Project ID: trading-journal-b83e9
+DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+preload.ts:153 App startup took: 265.2ms before preloading routes
+manifest.json:1 Manifest: Enctype should be set to either application/x-www-form-urlencoded or multipart/form-data. It currently defaults to application/x-www-form-urlencodedUnderstand this warning
+login:305 SW registered with scope: https://d4f35311-fd5a-4f0c-b81f-b48114512be2-00-gsisu1yzpllg.sisko.replit.dev/
+DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+login:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+performance.ts:64 Device performance evaluation: high (7ms)
+queryClient.ts:96 QueryClient configured based on device performance {devicePerformance: 'high', staleTime: 300000, gcTime: 600000, refetchOnWindowFocus: false}
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warning
+3DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+App.tsx:91 [TRANSITION-DEBUG] Đánh dấu trang chưa sẵn sàng và bắt đầu chuyển trang
+App.tsx:118 [TRANSITION-DEBUG] Thêm class page-transition vào document
+2DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+App.tsx:136 [TRANSITION-DEBUG] Safety Timer: Thêm class page-transition
+2DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+App.tsx:106 [App] Scrolling to top for page change: /auth/login -> /
+debug.ts:71 [DEBUG] Fetching user data for itqG9fPxUEZV9uT14dcp7cEW2Mi1
+debug.ts:71 [DEBUG] Fetching all trades for itqG9fPxUEZV9uT14dcp7cEW2Mi1
+DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+App.tsx:121 [TRANSITION-DEBUG] Trang đã sẵn sàng, xóa class page-transition
+DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
+App.tsx:147 [TRANSITION-DEBUG] Safety Timer cleanup, xóa class page-transition
+debug.ts:69 [DEBUG] [Dashboard] Generated performance data points: 5
+debug.ts:69 [DEBUG] Dashboard trading stats calculation: {allTrades: 7, closedTrades: 4, openTrades: 3}
+debug.ts:69 [DEBUG] Dashboard trading stats by PIP: {winning: 2, losing: 2, breakEven: 0, total: 4}
+debug.ts:69 [DEBUG] DEBUG TRADES CALCULATION: (4) [{…}, {…}, {…}, {…}]
+debug.ts:69 [DEBUG] Chi tiết profit/loss: {tradesWithProfit: 2, tradesWithLoss: 2, tradesWithBreakEven: 0, individualProfits: Array(2), individualLosses: Array(2)}
+4DialogContext.tsx:40 [DEBUG] DialogContext: detected 0 standard dialogs, 0 Radix dialogs
