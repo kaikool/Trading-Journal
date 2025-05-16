@@ -242,14 +242,22 @@ export function useTradeList(options: {
         const now = Date.now();
         lastTradesUpdateRef.current = now;
         
-        debug(`[TradeList] Trade changed (${action}), refreshing data immediately`);
+        debug(`[REALTIME-DEBUG][TradeList] Trade changed (${action}), tradeId: ${tradeId}, refreshing data immediately`);
         
         // Sử dụng Promise.resolve().then để đảm bảo thực hiện vào cuối event loop
         // Điều này giúp giải quyết vấn đề racing condition giữa invalidation và refetch
+        debug(`[REALTIME-DEBUG][TradeList] Scheduling refetch via Promise.resolve().then()`);
         Promise.resolve().then(() => {
           // TradeUpdateService đã thực hiện invalidateQueries, nhưng chúng ta cần đảm bảo
           // refetch được gọi sau khi invalidation đã hoàn tất
-          refetch();
+          debug(`[REALTIME-DEBUG][TradeList] Executing refetch in Promise.then() for action: ${action}`);
+          refetch()
+            .then(() => {
+              debug(`[REALTIME-DEBUG][TradeList] Refetch completed successfully for action: ${action}`);
+            })
+            .catch(err => {
+              logError(`[REALTIME-DEBUG][TradeList] Error during refetch for action ${action}:`, err);
+            });
         });
       }
     };
