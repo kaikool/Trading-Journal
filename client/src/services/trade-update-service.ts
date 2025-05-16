@@ -136,26 +136,26 @@ class TradeUpdateService {
       queryClientInstance.invalidateQueries({ 
         queryKey: [`/trades/${userId}`],
         exact: true,
-        refetchType: 'active',
+        refetchType: 'all',
       });
       
       // Vô hiệu hóa tất cả các truy vấn liên quan đến giao dịch cho người dùng này
       // Sử dụng cấu trúc phân cấp để bắt tất cả các truy vấn con
       queryClientInstance.invalidateQueries({ 
         queryKey: [TRADE_QUERY_ROOT_KEY, userId],
-        refetchType: 'active',
+        refetchType: 'all',
       });
       
       // Vô hiệu hóa các truy vấn liên quan đến phân tích và thống kê
       queryClientInstance.invalidateQueries({ 
         queryKey: ['analytics', userId],
-        refetchType: 'active',
+        refetchType: 'all',
       });
       
       // Vô hiệu hóa các truy vấn liên quan đến mục tiêu
       queryClientInstance.invalidateQueries({ 
         queryKey: ['goals', userId],
-        refetchType: 'active',
+        refetchType: 'all',
       });
       
       // Vô hiệu hóa các truy vấn cụ thể của từng trade (cho ViewTrade)
@@ -168,9 +168,15 @@ class TradeUpdateService {
                   key[0] === 'trade' && 
                   key[1].includes(userId);
           },
-          refetchType: 'active',
+          refetchType: 'all',
         });
       }
+      
+      // Buộc refetch tất cả các truy vấn trades trực tiếp
+      queryClientInstance.refetchQueries({
+        queryKey: [TRADE_QUERY_ROOT_KEY],
+        type: 'all',
+      });
       
       debug(`TradeUpdateService: Invalidated all trade related queries for user ${userId}`);
     } catch (error) {
