@@ -47,8 +47,8 @@ export const preloadRoute = (route: string): void => {
   const moduleLoader = ROUTE_TO_MODULE_MAP[route];
   if (moduleLoader) {
     setTimeout(() => {
-      moduleLoader().catch(err => {
-        console.debug(`Silent preload for ${route} failed:`, err);
+      moduleLoader().catch(() => {
+        // Silently handle preload failures
       });
     }, 200); // Small timeout to avoid blocking main thread
   }
@@ -58,8 +58,8 @@ export const preloadRoute = (route: string): void => {
   if (dependencies?.length) {
     setTimeout(() => {
       dependencies.forEach(dep => {
-        dep().catch(err => {
-          console.debug(`Silent dependency preload failed:`, err);
+        dep().catch(() => {
+          // Silently handle dependency preload failures
         });
       });
     }, 500); // Longer timeout for dependencies

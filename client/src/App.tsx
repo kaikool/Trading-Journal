@@ -100,10 +100,7 @@ function MainContent() {
       if (isRealPageChange) {
         // Tạo một trễ nhỏ để đảm bảo DOM đã render
         setTimeout(() => {
-          // Log cho debugging
-          if (process.env.NODE_ENV === 'development') {
-            console.log(`[App] Scrolling to top for page change: ${prevLocation} -> ${location}`);
-          }
+          // No logging needed
           
           // Sử dụng API có sẵn của trình duyệt để cuộn lên đầu
           window.scrollTo({
@@ -130,18 +127,15 @@ function MainContent() {
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
     if (!isPageReady) {
-      console.log('[TRANSITION-DEBUG] Safety Timer: Thêm class page-transition');
       // Áp dụng lớp này để ngăn nháy sáng trong suốt quá trình chuyển đổi
       document.documentElement.classList.add('page-transition');
       
       const safetyTimer = setTimeout(() => {
-        console.log('[TRANSITION-DEBUG] Safety Timer kết thúc, xóa class page-transition');
         setIsPageReady(true);
         document.documentElement.classList.remove('page-transition');
       }, 1000); // Khung an toàn tối đa 1 giây
       
       return () => {
-        console.log('[TRANSITION-DEBUG] Safety Timer cleanup, xóa class page-transition');
         clearTimeout(safetyTimer);
         document.documentElement.classList.remove('page-transition');
       };
