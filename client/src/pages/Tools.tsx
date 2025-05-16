@@ -1,8 +1,53 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Tools() {
+  const { isDarkMode } = useTheme();
+
+  // Dynamically inject TradingView widget script
+  useEffect(() => {
+    // Remove any existing script to avoid duplicates
+    const existingScript = document.getElementById("tradingview-widget-script");
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    // Create new script element
+    const script = document.createElement("script");
+    script.id = "tradingview-widget-script";
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
+    
+    // Configure widget options based on current theme
+    const widgetConfig = {
+      "width": "100%",
+      "height": "600",
+      "colorTheme": isDarkMode ? "dark" : "light",
+      "isTransparent": false,
+      "locale": "en",
+      "importanceFilter": "0,1",
+      "countryFilter": "us,eu,gb,ca,au,nz,jp,ch"
+    };
+    
+    script.innerHTML = JSON.stringify(widgetConfig);
+    
+    // Append script to widget container
+    const widgetContainer = document.getElementById("tradingview-widget-container");
+    if (widgetContainer) {
+      widgetContainer.appendChild(script);
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      if (script && script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, [isDarkMode]);
+
   return (
     <div className="container mx-auto p-4 max-w-6xl">
       <h1 className="text-3xl font-bold mb-6">Trading Tools</h1>
@@ -18,21 +63,16 @@ export default function Tools() {
             <CardHeader>
               <CardTitle>Economic Calendar</CardTitle>
               <CardDescription>
-                Real-time economic events calendar to help you stay informed about market-moving events.
+                Stay informed about market-moving economic events with real-time updates.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="w-full overflow-hidden rounded-md border border-muted">
-                <iframe 
-                  src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&category=_employment,_economicActivity,_inflation,_credit,_centralBanks,_confidenceIndex,_balance,_Bonds&importance=1,2,3&features=datepicker,timezone,timeselector,filters&countries=5&calType=week&timeZone=27&lang=1" 
-                  width="100%" 
-                  height="600" 
-                  frameBorder="0" 
-                  allowTransparency 
-                  className="w-full"
-                ></iframe>
-                <div className="p-2 text-xs text-muted-foreground">
-                  Economic Calendar provided by <a href="https://www.investing.com/" rel="nofollow" target="_blank" className="text-primary font-medium">Investing.com</a>
+              <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "600px" }}>
+                <div id="tradingview-widget-container" className="tradingview-widget-container h-full">
+                  <div className="tradingview-widget-container__widget h-full"></div>
+                  <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
+                    Powered by <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">TradingView</a>
+                  </div>
                 </div>
               </div>
             </CardContent>
