@@ -242,11 +242,11 @@ function MainContent() {
     >
       {/* Hiển thị skeleton loader khi trang đang chuyển */}
       {!isPageReady && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 flex items-center justify-center">
+        <div className="fixed inset-0 bg-background/80 dark:bg-background/90 backdrop-blur-sm z-40 flex items-center justify-center transition-colors">
           <div className="w-full max-w-5xl">
             <AppSkeleton
               level={SkeletonLevel.PAGE}
-              className="py-6"
+              className="py-6 transition-colors"
               customProps={{ 
                 showTabs: true, 
                 tabCount: 3 
