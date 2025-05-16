@@ -66,8 +66,7 @@ function TradingViewChart({ config }: TradingViewChartProps) {
   // Merge default with provided config
   const mergedConfig = {
     ...defaultConfig,
-    ...config,
-    customColors: { ...defaultConfig.customColors, ...config?.customColors }
+    ...config
   };
   
   useEffect(() => {

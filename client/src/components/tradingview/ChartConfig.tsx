@@ -187,15 +187,6 @@ const ChartConfig: React.FC = () => {
           <AccordionTrigger>Appearance</AccordionTrigger>
           <AccordionContent>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-3">
-                <Label className="mb-2">Chế độ hiển thị biểu đồ</Label>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Sau khi biểu đồ tải, bạn có thể tùy chỉnh màu sắc trực tiếp từ giao diện TradingView
-                </p>
-              </div>
-              
-              <Separator />
-              
               <div className="space-y-2">
                 <Label className="mb-2">Scale Type</Label>
                 <Select 

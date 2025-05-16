@@ -81,11 +81,14 @@ export default function Tools() {
 
       {/* Configuration Dialog */}
       <Dialog open={configOpen} onOpenChange={setConfigOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl" aria-describedby="config-description">
           <DialogHeader>
             <DialogTitle>
               {activeTab === "chart" ? "Chart Settings" : "Calendar Settings"}
             </DialogTitle>
+            <p id="config-description" className="text-sm text-muted-foreground mt-1">
+              Điều chỉnh cài đặt cho {activeTab === "chart" ? "biểu đồ" : "lịch kinh tế"}
+            </p>
           </DialogHeader>
           {getConfigComponent()}
         </DialogContent>
