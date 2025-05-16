@@ -114,12 +114,15 @@ function MainContent() {
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
+      document.documentElement.classList.add('page-transition');
       const readyTimer = setTimeout(() => {
         setIsPageReady(true);
+        document.documentElement.classList.remove('page-transition');
       }, 300); // Thời gian dài hơn để đảm bảo trang đã được tải
       
       return () => {
-        clearTimeout(readyTimer); 
+        clearTimeout(readyTimer);
+        document.documentElement.classList.remove('page-transition');
       };
     }
   }, [location]);

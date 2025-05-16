@@ -98,6 +98,25 @@
   /* Chart component configuration - Reference định nghĩa đầy đủ trong khối :root phía dưới */
 }
 
+/* Page transition fix for dark mode */
+.page-transition,
+.page-transition * {
+  transition: background-color 0.15s linear, background 0.15s linear,
+              border-color 0.15s linear, color 0.15s linear !important;
+}
+
+.dark.page-transition {
+  background-color: hsl(212 40% 6%) !important;
+}
+
+.dark.page-transition .bg-background {
+  background-color: hsl(212 40% 6%) !important;
+}
+
+.dark.page-transition .skeleton {
+  background-color: hsl(212 35% 10%) !important;
+}
+
 /* Animation utility classes */
 .progress-animate {
   transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
