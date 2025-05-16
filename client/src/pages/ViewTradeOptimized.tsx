@@ -30,6 +30,7 @@ export default function ViewTradeOptimized() {
   const { toast } = useToast();
   const userId = auth.currentUser?.uid;
   const [_, navigate] = useLocation();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Fetch trade data
   useEffect(() => {
@@ -115,33 +116,39 @@ export default function ViewTradeOptimized() {
     navigate("/trade/history");
   };
 
-  // Handle delete trade
-  const handleDelete = async (tradeId: string) => {
+  // Handle initiating delete trade
+  const handleDelete = (tradeId: string) => {
     if (!userId) return;
+    setIsDeleteDialogOpen(true);
+  };
+  
+  // Handle trade deletion after confirmation
+  const handleDeleteConfirm = async () => {
+    if (!userId || !tradeId) return;
     
-    if (window.confirm("Are you sure you want to delete this trade? This action cannot be undone.")) {
-      try {
-        setIsLoading(true);
-        // Sử dụng deleteTrade từ firebase.ts
-        // deleteTrade đã được cập nhật để gọi tradeUpdateService.notifyTradeDeleted
-        // Không cần cập nhật UI thủ công - TradeUpdateService sẽ thông báo cho observers
-        await deleteTrade(userId, tradeId);
-        toast({
-          title: "Trade deleted",
-          description: "The trade has been permanently deleted",
-        });
-        // Không cần navigate vì observer đã xử lý
-        // Nhưng vẫn giữ lại để đảm bảo UI nhất quán
-        navigate("/trade/history");
-      } catch (error) {
-        logError("Error deleting trade:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to delete trade. Please try again.",
-        });
-        setIsLoading(false);
-      }
+    try {
+      setIsLoading(true);
+      // Sử dụng deleteTrade từ firebase.ts
+      // deleteTrade đã được cập nhật để gọi tradeUpdateService.notifyTradeDeleted
+      // Không cần cập nhật UI thủ công - TradeUpdateService sẽ thông báo cho observers
+      await deleteTrade(userId, tradeId);
+      toast({
+        title: "Trade deleted",
+        description: "The trade has been permanently deleted",
+      });
+      // Không cần navigate vì observer đã xử lý
+      // Nhưng vẫn giữ lại để đảm bảo UI nhất quán
+      navigate("/trade/history");
+    } catch (error) {
+      logError("Error deleting trade:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete trade. Please try again.",
+      });
+      setIsLoading(false);
+    } finally {
+      setIsDeleteDialogOpen(false);
     }
   };
 
@@ -226,6 +233,31 @@ export default function ViewTradeOptimized() {
           </CardContent>
         </Card>
       )}
+      
+      {/* Dialog xác nhận xóa giao dịch */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="safe-area-p">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Trade Deletion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this 
+              <strong> {trade?.pair} {trade?.direction} </strong>
+              trade? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
