@@ -382,7 +382,7 @@ export default function EmotionTab({ data }: EmotionTabProps) {
   };
 
   // No longer using InsufficientDataCard component
-  // Removed unused component as part of code cleanup
+
 
   return (
     <div className="space-y-6">

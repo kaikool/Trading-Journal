@@ -58,4 +58,3 @@ export async function clearAssetsCache(): Promise<boolean> {
 
 
 
-// updateServiceWorker function was removed during cleanup - replaced by applyUpdate in pwa-helper.ts

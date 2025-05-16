@@ -17,7 +17,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { AppSettings } from "@/types";
 import { cn } from "@/lib/utils";
-// Removed unused import: evaluateDevicePerformance
+
 
 import { useTheme } from "@/contexts/ThemeContext";
 import { DASHBOARD_CONFIG } from "@/lib/config";
@@ -121,11 +121,11 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const userId = auth.currentUser?.uid;
-  // Removed unused state: devicePerformance
+
   const [activeTab, setActiveTab] = useState<string>('general');
   
   // Theme management - using the improved ThemeContext
-  const { theme, setTheme } = useTheme(); // Removed unused: isDarkMode
+  const { theme, setTheme } = useTheme();
   
   const [settings, setSettings] = useState<AppSettings>({
     theme: theme, // Initial value from context
