@@ -58,9 +58,9 @@ export type Trade = {
   exitImage?: string | null;
   entryImageM15?: string | null;
   exitImageM15?: string | null;
-  status?: string; // Added to fix the TS2339 errors (deprecated, use isOpen instead)
-  riskRewardRatio?: number; // Added to fix the TS2339 errors
-  isRevenge?: boolean; // Added to fix the TS2339 errors (redundant with revenge but needed for backward compatibility)
+  status?: string;
+  riskRewardRatio?: number;
+  isRevenge?: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
