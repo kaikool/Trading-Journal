@@ -29,7 +29,7 @@ export default function Tools() {
       "isTransparent": false,
       "locale": "en",
       "importanceFilter": "0,1",
-      "countryFilter": "us,eu,gb,ca,au,nz,jp,ch"
+      "countryFilter": "us"
     };
     
     script.innerHTML = JSON.stringify(widgetConfig);
