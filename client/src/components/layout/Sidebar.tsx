@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useLayout } from "@/contexts/LayoutContext";
+import { useTheme } from "@/contexts/ThemeContext"; 
 import { Icons } from "@/components/icons/icons";
+import * as LucideIcons from 'lucide-react';
 import { AppLogo } from "@/components/AppLogo";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,6 +26,54 @@ const SIDEBAR_LINKS = [
   { icon: <Icons.nav.achievements className="h-5 w-5" />, label: "Achievements", href: "/achievements" },
   { icon: <Icons.nav.settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
+
+// Theme Toggle Button Component
+function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
+  const { theme, setTheme, isDarkMode } = useTheme();
+  
+  // Handle theme toggle with smooth transition
+  const toggleTheme = () => {
+    // Toggle between light and dark, or use system as fallback
+    const newTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light';
+    setTheme(newTheme);
+  };
+  
+  // Determine which icon to show based on current theme
+  const getThemeIcon = () => {
+    if (theme === 'system') {
+      return <LucideIcons.Monitor className="h-5 w-5" />;
+    } else if (theme === 'dark' || isDarkMode) {
+      return <LucideIcons.Moon className="h-5 w-5" />;
+    } else {
+      return <LucideIcons.Sun className="h-5 w-5" />;
+    }
+  };
+  
+  // Get theme text label
+  const getThemeLabel = () => {
+    if (theme === 'system') return 'System';
+    if (theme === 'dark') return 'Dark';
+    return 'Light';
+  };
+  
+  return (
+    <Button
+      onClick={toggleTheme}
+      variant="ghost"
+      size={collapsed ? "icon" : "default"}
+      className={cn(
+        "h-10 transition-all",
+        collapsed ? "w-10 justify-center rounded-full" : "w-full justify-start text-sm font-normal"
+      )}
+      aria-label="Toggle theme"
+    >
+      <span className="w-5 h-5 flex items-center justify-center">
+        {getThemeIcon()}
+      </span>
+      {!collapsed && <span className="ml-3">{getThemeLabel()} Mode</span>}
+    </Button>
+  );
+}
 
 // Individual sidebar navigation item
 function SidebarItem({ 
@@ -265,6 +315,11 @@ export function Sidebar({ className }: { className?: string }) {
                 ))}
               </ul>
             </nav>
+          </div>
+          
+          {/* Theme toggle button */}
+          <div className="border-t border-border p-4">
+            <ThemeToggle />
           </div>
           
           {/* Logout Button - fixed to bottom with safe area */}
