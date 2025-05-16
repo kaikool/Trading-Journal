@@ -2,36 +2,30 @@ import React, { useEffect, useRef, memo } from 'react';
 import { useTheme } from "@/contexts/ThemeContext";
 
 function TradingViewChart() {
-  const container = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { isDarkMode } = useTheme();
-
+  
   useEffect(() => {
-    if (!container.current) return;
+    // Cleanup function to remove any existing widget scripts
+    const cleanup = () => {
+      const existingScript = document.getElementById("tradingview-widget-script");
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript);
+      }
+    };
     
-    // Clear any existing scripts first
-    container.current.innerHTML = "";
+    // Clean up first
+    cleanup();
     
-    const widgetContainer = document.createElement("div");
-    widgetContainer.className = "tradingview-widget-container__widget";
-    widgetContainer.style.height = "calc(100% - 32px)";
-    widgetContainer.style.width = "100%";
-    
-    const copyright = document.createElement("div");
-    copyright.className = "tradingview-widget-copyright p-2 text-xs text-muted-foreground";
-    copyright.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" class="text-primary font-medium">Powered by TradingView</a>';
-    
-    if (container.current) {
-      container.current.appendChild(widgetContainer);
-      container.current.appendChild(copyright);
-    }
-
+    // Create and add the script
     const script = document.createElement("script");
+    script.id = "tradingview-widget-script";
     script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
     script.type = "text/javascript";
     script.async = true;
     
-    // Configure chart options based on current theme
-    const chartOptions = {
+    // Set widget options
+    const widgetOptions = {
       "autosize": true,
       "symbol": "OANDA:XAUUSD",
       "interval": "60",
@@ -49,32 +43,35 @@ function TradingViewChart() {
         "OANDA:USDJPY"
       ],
       "studies": [
-        "STD;RSI",
+        "STD;RSI", 
         "STD;TEMA"
       ],
       "hide_volume": true,
       "support_host": "https://www.tradingview.com"
     };
     
-    script.innerHTML = JSON.stringify(chartOptions);
+    script.innerHTML = JSON.stringify(widgetOptions);
     
-    if (container.current) {
-      container.current.appendChild(script);
+    // Add the script to the container if it exists
+    if (containerRef.current) {
+      containerRef.current.appendChild(script);
     }
     
-    return () => {
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
+    // Cleanup on unmount
+    return cleanup;
   }, [isDarkMode]);
-
+  
   return (
-    <div 
-      className="tradingview-widget-container h-full w-full" 
-      ref={container} 
-      style={{ minHeight: "650px" }}
-    ></div>
+    <div className="w-full" style={{ height: "650px" }}>
+      <div className="tradingview-widget-container" ref={containerRef} style={{ height: "100%", width: "100%" }}>
+        <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
+        <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
+          <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">
+            Powered by TradingView
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }
 
