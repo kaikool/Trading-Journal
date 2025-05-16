@@ -50,7 +50,7 @@ export function PerformanceChart({
   data, 
   isLoading = false 
 }: PerformanceChartProps) {
-  // Đã loại bỏ console.log để cải thiện hiệu suất
+
   
   // Consider it loading if we receive an empty array
   // This happens when userData is not yet loaded in parent components
