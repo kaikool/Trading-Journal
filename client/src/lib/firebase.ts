@@ -323,6 +323,7 @@ async function addTrade(userId: string, tradeData: any) {
     processTradeTrigger(userId, 'create');
     
     // Sử dụng TradeUpdateService để thông báo cập nhật UI đồng bộ
+    debug(`[REALTIME-DEBUG] Notifying trade creation via TradeUpdateService for ID: ${docRef.id}`);
     tradeUpdateService.notifyTradeCreated(userId, docRef.id);
     
     // Return success response with id for easier access

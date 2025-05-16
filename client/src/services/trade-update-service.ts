@@ -54,13 +54,18 @@ class TradeUpdateService {
    * @param tradeId ID giao dịch mới (tùy chọn)
    */
   public notifyTradeCreated(userId: string, tradeId?: string) {
-    debug(`TradeUpdateService: Trade created notification (ID: ${tradeId || 'unknown'})`);
+    debug(`[REALTIME-DEBUG] TradeUpdateService: Trade created notification (ID: ${tradeId || 'unknown'})`);
+    
     // Đảm bảo invalidation xong trước khi thông báo cho observers
+    debug(`[REALTIME-DEBUG] Invalidating queries for userId: ${userId}`);
     this._invalidateTradeQueries(userId);
+    
     // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
+    debug(`[REALTIME-DEBUG] Scheduling notification to observers with delay`);
     setTimeout(() => {
+      debug(`[REALTIME-DEBUG] Notifying observers about new trade: ${tradeId}`);
       this._notifyObservers('create', tradeId);
-    }, 0);
+    }, 10); // Tăng delay lên 10ms để đảm bảo invalidation hoàn tất
   }
   
   /**
@@ -182,14 +187,20 @@ class TradeUpdateService {
    * Thông báo cho tất cả các observers về sự thay đổi
    */
   private _notifyObservers(action: 'create' | 'update' | 'delete' | 'close', tradeId?: string) {
+    const observerCount = this.observers.size;
+    debug(`[REALTIME-DEBUG] _notifyObservers: Notifying ${observerCount} observers for action ${action}, tradeId=${tradeId}`);
+    
     // Chuyển đổi Set thành Array trước khi duyệt qua để tránh lỗi TSC
-    Array.from(this.observers).forEach(observer => {
+    Array.from(this.observers).forEach((observer, index) => {
       try {
+        debug(`[REALTIME-DEBUG] Notifying observer ${index+1}/${observerCount} for action ${action}`);
         observer.onTradesChanged(action, tradeId);
       } catch (error) {
         logError('TradeUpdateService: Error notifying observer', error);
       }
     });
+    
+    debug(`[REALTIME-DEBUG] _notifyObservers: Completed notifications for action ${action}`);
   }
 }
 
