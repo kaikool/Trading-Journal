@@ -6,6 +6,12 @@ interface EconomicCalendarProps {
     importanceFilter?: string;
     countryFilter?: string;
     timeFrame?: string;
+    showTabs?: boolean;
+    showTimezone?: boolean;
+    showFlags?: boolean;
+    showSymbol?: boolean;
+    initialTab?: 'event' | 'forex' | 'crypto' | 'stock';
+    scrollToEarliestEvent?: boolean;
   };
 }
 
@@ -17,7 +23,13 @@ function EconomicCalendar({ config }: EconomicCalendarProps) {
   const defaultConfig = {
     importanceFilter: "0,1,2", // 0=low, 1=medium, 2=high
     countryFilter: "us,eu,gb,jp,au,ca,ch", // Common forex countries
-    timeFrame: "1M" // One month
+    timeFrame: "1M", // One month
+    showTabs: true,
+    showTimezone: true,
+    showFlags: true,
+    showSymbol: true,
+    initialTab: 'event' as const,
+    scrollToEarliestEvent: false
   };
   
   // Merge default with provided config
@@ -70,7 +82,38 @@ function EconomicCalendar({ config }: EconomicCalendarProps) {
       locale: "en",
       importanceFilter: mergedConfig.importanceFilter,
       countryFilter: mergedConfig.countryFilter,
-      timeFrame: mergedConfig.timeFrame
+      timeFrame: mergedConfig.timeFrame,
+      tabs: mergedConfig.showTabs ? [
+        {
+          title: "Events",
+          type: "economic-calendar",
+          isActive: mergedConfig.initialTab === 'event',
+          symbols: []
+        },
+        {
+          title: "Forex",
+          type: "symbols",
+          symbols: ["FX:EURUSD", "FX:USDJPY", "FX:GBPUSD", "FX:AUDUSD", "FX:USDCAD"],
+          isActive: mergedConfig.initialTab === 'forex'
+        },
+        {
+          title: "Crypto",
+          type: "symbols",
+          symbols: ["BINANCE:BTCUSDT", "BINANCE:ETHUSDT", "BINANCE:SOLUSDT", "BINANCE:DOGEUSDT", "BINANCE:BNBUSDT"],
+          isActive: mergedConfig.initialTab === 'crypto'
+        },
+        {
+          title: "Stock",
+          type: "symbols",
+          symbols: ["NASDAQ:AAPL", "NASDAQ:MSFT", "NASDAQ:AMZN", "NYSE:TSLA", "NASDAQ:NVDA"],
+          isActive: mergedConfig.initialTab === 'stock'
+        }
+      ] : undefined,
+      showTabs: mergedConfig.showTabs,
+      showTimezone: mergedConfig.showTimezone,
+      hideFlags: !mergedConfig.showFlags,
+      showSymbol: mergedConfig.showSymbol,
+      scrollToEarliestEvent: mergedConfig.scrollToEarliestEvent
     };
     
     // Convert to JSON and set as innerHTML

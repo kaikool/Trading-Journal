@@ -5,6 +5,12 @@ interface EconomicCalendarConfig {
   importanceFilter: string;
   countryFilter: string;
   timeFrame: string;
+  showTabs?: boolean;
+  showTimezone?: boolean;
+  showFlags?: boolean;
+  showSymbol?: boolean;
+  initialTab?: 'event' | 'forex' | 'crypto' | 'stock';
+  scrollToEarliestEvent?: boolean;
 }
 
 interface TradingToolsContextType {
@@ -50,7 +56,13 @@ const defaultChartConfig: TradingViewChartConfig = {
 const defaultCalendarConfig: EconomicCalendarConfig = {
   importanceFilter: "0,1,2", // 0=low, 1=medium, 2=high
   countryFilter: "us,eu,gb,jp,au,ca,ch", // Common forex countries
-  timeFrame: "1M" // One month
+  timeFrame: "1M", // One month
+  showTabs: true,
+  showTimezone: true,
+  showFlags: true,
+  showSymbol: true,
+  initialTab: 'event',
+  scrollToEarliestEvent: false
 };
 
 // Create context

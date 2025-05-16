@@ -230,9 +230,133 @@ const ChartConfig: React.FC = () => {
               <Separator />
               
               <div className="space-y-2">
+                <Label className="mb-2">Volume Colors</Label>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="volumeUpColor" className="text-xs">Volume Up</Label>
+                    <Input
+                      id="volumeUpColor"
+                      type="color"
+                      value={chartConfig.customColors?.volumeUpColor || "#26a69a80"}
+                      onChange={(e) => updateChartConfig({
+                        customColors: {
+                          ...chartConfig.customColors,
+                          volumeUpColor: e.target.value
+                        }
+                      })}
+                      className="h-8 w-full cursor-pointer"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="volumeDownColor" className="text-xs">Volume Down</Label>
+                    <Input
+                      id="volumeDownColor"
+                      type="color"
+                      value={chartConfig.customColors?.volumeDownColor || "#ef535080"}
+                      onChange={(e) => updateChartConfig({
+                        customColors: {
+                          ...chartConfig.customColors,
+                          volumeDownColor: e.target.value
+                        }
+                      })}
+                      className="h-8 w-full cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-2">
+                <Label className="mb-2">Scale Type</Label>
+                <Select 
+                  value={chartConfig.scaleMode || "Normal"} 
+                  onValueChange={(value) => updateChartConfig({ scaleMode: value as 'Normal' | 'Logarithmic' })}
+                >
+                  <SelectTrigger id="scaleMode">
+                    <SelectValue placeholder="Select scale type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Normal">Normal</SelectItem>
+                    <SelectItem value="Logarithmic">Logarithmic</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-2">
                 <Label className="mb-2">Display Options</Label>
                 
-                <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="showVolume"
+                      checked={chartConfig.showVolume !== false}
+                      onCheckedChange={(checked) => 
+                        updateChartConfig({ showVolume: checked })
+                      }
+                    />
+                    <Label htmlFor="showVolume">Show Volume</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="showGridLines"
+                      checked={chartConfig.showGridLines !== false}
+                      onCheckedChange={(checked) => 
+                        updateChartConfig({ showGridLines: checked })
+                      }
+                    />
+                    <Label htmlFor="showGridLines">Show Grid Lines</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="showFloatingTooltip"
+                      checked={chartConfig.showFloatingTooltip !== false}
+                      onCheckedChange={(checked) => 
+                        updateChartConfig({ showFloatingTooltip: checked })
+                      }
+                    />
+                    <Label htmlFor="showFloatingTooltip">Show Floating Tooltip</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="showWatermark"
+                      checked={chartConfig.showWatermark === true}
+                      onCheckedChange={(checked) => 
+                        updateChartConfig({ showWatermark: checked })
+                      }
+                    />
+                    <Label htmlFor="showWatermark">Show Watermark</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="fullscreenButton"
+                      checked={chartConfig.fullscreenButton !== false}
+                      onCheckedChange={(checked) => 
+                        updateChartConfig({ fullscreenButton: checked })
+                      }
+                    />
+                    <Label htmlFor="fullscreenButton">Fullscreen Button</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="allowScreenshot"
+                      checked={chartConfig.allowScreenshot !== false}
+                      onCheckedChange={(checked) => 
+                        updateChartConfig({ allowScreenshot: checked })
+                      }
+                    />
+                    <Label htmlFor="allowScreenshot">Allow Screenshots</Label>
+                  </div>
+                  
                   <div className="flex items-center space-x-2">
                     <Switch
                       id="showDetailsButton"

@@ -12,6 +12,16 @@ export interface TradingViewChartConfig {
   showHotlistButton?: boolean;
   showCalendarButton?: boolean;
   showDrawings?: boolean;
+  showVolume?: boolean;
+  scaleMode?: 'Normal' | 'Logarithmic';
+  showGridLines?: boolean;
+  customGridLineColor?: string;
+  backgroundColor?: string;
+  showFloatingTooltip?: boolean;
+  showWatermark?: boolean;
+  fullscreenButton?: boolean;
+  allowScreenshot?: boolean;
+  hideSideToolbar?: boolean;
   customColors?: {
     upColor?: string;
     downColor?: string;
@@ -19,6 +29,11 @@ export interface TradingViewChartConfig {
     wickDownColor?: string;
     borderUpColor?: string;
     borderDownColor?: string;
+    backgroundType?: 'solid' | 'gradient';
+    backColor?: string;
+    chartFontColor?: string;
+    volumeUpColor?: string;
+    volumeDownColor?: string;
   };
 }
 
@@ -53,11 +68,22 @@ function TradingViewChart({ config }: TradingViewChartProps) {
     showHotlistButton: true,
     showCalendarButton: true,
     showDrawings: true,
+    showVolume: true,
+    scaleMode: "Normal",
+    showGridLines: true,
+    showFloatingTooltip: true,
+    showWatermark: false,
+    fullscreenButton: true,
+    allowScreenshot: true,
+    hideSideToolbar: false,
     customColors: {
       upColor: "#26a69a",
       downColor: "#ef5350",
       wickUpColor: "#26a69a",
-      wickDownColor: "#ef5350"
+      wickDownColor: "#ef5350",
+      backgroundType: "solid",
+      volumeUpColor: "#26a69a80",
+      volumeDownColor: "#ef535080"
     }
   };
   
@@ -102,17 +128,26 @@ function TradingViewChart({ config }: TradingViewChartProps) {
       "enable_publishing": false,
       "hide_top_toolbar": false,
       "allow_symbol_change": true,
-      "save_image": true,
+      "save_image": mergedConfig.allowScreenshot !== false,
       "container_id": "tradingview-widget-container",
       "watchlist": mergedConfig.watchlist,
       "withdateranges": true,
-      "hide_side_toolbar": !mergedConfig.showDrawings,
+      "hide_side_toolbar": mergedConfig.hideSideToolbar === true || !mergedConfig.showDrawings,
       "details": mergedConfig.showDetailsButton,
       "hotlist": mergedConfig.showHotlistButton,
       "calendar": mergedConfig.showCalendarButton,
       "studies": mergedConfig.studies,
+      "show_popup_button": mergedConfig.fullscreenButton !== false,
+      "popup_width": "1000",
+      "popup_height": "650",
+      "hide_volume": mergedConfig.showVolume === false,
+      "hide_drawing_toolbar": mergedConfig.showDrawings === false,
+      "scale_mode": mergedConfig.scaleMode?.toLowerCase() === "logarithmic" ? "logarithmic" : "normal",
       "disabled_features": [
-        "header_compare"
+        "header_compare",
+        ...(mergedConfig.showGridLines === false ? ["grid_lines"] : []), 
+        ...(mergedConfig.showWatermark === false ? ["header_symbol_search"] : []),
+        ...(mergedConfig.showFloatingTooltip === false ? ["floating_tooltip"] : [])
       ],
       "enabled_features": [
         "use_localstorage_for_settings",
@@ -135,12 +170,32 @@ function TradingViewChart({ config }: TradingViewChartProps) {
         { "text": "1M", "resolution": "1M" }
       ],
       "overrides": {
+        // Candle style
         "mainSeriesProperties.candleStyle.upColor": mergedConfig.customColors?.upColor,
         "mainSeriesProperties.candleStyle.downColor": mergedConfig.customColors?.downColor,
         "mainSeriesProperties.candleStyle.wickUpColor": mergedConfig.customColors?.wickUpColor,
         "mainSeriesProperties.candleStyle.wickDownColor": mergedConfig.customColors?.wickDownColor,
         "mainSeriesProperties.candleStyle.borderUpColor": mergedConfig.customColors?.borderUpColor,
-        "mainSeriesProperties.candleStyle.borderDownColor": mergedConfig.customColors?.borderDownColor
+        "mainSeriesProperties.candleStyle.borderDownColor": mergedConfig.customColors?.borderDownColor,
+        
+        // Volume colors
+        "volumePaneSize": mergedConfig.showVolume !== false ? "medium" : "small",
+        "volume.volume.color.0": mergedConfig.customColors?.volumeDownColor || (mergedConfig.customColors?.downColor + "80"),
+        "volume.volume.color.1": mergedConfig.customColors?.volumeUpColor || (mergedConfig.customColors?.upColor + "80"),
+        
+        // Background
+        "paneProperties.background": mergedConfig.customColors?.backColor || (isDarkMode ? "#131722" : "#ffffff"),
+        "paneProperties.backgroundType": mergedConfig.customColors?.backgroundType || "solid",
+        
+        // Grid lines
+        "paneProperties.gridProperties.color": mergedConfig.customGridLineColor || (isDarkMode ? "#363c4e" : "#e1e3eb"),
+        "paneProperties.vertGridProperties.color": mergedConfig.customGridLineColor || (isDarkMode ? "#363c4e" : "#e1e3eb"),
+        "paneProperties.horzGridProperties.color": mergedConfig.customGridLineColor || (isDarkMode ? "#363c4e" : "#e1e3eb"),
+        
+        // Scaling
+        "scalesProperties.textColor": mergedConfig.customColors?.chartFontColor || (isDarkMode ? "#a3a6af" : "#131722"),
+        "scalesProperties.lineColor": mergedConfig.customGridLineColor || (isDarkMode ? "#363c4e" : "#e1e3eb"),
+        "scalesProperties.backgroundColor": mergedConfig.customColors?.backColor || (isDarkMode ? "#131722" : "#ffffff")
       }
     };
     
