@@ -36,22 +36,16 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
       // Tổng số dialog đang mở
       const totalDialogCount = dialogElements.length + radixDialogElements.length;
       
-      // Log thông tin để debug
-      console.log(`[DEBUG] DialogContext: detected ${dialogElements.length} standard dialogs, ${radixDialogElements.length} Radix dialogs`);
-      
       // Cập nhật trạng thái và đếm số lượng
       if (totalDialogCount > 0 && !dialogOpen) {
         dialogCountRef.current = totalDialogCount;
-        console.log(`[DEBUG] DialogContext: Opening dialog, count=${totalDialogCount}`);
         setDialogOpen(true);
       } else if (totalDialogCount === 0 && dialogOpen) {
         dialogCountRef.current = 0;
-        console.log(`[DEBUG] DialogContext: Closing dialog`);
         setDialogOpen(false);
       } else {
         // Chỉ cập nhật số lượng nếu có thay đổi
         if (dialogCountRef.current !== totalDialogCount) {
-          console.log(`[DEBUG] DialogContext: Dialog count changed ${dialogCountRef.current} -> ${totalDialogCount}`);
           dialogCountRef.current = totalDialogCount;
         }
       }
