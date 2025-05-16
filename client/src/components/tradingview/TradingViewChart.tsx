@@ -26,23 +26,21 @@ function TradingViewChart() {
     
     // Set widget options
     const widgetOptions = {
+      "width": "100%",
+      "height": "100%",
       "autosize": true,
       "symbol": "OANDA:XAUUSD",
-      "interval": "60", // H1 interval by default
+      "interval": "60", // 1h default
       "timezone": "exchange",
       "theme": isDarkMode ? "dark" : "light",
       "style": "1", // Candles style
       "locale": "en",
-      "hide_legend": true,
-      "allow_symbol_change": true,
-      "save_image": true,
+      "toolbar_bg": isDarkMode ? "#151924" : "#f1f3f6",
       "enable_publishing": false,
       "hide_top_toolbar": false,
-      "withdateranges": true,
-      "show_popup_button": true,
-      "popup_width": "1000",
-      "popup_height": "650",
-      "published_charts_count": 3,
+      "allow_symbol_change": true,
+      "save_image": true,
+      "container_id": "tradingview-widget-container",
       "watchlist": [
         "OANDA:XAUUSD",
         "BINANCE:BTCUSDT.P",
@@ -50,30 +48,40 @@ function TradingViewChart() {
         "OANDA:GBPUSD", 
         "OANDA:USDJPY"
       ],
-      "toolbar_bg": isDarkMode ? "#151924" : "#f1f3f6",
-      "studies_overrides": {
-        "volume.volume.color.0": "#ef5350",
-        "volume.volume.color.1": "#26a69a"
-      },
+      "withdateranges": true,
+      "hide_side_toolbar": false,
+      "details": true,
+      "hotlist": true,
+      "calendar": true,
+      "studies": [
+        "RSI@tv-basicstudies",
+        "MASimple@tv-basicstudies"
+      ],
+      "disabled_features": [
+        "header_compare"
+      ],
+      "enabled_features": [
+        "use_localstorage_for_settings",
+        "save_chart_properties_to_local_storage"
+      ],
+      "charts_storage_api_version": "1.1",
+      "client_id": "tradingview.com",
+      "user_id": "public_user",
+      "charts_storage_url": "https://saveload.tradingview.com",
+      "supported_resolutions": ["15", "30", "60", "240", "1D"],
+      "time_frames": [
+        { "text": "15m", "resolution": "15" },
+        { "text": "30m", "resolution": "30" },
+        { "text": "1h", "resolution": "60" },
+        { "text": "4h", "resolution": "240" },
+        { "text": "1D", "resolution": "1D" }
+      ],
       "overrides": {
         "mainSeriesProperties.candleStyle.upColor": "#26a69a",
         "mainSeriesProperties.candleStyle.downColor": "#ef5350",
         "mainSeriesProperties.candleStyle.wickUpColor": "#26a69a",
         "mainSeriesProperties.candleStyle.wickDownColor": "#ef5350"
-      },
-      "charts_storage_url": "https://saveload.tradingview.com",
-      "client_id": "tradingview.com",
-      "custom_css_url": "",
-      "allowed_intervals": ["15", "30", "60", "240", "1D"],
-      "default_intervals": ["15", "30", "60", "240", "1D"],
-      "disabled_features": ["header_compare"],
-      "enabled_features": ["use_localstorage_for_settings"],
-      "studies": [
-        "STD;RSI", 
-        "STD;TEMA"
-      ],
-      "hide_volume": true,
-      "support_host": "https://www.tradingview.com"
+      }
     };
     
     script.innerHTML = JSON.stringify(widgetOptions);
@@ -89,7 +97,7 @@ function TradingViewChart() {
   
   return (
     <div className="w-full" style={{ height: "75vh" }}>
-      <div className="tradingview-widget-container" ref={containerRef} style={{ height: "100%", width: "100%" }}>
+      <div className="tradingview-widget-container" ref={containerRef} style={{ height: "100%", width: "100%" }} id="tradingview-widget-container">
         <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 24px)", width: "100%" }}></div>
         <div className="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
           <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">
