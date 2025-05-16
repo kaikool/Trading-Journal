@@ -1,4 +1,4 @@
-// usePaginatedTrades hook removed - not used in the project
+
 // 
 
 // The original file contained a complete implementation for paginating trades,

@@ -12,4 +12,3 @@ export function determineTradeStatus(trade: Trade): TradeStatus {
   return trade.result as TradeStatus || "MANUAL";
 }
 
-// getTradeResultDisplay function removed - not used in the project
