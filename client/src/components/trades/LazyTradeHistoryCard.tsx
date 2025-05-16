@@ -23,6 +23,7 @@ import DirectionBadge from "./DirectionBadge";
 import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
+import { debug } from "@/lib/debug";
 // Lưu ý: Component này không gọi trực tiếp TradeUpdateService
 // nhưng được cập nhật thông qua TradeHistory.tsx và cơ chế cập nhật của useTradeList
 
@@ -50,6 +51,13 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     triggerOnce: false, // Cho phép trigger nhiều lần để cập nhật khi dữ liệu thay đổi
     rootMargin: '200px', // Pre-load trước 200px
   });
+  
+  // Log trạng thái inView để debug
+  useEffect(() => {
+    if (trade && trade.id) {
+      debug(`[SCROLL-DEBUG][${trade.id}] Card inView changed: ${inView}`);
+    }
+  }, [inView, trade]);
   
   // Lazy state cho hình ảnh
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -155,10 +163,15 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
 
   // Theo dõi trạng thái ảnh
   useEffect(() => {
-    if (cachedImageUrl && !isImageLoading) {
-      setImageLoaded(true);
+    if (trade && trade.id) {
+      debug(`[SCROLL-DEBUG][${trade.id}] Image state: cachedUrl=${!!cachedImageUrl}, isLoading=${isImageLoading}`);
+      
+      if (cachedImageUrl && !isImageLoading) {
+        debug(`[SCROLL-DEBUG][${trade.id}] Image loaded successfully`);
+        setImageLoaded(true);
+      }
     }
-  }, [cachedImageUrl, isImageLoading]);
+  }, [cachedImageUrl, isImageLoading, trade]);
   
   // Load strategy name from ID when component is in view
   useEffect(() => {
