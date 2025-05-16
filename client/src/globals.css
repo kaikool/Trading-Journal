@@ -99,22 +99,39 @@
 }
 
 /* Page transition fix for dark mode */
+.dark {
+  transition: none !important;
+}
+
 .page-transition,
 .page-transition * {
-  transition: background-color 0.15s linear, background 0.15s linear,
-              border-color 0.15s linear, color 0.15s linear !important;
+  transition: none !important;
 }
 
 .dark.page-transition {
   background-color: hsl(212 40% 6%) !important;
 }
 
-.dark.page-transition .bg-background {
+.dark.page-transition body {
   background-color: hsl(212 40% 6%) !important;
 }
 
-.dark.page-transition .skeleton {
-  background-color: hsl(212 35% 10%) !important;
+/* Tắt tất cả transition animation khi chuyển trang để tránh flash */
+.page-transition .fixed,
+.page-transition .absolute,
+.page-transition .bg-background,
+.page-transition .animate-pulse,
+.page-transition [class*='bg-'] {
+  transition: none !important;
+  background-color: transparent !important;
+  color: transparent !important;
+}
+
+/* Ngoại lệ cho dark mode */
+.dark.page-transition .fixed,
+.dark.page-transition .absolute,
+.dark.page-transition .bg-background {
+  background-color: hsl(212 40% 6%) !important;
 }
 
 /* Animation utility classes */

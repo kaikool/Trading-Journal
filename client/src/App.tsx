@@ -88,6 +88,7 @@ function MainContent() {
     // Khi location thay đổi, đánh dấu trang đang loading và scroll lên đầu trang
     if (prevLocation !== location) {
       // Đánh dấu trang chưa sẵn sàng và hiển thị chỉ báo loading
+      console.log('[TRANSITION-DEBUG] Đánh dấu trang chưa sẵn sàng và bắt đầu chuyển trang');
       setIsPageReady(false);
       
       // Lưu lại route hiện tại
@@ -114,8 +115,10 @@ function MainContent() {
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
+      console.log('[TRANSITION-DEBUG] Thêm class page-transition vào document');
       document.documentElement.classList.add('page-transition');
       const readyTimer = setTimeout(() => {
+        console.log('[TRANSITION-DEBUG] Trang đã sẵn sàng, xóa class page-transition');
         setIsPageReady(true);
         document.documentElement.classList.remove('page-transition');
       }, 300); // Thời gian dài hơn để đảm bảo trang đã được tải
@@ -130,15 +133,18 @@ function MainContent() {
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
     if (!isPageReady) {
-      // Đặt immediately để ngăn nháy sáng
+      console.log('[TRANSITION-DEBUG] Safety Timer: Thêm class page-transition');
+      // Áp dụng lớp này để ngăn nháy sáng trong suốt quá trình chuyển đổi
       document.documentElement.classList.add('page-transition');
       
       const safetyTimer = setTimeout(() => {
+        console.log('[TRANSITION-DEBUG] Safety Timer kết thúc, xóa class page-transition');
         setIsPageReady(true);
         document.documentElement.classList.remove('page-transition');
       }, 1000); // Khung an toàn tối đa 1 giây
       
       return () => {
+        console.log('[TRANSITION-DEBUG] Safety Timer cleanup, xóa class page-transition');
         clearTimeout(safetyTimer);
         document.documentElement.classList.remove('page-transition');
       };
