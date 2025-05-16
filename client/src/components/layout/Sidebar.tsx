@@ -41,11 +41,11 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   // Determine which icon to show based on current theme
   const getThemeIcon = () => {
     if (theme === 'system') {
-      return <LucideIcons.Monitor className="h-5 w-5" />;
+      return <Icons.ui.monitor className="h-5 w-5" />;
     } else if (theme === 'dark' || isDarkMode) {
-      return <LucideIcons.Moon className="h-5 w-5" />;
+      return <Icons.ui.moon className="h-5 w-5" />;
     } else {
-      return <LucideIcons.Sun className="h-5 w-5" />;
+      return <Icons.ui.sun className="h-5 w-5" />;
     }
   };
   
@@ -465,6 +465,20 @@ export function Sidebar({ className }: { className?: string }) {
           </div>
         )}
         
+        {/* Theme toggle button */}
+        {!sidebarCollapsed && (
+          <div className="border-t border-border p-3">
+            <ThemeToggle />
+          </div>
+        )}
+        
+        {/* Theme toggle (collapsed) */}
+        {sidebarCollapsed && (
+          <div className="border-t border-border p-3 flex justify-center">
+            <ThemeToggle collapsed={true} />
+          </div>
+        )}
+
         {/* Logout Button */}
         {!sidebarCollapsed && (
           <div className="border-t border-border p-3">
