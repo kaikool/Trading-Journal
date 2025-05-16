@@ -212,13 +212,15 @@ function MainContent() {
   // If not on auth/public page and user is not logged in, redirect to login page
   useEffect(() => {
     if (!loading && !hasUser && !isPublicPage) {
-      // Create a dummy user for testing on larger screens
-      if (process.env.NODE_ENV === 'development') {
-        console.log("Development mode: Auto-login enabled for testing");
-        // Instead of redirecting, allow viewing in dev mode
-        // This keeps mobile experience intact while letting desktop display properly
+      console.log("Not authenticated, navigation to login required");
+      // For desktop/larger screens, add a small delay to ensure the app has time to render first
+      if (window.innerWidth > 768) {
+        // Give the app time to hydrate and render first
+        setTimeout(() => {
+          window.location.href = "/auth/login";
+        }, 300);
       } else {
-        // In production, redirect normally
+        // For mobile, redirect immediately for faster experience
         window.location.href = "/auth/login";
       }
     }
