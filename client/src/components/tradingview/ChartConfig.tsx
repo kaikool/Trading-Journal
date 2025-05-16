@@ -188,83 +188,10 @@ const ChartConfig: React.FC = () => {
           <AccordionContent>
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-3">
-                <Label className="mb-2">Candle Colors</Label>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="upColor" className="text-xs">Bullish Color</Label>
-                    <Input
-                      id="upColor"
-                      type="color"
-                      value={chartConfig.customColors?.upColor || "#26a69a"}
-                      onChange={(e) => updateChartConfig({
-                        customColors: {
-                          ...chartConfig.customColors,
-                          upColor: e.target.value,
-                          wickUpColor: e.target.value
-                        }
-                      })}
-                      className="h-8 w-full cursor-pointer"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="downColor" className="text-xs">Bearish Color</Label>
-                    <Input
-                      id="downColor"
-                      type="color"
-                      value={chartConfig.customColors?.downColor || "#ef5350"}
-                      onChange={(e) => updateChartConfig({
-                        customColors: {
-                          ...chartConfig.customColors,
-                          downColor: e.target.value,
-                          wickDownColor: e.target.value
-                        }
-                      })}
-                      className="h-8 w-full cursor-pointer"
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div className="space-y-2">
-                <Label className="mb-2">Volume Colors</Label>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="volumeUpColor" className="text-xs">Volume Up</Label>
-                    <Input
-                      id="volumeUpColor"
-                      type="color"
-                      value={chartConfig.customColors?.volumeUpColor || "#26a69a80"}
-                      onChange={(e) => updateChartConfig({
-                        customColors: {
-                          ...chartConfig.customColors,
-                          volumeUpColor: e.target.value
-                        }
-                      })}
-                      className="h-8 w-full cursor-pointer"
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="volumeDownColor" className="text-xs">Volume Down</Label>
-                    <Input
-                      id="volumeDownColor"
-                      type="color"
-                      value={chartConfig.customColors?.volumeDownColor || "#ef535080"}
-                      onChange={(e) => updateChartConfig({
-                        customColors: {
-                          ...chartConfig.customColors,
-                          volumeDownColor: e.target.value
-                        }
-                      })}
-                      className="h-8 w-full cursor-pointer"
-                    />
-                  </div>
-                </div>
+                <Label className="mb-2">Chế độ hiển thị biểu đồ</Label>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Sau khi biểu đồ tải, bạn có thể tùy chỉnh màu sắc trực tiếp từ giao diện TradingView
+                </p>
               </div>
               
               <Separator />
