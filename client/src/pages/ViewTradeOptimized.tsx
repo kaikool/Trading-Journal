@@ -11,6 +11,16 @@ import { useLocation } from "wouter";
 import { LazyTradeViewEdit } from "@/components/trades/LazyTradeViewEdit";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function ViewTradeOptimized() {
   const { tradeId } = useParams();
