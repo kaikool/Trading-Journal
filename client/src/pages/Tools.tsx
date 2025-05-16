@@ -59,24 +59,14 @@ export default function Tools() {
         </TabsList>
         
         <TabsContent value="forex-calendar">
-          <Card>
-            <CardHeader>
-              <CardTitle>Economic Calendar</CardTitle>
-              <CardDescription>
-                Stay informed about market-moving economic events with real-time updates.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "600px" }}>
-                <div id="tradingview-widget-container" className="tradingview-widget-container h-full">
-                  <div className="tradingview-widget-container__widget h-full"></div>
-                  <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
-                    Powered by <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">TradingView</a>
-                  </div>
-                </div>
+          <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "650px" }}>
+            <div id="tradingview-widget-container" className="tradingview-widget-container h-full">
+              <div className="tradingview-widget-container__widget h-full"></div>
+              <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
+                Powered by <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">TradingView</a>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
