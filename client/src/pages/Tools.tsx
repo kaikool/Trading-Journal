@@ -7,69 +7,49 @@ import TradingViewChart from "@/components/tradingview/TradingViewChart";
 export default function Tools() {
   const { isDarkMode } = useTheme();
 
-  // Dynamically inject TradingView widget script for calendar
+  // Direct embed approach for TradingView calendar widget
   useEffect(() => {
-    // Function to initialize the economic calendar widget
-    const initializeCalendarWidget = () => {
-      const widgetContainer = document.getElementById("tradingview-calendar-container");
-      if (!widgetContainer) return;
+    const loadCalendarWidget = (container) => {
+      if (!container) return;
       
-      // Clear existing content
-      widgetContainer.innerHTML = "";
+      // Clear any existing content first
+      container.innerHTML = "";
       
-      // Create widget container div
-      const widgetDiv = document.createElement("div");
-      widgetDiv.className = "tradingview-widget-container__widget";
-      widgetDiv.style.height = "calc(100% - 24px)";
-      widgetDiv.style.width = "100%";
-      
-      // Create copyright div
-      const copyrightDiv = document.createElement("div");
-      copyrightDiv.className = "tradingview-widget-copyright p-1 text-xs text-muted-foreground";
-      copyrightDiv.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" class="text-primary font-medium">Powered by TradingView</a>';
-      
-      // Append to container
-      widgetContainer.appendChild(widgetDiv);
-      widgetContainer.appendChild(copyrightDiv);
-      
-      // Create the script element with proper configuration
-      const script = document.createElement("script");
-      script.id = "tradingview-widget-script";
-      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
-      script.async = true;
-      
-      // Simple string-based setup to avoid JSON stringify issues
-      script.textContent = JSON.stringify({
-        "width": "100%",
-        "height": "100%",
-        "colorTheme": isDarkMode ? "dark" : "light",
-        "isTransparent": false,
-        "locale": "en",
-        "importanceFilter": "0,1",
-        "currencyFilter": "USD,EUR,JPY,GBP,AUD,CAD,CHF,CNY",
-        "countryFilter": "us,eu,uk,jp,ca,au,ch,cn"
-      });
-      
-      // Append script to widget container
-      widgetDiv.appendChild(script);
+      // Manual HTML injection for TradingView widget
+      container.innerHTML = `
+        <div class="tradingview-widget-container" style="width:100%; height:100%;">
+          <iframe 
+            id="tradingview-widget-iframe"
+            src="https://s.tradingview.com/calendar/?locale=en&countryFilter=us&importanceFilter=-1,0,1&theme=${isDarkMode ? 'dark' : 'light'}" 
+            style="width:100%; height:100%; border:none;"
+            frameborder="0"
+            allowtransparency="true"
+            scrolling="no"
+          ></iframe>
+          <div class="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
+            <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" class="text-primary font-medium">
+              Powered by TradingView
+            </a>
+          </div>
+        </div>
+      `;
     };
 
-    // Handle tab change to initialize widget when forex-calendar tab is selected
+    // Function to handle tab changes
     const handleTabChange = () => {
-      const calendarTab = document.querySelector('[data-state="active"][value="forex-calendar"]');
-      if (calendarTab) {
-        // Initialize widget with a slight delay to ensure DOM is ready
-        setTimeout(initializeCalendarWidget, 100);
+      if (document.querySelector('[data-state="active"][value="forex-calendar"]')) {
+        const container = document.getElementById("tradingview-calendar-container");
+        loadCalendarWidget(container);
       }
     };
     
-    // Run once on mount with a delay to ensure proper rendering
+    // Initial load if forex-calendar is the active tab
     setTimeout(() => {
-      const calendarTab = document.querySelector('[data-state="active"][value="forex-calendar"]');
-      if (calendarTab) {
-        initializeCalendarWidget();
+      if (document.querySelector('[data-state="active"][value="forex-calendar"]')) {
+        const container = document.getElementById("tradingview-calendar-container");
+        loadCalendarWidget(container);
       }
-    }, 800);
+    }, 500);
     
     // Set up tab change listener
     const tabsList = document.querySelector('[role="tabslist"]');
