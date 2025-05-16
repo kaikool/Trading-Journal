@@ -1,7 +1,7 @@
 /**
  * Custom hook để sử dụng dữ liệu người dùng với React Query
  * 
- * Hook này thay thế hoàn toàn phiên bản cũ (useUserData) và:
+ * Hook này:
  * - Sử dụng React Query để quản lý cache, invalidation và stale time
  * - Hỗ trợ tự động cập nhật UI khi dữ liệu thay đổi
  * - Giảm cache conflicts và logic phức tạp

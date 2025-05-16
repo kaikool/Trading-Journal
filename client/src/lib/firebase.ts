@@ -1025,8 +1025,7 @@ async function getStrategies(userId: string): Promise<Array<TradingStrategy & { 
  * @param userId ID của người dùng cần theo dõi strategies
  * @param callback Hàm xử lý khi có dữ liệu mới
  * @returns Hàm unsubscribe
- * @deprecated Sử dụng FirebaseListenerService.onStrategiesSnapshot thay thế.
- * FirebaseListenerService cung cấp quản lý tập trung cho các Firebase listeners.
+
  */
 function onStrategiesSnapshot(userId: string, callback: (strategies: any[]) => void) {
   if (!userId) return () => {};

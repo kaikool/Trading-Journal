@@ -125,7 +125,7 @@ export function TradeImageManager({
     try {
       setIsDeleting(true);
       
-      // Xử lý trường hợp ảnh từ Cloudinary (legacy không còn được hỗ trợ)
+      // Xử lý trường hợp ảnh từ Cloudinary
       if (imageUrl.includes('cloudinary.com')) {
         console.log(`Phát hiện URL Cloudinary (không còn hỗ trợ) cho trade ${tradeId}: ${imageUrl}`);
         

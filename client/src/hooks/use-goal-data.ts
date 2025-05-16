@@ -99,7 +99,7 @@ export function useGoalData() {
     fetchGoalData();
     
     // Thiết lập polling cập nhật mỗi 30 giây
-    // Đây là giải pháp tạm thời thay thế cho FirebaseListenerService
+
     const intervalId = setInterval(() => {
       fetchGoalData();
     }, 30000);

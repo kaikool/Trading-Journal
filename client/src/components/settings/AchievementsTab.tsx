@@ -203,7 +203,7 @@ export const AchievementsTab: React.FC<{
     enabled: !!userId,
   });
   
-  // Access legacy user achievements for backward compatibility
+  // Access user achievements
   const { 
     data: userAchievements
   } = useQuery({
