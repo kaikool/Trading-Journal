@@ -56,7 +56,7 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
         onClick={toggleTheme}
         variant="outline"
         size="icon"
-        className="w-10 h-10 rounded-full transition-all"
+        className="w-8 h-8 rounded-full transition-all"
         aria-label="Toggle theme"
       >
         {getThemeIcon()}
@@ -65,32 +65,32 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   }
   
   return (
-    <div className="rounded-full border border-border h-9 p-0.5 flex items-center bg-muted/40">
+    <div className="rounded-full border border-border h-8 p-0.5 flex items-center bg-muted/40">
       <Button
         onClick={toggleTheme}
         variant={isDarkMode ? "ghost" : "default"}
         size="sm"
         className={cn(
-          "relative h-8 rounded-full transition-all flex items-center gap-2 px-3",
+          "relative h-7 rounded-full transition-all flex items-center px-2",
           isDarkMode ? "hover:text-foreground" : "text-primary-foreground"
         )}
-        aria-label="Toggle theme"
+        aria-label="Light mode"
       >
-        <Icons.ui.sun className="h-4 w-4" />
-        <span className="text-xs font-medium">Light</span>
+        <Icons.ui.sun className="h-3.5 w-3.5" />
+        <span className="text-xs font-medium ml-1.5">Light</span>
       </Button>
       <Button
         onClick={toggleTheme}
         variant={isDarkMode ? "default" : "ghost"}
         size="sm"
         className={cn(
-          "relative h-8 rounded-full transition-all flex items-center gap-2 px-3",
+          "relative h-7 rounded-full transition-all flex items-center px-2",
           isDarkMode ? "text-primary-foreground" : "hover:text-foreground"
         )}
-        aria-label="Toggle theme"
+        aria-label="Dark mode"
       >
-        <Icons.ui.moon className="h-4 w-4" />
-        <span className="text-xs font-medium">Dark</span>
+        <Icons.ui.moon className="h-3.5 w-3.5" />
+        <span className="text-xs font-medium ml-1.5">Dark</span>
       </Button>
     </div>
   );
@@ -339,7 +339,7 @@ export function Sidebar({ className }: { className?: string }) {
           </div>
           
           {/* Theme toggle button - tối ưu padding cho mobile */}
-          <div className="border-t border-border px-4 py-5">
+          <div className="border-t border-border px-4 py-3">
             <ThemeToggle />
           </div>
           
@@ -488,14 +488,14 @@ export function Sidebar({ className }: { className?: string }) {
         
         {/* Theme toggle button */}
         {!sidebarCollapsed && (
-          <div className="border-t border-border p-3">
+          <div className="border-t border-border p-2">
             <ThemeToggle />
           </div>
         )}
         
         {/* Theme toggle (collapsed) */}
         {sidebarCollapsed && (
-          <div className="border-t border-border p-3 flex justify-center">
+          <div className="border-t border-border p-2 flex justify-center">
             <ThemeToggle collapsed={true} />
           </div>
         )}
