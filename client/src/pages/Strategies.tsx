@@ -9,7 +9,7 @@ const StrategiesManagement = lazy(() =>
 );
 
 export default function StrategiesPage() {
-  const { isLoading } = useUserDataQuery(); // Removed unused: userData
+  const { isLoading } = useUserDataQuery();
   
   // Empty state component đã được xóa vì không sử dụng
   

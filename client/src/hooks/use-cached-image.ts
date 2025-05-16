@@ -154,5 +154,5 @@ export function useCachedImage(
 }
 
 // This default export is used in multiple components (ChartImageDialog, LazyTradeHistoryCard)
-// ts-prune may incorrectly flag this as unused when named imports are used
+
 export default useCachedImage;
