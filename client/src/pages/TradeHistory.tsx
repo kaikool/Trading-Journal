@@ -91,31 +91,22 @@ export default function TradeHistory() {
   // Lấy danh sách giao dịch từ data
   const trades = data?.trades || [];
   
-  // Đồng bộ hóa trạng thái sắp xếp giữa component và hook với cơ chế chống lặp vô hạn
-  const syncInProgress = useRef(false);
+  // Đồng bộ hóa trạng thái sắp xếp của hook với local state
+  // Sử dụng initialSync để đảm bảo chỉ sync một chiều: từ component đến hook
+  const initialSyncDone = useRef(false);
   
+  // Chỉ đồng bộ từ component sortBy đến hook, không đồng bộ ngược lại
   useEffect(() => {
-    // Chỉ xử lý khi không có quá trình đồng bộ hóa đang diễn ra
-    if (!syncInProgress.current && sortBy !== hookSortBy && hookSortBy) {
-      syncInProgress.current = true;
-      setSortBy(hookSortBy);
-      // Reset cờ sau khi state đã được cập nhật
-      setTimeout(() => {
-        syncInProgress.current = false;
-      }, 0);
+    // Nếu chưa thực hiện đồng bộ ban đầu thì bỏ qua để tránh reset giá trị mặc định
+    if (!initialSyncDone.current) {
+      initialSyncDone.current = true;
+      return;
     }
-  }, [hookSortBy, sortBy]);
-  
-  // Đồng bộ hóa từ component đến hook với cơ chế chống lặp vô hạn
-  useEffect(() => {
-    // Chỉ xử lý khi không có quá trình đồng bộ hóa đang diễn ra
-    if (!syncInProgress.current && sortBy !== hookSortBy) {
-      syncInProgress.current = true;
+    
+    // Chỉ đồng bộ khi có thay đổi thực sự để tránh vòng lặp vô hạn
+    if (sortBy !== hookSortBy) {
+      debug(`Syncing sort order from component to hook: ${sortBy}`);
       hookSetSortBy(sortBy);
-      // Reset cờ sau khi state đã được cập nhật
-      setTimeout(() => {
-        syncInProgress.current = false;
-      }, 0);
     }
   }, [sortBy, hookSortBy, hookSetSortBy]);
   
