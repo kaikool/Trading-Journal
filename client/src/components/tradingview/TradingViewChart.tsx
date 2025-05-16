@@ -50,15 +50,23 @@ function TradingViewChart() {
         "OANDA:GBPUSD", 
         "OANDA:USDJPY"
       ],
-      "chartType": "candlesticks",
-      "default_interval": "60",
-      "timeframe": "1D",
       "toolbar_bg": isDarkMode ? "#151924" : "#f1f3f6",
-      "favorites": {
-        "intervals": ["15", "30", "60", "240", "1D"],
-        "chartTypes": ["candlesticks"]
+      "studies_overrides": {
+        "volume.volume.color.0": "#ef5350",
+        "volume.volume.color.1": "#26a69a"
       },
-      "supported_resolutions": ["15", "30", "60", "240", "1D", "1W", "1M"],
+      "overrides": {
+        "mainSeriesProperties.candleStyle.upColor": "#26a69a",
+        "mainSeriesProperties.candleStyle.downColor": "#ef5350",
+        "mainSeriesProperties.candleStyle.wickUpColor": "#26a69a",
+        "mainSeriesProperties.candleStyle.wickDownColor": "#ef5350"
+      },
+      "charts_storage_url": "https://saveload.tradingview.com",
+      "client_id": "tradingview.com",
+      "custom_css_url": "",
+      "preset": "mobile",
+      "allowed_intervals": ["15", "30", "60", "240", "1D"],
+      "default_intervals": ["15", "30", "60", "240", "1D"],
       "disabled_features": ["header_compare"],
       "enabled_features": ["use_localstorage_for_settings"],
       "studies": [
