@@ -210,7 +210,7 @@ export function calculateLotSize(params: RiskCalculationParams): number {
   return Math.floor(lotSize * 100) / 100;
 }
 
-// getQuote function removed - not used in the project
+
 
 /**
  * Calculate risk/reward ratio

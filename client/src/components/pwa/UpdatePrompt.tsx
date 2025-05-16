@@ -29,7 +29,7 @@ export function UpdatePrompt() {
     // Add event listener for our custom update event
     window.addEventListener(PWA_UPDATE_EVENT, handleUpdateFound as EventListener);
     
-    // Legacy direct check for existing updates
+
     navigator.serviceWorker.getRegistration().then(registration => {
       if (registration?.waiting) {
         setUpdateRegistration(registration);

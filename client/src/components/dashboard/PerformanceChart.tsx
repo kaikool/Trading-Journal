@@ -167,7 +167,7 @@ export function PerformanceChart({
   const balanceRange = maxBalance - minBalance;
   
   // Tính toán domain để đảm bảo đường line nằm ở khoảng 2/3 biểu đồ
-  // Có thể điều chỉnh hệ số 1.5 để thay đổi vị trí (giá trị càng lớn thì đường line càng nằm cao)
+
   const domainMin = minBalance - balanceRange * 1.5;
   const domainMax = maxBalance + balanceRange * 0.1;
   

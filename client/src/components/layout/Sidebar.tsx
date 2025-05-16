@@ -205,7 +205,7 @@ export function Sidebar({ className }: { className?: string }) {
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
   const user = auth.currentUser;
-  // Đơn giản hóa: bỏ qua useScrollDirection phức tạp
+
   const { isActive } = useUserActivity(2000);
   
   useEffect(() => {

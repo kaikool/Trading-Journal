@@ -159,4 +159,3 @@ export function isAppInstalled(): boolean {
  * Alias for isAppInstalled to ensure consistent naming across the app
  * This matches the function in use-mobile.tsx
  */
-// Functions below were removed during cleanup as they were not used in the project

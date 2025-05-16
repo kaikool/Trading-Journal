@@ -114,7 +114,7 @@ export function useMarketPrice({
 }
 
 // Hook đơn giản hơn nếu chỉ muốn lấy giá một lần
-// NOTE: This hook is currently not used in the codebase, but kept for future use
+
 export function useFetchPrice(symbol: string) {
   const [price, setPrice] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);

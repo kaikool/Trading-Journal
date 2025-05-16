@@ -51,7 +51,7 @@ export function RecentTradesCard({
 }: RecentTradesCardProps) {
   const [_, setLocation] = useLocation();
 
-  // Removed getDirectionClasses as we're now using DirectionBadge component
+
 
   // Function to format timestamp - Sử dụng useMemoWithPerf để tối ưu theo hiệu năng thiết bị
   const formatTimestamp = useMemoWithPerf(() => {

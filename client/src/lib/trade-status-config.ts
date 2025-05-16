@@ -75,4 +75,3 @@ export function getTradeStatusConfig(status: TradeStatus): TradeStatusConfig {
   return TRADE_STATUS_CONFIG[status];
 }
 
-// Functions below have been removed by cleanup as they were not used in the project
