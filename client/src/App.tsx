@@ -127,11 +127,18 @@ function MainContent() {
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
     if (!isPageReady) {
+      // Đặt immediately để ngăn nháy sáng
+      document.documentElement.classList.add('page-transition');
+      
       const safetyTimer = setTimeout(() => {
         setIsPageReady(true);
+        document.documentElement.classList.remove('page-transition');
       }, 1000); // Khung an toàn tối đa 1 giây
       
-      return () => clearTimeout(safetyTimer);
+      return () => {
+        clearTimeout(safetyTimer);
+        document.documentElement.classList.remove('page-transition');
+      };
     }
   }, [isPageReady]);
   
