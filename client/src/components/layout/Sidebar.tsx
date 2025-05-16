@@ -261,9 +261,6 @@ export function Sidebar({ className }: { className?: string }) {
   const initials = user?.displayName 
     ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase() 
     : user?.email?.charAt(0).toUpperCase() || '?';
-  
-  // Đã loại bỏ cơ chế swipe để mở sidebar, chỉ giữ lại nút SidebarHint
-  // và các phương thức mở/đóng sidebar bằng nút
 
   // Prevent hydration mismatch
   if (!mounted) return null;
