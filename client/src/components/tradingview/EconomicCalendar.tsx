@@ -74,21 +74,36 @@ function EconomicCalendar({ config }: EconomicCalendarProps) {
     script.async = true;
     
     // Set widget options as a plain object
+    // Note: logging the configuration to help with debugging
+    console.log("Economic Calendar Config:", {
+      importanceFilter: mergedConfig.importanceFilter,
+      countryFilter: mergedConfig.countryFilter,
+      timeFrame: mergedConfig.timeFrame
+    });
+    
     const widgetOptions = {
       width: "100%",
       height: "100%",
       colorTheme: isDarkMode ? "dark" : "light",
       isTransparent: false,
       locale: "en",
-      importanceFilter: mergedConfig.importanceFilter,
-      countryFilter: mergedConfig.countryFilter,
+      // In TradingView, the importance filter must be explicit: 0=low, 1=medium, 2=high
+      // If none selected, provide empty string instead of default
+      importanceFilter: mergedConfig.importanceFilter || "",
+      // If no countries selected, use empty string
+      countryFilter: mergedConfig.countryFilter || "",
       timeFrame: mergedConfig.timeFrame,
       tabs: mergedConfig.showTabs ? [
         {
           title: "Events",
           type: "economic-calendar",
           isActive: mergedConfig.initialTab === 'event',
-          symbols: []
+          symbols: [],
+          // Apply filters directly to the events tab as well
+          filter: {
+            importance: mergedConfig.importanceFilter,
+            countries: mergedConfig.countryFilter.split(',')
+          }
         },
         {
           title: "Forex",
