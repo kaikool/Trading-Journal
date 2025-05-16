@@ -65,33 +65,35 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   }
   
   return (
-    <div className="rounded-full border border-border h-8 p-0.5 flex items-center bg-muted/40">
-      <Button
-        onClick={toggleTheme}
-        variant={isDarkMode ? "ghost" : "default"}
-        size="sm"
-        className={cn(
-          "relative h-7 rounded-full transition-all flex items-center px-2",
-          isDarkMode ? "hover:text-foreground" : "text-primary-foreground"
-        )}
-        aria-label="Light mode"
-      >
-        <Icons.ui.sun className="h-3.5 w-3.5" />
-        <span className="text-xs font-medium ml-1.5">Light</span>
-      </Button>
-      <Button
-        onClick={toggleTheme}
-        variant={isDarkMode ? "default" : "ghost"}
-        size="sm"
-        className={cn(
-          "relative h-7 rounded-full transition-all flex items-center px-2",
-          isDarkMode ? "text-primary-foreground" : "hover:text-foreground"
-        )}
-        aria-label="Dark mode"
-      >
-        <Icons.ui.moon className="h-3.5 w-3.5" />
-        <span className="text-xs font-medium ml-1.5">Dark</span>
-      </Button>
+    <div className="flex items-center bg-transparent">
+      <div className="flex items-center rounded-full border border-border overflow-hidden shadow-sm">
+        <button
+          onClick={() => !isDarkMode || toggleTheme()}
+          className={cn(
+            "h-7 px-2.5 flex items-center justify-center gap-1.5 text-xs font-medium transition-all duration-150",
+            isDarkMode 
+              ? "bg-transparent hover:bg-background/70 text-foreground/80" 
+              : "bg-primary text-primary-foreground"
+          )}
+          aria-label="Light mode"
+        >
+          <Icons.ui.sun className="h-3.5 w-3.5" />
+          <span>Light</span>
+        </button>
+        <button
+          onClick={() => isDarkMode || toggleTheme()}
+          className={cn(
+            "h-7 px-2.5 flex items-center justify-center gap-1.5 text-xs font-medium transition-all duration-150",
+            isDarkMode 
+              ? "bg-primary text-primary-foreground" 
+              : "bg-transparent hover:bg-background/70 text-foreground/80"
+          )}
+          aria-label="Dark mode"
+        >
+          <Icons.ui.moon className="h-3.5 w-3.5" />
+          <span>Dark</span>
+        </button>
+      </div>
     </div>
   );
 }
