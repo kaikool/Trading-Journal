@@ -20,6 +20,7 @@ import AchievementNotificationContainer from "@/components/achievements/Achievem
 import { LayoutProvider } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DialogProvider } from "@/contexts/DialogContext";
+import { TradingToolsProvider } from "@/contexts/TradingToolsContext";
 
 // Improved dynamic imports with proper code splitting
 // Core/frequently used pages - higher priority
@@ -351,10 +352,12 @@ function App() {
       <ThemeProvider>
         <LayoutProvider>
           <DialogProvider>
-            <MainContent />
-            <Toaster />
-            <PWAContainer />
-            <AchievementNotificationContainer />
+            <TradingToolsProvider>
+              <MainContent />
+              <Toaster />
+              <PWAContainer />
+              <AchievementNotificationContainer />
+            </TradingToolsProvider>
           </DialogProvider>
         </LayoutProvider>
       </ThemeProvider>

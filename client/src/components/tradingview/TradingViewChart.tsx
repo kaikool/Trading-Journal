@@ -1,9 +1,72 @@
 import React, { useEffect, useRef, memo } from 'react';
 import { useTheme } from "@/contexts/ThemeContext";
 
-function TradingViewChart() {
+export interface TradingViewChartConfig {
+  symbol?: string;
+  interval?: string;
+  timezone?: string;
+  style?: string;
+  studies?: string[];
+  watchlist?: string[];
+  showDetailsButton?: boolean;
+  showHotlistButton?: boolean;
+  showCalendarButton?: boolean;
+  showDrawings?: boolean;
+  customColors?: {
+    upColor?: string;
+    downColor?: string;
+    wickUpColor?: string;
+    wickDownColor?: string;
+    borderUpColor?: string;
+    borderDownColor?: string;
+  };
+}
+
+interface TradingViewChartProps {
+  config?: TradingViewChartConfig;
+}
+
+function TradingViewChart({ config }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isDarkMode } = useTheme();
+  
+  // Default configuration
+  const defaultConfig: TradingViewChartConfig = {
+    symbol: "OANDA:XAUUSD",
+    interval: "60", // 1h default
+    timezone: "exchange",
+    style: "1", // Candles style
+    studies: [
+      "RSI@tv-basicstudies",
+      "MASimple@tv-basicstudies"
+    ],
+    watchlist: [
+      "OANDA:XAUUSD",
+      "BINANCE:BTCUSDT.P",
+      "FX:GBPUSD",
+      "OANDA:GBPUSD", 
+      "OANDA:USDJPY",
+      "OANDA:EURUSD",
+      "OANDA:AUDUSD"
+    ],
+    showDetailsButton: true,
+    showHotlistButton: true,
+    showCalendarButton: true,
+    showDrawings: true,
+    customColors: {
+      upColor: "#26a69a",
+      downColor: "#ef5350",
+      wickUpColor: "#26a69a",
+      wickDownColor: "#ef5350"
+    }
+  };
+  
+  // Merge default with provided config
+  const mergedConfig = {
+    ...defaultConfig,
+    ...config,
+    customColors: { ...defaultConfig.customColors, ...config?.customColors }
+  };
   
   useEffect(() => {
     // Cleanup function to remove any existing widget scripts
@@ -29,11 +92,11 @@ function TradingViewChart() {
       "width": "100%",
       "height": "100%",
       "autosize": true,
-      "symbol": "OANDA:XAUUSD",
-      "interval": "60", // 1h default
-      "timezone": "exchange",
+      "symbol": mergedConfig.symbol,
+      "interval": mergedConfig.interval,
+      "timezone": mergedConfig.timezone,
       "theme": isDarkMode ? "dark" : "light",
-      "style": "1", // Candles style
+      "style": mergedConfig.style,
       "locale": "en",
       "toolbar_bg": isDarkMode ? "#151924" : "#f1f3f6",
       "enable_publishing": false,
@@ -41,22 +104,13 @@ function TradingViewChart() {
       "allow_symbol_change": true,
       "save_image": true,
       "container_id": "tradingview-widget-container",
-      "watchlist": [
-        "OANDA:XAUUSD",
-        "BINANCE:BTCUSDT.P",
-        "FX:GBPUSD",
-        "OANDA:GBPUSD", 
-        "OANDA:USDJPY"
-      ],
+      "watchlist": mergedConfig.watchlist,
       "withdateranges": true,
-      "hide_side_toolbar": false,
-      "details": true,
-      "hotlist": true,
-      "calendar": true,
-      "studies": [
-        "RSI@tv-basicstudies",
-        "MASimple@tv-basicstudies"
-      ],
+      "hide_side_toolbar": !mergedConfig.showDrawings,
+      "details": mergedConfig.showDetailsButton,
+      "hotlist": mergedConfig.showHotlistButton,
+      "calendar": mergedConfig.showCalendarButton,
+      "studies": mergedConfig.studies,
       "disabled_features": [
         "header_compare"
       ],
@@ -68,19 +122,25 @@ function TradingViewChart() {
       "client_id": "tradingview.com",
       "user_id": "public_user",
       "charts_storage_url": "https://saveload.tradingview.com",
-      "supported_resolutions": ["15", "30", "60", "240", "1D"],
+      "supported_resolutions": ["1", "5", "15", "30", "60", "240", "1D", "1W", "1M"],
       "time_frames": [
+        { "text": "1m", "resolution": "1" },
+        { "text": "5m", "resolution": "5" },
         { "text": "15m", "resolution": "15" },
         { "text": "30m", "resolution": "30" },
         { "text": "1h", "resolution": "60" },
         { "text": "4h", "resolution": "240" },
-        { "text": "1D", "resolution": "1D" }
+        { "text": "1D", "resolution": "1D" },
+        { "text": "1W", "resolution": "1W" },
+        { "text": "1M", "resolution": "1M" }
       ],
       "overrides": {
-        "mainSeriesProperties.candleStyle.upColor": "#26a69a",
-        "mainSeriesProperties.candleStyle.downColor": "#ef5350",
-        "mainSeriesProperties.candleStyle.wickUpColor": "#26a69a",
-        "mainSeriesProperties.candleStyle.wickDownColor": "#ef5350"
+        "mainSeriesProperties.candleStyle.upColor": mergedConfig.customColors?.upColor,
+        "mainSeriesProperties.candleStyle.downColor": mergedConfig.customColors?.downColor,
+        "mainSeriesProperties.candleStyle.wickUpColor": mergedConfig.customColors?.wickUpColor,
+        "mainSeriesProperties.candleStyle.wickDownColor": mergedConfig.customColors?.wickDownColor,
+        "mainSeriesProperties.candleStyle.borderUpColor": mergedConfig.customColors?.borderUpColor,
+        "mainSeriesProperties.candleStyle.borderDownColor": mergedConfig.customColors?.borderDownColor
       }
     };
     
@@ -93,7 +153,7 @@ function TradingViewChart() {
     
     // Cleanup on unmount
     return cleanup;
-  }, [isDarkMode]);
+  }, [isDarkMode, mergedConfig]);
   
   return (
     <div className="w-full" style={{ height: "75vh" }}>
