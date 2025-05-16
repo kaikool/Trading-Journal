@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTheme } from "@/contexts/ThemeContext";
+import TradingViewChart from "@/components/tradingview/TradingViewChart";
 
 export default function Tools() {
   const { isDarkMode } = useTheme();
@@ -62,11 +63,18 @@ export default function Tools() {
       
       {/* Main content */}
       <div className="grid grid-cols-1 gap-6">
-        <Tabs defaultValue="forex-calendar" className="w-full">
+        <Tabs defaultValue="chart" className="w-full">
           <TabsList className="mb-4">
+            <TabsTrigger value="chart">Chart</TabsTrigger>
             <TabsTrigger value="forex-calendar">Forex Calendar</TabsTrigger>
             {/* Additional tabs can be added here later */}
           </TabsList>
+          
+          <TabsContent value="chart">
+            <div className="w-full overflow-hidden rounded-md border border-muted">
+              <TradingViewChart />
+            </div>
+          </TabsContent>
           
           <TabsContent value="forex-calendar">
             <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "650px" }}>
