@@ -62,10 +62,10 @@ function TradingViewChart() {
   }, [isDarkMode]);
   
   return (
-    <div className="w-full" style={{ height: "650px" }}>
+    <div className="w-full" style={{ height: "75vh" }}>
       <div className="tradingview-widget-container" ref={containerRef} style={{ height: "100%", width: "100%" }}>
-        <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
-        <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
+        <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 24px)", width: "100%" }}></div>
+        <div className="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
           <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">
             Powered by TradingView
           </a>
