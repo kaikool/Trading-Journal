@@ -48,8 +48,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
   // Sử dụng react-intersection-observer để chỉ render khi card nằm trong viewport
   const { ref, inView } = useInView({
     threshold: 0.1,     // Trigger khi 10% card hiện ra trong viewport
-    triggerOnce: false, // Cho phép trigger nhiều lần để cập nhật khi dữ liệu thay đổi
-    rootMargin: '200px', // Pre-load trước 200px
+    triggerOnce: true,  // Chỉ trigger một lần để tránh re-render liên tục
+    rootMargin: '100px', // Giảm khoảng cách pre-load để giảm số lượng card cần theo dõi
   });
   
   // Log trạng thái inView để debug
