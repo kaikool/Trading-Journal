@@ -30,10 +30,29 @@ function EconomicCalendar({ config }: EconomicCalendarProps) {
       if (existingScript && existingScript.parentNode) {
         existingScript.parentNode.removeChild(existingScript);
       }
+      
+      // Also clean up any existing calendar elements
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '';
+      }
     };
     
     // Clean up first
     cleanup();
+    
+    // Create widget container
+    const widgetContainer = document.createElement("div");
+    widgetContainer.className = "tradingview-widget-container";
+    widgetContainer.style.height = "100%";
+    
+    const widgetDiv = document.createElement("div");
+    widgetDiv.className = "tradingview-widget-container__widget";
+    widgetDiv.style.height = "calc(100% - 24px)";
+    widgetDiv.style.width = "100%";
+    
+    const copyright = document.createElement("div");
+    copyright.className = "tradingview-widget-copyright p-1 text-xs text-muted-foreground";
+    copyright.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" class="text-primary font-medium">Powered by TradingView</a>';
     
     // Create and add the script
     const script = document.createElement("script");
@@ -42,24 +61,27 @@ function EconomicCalendar({ config }: EconomicCalendarProps) {
     script.type = "text/javascript";
     script.async = true;
     
-    // Set widget options
+    // Set widget options as a plain object
     const widgetOptions = {
-      "width": "100%",
-      "height": "100%",
-      "autosize": true,
-      "colorTheme": isDarkMode ? "dark" : "light",
-      "isTransparent": false,
-      "locale": "en",
-      "importanceFilter": mergedConfig.importanceFilter,
-      "countryFilter": mergedConfig.countryFilter,
-      "timeFrame": mergedConfig.timeFrame
+      width: "100%",
+      height: "100%",
+      colorTheme: isDarkMode ? "dark" : "light",
+      isTransparent: false,
+      locale: "en",
+      importanceFilter: mergedConfig.importanceFilter,
+      countryFilter: mergedConfig.countryFilter,
+      timeFrame: mergedConfig.timeFrame
     };
     
+    // Convert to JSON and set as innerHTML
     script.innerHTML = JSON.stringify(widgetOptions);
     
-    // Add the script to the container if it exists
+    // Add the elements to container if it exists
     if (containerRef.current) {
-      containerRef.current.appendChild(script);
+      widgetContainer.appendChild(widgetDiv);
+      widgetContainer.appendChild(copyright);
+      widgetContainer.appendChild(script);
+      containerRef.current.appendChild(widgetContainer);
     }
     
     // Cleanup on unmount
@@ -67,15 +89,8 @@ function EconomicCalendar({ config }: EconomicCalendarProps) {
   }, [isDarkMode, mergedConfig]);
   
   return (
-    <div className="w-full" style={{ height: "75vh" }}>
-      <div className="tradingview-widget-container" ref={containerRef} style={{ height: "100%", width: "100%" }} id="tradingview-calendar-container">
-        <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 24px)", width: "100%" }}></div>
-        <div className="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
-          <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">
-            Powered by TradingView
-          </a>
-        </div>
-      </div>
+    <div className="w-full h-full" style={{ height: "75vh" }}>
+      <div ref={containerRef} className="h-full w-full"></div>
     </div>
   );
 }

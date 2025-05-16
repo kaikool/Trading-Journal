@@ -1,70 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Settings } from "lucide-react";
+
 import TradingViewChart from "@/components/tradingview/TradingViewChart";
+import EconomicCalendar from "@/components/tradingview/EconomicCalendar";
+import ChartConfig from "@/components/tradingview/ChartConfig";
+import CalendarConfig from "@/components/tradingview/CalendarConfig";
+import { useTradingTools } from "@/contexts/TradingToolsContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Tools() {
   const { isDarkMode } = useTheme();
+  const { chartConfig, calendarConfig } = useTradingTools();
+  const [activeTab, setActiveTab] = useState("chart");
+  const [configOpen, setConfigOpen] = useState(false);
 
-  // Xử lý khi tab thay đổi để tải calendar
+  // Handle tab changes
   const handleTabChange = (value: string) => {
-    if (value === "forex-calendar") {
-      setTimeout(() => {
-        const container = document.getElementById("calendar-container");
-        if (container) {
-          // Xóa nội dung cũ
-          container.innerHTML = "";
-          
-          // TradingView Widget BEGIN
-          const widgetContainer = document.createElement("div");
-          widgetContainer.className = "tradingview-widget-container";
-          widgetContainer.style.height = "100%";
-          
-          const widgetDiv = document.createElement("div");
-          widgetDiv.className = "tradingview-widget-container__widget";
-          widgetDiv.style.height = "calc(100% - 24px)";
-          widgetDiv.style.width = "100%";
-          
-          const copyright = document.createElement("div");
-          copyright.className = "tradingview-widget-copyright";
-          copyright.style.padding = "4px";
-          copyright.style.fontSize = "12px";
-          copyright.innerHTML = '<a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" style="color: #1E88E5; font-weight: 500;">Track all markets on TradingView</a>';
-          
-          const script = document.createElement("script");
-          script.type = "text/javascript";
-          script.src = "https://s3.tradingview.com/external-embedding/embed-widget-events.js";
-          script.async = true;
-          script.innerHTML = JSON.stringify({
-            "width": "100%",
-            "height": "100%",
-            "colorTheme": isDarkMode ? "dark" : "light",
-            "isTransparent": false,
-            "locale": "en",
-            "importanceFilter": "0,1",
-            "countryFilter": "us"
-          });
-          
-          widgetContainer.appendChild(widgetDiv);
-          widgetContainer.appendChild(copyright);
-          widgetContainer.appendChild(script);
-          container.appendChild(widgetContainer);
-          // TradingView Widget END
-        }
-      }, 100);
+    setActiveTab(value);
+  };
+
+  // Get the appropriate configuration component based on active tab
+  const getConfigComponent = () => {
+    if (activeTab === "chart") {
+      return <ChartConfig />;
+    } else if (activeTab === "forex-calendar") {
+      return <CalendarConfig />;
     }
+    return null;
   };
 
   return (
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
-          Trading Tools
-        </h1>
-        <p className="text-muted-foreground mt-1 text-sm md:text-base">
-          Access essential tools for your trading analysis and decision making
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+            Trading Tools
+          </h1>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">
+            Access essential tools for your trading analysis and decision making
+          </p>
+        </div>
+        
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="self-start sm:self-center"
+          onClick={() => setConfigOpen(true)}
+        >
+          <Settings className="h-4 w-4 mr-2" />
+          Configure
+        </Button>
       </div>
       
       {/* Main content */}
@@ -78,17 +67,29 @@ export default function Tools() {
           
           <TabsContent value="chart">
             <div className="w-full overflow-hidden rounded-md border border-muted">
-              <TradingViewChart />
+              <TradingViewChart config={chartConfig} />
             </div>
           </TabsContent>
           
           <TabsContent value="forex-calendar">
             <div className="w-full overflow-hidden rounded-md border border-muted" style={{ height: "75vh" }}>
-              <div id="calendar-container" className="h-full"></div>
+              <EconomicCalendar config={calendarConfig} />
             </div>
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Configuration Dialog */}
+      <Dialog open={configOpen} onOpenChange={setConfigOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>
+              {activeTab === "chart" ? "Chart Settings" : "Calendar Settings"}
+            </DialogTitle>
+          </DialogHeader>
+          {getConfigComponent()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
