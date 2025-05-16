@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -16,6 +16,33 @@ export default function Tools() {
   const { chartConfig, calendarConfig } = useTradingTools();
   const [activeTab, setActiveTab] = useState("chart");
   const [configOpen, setConfigOpen] = useState(false);
+  const [chartKey, setChartKey] = useState(Date.now());
+  const [calendarKey, setCalendarKey] = useState(Date.now());
+
+  // Effect to listen for config update events
+  useEffect(() => {
+    // Listen for chart config updates
+    const handleChartConfigUpdated = () => {
+      setChartKey(Date.now()); // Force remount of chart component
+      setConfigOpen(false);    // Close the dialog
+    };
+    
+    // Listen for calendar config updates
+    const handleCalendarConfigUpdated = () => {
+      setCalendarKey(Date.now()); // Force remount of calendar component
+      setConfigOpen(false);       // Close the dialog
+    };
+    
+    // Add event listeners
+    window.addEventListener('chart-config-updated', handleChartConfigUpdated);
+    window.addEventListener('calendar-config-updated', handleCalendarConfigUpdated);
+    
+    // Clean up event listeners on unmount
+    return () => {
+      window.removeEventListener('chart-config-updated', handleChartConfigUpdated);
+      window.removeEventListener('calendar-config-updated', handleCalendarConfigUpdated);
+    };
+  }, []);
 
   // Handle tab changes
   const handleTabChange = (value: string) => {
@@ -67,13 +94,13 @@ export default function Tools() {
           
           <TabsContent value="chart">
             <div className="w-full overflow-hidden rounded-md border border-muted">
-              <TradingViewChart config={chartConfig} />
+              <TradingViewChart key={chartKey} config={chartConfig} />
             </div>
           </TabsContent>
           
           <TabsContent value="forex-calendar">
             <div className="w-full overflow-hidden rounded-md border border-muted" style={{ height: "75vh" }}>
-              <EconomicCalendar config={calendarConfig} />
+              <EconomicCalendar key={calendarKey} config={calendarConfig} />
             </div>
           </TabsContent>
         </Tabs>

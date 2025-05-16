@@ -333,7 +333,14 @@ const ChartConfig: React.FC = () => {
         >
           Reset to Defaults
         </Button>
-        <Button onClick={() => window.location.reload()}>Apply Changes</Button>
+        <Button onClick={() => {
+          // Close the dialog
+          const closeEvent = new CustomEvent('chart-config-updated');
+          window.dispatchEvent(closeEvent);
+          
+          // Return to any parent dialogs that might be open
+          return false;
+        }}>Apply Changes</Button>
       </div>
     </div>
   );
