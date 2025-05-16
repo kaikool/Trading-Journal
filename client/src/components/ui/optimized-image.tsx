@@ -116,12 +116,13 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     >
       {/* Placeholder và loading indicator */}
       {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted/10">
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/10" style={{ height: '100%' }}>
           {placeholder ? (
             <img 
               src={placeholder} 
               alt="Loading" 
               className="w-full h-full object-cover opacity-50"
+              style={{ objectFit: 'cover' }}
             />
           ) : (
             <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground/70" />
