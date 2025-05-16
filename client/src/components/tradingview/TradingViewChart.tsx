@@ -31,7 +31,7 @@ function TradingViewChart() {
       "interval": "60", // H1 interval by default
       "timezone": "exchange",
       "theme": isDarkMode ? "dark" : "light",
-      "style": "1",
+      "style": "1", // Candles style
       "locale": "en",
       "hide_legend": true,
       "allow_symbol_change": true,
@@ -50,8 +50,13 @@ function TradingViewChart() {
         "OANDA:GBPUSD", 
         "OANDA:USDJPY"
       ],
+      "chartType": "candlesticks",
+      "default_interval": "60",
+      "timeframe": "1D",
+      "toolbar_bg": isDarkMode ? "#151924" : "#f1f3f6",
       "favorites": {
-        "intervals": ["15", "30", "60", "240", "1D"]
+        "intervals": ["15", "30", "60", "240", "1D"],
+        "chartTypes": ["candlesticks"]
       },
       "supported_resolutions": ["15", "30", "60", "240", "1D", "1W", "1M"],
       "disabled_features": ["header_compare"],
