@@ -244,13 +244,13 @@ export function useTradeList(options: {
         
         debug(`[TradeList] Trade changed (${action}), refreshing data immediately`);
         
-        // Sử dụng Promise.resolve().then để đảm bảo thực hiện vào cuối event loop
-        // Điều này giúp giải quyết vấn đề racing condition giữa invalidation và refetch
-        Promise.resolve().then(() => {
-          // TradeUpdateService đã thực hiện invalidateQueries, nhưng chúng ta cần đảm bảo
-          // refetch được gọi sau khi invalidation đã hoàn tất
+        // Buộc invalidate cache và refetch ngay lập tức
+        queryClient.invalidateQueries({ queryKey: ['trades', userId] });
+        
+        // Sử dụng setTimeout để đảm bảo thực hiện sau khi invalidation hoàn tất
+        setTimeout(() => {
           refetch();
-        });
+        }, 100);
       }
     };
     
