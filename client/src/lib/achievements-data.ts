@@ -876,10 +876,8 @@ export const defineAchievements = (): Achievement[] => {
 
 
 
-// Function calculateLevelProgress removed from here
-// It was using the local calculateUserLevel function with different thresholds
-// than the ones in achievements-service.ts
-// This could lead to inconsistencies in level calculations
+
+
 
 // Convert achievement level to display label
 export function achievementLevelLabel(level: string): string {
