@@ -30,7 +30,8 @@ export function useIsMobile() {
       const isInPWAMode = isPWA()
       
       // Return true if either condition is met
-      return isViewportMobile || isInPWAMode
+      // But don't force desktop to use mobile layout when in PWA mode
+      return isViewportMobile
     }
 
     // Set up media query for viewport changes
