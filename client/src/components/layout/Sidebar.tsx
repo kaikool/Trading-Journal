@@ -60,30 +60,60 @@ function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   }
   
   return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="flex items-center gap-2">
-        <Icons.ui.moon className="h-4 w-4 text-foreground/70" />
-        <span className="text-xs font-medium text-foreground/70">Dark Mode</span>
+    <div className="space-y-2">
+      {/* Light Mode Toggle */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Icons.ui.sun className="h-4 w-4 text-foreground/70" />
+          <span className="text-xs font-medium text-foreground/70">Light Mode</span>
+        </div>
+        
+        <button
+          onClick={() => isDarkMode && toggleTheme()}
+          className={cn(
+            "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out",
+            !isDarkMode ? "bg-primary" : "bg-muted"
+          )}
+          role="switch"
+          aria-checked={!isDarkMode}
+        >
+          <span className="sr-only">Toggle light mode</span>
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
+              !isDarkMode ? "translate-x-4" : "translate-x-0"
+            )}
+          />
+        </button>
       </div>
       
-      <button
-        onClick={toggleTheme}
-        className={cn(
-          "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out",
-          isDarkMode ? "bg-primary" : "bg-muted"
-        )}
-        role="switch"
-        aria-checked={isDarkMode}
-      >
-        <span className="sr-only">Toggle dark mode</span>
-        <span
-          aria-hidden="true"
+      {/* Dark Mode Toggle */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Icons.ui.moon className="h-4 w-4 text-foreground/70" />
+          <span className="text-xs font-medium text-foreground/70">Dark Mode</span>
+        </div>
+        
+        <button
+          onClick={() => !isDarkMode && toggleTheme()}
           className={cn(
-            "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
-            isDarkMode ? "translate-x-4" : "translate-x-0"
+            "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out",
+            isDarkMode ? "bg-primary" : "bg-muted"
           )}
-        />
-      </button>
+          role="switch"
+          aria-checked={isDarkMode}
+        >
+          <span className="sr-only">Toggle dark mode</span>
+          <span
+            aria-hidden="true"
+            className={cn(
+              "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out",
+              isDarkMode ? "translate-x-4" : "translate-x-0"
+            )}
+          />
+        </button>
+      </div>
     </div>
   );
 }
