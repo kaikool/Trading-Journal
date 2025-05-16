@@ -49,26 +49,37 @@ export default function Tools() {
   }, [isDarkMode]);
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-6">Trading Tools</h1>
+    <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col mb-4">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent">
+          Trading Tools
+        </h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          Access essential tools for your trading analysis and decision making
+        </p>
+      </div>
       
-      <Tabs defaultValue="forex-calendar" className="w-full">
-        <TabsList className="mb-4">
-          <TabsTrigger value="forex-calendar">Forex Calendar</TabsTrigger>
-          {/* Additional tabs can be added here later */}
-        </TabsList>
-        
-        <TabsContent value="forex-calendar">
-          <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "650px" }}>
-            <div id="tradingview-widget-container" className="tradingview-widget-container h-full">
-              <div className="tradingview-widget-container__widget h-full"></div>
-              <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
-                Powered by <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">TradingView</a>
+      {/* Main content */}
+      <div className="grid grid-cols-1 gap-6">
+        <Tabs defaultValue="forex-calendar" className="w-full">
+          <TabsList className="mb-4">
+            <TabsTrigger value="forex-calendar">Forex Calendar</TabsTrigger>
+            {/* Additional tabs can be added here later */}
+          </TabsList>
+          
+          <TabsContent value="forex-calendar">
+            <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "650px" }}>
+              <div id="tradingview-widget-container" className="tradingview-widget-container h-full">
+                <div className="tradingview-widget-container__widget h-full"></div>
+                <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
+                  Powered by <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">TradingView</a>
+                </div>
               </div>
             </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
