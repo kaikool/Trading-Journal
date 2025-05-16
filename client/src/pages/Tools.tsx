@@ -1,41 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useTheme } from "@/contexts/ThemeContext";
 import TradingViewChart from "@/components/tradingview/TradingViewChart";
-
-// Simple TradingView Calendar component using iframe
-const ForexCalendar = () => {
-  const { isDarkMode } = useTheme();
-  
-  return (
-    <div className="w-full h-full rounded-md overflow-hidden">
-      <iframe 
-        src={`https://s.tradingview.com/calendar/?locale=en&importanceFilter=-1,0,1&countryFilter=us&theme=${isDarkMode ? 'dark' : 'light'}`}
-        style={{ 
-          width: "100%", 
-          height: "100%", 
-          border: "none",
-          minHeight: "75vh"
-        }}
-        frameBorder="0"
-        allowTransparency={true}
-        title="Economic Calendar"
-      />
-      <div className="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
-        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">
-          Powered by TradingView
-        </a>
-      </div>
-    </div>
-  );
-};
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Tools() {
-  const [activeTab, setActiveTab] = useState("chart");
-  
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-  };
+  const { isDarkMode } = useTheme();
 
   return (
     <div className="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6">
@@ -51,11 +20,7 @@ export default function Tools() {
       
       {/* Main content */}
       <div className="grid grid-cols-1 gap-6">
-        <Tabs 
-          defaultValue="chart" 
-          className="w-full"
-          onValueChange={handleTabChange}
-        >
+        <Tabs defaultValue="chart" className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="chart">Chart</TabsTrigger>
             <TabsTrigger value="forex-calendar">Forex Calendar</TabsTrigger>
@@ -69,8 +34,35 @@ export default function Tools() {
           </TabsContent>
           
           <TabsContent value="forex-calendar">
-            <div className="w-full overflow-hidden rounded-md border border-muted">
-              {activeTab === "forex-calendar" && <ForexCalendar />}
+            <div className="w-full overflow-hidden rounded-md border border-muted h-[75vh]">
+              {/* TradingView Widget BEGIN */}
+              <div className="tradingview-widget-container h-full">
+                <div className="tradingview-widget-container__widget h-[calc(100%-24px)]"></div>
+                <div className="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
+                  <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">
+                    Track all markets on TradingView
+                  </a>
+                </div>
+                <script 
+                  type="text/javascript" 
+                  src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" 
+                  async
+                  dangerouslySetInnerHTML={{
+                    __html: `
+                    {
+                      "width": "100%",
+                      "height": "100%",
+                      "colorTheme": "${isDarkMode ? 'dark' : 'light'}",
+                      "isTransparent": false,
+                      "locale": "en",
+                      "importanceFilter": "0,1",
+                      "countryFilter": "us"
+                    }
+                    `
+                  }}
+                ></script>
+              </div>
+              {/* TradingView Widget END */}
             </div>
           </TabsContent>
         </Tabs>
