@@ -28,20 +28,34 @@ function TradingViewChart() {
     const widgetOptions = {
       "autosize": true,
       "symbol": "OANDA:XAUUSD",
-      "interval": "60",
+      "interval": "60", // H1 interval by default
       "timezone": "exchange",
       "theme": isDarkMode ? "dark" : "light",
       "style": "1",
       "locale": "en",
       "hide_legend": true,
       "allow_symbol_change": true,
+      "save_image": true,
+      "enable_publishing": false,
+      "hide_top_toolbar": false,
+      "withdateranges": true,
+      "show_popup_button": true,
+      "popup_width": "1000",
+      "popup_height": "650",
+      "published_charts_count": 3,
       "watchlist": [
         "OANDA:XAUUSD",
         "BINANCE:BTCUSDT.P",
         "FX:GBPUSD",
-        "OANDA:GBPUSD",
+        "OANDA:GBPUSD", 
         "OANDA:USDJPY"
       ],
+      "favorites": {
+        "intervals": ["15", "30", "60", "240", "1D"]
+      },
+      "supported_resolutions": ["15", "30", "60", "240", "1D", "1W", "1M"],
+      "disabled_features": ["header_compare"],
+      "enabled_features": ["use_localstorage_for_settings"],
       "studies": [
         "STD;RSI", 
         "STD;TEMA"
