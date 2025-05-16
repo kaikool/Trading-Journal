@@ -872,11 +872,9 @@ export const defineAchievements = (): Achievement[] => {
   ];
 };
 
-// calculateAchievementTotalPoints function removed - not used in the project
 
-// Function calculateUserLevel removed from here - duplicate of the function in achievements-service.ts
-// This was causing issues as it had different level thresholds compared to the 
-// function in achievements-service.ts
+
+
 
 // Function calculateLevelProgress removed from here
 // It was using the local calculateUserLevel function with different thresholds

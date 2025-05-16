@@ -24,7 +24,7 @@ export function formatPercentage(value: number): string {
   }).format(value / 100);
 }
 
-// formatNumber function removed - not used in the project
+
 
 export function formatDate(date: Date | string | number | null): string {
   if (!date) return "N/A";
@@ -37,11 +37,7 @@ export function formatDate(date: Date | string | number | null): string {
   }).format(dateObj);
 }
 
-// formatTime function removed - not used in the project
 
-// formatDateTime function removed - not used in the project
-
-// truncateText function removed - not used in the project
 
 export function getRelativeTime(date: Date | string | number | null): string {
   if (!date) return "N/A";
@@ -62,9 +58,7 @@ export function getRelativeTime(date: Date | string | number | null): string {
   return formatDate(dateObj);
 }
 
-// getRandomId function removed - not used in the project
 
-// calculateWinRate function removed - not used in the project
 
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
@@ -83,4 +77,4 @@ export function debounce<T extends (...args: any[]) => any>(
   };
 }
 
-// navigateToSettingsTab function removed - not used in the project
+

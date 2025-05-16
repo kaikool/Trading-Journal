@@ -308,4 +308,3 @@ export function compareTimestamps(a: TimestampInput, b: TimestampInput): number 
   return dateA.getTime() - dateB.getTime();
 }
 
-// isSameDay and isSameMonth functions removed - not used in the project
