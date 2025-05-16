@@ -77,10 +77,10 @@ export default function Tools() {
           </TabsContent>
           
           <TabsContent value="forex-calendar">
-            <div className="w-full overflow-hidden rounded-md border border-muted" style={{ minHeight: "650px" }}>
-              <div id="tradingview-widget-container" className="tradingview-widget-container h-full">
-                <div className="tradingview-widget-container__widget h-full"></div>
-                <div className="tradingview-widget-copyright p-2 text-xs text-muted-foreground">
+            <div className="w-full overflow-hidden rounded-md border border-muted" style={{ height: "75vh" }}>
+              <div id="tradingview-widget-container" className="tradingview-widget-container" style={{ height: "100%", width: "100%" }}>
+                <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 24px)", width: "100%" }}></div>
+                <div className="tradingview-widget-copyright p-1 text-xs text-muted-foreground">
                   Powered by <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank" className="text-primary font-medium">TradingView</a>
                 </div>
               </div>
