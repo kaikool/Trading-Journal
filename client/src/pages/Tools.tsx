@@ -87,7 +87,7 @@ export default function Tools() {
               {activeTab === "chart" ? "Chart Settings" : "Calendar Settings"}
             </DialogTitle>
             <p id="config-description" className="text-sm text-muted-foreground mt-1">
-              Điều chỉnh cài đặt cho {activeTab === "chart" ? "biểu đồ" : "lịch kinh tế"}
+              Configure {activeTab === "chart" ? "chart" : "economic calendar"} settings
             </p>
           </DialogHeader>
           {getConfigComponent()}
