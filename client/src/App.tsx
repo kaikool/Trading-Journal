@@ -88,7 +88,6 @@ function MainContent() {
     // Khi location thay đổi, đánh dấu trang đang loading và scroll lên đầu trang
     if (prevLocation !== location) {
       // Đánh dấu trang chưa sẵn sàng và hiển thị chỉ báo loading
-      console.log('[TRANSITION-DEBUG] Đánh dấu trang chưa sẵn sàng và bắt đầu chuyển trang');
       setIsPageReady(false);
       
       // Lưu lại route hiện tại
@@ -115,10 +114,8 @@ function MainContent() {
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
-      console.log('[TRANSITION-DEBUG] Thêm class page-transition vào document');
       document.documentElement.classList.add('page-transition');
       const readyTimer = setTimeout(() => {
-        console.log('[TRANSITION-DEBUG] Trang đã sẵn sàng, xóa class page-transition');
         setIsPageReady(true);
         document.documentElement.classList.remove('page-transition');
       }, 300); // Thời gian dài hơn để đảm bảo trang đã được tải

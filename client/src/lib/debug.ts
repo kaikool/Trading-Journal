@@ -22,16 +22,16 @@ interface DebugConfig {
 
 // Default configuration
 const DEBUG_CONFIG: DebugConfig = {
-  enabled: isDevelopment,
-  level: isDevelopment ? 'minimal' : 'minimal',  // Reducing default level to minimal
+  enabled: false, // Disable all debug logs by default
+  level: 'minimal',
   categories: {
     data: false,     // Data loading/processing - disabled for performance
-    navigation: true, // Navigation/routing
+    navigation: false, // Navigation/routing - disabled
     render: false,   // Component rendering (verbose)
     auth: false,     // Authentication - disabled for performance
     api: false,      // API calls - disabled for performance
     cache: false,    // Caching operations - disabled for performance
-    performance: true, // Keep performance metrics enabled
+    performance: false, // Performance metrics - disabled
   }
 };
 
