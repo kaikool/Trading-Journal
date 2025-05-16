@@ -99,15 +99,20 @@
 }
 
 /* Page transition fix for dark mode */
-.dark {
+/* Disable transitions completely during initial load */
+.no-transition,
+.no-transition * {
   transition: none !important;
 }
 
+/* Disable transitions completely during page transitions */
 .page-transition,
 .page-transition * {
   transition: none !important;
+  animation: none !important;
 }
 
+/* Force dark background during transitions */
 .dark.page-transition {
   background-color: hsl(212 40% 6%) !important;
 }
@@ -116,21 +121,18 @@
   background-color: hsl(212 40% 6%) !important;
 }
 
-/* Tắt tất cả transition animation khi chuyển trang để tránh flash */
-.page-transition .fixed,
-.page-transition .absolute,
-.page-transition .bg-background,
-.page-transition .animate-pulse,
-.page-transition [class*='bg-'] {
-  transition: none !important;
+/* Prevent white flash during transitions */
+.dark.page-transition * {
   background-color: transparent !important;
-  color: transparent !important;
+  border-color: transparent !important;
 }
 
-/* Ngoại lệ cho dark mode */
+/* Only apply background to necessary elements */
 .dark.page-transition .fixed,
 .dark.page-transition .absolute,
-.dark.page-transition .bg-background {
+.dark.page-transition .bg-background,
+.dark.page-transition .skeleton,
+.dark.page-transition div[class*='bg-background'] {
   background-color: hsl(212 40% 6%) !important;
 }
 

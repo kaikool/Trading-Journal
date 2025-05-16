@@ -1,6 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-transition">
   <head>
+    <script>
+      // Prevent white flash in dark mode during page load
+      (function() {
+        // Check if we should apply dark mode
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('theme');
+        
+        if ((darkModeMediaQuery.matches && savedTheme !== 'light') || savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.backgroundColor = 'hsl(212 40% 6%)';
+        }
+      })();
+    </script>
     <meta charset="UTF-8" />
     <title>Forex Trade Journal</title>
 
