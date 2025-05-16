@@ -258,14 +258,14 @@ function MainContent() {
     >
       {/* Hiển thị skeleton loader khi trang đang chuyển */}
       {!isPageReady && (
-        <div className="fixed inset-0 bg-background/80 dark:bg-background/90 backdrop-blur-sm z-40 flex items-center justify-center transition-colors">
+        <div className="fixed inset-0 bg-background dark:bg-background z-40 flex items-center justify-center">
           <div className="w-full max-w-5xl">
             <AppSkeleton
               level={SkeletonLevel.PAGE}
-              className="py-6 transition-colors"
+              className="py-6"
               customProps={{ 
                 showTabs: true, 
-                tabCount: 3 
+                tabCount: 3
               }}
             />
           </div>
@@ -279,7 +279,10 @@ function MainContent() {
               level={SkeletonLevel.PAGE}
               height={600}
               className="py-6"
-              customProps={{ showTabs: true, tabCount: 4 }}
+              customProps={{ 
+                showTabs: true, 
+                tabCount: 4
+              }}
             />
           </div>
         }>

@@ -1,6 +1,14 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
+// Kiểm tra trạng thái dark mode để áp dụng đúng màu
+const isDarkMode = () => {
+  if (typeof window !== 'undefined') {
+    return document.documentElement.classList.contains('dark');
+  }
+  return false;
+}
+
 /**
  * Các cấp độ skeleton cho các trường hợp sử dụng khác nhau
  */
@@ -34,6 +42,8 @@ export function AppSkeleton({
   count = 1,
   customProps = {}
 }: AppSkeletonProps) {
+  // Kiểm tra nếu dark mode được force
+  const darkModeForced = customProps.forceDark === true;
   const renderContent = () => {
     switch (level) {
       case SkeletonLevel.LIST_ITEM:
