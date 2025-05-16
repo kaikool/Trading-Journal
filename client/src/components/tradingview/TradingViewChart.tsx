@@ -64,7 +64,6 @@ function TradingViewChart() {
       "charts_storage_url": "https://saveload.tradingview.com",
       "client_id": "tradingview.com",
       "custom_css_url": "",
-      "preset": "mobile",
       "allowed_intervals": ["15", "30", "60", "240", "1D"],
       "default_intervals": ["15", "30", "60", "240", "1D"],
       "disabled_features": ["header_compare"],
