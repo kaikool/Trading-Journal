@@ -2,15 +2,18 @@
 <html lang="en" class="no-transition">
   <head>
     <script>
-      // Prevent white flash in dark mode during page load
+      // Áp dụng dark mode ngay lập tức để tránh hiệu ứng nháy
       (function() {
-        // Check if we should apply dark mode
-        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const savedTheme = localStorage.getItem('theme');
+        // Kiểm tra xem có nên áp dụng dark mode hay không
+        var storedTheme = localStorage.getItem('theme');
+        var isDarkMode = storedTheme === 'dark' || 
+          (storedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         
-        if ((darkModeMediaQuery.matches && savedTheme !== 'light') || savedTheme === 'dark') {
+        if (isDarkMode) {
           document.documentElement.classList.add('dark');
           document.documentElement.style.backgroundColor = 'hsl(212 40% 6%)';
+          // Thêm màu nền cho body để đảm bảo không có nháy sáng
+          document.write('<style>body{background-color:hsl(212 40% 6%)}</style>');
         }
       })();
     </script>

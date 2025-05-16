@@ -99,9 +99,17 @@
 }
 
 /* Page transition fix for dark mode */
-/* Fix for page transition flashing in dark mode - we use a simpler approach */
+/* Đảm bảo dark mode không có flash khi chuyển trang */
+html.dark {
+  background-color: hsl(212 40% 6%);
+}
+
+html.dark body {
+  background-color: hsl(212 40% 6%);
+}
+
+/* Vô hiệu hóa transition trong dark mode để tránh flash */
 .dark * {
-  /* This will ensure elements inherit dark mode styles correctly without flash */
   transition: none !important;
 }
 
