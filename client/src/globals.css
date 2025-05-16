@@ -481,7 +481,7 @@
   /* Safe area padding utilities - using CSS variables */
   .pt-safe { padding-top: var(--safe-top); }
   .pr-safe { padding-right: var(--safe-right); }
-  /* Sử dụng .has-safe-bottom thay thế */
+
   .pb-safe { padding-bottom: var(--spacing-bottom-safe); }
   .pl-safe { padding-left: var(--safe-left); }
   
@@ -506,7 +506,7 @@
   /* Safe area margin utilities */
   .mt-safe { margin-top: var(--safe-top); }
   .mr-safe { margin-right: var(--safe-right); }
-  /* Sử dụng class .has-safe-bottom-margin thay thế */
+
   .mb-safe { margin-bottom: var(--spacing-bottom-safe); }
   .ml-safe { margin-left: var(--safe-left); }
   

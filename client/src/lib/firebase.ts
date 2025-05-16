@@ -1463,8 +1463,7 @@ async function deleteGoal(userId: string, goalId: string) {
  * @param callback - Hàm xử lý khi có dữ liệu mới
  * @param errorCallback - Hàm xử lý khi có lỗi (tùy chọn)
  * @returns Hàm hủy lắng nghe
- * @deprecated Sử dụng FirebaseListenerService.onGoalsSnapshot thay thế.
- * FirebaseListenerService cung cấp quản lý tập trung cho các Firebase listeners.
+
  */
 function onGoalsSnapshot(
   userId: string,

@@ -1,6 +1,6 @@
 import admin from 'firebase-admin';
 
-// In-memory database để thay thế Firestore
+// In-memory database implementation
 interface CollectionQuerySnapshot {
   empty: boolean;
   docs: Array<{
@@ -149,7 +149,7 @@ const storage = {
   })
 };
 
-// Tạo instance MemoryFirestore để thay thế Firestore
+// Tạo instance MemoryFirestore cho in-memory storage
 const db = new MemoryFirestore();
 
 // MemoryFirestore không cần dữ liệu mẫu nữa

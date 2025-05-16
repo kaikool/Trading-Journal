@@ -2,7 +2,7 @@
  * timestamp.ts
  * 
  * Cung cấp các hàm tiện ích để xử lý timestamp trong ứng dụng.
- * File này thay thế và chuẩn hóa các hàm xử lý timestamp trùng lặp trong dự án.
+ * File này cung cấp các hàm xử lý timestamp chuẩn cho dự án.
  */
 
 import { getTimestampMilliseconds, TimestampInput } from '@/lib/format-timestamp';
