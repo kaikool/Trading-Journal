@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Settings } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Settings, X } from "lucide-react";
 
 import TradingViewChart from "@/components/tradingview/TradingViewChart";
 import EconomicCalendar from "@/components/tradingview/EconomicCalendar";
@@ -15,7 +15,7 @@ export default function Tools() {
   const { isDarkMode } = useTheme();
   const { chartConfig, calendarConfig } = useTradingTools();
   const [activeTab, setActiveTab] = useState("chart");
-  const [configOpen, setConfigOpen] = useState(false);
+  const [showConfig, setShowConfig] = useState(false);
   const [chartKey, setChartKey] = useState(Date.now());
   const [calendarKey, setCalendarKey] = useState(Date.now());
 
@@ -24,13 +24,13 @@ export default function Tools() {
     // Listen for chart config updates
     const handleChartConfigUpdated = () => {
       setChartKey(Date.now()); // Force remount of chart component
-      setConfigOpen(false);    // Close the dialog
+      setShowConfig(false);    // Hide the config panel
     };
     
     // Listen for calendar config updates
     const handleCalendarConfigUpdated = () => {
       setCalendarKey(Date.now()); // Force remount of calendar component
-      setConfigOpen(false);       // Close the dialog
+      setShowConfig(false);       // Hide the config panel
     };
     
     // Add event listeners
@@ -85,13 +85,36 @@ export default function Tools() {
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => setConfigOpen(true)}
+              onClick={() => setShowConfig(!showConfig)}
               className="ml-2 flex items-center"
             >
               <Settings className="h-4 w-4 mr-1" />
-              <span>Config</span>
+              <span>{showConfig ? "Hide Config" : "Config"}</span>
             </Button>
           </div>
+          
+          {showConfig && (
+            <Card className="mb-4 p-4 border-muted">
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h3 className="text-lg font-medium">
+                    {activeTab === "chart" ? "Chart Settings" : "Calendar Settings"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Configure {activeTab === "chart" ? "chart" : "economic calendar"} settings
+                  </p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setShowConfig(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              {getConfigComponent()}
+            </Card>
+          )}
           
           <TabsContent value="chart">
             <div className="w-full overflow-hidden rounded-md border border-muted">
@@ -106,21 +129,6 @@ export default function Tools() {
           </TabsContent>
         </Tabs>
       </div>
-
-      {/* Configuration Dialog */}
-      <Dialog open={configOpen} onOpenChange={setConfigOpen}>
-        <DialogContent className="max-w-xl" aria-describedby="config-description">
-          <DialogHeader>
-            <DialogTitle>
-              {activeTab === "chart" ? "Chart Settings" : "Calendar Settings"}
-            </DialogTitle>
-            <p id="config-description" className="text-sm text-muted-foreground mt-1">
-              Configure {activeTab === "chart" ? "chart" : "economic calendar"} settings
-            </p>
-          </DialogHeader>
-          {getConfigComponent()}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
