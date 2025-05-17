@@ -77,22 +77,9 @@ export function PerformanceChart({
     
     return () => observer.disconnect();
   }, []);
-  // Loading state - use effectiveIsLoading that includes empty array case
+  // Skip rendering if loading
   if (effectiveIsLoading) {
-    return (
-      <Card className="relative overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <div className="flex items-center gap-2">
-            {/* Empty loading header */}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[var(--balance-chart-height)] w-full min-h-[200px]">
-            {/* Empty loading container */}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
   
   // Empty state - now this only happens when data is really empty, not during loading

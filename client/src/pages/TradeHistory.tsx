@@ -935,11 +935,7 @@ export default function TradeHistory() {
       )}
 
       <div className="w-full space-y-5 overflow-hidden">
-        {isLoading ? (
-          <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Empty loading state without skeleton */}
-          </div>
-        ) : trades.length > 0 ? (
+        {!isLoading && trades.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full overflow-hidden">
               <AnimatePresence>

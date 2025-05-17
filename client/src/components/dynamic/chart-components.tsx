@@ -80,7 +80,7 @@ export function LazyChart({
   };
 
   return (
-    <Suspense fallback={<div className="bg-background/5 rounded-md" style={{height: typeof height === 'number' ? `${height}px` : height}}></div>}>
+    <Suspense fallback={null}>
       <ResponsiveContainer width={width} height={height}>
         {renderChart()}
       </ResponsiveContainer>
