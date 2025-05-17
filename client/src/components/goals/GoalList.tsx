@@ -153,14 +153,9 @@ export function GoalList() {
     }
   };
 
-  // Render loading state
+  // Skip rendering when loading
   if (isLoadingProgress) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96 space-y-4">
-        <GoalIcon className="h-12 w-12 animate-pulse text-primary" />
-        <p className="text-lg font-medium">Loading goal data...</p>
-      </div>
-    );
+    return null;
   }
 
   // No goal data available
