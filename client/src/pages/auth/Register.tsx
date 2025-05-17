@@ -156,7 +156,7 @@ export default function Register() {
               disabled={isLoading}
               size="lg"
             >
-              {isLoading ? "Please wait..." : "Create account"}
+              Create account
             </Button>
           </form>
         </Form>
@@ -206,12 +206,10 @@ export default function Register() {
           }}
           disabled={isLoading}
         >
-          {!isLoading && (
-            <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
-              <FcGoogle className="h-4 w-4" />
-            </div>
-          )}
-          <span>{isLoading ? "Please wait..." : "Sign up with Google"}</span>
+          <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
+            <FcGoogle className="h-4 w-4" />
+          </div>
+          <span>Sign up with Google</span>
         </Button>
         
         <p className="text-center text-xs text-muted-foreground mt-6">

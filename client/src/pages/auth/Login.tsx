@@ -126,7 +126,7 @@ export default function Login() {
               disabled={isLoading}
               size="lg"
             >
-              {isLoading ? "Please wait..." : "Sign in"}
+              Sign in
             </Button>
           </form>
         </Form>
@@ -176,12 +176,10 @@ export default function Login() {
           }}
           disabled={isLoading}
         >
-          {!isLoading && (
-            <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
-              <FcGoogle className="h-4 w-4" />
-            </div>
-          )}
-          <span>{isLoading ? "Please wait..." : "Sign in with Google"}</span>
+          <div className="w-5 h-5 flex items-center justify-center mr-1 z-10">
+            <FcGoogle className="h-4 w-4" />
+          </div>
+          <span>Sign in with Google</span>
         </Button>
       </AuthCard>
     </AuthLayout>
