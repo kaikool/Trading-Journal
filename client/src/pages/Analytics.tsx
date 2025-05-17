@@ -478,25 +478,25 @@ export default function Analytics() {
             </TabsContent>
             
             <TabsContent value="strategy">
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
+              <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
                 <StrategyTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="discipline">
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
+              <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
                 <DisciplineTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="emotion">
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
+              <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
                 <EmotionTab data={analyticsData} />
               </Suspense>
             </TabsContent>
             
             <TabsContent value="advanced">
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
+              <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
                 <AdvancedTab data={analyticsData} />
               </Suspense>
             </TabsContent>

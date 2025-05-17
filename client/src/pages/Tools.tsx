@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Settings, X } from "lucide-react";
-import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
+
 
 // Dynamic imports for code splitting
 import { 
