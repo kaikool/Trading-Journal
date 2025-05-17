@@ -1,5 +1,6 @@
 @import "./globals.css";
 @import "./components/ui/loading.css";
+@import "./components/ui/animations.css";
 
 @tailwind base;
 @tailwind components;
