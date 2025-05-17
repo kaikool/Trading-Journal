@@ -36,7 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -425,28 +425,28 @@ export default function Settings() {
   
   // Save API settings đã bị xóa
   
-  // Loading state with skeleton UI
+  // Empty loading state (no skeletons)
   if (isLoading) {
     return (
       <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Skeleton className="h-9 w-48 mb-2" />
-            <Skeleton className="h-5 w-64" />
+            <div className="h-9 w-48 mb-2"></div>
+            <div className="h-5 w-64"></div>
           </div>
-          <Skeleton className="h-10 w-36" />
+          <div className="h-10 w-36"></div>
         </div>
         
-        <Skeleton className="h-12 w-full mb-8" />
+        <div className="h-12 w-full mb-8"></div>
         
         {Array(3).fill(0).map((_, i) => (
           <Card key={i} className="mb-6 shadow-sm border border-border/40">
             <CardHeader className="pb-2">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="h-10 w-10 rounded-full"></div>
                 <div>
-                  <Skeleton className="h-6 w-40 mb-1" />
-                  <Skeleton className="h-4 w-64" />
+                  <div className="h-6 w-40 mb-1"></div>
+                  <div className="h-4 w-64"></div>
                 </div>
               </div>
             </CardHeader>
@@ -455,8 +455,8 @@ export default function Settings() {
               <div className="space-y-6">
                 {Array(3).fill(0).map((_, j) => (
                   <div key={j} className="space-y-2">
-                    <Skeleton className="h-5 w-32" />
-                    <Skeleton className="h-10 w-full" />
+                    <div className="h-5 w-32"></div>
+                    <div className="h-10 w-full"></div>
                   </div>
                 ))}
               </div>

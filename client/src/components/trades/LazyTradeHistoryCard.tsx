@@ -491,8 +491,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
           </CardContent>
         </Card>
       ) : (
-        // Skeleton loading when not in view
-        <Skeleton className="w-full h-48" />
+        // Empty placeholder when not in view
+        <div className="w-full h-48 bg-background/5 rounded-md"></div>
       )}
     </div>
   );
