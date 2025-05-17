@@ -50,11 +50,7 @@ export function FormHeader({
             }}
             disabled={isDraftLoading}
           >
-            {isDraftLoading ? (
-              <Icons.ui.spinner className="h-3 w-3 animate-spin" />
-            ) : (
-              <Icons.ui.check className="h-3 w-3" />
-            )}
+            <Icons.ui.check className="h-3 w-3" />
             <span>Load Draft</span>
           </Button>
           <Button

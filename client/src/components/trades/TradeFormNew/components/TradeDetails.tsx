@@ -311,11 +311,7 @@ export function TradeDetails({
                     onClick={calculateOptimalLotSize}
                     disabled={isCalculatingLotSize}
                   >
-                    {isCalculatingLotSize ? (
-                      <Icons.ui.spinner className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <span>Calculate</span>
-                    )}
+                    <span>Calculate</span>
                   </Button>
                 </div>
                 <FormControl>

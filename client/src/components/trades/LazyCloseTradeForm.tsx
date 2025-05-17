@@ -26,8 +26,8 @@ export function LazyCloseTradeForm(props: CloseTradeFormProps) {
       fallback={
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2">
-            <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Loading form...</p>
+            <div className="h-8 w-8"></div>
+            <p className="text-sm text-muted-foreground opacity-0">Loading form...</p>
           </div>
         </div>
       }

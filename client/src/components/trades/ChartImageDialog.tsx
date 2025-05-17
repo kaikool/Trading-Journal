@@ -245,11 +245,11 @@ export function ChartImageDialog({
             onMouseLeave={handleMouseUp}
             {...(scale <= 1 ? swipeHandlers : {})}
           >
-            {/* Loading indicator */}
+            {/* Empty Loading State */}
             {isLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
-                <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
-                <span className="mt-2 text-xs font-medium">Đang tải...</span>
+                <div className="h-8 w-8"></div>
+                <span className="mt-2 text-xs font-medium opacity-0">Đang tải...</span>
               </div>
             )}
             {/* Error state */}
