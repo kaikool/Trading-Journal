@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
-import { LoadingProvider, LoadingLevel, useLoading } from "@/contexts/LoadingContext";
+import { LoadingProvider, LoadingLevel } from "@/contexts/LoadingContext";
 import { SplashScreen } from "@/components/ui/splash-screen";
 import { ProgressBar } from "@/components/ui/progress-bar";
 
@@ -255,11 +255,14 @@ function MainContent() {
         transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
       }}
     >
-      {/* Page transition state without skeleton */}
+      {/* Hiển thị thanh progress ở đầu trang khi chuyển trang */}
       {!isPageReady && (
-        <div className="fixed inset-0 bg-background dark:bg-background z-40 flex items-center justify-center">
-          <div className="w-full max-w-5xl">
-            {/* Page transition with no skeleton */}
+        <div className="fixed inset-0 bg-background/90 dark:bg-background/90 z-40 flex items-center justify-center">
+          <div className="w-full max-w-5xl flex flex-col items-center space-y-6">
+            <div className="animate-spin text-primary">
+              <Icons.ui.refresh className="w-8 h-8" />
+            </div>
+            <p className="text-sm text-muted-foreground">Đang tải trang...</p>
           </div>
         </div>
       )}
@@ -336,6 +339,8 @@ function App() {
             <DialogProvider>
               <TradingToolsProvider>
                 <MainContent />
+                {/* Hiển thị thanh progress ở cấp độ ứng dụng */}
+                <ProgressBar fixed={true} height={3} color="primary" />
                 <Toaster />
                 <PWAContainer />
                 <AchievementNotificationContainer />
