@@ -125,7 +125,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
               style={{ objectFit: 'cover' }}
             />
           ) : (
-            <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground/70" />
+            <div className="h-8 w-8"></div>
           )}
         </div>
       )}

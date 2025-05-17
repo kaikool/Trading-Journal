@@ -192,11 +192,7 @@ export function TradeImageManager({
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? (
-              <Icons.ui.spinner className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Icons.ui.close className="h-3.5 w-3.5" />
-            )}
+            <Icons.ui.close className="h-3.5 w-3.5" />
           </Button>
           
           <Button 
