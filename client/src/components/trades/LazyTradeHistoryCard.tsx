@@ -7,7 +7,7 @@ import {
   CardGradient,
   CardValue
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { Icons } from "@/components/icons/icons";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useLocation } from "wouter";
