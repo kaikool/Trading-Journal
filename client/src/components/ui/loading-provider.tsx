@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLoadingStore } from '@/hooks/use-loading-store';
-import { SplashScreen } from './splash-screen';
+import { ModernSplashScreen } from './modern-splash-screen';
 import { ProgressBar } from './progress-bar';
 
 interface LoadingProviderProps {
@@ -22,10 +22,11 @@ export function LoadingProvider({
   
   return (
     <>
-      {/* Hiển thị splash screen khi app đang khởi động */}
-      <SplashScreen 
+      {/* Hiển thị splash screen hiện đại khi app đang khởi động */}
+      <ModernSplashScreen 
         text="Đang khởi động ứng dụng..." 
-        minimumDisplayTime={splashMinDisplayTime} 
+        minimumDisplayTime={splashMinDisplayTime}
+        brandName="Táo Tầu"
       />
       
       {/* Hiển thị thanh progress ở đầu trang */}

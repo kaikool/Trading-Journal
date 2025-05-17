@@ -246,16 +246,50 @@ function MainContent() {
     }
   }, [loading, hasUser, isPublicPage]);
 
-  // Sử dụng loading state đơn giản cho khởi động ban đầu
+  // Sử dụng ModernSplashScreen cho khởi động ban đầu
   if (loading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin text-primary">
-            <Icons.ui.refresh className="w-10 h-10" />
+      <div className="h-screen w-full flex items-center justify-center overflow-hidden">
+        <div className="relative w-full h-full">
+          {/* Sử dụng thiết kế loading hiện đại với đồ họa tăng trưởng */}
+          <div className="fixed inset-0 z-50 flex flex-col items-center justify-center">
+            <div className="w-32 h-32 relative animate-float">
+              {/* Hiệu ứng background pulse */}
+              <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping-slow"></div>
+              
+              {/* Hiệu ứng pulse thứ hai */}
+              <div className="absolute inset-0 rounded-full bg-primary/5 animate-ping-slow" 
+                   style={{ animationDelay: '0.5s' }}></div>
+              
+              {/* Logo chính */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Icons.analytics.barChart className="w-20 h-20 text-primary" />
+              </div>
+              
+              {/* Vòng quay */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="rounded-full border-2 border-primary/30 animate-spin-slow" 
+                     style={{ width: '120%', height: '120%' }}></div>
+              </div>
+            </div>
+            
+            {/* Phần text */}
+            <div className="mt-10 space-y-4 text-center">
+              <p className="text-xl font-medium text-foreground animate-fade-up">
+                Đang khởi động ứng dụng...
+              </p>
+              
+              <p className="bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent 
+                            font-semibold animate-fade-up animation-delay-300">
+                made by Táo Tầu
+              </p>
+              
+              {/* Thanh loading mảnh, tinh tế */}
+              <div className="w-64 h-1 mt-3 bg-muted overflow-hidden rounded-full animate-fade-up animation-delay-500">
+                <div className="h-full bg-primary animate-progress-grow animate-breathing-glow rounded-full"></div>
+              </div>
+            </div>
           </div>
-          <p className="text-lg font-medium">Đang khởi động ứng dụng...</p>
-          <p className="text-sm text-muted-foreground">made by Táo Tầu</p>
         </div>
       </div>
     );
