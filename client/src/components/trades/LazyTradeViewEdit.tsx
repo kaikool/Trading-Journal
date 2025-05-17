@@ -166,8 +166,8 @@ export function LazyTradeViewEdit({
             <span className="text-sm text-muted-foreground font-medium">
               {isLoadingStrategy ? (
                 <span className="inline-flex items-center">
-                  <Icons.ui.spinner className="h-3 w-3 animate-spin mr-1" />
-                  Loading...
+                  <div className="h-3 w-3 mr-1"></div>
+                  <span className="opacity-0">Loading...</span>
                 </span>
               ) : strategyName}
             </span>
@@ -426,8 +426,8 @@ export function LazyTradeViewEdit({
                 fallback={
                   <div className="w-full py-8 flex items-center justify-center">
                     <div className="flex flex-col items-center gap-2">
-                      <Icons.ui.spinner className="h-8 w-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground">Loading form...</p>
+                      <div className="h-8 w-8"></div>
+                      <p className="text-sm text-muted-foreground opacity-0">Loading form...</p>
                     </div>
                   </div>
                 }

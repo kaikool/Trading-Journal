@@ -729,11 +729,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                 className="flex-1 gap-1"
                 variant={previewResult?.profitLoss && previewResult.profitLoss > 0 ? "default" : "destructive"}
               >
-                {isSubmitting || isUploading ? (
-                  <Icons.ui.spinner className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Icons.ui.lock className="h-4 w-4" />
-                )}
+                <Icons.ui.lock className="h-4 w-4" />
                 {isSubmitting 
                   ? "Processing..." 
                   : isUploading 
