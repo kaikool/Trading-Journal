@@ -6,7 +6,7 @@ import {
   CardIcon,
   CardGradient
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
 import { Icons } from "@/components/icons/icons";
 import { UI_CONFIG, COLOR_CONFIG } from "@/lib/config";
@@ -83,13 +83,13 @@ export function PerformanceChart({
       <Card className="relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-8 rounded-md" />
-            <Skeleton className="h-6 w-40" />
+            {/* Empty loading header */}
           </div>
-          <Skeleton className="h-6 w-24 rounded-full" />
         </CardHeader>
         <CardContent>
-          <Skeleton className="h-[var(--balance-chart-height)] w-full min-h-[200px] rounded-lg" />
+          <div className="h-[var(--balance-chart-height)] w-full min-h-[200px]">
+            {/* Empty loading container */}
+          </div>
         </CardContent>
       </Card>
     );

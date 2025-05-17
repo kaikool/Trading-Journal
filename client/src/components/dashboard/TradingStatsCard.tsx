@@ -8,7 +8,7 @@ import {
   CardValue 
 } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { cn } from "@/lib/utils";
 import { formatProfitFactor } from "@/lib/balance-calculation-rules";
 import { formatPercentage, formatRiskReward } from "@/utils/format-number";
@@ -38,22 +38,12 @@ export function TradingStatsCard({
       <Card className="relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-8 rounded-md" />
-            <Skeleton className="h-6 w-40" />
+            {/* Empty loading header */}
           </div>
-          <Skeleton className="h-6 w-24 rounded-full" />
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array(4).fill(0).map((_, index) => (
-              <div key={index} className="bg-muted/10 p-3 rounded-lg border border-muted/30">
-                <div className="flex justify-between items-center mb-2">
-                  <Skeleton className="h-4 w-20" />
-                  <Skeleton className="h-6 w-6 rounded-md" />
-                </div>
-                <Skeleton className="h-7 w-16 mt-1" />
-              </div>
-            ))}
+            {/* Empty loading content */}
           </div>
         </CardContent>
       </Card>

@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { Icons } from "@/components/icons/icons";
 import { cn } from "@/lib/utils";
 import { CHART_CONFIG } from "@/lib/config";
@@ -66,12 +66,12 @@ export function PairPerformanceCard({
       <Card className="shadow-sm border border-border/40">
         <CardHeader className="pb-0 pt-3 px-4">
           <div className="flex justify-between items-center">
-            <Skeleton className="h-5 w-32" />
+            {/* Empty loading state */}
           </div>
         </CardHeader>
         <CardContent>
           <div className="h-[200px] w-full flex items-center justify-center">
-            <Skeleton className="h-[160px] w-[160px] rounded-full" />
+            {/* Empty loading container */}
           </div>
         </CardContent>
       </Card>
