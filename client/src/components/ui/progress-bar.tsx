@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useLoading } from "@/contexts/LoadingContext";
+import { useLoadingStore } from "@/hooks/use-loading-store";
 
 interface ProgressBarProps {
   className?: string;
@@ -19,7 +19,9 @@ export function ProgressBar({
   showOnPageLoading = true,
   showOnAppLoading = true,
 }: ProgressBarProps) {
-  const { isPageLoading, isAppLoading, progress } = useLoading();
+  const isPageLoading = useLoadingStore(state => state.isPageLoading);
+  const isAppLoading = useLoadingStore(state => state.isAppLoading);
+  const progress = useLoadingStore(state => state.progress);
   const [visible, setVisible] = useState(false);
   
   // Calculate if progress bar should be visible

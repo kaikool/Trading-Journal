@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLoading, LoadingLevel } from '@/contexts/LoadingContext';
+import { useLoadingStore, LoadingLevel } from './use-loading-store';
 
 /**
  * Hook để quản lý trạng thái loading trong các component
@@ -15,7 +15,8 @@ export function useLoadingEffect(
   level: LoadingLevel = LoadingLevel.COMPONENT,
   deps: any[] = []
 ) {
-  const { startLoading, stopLoading } = useLoading();
+  const startLoading = useLoadingStore(state => state.startLoading);
+  const stopLoading = useLoadingStore(state => state.stopLoading);
   
   useEffect(() => {
     if (isLoading) {

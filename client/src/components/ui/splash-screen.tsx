@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { useLoading } from '@/contexts/LoadingContext';
+import { useLoadingStore } from '@/hooks/use-loading-store';
 import { Icons } from '@/components/icons/icons';
 
 interface SplashScreenProps {
@@ -18,7 +18,8 @@ export function SplashScreen({
   minimumDisplayTime = 1000,
   showProgressBar = true,
 }: SplashScreenProps) {
-  const { isAppLoading, progress } = useLoading();
+  const isAppLoading = useLoadingStore(state => state.isAppLoading);
+  const progress = useLoadingStore(state => state.progress);
   const [visible, setVisible] = useState(true);
   const [startTime] = useState(Date.now());
   
@@ -83,19 +84,3 @@ export function SplashScreen({
     </div>
   );
 }
-
-// Add this to global.css or create a new file for animations
-// @keyframes pulse-grow {
-//   0%, 100% {
-//     transform: scale(1);
-//     opacity: 0.8;
-//   }
-//   50% {
-//     transform: scale(1.05);
-//     opacity: 1;
-//   }
-// }
-//
-// .animate-pulse-grow {
-//   animation: pulse-grow 2s infinite ease-in-out;
-// }

@@ -6,9 +6,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
-import { LoadingProvider, LoadingLevel } from "@/contexts/LoadingContext";
 import { SplashScreen } from "@/components/ui/splash-screen";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
+import { useLoadingStore, LoadingLevel } from "@/hooks/use-loading-store";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -270,7 +271,8 @@ function MainContent() {
       <ErrorBoundary>
         <Suspense fallback={
           <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-8">
-            {/* Empty container for lazy-loaded component */}
+            {/* Sử dụng AppSkeleton cấp trang khi lazy loading */}
+            <AppSkeleton level={SkeletonLevel.PAGE} animation="pulse" hasTitle hasFooter />
           </div>
         }>
           <Switch>
@@ -333,22 +335,20 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LoadingProvider>
-        <ThemeProvider>
-          <LayoutProvider>
-            <DialogProvider>
-              <TradingToolsProvider>
-                <MainContent />
-                {/* Hiển thị thanh progress ở cấp độ ứng dụng */}
-                <ProgressBar fixed={true} height={3} color="primary" />
-                <Toaster />
-                <PWAContainer />
-                <AchievementNotificationContainer />
-              </TradingToolsProvider>
-            </DialogProvider>
-          </LayoutProvider>
-        </ThemeProvider>
-      </LoadingProvider>
+      <ThemeProvider>
+        <LayoutProvider>
+          <DialogProvider>
+            <TradingToolsProvider>
+              <MainContent />
+              {/* Hiển thị thanh progress ở cấp độ ứng dụng */}
+              <ProgressBar fixed={true} height={3} color="primary" />
+              <Toaster />
+              <PWAContainer />
+              <AchievementNotificationContainer />
+            </TradingToolsProvider>
+          </DialogProvider>
+        </LayoutProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
