@@ -491,7 +491,6 @@ export default function Settings() {
         >
           {isSaving ? (
             <>
-              <Icons.ui.spinner className="mr-2 h-4 w-4 animate-spin" />
               Saving...
             </>
           ) : (
@@ -744,7 +743,7 @@ export default function Settings() {
                       className="px-3"
                     >
                       {isUpdatingDisplayName ? (
-                        <Icons.ui.spinner className="h-4 w-4 animate-spin" />
+                        <>{/* Đã xóa spinner */}</>
                       ) : (
                         <Icons.ui.check className="h-4 w-4" />
                       )}
@@ -848,7 +847,7 @@ export default function Settings() {
                 >
                   {isChangingPassword ? (
                     <>
-                      <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
+                      {/* Đã xóa spinner */}
                       Updating...
                     </>
                   ) : (
