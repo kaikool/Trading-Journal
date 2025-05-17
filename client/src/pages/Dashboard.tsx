@@ -29,9 +29,7 @@ import {
 // Import lazy-loaded components with Suspense
 import { 
   LazyPerformanceChart, 
-  LazyRecentTradesCard,
-  AppSkeleton, 
-  SkeletonLevel 
+  LazyRecentTradesCard
 } from "@/components/dynamic";
 
 // Define types
@@ -435,11 +433,7 @@ export default function Dashboard() {
             hasTrades={hasTrades}
           />
         ) : (
-          <AppSkeleton 
-            level={SkeletonLevel.STATS} 
-            height={160}
-            customProps={{ showProgress: true, showFooterText: true }} 
-          />
+          <div className="h-[160px] bg-background/5 rounded-md"></div>
         )}
         
         {/* Second row: Trading Stats */}
@@ -454,37 +448,33 @@ export default function Dashboard() {
             totalLoss={statsValues.totalLoss}
           />
         ) : (
-          <AppSkeleton 
-            level={SkeletonLevel.STATS} 
-            height={160}
-            className="p-4"
-          />
+          <div className="h-[160px] bg-background/5 rounded-md p-4"></div>
         )}
         
         {/* Third row: Performance Chart - Lazy loaded */}
         <div className="suspense-boundary">
-          <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} />}>
+          <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
             {userData ? (
               <LazyPerformanceChart 
                 data={performanceData}
                 isLoading={false} // Không cần hiện loading vì đã có userData
               />
             ) : (
-              <AppSkeleton level={SkeletonLevel.CHART} />
+              <div className="h-[300px] bg-background/5 rounded-md"></div>
             )}
           </Suspense>
         </div>
         
         {/* Fourth row: Recent Trades - Lazy loaded */}
         <div className="suspense-boundary">
-          <Suspense fallback={<AppSkeleton level={SkeletonLevel.LIST} />}>
+          <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
             {userData ? (
               <LazyRecentTradesCard 
                 trades={trades.slice(0, 5)}
                 isLoading={false} // Không cần hiện loading vì đã có dữ liệu
               />
             ) : (
-              <AppSkeleton level={SkeletonLevel.LIST} height={400} />
+              <div className="h-[400px] bg-background/5 rounded-md"></div>
             )}
           </Suspense>
         </div>
