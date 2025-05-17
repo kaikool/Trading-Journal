@@ -84,6 +84,10 @@ function MainContent() {
   const isMobile = useIsMobile();
   const currentRoute = location;
   
+  // Sử dụng Zustand store để quản lý loading
+  const startLoading = useLoadingStore(state => state.startLoading);
+  const stopLoading = useLoadingStore(state => state.stopLoading);
+  
   // Add transition state to improve route changes
   const [isPageReady, setIsPageReady] = useState<boolean>(true);
   const [prevLocation, setPrevLocation] = useState<string>(location);
@@ -200,14 +204,26 @@ function MainContent() {
     return () => clearTimeout(timer);
   }, [location, isMobile]);
 
+  // Quản lý quá trình khởi tạo ứng dụng với loading system mới
   useEffect(() => {
+    // Bắt đầu trạng thái loading cho toàn bộ ứng dụng
+    const appLoadingId = 'app-initialization';
+    startLoading(appLoadingId, LoadingLevel.APP);
+    
+    // Theo dõi đăng nhập từ Firebase
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       setUser(authUser);
       setLoading(false);
+      
+      // Hoàn thành trạng thái loading cho toàn bộ ứng dụng
+      stopLoading(appLoadingId, LoadingLevel.APP);
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribe();
+      stopLoading(appLoadingId, LoadingLevel.APP);
+    };
+  }, [startLoading, stopLoading]);
 
   // Check if user is on auth page
   const isAuthPage = location.startsWith("/auth");
@@ -231,15 +247,9 @@ function MainContent() {
     }
   }, [loading, hasUser, isPublicPage]);
 
+  // Sử dụng component SplashScreen mới cho trạng thái loading ban đầu của ứng dụng
   if (loading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <div className="w-full max-w-5xl">
-          {/* Sử dụng SplashScreen mới để hiển thị trạng thái loading ban đầu */}
-          <SplashScreen />
-        </div>
-      </div>
-    );
+    return <SplashScreen text="Đang khởi động ứng dụng..." minimumDisplayTime={1200} />;
   }
   
   // Render page content without animation libs
@@ -256,22 +266,30 @@ function MainContent() {
         transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
       }}
     >
-      {/* Hiển thị thanh progress ở đầu trang khi chuyển trang */}
+      {/* Hiển thị trạng thái loading khi chuyển trang */}
       {!isPageReady && (
-        <div className="fixed inset-0 bg-background/90 dark:bg-background/90 z-40 flex items-center justify-center">
-          <div className="w-full max-w-5xl flex flex-col items-center space-y-6">
-            <div className="animate-spin text-primary">
-              <Icons.ui.refresh className="w-8 h-8" />
-            </div>
-            <p className="text-sm text-muted-foreground">Đang tải trang...</p>
+        <>
+          {/* Hiển thị thanh progress ở đầu trang */}
+          <div className="fixed top-0 left-0 right-0 h-1 bg-primary/10 z-50">
+            <div className="h-full bg-primary animate-indeterminate-progress"></div>
           </div>
-        </div>
+          
+          {/* Hiển thị overlay loading trang */}
+          <div className="fixed inset-0 bg-background/90 dark:bg-background/90 z-40 flex items-center justify-center">
+            <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
+              <div className="animate-spin text-primary">
+                <Icons.ui.refresh className="w-8 h-8" />
+              </div>
+              <p className="text-sm text-muted-foreground">Đang tải trang...</p>
+            </div>
+          </div>
+        </>
       )}
       
       <ErrorBoundary>
         <Suspense fallback={
           <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-8">
-            {/* Sử dụng AppSkeleton cấp trang khi lazy loading */}
+            {/* Hiển thị skeleton cơ bản cho lazy loading */}
             <AppSkeleton level={SkeletonLevel.PAGE} animation="pulse" hasTitle hasFooter />
           </div>
         }>
@@ -324,6 +342,8 @@ function MainContent() {
     </>
   );
 }
+
+
 
 function App() {
   // Configure performance optimization when application starts
