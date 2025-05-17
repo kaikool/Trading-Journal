@@ -34,24 +34,9 @@ export function ChartWrapper({
   height = 250,
   actions
 }: ChartWrapperProps) {
-  // Show loading state
+  // Skip rendering if loading
   if (isLoading) {
-    return (
-      <Card className={cn(
-        "relative w-full shadow-sm bg-card border border-border/30",
-        className
-      )}>
-        <div 
-          style={{ height: typeof height === 'number' ? `${height}px` : height }}
-          className="flex flex-col items-center justify-center p-6"
-        >
-          <Icons.ui.spinner className="h-8 w-8 text-muted-foreground/50 animate-spin mb-4" />
-          <div className="text-sm font-medium text-muted-foreground">
-            Loading chart data...
-          </div>
-        </div>
-      </Card>
-    );
+    return null;
   }
   
   // Show empty state if no data

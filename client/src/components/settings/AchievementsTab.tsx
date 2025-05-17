@@ -272,11 +272,7 @@ export const AchievementsTab: React.FC<{
   );
   
   if (isLoading) {
-    return (
-      <div className="py-8 flex justify-center">
-        <Icons.ui.spinner className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return null;
   }
   
   if (error || !enhancedAchievementsData || !userAchievements) {
