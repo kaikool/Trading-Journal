@@ -73,14 +73,10 @@ export function ActionButtons({
           "min-w-[100px]"
         )}
       >
-        {isPrimaryLoading ? (
-          <span>Please wait...</span>
-        ) : (
-          <>
-            {primaryIcon}
-            {primaryLabel}
-          </>
-        )}
+        <>
+          {primaryIcon}
+          {primaryLabel}
+        </>
       </Button>
     </div>
   );
@@ -131,14 +127,10 @@ export function DialogActions({
         onClick={onConfirm}
         disabled={isDisabled || isLoading}
       >
-        {isLoading ? (
-          <span>Please wait...</span>
-        ) : (
-          <>
-            {confirmIcon}
-            {confirmLabel}
-          </>
-        )}
+        <>
+          {confirmIcon}
+          {confirmLabel}
+        </>
       </Button>
     </div>
   );
