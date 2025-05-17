@@ -11,7 +11,7 @@ import {
   CardGradient
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { cn } from "@/lib/utils";
 import { getTradeStatusConfig } from "@/lib/trade-status-config";
 import { format } from "date-fns";
@@ -178,34 +178,16 @@ export function RecentTradesCard({
       <Card className="h-full flex flex-col relative overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div>
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-8 w-8 rounded-md" />
-              <Skeleton className="h-6 w-40" />
-            </div>
-            <Skeleton className="h-4 w-56 mt-2" />
+            {/* Empty loading header without skeleton */}
           </div>
         </CardHeader>
         
         <CardContent className="py-2 flex-grow">
-          {Array(3).fill(0).map((_, index) => (
-            <div key={index} className="flex items-center justify-between py-3 border-b border-border/30 last:border-0">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-5 w-5 rounded-full" />
-                  <Skeleton className="h-4 w-20" />
-                </div>
-                <Skeleton className="h-3.5 w-32" />
-              </div>
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-5 w-16 rounded-md" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-              </div>
-            </div>
-          ))}
+          {/* Empty loading content */}
         </CardContent>
         
         <CardFooter>
-          <Skeleton className="h-9 w-28" />
+          {/* Empty loading footer */}
         </CardFooter>
       </Card>
     );

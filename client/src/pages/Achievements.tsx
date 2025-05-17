@@ -1,5 +1,4 @@
 import { lazy, Suspense, useState, useEffect } from "react";
-import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { Icons } from "@/components/icons/icons";
 import { db } from "@/lib/firebase";

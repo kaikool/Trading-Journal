@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
 type ActionButtonsProps = {
   primaryLabel: string;
