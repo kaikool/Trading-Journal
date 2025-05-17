@@ -124,7 +124,7 @@ export function GetPriceButton({
             disabled={isLoading}
           >
             {isLoading ? (
-              <Icons.ui.refresh className={`${iconSize} animate-spin`} />
+              <Icons.ui.refresh className={`${iconSize}`} />
             ) : lastFetchTime ? (
               <Icons.ui.circleCheck className={`${iconSize} text-green-500`} />
             ) : (

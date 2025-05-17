@@ -352,7 +352,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                     <span className="text-sm ml-1.5 text-muted-foreground font-medium max-w-[150px] truncate">
                       {isLoadingStrategy ? (
                         <span className="flex items-center">
-                          <Icons.ui.spinner className="h-3 w-3 mr-1.5 animate-spin" />
                           Loading...
                         </span>
                       ) : strategyName || strategy}
