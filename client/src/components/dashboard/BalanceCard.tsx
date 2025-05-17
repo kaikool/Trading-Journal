@@ -19,20 +19,7 @@ const BalanceCard = React.memo(function BalanceCard({
   isLoading = false
 }: BalanceCardProps) {
   if (isLoading) {
-    return (
-      <Card className="rounded-lg p-6 text-white shadow-md animate-pulse relative overflow-hidden h-[138px]">
-        {/* Apple-inspired subtle gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 opacity-95" />
-        <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
-        
-        <div className="flex justify-between mb-2 relative z-10">
-          <div className="h-5 w-24 bg-white/20 rounded-md" />
-          <div className="h-5 w-5 bg-white/20 rounded-full" />
-        </div>
-        <div className="h-8 w-40 bg-white/30 rounded-md mb-2 relative z-10" />
-        <div className="h-5 w-36 bg-white/20 rounded-md relative z-10" />
-      </Card>
-    );
+    return null;
   }
 
   // Định dạng số dư chính xác

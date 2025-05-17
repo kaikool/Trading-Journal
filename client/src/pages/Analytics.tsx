@@ -394,23 +394,8 @@ export default function Analytics() {
   // Sử dụng hàm calculateWinRate đã được định nghĩa trong forex-calculator.ts
   // Không định nghĩa lại ở đây để đảm bảo tính nhất quán
 
-  // Skeleton loading component - cải thiện UX
-  const TabLoadingFallback = () => (
-    <div className="space-y-6">
-      {/* KPI Row Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-[120px] bg-background/5 rounded-md"></div>
-        ))}
-      </div>
-      
-      {/* Chart Skeletons */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="h-[220px] bg-background/5 rounded-md"></div>
-        <div className="h-[220px] bg-background/5 rounded-md"></div>
-      </div>
-    </div>
-  );
+  // Empty loading component
+  const TabLoadingFallback = () => null;
 
   // Empty state component
   const EmptyState = () => (

@@ -77,22 +77,9 @@ export function AccountSummaryCard({
         : "bg-destructive"
   };
 
-  // Loading state
+  // Skip rendering if loading
   if (isLoading) {
-    return (
-      <Card className="border shadow-sm">
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            {/* Empty loading state without skeleton */}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="balance-container">
-            {/* Empty loading container */}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   // Calculate percentage for progress bar
