@@ -133,21 +133,7 @@ export default function RecentTradesTable({
   };
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-lg font-semibold">Recent Closed Trades</CardTitle>
-          <div className="h-8 w-24">
-            {/* Empty loading state */}
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="h-[300px]">
-            {/* Empty loading container */}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (

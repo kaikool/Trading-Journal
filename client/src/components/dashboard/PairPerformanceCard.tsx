@@ -60,22 +60,9 @@ export function PairPerformanceCard({
     return `${value} (${dataItem.winRate.toFixed(0)}%)`;
   };
 
-  // Loading state
+  // Skip rendering if loading
   if (isLoading) {
-    return (
-      <Card className="shadow-sm border border-border/40">
-        <CardHeader className="pb-0 pt-3 px-4">
-          <div className="flex justify-between items-center">
-            {/* Empty loading state */}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px] w-full flex items-center justify-center">
-            {/* Empty loading container */}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   // Empty state

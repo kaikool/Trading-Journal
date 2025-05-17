@@ -32,22 +32,9 @@ export function TradingStatsCard({
   totalProfit = 0,
   totalLoss = 0
 }: TradingStatsCardProps) {
-  // Loading state
+  // Skip rendering if loading
   if (isLoading) {
-    return (
-      <Card className="relative overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div className="flex items-center gap-2">
-            {/* Empty loading header */}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Empty loading content */}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
   
   // Calculate performance ratings - 0% hiển thị màu trung tính

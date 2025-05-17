@@ -15,40 +15,7 @@ export default function RecentActivity({
   onViewAll 
 }: RecentActivityProps) {
   if (isLoading) {
-    return (
-      <Card className="shadow-sm border border-border/30 h-full">
-        <CardHeader className="pb-2">
-          <div className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
-              <CardDescription className="text-xs mt-1">Your latest trading actions</CardDescription>
-            </div>
-            <div className="placeholder-text h-6 w-16 rounded-full" />
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="activity-placeholder">
-                <div className="flex items-center">
-                  <div className="placeholder-circle" />
-                  <div className="ml-3 flex-1">
-                    <div className="flex justify-between">
-                      <div className="placeholder-text w-16" />
-                      <div className="placeholder-text w-20" />
-                    </div>
-                    <div className="flex justify-between mt-1">
-                      <div className="placeholder-text-sm w-24" />
-                      <div className="placeholder-text-sm w-10" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (
