@@ -8,7 +8,7 @@ import {
   CardGradient,
   CardValue
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatNumber } from "@/utils/format-number";
@@ -83,15 +83,12 @@ export function AccountSummaryCard({
       <Card className="border shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <Skeleton className="h-6 w-36" />
-            <Skeleton className="h-5 w-16 rounded-full" />
+            {/* Empty loading state without skeleton */}
           </div>
         </CardHeader>
         <CardContent>
-          <div className="balance-skeleton-container">
-            <Skeleton className="balance-skeleton-amount" />
-            <Skeleton className="balance-skeleton-subtitle" />
-            <Skeleton className="balance-skeleton-bar mt-4" />
+          <div className="balance-container">
+            {/* Empty loading container */}
           </div>
         </CardContent>
       </Card>

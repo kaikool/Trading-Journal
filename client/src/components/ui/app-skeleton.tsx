@@ -1,6 +1,4 @@
-import { cn } from "@/lib/utils"
-
-// Empty placeholder for removed skeleton components
+// Empty file - skeletons completely removed
 export enum SkeletonLevel {
   LIST_ITEM = "list_item",
   CARD = "card",
@@ -12,21 +10,6 @@ export enum SkeletonLevel {
   AVATAR = "avatar",
 }
 
-interface AppSkeletonProps {
-  level: SkeletonLevel;
-  className?: string;
-  height?: number;
-  count?: number;
-  customProps?: Record<string, any>;
-}
-
-// Simple empty div as replacement for the skeleton component
-export function AppSkeleton({ 
-  level, 
-  className = "", 
-  height, 
-  count = 1,
-  customProps = {}
-}: AppSkeletonProps) {
+export function AppSkeleton() {
   return null;
 }

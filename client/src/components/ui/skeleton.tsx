@@ -1,11 +1,4 @@
-import { cn } from "@/lib/utils"
-
-function Skeleton({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  // Return empty div instead of animated skeleton
+// Empty file - skeletons removed
+export function Skeleton() {
   return null;
 }
-
-export { Skeleton }
