@@ -175,14 +175,10 @@ export function FormActions({
         type="submit"
         disabled={isDisabled || isSubmitting}
       >
-        {isSubmitting ? (
-          <span>Please wait...</span>
-        ) : (
-          <>
-            {submitIcon}
-            {submitLabel}
-          </>
-        )}
+        <>
+          {submitIcon}
+          {submitLabel}
+        </>
       </Button>
     </div>
   );
