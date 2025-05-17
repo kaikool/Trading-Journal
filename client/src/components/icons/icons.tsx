@@ -171,7 +171,7 @@ export const Icons = {
     doorOpen: LucideIcons.DoorOpen,
     logOut: LucideIcons.LogOut,
     clock: LucideIcons.Clock,
-    loader: LucideIcons.Loader2,
+    // Loader đã bị xóa
     // Thêm các icon mới cho TradeDetails
     currencyPair: LucideIcons.Banknote,
     direction: LucideIcons.MoveVertical,
@@ -227,7 +227,6 @@ export function getIcon(name: keyof typeof LucideIcons) {
 }
 
 // Re-export lại một số nhóm/icons thường dùng để tiện sử dụng trực tiếp
-export const Spinner = Icons.ui.spinner;
 export const UIIcons = Icons.ui;
 export const NavIcons = Icons.nav;
 export const TradeIcons = Icons.trade;
