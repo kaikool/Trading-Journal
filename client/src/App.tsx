@@ -232,14 +232,7 @@ function MainContent() {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <div className="w-full max-w-5xl">
-          <AppSkeleton
-            level={SkeletonLevel.PAGE}
-            className="py-6"
-            customProps={{ 
-              showTabs: true, 
-              tabCount: 3 
-            }}
-          />
+          {/* Loading state without skeleton */}
         </div>
       </div>
     );
@@ -259,18 +252,11 @@ function MainContent() {
         transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
       }}
     >
-      {/* Hiển thị skeleton loader khi trang đang chuyển */}
+      {/* Page transition state without skeleton */}
       {!isPageReady && (
         <div className="fixed inset-0 bg-background dark:bg-background z-40 flex items-center justify-center">
           <div className="w-full max-w-5xl">
-            <AppSkeleton
-              level={SkeletonLevel.PAGE}
-              className="py-6"
-              customProps={{ 
-                showTabs: true, 
-                tabCount: 3
-              }}
-            />
+            {/* Page transition with no skeleton */}
           </div>
         </div>
       )}
@@ -278,15 +264,7 @@ function MainContent() {
       <ErrorBoundary>
         <Suspense fallback={
           <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-8">
-            <AppSkeleton 
-              level={SkeletonLevel.PAGE}
-              height={600}
-              className="py-6"
-              customProps={{ 
-                showTabs: true, 
-                tabCount: 4
-              }}
-            />
+            {/* Empty container for lazy-loaded component */}
           </div>
         }>
           <Switch>
