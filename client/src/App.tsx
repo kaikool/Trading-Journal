@@ -6,10 +6,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
-import { SplashScreen } from "@/components/ui/splash-screen";
-import { ProgressBar } from "@/components/ui/progress-bar";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useLoadingStore, LoadingLevel } from "@/hooks/use-loading-store";
+import { LoadingProvider } from "@/components/ui/loading-provider";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -247,9 +246,19 @@ function MainContent() {
     }
   }, [loading, hasUser, isPublicPage]);
 
-  // Sử dụng component SplashScreen mới cho trạng thái loading ban đầu của ứng dụng
+  // Sử dụng loading state đơn giản cho khởi động ban đầu
   if (loading) {
-    return <SplashScreen text="Đang khởi động ứng dụng..." minimumDisplayTime={1200} />;
+    return (
+      <div className="h-screen w-full flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin text-primary">
+            <Icons.ui.refresh className="w-10 h-10" />
+          </div>
+          <p className="text-lg font-medium">Đang khởi động ứng dụng...</p>
+          <p className="text-sm text-muted-foreground">made by Táo Tầu</p>
+        </div>
+      </div>
+    );
   }
   
   // Render page content without animation libs
@@ -359,12 +368,12 @@ function App() {
         <LayoutProvider>
           <DialogProvider>
             <TradingToolsProvider>
-              <MainContent />
-              {/* Hiển thị thanh progress ở cấp độ ứng dụng */}
-              <ProgressBar fixed={true} height={3} color="primary" />
-              <Toaster />
-              <PWAContainer />
-              <AchievementNotificationContainer />
+              <LoadingProvider>
+                <MainContent />
+                <Toaster />
+                <PWAContainer />
+                <AchievementNotificationContainer />
+              </LoadingProvider>
             </TradingToolsProvider>
           </DialogProvider>
         </LayoutProvider>
