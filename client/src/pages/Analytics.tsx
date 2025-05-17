@@ -7,7 +7,7 @@ import { useTradesQuery } from "@/hooks/use-trades-query";
 import { useAuth } from "@/hooks/use-auth";
 import { getClosedTrades, calculateCurrentBalance } from "@/lib/balance-calculation-rules";
 import { calculateWinRate } from "@/lib/forex-calculator"; // Import hàm tính toán tỷ lệ thắng
-import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
+
 import { debug, logError } from "@/lib/debug";
 import { getStrategies } from "@/lib/firebase";
 import { TradingStrategy } from "@/types";
@@ -400,14 +400,14 @@ export default function Analytics() {
       {/* KPI Row Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <AppSkeleton key={i} level={SkeletonLevel.STATS} height={120} />
+          <div key={i} className="h-[120px] bg-background/5 rounded-md"></div>
         ))}
       </div>
       
       {/* Chart Skeletons */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AppSkeleton level={SkeletonLevel.CHART} height={220} customProps={{ showControls: true }} />
-        <AppSkeleton level={SkeletonLevel.CHART} height={220} customProps={{ showControls: true }} />
+        <div className="h-[220px] bg-background/5 rounded-md"></div>
+        <div className="h-[220px] bg-background/5 rounded-md"></div>
       </div>
     </div>
   );
@@ -437,7 +437,7 @@ export default function Analytics() {
       
       {/* Main content */}
       {!userData ? (
-        <AppSkeleton level={SkeletonLevel.PAGE} height={400} />
+        <div className="h-[400px] bg-background/5 rounded-md"></div>
       ) : analyticsData.totalTrades === 0 ? (
         <EmptyState />
       ) : (
@@ -472,7 +472,7 @@ export default function Analytics() {
           
           {/* Tabs content với Suspense cho dynamic import */}
             <TabsContent value="overview">
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={300} />}>
+              <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
                 <OverviewTab data={analyticsData} />
               </Suspense>
             </TabsContent>
