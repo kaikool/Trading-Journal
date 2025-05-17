@@ -137,11 +137,9 @@ export function SafeLazyLoad({
 
   // Still loading
   return fallback || (
-    <AppSkeleton
-      level={SkeletonLevel.CARD}
-      height={typeof height === 'number' ? height : 300}
-      customProps={{ showProgress: true }}
-    />
+    <div style={{ height: typeof height === 'number' ? height : 300 }}>
+      {/* Empty loading container */}
+    </div>
   );
 }
 
@@ -236,11 +234,9 @@ export function createSafeLazyComponent<T>(factory: () => Promise<{ default: Rea
         }}
       >
         <Suspense fallback={fallback || (
-          <AppSkeleton
-            level={SkeletonLevel.CARD}
-            height={typeof height === 'number' ? height : 300}
-            customProps={{ showProgress: true }}
-          />
+          <div style={{ height: typeof height === 'number' ? height : 300 }}>
+            {/* Empty loading container */}
+          </div>
         )}>
           <LazyComponent {...componentProps} />
         </Suspense>

@@ -71,10 +71,12 @@ export default function AchievementsPage() {
       
       {/* Main content */}
       {isLoading ? (
-        <AppSkeleton level={SkeletonLevel.PAGE} height={400} />
+        <div style={{ height: 400 }}>
+          {/* Loading container without skeleton */}
+        </div>
       ) : (
         <div className="space-y-8">
-          <Suspense fallback={<AppSkeleton level={SkeletonLevel.LIST_ITEM} height={400} />}>
+          <Suspense fallback={<div style={{ height: 400 }}></div>}>
             <AchievementsTab
               showNotifications={showNotifications}
               onToggleNotifications={setShowNotifications}
