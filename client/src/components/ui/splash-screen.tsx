@@ -59,7 +59,7 @@ export function SplashScreen({
         <div className="w-20 h-20 relative animate-pulse-grow">
           {logo || (
             <div className="w-full h-full flex items-center justify-center">
-              <Icons.logo className="w-16 h-16" />
+              <Icons.analytics.barChart className="w-16 h-16" />
             </div>
           )}
         </div>

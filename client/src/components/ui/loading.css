@@ -1,0 +1,86 @@
+/* Loading animations và utilities */
+
+/* Wave animation for skeletons */
+@keyframes skeleton-wave {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton-wave {
+  background: linear-gradient(90deg, 
+    hsl(var(--muted) / 0.5) 25%, 
+    hsl(var(--muted) / 0.8) 37%, 
+    hsl(var(--muted) / 0.5) 63%
+  );
+  background-size: 200px 100%;
+  animation: skeleton-wave 1.5s infinite linear;
+}
+
+/* Progress bar completion animation */
+@keyframes progress-complete {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-progress-complete {
+  animation: progress-complete 0.5s ease-out forwards;
+}
+
+/* Pulse grow animation for splash screen */
+@keyframes pulse-grow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-grow {
+  animation: pulse-grow 2s infinite ease-in-out;
+}
+
+/* Indeterminate progress animation */
+@keyframes indeterminate-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(30%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-indeterminate-progress {
+  animation: indeterminate-progress 1.5s infinite ease-in-out;
+  width: 70%;
+}
+
+/* Page transition class */
+.page-transition::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: hsl(var(--primary));
+  animation: indeterminate-progress 1.5s infinite ease-in-out;
+  width: 70%;
+  z-index: 1000;
+}

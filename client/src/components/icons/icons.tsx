@@ -217,6 +217,9 @@ export const Icons = {
     info: LucideIcons.Info,
     dollarSign: LucideIcons.DollarSign
   },
+  
+  // Logo và App identity
+  logo: LucideIcons.BarChart3,
 };
 
 // The icons were directly added to the UI, analytics, and general groups above

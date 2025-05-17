@@ -6,7 +6,9 @@ import { Toaster } from "@/components/ui/toaster";
 import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
-// No skeleton imports needed
+import { LoadingProvider, LoadingLevel, useLoading } from "@/contexts/LoadingContext";
+import { SplashScreen } from "@/components/ui/splash-screen";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -232,7 +234,8 @@ function MainContent() {
     return (
       <div className="h-screen w-full flex items-center justify-center">
         <div className="w-full max-w-5xl">
-          {/* Loading state without skeleton */}
+          {/* Sử dụng SplashScreen mới để hiển thị trạng thái loading ban đầu */}
+          <SplashScreen />
         </div>
       </div>
     );
@@ -327,18 +330,20 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <LayoutProvider>
-          <DialogProvider>
-            <TradingToolsProvider>
-              <MainContent />
-              <Toaster />
-              <PWAContainer />
-              <AchievementNotificationContainer />
-            </TradingToolsProvider>
-          </DialogProvider>
-        </LayoutProvider>
-      </ThemeProvider>
+      <LoadingProvider>
+        <ThemeProvider>
+          <LayoutProvider>
+            <DialogProvider>
+              <TradingToolsProvider>
+                <MainContent />
+                <Toaster />
+                <PWAContainer />
+                <AchievementNotificationContainer />
+              </TradingToolsProvider>
+            </DialogProvider>
+          </LayoutProvider>
+        </ThemeProvider>
+      </LoadingProvider>
     </QueryClientProvider>
   );
 }
