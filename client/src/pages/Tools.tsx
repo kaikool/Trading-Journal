@@ -71,26 +71,27 @@ export default function Tools() {
             Access essential tools for your trading analysis and decision making
           </p>
         </div>
-        
-        <Button 
-          variant="outline" 
-          size="sm"
-          className="self-start sm:self-center"
-          onClick={() => setConfigOpen(true)}
-        >
-          <Settings className="h-4 w-4 mr-2" />
-          Configure
-        </Button>
       </div>
       
       {/* Main content */}
       <div className="grid grid-cols-1 gap-6">
         <Tabs defaultValue="chart" className="w-full" onValueChange={handleTabChange}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="chart">Chart</TabsTrigger>
-            <TabsTrigger value="forex-calendar">Forex Calendar</TabsTrigger>
-            {/* Additional tabs can be added here later */}
-          </TabsList>
+          <div className="flex justify-between items-center mb-4">
+            <TabsList>
+              <TabsTrigger value="chart">Chart</TabsTrigger>
+              <TabsTrigger value="forex-calendar">Forex Calendar</TabsTrigger>
+              {/* Additional tabs can be added here later */}
+            </TabsList>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setConfigOpen(true)}
+              className="ml-2 flex items-center"
+            >
+              <Settings className="h-4 w-4 mr-1" />
+              <span>Config</span>
+            </Button>
+          </div>
           
           <TabsContent value="chart">
             <div className="w-full overflow-hidden rounded-md border border-muted">
