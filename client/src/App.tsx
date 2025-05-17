@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Icons } from "@/components/icons/icons";
 import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
-import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
+// No skeleton imports needed
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";

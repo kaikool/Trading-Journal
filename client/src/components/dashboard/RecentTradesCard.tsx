@@ -174,23 +174,7 @@ export function RecentTradesCard({
   }, [trades, formatTimestamp, handleViewTrade], true); // true để luôn memoize vì đây là component có tính toán phức tạp
   
   if (isLoading) {
-    return (
-      <Card className="h-full flex flex-col relative overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <div>
-            {/* Empty loading header without skeleton */}
-          </div>
-        </CardHeader>
-        
-        <CardContent className="py-2 flex-grow">
-          {/* Empty loading content */}
-        </CardContent>
-        
-        <CardFooter>
-          {/* Empty loading footer */}
-        </CardFooter>
-      </Card>
-    );
+    return null;
   }
 
   // Calculate card gradient based on win rate

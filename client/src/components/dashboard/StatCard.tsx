@@ -57,29 +57,9 @@ export default function StatCard({
     color === "destructive" ? "bg-gradient-to-r from-destructive/70 via-destructive/90 to-destructive" :
     "bg-gradient-to-r from-primary/70 via-primary/90 to-primary";
 
-  // Loading/skeleton state
+  // Skip rendering if loading
   if (isLoading) {
-    return (
-      <Card className="border shadow-sm h-[138px]">
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <div className="h-5 w-24 bg-muted/60 rounded-md" />
-            <div className="h-7 w-7 bg-muted/60 rounded-full" />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-8 w-20 bg-muted/60 rounded-md mb-2" />
-          {progressValue !== undefined && (
-            <div className="relative z-10 mt-4 pt-1">
-              <div className="w-full bg-muted/60 rounded-full h-2" />
-            </div>
-          )}
-          {supportingText && (
-            <div className="h-5 w-36 bg-muted/60 rounded-md mt-2" />
-          )}
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (
