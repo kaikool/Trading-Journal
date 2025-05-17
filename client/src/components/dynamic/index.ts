@@ -1,8 +1,7 @@
 import { lazy, Suspense } from 'react';
-import { AppSkeleton, SkeletonLevel } from '@/components/ui/app-skeleton';
 
 // Re-export necessary components
-export { Suspense, AppSkeleton, SkeletonLevel };
+export { Suspense };
 
 // Dashboard components with lazy loading
 export const LazyPerformanceChart = lazy(() => 
