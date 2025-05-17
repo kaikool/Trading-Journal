@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Settings, X } from "lucide-react";
+import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
-import TradingViewChart from "@/components/tradingview/TradingViewChart";
-import EconomicCalendar from "@/components/tradingview/EconomicCalendar";
-import ChartConfig from "@/components/tradingview/ChartConfig";
-import CalendarConfig from "@/components/tradingview/CalendarConfig";
+// Dynamic imports for code splitting
+import { 
+  LazyTradingViewChart, 
+  LazyEconomicCalendar,
+  LazyChartConfig,
+  LazyCalendarConfig
+} from "@/components/dynamic/trading-components";
+
 import { useTradingTools } from "@/contexts/TradingToolsContext";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -52,9 +57,17 @@ export default function Tools() {
   // Get the appropriate configuration component based on active tab
   const getConfigComponent = () => {
     if (activeTab === "chart") {
-      return <ChartConfig />;
+      return (
+        <Suspense fallback={<AppSkeleton level={SkeletonLevel.FORM} />}>
+          <LazyChartConfig />
+        </Suspense>
+      );
     } else if (activeTab === "forex-calendar") {
-      return <CalendarConfig />;
+      return (
+        <Suspense fallback={<AppSkeleton level={SkeletonLevel.FORM} />}>
+          <LazyCalendarConfig />
+        </Suspense>
+      );
     }
     return null;
   };
@@ -118,13 +131,17 @@ export default function Tools() {
           
           <TabsContent value="chart">
             <div className="w-full overflow-hidden rounded-md border border-muted">
-              <TradingViewChart key={chartKey} config={chartConfig} />
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} />}>
+                <LazyTradingViewChart key={chartKey} config={chartConfig} />
+              </Suspense>
             </div>
           </TabsContent>
           
           <TabsContent value="forex-calendar">
             <div className="w-full overflow-hidden rounded-md border border-muted" style={{ height: "75vh" }}>
-              <EconomicCalendar key={calendarKey} config={calendarConfig} />
+              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} />}>
+                <LazyEconomicCalendar key={calendarKey} config={calendarConfig} />
+              </Suspense>
             </div>
           </TabsContent>
         </Tabs>
