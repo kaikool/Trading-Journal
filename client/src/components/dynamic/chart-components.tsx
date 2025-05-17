@@ -6,7 +6,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-import { AppSkeleton, SkeletonLevel } from '@/components/ui/app-skeleton';
+
 
 // Các component trực tiếp từ recharts
 export { LineChart, AreaChart, BarChart, PieChart, ComposedChart };
@@ -80,7 +80,7 @@ export function LazyChart({
   };
 
   return (
-    <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} height={height as number} />}>
+    <Suspense fallback={<div className="bg-background/5 rounded-md" style={{height: typeof height === 'number' ? `${height}px` : height}}></div>}>
       <ResponsiveContainer width={width} height={height}>
         {renderChart()}
       </ResponsiveContainer>

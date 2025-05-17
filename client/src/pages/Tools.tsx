@@ -58,13 +58,13 @@ export default function Tools() {
   const getConfigComponent = () => {
     if (activeTab === "chart") {
       return (
-        <Suspense fallback={<AppSkeleton level={SkeletonLevel.FORM} />}>
+        <Suspense fallback={<div className="h-[200px] bg-background/5 rounded-md"></div>}>
           <LazyChartConfig />
         </Suspense>
       );
     } else if (activeTab === "forex-calendar") {
       return (
-        <Suspense fallback={<AppSkeleton level={SkeletonLevel.FORM} />}>
+        <Suspense fallback={<div className="h-[200px] bg-background/5 rounded-md"></div>}>
           <LazyCalendarConfig />
         </Suspense>
       );
@@ -131,7 +131,7 @@ export default function Tools() {
           
           <TabsContent value="chart">
             <div className="w-full overflow-hidden rounded-md border border-muted">
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} />}>
+              <Suspense fallback={<div className="h-[600px] bg-background/5 rounded-md"></div>}>
                 <LazyTradingViewChart key={chartKey} config={chartConfig} />
               </Suspense>
             </div>
@@ -139,7 +139,7 @@ export default function Tools() {
           
           <TabsContent value="forex-calendar">
             <div className="w-full overflow-hidden rounded-md border border-muted" style={{ height: "75vh" }}>
-              <Suspense fallback={<AppSkeleton level={SkeletonLevel.CHART} />}>
+              <Suspense fallback={<div className="h-[600px] bg-background/5 rounded-md"></div>}>
                 <LazyEconomicCalendar key={calendarKey} config={calendarConfig} />
               </Suspense>
             </div>
