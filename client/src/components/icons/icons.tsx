@@ -28,7 +28,7 @@ export const Icons = {
   
   // Nhóm User Interface (giao diện người dùng)
   ui: {
-    spinner: LucideIcons.Loader2,
+    // Xóa bỏ spinner icon
     refresh: LucideIcons.RefreshCw,
     warning: LucideIcons.AlertTriangle,
     error: LucideIcons.AlertCircle,
