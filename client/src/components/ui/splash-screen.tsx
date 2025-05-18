@@ -129,9 +129,9 @@ export function SplashScreen({
           </div>
         </div>
         
-        {/* Content container with glassmorphism */}
+        {/* Glass effect container */}
         <motion.div 
-          className="relative z-10 w-full max-w-md mx-auto p-8 rounded-lg"
+          className="relative z-10 w-full max-w-sm mx-auto p-8 rounded-xl bg-background/30 dark:bg-background/10 backdrop-blur-md border border-foreground/5 shadow-xl"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -287,9 +287,9 @@ export function SplashScreen({
           </div>
           
           {/* Text and Branding */}
-          <div className="text-center space-y-6 mb-10">
+          <div className="text-center space-y-4 mb-8">
             <motion.h1 
-              className="text-3xl font-light tracking-wider"
+              className="text-2xl font-light tracking-wider"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
