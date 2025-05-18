@@ -249,7 +249,7 @@ function MainContent() {
 
   // Sử dụng Splash Screen tối giản
   if (loading) {
-    return <SplashScreen brandName="Táo Tầu" text="Loading..." />;
+    return <SplashScreen brandName="FOREX PRO" text="Initializing" />;
   }
   
   // Render page content without animation libs
