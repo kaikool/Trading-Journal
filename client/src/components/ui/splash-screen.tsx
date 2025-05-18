@@ -79,7 +79,7 @@ export function SplashScreen({
       <motion.div 
         className={cn(
           "fixed inset-0 z-[100] flex flex-col items-center justify-center",
-          "bg-gradient-to-br from-black to-slate-900",
+          "bg-gradient-to-br from-background via-background to-background/95 dark:from-slate-950 dark:to-slate-900",
           className
         )}
         initial={{ opacity: 0 }}
@@ -121,10 +121,10 @@ export function SplashScreen({
           {/* Chart grid */}
           <div className="absolute inset-0 opacity-[0.03]">
             {Array.from({ length: 20 }).map((_, i) => (
-              <div key={`h-${i}`} className="absolute h-px w-full bg-white/50" style={{ top: `${i * 5}%` }} />
+              <div key={`h-${i}`} className="absolute h-px w-full bg-foreground/50" style={{ top: `${i * 5}%` }} />
             ))}
             {Array.from({ length: 20 }).map((_, i) => (
-              <div key={`v-${i}`} className="absolute w-px h-full bg-white/50" style={{ left: `${i * 5}%` }} />
+              <div key={`v-${i}`} className="absolute w-px h-full bg-foreground/50" style={{ left: `${i * 5}%` }} />
             ))}
           </div>
         </div>
@@ -180,14 +180,14 @@ export function SplashScreen({
                 {/* Currency symbols */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <motion.div 
-                    className="text-4xl font-bold text-white flex items-center"
+                    className="text-4xl font-bold flex items-center"
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.7, delay: 1.2 }}
                   >
                     <span className="text-primary">¥</span>
                     <motion.span 
-                      className="text-white mx-1 opacity-70"
+                      className="text-foreground mx-1 opacity-70"
                       animate={{ 
                         opacity: [0.7, 1, 0.7],
                         scale: [1, 1.1, 1] 
@@ -240,12 +240,12 @@ export function SplashScreen({
           {/* Text and Branding */}
           <div className="text-center space-y-6 mb-10">
             <motion.h1 
-              className="text-3xl font-light text-white tracking-wider"
+              className="text-3xl font-light tracking-wider"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <span className="font-semibold text-primary">Forex</span> Trading Journal
+              <span className="font-semibold text-primary">Forex</span> <span className="text-foreground">Trading Journal</span>
             </motion.h1>
             
             <motion.div
@@ -254,7 +254,7 @@ export function SplashScreen({
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1 }}
             >
-              <p className="text-gray-400 text-sm tracking-wider uppercase">
+              <p className="text-muted-foreground text-sm tracking-wider uppercase">
                 {text}<span className="inline-block ml-1 animate-pulse">...</span>
               </p>
               <div className="h-px w-16 bg-primary/30 mx-auto"/>
@@ -269,7 +269,7 @@ export function SplashScreen({
             transition={{ duration: 0.5, delay: 1.2 }}
           >
             {/* Progress percentage with blurred glow */}
-            <div className="relative h-px w-full bg-gray-800/50 rounded-full overflow-hidden">
+            <div className="relative h-px w-full bg-muted/50 rounded-full overflow-hidden">
               <motion.div 
                 className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/40 via-primary to-primary/80"
                 style={{ width: `${progress}%` }}
@@ -277,7 +277,7 @@ export function SplashScreen({
               />
               
               <motion.div 
-                className="absolute top-0 left-0 h-full w-20 bg-white/20 blur-sm"
+                className="absolute top-0 left-0 h-full w-20 bg-foreground/20 blur-sm"
                 style={{ 
                   left: `-10px`,
                   transform: `translateX(${progress}%)`
@@ -285,7 +285,7 @@ export function SplashScreen({
               />
             </div>
             
-            <div className="flex justify-between text-[10px] tracking-wider text-gray-500">
+            <div className="flex justify-between text-[10px] tracking-wider text-muted-foreground">
               <span className="uppercase">{brandName}</span>
               <span>{Math.round(progress)}%</span>
             </div>
