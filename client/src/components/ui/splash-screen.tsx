@@ -79,7 +79,7 @@ export function SplashScreen({
       <motion.div 
         className={cn(
           "fixed inset-0 z-[100] flex flex-col items-center justify-center",
-          "bg-gradient-to-br from-background via-background to-background/95 dark:from-slate-950 dark:to-slate-900",
+          "bg-gradient-to-br from-background/95 via-background to-background/90 dark:from-slate-950 dark:via-background dark:to-slate-900/90",
           className
         )}
         initial={{ opacity: 0 }}
@@ -129,9 +129,9 @@ export function SplashScreen({
           </div>
         </div>
         
-        {/* Compact glass container */}
+        {/* Modern glass container */}
         <motion.div 
-          className="relative z-10 w-full max-w-[280px] mx-auto p-6 rounded-lg bg-background/30 dark:bg-background/10 backdrop-blur-md border border-foreground/5 shadow-lg"
+          className="relative z-10 w-full max-w-[260px] mx-auto p-5 rounded-xl bg-gradient-to-br from-background/40 to-background/10 dark:from-background/20 dark:to-background/5 backdrop-blur-xl border border-foreground/10 shadow-xl"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -150,16 +150,34 @@ export function SplashScreen({
                   <div className="absolute inset-[10%] bg-primary/20 rounded-full blur-md" />
                 </motion.div>
                 
-                {/* Simple animated logo */}
+                {/* Modern animated logo */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div
-                    className="text-primary text-2xl font-bold"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                  >
-                    FX
-                  </motion.div>
+                  <div className="relative">
+                    <motion.div
+                      className="relative z-10 text-primary text-3xl font-black tracking-tighter"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.3 }}
+                    >
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">FX</span>
+                    </motion.div>
+                    
+                    {/* Animated highlight */}
+                    <motion.div 
+                      className="absolute -inset-1 bg-primary/10 blur-md rounded-full"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ 
+                        opacity: [0, 0.6, 0.2],
+                        scale: [0.8, 1.2, 1]
+                      }}
+                      transition={{ 
+                        duration: 2, 
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }}
+                    />
+                  </div>
                 </div>
                 
                 {/* Removed orbiting dots */}
@@ -170,12 +188,13 @@ export function SplashScreen({
           {/* Text and Branding */}
           <div className="text-center space-y-2 mb-5">
             <motion.h1 
-              className="text-lg font-light tracking-wider"
+              className="text-2xl font-bold tracking-tight"
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <span className="font-medium text-primary">Forex</span> <span className="text-foreground">Journal</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">FOREX</span>
+              <span className="text-foreground"> PRO</span>
             </motion.h1>
             
             <motion.div
@@ -184,10 +203,9 @@ export function SplashScreen({
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1 }}
             >
-              <p className="text-muted-foreground text-xs tracking-wider uppercase">
+              <p className="text-muted-foreground text-xs tracking-wider">
                 {text}<span className="inline-block ml-1 animate-pulse">...</span>
               </p>
-              <div className="h-px w-12 bg-primary/30 mx-auto"/>
             </motion.div>
           </div>
           
