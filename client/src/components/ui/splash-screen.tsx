@@ -19,7 +19,7 @@ export function SplashScreen({
   text = 'Loading...',
   minimumDisplayTime = 2000,
   brandName = 'Táo Tầu',
-  logoSize = 90,
+  logoSize = 60,
 }: SplashScreenProps) {
   const isAppLoading = useLoadingStore(state => state.isAppLoading);
   const progress = useLoadingStore(state => state.progress);
@@ -27,51 +27,32 @@ export function SplashScreen({
   const [startTime] = useState(Date.now());
   const [animationPhase, setAnimationPhase] = useState(0);
   
-  // Enhanced animation phases
+  // Simple animation phases
   useEffect(() => {
-    // Phase 1: Background and gradient appear
     const phase1 = setTimeout(() => setAnimationPhase(1), 100);
+    const phase2 = setTimeout(() => setAnimationPhase(2), 500);
     
-    // Phase 2: Logo appear with animation
-    const phase2 = setTimeout(() => setAnimationPhase(2), 300);
-    
-    // Phase 3: Text and progress appear
-    const phase3 = setTimeout(() => setAnimationPhase(3), 600);
-    
-    // Cleanup timers on unmount
     return () => {
       clearTimeout(phase1);
       clearTimeout(phase2);
-      clearTimeout(phase3);
     };
   }, []);
   
-  // Handle minimum display time with clean exit animation
+  // Handle minimum display time
   useEffect(() => {
     if (!isAppLoading()) {
       const currentTime = Date.now();
       const elapsedTime = currentTime - startTime;
       
       if (elapsedTime >= minimumDisplayTime) {
-        // Begin exit animation
-        setAnimationPhase(4);
-        
-        // Allow exit animation to complete before unmounting
-        const hideTimer = setTimeout(() => {
-          setVisible(false);
-        }, 650);
-        
+        setAnimationPhase(3);
+        const hideTimer = setTimeout(() => setVisible(false), 500);
         return () => clearTimeout(hideTimer);
       } else {
-        // Wait for minimum display time
         const remainingTime = minimumDisplayTime - elapsedTime;
         const timer = setTimeout(() => {
-          setAnimationPhase(4);
-          
-          // Allow exit animation to complete before unmounting
-          setTimeout(() => {
-            setVisible(false);
-          }, 650);
+          setAnimationPhase(3);
+          setTimeout(() => setVisible(false), 500);
         }, remainingTime);
         
         return () => clearTimeout(timer);
@@ -79,232 +60,83 @@ export function SplashScreen({
     }
   }, [isAppLoading, minimumDisplayTime, startTime]);
   
-  // Improved progress animation with smoother increments
+  // Progress animation
   useEffect(() => {
-    // Smooth progress updates
     const progressInterval = setInterval(() => {
-      // Stop progress animation during exit phase
-      if (animationPhase === 4) {
+      if (animationPhase === 3) {
         clearInterval(progressInterval);
         return;
       }
       
-      // Get current progress value
       const currentProgress = useLoadingStore.getState().progress;
-      
-      // Improved, smoother progress updates
       if (currentProgress < 95) {
-        const increment = Math.max(0.2, (95 - currentProgress) / 50);
-        useLoadingStore.getState().setProgress(currentProgress + increment);
+        useLoadingStore.getState().setProgress(currentProgress + 0.5);
       }
-    }, 80);
+    }, 100);
     
     return () => clearInterval(progressInterval);
   }, [animationPhase]);
   
-  // Don't render if not visible
   if (!visible) return null;
   
   return (
     <AnimatePresence>
       <motion.div 
         className={cn(
-          "fixed inset-0 z-50 flex flex-col items-center justify-center",
-          "bg-gradient-to-b from-background to-background/95",
+          "fixed inset-0 z-50 flex items-center justify-center",
+          "bg-background",
           className
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        transition={{ duration: 0.4 }}
       >
-        <div className="absolute inset-0 bg-primary/5 backdrop-blur-[2px]" />
-        
-        <motion.div 
-          className="relative w-full max-w-[320px] mx-auto px-6 text-center z-10"
-          initial={{ y: 20 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          {/* Modern logo container with enhanced animation */}
-          <motion.div 
-            className="relative mx-auto mb-8"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={animationPhase >= 2 && animationPhase < 4 
-              ? { scale: 1, opacity: 1 } 
-              : { scale: 0.9, opacity: 0 }}
-            transition={{ 
-              duration: 0.7,
-              ease: "easeOut"
-            }}
-          >
-            {/* Decorative rings around logo - positioned with flex */}
+        {/* Simple container */}
+        <div className="w-72 text-center">
+          {/* Logo */}
+          <div className="mb-8 flex justify-center">
             <motion.div
-              className="absolute flex items-center justify-center rounded-full border-2 border-primary/10"
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={animationPhase >= 2 && animationPhase < 4 
-                ? { scale: 1.2, opacity: 0.5 } 
-                : { scale: 0.6, opacity: 0 }}
-              transition={{ 
-                duration: 2.5, 
-                ease: "easeInOut", 
-                repeat: Infinity,
-                repeatType: "loop"
-              }}
-              style={{
-                width: logoSize + 20,
-                height: logoSize + 20,
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)'
-              }}
-            />
-            
-            {/* Inner decorative ring - positioned with flex */}
-            <motion.div
-              className="absolute flex items-center justify-center rounded-full border-2 border-primary/20"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={animationPhase >= 2 && animationPhase < 4 
-                ? { scale: 1.1, opacity: 0.7 } 
-                : { scale: 0.8, opacity: 0 }}
-              transition={{ 
-                duration: 2, 
-                delay: 0.3,
-                ease: "easeInOut", 
-                repeat: Infinity,
-                repeatType: "loop"
-              }}
-              style={{
-                width: logoSize + 10,
-                height: logoSize + 10,
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)'
-              }}
-            />
-            
-            {/* Enhanced logo with subtle pulsing */}
-            <motion.div 
-              className="relative flex items-center justify-center"
-              animate={animationPhase >= 2 && animationPhase < 4 
-                ? { 
-                    scale: [1, 1.05, 1]
-                  } 
-                : { scale: 1 }}
-              transition={{ 
-                duration: 4, 
-                ease: "easeInOut", 
-                repeat: Infinity,
-                repeatType: "mirror"
-              }}
-              style={{
-                width: logoSize,
-                height: logoSize
-              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={animationPhase >= 1 ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5 }}
+              className="relative"
             >
-              {/* Logo with drop shadow */}
-              <div className="relative flex items-center justify-center w-full h-full">
-                {logo || (
-                  <div className="relative flex items-center justify-center w-full h-full">
-                    {/* Background glow effect */}
-                    <div 
-                      className="absolute rounded-full bg-primary/20 blur-xl"
-                      style={{ 
-                        width: '80%', 
-                        height: '80%',
-                        left: '10%',
-                        top: '10%'
-                      }}
-                    />
-                    
-                    {/* Main logo with enhanced styling */}
-                    <div className="flex items-center justify-center drop-shadow-lg">
-                      <Icons.analytics.barChart
-                        className="text-primary" 
-                        style={{ 
-                          width: '100%', 
-                          height: '100%'
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
+              {/* Logo only */}
+              <div className="w-20 h-20 mx-auto flex items-center justify-center">
+                {/* Logo */}
+                <div className="w-16 h-16 flex items-center justify-center">
+                  {logo || <Icons.logo className="w-full h-full text-primary" />}
+                </div>
               </div>
             </motion.div>
-          </motion.div>
+          </div>
           
-          {/* Enhanced text section with staggered animation */}
-          <motion.div 
-            className="mb-7 space-y-3"
+          {/* Text */}
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
-            animate={animationPhase >= 3 && animationPhase < 4 
-              ? { opacity: 1, y: 0 } 
-              : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            animate={animationPhase >= 1 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-6 space-y-2"
           >
-            {/* App name - new addition */}
-            <motion.h1 
-              className="text-xl font-medium text-foreground"
-              initial={{ opacity: 0 }}
-              animate={animationPhase >= 3 && animationPhase < 4 
-                ? { opacity: 1 } 
-                : { opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              Forex Trading Journal
-            </motion.h1>
-            
-            {/* Loading text - enhanced */}
-            <motion.p 
-              className="text-base font-light text-foreground/70 tracking-wide"
-              initial={{ opacity: 0 }}
-              animate={animationPhase >= 3 && animationPhase < 4 
-                ? { opacity: 1 } 
-                : { opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              {text}
-            </motion.p>
-            
-            {/* Brand name - enhanced */}
-            <motion.p 
-              className="text-xs text-primary/80 font-normal"
-              initial={{ opacity: 0 }}
-              animate={animationPhase >= 3 && animationPhase < 4 
-                ? { opacity: 1 } 
-                : { opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              made by {brandName}
-            </motion.p>
+            <h1 className="text-xl font-medium">Forex Trading Journal</h1>
+            <p className="text-foreground/70 text-sm">{text}</p>
+            <p className="text-xs text-primary/80">made by {brandName}</p>
           </motion.div>
           
-          {/* Modern progress bar */}
-          <motion.div 
-            className="w-full mx-auto relative h-1.5 rounded-full overflow-hidden"
-            initial={{ opacity: 0, scaleX: 0.8 }}
-            animate={animationPhase >= 3 && animationPhase < 4 
-              ? { opacity: 1, scaleX: 1 } 
-              : { opacity: 0, scaleX: 0.8 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+          {/* Progress */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={animationPhase >= 1 ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="h-1 w-full bg-muted/20 rounded-full overflow-hidden"
           >
-            {/* Track - subtle gradient */}
-            <div className="absolute inset-0 bg-muted/30 rounded-full" />
-            
-            {/* Progress fill - gradient and glow effect */}
             <motion.div 
-              className="absolute h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
-              style={{ 
-                width: `${progress}%`,
-                boxShadow: '0 0 10px rgba(var(--primary), 0.5)'
-              }}
-              transition={{ duration: 0.2 }}
-            >
-              {/* Subtle shine effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
-            </motion.div>
+              className="h-full bg-primary rounded-full"
+              style={{ width: `${progress}%` }}
+            />
           </motion.div>
-        </motion.div>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
