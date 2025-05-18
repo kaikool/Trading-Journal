@@ -19,6 +19,7 @@ const StrategyTab = lazy(() => import("@/components/analytics/StrategyTab"));
 const DisciplineTab = lazy(() => import("@/components/analytics/DisciplineTab"));
 const EmotionTab = lazy(() => import("@/components/analytics/EmotionTab"));
 const AdvancedTab = lazy(() => import("@/components/analytics/AdvancedTab"));
+const StrategyRecommendationEngine = lazy(() => import("@/components/recommendations/StrategyRecommendationEngine").then(module => ({ default: module.StrategyRecommendationEngine })));
 
 // Thêm khai báo cho window
 declare global {
@@ -450,6 +451,11 @@ export default function Analytics() {
                   <Icons.analytics.stats className="h-4 w-4 flex-shrink-0" />
                   <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Advanced</span>
                 </TabsTrigger>
+                
+                <TabsTrigger value="recommendations" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
+                  <Icons.analytics.lightbulb className="h-4 w-4 flex-shrink-0" />
+                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Đề xuất</span>
+                </TabsTrigger>
 
               </TabsList>
             </div>
@@ -483,6 +489,12 @@ export default function Analytics() {
             <TabsContent value="advanced">
               <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
                 <AdvancedTab data={analyticsData} />
+              </Suspense>
+            </TabsContent>
+            
+            <TabsContent value="recommendations">
+              <Suspense fallback={<div className="h-[300px] bg-background/5 rounded-md"></div>}>
+                <StrategyRecommendationEngine trades={analyticsData.trades} strategies={strategies} />
               </Suspense>
             </TabsContent>
             
