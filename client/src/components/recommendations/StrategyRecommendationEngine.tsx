@@ -3,10 +3,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
-import { Trade, TradingStrategy } from "@/types";
+import { TradingStrategy } from "@/types";
+import { Trade } from "shared/schema";
 import { Icons } from "@/components/icons/icons";
 
-// Định nghĩa type cho đề xuất chiến lược
+// Define type for strategy recommendation
 interface StrategyRecommendation {
   strategyId: string;
   strategyName: string;
@@ -28,16 +29,16 @@ interface StrategyRecommendationEngineProps {
 }
 
 /**
- * Engine đề xuất chiến lược giao dịch
+ * Strategy Recommendation Engine
  * 
- * Component này phân tích lịch sử giao dịch của người dùng và đưa ra
- * các đề xuất chiến lược phù hợp nhất dựa trên hiệu suất trong quá khứ.
+ * This component analyzes the user's trading history and provides
+ * the most suitable strategy recommendations based on past performance.
  */
 export function StrategyRecommendationEngine({ trades, strategies }: StrategyRecommendationEngineProps) {
-  // Chỉ phân tích các giao dịch đã đóng
+  // Only analyze closed trades
   const closedTrades = useMemo(() => trades.filter(trade => !trade.isOpen), [trades]);
   
-  // Tính toán các đề xuất chiến lược dựa trên dữ liệu giao dịch
+  // Calculate strategy recommendations based on trading data
   const recommendations = useMemo(() => {
     if (closedTrades.length < 5 || strategies.length === 0) {
       return [];
@@ -398,21 +399,27 @@ function generateRecommendations(trades: Trade[], strategies: TradingStrategy[])
     const improvementTips: string[] = [];
     
     // Account for potential missing discipline properties by safely accessing them
-    const followedPlanWins = perf.trades.filter(t => 
-      (t.discipline?.followedPlan || t.followedPlan) && (t.pips || 0) > 0
-    ).length;
+    const followedPlanWins = perf.trades.filter(t => {
+      // Access discipline property safely through optional chaining
+      const followedPlan = t.discipline?.followedPlan;
+      return followedPlan === true && (t.pips || 0) > 0;
+    }).length;
     
-    const followedPlanTotal = perf.trades.filter(t => 
-      t.discipline?.followedPlan || t.followedPlan
-    ).length;
+    const followedPlanTotal = perf.trades.filter(t => {
+      // Access discipline property safely through optional chaining
+      return t.discipline?.followedPlan === true;
+    }).length;
     
-    const notFollowedPlanWins = perf.trades.filter(t => 
-      !(t.discipline?.followedPlan || t.followedPlan) && (t.pips || 0) > 0
-    ).length;
+    const notFollowedPlanWins = perf.trades.filter(t => {
+      // Access discipline property safely through optional chaining
+      const followedPlan = t.discipline?.followedPlan;
+      return followedPlan === false && (t.pips || 0) > 0;
+    }).length;
     
-    const notFollowedPlanTotal = perf.trades.filter(t => 
-      !(t.discipline?.followedPlan || t.followedPlan)
-    ).length;
+    const notFollowedPlanTotal = perf.trades.filter(t => {
+      // Access discipline property safely through optional chaining
+      return t.discipline?.followedPlan === false;
+    }).length;
 
     if (followedPlanTotal > 0 && notFollowedPlanTotal > 0) {
       const followedPlanWinRate = (followedPlanWins / followedPlanTotal) * 100;
@@ -424,13 +431,15 @@ function generateRecommendations(trades: Trade[], strategies: TradingStrategy[])
     }
 
     // Check the impact of revenge trading - safely access property
-    const revengeTrades = perf.trades.filter(t => 
-      t.discipline?.revenge || t.revenge || t.isRevenge
-    ).length;
+    const revengeTrades = perf.trades.filter(t => {
+      // Access discipline property safely
+      return t.discipline?.revenge === true;
+    }).length;
     
-    const revengeWins = perf.trades.filter(t => 
-      (t.discipline?.revenge || t.revenge || t.isRevenge) && (t.pips || 0) > 0
-    ).length;
+    const revengeWins = perf.trades.filter(t => {
+      // Access discipline property safely
+      return t.discipline?.revenge === true && (t.pips || 0) > 0;
+    }).length;
     
     if (revengeTrades > 2) {
       const revengeWinRate = (revengeWins / revengeTrades) * 100;
