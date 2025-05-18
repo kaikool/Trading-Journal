@@ -138,12 +138,12 @@ export function SplashScreen({
               ease: "easeOut"
             }}
           >
-            {/* Decorative rings around logo */}
+            {/* Decorative rings around logo - positioned with flex */}
             <motion.div
-              className="absolute inset-0 rounded-full border-4 border-primary/10"
+              className="absolute flex items-center justify-center rounded-full border-2 border-primary/10"
               initial={{ scale: 0.6, opacity: 0 }}
               animate={animationPhase >= 2 && animationPhase < 4 
-                ? { scale: 1.2, opacity: 0.5, borderWidth: 2 } 
+                ? { scale: 1.2, opacity: 0.5 } 
                 : { scale: 0.6, opacity: 0 }}
               transition={{ 
                 duration: 2.5, 
@@ -154,14 +154,15 @@ export function SplashScreen({
               style={{
                 width: logoSize + 20,
                 height: logoSize + 20,
-                left: -10,
-                top: -10
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)'
               }}
             />
             
-            {/* Inner decorative ring */}
+            {/* Inner decorative ring - positioned with flex */}
             <motion.div
-              className="absolute inset-0 rounded-full border-2 border-primary/20"
+              className="absolute flex items-center justify-center rounded-full border-2 border-primary/20"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={animationPhase >= 2 && animationPhase < 4 
                 ? { scale: 1.1, opacity: 0.7 } 
@@ -176,66 +177,56 @@ export function SplashScreen({
               style={{
                 width: logoSize + 10,
                 height: logoSize + 10,
-                left: -5,
-                top: -5
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)'
               }}
             />
             
-            {/* Enhanced logo with subtle pulsing and rotation */}
+            {/* Enhanced logo with subtle pulsing */}
             <motion.div 
-              className="relative"
+              className="relative flex items-center justify-center"
               animate={animationPhase >= 2 && animationPhase < 4 
                 ? { 
-                    scale: [1, 1.05, 1],
-                    rotate: [0, 2, 0, -2, 0]
+                    scale: [1, 1.05, 1]
                   } 
-                : { scale: 1, rotate: 0 }}
+                : { scale: 1 }}
               transition={{ 
-                duration: 6, 
+                duration: 4, 
                 ease: "easeInOut", 
                 repeat: Infinity,
                 repeatType: "mirror"
               }}
+              style={{
+                width: logoSize,
+                height: logoSize
+              }}
             >
               {/* Logo with drop shadow */}
-              <div className="relative">
+              <div className="relative flex items-center justify-center w-full h-full">
                 {logo || (
-                  <div className="relative">
+                  <div className="relative flex items-center justify-center w-full h-full">
                     {/* Background glow effect */}
                     <div 
                       className="absolute rounded-full bg-primary/20 blur-xl"
                       style={{ 
-                        width: logoSize * 0.8, 
-                        height: logoSize * 0.8,
-                        left: logoSize * 0.1,
-                        top: logoSize * 0.1
+                        width: '80%', 
+                        height: '80%',
+                        left: '10%',
+                        top: '10%'
                       }}
                     />
                     
                     {/* Main logo with enhanced styling */}
-                    <div className="relative drop-shadow-lg">
-                      <Icons.analytics.chartLine
+                    <div className="flex items-center justify-center drop-shadow-lg">
+                      <Icons.analytics.barChart
                         className="text-primary" 
                         style={{ 
-                          width: logoSize, 
-                          height: logoSize
+                          width: '100%', 
+                          height: '100%'
                         }}
                       />
                     </div>
-                    
-                    {/* Small highlight dots - decorative elements */}
-                    <motion.div 
-                      className="absolute w-2 h-2 rounded-full bg-primary/80"
-                      style={{ right: 10, top: 15 }}
-                      animate={{ opacity: [0.4, 0.9, 0.4] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <motion.div 
-                      className="absolute w-1 h-1 rounded-full bg-primary/80"
-                      style={{ left: 18, bottom: 20 }}
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1.5, delay: 0.3, repeat: Infinity }}
-                    />
                   </div>
                 )}
               </div>
