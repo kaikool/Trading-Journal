@@ -24,7 +24,7 @@ export function LoadingProvider({
     <>
       {/* Hiển thị splash screen khi app đang khởi động */}
       <SplashScreen 
-        text="Đang tải trang..." 
+        text="Loading..." 
         minimumDisplayTime={splashMinDisplayTime}
         brandName="Táo Tầu"
       />
