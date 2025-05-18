@@ -269,9 +269,9 @@ function MainContent() {
       {/* Hiển thị trạng thái loading khi chuyển trang */}
       {!isPageReady && (
         <>
-          {/* Hiển thị thanh progress ở đầu trang */}
-          <div className="fixed top-0 left-0 right-0 h-0.5 bg-primary/5 z-50">
-            <div className="h-full bg-primary/60 animate-indeterminate-progress"></div>
+          {/* Hiển thị thanh progress ở đầu trang - cực kỳ tinh tế */}
+          <div className="fixed top-0 left-0 right-0 h-[2px] bg-transparent z-50">
+            <div className="h-full bg-primary/30 animate-subtle-progress"></div>
           </div>
           
           {/* Hiển thị overlay loading trang với animation tăng trưởng */}
@@ -313,11 +313,11 @@ function MainContent() {
                 <p className="text-foreground/70 text-sm">Loading...</p>
               </div>
               
-              {/* Progress bar */}
-              <div className="h-1 w-full bg-muted/20 rounded-full overflow-hidden">
+              {/* Progress bar - tinh tế hơn */}
+              <div className="h-[2px] w-full bg-muted/10 rounded-full overflow-hidden mt-2">
                 <div 
-                  className="h-full bg-primary rounded-full"
-                  style={{ animation: 'progress-animation 3.5s infinite ease-in-out' }}
+                  className="h-full bg-primary/40 rounded-full"
+                  style={{ animation: 'progress-animation 3.5s infinite cubic-bezier(0.4, 0.0, 0.2, 1)' }}
                 />
               </div>
             </div>

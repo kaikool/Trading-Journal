@@ -95,6 +95,33 @@
   }
 }
 
+/* Sự tinh tế trong loading animations */
+@keyframes subtle-progress {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  10% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 0.4;
+    transform: translateX(10%);
+  }
+  60% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.animate-subtle-progress {
+  animation: subtle-progress 2.5s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+  width: 100%;
+}
+
 /* Page transition class */
 .page-transition::before {
   content: "";
