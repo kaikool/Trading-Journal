@@ -179,29 +179,130 @@ export function SplashScreen({
                 
                 {/* Currency symbols */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div 
-                    className="text-4xl font-bold flex items-center"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.7, delay: 1.2 }}
-                  >
-                    <span className="text-primary">¥</span>
-                    <motion.span 
-                      className="text-foreground mx-1 opacity-70"
-                      animate={{ 
-                        opacity: [0.7, 1, 0.7],
-                        scale: [1, 1.1, 1] 
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatType: "reverse" 
-                      }}
+                  <div className="relative w-20 h-20">
+                    {/* Nến Nhật xuất hiện dần theo thứ tự */}
+                    {/* Nến 1 - Bullish */}
+                    <motion.div
+                      className="absolute"
+                      style={{ left: '10%', bottom: '30%', width: '10%', height: '25%' }}
+                      initial={{ scaleY: 0, opacity: 0 }}
+                      animate={{ scaleY: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.7 }}
                     >
-                      €
-                    </motion.span>
-                    <span className="text-primary">$</span>
-                  </motion.div>
+                      <motion.div 
+                        className="w-0.5 h-3 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 0.7 }}
+                      />
+                      <motion.div 
+                        className="w-full h-full bg-primary" 
+                      />
+                      <motion.div 
+                        className="w-0.5 h-5 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 0.7 }}
+                      />
+                    </motion.div>
+
+                    {/* Nến 2 - Bearish */}
+                    <motion.div
+                      className="absolute"
+                      style={{ left: '30%', bottom: '20%', width: '10%', height: '20%' }}
+                      initial={{ scaleY: 0, opacity: 0 }}
+                      animate={{ scaleY: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.9 }}
+                    >
+                      <motion.div 
+                        className="w-0.5 h-6 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 0.9 }}
+                      />
+                      <motion.div 
+                        className="w-full h-full border border-foreground bg-transparent" 
+                      />
+                      <motion.div 
+                        className="w-0.5 h-4 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 0.9 }}
+                      />
+                    </motion.div>
+
+                    {/* Nến 3 - Bullish */}
+                    <motion.div
+                      className="absolute"
+                      style={{ left: '50%', bottom: '15%', width: '10%', height: '40%' }}
+                      initial={{ scaleY: 0, opacity: 0 }}
+                      animate={{ scaleY: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 1.1 }}
+                    >
+                      <motion.div 
+                        className="w-0.5 h-2 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 1.1 }}
+                      />
+                      <motion.div 
+                        className="w-full h-full bg-primary" 
+                      />
+                      <motion.div 
+                        className="w-0.5 h-3 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 1.1 }}
+                      />
+                    </motion.div>
+
+                    {/* Nến 4 - Bullish Strong */}
+                    <motion.div
+                      className="absolute"
+                      style={{ left: '70%', bottom: '10%', width: '10%', height: '50%' }}
+                      initial={{ scaleY: 0, opacity: 0 }}
+                      animate={{ scaleY: 1, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 1.3 }}
+                    >
+                      <motion.div 
+                        className="w-0.5 h-3 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 1.3 }}
+                      />
+                      <motion.div 
+                        className="w-full h-full bg-primary" 
+                      />
+                      <motion.div 
+                        className="w-0.5 h-1 bg-foreground mx-auto"
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ duration: 0.3, delay: 1.3 }}
+                      />
+                    </motion.div>
+
+                    {/* Trendline tăng */}
+                    <motion.div 
+                      className="absolute inset-0"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 1.5 }}
+                    >
+                      <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0">
+                        <motion.path 
+                          d="M15,70 C30,60 50,50 85,30" 
+                          stroke="currentColor" 
+                          strokeWidth="1.5"
+                          strokeDasharray="150"
+                          fill="none"
+                          className="text-primary"
+                          initial={{ strokeDashoffset: 150 }}
+                          animate={{ strokeDashoffset: 0 }}
+                          transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
+                        />
+                      </svg>
+                    </motion.div>
+                  </div>
                 </div>
                 
                 {/* Dots orbiting around */}
