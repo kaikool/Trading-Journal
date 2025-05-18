@@ -141,40 +141,16 @@ export function SplashScreen({
             {logo || (
               <div className="relative w-32 h-32">
                 {/* Glowing backdrop */}
-                <motion.div 
-                  className="absolute inset-0 rounded-full blur-2xl bg-primary/20"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 0.8 }}
-                  transition={{ duration: 1.5, delay: 0.2 }}
-                />
+                {/* Simpler backdrop */}
                 
-                {/* Circular ring */}
+                {/* Subtle background glow */}
                 <motion.div 
-                  className="absolute inset-0 flex items-center justify-center"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                  className="absolute inset-0 opacity-20"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.2 }}
+                  transition={{ duration: 1, delay: 0.5 }}
                 >
-                  <svg width="100%" height="100%" viewBox="0 0 120 120">
-                    <motion.circle
-                      cx="60"
-                      cy="60"
-                      r="50"
-                      fill="none"
-                      stroke="url(#gradientStroke)"
-                      strokeWidth="2"
-                      strokeDasharray="314"
-                      initial={{ strokeDashoffset: 314 }}
-                      animate={{ strokeDashoffset: phase > 1 ? 0 : 314 }}
-                      transition={{ duration: 3, ease: "easeInOut" }}
-                    />
-                    <defs>
-                      <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#4F46E5" />
-                        <stop offset="100%" stopColor="#06B6D4" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
+                  <div className="absolute inset-[10%] bg-primary/20 rounded-full blur-lg" />
                 </motion.div>
                 
                 {/* Currency symbols */}
@@ -305,35 +281,7 @@ export function SplashScreen({
                   </div>
                 </div>
                 
-                {/* Dots orbiting around */}
-                {[0, 1, 2, 3, 4, 5].map(i => {
-                  const angle = (i * 60) % 360;
-                  return (
-                    <motion.div
-                      key={i}
-                      className="absolute w-1.5 h-1.5 rounded-full bg-primary/80"
-                      style={{
-                        top: '50%',
-                        left: '50%',
-                        margin: '-2px 0 0 -2px',
-                      }}
-                      initial={{ 
-                        x: 0, 
-                        y: 0, 
-                        opacity: 0 
-                      }}
-                      animate={{
-                        x: Math.cos((angle * Math.PI) / 180) * 55,
-                        y: Math.sin((angle * Math.PI) / 180) * 55,
-                        opacity: 0.8
-                      }}
-                      transition={{ 
-                        duration: 0.5, 
-                        delay: 1.5 + (i * 0.1)
-                      }}
-                    />
-                  );
-                })}
+                {/* Removed orbiting dots */}
               </div>
             )}
           </div>
