@@ -236,16 +236,17 @@ export function SplashScreen({
             <p className="text-xs text-primary/80">made by {brandName}</p>
           </motion.div>
           
-          {/* Progress */}
+          {/* Progress - tinh tế hơn */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={animationPhase >= 1 ? { opacity: 1 } : {}}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="h-1 w-full bg-muted/20 rounded-full overflow-hidden"
+            className="h-[2px] w-full bg-muted/10 rounded-full overflow-hidden mt-2"
           >
             <motion.div 
-              className="h-full bg-primary rounded-full"
+              className="h-full bg-primary/40 rounded-full"
               style={{ width: `${progress}%` }}
+              transition={{ ease: [0.4, 0.0, 0.2, 1] }}
             />
           </motion.div>
         </div>
