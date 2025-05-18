@@ -270,13 +270,14 @@ function MainContent() {
       {!isPageReady && (
         <>
           {/* Hiển thị thanh progress ở đầu trang */}
-          <div className="fixed top-0 left-0 right-0 h-1 bg-primary/10 z-50">
-            <div className="h-full bg-primary animate-indeterminate-progress"></div>
+          <div className="fixed top-0 left-0 right-0 h-0.5 bg-primary/5 z-50">
+            <div className="h-full bg-primary/60 animate-indeterminate-progress"></div>
           </div>
           
           {/* Hiển thị overlay loading trang với animation tăng trưởng */}
           <div className="fixed inset-0 bg-background/90 dark:bg-background/90 z-40 flex items-center justify-center">
-            <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
+            <div className="w-72 text-center space-y-6">
+              {/* Chart logo */}
               <div className="w-24 h-24 mx-auto animate-pulse-grow text-primary">
                 {/* Animated Growth Chart */}
                 <svg width="100%" height="100%" viewBox="0 0 100 100" className="text-primary">
@@ -305,7 +306,20 @@ function MainContent() {
                   <path d="M80,30 L87,25 L83,37 Z" fill="currentColor" />
                 </svg>
               </div>
-              <p className="text-lg font-medium text-primary animate-pulse-grow">Loading</p>
+              
+              {/* Text */}
+              <div className="space-y-2">
+                <h1 className="text-xl font-medium">Forex Trading Journal</h1>
+                <p className="text-foreground/70 text-sm">Loading...</p>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="h-1 w-full bg-muted/20 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-primary rounded-full"
+                  style={{ animation: 'progress-animation 3.5s infinite ease-in-out' }}
+                />
+              </div>
             </div>
           </div>
         </>
