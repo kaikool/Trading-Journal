@@ -274,13 +274,13 @@ function MainContent() {
             <div className="h-full bg-primary animate-indeterminate-progress"></div>
           </div>
           
-          {/* Hiển thị overlay loading trang */}
+          {/* Hiển thị overlay loading trang với animation tăng trưởng */}
           <div className="fixed inset-0 bg-background/90 dark:bg-background/90 z-40 flex items-center justify-center">
             <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
-              <div className="animate-spin text-primary">
-                <Icons.ui.refresh className="w-8 h-8" />
+              <div className="animate-pulse-grow text-primary">
+                <Icons.ui.circleDot className="w-16 h-16" />
               </div>
-              <p className="text-sm text-muted-foreground">Đang tải trang...</p>
+              <p className="text-lg font-medium text-primary animate-pulse-grow">Loading</p>
             </div>
           </div>
         </>
