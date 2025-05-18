@@ -1048,7 +1048,7 @@ html.dark body {
         width: 100%;
         top: 0;
         left: 0;
-        overscroll-behavior: none;
+        /* Đã xóa giới hạn overscroll để cho phép cử chỉ vuốt mặc định */
       }
     }
   }
@@ -1073,7 +1073,7 @@ html.dark body {
   .mobile-layout {
     /* Base layout styling */
     max-height: 100dvh; /* Dynamic viewport height */
-    overscroll-behavior-y: none; /* Prevent pull-to-refresh */
+    /* Đã xóa: cho phép tính năng pull-to-refresh */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     /* Apply safe area to top automatically */
     padding-top: var(--safe-top);
@@ -1146,8 +1146,8 @@ html.dark body {
     
     /* Ngăn chặn cuộn nhưng vẫn cho phép vuốt ngang Safari */
     overflow: hidden !important;
-    /* UPDATED: Thay đổi touch-action để cho phép vuốt điều hướng của Safari */
-    touch-action: pan-x !important; /* Chỉ cho phép vuốt ngang */
+    /* Cho phép mọi cử chỉ touch mặc định */
+    touch-action: auto;
     user-select: none !important;
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
@@ -1345,9 +1345,8 @@ html.dark body {
   /* Class để ngăn chặn cuộn nhưng vẫn cho phép điều hướng Safari */
   .no-scroll {
     overflow: hidden !important;
-    overscroll-behavior: none !important;
-    /* Giữ nguyên touch-action mặc định để cho phép vuốt điều hướng Safari */
-    /* touch-action: pan-x !important; Chỉ cho phép vuốt ngang */
+    /* Đã xóa giới hạn overscroll để cho phép cử chỉ vuốt mặc định */
+    /* Cho phép tất cả các cử chỉ touch mặc định */
     pointer-events: auto !important;
     /* Loại bỏ -webkit-overflow-scrolling: none để không can thiệp vào Safari */
     user-select: none !important;
@@ -1532,7 +1531,7 @@ html.dark body {
     background-color: transparent; /* Đảm bảo không có background */
     
     /* Enable pan gestures only (pinch is handled by JS) */
-    touch-action: pan-x pan-y;
+    touch-action: auto;
     
     /* Mobile optimizations - using 0.375rem (6px) padding standard */
     @media (max-width: 640px) {
