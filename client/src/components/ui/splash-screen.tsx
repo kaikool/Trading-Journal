@@ -129,156 +129,37 @@ export function SplashScreen({
           </div>
         </div>
         
-        {/* Glass effect container */}
+        {/* Compact glass container */}
         <motion.div 
-          className="relative z-10 w-full max-w-sm mx-auto p-8 rounded-xl bg-background/30 dark:bg-background/10 backdrop-blur-md border border-foreground/5 shadow-xl"
+          className="relative z-10 w-full max-w-[280px] mx-auto p-6 rounded-lg bg-background/30 dark:bg-background/10 backdrop-blur-md border border-foreground/5 shadow-lg"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          {/* Central Symbol */}
-          <div className="relative flex justify-center mb-12">
+          {/* Central Symbol - smaller and more compact */}
+          <div className="relative flex justify-center mb-6">
             {logo || (
-              <div className="relative w-32 h-32">
-                {/* Glowing backdrop */}
-                {/* Simpler backdrop */}
-                
-                {/* Subtle background glow */}
+              <div className="relative w-24 h-24">
+                {/* Simple background glow */}
                 <motion.div 
-                  className="absolute inset-0 opacity-20"
+                  className="absolute inset-0 opacity-10"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.2 }}
-                  transition={{ duration: 1, delay: 0.5 }}
+                  animate={{ opacity: 0.1 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
                 >
-                  <div className="absolute inset-[10%] bg-primary/20 rounded-full blur-lg" />
+                  <div className="absolute inset-[10%] bg-primary/20 rounded-full blur-md" />
                 </motion.div>
                 
-                {/* Currency symbols */}
+                {/* Simple animated logo */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative w-20 h-20">
-                    {/* Nến Nhật xuất hiện dần theo thứ tự */}
-                    {/* Nến 1 - Bullish */}
-                    <motion.div
-                      className="absolute"
-                      style={{ left: '10%', bottom: '30%', width: '10%', height: '25%' }}
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      animate={{ scaleY: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.7 }}
-                    >
-                      <motion.div 
-                        className="w-0.5 h-3 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 0.7 }}
-                      />
-                      <motion.div 
-                        className="w-full h-full bg-primary" 
-                      />
-                      <motion.div 
-                        className="w-0.5 h-5 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 0.7 }}
-                      />
-                    </motion.div>
-
-                    {/* Nến 2 - Bearish */}
-                    <motion.div
-                      className="absolute"
-                      style={{ left: '30%', bottom: '20%', width: '10%', height: '20%' }}
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      animate={{ scaleY: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.9 }}
-                    >
-                      <motion.div 
-                        className="w-0.5 h-6 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 0.9 }}
-                      />
-                      <motion.div 
-                        className="w-full h-full border border-foreground bg-transparent" 
-                      />
-                      <motion.div 
-                        className="w-0.5 h-4 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 0.9 }}
-                      />
-                    </motion.div>
-
-                    {/* Nến 3 - Bullish */}
-                    <motion.div
-                      className="absolute"
-                      style={{ left: '50%', bottom: '15%', width: '10%', height: '40%' }}
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      animate={{ scaleY: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 1.1 }}
-                    >
-                      <motion.div 
-                        className="w-0.5 h-2 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 1.1 }}
-                      />
-                      <motion.div 
-                        className="w-full h-full bg-primary" 
-                      />
-                      <motion.div 
-                        className="w-0.5 h-3 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 1.1 }}
-                      />
-                    </motion.div>
-
-                    {/* Nến 4 - Bullish Strong */}
-                    <motion.div
-                      className="absolute"
-                      style={{ left: '70%', bottom: '10%', width: '10%', height: '50%' }}
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      animate={{ scaleY: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 1.3 }}
-                    >
-                      <motion.div 
-                        className="w-0.5 h-3 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 1.3 }}
-                      />
-                      <motion.div 
-                        className="w-full h-full bg-primary" 
-                      />
-                      <motion.div 
-                        className="w-0.5 h-1 bg-foreground mx-auto"
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.3, delay: 1.3 }}
-                      />
-                    </motion.div>
-
-                    {/* Trendline tăng */}
-                    <motion.div 
-                      className="absolute inset-0"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 1.5 }}
-                    >
-                      <svg width="100%" height="100%" viewBox="0 0 100 100" className="absolute inset-0">
-                        <motion.path 
-                          d="M15,70 C30,60 50,50 85,30" 
-                          stroke="currentColor" 
-                          strokeWidth="1.5"
-                          strokeDasharray="150"
-                          fill="none"
-                          className="text-primary"
-                          initial={{ strokeDashoffset: 150 }}
-                          animate={{ strokeDashoffset: 0 }}
-                          transition={{ duration: 1.5, delay: 1.5, ease: "easeOut" }}
-                        />
-                      </svg>
-                    </motion.div>
-                  </div>
+                  <motion.div
+                    className="text-primary text-2xl font-bold"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    FX
+                  </motion.div>
                 </div>
                 
                 {/* Removed orbiting dots */}
@@ -287,54 +168,46 @@ export function SplashScreen({
           </div>
           
           {/* Text and Branding */}
-          <div className="text-center space-y-4 mb-8">
+          <div className="text-center space-y-2 mb-5">
             <motion.h1 
-              className="text-2xl font-light tracking-wider"
-              initial={{ opacity: 0, y: 10 }}
+              className="text-lg font-light tracking-wider"
+              initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <span className="font-semibold text-primary">Forex</span> <span className="text-foreground">Trading Journal</span>
+              <span className="font-medium text-primary">Forex</span> <span className="text-foreground">Journal</span>
             </motion.h1>
             
             <motion.div
-              className="space-y-2"
+              className="space-y-1"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 1 }}
             >
-              <p className="text-muted-foreground text-sm tracking-wider uppercase">
+              <p className="text-muted-foreground text-xs tracking-wider uppercase">
                 {text}<span className="inline-block ml-1 animate-pulse">...</span>
               </p>
-              <div className="h-px w-16 bg-primary/30 mx-auto"/>
+              <div className="h-px w-12 bg-primary/30 mx-auto"/>
             </motion.div>
           </div>
           
-          {/* Progress indicators */}
+          {/* Minimal progress indicator */}
           <motion.div 
-            className="space-y-2"
+            className="space-y-1"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.2 }}
           >
-            {/* Progress percentage with blurred glow */}
-            <div className="relative h-px w-full bg-muted/50 rounded-full overflow-hidden">
+            {/* Simple progress bar */}
+            <div className="relative h-px w-full bg-muted/30 rounded-full overflow-hidden">
               <motion.div 
-                className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/40 via-primary to-primary/80"
+                className="absolute top-0 left-0 h-full bg-primary/60"
                 style={{ width: `${progress}%` }}
                 transition={{ ease: "easeOut" }}
               />
-              
-              <motion.div 
-                className="absolute top-0 left-0 h-full w-20 bg-foreground/20 blur-sm"
-                style={{ 
-                  left: `-10px`,
-                  transform: `translateX(${progress}%)`
-                }}
-              />
             </div>
             
-            <div className="flex justify-between text-[10px] tracking-wider text-muted-foreground">
+            <div className="flex justify-between text-[9px] tracking-wider text-muted-foreground opacity-80">
               <span className="uppercase">{brandName}</span>
               <span>{Math.round(progress)}%</span>
             </div>
