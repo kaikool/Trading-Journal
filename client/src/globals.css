@@ -981,7 +981,7 @@ html.dark body {
     max-width: 100vw;
     -webkit-overflow-scrolling: touch; /* Cải thiện trải nghiệm cuộn trên iOS */
     scroll-behavior: smooth; /* Cải thiện hiệu ứng cuộn mượt */
-    overscroll-behavior-y: contain; /* Ngăn chặn hiệu ứng bounce */
+    /* Đã xóa ngăn chặn hiệu ứng bounce để cho phép vuốt mặc định */
   }
   
   body {
@@ -1033,7 +1033,7 @@ html.dark body {
       width: calc(100% * var(--is-mobile-or-pwa, 0));
       top: calc(0px * var(--is-mobile-or-pwa, 0));
       left: calc(0px * var(--is-mobile-or-pwa, 0));
-      overscroll-behavior: calc(none * var(--is-mobile-or-pwa, 0));
+      /* Đã xóa giới hạn overscroll để cho phép cử chỉ vuốt mặc định */
     }
   }
   
