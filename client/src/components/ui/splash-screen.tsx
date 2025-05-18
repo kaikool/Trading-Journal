@@ -9,365 +9,288 @@ interface SplashScreenProps {
   text?: string;
   minimumDisplayTime?: number;
   brandName?: string;
-  logoSize?: number;
 }
 
 export function SplashScreen({
   className,
   logo,
-  text = 'Loading...',
+  text = 'Initializing',
   minimumDisplayTime = 2000,
-  brandName = 'Forex Journal',
-  logoSize = 60,
+  brandName = 'FOREX PRO',
 }: SplashScreenProps) {
   const isAppLoading = useLoadingStore(state => state.isAppLoading);
   const progress = useLoadingStore(state => state.progress);
   const [visible, setVisible] = useState(true);
   const [startTime] = useState(Date.now());
-  const [animationPhase, setAnimationPhase] = useState(0);
+  const [phase, setPhase] = useState(0);
   
-  // Sophisticated animation phases
+  // Animation phases
   useEffect(() => {
-    const phase1 = setTimeout(() => setAnimationPhase(1), 100);
-    const phase2 = setTimeout(() => setAnimationPhase(2), 600);
+    const phases = [
+      setTimeout(() => setPhase(1), 200),
+      setTimeout(() => setPhase(2), 700),
+      setTimeout(() => setPhase(3), 1200)
+    ];
     
-    return () => {
-      clearTimeout(phase1);
-      clearTimeout(phase2);
-    };
+    return () => phases.forEach(clearTimeout);
   }, []);
   
-  // Handle minimum display time with smooth transitions
+  // Handle timing
   useEffect(() => {
     if (!isAppLoading()) {
-      const currentTime = Date.now();
-      const elapsedTime = currentTime - startTime;
+      const elapsedTime = Date.now() - startTime;
       
       if (elapsedTime >= minimumDisplayTime) {
-        setAnimationPhase(3);
-        const hideTimer = setTimeout(() => setVisible(false), 800);
-        return () => clearTimeout(hideTimer);
+        setPhase(4);
+        const timer = setTimeout(() => setVisible(false), 650);
+        return () => clearTimeout(timer);
       } else {
-        const remainingTime = minimumDisplayTime - elapsedTime;
         const timer = setTimeout(() => {
-          setAnimationPhase(3);
-          setTimeout(() => setVisible(false), 800);
-        }, remainingTime);
+          setPhase(4);
+          setTimeout(() => setVisible(false), 650);
+        }, minimumDisplayTime - elapsedTime);
         
         return () => clearTimeout(timer);
       }
     }
   }, [isAppLoading, minimumDisplayTime, startTime]);
   
-  // Smart progress animation
+  // Progress control
   useEffect(() => {
-    const progressInterval = setInterval(() => {
-      if (animationPhase === 3) {
-        clearInterval(progressInterval);
-        return;
-      }
-      
-      const currentProgress = useLoadingStore.getState().progress;
-      // Gradually slow down progress as it approaches 95%
-      const increment = Math.max(0.1, (95 - currentProgress) / 40);
-      
-      if (currentProgress < 95) {
-        useLoadingStore.getState().setProgress(currentProgress + increment);
-      }
-    }, 120);
+    if (phase === 4) return;
     
-    return () => clearInterval(progressInterval);
-  }, [animationPhase]);
+    const interval = setInterval(() => {
+      const current = useLoadingStore.getState().progress;
+      // Slow down as progress increases
+      const increment = (100 - current) / 50;
+      
+      if (current < 95) {
+        useLoadingStore.getState().setProgress(current + increment);
+      }
+    }, 100);
+    
+    return () => clearInterval(interval);
+  }, [phase]);
   
   if (!visible) return null;
   
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <motion.div 
         className={cn(
-          "fixed inset-0 z-50 flex items-center justify-center",
-          "bg-background/90 backdrop-blur-sm",
+          "fixed inset-0 z-[100] flex flex-col items-center justify-center",
+          "bg-gradient-to-br from-black to-slate-900",
           className
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5 }}
       >
-        <div className="w-80 max-w-[90vw]">
-          {/* Modern logo container with subtle gradient background */}
-          <motion.div
-            className="mb-10 rounded-2xl overflow-hidden relative flex justify-center items-center bg-gradient-to-br from-background to-muted/30 p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={animationPhase >= 1 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Elegant decorative elements */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
-              <div className="absolute top-0 left-0 h-full w-[1px] bg-gradient-to-b from-transparent via-primary/30 to-transparent"></div>
-              <div className="absolute top-0 right-0 h-full w-[1px] bg-gradient-to-b from-transparent via-primary/50 to-transparent"></div>
-            </div>
-
-            <div className="relative z-10">
-              {logo || (
-                <motion.div 
-                  className="w-28 h-28 relative mx-auto"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  {/* Refined financial chart visualization */}
-                  <svg width="100%" height="100%" viewBox="0 0 100 100" className="text-primary drop-shadow-sm">
-                    {/* Subtle grid */}
-                    <motion.g opacity="0.15">
-                      <motion.line 
-                        x1="10" y1="20" x2="90" y2="20" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.1 }}
-                      />
-                      <motion.line 
-                        x1="10" y1="40" x2="90" y2="40" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.2 }}
-                      />
-                      <motion.line 
-                        x1="10" y1="60" x2="90" y2="60" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                      />
-                      <motion.line 
-                        x1="10" y1="80" x2="90" y2="80" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.4 }}
-                      />
-                      
-                      <motion.line 
-                        x1="20" y1="10" x2="20" y2="90" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.2 }}
-                      />
-                      <motion.line 
-                        x1="40" y1="10" x2="40" y2="90" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                      />
-                      <motion.line 
-                        x1="60" y1="10" x2="60" y2="90" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.4 }}
-                      />
-                      <motion.line 
-                        x1="80" y1="10" x2="80" y2="90" 
-                        stroke="currentColor" 
-                        strokeWidth="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                      />
-                    </motion.g>
-                    
-                    {/* Elegant frame */}
-                    <motion.rect 
-                      x="10" y="10" width="80" height="80" 
-                      stroke="currentColor" 
-                      fill="none"
-                      strokeWidth="1.5"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 1.5 }}
-                    />
-                    
-                    {/* Sophisticated candlestick chart */}
-                    <motion.g 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
-                    >
-                      {/* Candlestick 1 - Down */}
-                      <motion.line 
-                        x1="20" y1="30" x2="20" y2="60" 
-                        stroke="currentColor" 
-                        strokeWidth="1"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.4, delay: 0.8 }}
-                      />
-                      <motion.rect 
-                        x="17" y="35" width="6" height="20" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.4, delay: 0.9 }}
-                      />
-                      
-                      {/* Candlestick 2 - Up */}
-                      <motion.line 
-                        x1="35" y1="25" x2="35" y2="55" 
-                        stroke="currentColor" 
-                        strokeWidth="1"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.4, delay: 1.0 }}
-                      />
-                      <motion.rect 
-                        x="32" y="25" width="6" height="15" 
-                        fill="currentColor" 
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.4, delay: 1.1 }}
-                      />
-                      
-                      {/* Candlestick 3 - Up */}
-                      <motion.line 
-                        x1="50" y1="20" x2="50" y2="65" 
-                        stroke="currentColor" 
-                        strokeWidth="1"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.4, delay: 1.2 }}
-                      />
-                      <motion.rect 
-                        x="47" y="20" width="6" height="25" 
-                        fill="currentColor" 
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.4, delay: 1.3 }}
-                      />
-                      
-                      {/* Candlestick 4 - Down */}
-                      <motion.line 
-                        x1="65" y1="15" x2="65" y2="70" 
-                        stroke="currentColor" 
-                        strokeWidth="1"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.4, delay: 1.4 }}
-                      />
-                      <motion.rect 
-                        x="62" y="40" width="6" height="25" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.4, delay: 1.5 }}
-                      />
-                      
-                      {/* Candlestick 5 - Up */}
-                      <motion.line 
-                        x1="80" y1="15" x2="80" y2="80" 
-                        stroke="currentColor" 
-                        strokeWidth="1"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.4, delay: 1.6 }}
-                      />
-                      <motion.rect 
-                        x="77" y="15" width="6" height="40" 
-                        fill="currentColor" 
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: 1 }}
-                        transition={{ duration: 0.4, delay: 1.7 }}
-                      />
-                    </motion.g>
-                    
-                    {/* Elegant trend line overlay */}
-                    <motion.path 
-                      d="M20,45 C30,40 35,35 50,30 C65,25 75,20 80,20"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeDasharray="2 2"
-                      strokeLinecap="round"
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: 0.7 }}
-                      transition={{ duration: 2, delay: 1.8 }}
-                    />
-                  </svg>
-                  
-                  {/* Subtle animated glow effect */}
-                  <div className="absolute inset-0 rounded-full bg-primary/5 blur-xl animate-pulse-slow"></div>
-                </motion.div>
-              )}
-            </div>
-          </motion.div>
-          
-          {/* Elegant text content */}
-          <motion.div
-            className="text-center space-y-3 mb-8"
-            initial={{ opacity: 0, y: 15 }}
-            animate={animationPhase >= 1 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.3 }}
-          >
-            <h1 className="text-2xl font-light tracking-wide">Forex Trading Journal</h1>
-            <p className="text-foreground/60 text-sm font-light tracking-wider uppercase">{text}</p>
-            
-            {/* Subtle brand signature */}
-            <div className="pt-1">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-medium">
-                {brandName}
-              </p>
-            </div>
-          </motion.div>
-          
-          {/* Refined progress indicators */}
-          <motion.div
-            className="space-y-3"
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Market patterns */}
+          <motion.div 
+            className="absolute top-0 right-0 w-[60%] h-[60%] opacity-10"
             initial={{ opacity: 0 }}
-            animate={animationPhase >= 1 ? { opacity: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            animate={{ opacity: 0.05 }}
+            transition={{ duration: 2 }}
           >
-            {/* Elegant progress percentage */}
-            <div className="flex justify-between items-center text-[10px] uppercase tracking-wider text-foreground/40 px-1">
-              <span>Loading</span>
-              <span>{Math.round(progress)}%</span>
-            </div>
-            
-            {/* Sophisticated progress bar */}
-            <div className="h-[2px] w-full bg-muted/20 rounded-full overflow-hidden relative">
-              {/* Primary progress */}
+            {Array.from({ length: 10 }).map((_, i) => (
               <motion.div 
-                className="h-full bg-primary/50 rounded-full"
+                key={i}
+                className="absolute bg-primary/30"
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  width: `${10 + Math.random() * 30}px`,
+                  height: `${100 + Math.random() * 200}px`,
+                  opacity: 0.1 + Math.random() * 0.2
+                }}
+                initial={{ scaleY: 0 }}
+                animate={{ scaleY: 1 }}
+                transition={{ 
+                  duration: 1.5 + Math.random(),
+                  delay: 0.5 + Math.random() * 1.5,
+                  ease: "easeOut"
+                }}
+              />
+            ))}
+          </motion.div>
+          
+          {/* Chart grid */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div key={`h-${i}`} className="absolute h-px w-full bg-white/50" style={{ top: `${i * 5}%` }} />
+            ))}
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div key={`v-${i}`} className="absolute w-px h-full bg-white/50" style={{ left: `${i * 5}%` }} />
+            ))}
+          </div>
+        </div>
+        
+        {/* Content container with glassmorphism */}
+        <motion.div 
+          className="relative z-10 w-full max-w-md mx-auto p-8 rounded-lg"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {/* Central Symbol */}
+          <div className="relative flex justify-center mb-12">
+            {logo || (
+              <div className="relative w-32 h-32">
+                {/* Glowing backdrop */}
+                <motion.div 
+                  className="absolute inset-0 rounded-full blur-2xl bg-primary/20"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 0.8 }}
+                  transition={{ duration: 1.5, delay: 0.2 }}
+                />
+                
+                {/* Circular ring */}
+                <motion.div 
+                  className="absolute inset-0 flex items-center justify-center"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                >
+                  <svg width="100%" height="100%" viewBox="0 0 120 120">
+                    <motion.circle
+                      cx="60"
+                      cy="60"
+                      r="50"
+                      fill="none"
+                      stroke="url(#gradientStroke)"
+                      strokeWidth="2"
+                      strokeDasharray="314"
+                      initial={{ strokeDashoffset: 314 }}
+                      animate={{ strokeDashoffset: phase > 1 ? 0 : 314 }}
+                      transition={{ duration: 3, ease: "easeInOut" }}
+                    />
+                    <defs>
+                      <linearGradient id="gradientStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#4F46E5" />
+                        <stop offset="100%" stopColor="#06B6D4" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </motion.div>
+                
+                {/* Currency symbols */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div 
+                    className="text-4xl font-bold text-white flex items-center"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.7, delay: 1.2 }}
+                  >
+                    <span className="text-primary">¥</span>
+                    <motion.span 
+                      className="text-white mx-1 opacity-70"
+                      animate={{ 
+                        opacity: [0.7, 1, 0.7],
+                        scale: [1, 1.1, 1] 
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse" 
+                      }}
+                    >
+                      €
+                    </motion.span>
+                    <span className="text-primary">$</span>
+                  </motion.div>
+                </div>
+                
+                {/* Dots orbiting around */}
+                {[0, 1, 2, 3, 4, 5].map(i => {
+                  const angle = (i * 60) % 360;
+                  return (
+                    <motion.div
+                      key={i}
+                      className="absolute w-1.5 h-1.5 rounded-full bg-primary/80"
+                      style={{
+                        top: '50%',
+                        left: '50%',
+                        margin: '-2px 0 0 -2px',
+                      }}
+                      initial={{ 
+                        x: 0, 
+                        y: 0, 
+                        opacity: 0 
+                      }}
+                      animate={{
+                        x: Math.cos((angle * Math.PI) / 180) * 55,
+                        y: Math.sin((angle * Math.PI) / 180) * 55,
+                        opacity: 0.8
+                      }}
+                      transition={{ 
+                        duration: 0.5, 
+                        delay: 1.5 + (i * 0.1)
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          
+          {/* Text and Branding */}
+          <div className="text-center space-y-6 mb-10">
+            <motion.h1 
+              className="text-3xl font-light text-white tracking-wider"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+              <span className="font-semibold text-primary">Forex</span> Trading Journal
+            </motion.h1>
+            
+            <motion.div
+              className="space-y-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1 }}
+            >
+              <p className="text-gray-400 text-sm tracking-wider uppercase">
+                {text}<span className="inline-block ml-1 animate-pulse">...</span>
+              </p>
+              <div className="h-px w-16 bg-primary/30 mx-auto"/>
+            </motion.div>
+          </div>
+          
+          {/* Progress indicators */}
+          <motion.div 
+            className="space-y-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+          >
+            {/* Progress percentage with blurred glow */}
+            <div className="relative h-px w-full bg-gray-800/50 rounded-full overflow-hidden">
+              <motion.div 
+                className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/40 via-primary to-primary/80"
                 style={{ width: `${progress}%` }}
-                transition={{ ease: [0.4, 0.0, 0.2, 1] }}
+                transition={{ ease: "easeOut" }}
               />
               
-              {/* Animated highlight effect */}
               <motion.div 
-                className="absolute top-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-primary/20 to-transparent"
+                className="absolute top-0 left-0 h-full w-20 bg-white/20 blur-sm"
                 style={{ 
-                  left: `-20px`,
-                  transform: `translateX(${progress}%)`,
-                  opacity: progress > 5 ? 1 : 0
+                  left: `-10px`,
+                  transform: `translateX(${progress}%)`
                 }}
-                transition={{ ease: [0.4, 0.0, 0.2, 1] }}
               />
             </div>
+            
+            <div className="flex justify-between text-[10px] tracking-wider text-gray-500">
+              <span className="uppercase">{brandName}</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
     </AnimatePresence>
   );
