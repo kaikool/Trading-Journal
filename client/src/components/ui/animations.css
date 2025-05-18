@@ -1,5 +1,19 @@
 /* Modern animations for Splash Screen and loading elements */
 
+/* Shimmer effect for highlight on progress bars */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-150%);
+  }
+  100% {
+    transform: translateX(150%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
 /* Floating animation for logo */
 @keyframes float {
   0%, 100% {
