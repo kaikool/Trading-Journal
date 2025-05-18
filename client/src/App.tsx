@@ -246,85 +246,83 @@ function MainContent() {
     }
   }, [loading, hasUser, isPublicPage]);
 
-  // Sử dụng Premium Splash Screen với hiệu ứng tăng trưởng sang trọng
+  // Sử dụng Splash Screen tinh tế, sang trọng
   if (loading) {
-    // Cập nhật loading store để bắt đầu
-    useEffect(() => {
-      const initLoadingId = 'app-init';
-      startLoading(initLoadingId, LoadingLevel.APP);
-      return () => stopLoading(initLoadingId, LoadingLevel.APP);
-    }, []);
-    
     return (
-      <div className="h-screen w-full overflow-hidden bg-gradient-to-b from-background to-background/95">
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="relative w-full h-full">
-            {/* Logo container với hiệu ứng tăng trưởng rõ ràng */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="relative w-24 h-24">
-                {/* Glow background effect */}
-                <div className="absolute inset-0 rounded-full bg-primary/5 animate-pulse-grow"></div>
-                
-                {/* Outer orbital ring with precise animation */}
-                <div className="absolute -inset-8 rounded-full border border-primary/20 animate-spin-slow"
-                     style={{ animationDuration: '20s' }}></div>
-                
-                {/* Middle orbital ring */}
-                <div className="absolute -inset-4 rounded-full border border-primary/30 animate-spin-slow"
-                     style={{ animationDuration: '15s', animationDirection: 'reverse' }}></div>
-                
-                {/* Inner orbital ring */}
-                <div className="absolute -inset-1 rounded-full border border-primary/40 animate-spin-slow"
-                     style={{ animationDuration: '10s' }}></div>
-                
-                {/* Center logo with elevation shadow */}
-                <div className="absolute inset-0 flex items-center justify-center animate-float"
-                     style={{ animationDuration: '4s' }}>
-                  <div className="relative w-20 h-20 rounded-full bg-background shadow-lg flex items-center justify-center">
-                    <Icons.analytics.barChart 
-                      className="w-12 h-12 text-primary animate-scale-pulse" 
-                      style={{ 
-                        filter: "drop-shadow(0 0 8px rgba(var(--primary), 0.4))",
-                        animationDuration: '3s'
-                      }}
-                    />
-                    
-                    {/* Logo glow effect */}
-                    <div className="absolute inset-0 rounded-full animate-breathing-glow"
-                         style={{ boxShadow: "0 0 15px rgba(var(--primary), 0.15)" }}></div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Text section with staggered entrance */}
-              <div className="mt-12 space-y-3 text-center">
-                <h3 className="text-xl font-medium text-foreground animate-fade-up">
-                  Đang khởi động ứng dụng...
-                </h3>
-                
-                <p className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 
-                              bg-clip-text text-transparent font-semibold animate-fade-up animation-delay-200">
-                  made by Táo Tầu
-                </p>
-              </div>
-              
-              {/* Premium progress bar with shimmer effect */}
-              <div className="w-72 h-1 mt-10 relative overflow-hidden rounded-full animate-fade-up animation-delay-300">
-                {/* Track with subtle gradient */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-muted/70 via-muted to-muted/70"></div>
-                
-                {/* Progress fill with elegant gradient */}
-                <div className="absolute h-full rounded-full bg-gradient-to-r from-primary/80 via-primary to-primary/80 animate-breathing-glow"
-                     style={{ 
-                       width: '85%',
-                       boxShadow: "0 0 10px rgba(var(--primary), 0.3), 0 0 5px rgba(var(--primary), 0.2) inset" 
-                     }}></div>
-                
-                {/* Shimmer highlight effect */}
-                <div className="absolute h-full w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background backdrop-blur-sm">
+        <div className="max-w-sm w-full px-6 py-8">
+          {/* Logo container với hiệu ứng tăng trưởng tinh tế */}
+          <div className="flex justify-center mb-12">
+            <div className="relative">
+              {/* Subtle glow background */}
+              <div 
+                className="absolute -inset-3 opacity-20 blur-xl bg-primary/30 rounded-full"
+                style={{
+                  animation: "pulse 3s infinite ease-in-out",
+                }}
+              ></div>
+            
+              {/* Logo với hiệu ứng tăng trưởng tinh tế */}
+              <div className="relative z-10" style={{ 
+                animation: "scale 3s infinite ease-in-out",
+                transformOrigin: "center center"
+              }}>
+                <Icons.analytics.barChart 
+                  className="w-16 h-16 text-primary" 
+                  style={{ filter: "drop-shadow(0 0 12px rgba(var(--primary), 0.3))" }}
+                />
               </div>
             </div>
           </div>
+          
+          {/* Text với hiệu ứng thanh lịch */}
+          <div className="space-y-1 text-center">
+            <p className="text-lg text-foreground font-medium opacity-90 tracking-wide">Đang khởi động ứng dụng...</p>
+            
+            <p className="mt-1 text-sm bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent font-medium">
+              made by Táo Tầu
+            </p>
+          </div>
+          
+          {/* Progress bar thanh lịch */}
+          <div className="mt-8 relative h-0.5 w-full bg-muted/50 overflow-hidden rounded-full">
+            {/* Phần fill với hiệu ứng animation */}
+            <div className="absolute top-0 left-0 h-full w-full rounded-full">
+              <div 
+                className="h-full bg-gradient-to-r from-primary/70 via-primary to-primary/70 rounded-full"
+                style={{
+                  width: "87%",
+                  boxShadow: "0 0 6px rgba(var(--primary), 0.3)",
+                  animation: "progress-pulse 2s infinite ease-out"
+                }}
+              >
+                {/* Hiệu ứng ánh sáng chuyển động */}
+                <div 
+                  className="absolute inset-y-0 h-full w-24 animate-shimmer"
+                  style={{
+                    backgroundImage: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)",
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
+          
+          <style jsx>{`
+            @keyframes scale {
+              0%, 100% { transform: scale(1); }
+              50% { transform: scale(1.08); }
+            }
+            
+            @keyframes pulse {
+              0%, 100% { opacity: 0.1; transform: scale(0.95); }
+              50% { opacity: 0.3; transform: scale(1.05); }
+            }
+            
+            @keyframes progress-pulse {
+              0%, 100% { filter: brightness(1); }
+              50% { filter: brightness(1.2); }
+            }
+          `}</style>
         </div>
       </div>
     );
