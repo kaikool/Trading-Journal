@@ -16,7 +16,7 @@ export function LuxurySplashScreen({
   className,
   text = 'Loading...',
   minimumDisplayTime = 2000,
-  logoSize = 100,
+  logoSize = 80,
   brandName = 'Táo Tầu',
 }: LuxurySplashScreenProps) {
   const isAppLoading = useLoadingStore(state => state.isAppLoading);
@@ -25,30 +25,22 @@ export function LuxurySplashScreen({
   const [startTime] = useState(Date.now());
   const [animationPhase, setAnimationPhase] = useState(0);
   
-  // Animation phases
+  // Animation phases - minimalist approach
   useEffect(() => {
-    // Phase 1: Initial logo reveal
+    // Phase 1: Logo appear
     const phase1 = setTimeout(() => setAnimationPhase(1), 100);
     
-    // Phase 2: Logo growth and effects
-    const phase2 = setTimeout(() => setAnimationPhase(2), 300);
-    
-    // Phase 3: Text reveal
-    const phase3 = setTimeout(() => setAnimationPhase(3), 500);
-    
-    // Phase 4: Progress bar
-    const phase4 = setTimeout(() => setAnimationPhase(4), 700);
+    // Phase 2: Text and progress appear
+    const phase2 = setTimeout(() => setAnimationPhase(2), 400);
     
     // Cleanup timers on unmount
     return () => {
       clearTimeout(phase1);
       clearTimeout(phase2);
-      clearTimeout(phase3);
-      clearTimeout(phase4);
     };
   }, []);
   
-  // Handle minimum display time with elegant exit animation
+  // Handle minimum display time with clean exit animation
   useEffect(() => {
     if (!isAppLoading()) {
       const currentTime = Date.now();
@@ -56,24 +48,24 @@ export function LuxurySplashScreen({
       
       if (elapsedTime >= minimumDisplayTime) {
         // Begin exit animation
-        setAnimationPhase(5);
+        setAnimationPhase(3);
         
         // Allow exit animation to complete before unmounting
         const hideTimer = setTimeout(() => {
           setVisible(false);
-        }, 600);
+        }, 500);
         
         return () => clearTimeout(hideTimer);
       } else {
         // Wait for minimum display time
         const remainingTime = minimumDisplayTime - elapsedTime;
         const timer = setTimeout(() => {
-          setAnimationPhase(5);
+          setAnimationPhase(3);
           
           // Allow exit animation to complete before unmounting
           setTimeout(() => {
             setVisible(false);
-          }, 600);
+          }, 500);
         }, remainingTime);
         
         return () => clearTimeout(timer);
@@ -81,12 +73,12 @@ export function LuxurySplashScreen({
     }
   }, [isAppLoading, minimumDisplayTime, startTime]);
   
-  // Progress animation with elegant increments
+  // Progress animation with simple increments
   useEffect(() => {
     // Smooth progress updates
     const progressInterval = setInterval(() => {
       // Stop progress animation during exit phase
-      if (animationPhase === 5) {
+      if (animationPhase === 3) {
         clearInterval(progressInterval);
         return;
       }
@@ -94,16 +86,9 @@ export function LuxurySplashScreen({
       // Get current progress value
       const currentProgress = useLoadingStore.getState().progress;
       
-      // Calculate increment based on current progress
-      if (currentProgress < 30) {
-        // Slow start
-        useLoadingStore.getState().setProgress(currentProgress + 0.3);
-      } else if (currentProgress < 80) {
-        // Faster middle section
-        useLoadingStore.getState().setProgress(currentProgress + 0.5);
-      } else if (currentProgress < 95) {
-        // Slow finish
-        useLoadingStore.getState().setProgress(currentProgress + 0.1);
+      // Simple, consistent progress updates
+      if (currentProgress < 95) {
+        useLoadingStore.getState().setProgress(currentProgress + 0.4);
       }
     }, 100);
     
@@ -118,53 +103,32 @@ export function LuxurySplashScreen({
       <motion.div 
         className={cn(
           "fixed inset-0 z-50 flex flex-col items-center justify-center",
-          "bg-background backdrop-blur-sm",
+          "bg-background",
           className
         )}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
       >
-        <div className="relative w-full max-w-sm mx-auto px-6 text-center">
-          {/* Logo with growth animation */}
+        <div className="w-full max-w-[280px] mx-auto px-4 text-center">
+          {/* Minimal logo with subtle growth animation */}
           <motion.div 
-            className="relative mx-auto mb-8"
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={animationPhase >= 1 && animationPhase < 5 
+            className="relative mx-auto mb-6"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={animationPhase >= 1 && animationPhase < 3 
               ? { scale: 1, opacity: 1 } 
-              : { scale: 1.2, opacity: 0 }}
+              : { scale: 1.1, opacity: 0 }}
             transition={{ 
-              type: "spring", 
-              stiffness: 260, 
-              damping: 20, 
-              duration: 0.8 
+              duration: 0.7,
+              ease: "easeOut"
             }}
           >
-            {/* Logo glow effect */}
-            <motion.div
-              className="absolute -inset-3 rounded-full opacity-30 blur-md"
-              style={{ background: `radial-gradient(circle, rgba(var(--primary), 0.3) 0%, transparent 70%)` }}
-              animate={{ 
-                scale: [1, 1.1, 1],
-                opacity: [0.2, 0.3, 0.2] 
-              }}
-              transition={{ 
-                duration: 2.5, 
-                repeat: Infinity, 
-                repeatType: "mirror" 
-              }}
-            />
-            
-            {/* Main logo */}
+            {/* Minimalist logo */}
             <motion.div 
-              className="relative flex items-center justify-center"
-              animate={animationPhase >= 2 && animationPhase < 5 
-                ? { 
-                    scale: [1, 1.05, 1],
-                    rotate: [0, 1, 0, -1, 0]
-                  } 
-                : { scale: 1, rotate: 0 }}
+              animate={animationPhase >= 1 && animationPhase < 3 
+                ? { scale: [1, 1.03, 1] } 
+                : { scale: 1 }}
               transition={{ 
                 duration: 3, 
                 ease: "easeInOut", 
@@ -176,92 +140,51 @@ export function LuxurySplashScreen({
                 className="text-primary" 
                 style={{ 
                   width: logoSize, 
-                  height: logoSize,
-                  filter: "drop-shadow(0 0 8px rgba(var(--primary), 0.4))"
+                  height: logoSize
                 }}
               />
             </motion.div>
           </motion.div>
           
-          {/* Loading text */}
+          {/* Minimalist text section */}
           <motion.div 
-            className="mb-6"
-            initial={{ opacity: 0, y: 10 }}
-            animate={animationPhase >= 3 && animationPhase < 5 
-              ? { opacity: 1, y: 0 } 
-              : { opacity: 0, y: animationPhase >= 5 ? -10 : 10 }}
-            transition={{ 
-              duration: 0.5, 
-              ease: "easeOut"
-            }}
+            className="mb-5 space-y-2"
+            initial={{ opacity: 0 }}
+            animate={animationPhase >= 2 && animationPhase < 3 
+              ? { opacity: 1 } 
+              : { opacity: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            <motion.p 
-              className="text-xl font-medium text-foreground tracking-wide"
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            {/* Loading text - minimal */}
+            <p className="text-base font-normal text-foreground/80 tracking-wider">
               {text}
-            </motion.p>
-          </motion.div>
-          
-          {/* Brand name */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={animationPhase >= 3 && animationPhase < 5 
-              ? { opacity: 1, y: 0 } 
-              : { opacity: 0, y: animationPhase >= 5 ? -10 : 10 }}
-            transition={{ 
-              duration: 0.5, 
-              delay: 0.1,
-              ease: "easeOut"
-            }}
-          >
-            <p className={cn(
-              "text-sm font-medium",
-              "bg-gradient-to-r from-primary/80 via-primary to-primary/80",
-              "bg-clip-text text-transparent"
-            )}>
+            </p>
+            
+            {/* Brand name - minimal */}
+            <p className="text-xs text-primary/90 font-normal">
               made by {brandName}
             </p>
           </motion.div>
           
-          {/* Thin, elegant progress bar */}
+          {/* Extremely thin progress bar - minimalist */}
           <motion.div 
-            className="w-full mx-auto mt-8 relative h-[1.5px]"
-            initial={{ opacity: 0, scaleX: 0.8 }}
-            animate={animationPhase >= 4 && animationPhase < 5 
-              ? { opacity: 1, scaleX: 1 } 
-              : { opacity: 0, scaleX: animationPhase >= 5 ? 1.1 : 0.8 }}
-            transition={{ duration: 0.5 }}
+            className="w-full mx-auto relative h-[1px]"
+            initial={{ opacity: 0 }}
+            animate={animationPhase >= 2 && animationPhase < 3 
+              ? { opacity: 0.9 } 
+              : { opacity: 0 }}
+            transition={{ duration: 0.4 }}
           >
-            {/* Track */}
-            <div 
-              className="absolute inset-0 rounded-full bg-muted/30"
-            />
+            {/* Track - barely visible */}
+            <div className="absolute inset-0 bg-muted/20" />
             
-            {/* Progress fill */}
+            {/* Progress fill - clean and minimal */}
             <motion.div 
-              className="absolute h-full rounded-full bg-primary"
+              className="absolute h-full bg-primary/90"
               style={{ 
-                width: `${progress}%`,
-                boxShadow: "0 0 6px rgba(var(--primary), 0.3)"
+                width: `${progress}%`
               }}
-              transition={{ duration: 0.3 }}
-            />
-            
-            {/* Animated shine effect */}
-            <motion.div 
-              className="absolute h-full w-16 rounded-full"
-              style={{
-                background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)",
-                left: `calc(${progress}% - 50px)`
-              }}
-              animate={{ left: [`-10%`, `calc(${progress}% - 10px)`, `calc(${progress}% - 10px)`] }}
-              transition={{
-                duration: 1.5, 
-                repeat: Infinity,
-                repeatDelay: 0.8
-              }}
+              transition={{ duration: 0.2 }}
             />
           </motion.div>
         </div>
