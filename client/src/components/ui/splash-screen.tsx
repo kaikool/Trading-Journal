@@ -104,9 +104,9 @@ export function SplashScreen({
             >
               {/* Logo only */}
               <div className="w-20 h-20 mx-auto flex items-center justify-center">
-                {/* Logo */}
+                {/* Logo - Growth icon */}
                 <div className="w-16 h-16 flex items-center justify-center">
-                  {logo || <Icons.logo className="w-full h-full text-primary" />}
+                  {logo || <Icons.analytics.trendingUp className="w-full h-full text-primary" />}
                 </div>
               </div>
             </motion.div>
