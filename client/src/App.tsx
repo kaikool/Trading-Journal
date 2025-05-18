@@ -277,8 +277,33 @@ function MainContent() {
           {/* Hiển thị overlay loading trang với animation tăng trưởng */}
           <div className="fixed inset-0 bg-background/90 dark:bg-background/90 z-40 flex items-center justify-center">
             <div className="w-full max-w-5xl flex flex-col items-center space-y-4">
-              <div className="animate-pulse-grow text-primary">
-                <Icons.ui.circleDot className="w-16 h-16" />
+              <div className="w-24 h-24 mx-auto animate-pulse-grow text-primary">
+                {/* Animated Growth Chart */}
+                <svg width="100%" height="100%" viewBox="0 0 100 100" className="text-primary">
+                  {/* Grid lines */}
+                  <path d="M10,80 H90" stroke="currentColor" strokeOpacity="0.3" strokeWidth="1" />
+                  <path d="M10,60 H90" stroke="currentColor" strokeOpacity="0.2" strokeWidth="1" />
+                  <path d="M10,40 H90" stroke="currentColor" strokeOpacity="0.2" strokeWidth="1" />
+                  
+                  {/* Y-axis */}
+                  <path d="M10,20 L10,80" stroke="currentColor" strokeWidth="1.5" />
+                  
+                  {/* X-axis */}
+                  <path d="M10,80 L90,80" stroke="currentColor" strokeWidth="1.5" />
+                  
+                  {/* Growth line */}
+                  <path d="M20,70 L35,65 L50,55 L65,60 L80,30" fill="none" stroke="currentColor" strokeWidth="2.5" />
+                  
+                  {/* Data points */}
+                  <circle cx="20" cy="70" r="3" fill="currentColor" />
+                  <circle cx="35" cy="65" r="3" fill="currentColor" />
+                  <circle cx="50" cy="55" r="3" fill="currentColor" />
+                  <circle cx="65" cy="60" r="3" fill="currentColor" />
+                  <circle cx="80" cy="30" r="4" fill="currentColor" />
+                  
+                  {/* Trend arrow */}
+                  <path d="M80,30 L87,25 L83,37 Z" fill="currentColor" />
+                </svg>
               </div>
               <p className="text-lg font-medium text-primary animate-pulse-grow">Loading</p>
             </div>
