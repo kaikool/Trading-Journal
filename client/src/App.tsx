@@ -9,6 +9,7 @@ import ErrorBoundary from "@/components/ui/error-boundary";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useLoadingStore, LoadingLevel } from "@/hooks/use-loading-store";
 import { LoadingProvider } from "@/components/ui/loading-provider";
+import { LuxurySplashScreen } from "@/components/ui/luxury-splash-screen";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -246,86 +247,9 @@ function MainContent() {
     }
   }, [loading, hasUser, isPublicPage]);
 
-  // Sử dụng Splash Screen tinh tế, sang trọng
+  // Sử dụng Luxury Splash Screen tinh tế, sang trọng
   if (loading) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background backdrop-blur-sm">
-        <div className="max-w-sm w-full px-6 py-8">
-          {/* Logo container với hiệu ứng tăng trưởng tinh tế */}
-          <div className="flex justify-center mb-12">
-            <div className="relative">
-              {/* Subtle glow background */}
-              <div 
-                className="absolute -inset-3 opacity-20 blur-xl bg-primary/30 rounded-full"
-                style={{
-                  animation: "pulse 3s infinite ease-in-out",
-                }}
-              ></div>
-            
-              {/* Logo với hiệu ứng tăng trưởng tinh tế */}
-              <div className="relative z-10" style={{ 
-                animation: "scale 3s infinite ease-in-out",
-                transformOrigin: "center center"
-              }}>
-                <Icons.analytics.barChart 
-                  className="w-16 h-16 text-primary" 
-                  style={{ filter: "drop-shadow(0 0 12px rgba(var(--primary), 0.3))" }}
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* Text với hiệu ứng thanh lịch */}
-          <div className="space-y-1 text-center">
-            <p className="text-lg text-foreground font-medium opacity-90 tracking-wide">Đang khởi động ứng dụng...</p>
-            
-            <p className="mt-1 text-sm bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent font-medium">
-              made by Táo Tầu
-            </p>
-          </div>
-          
-          {/* Progress bar thanh lịch */}
-          <div className="mt-8 relative h-0.5 w-full bg-muted/50 overflow-hidden rounded-full">
-            {/* Phần fill với hiệu ứng animation */}
-            <div className="absolute top-0 left-0 h-full w-full rounded-full">
-              <div 
-                className="h-full bg-gradient-to-r from-primary/70 via-primary to-primary/70 rounded-full"
-                style={{
-                  width: "87%",
-                  boxShadow: "0 0 6px rgba(var(--primary), 0.3)",
-                  animation: "progress-pulse 2s infinite ease-out"
-                }}
-              >
-                {/* Hiệu ứng ánh sáng chuyển động */}
-                <div 
-                  className="absolute inset-y-0 h-full w-24 animate-shimmer"
-                  style={{
-                    backgroundImage: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent)",
-                  }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          
-          <style jsx>{`
-            @keyframes scale {
-              0%, 100% { transform: scale(1); }
-              50% { transform: scale(1.08); }
-            }
-            
-            @keyframes pulse {
-              0%, 100% { opacity: 0.1; transform: scale(0.95); }
-              50% { opacity: 0.3; transform: scale(1.05); }
-            }
-            
-            @keyframes progress-pulse {
-              0%, 100% { filter: brightness(1); }
-              50% { filter: brightness(1.2); }
-            }
-          `}</style>
-        </div>
-      </div>
-    );
+    return <LuxurySplashScreen brandName="Táo Tầu" text="Đang khởi động ứng dụng..." />;
   }
   
   // Render page content without animation libs
