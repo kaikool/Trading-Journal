@@ -9,7 +9,7 @@ import ErrorBoundary from "@/components/ui/error-boundary";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useLoadingStore, LoadingLevel } from "@/hooks/use-loading-store";
 import { LoadingProvider } from "@/components/ui/loading-provider";
-import { LuxurySplashScreen } from "@/components/ui/luxury-splash-screen";
+import { SplashScreen } from "@/components/ui/splash-screen";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
@@ -247,9 +247,9 @@ function MainContent() {
     }
   }, [loading, hasUser, isPublicPage]);
 
-  // Sử dụng Luxury Splash Screen tinh tế, sang trọng
+  // Sử dụng Splash Screen tối giản
   if (loading) {
-    return <LuxurySplashScreen brandName="Táo Tầu" text="Đang khởi động ứng dụng..." />;
+    return <SplashScreen brandName="Táo Tầu" text="Loading..." />;
   }
   
   // Render page content without animation libs
