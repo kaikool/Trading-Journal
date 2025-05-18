@@ -50,9 +50,9 @@ export function StrategyRecommendationEngine({ trades, strategies }: StrategyRec
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <Icons.analytics.stats className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium">Chưa đủ dữ liệu giao dịch</h3>
+        <h3 className="text-lg font-medium">Insufficient Trading Data</h3>
         <p className="text-sm text-muted-foreground mt-2">
-          Cần ít nhất 5 giao dịch đã đóng để tạo đề xuất chiến lược có giá trị.
+          At least 5 closed trades are needed to generate valuable strategy recommendations.
         </p>
       </div>
     );
@@ -62,9 +62,9 @@ export function StrategyRecommendationEngine({ trades, strategies }: StrategyRec
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <Icons.analytics.stats className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium">Chưa có chiến lược nào được thiết lập</h3>
+        <h3 className="text-lg font-medium">No Strategies Configured</h3>
         <p className="text-sm text-muted-foreground mt-2">
-          Thiết lập ít nhất một chiến lược trong phần Cài đặt để nhận đề xuất.
+          Set up at least one strategy in Settings to receive recommendations.
         </p>
       </div>
     );
@@ -74,9 +74,9 @@ export function StrategyRecommendationEngine({ trades, strategies }: StrategyRec
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <Icons.analytics.stats className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium">Không thể tạo đề xuất</h3>
+        <h3 className="text-lg font-medium">Unable to Generate Recommendations</h3>
         <p className="text-sm text-muted-foreground mt-2">
-          Không thể tạo đề xuất từ dữ liệu hiện có. Thêm nhiều giao dịch với thông tin chi tiết hơn.
+          Cannot create recommendations from existing data. Add more detailed trades.
         </p>
       </div>
     );
@@ -103,7 +103,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
     reasonsToUse, riskLevel, improvementTips
   } = recommendation;
   
-  // Xác định màu cho cấp độ rủi ro
+  // Determine color for risk level
   const getRiskLevelColor = (level: string) => {
     switch (level) {
       case 'Low': return 'bg-green-500/10 text-green-500';
@@ -113,7 +113,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
     }
   };
   
-  // Xác định màu cho độ tin cậy
+  // Determine color for confidence score
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 80) return 'text-green-500';
     if (confidence >= 60) return 'text-yellow-500';
@@ -126,25 +126,25 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
         <div className="flex items-start justify-between">
           <CardTitle className="text-xl">{strategyName}</CardTitle>
           <Badge variant="outline" className={`ml-2 ${getRiskLevelColor(riskLevel)}`}>
-            {riskLevel === 'Low' ? 'Rủi ro thấp' : riskLevel === 'Medium' ? 'Rủi ro vừa' : 'Rủi ro cao'}
+            {riskLevel === 'Low' ? 'Low Risk' : riskLevel === 'Medium' ? 'Medium Risk' : 'High Risk'}
           </Badge>
         </div>
         <CardDescription>
-          Độ tin cậy đề xuất: <span className={getConfidenceColor(confidence)}>{confidence}%</span>
+          Recommendation confidence: <span className={getConfidenceColor(confidence)}>{confidence}%</span>
         </CardDescription>
       </CardHeader>
       
       <CardContent className="pb-0 space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Tỷ lệ thắng dự kiến</span>
+            <span className="text-sm font-medium">Expected win rate</span>
             <span className="text-sm">{expectedWinRate}%</span>
           </div>
           <Progress value={expectedWinRate} className="h-2" />
         </div>
         
         <div>
-          <h4 className="text-sm font-medium mb-2">Lý do đề xuất</h4>
+          <h4 className="text-sm font-medium mb-2">Recommendation rationale</h4>
           <ul className="text-sm space-y-1 pl-5 list-disc">
             {reasonsToUse.map((reason, index) => (
               <li key={index}>{reason}</li>
@@ -156,7 +156,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
         
         <div className="space-y-3">
           <div>
-            <h4 className="text-sm font-medium mb-1.5">Cặp tiền tệ phù hợp nhất</h4>
+            <h4 className="text-sm font-medium mb-1.5">Best currency pairs</h4>
             <div className="flex flex-wrap gap-1.5">
               {bestPairs.map((pair, index) => (
                 <Badge key={index} variant="secondary">{pair}</Badge>
@@ -165,7 +165,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
           </div>
           
           <div>
-            <h4 className="text-sm font-medium mb-1.5">Thời điểm giao dịch tối ưu</h4>
+            <h4 className="text-sm font-medium mb-1.5">Optimal trading sessions</h4>
             <div className="flex flex-wrap gap-1.5">
               {bestSessions.map((session, index) => (
                 <Badge key={index} variant="outline">{session}</Badge>
@@ -174,7 +174,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
           </div>
           
           <div>
-            <h4 className="text-sm font-medium mb-1.5">Điều kiện thị trường</h4>
+            <h4 className="text-sm font-medium mb-1.5">Market conditions</h4>
             <div className="flex flex-wrap gap-1.5">
               {marketConditions.map((condition, index) => (
                 <Badge key={index} variant="outline" className="bg-blue-500/10 text-blue-500">
@@ -185,7 +185,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
           </div>
           
           <div>
-            <h4 className="text-sm font-medium mb-1.5">Trạng thái cảm xúc phù hợp</h4>
+            <h4 className="text-sm font-medium mb-1.5">Suitable emotional states</h4>
             <div className="flex flex-wrap gap-1.5">
               {emotionalStates.map((state, index) => (
                 <Badge key={index} variant="outline" className="bg-purple-500/10 text-purple-500">
@@ -198,7 +198,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
       </CardContent>
       
       <CardFooter className="flex flex-col items-start pt-4">
-        <h4 className="text-sm font-medium mb-2">Lời khuyên cải thiện</h4>
+        <h4 className="text-sm font-medium mb-2">Improvement tips</h4>
         <ul className="text-sm space-y-1 pl-5 list-disc">
           {improvementTips.map((tip, index) => (
             <li key={index}>{tip}</li>
@@ -210,7 +210,7 @@ function RecommendationCard({ recommendation }: { recommendation: StrategyRecomm
 }
 
 /**
- * Tạo các đề xuất chiến lược dựa trên dữ liệu giao dịch
+ * Generate strategy recommendations based on trading data
  */
 function generateRecommendations(trades: Trade[], strategies: TradingStrategy[]): StrategyRecommendation[] {
   if (trades.length === 0 || strategies.length === 0) {
@@ -382,48 +382,66 @@ function generateRecommendations(trades: Trade[], strategies: TradingStrategy[])
     // Tạo lý do đề xuất
     const reasonsToUse: string[] = [];
     if (winRate > 50) {
-      reasonsToUse.push(`Tỷ lệ thắng cao (${winRate.toFixed(1)}%) với chiến lược này.`);
+      reasonsToUse.push(`High win rate (${winRate.toFixed(1)}%) with this strategy.`);
     }
     if (avgProfitLoss > 0) {
-      reasonsToUse.push(`Lợi nhuận trung bình tích cực: ${formatCurrency(avgProfitLoss)}/giao dịch.`);
+      reasonsToUse.push(`Positive average profit: ${formatCurrency(avgProfitLoss)}/trade.`);
     }
     if (bestPairs.length > 0) {
-      reasonsToUse.push(`Hiệu quả với các cặp: ${bestPairs.join(', ')}.`);
+      reasonsToUse.push(`Effective with pairs: ${bestPairs.join(', ')}.`);
     }
     if (bestSessions.length > 0) {
-      reasonsToUse.push(`Thành công trong phiên: ${bestSessions.join(', ')}.`);
+      reasonsToUse.push(`Successful in sessions: ${bestSessions.join(', ')}.`);
     }
 
-    // Tạo các lời khuyên cải thiện
+    // Create improvement tips
     const improvementTips: string[] = [];
-    const followedPlanWins = perf.trades.filter(t => t.followedPlan && (t.pips || 0) > 0).length;
-    const followedPlanTotal = perf.trades.filter(t => t.followedPlan).length;
-    const notFollowedPlanWins = perf.trades.filter(t => !t.followedPlan && (t.pips || 0) > 0).length;
-    const notFollowedPlanTotal = perf.trades.filter(t => !t.followedPlan).length;
+    
+    // Account for potential missing discipline properties by safely accessing them
+    const followedPlanWins = perf.trades.filter(t => 
+      (t.discipline?.followedPlan || t.followedPlan) && (t.pips || 0) > 0
+    ).length;
+    
+    const followedPlanTotal = perf.trades.filter(t => 
+      t.discipline?.followedPlan || t.followedPlan
+    ).length;
+    
+    const notFollowedPlanWins = perf.trades.filter(t => 
+      !(t.discipline?.followedPlan || t.followedPlan) && (t.pips || 0) > 0
+    ).length;
+    
+    const notFollowedPlanTotal = perf.trades.filter(t => 
+      !(t.discipline?.followedPlan || t.followedPlan)
+    ).length;
 
     if (followedPlanTotal > 0 && notFollowedPlanTotal > 0) {
       const followedPlanWinRate = (followedPlanWins / followedPlanTotal) * 100;
       const notFollowedPlanWinRate = (notFollowedPlanWins / notFollowedPlanTotal) * 100;
       
       if (followedPlanWinRate > notFollowedPlanWinRate + 10) {
-        improvementTips.push(`Tuân thủ kế hoạch tăng hiệu suất lên ${(followedPlanWinRate - notFollowedPlanWinRate).toFixed(1)}%.`);
+        improvementTips.push(`Following your plan increases performance by ${(followedPlanWinRate - notFollowedPlanWinRate).toFixed(1)}%.`);
       }
     }
 
-    // Kiểm tra ảnh hưởng của giao dịch trả thù
-    const revengeTrades = perf.trades.filter(t => t.revenge).length;
-    const revengeWins = perf.trades.filter(t => t.revenge && (t.pips || 0) > 0).length;
+    // Check the impact of revenge trading - safely access property
+    const revengeTrades = perf.trades.filter(t => 
+      t.discipline?.revenge || t.revenge || t.isRevenge
+    ).length;
+    
+    const revengeWins = perf.trades.filter(t => 
+      (t.discipline?.revenge || t.revenge || t.isRevenge) && (t.pips || 0) > 0
+    ).length;
     
     if (revengeTrades > 2) {
       const revengeWinRate = (revengeWins / revengeTrades) * 100;
       if (revengeWinRate < winRate) {
-        improvementTips.push(`Tránh giao dịch trả thù - giảm tỷ lệ thắng ${(winRate - revengeWinRate).toFixed(1)}%.`);
+        improvementTips.push(`Avoid revenge trading - it reduces win rate by ${(winRate - revengeWinRate).toFixed(1)}%.`);
       }
     }
 
-    // Thêm các lời khuyên thực tế
-    improvementTips.push("Tăng kích thước lô khi xu hướng rõ ràng, điều này cải thiện R:R.");
-    improvementTips.push("Thực hiện nghiêm túc journal giao dịch sau mỗi lần.");
+    // Add practical advice
+    improvementTips.push("Increase position size when trend is clear to improve R:R ratio.");
+    improvementTips.push("Maintain detailed trade journal for each position.");
 
     recommendations.push({
       strategyId,

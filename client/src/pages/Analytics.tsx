@@ -454,7 +454,7 @@ export default function Analytics() {
                 
                 <TabsTrigger value="recommendations" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
                   <Icons.analytics.lightbulb className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Đề xuất</span>
+                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Recommendations</span>
                 </TabsTrigger>
 
               </TabsList>
