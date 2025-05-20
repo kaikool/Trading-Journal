@@ -111,6 +111,17 @@ export default function TradeHistory() {
             queryKey: ['trades', userId],
             refetchType: 'active'
           });
+          
+          // Thêm logic để đảm bảo history được cập nhật đầy đủ
+          // bằng cách buộc refetch sau khi invalidation hoàn tất
+          setTimeout(() => {
+            debug(`[TradeHistory] Forcing additional refresh after ${action} for trade ${tradeId || 'unknown'}`);
+            // Kích hoạt cập nhật bằng cách reset trigger
+            setUpdateTrigger(prev => prev + 1);
+            
+            // Force data re-fetch bằng cách giả lập thay đổi bộ lọc
+            hookSetSortBy(hookSortBy);
+          }, 300);
         }
       }
     };
@@ -124,7 +135,7 @@ export default function TradeHistory() {
       debug(`[TradeHistory] Unregistering observer for trade updates`);
       unregister();
     };
-  }, [userId, queryClient, setUpdateTrigger]);
+  }, [userId, queryClient, setUpdateTrigger, hookSetSortBy, hookSortBy]);
   
   // Đồng bộ hóa trạng thái sắp xếp của hook với local state
   // Sử dụng initialSync để đảm bảo chỉ sync một chiều: từ component đến hook
