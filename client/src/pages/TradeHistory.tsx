@@ -93,36 +93,49 @@ export default function TradeHistory() {
   // Lấy danh sách giao dịch từ data
   const trades = data?.trades || [];
   
-  // Đăng ký observer để theo dõi thay đổi giao dịch (thêm, sửa, xóa)
+  // Tham chiếu để theo dõi thời gian của lần cập nhật cuối
+  const lastTradesUpdateRef = useRef<number>(0);
+  
+  // Đăng ký observer để theo dõi thay đổi giao dịch (thêm, sửa, xóa) - sử dụng cơ chế tương tự dashboard
   useEffect(() => {
     if (!userId) return;
     
-    // Tạo observer để theo dõi thay đổi giao dịch
+    debug("[TradeHistory] Registering optimized observer with TradeUpdateService");
+    
+    // Tạo observer để theo dõi thay đổi giao dịch theo cơ chế tối ưu của dashboard
     const observer: TradeChangeObserver = {
       onTradesChanged: (action, tradeId) => {
-        debug(`[TradeHistory] Received ${action} action for trade ${tradeId || 'unknown'}`);
+        // Tối ưu: Sử dụng ref để tránh cập nhật liên tục và chỉ theo dõi cập nhật mới nhất
+        const now = Date.now();
+        lastTradesUpdateRef.current = now;
         
-        // Buộc cập nhật UI bằng cách tăng update trigger
-        setUpdateTrigger(prev => prev + 1);
+        debug(`[REALTIME-DEBUG][TradeHistory] Trade changed (${action}), tradeId: ${tradeId || 'unknown'}, refreshing data...`);
         
-        // Vô hiệu hóa cache để lấy dữ liệu mới nhất
-        if (userId) {
+        // Cải thiện cơ chế cập nhật: thêm độ trễ ngắn để đảm bảo xử lý theo trình tự
+        setTimeout(() => {
+          // Kiểm tra nếu đây là yêu cầu cập nhật mới nhất
+          if (lastTradesUpdateRef.current !== now) {
+            debug(`[REALTIME-DEBUG][TradeHistory] Skipping outdated update request for ${action}`);
+            return;
+          }
+          
+          debug(`[REALTIME-DEBUG][TradeHistory] Executing immediate cache invalidation for action: ${action}`);
+          
+          // Vô hiệu hóa cache để lấy dữ liệu mới nhất
           queryClient.invalidateQueries({ 
             queryKey: ['trades', userId],
             refetchType: 'active'
           });
           
-          // Thêm logic để đảm bảo history được cập nhật đầy đủ
-          // bằng cách buộc refetch sau khi invalidation hoàn tất
+          // Tối ưu: Tăng update trigger để kích hoạt cập nhật UI
+          setUpdateTrigger(prev => prev + 1);
+          
+          // Thực hiện lần refetch thứ hai sau khoảng thời gian ngắn để đảm bảo dữ liệu đã được cập nhật
           setTimeout(() => {
-            debug(`[TradeHistory] Forcing additional refresh after ${action} for trade ${tradeId || 'unknown'}`);
-            // Kích hoạt cập nhật bằng cách reset trigger
-            setUpdateTrigger(prev => prev + 1);
-            
-            // Force data re-fetch bằng cách giả lập thay đổi bộ lọc
-            hookSetSortBy(hookSortBy);
-          }, 300);
-        }
+            debug(`[REALTIME-DEBUG][TradeHistory] Executing secondary data refresh for action: ${action}`);
+            hookSetSortBy(hookSortBy); // Kích hoạt refetch bằng cách giả lập thay đổi bộ lọc
+          }, 150); // Giảm thời gian trễ xuống để cập nhật nhanh hơn
+        }, 50);
       }
     };
     
