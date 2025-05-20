@@ -35,38 +35,36 @@ export function SplashScreen({
     return () => phases.forEach(clearTimeout);
   }, []);
   
-  // Handle timing
+  // Handle timing - đơn giản hóa và ưu tiên hiệu suất
   useEffect(() => {
     if (!isAppLoading()) {
       const elapsedTime = Date.now() - startTime;
       
-      // Emit a custom event before splash screen disappears
-      // This will be used to trigger entrance animations
-      const emitAppReadyEvent = () => {
-        const appReadyEvent = new CustomEvent('appReady', { 
-          detail: { timestamp: Date.now() } 
-        });
-        document.dispatchEvent(appReadyEvent);
-        
-        // Add a special class to the body for triggering CSS animations
+      // Hàm kết thúc splash screen và áp dụng hiệu ứng cho nội dung
+      const finishSplashScreen = () => {
+        // Thêm class vào body để kích hoạt hiệu ứng CSS cho nội dung chính
         document.body.classList.add('app-content-visible');
+        
+        // Thêm delay ngắn để animation có thể bắt đầu trước khi splash screen biến mất
+        setTimeout(() => setVisible(false), 150);
       };
       
       if (elapsedTime >= minimumDisplayTime) {
-        setPhase(4);
-        const timer = setTimeout(() => {
-          emitAppReadyEvent();
-          setTimeout(() => setVisible(false), 150); // Shorter delay for smoother transition
-        }, 500);
+        // Đã đủ thời gian hiển thị tối thiểu
+        setPhase(4); // Chuyển sang phase cuối
+        
+        // Thêm timeout để người dùng có thể thấy phase cuối trước khi kết thúc
+        const timer = setTimeout(finishSplashScreen, 300);
         return () => clearTimeout(timer);
       } else {
+        // Chưa đủ thời gian hiển thị tối thiểu
+        const remainingTime = minimumDisplayTime - elapsedTime;
         const timer = setTimeout(() => {
-          setPhase(4);
-          setTimeout(() => {
-            emitAppReadyEvent();
-            setTimeout(() => setVisible(false), 150);
-          }, 500);
-        }, minimumDisplayTime - elapsedTime);
+          setPhase(4); // Chuyển sang phase cuối
+          
+          // Thêm timeout để người dùng có thể thấy phase cuối trước khi kết thúc
+          setTimeout(finishSplashScreen, 300);
+        }, remainingTime);
         
         return () => clearTimeout(timer);
       }

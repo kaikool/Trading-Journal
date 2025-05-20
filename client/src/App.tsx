@@ -253,8 +253,6 @@ function MainContent() {
     return <SplashScreen brandName="FOREX PRO" text="Initializing" />;
   }
   
-  // Để tránh lỗi React Hook, hãy gộp useEffect này với useEffect hiện có
-  
   // Render page content with enhanced animations
   const renderPageContent = () => (
     <div

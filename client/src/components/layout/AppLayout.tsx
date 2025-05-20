@@ -57,7 +57,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="relative min-h-screen bg-background">
       {/* Sidebar Component - handles both mobile (drawer) and desktop (fixed) sidebar */}
-      <Sidebar />
+      <Sidebar className="sidebar-root" />
       
       {/* Main Content Area */}
       {/* Nút cuộn lên đầu trang đơn giản */}
@@ -86,7 +86,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         
         <div 
           className={cn(
-            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow",
+            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow page-content",
             // Luôn tôn trọng safe area, top safe area xử lý theo scroll position
             respectSafeArea 
               ? "pt-4 pb-8 safe-area-bottom" 
