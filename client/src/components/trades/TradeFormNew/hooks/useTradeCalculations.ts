@@ -37,33 +37,40 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     if (!userId) return;
     
     try {
+      // Lấy tất cả dữ liệu người dùng mới nhất
       const userData = await getUserData(userId);
-      if (userData) {
-        // Set initial and current balance
-        const initialBalance = userData.initialBalance || DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE;
-        
-        // If user has trades, calculate current balance
-        if (userData.trades && userData.trades.length > 0) {
-          const currentBalance = calculateCurrentBalance(initialBalance, userData.trades);
-          debug(`[useTradeCalculations] Updated account balance: ${currentBalance}`);
-          setAccountBalance(currentBalance);
-        } else {
-          setAccountBalance(userData.currentBalance || initialBalance);
+      if (!userData) {
+        debug('[useTradeCalculations] User data not found');
+        return;
+      }
+      
+      // Đảm bảo lấy tất cả giao dịch mới nhất
+      const { getAllTrades } = await import('@/lib/firebase');
+      const latestTrades = await getAllTrades(userId);
+      debug(`[useTradeCalculations] Got ${latestTrades.length} latest trades for balance calculation`);
+      
+      // Set initial and current balance
+      const initialBalance = userData.initialBalance || DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE;
+      
+      // Tính toán số dư hiện tại dựa trên giao dịch mới nhất
+      const currentBalance = calculateCurrentBalance(initialBalance, latestTrades);
+      debug(`[useTradeCalculations] Updated account balance: ${currentBalance} (initial: ${initialBalance})`);
+      
+      // Cập nhật số dư trong state
+      setAccountBalance(currentBalance);
+      
+      // Set risk and reward ratio defaults if available
+      if (userData.settings) {
+        // Thiết lập Risk per Trade từ settings (nếu có)
+        if (userData.settings.defaultRiskPerTrade) {
+          setRiskPercentage(userData.settings.defaultRiskPerTrade);
         }
         
-        // Set risk and reward ratio defaults if available
-        if (userData.settings) {
-          // Thiết lập Risk per Trade từ settings (nếu có)
-          if (userData.settings.defaultRiskPerTrade) {
-            setRiskPercentage(userData.settings.defaultRiskPerTrade);
-          }
-          
-          // Thiết lập Risk:Reward ratio từ settings (nếu có)
-          if (userData.settings.defaultRiskRewardRatio) {
-            const defaultRR = userData.settings.defaultRiskRewardRatio;
-            setDefaultRiskRewardRatio(defaultRR);
-            setRiskRewardRatio(defaultRR);
-          }
+        // Thiết lập Risk:Reward ratio từ settings (nếu có)
+        if (userData.settings.defaultRiskRewardRatio) {
+          const defaultRR = userData.settings.defaultRiskRewardRatio;
+          setDefaultRiskRewardRatio(defaultRR);
+          setRiskRewardRatio(defaultRR);
         }
       }
     } catch (error) {
@@ -90,8 +97,8 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
   }, [userId, refreshUserData]);
   
   // Subscribe to trade updates to refresh balance when trades change
-  useTradeUpdateEvents(userId, () => {
-    debug('[useTradeCalculations] Trade update detected, refreshing account balance');
+  useTradeUpdateEvents(userId, (action) => {
+    debug(`[useTradeCalculations] Trade ${action} detected, refreshing account balance immediately`);
     refreshUserData();
   });
   
