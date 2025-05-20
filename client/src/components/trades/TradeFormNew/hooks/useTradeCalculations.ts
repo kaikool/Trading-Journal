@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TradeFormValues } from '../types';
 import { DASHBOARD_CONFIG } from '@/lib/config';
-import { getUserData } from '@/lib/firebase';
+import { getUserData, useTradeUpdateSubscription } from '@/lib/firebase';
 import { calculateCurrentBalance } from '@/lib/balance-calculation-rules';
 import { 
   calculateLotSize, 
@@ -14,7 +14,7 @@ import {
   Direction,
   Currency
 } from '@/lib/forex-calculator';
-
+import { debug } from '@/lib/debug';
 
 interface UseTradeCalculationsProps {
   form: UseFormReturn<TradeFormValues>;
@@ -31,6 +31,45 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
   const [isCalculatingTakeProfit, setIsCalculatingTakeProfit] = useState(false);
   const [isLoadingUserData, setIsLoadingUserData] = useState<boolean>(true);
   
+  // Function to load/refresh user data and update account balance
+  const refreshUserData = useCallback(async () => {
+    if (!userId) return;
+    
+    try {
+      const userData = await getUserData(userId);
+      if (userData) {
+        // Set initial and current balance
+        const initialBalance = userData.initialBalance || DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE;
+        
+        // If user has trades, calculate current balance
+        if (userData.trades && userData.trades.length > 0) {
+          const currentBalance = calculateCurrentBalance(initialBalance, userData.trades);
+          debug(`[useTradeCalculations] Updated account balance: ${currentBalance}`);
+          setAccountBalance(currentBalance);
+        } else {
+          setAccountBalance(userData.currentBalance || initialBalance);
+        }
+        
+        // Set risk and reward ratio defaults if available
+        if (userData.settings) {
+          // Thiết lập Risk per Trade từ settings (nếu có)
+          if (userData.settings.defaultRiskPerTrade) {
+            setRiskPercentage(userData.settings.defaultRiskPerTrade);
+          }
+          
+          // Thiết lập Risk:Reward ratio từ settings (nếu có)
+          if (userData.settings.defaultRiskRewardRatio) {
+            const defaultRR = userData.settings.defaultRiskRewardRatio;
+            setDefaultRiskRewardRatio(defaultRR);
+            setRiskRewardRatio(defaultRR);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
+  }, [userId]);
+  
   // Load user data on component mount
   useEffect(() => {
     const loadUserData = async () => {
@@ -38,33 +77,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
       
       setIsLoadingUserData(true);
       try {
-        const userData = await getUserData(userId);
-        if (userData) {
-          // Set initial and current balance
-          const initialBalance = userData.initialBalance || DASHBOARD_CONFIG.DEFAULT_INITIAL_BALANCE;
-          setAccountBalance(userData.currentBalance || initialBalance);
-          
-          // If user has trades, calculate current balance
-          if (userData.trades && userData.trades.length > 0) {
-            const currentBalance = calculateCurrentBalance(initialBalance, userData.trades);
-            setAccountBalance(currentBalance);
-          }
-          
-          // Set risk and reward ratio defaults if available
-          if (userData.settings) {
-            // Thiết lập Risk per Trade từ settings (nếu có)
-            if (userData.settings.defaultRiskPerTrade) {
-              setRiskPercentage(userData.settings.defaultRiskPerTrade);
-            }
-            
-            // Thiết lập Risk:Reward ratio từ settings (nếu có)
-            if (userData.settings.defaultRiskRewardRatio) {
-              const defaultRR = userData.settings.defaultRiskRewardRatio;
-              setDefaultRiskRewardRatio(defaultRR);
-              setRiskRewardRatio(defaultRR);
-            }
-          }
-        }
+        await refreshUserData();
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
@@ -73,7 +86,13 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
     };
     
     loadUserData();
-  }, [userId]);
+  }, [userId, refreshUserData]);
+  
+  // Subscribe to trade updates to refresh balance when trades change
+  useTradeUpdateSubscription(userId, () => {
+    debug('[useTradeCalculations] Trade update detected, refreshing account balance');
+    refreshUserData();
+  });
   
   // Calculate risk:reward ratio and auto-calculate take profit when relevant form fields change
   useEffect(() => {
