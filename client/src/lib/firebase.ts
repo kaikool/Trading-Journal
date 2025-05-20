@@ -729,10 +729,17 @@ async function updateTrade(userId: string, tradeId: string, tradeData: any, opti
     }
     
     // Sử dụng TradeUpdateService để thông báo cập nhật UI đồng bộ
+    // Tăng thời gian delay cho thông báo để đảm bảo dữ liệu đã được lưu vào Firestore
     if (isClosingTrade) {
-      tradeUpdateService.notifyTradeClosed(userId, tradeId);
+      setTimeout(() => {
+        debug(`[REALTIME-DEBUG] Notifying trade closed with delay for better UI sync: ${tradeId}`);
+        tradeUpdateService.notifyTradeClosed(userId, tradeId);
+      }, 100); // Tăng delay lên 100ms
     } else {
-      tradeUpdateService.notifyTradeUpdated(userId, tradeId);
+      setTimeout(() => {
+        debug(`[REALTIME-DEBUG] Notifying trade updated with delay for better UI sync: ${tradeId}`);
+        tradeUpdateService.notifyTradeUpdated(userId, tradeId);
+      }, 100); // Tăng delay lên 100ms
     }
     
     return {

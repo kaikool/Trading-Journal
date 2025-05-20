@@ -77,10 +77,26 @@ class TradeUpdateService {
   public notifyTradeUpdated(userId: string, tradeId: string) {
     debug(`TradeUpdateService: Trade updated notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
+    // Tăng độ trễ để đảm bảo invalidation hoàn tất và dữ liệu mới đã được lấy
     setTimeout(() => {
+      debug(`[REALTIME-DEBUG] Notifying observers about updated trade after cache invalidation: ${tradeId}`);
       this._notifyObservers('update', tradeId);
-    }, 0);
+      
+      // Vô hiệu hóa lần thứ hai sau khoảng thời gian ngắn
+      // Đây là phương pháp "double invalidation" để đảm bảo dữ liệu được cập nhật đầy đủ
+      setTimeout(() => {
+        if (queryClientInstance) {
+          debug(`[REALTIME-DEBUG] Performing second invalidation for tradeId: ${tradeId}`);
+          queryClientInstance.invalidateQueries({ 
+            predicate: (query) => {
+              const key = query.queryKey;
+              return Array.isArray(key) && key[0] === TRADE_QUERY_ROOT_KEY;
+            },
+            refetchType: 'active',
+          });
+        }
+      }, 100);
+    }, 50);
   }
   
   /**
