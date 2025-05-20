@@ -23,7 +23,6 @@ import AchievementNotificationContainer from "@/components/achievements/Achievem
 import { LayoutProvider } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DialogProvider } from "@/contexts/DialogContext";
-import { TradingToolsProvider } from "@/contexts/TradingToolsContext";
 
 // Improved dynamic imports with proper code splitting
 // Core/frequently used pages - higher priority
@@ -40,7 +39,6 @@ const Settings = lazy(() => import("@/pages/Settings"));
 const Strategies = lazy(() => import("@/pages/Strategies"));
 const Achievements = lazy(() => import("@/pages/Achievements"));
 const Goals = lazy(() => import("@/pages/Goals"));
-const Tools = lazy(() => import("@/pages/Tools"));
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 // Tạo layout component được bọc bởi ErrorBoundary
@@ -305,8 +303,6 @@ function MainContent() {
             <Route path="/achievements" component={Achievements} />
             {/* Goals page */}
             <Route path="/goals" component={Goals} />
-            {/* Tools page */}
-            <Route path="/tools" component={Tools} />
             
             {/* Fallback to 404 */}
             <Route path="/:rest*" component={NotFound} />
@@ -348,14 +344,12 @@ function App() {
       <ThemeProvider>
         <LayoutProvider>
           <DialogProvider>
-            <TradingToolsProvider>
-              <LoadingProvider>
-                <MainContent />
-                <Toaster />
-                <PWAContainer />
-                <AchievementNotificationContainer />
-              </LoadingProvider>
-            </TradingToolsProvider>
+            <LoadingProvider>
+              <MainContent />
+              <Toaster />
+              <PWAContainer />
+              <AchievementNotificationContainer />
+            </LoadingProvider>
           </DialogProvider>
         </LayoutProvider>
       </ThemeProvider>
