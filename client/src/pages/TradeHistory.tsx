@@ -9,6 +9,7 @@ import { useUserDataQuery } from "@/hooks/use-user-data-query";
 import { useAuth } from "@/hooks/use-auth";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -55,6 +56,7 @@ export default function TradeHistory() {
   const { toast } = useToast();
   const { userData } = useUserDataQuery();
   const { userId } = useAuth();
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState<TradeFilterOptions>({});
   const [sortBy, setSortBy] = useState<"newest" | "oldest" | "profit" | "loss">("newest");
   const [showFilters, setShowFilters] = useState(false);
@@ -63,6 +65,8 @@ export default function TradeHistory() {
   // State cho dialog xác nhận xóa
   const [tradeToDelete, setTradeToDelete] = useState<Trade | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  // State để buộc cập nhật UI khi có thay đổi
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   
   // Thêm state để tracking các discipline flags
   const [hasEnteredEarly, setHasEnteredEarly] = useState<boolean | undefined>(undefined);
