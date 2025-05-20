@@ -206,6 +206,21 @@ function MainContent() {
     return () => clearTimeout(timer);
   }, [location, isMobile]);
 
+  // Khởi tạo viewport height cho hiển thị đồng nhất trên các thiết bị
+  useEffect(() => {
+    // Khởi tạo cơ chế tính toán viewport height chính xác
+    initViewportHeight();
+    
+    // Thêm class đặc biệt cho body nếu đang chạy trong PWA mode
+    if (isPWA()) {
+      document.body.classList.add('pwa-mode');
+      document.documentElement.classList.add('is-pwa');
+    }
+    
+    // Log thông tin hữu ích cho debug
+    console.log('App startup took:', `${performance.now().toFixed(1)}ms before preloading routes`);
+  }, []);
+  
   // Quản lý quá trình khởi tạo ứng dụng với loading system mới
   useEffect(() => {
     // Bắt đầu trạng thái loading cho toàn bộ ứng dụng
