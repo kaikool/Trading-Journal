@@ -35,20 +35,36 @@ export function useTradesQuery() {
   useEffect(() => {
     if (!userId) return;
     
+    debug(`[useTradesQuery] Registering observer for trade updates for user ${userId}`);
+    
     const unsubscribe = tradeUpdateService.registerObserver({
       onTradesChanged: (action, tradeId) => {
-        debug(`Trade changed via TradeUpdateService (${action}, ID: ${tradeId || 'unknown'}), triggering refetch`);
+        debug(`[useTradesQuery] Trade changed via TradeUpdateService (${action}, ID: ${tradeId || 'unknown'}), triggering immediate refetch`);
         
-        // Đảm bảo refetch được gọi sau khi invalidateQueries (đã thực hiện trong tradeUpdateService)
-        // bằng cách đẩy refetch vào cuối event loop
-        Promise.resolve().then(() => {
-          // Sử dụng options để tránh rơi vào stale time, đảm bảo luôn lấy dữ liệu mới nhất
-          refetch({ cancelRefetch: false, throwOnError: false });
-        });
+        // Giải quyết vấn đề cập nhật bằng cách:
+        // 1. Đợi invalidateQueries (đã thực hiện trong tradeUpdateService) hoàn tất
+        // 2. Thêm độ trễ nhỏ trước khi refetch để đảm bảo Firebase đã cập nhật dữ liệu
+        // 3. Force refetch bỏ qua stale time
+        setTimeout(() => {
+          debug(`[useTradesQuery] Executing refetch for action: ${action}`);
+          refetch({ 
+            cancelRefetch: true,     // Hủy các refetch đang chờ để tránh race condition
+            throwOnError: false      // Không ném lỗi nếu refetch thất bại
+          });
+          
+          // Double check để đảm bảo dữ liệu được cập nhật - giải quyết vấn đề Firebase delay
+          setTimeout(() => {
+            debug(`[useTradesQuery] Executing secondary refetch for action: ${action}`);
+            refetch({ cancelRefetch: false, throwOnError: false });
+          }, 500);
+        }, 100);
       }
     });
     
-    return () => unsubscribe();
+    return () => {
+      debug(`[useTradesQuery] Unregistering observer for user ${userId}`);
+      unsubscribe();
+    };
   }, [userId, refetch]);
   
   return {

@@ -238,27 +238,39 @@ export function useTradeList(options: {
     const observer: TradeChangeObserver = {
       onTradesChanged: (action, tradeId) => {
         // Loại bỏ debounce để đảm bảo cập nhật ngay lập tức cho mọi hành động
-        // Chỉ giữ lại logging để theo dõi
         const now = Date.now();
         lastTradesUpdateRef.current = now;
         
-        debug(`[REALTIME-DEBUG][TradeList] Trade changed (${action}), tradeId: ${tradeId}, refreshing data immediately`);
+        debug(`[REALTIME-DEBUG][TradeList] Trade changed (${action}), tradeId: ${tradeId}, refreshing history data immediately`);
         
-        // Sử dụng Promise.resolve().then để đảm bảo thực hiện vào cuối event loop
-        // Điều này giúp giải quyết vấn đề racing condition giữa invalidation và refetch
-        debug(`[REALTIME-DEBUG][TradeList] Scheduling refetch via Promise.resolve().then()`);
-        Promise.resolve().then(() => {
-          // TradeUpdateService đã thực hiện invalidateQueries, nhưng chúng ta cần đảm bảo
-          // refetch được gọi sau khi invalidation đã hoàn tất
-          debug(`[REALTIME-DEBUG][TradeList] Executing refetch in Promise.then() for action: ${action}`);
-          refetch()
+        // Cải thiện cơ chế cập nhật: thêm độ trễ sau khi invalidation đã hoàn tất
+        setTimeout(() => {
+          debug(`[REALTIME-DEBUG][TradeList] Executing immediate refetch for action: ${action}`);
+          
+          // Vô hiệu hóa cache trước để đảm bảo lấy dữ liệu mới nhất
+          queryClient.invalidateQueries({ 
+            queryKey: ['trades', userId],
+            refetchType: 'active'
+          });
+          
+          // Đảm bảo refetch được gọi sau invalidation
+          refetch({ cancelRefetch: true, throwOnError: false })
             .then(() => {
-              debug(`[REALTIME-DEBUG][TradeList] Refetch completed successfully for action: ${action}`);
+              debug(`[REALTIME-DEBUG][TradeList] First refetch completed for action: ${action}`);
+              
+              // Thực hiện lần refetch thứ hai sau 500ms để đảm bảo Firebase đã cập nhật
+              setTimeout(() => {
+                debug(`[REALTIME-DEBUG][TradeList] Executing secondary refetch for action: ${action}`);
+                refetch({ cancelRefetch: false, throwOnError: false })
+                  .then(() => {
+                    debug(`[REALTIME-DEBUG][TradeList] Secondary refetch completed for action: ${action}`);
+                  });
+              }, 500);
             })
             .catch(err => {
               logError(`[REALTIME-DEBUG][TradeList] Error during refetch for action ${action}:`, err);
             });
-        });
+        }, 100);
       }
     };
     
@@ -271,7 +283,7 @@ export function useTradeList(options: {
       debug("[TradeList] Unregistering from TradeUpdateService");
       unregister();
     };
-  }, [userId, enableRealtime, refetch]);
+  }, [userId, enableRealtime, refetch, queryClient]);
   
   // Lọc dữ liệu dựa trên các filter
   // Sử dụng memozied function cho applyFilters để tránh tính toán lại khi re-render
