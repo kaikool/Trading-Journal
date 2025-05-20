@@ -156,14 +156,14 @@ export function SplashScreen({
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-background/10"></div>
         </div>
         
-        {/* Modern glass container */}
+        {/* Container đục - không trong suốt */}
         <motion.div 
-          className="relative z-10 w-full max-w-[270px] mx-auto p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 dark:from-slate-900/20 dark:to-slate-900/10 backdrop-blur-xl border border-white/20 shadow-2xl"
+          className="relative z-10 w-full max-w-[270px] mx-auto p-6 rounded-2xl bg-background dark:bg-slate-900 border border-border shadow-2xl"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           style={{
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
           }}
         >
           {/* Central Symbol - smaller and more compact */}
