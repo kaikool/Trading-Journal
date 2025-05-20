@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TradeFormValues } from '../types';
 import { DASHBOARD_CONFIG } from '@/lib/config';
-import { getUserData, useTradeUpdateSubscription } from '@/lib/firebase';
+import { getUserData } from '@/lib/firebase';
 import { calculateCurrentBalance } from '@/lib/balance-calculation-rules';
 import { 
   calculateLotSize, 
@@ -15,6 +15,7 @@ import {
   Currency
 } from '@/lib/forex-calculator';
 import { debug } from '@/lib/debug';
+import { useTradeUpdateEvents } from '@/hooks/use-trade-update-events';
 
 interface UseTradeCalculationsProps {
   form: UseFormReturn<TradeFormValues>;
@@ -89,7 +90,7 @@ export function useTradeCalculations({ form, userId }: UseTradeCalculationsProps
   }, [userId, refreshUserData]);
   
   // Subscribe to trade updates to refresh balance when trades change
-  useTradeUpdateSubscription(userId, () => {
+  useTradeUpdateEvents(userId, () => {
     debug('[useTradeCalculations] Trade update detected, refreshing account balance');
     refreshUserData();
   });
