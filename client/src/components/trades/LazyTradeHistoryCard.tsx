@@ -24,8 +24,11 @@ import { ChartImageDialog } from "./ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
 import { debug } from "@/lib/debug";
-// Lưu ý: Component này không gọi trực tiếp TradeUpdateService
-// nhưng được cập nhật thông qua TradeHistory.tsx và cơ chế cập nhật của useTradeList
+// Component này không gọi trực tiếp TradeUpdateService
+// được cập nhật qua:
+// 1. Key prop dựa trên updateTrigger trong TradeHistory.tsx
+// 2. Tham chiếu tới prop trade mới khi danh sách trades thay đổi
+// 3. Memo hóa để tối ưu hiệu suất khi không cần thiết re-render
 
 interface TradeHistoryCardProps {
   trade: any;

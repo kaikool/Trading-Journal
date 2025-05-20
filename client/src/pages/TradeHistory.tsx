@@ -1002,6 +1002,7 @@ export default function TradeHistory() {
                       className="w-full overflow-hidden"
                     >
                       <LazyTradeHistoryCard 
+                        key={`${trade.id}-${updateTrigger}`} 
                         trade={trade} 
                         onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
                         onDelete={() => {
