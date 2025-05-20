@@ -627,6 +627,26 @@ html.dark body {
     padding-top: max(var(--safe-top), 0.5rem);
   }
   
+  /* Class đặc biệt cho splash screen, đảm bảo hiển thị full màn hình */
+  .safe-area-splash {
+    position: fixed;
+    inset: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    z-index: 9999;
+    /* Đảm bảo safe area được xử lý đúng cách */
+    --splash-padding: 0px;
+    padding-top: max(var(--splash-padding), env(safe-area-inset-top, 0px)) !important;
+    padding-right: max(var(--splash-padding), env(safe-area-inset-right, 0px)) !important;
+    padding-bottom: max(var(--splash-padding), env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: max(var(--splash-padding), env(safe-area-inset-left, 0px)) !important;
+  }
+  
   .pwa-status-bar-area {
     padding-top: var(--safe-top);
     height: calc(var(--status-bar-height) + var(--safe-top));

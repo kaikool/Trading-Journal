@@ -95,9 +95,19 @@ export function SplashScreen({
       <motion.div 
         className={cn(
           "fixed inset-0 z-[100] flex flex-col items-center justify-center",
-          "bg-gradient-to-br from-background/95 via-background to-background/90 dark:from-slate-950 dark:via-background dark:to-slate-900/90",
+          "safe-area-splash bg-gradient-to-br from-background/95 via-background to-background/90 dark:from-slate-950 dark:via-background dark:to-slate-900/90",
+          // Đảm bảo safe area được áp dụng đúng cách
+          "pt-safe pr-safe pb-safe pl-safe",
           className
         )}
+        style={{
+          // Đảm bảo hiển thị full screen, kể cả trên các thiết bị có notch hoặc rounded corners
+          width: '100vw',
+          maxWidth: '100vw', 
+          maxHeight: '100vh',
+          // Sử dụng dynamic viewport height để đảm bảo full screen trên mobile
+          minHeight: '100vh',
+        }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

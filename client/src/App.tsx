@@ -10,6 +10,7 @@ import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useLoadingStore, LoadingLevel } from "@/hooks/use-loading-store";
 import { LoadingProvider } from "@/components/ui/loading-provider";
 import { SplashScreen } from "@/components/ui/splash-screen";
+import { initViewportHeight, isPWA } from "@/lib/viewport-height";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { auth } from "@/lib/firebase";
