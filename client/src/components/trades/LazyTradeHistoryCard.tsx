@@ -504,13 +504,33 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
 import { memoWithPerf } from '@/lib/performance';
 
 export default memoWithPerf(LazyTradeHistoryCard, (prevProps, nextProps) => {
-  // Tối ưu so sánh props để tránh re-renders không cần thiết
+  // CẢI THIỆN: Sửa lại so sánh để đảm bảo card được cập nhật khi có thay đổi giao dịch
+  // Kiểm tra key đầu tiên - nếu key thay đổi (do TradeHistory updateTrigger thay đổi), luôn re-render
+  if (prevProps.key !== nextProps.key) {
+    debug(`[LazyTradeHistoryCard] Force update due to key change: ${prevProps.key} → ${nextProps.key}`);
+    return false; // trả về false = cần re-render
+  }
+  
+  // So sánh nhanh ID trước
+  if (prevProps.trade.id !== nextProps.trade.id) {
+    return false; // trả về false = cần re-render
+  }
+  
+  // Tối ưu so sánh chi tiết cho các trường quan trọng
   const sameProps = [
-    prevProps.trade.id === nextProps.trade.id,
     prevProps.trade.updatedAt === nextProps.trade.updatedAt,
     JSON.stringify(prevProps.trade.profitLoss) === JSON.stringify(nextProps.trade.profitLoss),
-    prevProps.trade.result === nextProps.trade.result
+    prevProps.trade.result === nextProps.trade.result,
+    prevProps.trade.exitPrice === nextProps.trade.exitPrice,
+    prevProps.trade.closeDate === nextProps.trade.closeDate,
+    prevProps.trade.status === nextProps.trade.status,
+    prevProps.trade.isOpen === nextProps.trade.isOpen
   ];
+  
+  // Debug thông tin khi props thay đổi
+  if (!sameProps.every(prop => prop === true)) {
+    debug(`[LazyTradeHistoryCard] Re-rendering ${prevProps.trade.id} due to property changes`);
+  }
   
   // Chỉ re-render nếu có bất kỳ giá trị nào thay đổi
   return sameProps.every(prop => prop === true);
