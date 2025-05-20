@@ -90,6 +90,9 @@ function MainContent() {
   const [isPageReady, setIsPageReady] = useState<boolean>(true);
   const [prevLocation, setPrevLocation] = useState<string>(location);
   
+  // Theo dõi trạng thái hoàn thành của splash screen
+  const [appReady, setAppReady] = useState(false);
+  
   // Tối ưu hóa việc chuyển trang
   useEffect(() => {
     // Khi location thay đổi, đánh dấu trang đang loading và scroll lên đầu trang
@@ -250,12 +253,14 @@ function MainContent() {
     return <SplashScreen brandName="FOREX PRO" text="Initializing" />;
   }
   
-  // Render page content without animation libs
+  // Để tránh lỗi React Hook, hãy gộp useEffect này với useEffect hiện có
+  
+  // Render page content with enhanced animations
   const renderPageContent = () => (
     <div
       key={currentRoute}
       className={cn(
-        "transition-opacity",
+        "transition-opacity app-main-content",
         "min-h-[calc(100vh-4rem)]",
         // Thêm className để hiển thị loading state
         !isPageReady && "pointer-events-none opacity-80"

@@ -135,3 +135,46 @@
   width: 70%;
   z-index: 1000;
 }
+
+/* Animations đặc biệt sau khi splash screen biến mất */
+.app-content-visible .app-main-content {
+  animation: scale-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Tạo hiệu ứng staggered (lần lượt) xuất hiện cho các thành phần UI chính */
+.app-content-visible .sidebar-root {
+  animation: fade-in-right 0.5s ease-out forwards;
+  animation-delay: 100ms;
+}
+
+.app-content-visible .app-header {
+  animation: fade-in 0.5s ease-out forwards;
+  animation-delay: 200ms;
+}
+
+.app-content-visible .page-title {
+  animation: fade-up 0.5s ease-out forwards;
+  animation-delay: 300ms;
+}
+
+.app-content-visible .page-content {
+  animation: fade-up 0.5s ease-out forwards;
+  animation-delay: 400ms;
+}
+
+/* Hiệu ứng đặc biệt cho các card và widget */
+.app-content-visible .app-card {
+  animation: scale-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--card-index, 0) * 100ms + 300ms);
+  transform-origin: center center;
+}
+
+/* Hiệu ứng fade-in đơn giản */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

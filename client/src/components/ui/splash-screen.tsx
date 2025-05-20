@@ -40,14 +40,32 @@ export function SplashScreen({
     if (!isAppLoading()) {
       const elapsedTime = Date.now() - startTime;
       
+      // Emit a custom event before splash screen disappears
+      // This will be used to trigger entrance animations
+      const emitAppReadyEvent = () => {
+        const appReadyEvent = new CustomEvent('appReady', { 
+          detail: { timestamp: Date.now() } 
+        });
+        document.dispatchEvent(appReadyEvent);
+        
+        // Add a special class to the body for triggering CSS animations
+        document.body.classList.add('app-content-visible');
+      };
+      
       if (elapsedTime >= minimumDisplayTime) {
         setPhase(4);
-        const timer = setTimeout(() => setVisible(false), 650);
+        const timer = setTimeout(() => {
+          emitAppReadyEvent();
+          setTimeout(() => setVisible(false), 150); // Shorter delay for smoother transition
+        }, 500);
         return () => clearTimeout(timer);
       } else {
         const timer = setTimeout(() => {
           setPhase(4);
-          setTimeout(() => setVisible(false), 650);
+          setTimeout(() => {
+            emitAppReadyEvent();
+            setTimeout(() => setVisible(false), 150);
+          }, 500);
         }, minimumDisplayTime - elapsedTime);
         
         return () => clearTimeout(timer);
