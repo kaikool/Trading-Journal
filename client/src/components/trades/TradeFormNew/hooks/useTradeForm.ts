@@ -49,7 +49,7 @@ export function useTradeForm(props: TradeFormProps) {
       notes: initialValues.notes || "",
       isOpen: initialValues.isOpen, // Sử dụng giá trị thực từ giao dịch, không ghi đè mặc định
       exitPrice: initialValues.exitPrice || null,
-      result: initialValues.result as any, // Sử dụng giá trị thực từ giao dịch, không ghi đè
+      result: initialValues.result || null, // Sử dụng null thay vì undefined vì Firebase không chấp nhận undefined
       closingNote: ""
     } : {
       pair: "XAUUSD",
