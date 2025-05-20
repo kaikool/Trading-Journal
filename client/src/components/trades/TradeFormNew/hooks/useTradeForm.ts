@@ -49,7 +49,7 @@ export function useTradeForm(props: TradeFormProps) {
       notes: initialValues.notes || "",
       isOpen: initialValues.isOpen, // Sử dụng giá trị thực từ giao dịch, không ghi đè mặc định
       exitPrice: initialValues.exitPrice || null,
-      result: initialValues.result as "TP" | "SL" | "BE" | "MANUAL" | undefined, // Đảm bảo kiểu dữ liệu đúng
+      result: (initialValues.result as "TP" | "SL" | "BE" | "MANUAL" | undefined) || undefined, // Giữ nguyên kiểu dữ liệu để tương thích với zod schema
       closingNote: ""
     } : {
       pair: "XAUUSD",
@@ -135,10 +135,13 @@ export function useTradeForm(props: TradeFormProps) {
         Object.entries(data).filter(([_, value]) => value !== undefined)
       );
       
-      // Xử lý result đặc biệt để tránh lỗi undefined
-      if (cleanData.result === undefined) {
-        delete cleanData.result;
-      }
+      // Xử lý các trường đặc biệt để tránh lỗi undefined
+      // Firebase không chấp nhận undefined, nhưng có thể xóa trường đó
+      ['result', 'exitPrice', 'closingNote'].forEach(field => {
+        if (cleanData[field] === undefined || cleanData[field] === null) {
+          delete cleanData[field];
+        }
+      });
       
       const tradeData = {
         ...cleanData,
