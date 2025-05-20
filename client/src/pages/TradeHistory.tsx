@@ -93,6 +93,39 @@ export default function TradeHistory() {
   // Lấy danh sách giao dịch từ data
   const trades = data?.trades || [];
   
+  // Đăng ký observer để theo dõi thay đổi giao dịch (thêm, sửa, xóa)
+  useEffect(() => {
+    if (!userId) return;
+    
+    // Tạo observer để theo dõi thay đổi giao dịch
+    const observer: TradeChangeObserver = {
+      onTradesChanged: (action, tradeId) => {
+        debug(`[TradeHistory] Received ${action} action for trade ${tradeId || 'unknown'}`);
+        
+        // Buộc cập nhật UI bằng cách tăng update trigger
+        setUpdateTrigger(prev => prev + 1);
+        
+        // Vô hiệu hóa cache để lấy dữ liệu mới nhất
+        if (userId) {
+          queryClient.invalidateQueries({ 
+            queryKey: ['trades', userId],
+            refetchType: 'active'
+          });
+        }
+      }
+    };
+    
+    // Đăng ký observer với service
+    debug(`[TradeHistory] Registering observer for trade updates for user ${userId}`);
+    const unregister = tradeUpdateService.registerObserver(observer);
+    
+    // Hủy đăng ký khi component unmount
+    return () => {
+      debug(`[TradeHistory] Unregistering observer for trade updates`);
+      unregister();
+    };
+  }, [userId, queryClient, setUpdateTrigger]);
+  
   // Đồng bộ hóa trạng thái sắp xếp của hook với local state
   // Sử dụng initialSync để đảm bảo chỉ sync một chiều: từ component đến hook
   const initialSyncDone = useRef(false);
@@ -128,6 +161,11 @@ export default function TradeHistory() {
     prevFiltersRef.current = {...filters};
     prevSortByRef.current = sortBy;
     prevTradesLengthRef.current = trades.length;
+    
+    // Debug thêm khi có trigger cập nhật từ observer
+    if (updateTrigger > 0) {
+      debug(`[TradeHistory] Refreshing UI due to updateTrigger: ${updateTrigger}`);
+    }
     
     // Ghi log có điều kiện
     if (filtersChanged) {
