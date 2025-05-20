@@ -49,7 +49,7 @@ export function useTradeForm(props: TradeFormProps) {
       notes: initialValues.notes || "",
       isOpen: initialValues.isOpen, // Sử dụng giá trị thực từ giao dịch, không ghi đè mặc định
       exitPrice: initialValues.exitPrice || null,
-      result: initialValues.result || null, // Sử dụng null thay vì undefined vì Firebase không chấp nhận undefined
+      result: initialValues.result as "TP" | "SL" | "BE" | "MANUAL" | undefined, // Đảm bảo kiểu dữ liệu đúng
       closingNote: ""
     } : {
       pair: "XAUUSD",
@@ -129,13 +129,23 @@ export function useTradeForm(props: TradeFormProps) {
       // Get image URLs
       const imageUrls = imageManagement.getAllImageUrls();
       
-      // Prepare trade data
+      // Prepare trade data - lọc bỏ giá trị undefined trước khi gửi lên Firebase
+      // Copy dữ liệu form và loại bỏ các giá trị undefined
+      const cleanData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== undefined)
+      );
+      
+      // Xử lý result đặc biệt để tránh lỗi undefined
+      if (cleanData.result === undefined) {
+        delete cleanData.result;
+      }
+      
       const tradeData = {
-        ...data,
-        entryImage: imageUrls.entryImage1,
-        exitImage: imageUrls.exitImage1,
-        entryImageM15: imageUrls.entryImage2,
-        exitImageM15: imageUrls.exitImage2,
+        ...cleanData,
+        entryImage: imageUrls.entryImage1 || null,
+        exitImage: imageUrls.exitImage1 || null,
+        entryImageM15: imageUrls.entryImage2 || null,
+        exitImageM15: imageUrls.exitImage2 || null,
         userId,
         updatedAt: serverTimestamp(),
         // Chỉ đặt createdAt và isOpen cho giao dịch mới
