@@ -35,25 +35,40 @@ export function SplashScreen({
     return () => phases.forEach(clearTimeout);
   }, []);
   
-  // Handle timing - đơn giản hóa và ưu tiên hiệu suất
+  // Cải thiện cơ chế chuyển đổi để mượt mà hơn
   useEffect(() => {
     if (!isAppLoading()) {
       const elapsedTime = Date.now() - startTime;
       
-      // Hàm kết thúc splash screen và áp dụng hiệu ứng cho nội dung
+      // Hàm kết thúc splash screen với hiệu ứng mượt mà hơn
       const finishSplashScreen = () => {
-        // Thêm class vào body để kích hoạt hiệu ứng CSS cho nội dung chính
-        document.body.classList.add('app-content-visible');
+        // Bước 1: Chuẩn bị nội dung chính TRƯỚC KHI ẩn splash screen
+        document.body.classList.add('app-content-ready');
         
-        // Thêm delay ngắn để animation có thể bắt đầu trước khi splash screen biến mất
-        setTimeout(() => setVisible(false), 150);
+        // Bước 2: Cho phép browser render các thay đổi cần thiết
+        requestAnimationFrame(() => {
+          // Đảm bảo có đủ thời gian để browser render các class mới
+          setTimeout(() => {
+            // Bước 3: Kích hoạt hiệu ứng mờ dần của splash screen
+            setPhase(5); // Phase mờ dần đặc biệt
+            
+            // Bước 4: Chỉ sau khi splash screen đã mờ hoàn toàn, mới ẩn nó đi
+            setTimeout(() => {
+              // Thêm class hiển thị nội dung với hiệu ứng mượt mà
+              document.body.classList.add('app-content-visible');
+              // Đặt flag đã sẵn sàng và ẩn splash screen
+              setVisible(false);
+            }, 400); // Thời gian chuyển tiếp dài hơn để tránh hiệu ứng nháy
+          }, 100);
+        });
       };
       
+      // Xử lý thời gian hiển thị tối thiểu 
       if (elapsedTime >= minimumDisplayTime) {
         // Đã đủ thời gian hiển thị tối thiểu
         setPhase(4); // Chuyển sang phase cuối
         
-        // Thêm timeout để người dùng có thể thấy phase cuối trước khi kết thúc
+        // Thêm timeout để người dùng có thể thấy phase cuối trước khi bắt đầu quá trình kết thúc
         const timer = setTimeout(finishSplashScreen, 300);
         return () => clearTimeout(timer);
       } else {
@@ -62,7 +77,7 @@ export function SplashScreen({
         const timer = setTimeout(() => {
           setPhase(4); // Chuyển sang phase cuối
           
-          // Thêm timeout để người dùng có thể thấy phase cuối trước khi kết thúc
+          // Bắt đầu quá trình kết thúc splash screen mượt mà
           setTimeout(finishSplashScreen, 300);
         }, remainingTime);
         
@@ -113,7 +128,7 @@ export function SplashScreen({
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
         transition={{ duration: 0.5 }}
       >
         {/* Glass Effect Background Elements */}

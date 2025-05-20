@@ -136,20 +136,36 @@
   z-index: 1000;
 }
 
-/* Animations đặc biệt sau khi splash screen biến mất */
-.app-content-visible .app-main-content {
-  animation: scale-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+/* Cơ chế chuyển tiếp mượt mà từ splash screen sang ứng dụng chính */
+
+/* Bước 1: Giai đoạn chuẩn bị trước khi hiển thị nội dung */
+.app-content-ready {
+  /* Ẩn nội dung nhưng vẫn chuẩn bị để render */
+  background-color: var(--background);
 }
 
-/* Tạo hiệu ứng staggered (lần lượt) xuất hiện cho các thành phần UI chính */
+.app-content-ready .app-main-content,
+.app-content-ready .sidebar-root,
+.app-content-ready .app-header,
+.app-content-ready .page-title,
+.app-content-ready .page-content {
+  opacity: 0;
+}
+
+/* Bước 2: Hiển thị nội dung với hiệu ứng mượt mà khi splash screen biến mất */
+.app-content-visible .app-main-content {
+  animation: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Tạo hiệu ứng lần lượt xuất hiện cho các thành phần UI chính - nhẹ nhàng hơn */
 .app-content-visible .sidebar-root {
-  animation: fade-in-right 0.5s ease-out forwards;
-  animation-delay: 100ms;
+  animation: fade-in 0.5s ease-out forwards;
+  animation-delay: 50ms;
 }
 
 .app-content-visible .app-header {
   animation: fade-in 0.5s ease-out forwards;
-  animation-delay: 200ms;
+  animation-delay: 100ms;
 }
 
 .app-content-visible .page-title {
