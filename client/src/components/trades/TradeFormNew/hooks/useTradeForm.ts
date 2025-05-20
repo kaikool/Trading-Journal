@@ -47,9 +47,9 @@ export function useTradeForm(props: TradeFormProps) {
       sessionType: initialValues.sessionType || "",
       hasNews: initialValues.hasNews || false,
       notes: initialValues.notes || "",
-      isOpen: initialValues.isOpen || false,
+      isOpen: initialValues.isOpen, // Sử dụng giá trị thực từ giao dịch, không ghi đè mặc định
       exitPrice: initialValues.exitPrice || null,
-      result: initialValues.result as any || undefined,
+      result: initialValues.result as any, // Sử dụng giá trị thực từ giao dịch, không ghi đè
       closingNote: ""
     } : {
       pair: "XAUUSD",
