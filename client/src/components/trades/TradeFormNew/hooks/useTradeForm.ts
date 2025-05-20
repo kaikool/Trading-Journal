@@ -137,9 +137,15 @@ export function useTradeForm(props: TradeFormProps) {
         entryImageM15: imageUrls.entryImage2,
         exitImageM15: imageUrls.exitImage2,
         userId,
-        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        isOpen: true // Default to open trade
+        // Chỉ đặt createdAt và isOpen cho giao dịch mới
+        ...(isEditMode 
+          ? {} // Không ghi đè isOpen cho giao dịch đang edit
+          : { 
+              createdAt: serverTimestamp(),
+              isOpen: true // Default to open trade chỉ khi tạo mới
+            }
+        )
       };
       
       let result;
