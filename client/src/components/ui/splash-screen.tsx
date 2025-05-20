@@ -95,7 +95,7 @@ export function SplashScreen({
       <motion.div 
         className={cn(
           "fixed inset-0 z-[100] flex flex-col items-center justify-center",
-          "safe-area-splash bg-gradient-to-br from-background/95 via-background to-background/90 dark:from-slate-950 dark:via-background dark:to-slate-900/90",
+          "safe-area-splash backdrop-blur-xl",
           // Đảm bảo safe area được áp dụng đúng cách
           "pt-safe pr-safe pb-safe pl-safe",
           className
@@ -107,60 +107,64 @@ export function SplashScreen({
           maxHeight: '100vh',
           // Sử dụng dynamic viewport height để đảm bảo full screen trên mobile
           minHeight: '100vh',
+          // Hiệu ứng glass
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(12px)',
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Animated Background Elements */}
+        {/* Glass Effect Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          {/* Market patterns */}
+          {/* Glassmorphism Particles */}
           <motion.div 
-            className="absolute top-0 right-0 w-[60%] h-[60%] opacity-10"
+            className="absolute inset-0"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.05 }}
-            transition={{ duration: 2 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
           >
-            {Array.from({ length: 10 }).map((_, i) => (
+            {/* Glass Particles */}
+            {Array.from({ length: 15 }).map((_, i) => (
               <motion.div 
                 key={i}
-                className="absolute bg-primary/30"
+                className="absolute rounded-full bg-white/10 backdrop-blur-md"
                 style={{
                   top: `${Math.random() * 100}%`,
                   left: `${Math.random() * 100}%`,
-                  width: `${10 + Math.random() * 30}px`,
-                  height: `${100 + Math.random() * 200}px`,
-                  opacity: 0.1 + Math.random() * 0.2
+                  width: `${30 + Math.random() * 100}px`,
+                  height: `${30 + Math.random() * 100}px`,
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03))',
+                  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)',
+                  backdropFilter: 'blur(5px)',
+                  opacity: 0.1 + Math.random() * 0.15
                 }}
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: 1 }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 0.1 + Math.random() * 0.15 }}
                 transition={{ 
-                  duration: 1.5 + Math.random(),
-                  delay: 0.5 + Math.random() * 1.5,
+                  duration: 1 + Math.random() * 2,
+                  delay: Math.random() * 2,
                   ease: "easeOut"
                 }}
               />
             ))}
           </motion.div>
           
-          {/* Chart grid */}
-          <div className="absolute inset-0 opacity-[0.03]">
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={`h-${i}`} className="absolute h-px w-full bg-foreground/50" style={{ top: `${i * 5}%` }} />
-            ))}
-            {Array.from({ length: 20 }).map((_, i) => (
-              <div key={`v-${i}`} className="absolute w-px h-full bg-foreground/50" style={{ left: `${i * 5}%` }} />
-            ))}
-          </div>
+          {/* Subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-background/10"></div>
         </div>
         
         {/* Modern glass container */}
         <motion.div 
-          className="relative z-10 w-full max-w-[260px] mx-auto p-5 rounded-xl bg-gradient-to-br from-background/40 to-background/10 dark:from-background/20 dark:to-background/5 backdrop-blur-xl border border-foreground/10 shadow-xl"
+          className="relative z-10 w-full max-w-[270px] mx-auto p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 dark:from-slate-900/20 dark:to-slate-900/10 backdrop-blur-xl border border-white/20 shadow-2xl"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
+          style={{
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1)',
+          }}
         >
           {/* Central Symbol - smaller and more compact */}
           <div className="relative flex justify-center mb-6">
