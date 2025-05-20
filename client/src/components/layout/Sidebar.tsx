@@ -24,7 +24,6 @@ const SIDEBAR_LINKS = [
   { icon: <Icons.nav.strategies className="h-5 w-5" />, label: "Strategies", href: "/strategies" },
   { icon: <Icons.nav.goals className="h-5 w-5" />, label: "Goals", href: "/goals" },
   { icon: <Icons.nav.achievements className="h-5 w-5" />, label: "Achievements", href: "/achievements" },
-  { icon: <LucideIcons.Briefcase className="h-5 w-5" />, label: "Tools", href: "/tools" },
   { icon: <Icons.nav.settings className="h-5 w-5" />, label: "Settings", href: "/settings" },
 ];
 
