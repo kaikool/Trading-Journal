@@ -164,24 +164,7 @@ Chỉ trả về JSON, không có text thêm.`;
         return parsed;
       } catch (parseError) {
         console.error('Lỗi parse JSON:', parseError);
-        return {
-          suggestedConditions: [
-            {
-              id: "suggestion-1",
-              title: "Xác nhận xu hướng với RSI",
-              description: "Thêm RSI để xác nhận tín hiệu và tránh giao dịch trong vùng quá mua/quá bán",
-              condition: {
-                label: "RSI trong vùng hợp lý",
-                indicator: "RSI(14)",
-                timeframe: "H4",
-                expectedValue: "30-70",
-                description: "RSI nằm giữa 30-70 để tránh extreme zones"
-              },
-              confidence: 75,
-              impact: "high"
-            }
-          ]
-        };
+        throw new Error('Không thể phân tích phản hồi từ AI. Vui lòng thử lại.');
       }
     } catch (error) {
       console.error('Lỗi tạo gợi ý:', error);
