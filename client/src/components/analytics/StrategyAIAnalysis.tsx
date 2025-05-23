@@ -256,7 +256,7 @@ export default function StrategyAIAnalysis() {
     setIsLoadingAIRecommendations(true);
     try {
       const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `
       Analyze this forex trading strategy performance and provide specific recommendations:
