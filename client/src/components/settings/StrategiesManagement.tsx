@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
   StrategyConditionList,
 } from "./StrategyConditionInput";
+import { AIStrategyAnalysis } from "@/components/analytics/AIStrategyAnalysis";
 
 import {
   DialogContent,
@@ -155,7 +156,10 @@ const StrategyItem = React.memo(function StrategyItem({
   isSaving,
   onEditFieldChange,
   newTimeframe,
-  resetFormFields
+  resetFormFields,
+  aiAnalysisStrategyId,
+  onToggleAIAnalysis,
+  onAIStrategyUpdate
 }: {
   strategy: TradingStrategy;
   isEditMode: boolean;
@@ -167,6 +171,9 @@ const StrategyItem = React.memo(function StrategyItem({
   onEditFieldChange?: (fieldName: string, value: any) => void;
   newTimeframe: string;
   resetFormFields: () => void;
+  aiAnalysisStrategyId: string | null;
+  onToggleAIAnalysis: (strategyId: string | null) => void;
+  onAIStrategyUpdate: (strategy: TradingStrategy) => void;
 }) {
   // Memoized handler for updating fields in edit mode
   const handleFieldChange = useCallback((fieldName: string, value: any) => {
@@ -524,39 +531,62 @@ const StrategyItem = React.memo(function StrategyItem({
               </div>
             )}
             
-            <div className="flex justify-end gap-1.5 border-t border-border/20 mt-3 pt-3">
-              {!strategy.isDefault && (
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={onSetAsDefault}
-                  disabled={isSaving}
-                  className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary h-8 px-2 text-xs"
-                >
-                  <Icons.trade.bookmark className="h-3 w-3 mr-1" />
-                  Default
-                </Button>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={onEdit}
-                className="bg-secondary/30 hover:bg-secondary/50 h-8 px-2 text-xs"
-              >
-                <Icons.general.edit className="h-3 w-3 mr-1" />
-                Edit
-              </Button>
+            <div className="flex justify-between gap-1.5 border-t border-border/20 mt-3 pt-3">
+              {/* AI Analysis Button */}
               <Button 
                 variant="outline" 
                 size="sm"
-                className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10 h-8 px-2 text-xs"
-                onClick={onDelete}
-                disabled={isSaving}
+                onClick={() => onToggleAIAnalysis(aiAnalysisStrategyId === strategy.id ? null : strategy.id)}
+                className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20 text-primary hover:from-primary/10 hover:to-primary/15 h-8 px-2 text-xs"
               >
-                <Icons.trade.trash className="h-3 w-3 mr-1" />
-                Delete
+                <Icons.analytics.brain className="h-3 w-3 mr-1" />
+                {aiAnalysisStrategyId === strategy.id ? 'Ẩn AI' : 'Phân tích AI'}
               </Button>
+              
+              <div className="flex gap-1.5">
+                {!strategy.isDefault && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={onSetAsDefault}
+                    disabled={isSaving}
+                    className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary h-8 px-2 text-xs"
+                  >
+                    <Icons.trade.bookmark className="h-3 w-3 mr-1" />
+                    Default
+                  </Button>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={onEdit}
+                  className="bg-secondary/30 hover:bg-secondary/50 h-8 px-2 text-xs"
+                >
+                  <Icons.general.edit className="h-3 w-3 mr-1" />
+                  Edit
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="text-destructive hover:text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/10 h-8 px-2 text-xs"
+                  onClick={onDelete}
+                  disabled={isSaving}
+                >
+                  <Icons.trade.trash className="h-3 w-3 mr-1" />
+                  Delete
+                </Button>
+              </div>
             </div>
+            
+            {/* AI Analysis Component */}
+            {aiAnalysisStrategyId === strategy.id && (
+              <div className="mt-4 border-t pt-4">
+                <AIStrategyAnalysis 
+                  strategy={strategy}
+                  onUpdateStrategy={onAIStrategyUpdate}
+                />
+              </div>
+            )}
           </div>
         )}
       </AccordionContent>
@@ -583,6 +613,9 @@ export function StrategiesManagement() {
   // State for tracking new rule inputs
   const [newTimeframe, setNewTimeframe] = useState("");
   
+  // State cho AI Analysis
+  const [aiAnalysisStrategyId, setAiAnalysisStrategyId] = useState<string | null>(null);
+  
   // State for new strategy creation
   const [newStrategy, setNewStrategy] = useState<Partial<TradingStrategy>>({
     id: uuidv4(),
@@ -603,6 +636,36 @@ export function StrategiesManagement() {
     setEditedStrategy(null);
     setNewTimeframe("");
   }, []);
+
+  // Handler cho AI analysis strategy update
+  const handleAIStrategyUpdate = useCallback(async (updatedStrategy: TradingStrategy) => {
+    if (!auth.currentUser) return;
+    
+    try {
+      setIsSaving(true);
+      const userId = auth.currentUser.uid;
+      await updateStrategy(userId, updatedStrategy.id, updatedStrategy);
+      
+      // Update local state
+      setStrategies(prev => prev.map(s => 
+        s.id === updatedStrategy.id ? updatedStrategy : s
+      ));
+      
+      toast({
+        title: "Thành công",
+        description: "Chiến lược đã được cập nhật với gợi ý AI",
+      });
+    } catch (error) {
+      console.error("Error updating strategy with AI suggestion:", error);
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật chiến lược",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [toast]);
   
   // Load strategies on component mount
   useEffect(() => {
