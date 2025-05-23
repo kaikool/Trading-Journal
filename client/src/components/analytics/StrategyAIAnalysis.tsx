@@ -511,11 +511,26 @@ export default function StrategyAIAnalysis() {
   }, [userId, toast]);
 
   // Handle strategy selection
-  const handleStrategyChange = (value: string) => {
+  const handleStrategyChange = async (value: string) => {
     setSelectedStrategyId(value);
     const strategy = strategies.find(s => s.id === value);
     setSelectedStrategy(strategy || null);
-    setAnalysisResults(null);
+    
+    // Auto-run condition analysis when strategy is selected
+    if (strategy && trades) {
+      setIsAnalyzing(true);
+      try {
+        const results = await analyzeStrategyPerformance(strategy, trades);
+        setAnalysisResults(results);
+      } catch (error) {
+        console.error('Auto-analysis error:', error);
+        setAnalysisResults(null);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    } else {
+      setAnalysisResults(null);
+    }
   };
 
   // Run analysis
@@ -617,24 +632,27 @@ export default function StrategyAIAnalysis() {
           {selectedStrategy && (
             <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
               <div className="text-sm text-muted-foreground">
-                {trades?.length || 0} trades available
+                {trades?.length || 0} trades available • Analysis auto-loaded
               </div>
-              <Button 
-                onClick={handleRunAnalysis}
-                disabled={isAnalyzing || !trades || trades.length === 0}
-              >
-                {isAnalyzing ? (
-                  <>
-                    <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                    Analyze
-                  </>
-                )}
-              </Button>
+              {analysisResults && (
+                <Button 
+                  onClick={handleRunAnalysis}
+                  disabled={isAnalyzing}
+                  variant="outline"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
+                      Getting AI suggestions...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.analytics.brain className="h-4 w-4 mr-2" />
+                      Get AI Recommendations
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
