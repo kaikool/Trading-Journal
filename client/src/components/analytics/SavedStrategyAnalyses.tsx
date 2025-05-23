@@ -191,9 +191,11 @@ export default function SavedStrategyAnalyses() {
                 >
                   <div className="space-y-1">
                     <div className="font-medium">{analysis.strategyName}</div>
-                    <div className="text-xs flex items-center gap-1.5 font-medium text-blue-600 dark:text-blue-400">
-                      <Icons.ui.calendar className="h-3.5 w-3.5 text-blue-500 dark:text-blue-300" />
-                      {formatDate(analysis.createdAt)}
+                    <div className="text-xs flex items-center gap-1.5 font-medium">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                        <Icons.ui.calendar className="h-3 w-3 mr-1" />
+                        {formatDate(analysis.createdAt)}
+                      </span>
                     </div>
                   </div>
                 </Button>
