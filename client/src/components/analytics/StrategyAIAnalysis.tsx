@@ -23,6 +23,12 @@ import { TradingStrategy } from "@/types";
 import { getStrategies, updateStrategy } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import { useTradesQuery } from "@/hooks/use-trades-query";
+import { 
+  calculateAIStrategyData, 
+  formatAIDataForGemini,
+  type AIConditionPerformance,
+  type AIAnalysisResults 
+} from "./AIStrategyAnalysisCalculation";
 
 // Types for analysis results
 interface ConditionPerformance {
@@ -99,112 +105,48 @@ function useStrategyAnalysis() {
   const analyzeStrategyPerformance = async (
     strategy: TradingStrategy, 
     trades: any[],
-    analyticsData?: any // Add analytics data parameter to reuse calculated values
+    analyticsData?: any // Optional analytics data for fallback
   ): Promise<AnalysisResults> => {
     try {
-      // Filter trades for this strategy
-      const strategyTrades = trades.filter(trade => 
-        trade.strategy === strategy.name || 
-        trade.strategy === strategy.id
-      );
+      // Sử dụng module AI riêng để tính toán
+      const aiResults = calculateAIStrategyData(strategy, trades);
+      
+      // Format dữ liệu cho Gemini AI
+      const aiFormattedData = formatAIDataForGemini(strategy, aiResults);
+      
+      console.log('=== AI CALCULATION MODULE RESULTS ===');
+      console.log('AI Strategy:', aiFormattedData.aiStrategyName);
+      console.log('AI Overall Stats:', aiFormattedData.aiOverallStatsFormatted);
+      console.log('AI Condition Performance:', aiFormattedData.aiConditionPerformanceFormatted);
+      console.log('====================================');
 
-      if (strategyTrades.length === 0) {
-        throw new Error('Không có dữ liệu giao dịch cho chiến lược này');
-      }
+      // Convert AI results to legacy format for compatibility
+      const overallStats = {
+        totalTrades: aiResults.aiOverallStats.aiTotalTrades,
+        winRate: aiResults.aiOverallStats.aiWinRate,
+        profitLoss: aiResults.aiOverallStats.aiProfitLoss,
+        avgProfit: aiResults.aiOverallStats.aiAvgProfit,
+        bestPerformingCondition: aiResults.aiOverallStats.aiBestPerformingCondition,
+        worstPerformingCondition: aiResults.aiOverallStats.aiWorstPerformingCondition
+      };
 
-      // Use pre-calculated values from analytics if available
-      let overallStats;
-      if (analyticsData?.strategyPerformance) {
-        const strategyPerf = analyticsData.strategyPerformance.find((s: any) => 
-          s.strategy === strategy.name || s.strategy === strategy.id
-        );
-        
-        if (strategyPerf) {
-          // Reuse calculated values from analytics system
-          overallStats = {
-            totalTrades: strategyPerf.trades,
-            winRate: strategyPerf.winRate,
-            profitLoss: strategyPerf.netProfit,
-            avgProfit: strategyPerf.trades > 0 ? strategyPerf.netProfit / strategyPerf.trades : 0,
-            bestPerformingCondition: '',
-            worstPerformingCondition: ''
-          };
-          
-          console.log('=== USING PRE-CALCULATED ANALYTICS DATA ===');
-          console.log('Strategy:', strategy.name);
-          console.log('Reused Stats:', overallStats);
-          console.log('==========================================');
-        } else {
-          // Fallback to manual calculation if strategy not found in analytics
-          overallStats = calculateStatsFromTrades(strategyTrades);
-        }
-      } else {
-        // Fallback to manual calculation if no analytics data provided
-        overallStats = calculateStatsFromTrades(strategyTrades);
-      }
+      // Convert AI condition performance to legacy format
+      const conditionPerformance: ConditionPerformance[] = aiResults.aiConditionPerformance.map(aiCond => ({
+        id: aiCond.id,
+        label: aiCond.label,
+        type: aiCond.type,
+        winRate: aiCond.aiWinRate,
+        totalTrades: aiCond.aiTotalTrades,
+        winningTrades: aiCond.aiWinningTrades,
+        losingTrades: aiCond.aiLosingTrades,
+        impact: aiCond.aiImpact,
+        profitLoss: aiCond.aiProfitLoss,
+        avgProfit: aiCond.aiAvgProfit,
+        recommendation: aiCond.aiRecommendation
+      }));
 
-      // Analyze each condition performance
-      const allConditions = [
-        ...(strategy.rules || []).map(r => ({ ...r, type: 'rule' as const })),
-        ...(strategy.entryConditions || []).map(r => ({ ...r, type: 'entry' as const })),
-        ...(strategy.exitConditions || []).map(r => ({ ...r, type: 'exit' as const }))
-      ];
-
-      const conditionPerformance: ConditionPerformance[] = allConditions.map(condition => {
-        // Use all strategy trades as baseline for condition analysis
-        // In a real implementation, you would track which specific conditions were met per trade
-        // For now, we analyze all trades that used this strategy
-        const conditionTrades = strategyTrades; // All trades for this strategy
-        
-        // Debug: Log trade structure to understand the data format
-        console.log('=== DEBUGGING CONDITION PERFORMANCE ===');
-        console.log('Sample trade for condition analysis:', conditionTrades[0]);
-        console.log('Available trade fields:', Object.keys(conditionTrades[0] || {}));
-        console.log('=======================================');
-        
-        // Use the same logic as overall stats for consistency
-        const conditionWins = conditionTrades.filter(t => 
-          t.result === 'win' || t.result === 'Win' || 
-          (t.profitLoss && t.profitLoss > 0) ||
-          (t.pips && t.pips > 0)
-        );
-        const conditionLosses = conditionTrades.filter(t => 
-          t.result === 'loss' || t.result === 'Loss' ||
-          (t.profitLoss && t.profitLoss < 0) ||
-          (t.pips && t.pips < 0)
-        );
-        const conditionProfit = conditionTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
-
-        const winRate = conditionTrades.length > 0 ? (conditionWins.length / conditionTrades.length) * 100 : 0;
-        
-        // Determine impact based on condition type and performance
-        let impact: 'high' | 'medium' | 'low' = 'medium';
-        if (condition.type === 'entry' && winRate >= 60) impact = 'high';
-        else if (condition.type === 'exit' && Math.abs(conditionProfit) > 100) impact = 'high';
-        else if (winRate < 40) impact = 'low';
-
-        return {
-          id: condition.id,
-          label: condition.label,
-          type: condition.type,
-          winRate,
-          totalTrades: conditionTrades.length,
-          winningTrades: conditionWins.length,
-          losingTrades: conditionLosses.length,
-          impact,
-          profitLoss: conditionProfit,
-          avgProfit: conditionTrades.length > 0 ? conditionProfit / conditionTrades.length : 0,
-          recommendation: winRate >= 60 ? 'keep' : winRate >= 40 ? 'modify' : 'remove'
-        };
-      });
-
-      // Generate AI recommendations using Gemini
+      // Generate AI recommendations using Gemini với dữ liệu đã được tính toán từ module AI
       const recommendations = await generateAIRecommendations(strategy, overallStats, conditionPerformance);
-
-      // Update best/worst performing conditions
-      const sortedByWinRate = conditionPerformance.sort((a, b) => b.winRate - a.winRate);
-      overallStats.bestPerformingCondition = sortedByWinRate[0]?.label || 'N/A';
-      overallStats.worstPerformingCondition = sortedByWinRate[sortedByWinRate.length - 1]?.label || 'N/A';
 
       return {
         overallStats,
@@ -213,7 +155,7 @@ function useStrategyAnalysis() {
       };
 
     } catch (error) {
-      console.error('Analysis error:', error);
+      console.error('AI Analysis error:', error);
       throw error;
     }
   };
@@ -234,11 +176,11 @@ function useStrategyAnalysis() {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       // Log data being sent to Gemini for debugging
-      console.log('=== DATA SENT TO GEMINI ===');
+      console.log('=== AI DATA SENT TO GEMINI ===');
       console.log('Strategy:', strategy.name);
       console.log('Overall Stats:', overallStats);
-      console.log('Condition Performance:', conditionPerformance);
-      console.log('========================');
+      console.log('Condition Performance (AI Calculated):', conditionPerformance);
+      console.log('==============================');
 
       const prompt = `
 Phân tích chiến lược forex "${strategy.name}" và đưa ra gợi ý cải tiến bằng tiếng Việt:
