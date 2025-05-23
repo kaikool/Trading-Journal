@@ -178,20 +178,20 @@ export default function SavedStrategyAnalyses() {
               </p>
             </div>
           ) : (
-            <div className="flex flex-wrap gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {savedAnalyses.map((analysis) => (
                 <Button
                   key={analysis.id}
                   variant={selectedAnalysisId === analysis.id ? "default" : "outline"}
                   size="sm"
-                  className={`h-auto text-left py-3 px-4 ${
+                  className={`h-auto w-full text-left py-3 px-4 ${
                     selectedAnalysisId === analysis.id ? 'border-primary/40' : 'bg-white/80 dark:bg-black/20'
                   }`}
                   onClick={() => setSelectedAnalysisId(analysis.id)}
                 >
-                  <div className="space-y-1">
-                    <div className="font-medium">{analysis.strategyName}</div>
-                    <div className="text-xs flex items-center gap-1.5 font-medium">
+                  <div className="w-full">
+                    <div className="font-medium mb-2">{analysis.strategyName}</div>
+                    <div className="text-xs">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                         <Icons.ui.calendar className="h-3 w-3 mr-1" />
                         {formatDate(analysis.createdAt)}
