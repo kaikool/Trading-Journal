@@ -259,44 +259,44 @@ export default function StrategyAIAnalysis() {
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       const prompt = `
-      Analyze this forex trading strategy performance and provide specific recommendations:
+      Phân tích hiệu suất chiến lược giao dịch Forex này và đưa ra các khuyến nghị cụ thể:
 
-      Overall Performance:
-      - Total Trades: ${analysisResults.overallPerformance.totalTrades}
-      - Win Rate: ${analysisResults.overallPerformance.winRate.toFixed(1)}%
-      - Average Profit: $${analysisResults.overallPerformance.avgProfit.toFixed(2)}
-      - Profit Factor: ${analysisResults.overallPerformance.profitFactor.toFixed(2)}
+      Hiệu suất tổng thể:
+      - Tổng số giao dịch: ${analysisResults.overallPerformance.totalTrades}
+      - Tỷ lệ thắng: ${analysisResults.overallPerformance.winRate.toFixed(1)}%
+      - Lợi nhuận trung bình: $${analysisResults.overallPerformance.avgProfit.toFixed(2)}
+      - Hệ số lợi nhuận: ${analysisResults.overallPerformance.profitFactor.toFixed(2)}
 
-      Condition Performance:
+      Hiệu suất của các điều kiện:
       ${analysisResults.conditionPerformance.map(condition => 
-        `- ${condition.label}: ${condition.winRate.toFixed(1)}% win rate (${condition.totalTrades} trades)`
+        `- ${condition.label}: ${condition.winRate.toFixed(1)}% tỷ lệ thắng (${condition.totalTrades} giao dịch)`
       ).join('\n')}
 
-      Please provide:
-      1. 3-5 specific recommendations to improve this strategy
-      2. Each recommendation should include:
-         - Title (concise action)
-         - Description (detailed explanation)
-         - Confidence level (0-100)
-         - Impact level (High/Medium/Low)
-         - Specific condition to add/modify if applicable
+      Vui lòng cung cấp:
+      1. 3-5 khuyến nghị cụ thể để cải thiện chiến lược này
+      2. Mỗi khuyến nghị nên bao gồm:
+         - Tiêu đề (hành động ngắn gọn)
+         - Mô tả (giải thích chi tiết)
+         - Mức độ tin cậy (0-100)
+         - Mức độ tác động (High/Medium/Low)
+         - Điều kiện cụ thể để thêm/sửa đổi nếu có
 
-      Format as JSON with this structure:
+      Trả lời bằng tiếng Việt với định dạng JSON như sau:
       {
         "recommendations": [
           {
             "id": "rec-1",
-            "title": "Recommendation title",
-            "description": "Detailed description",
+            "title": "Tiêu đề khuyến nghị",
+            "description": "Mô tả chi tiết bằng tiếng Việt",
             "confidence": 85,
             "impact": "High",
             "type": "add_condition",
             "condition": {
-              "label": "Condition name",
-              "description": "What this condition does",
-              "indicator": "Technical indicator",
-              "timeframe": "Time frame",
-              "expectedValue": "Expected value/signal"
+              "label": "Tên điều kiện",
+              "description": "Chức năng của điều kiện này",
+              "indicator": "Chỉ báo kỹ thuật",
+              "timeframe": "Khung thời gian",
+              "expectedValue": "Giá trị/tín hiệu mong đợi"
             }
           }
         ]
@@ -308,17 +308,17 @@ export default function StrategyAIAnalysis() {
       const text = response.text();
 
       try {
-        // Extract JSON from the response text
-        // This handles cases where the AI might include markdown code blocks or additional text
+        // Xử lý phản hồi từ Gemini API
+        // Hỗ trợ nhiều định dạng phản hồi khác nhau
         let jsonText = text;
         
-        // If response contains a code block with JSON, extract it
+        // Nếu phản hồi chứa code block JSON, trích xuất nội dung
         const jsonBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
         if (jsonBlockMatch && jsonBlockMatch[1]) {
           jsonText = jsonBlockMatch[1].trim();
         }
         
-        // Try to find JSON with recommendations array
+        // Tìm phần JSON trong phản hồi
         const jsonStartPos = jsonText.indexOf('{');
         const jsonEndPos = jsonText.lastIndexOf('}') + 1;
         
@@ -326,12 +326,12 @@ export default function StrategyAIAnalysis() {
           jsonText = jsonText.substring(jsonStartPos, jsonEndPos);
         }
         
-        // Parse the cleaned JSON text
+        // Parse JSON
         const parsed = JSON.parse(jsonText);
         
-        // Ensure recommendations is an array
+        // Kiểm tra recommendations có phải là mảng không
         if (!parsed.recommendations || !Array.isArray(parsed.recommendations)) {
-          throw new Error('Response does not contain recommendations array');
+          throw new Error('Phản hồi không chứa mảng recommendations');
         }
         
         setAnalysisResults(prev => prev ? {
@@ -340,56 +340,17 @@ export default function StrategyAIAnalysis() {
         } : null);
 
         toast({
-          title: "AI Analysis Complete",
-          description: `Generated ${parsed.recommendations.length} recommendations`,
+          title: "Phân tích AI hoàn tất",
+          description: `Đã tạo ${parsed.recommendations.length} khuyến nghị`,
           variant: "default",
         });
       } catch (parseError) {
-        console.error('Failed to parse AI response:', parseError, text);
-        
-        // Create fallback recommendations when parsing fails
-        const fallbackRecommendations = [
-          {
-            "id": "rec-fallback-1",
-            "title": "Tối ưu hóa điều kiện vào lệnh",
-            "description": "Cải thiện độ chính xác của các điều kiện vào lệnh bằng cách thêm xác nhận từ các chỉ báo khác",
-            "confidence": 85,
-            "impact": "High",
-            "type": "add_condition",
-            "condition": {
-              "label": "Xác nhận khối lượng",
-              "description": "Thêm xác nhận khối lượng khi breakout xảy ra",
-              "indicator": "Volume",
-              "timeframe": "H1",
-              "expectedValue": "Volume > 1.5x Average"
-            }
-          },
-          {
-            "id": "rec-fallback-2",
-            "title": "Cải thiện quản lý rủi ro",
-            "description": "Điều chỉnh kích thước vị thế dựa trên biến động thị trường",
-            "confidence": 80,
-            "impact": "Medium",
-            "type": "general_advice",
-            "condition": {
-              "label": "Điều chỉnh kích thước lệnh",
-              "description": "Giảm kích thước lệnh trong thị trường biến động cao",
-              "indicator": "ATR",
-              "timeframe": "D1",
-              "expectedValue": "Điều chỉnh theo ATR"
-            }
-          }
-        ];
-        
-        setAnalysisResults(prev => prev ? {
-          ...prev,
-          recommendations: fallbackRecommendations
-        } : null);
+        console.error('Lỗi khi xử lý phản hồi từ AI:', parseError, text);
         
         toast({
-          title: "AI Analysis Complete",
-          description: "Analysis completed with default recommendations",
-          variant: "default",
+          title: "Lỗi phân tích",
+          description: "Không thể xử lý phản hồi từ AI. Vui lòng thử lại.",
+          variant: "destructive",
         });
       }
 
