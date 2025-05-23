@@ -61,7 +61,7 @@ export function calculateAIStrategyData(
   console.log('AI Strategy Trades:', aiStrategyTrades.length);
   console.log('==============================');
   
-  // Debug: Kiểm tra từng trade và conditions được tích chọn
+  // Debug: Kiểm tra từng trade và conditions được tích chọn  
   console.log('=== DETAILED TRADE ANALYSIS ===');
   aiStrategyTrades.forEach((trade, index) => {
     console.log(`Trade ${index + 1}:`, {
@@ -70,12 +70,11 @@ export function calculateAIStrategyData(
       result: trade.result,
       profitLoss: trade.profitLoss,
       pips: trade.pips,
-      // Kiểm tra xem có field nào track conditions được tích chọn không
-      conditions: trade.conditions || 'No conditions field',
-      selectedRules: trade.selectedRules || 'No selectedRules field',
-      usedConditions: trade.usedConditions || 'No usedConditions field',
-      // Log tất cả fields để tìm field tracking conditions
-      allFields: Object.keys(trade)
+      // Kiểm tra các field tracking conditions mới đã được thêm
+      usedRules: trade.usedRules || 'No usedRules field',
+      usedEntryConditions: trade.usedEntryConditions || 'No usedEntryConditions field',
+      usedExitConditions: trade.usedExitConditions || 'No usedExitConditions field',
+      hasConditionTracking: !!(trade.usedRules || trade.usedEntryConditions || trade.usedExitConditions)
     });
   });
   console.log('===============================');
@@ -136,19 +135,24 @@ function calculateAIOverallStats(aiStrategyTrades: any[]): AIOverallStats {
 /**
  * Tính toán performance cho từng condition dành cho AI
  * 
- * HẠN CHẾ HIỆN TẠI: Database không track conditions nào được sử dụng cho từng trade
- * GIẢI PHÁP: Báo cáo minh bạch và chỉ sử dụng dữ liệu thực có sẵn
+ * CẬP NHẬT: Sử dụng dữ liệu tracking conditions thực tế từ database
+ * Hỗ trợ cả trades cũ (không có tracking) và trades mới (có tracking)
  */
 function calculateAIConditionPerformance(
   strategy: TradingStrategy,
   aiStrategyTrades: any[]
 ): AIConditionPerformance[] {
   
-  console.log('=== CONDITION PERFORMANCE LIMITATION ===');
-  console.log('THỰC TRẠNG: Database chưa có field tracking conditions per trade');
-  console.log('SỐ LIỆU HIỆN CÓ: Overall strategy performance từ', aiStrategyTrades.length, 'trades');
-  console.log('KẾT QUẢ: Chỉ có thể phân tích strategy level, không thể phân tích condition level');
-  console.log('========================================');
+  console.log('=== CONDITION PERFORMANCE CALCULATION ===');
+  console.log('TRADES ANALYSIS: Phân tích', aiStrategyTrades.length, 'trades');
+  
+  // Kiểm tra xem có trades nào có condition tracking
+  const tradesWithTracking = aiStrategyTrades.filter(trade => 
+    trade.usedRules || trade.usedEntryConditions || trade.usedExitConditions
+  );
+  
+  console.log('TRADES WITH TRACKING:', tradesWithTracking.length, '/', aiStrategyTrades.length);
+  console.log('=========================================');
   
   // Tập hợp tất cả conditions từ strategy
   const allAIConditions = [
@@ -157,23 +161,61 @@ function calculateAIConditionPerformance(
     ...(strategy.exitConditions || []).map(r => ({ ...r, type: 'exit' as const }))
   ];
 
-  // Báo cáo rằng không thể phân tích condition-level với dữ liệu hiện có
   return allAIConditions.map((condition) => {
-    console.log(`Condition "${condition.label}": Không có dữ liệu tracking usage`);
+    // Tìm trades có sử dụng condition này
+    let conditionTrades: any[] = [];
+    
+    if (condition.type === 'rule') {
+      conditionTrades = aiStrategyTrades.filter(trade => 
+        trade.usedRules && trade.usedRules.includes(condition.id)
+      );
+    } else if (condition.type === 'entry') {
+      conditionTrades = aiStrategyTrades.filter(trade => 
+        trade.usedEntryConditions && trade.usedEntryConditions.includes(condition.id)
+      );
+    } else if (condition.type === 'exit') {
+      conditionTrades = aiStrategyTrades.filter(trade => 
+        trade.usedExitConditions && trade.usedExitConditions.includes(condition.id)
+      );
+    }
+
+    // Tính toán performance dựa trên dữ liệu thực
+    const aiWinningTrades = conditionTrades.filter(trade => isWinningTrade(trade));
+    const aiLosingTrades = conditionTrades.filter(trade => isLosingTrade(trade));
+    const aiBreakEvenTrades = conditionTrades.filter(trade => isBreakEvenTrade(trade));
+    
+    // Tính win rate theo công thức: (winning trades) / (total - break even) * 100%
+    const aiNonBreakEvenTrades = conditionTrades.length - aiBreakEvenTrades.length;
+    const aiWinRate = aiNonBreakEvenTrades > 0 
+      ? (aiWinningTrades.length / aiNonBreakEvenTrades) * 100 
+      : 0;
+    
+    const aiConditionProfit = conditionTrades.reduce(
+      (sum, trade) => sum + (trade.profitLoss || 0), 
+      0
+    );
+
+    const aiImpact = calculateAIImpact(condition, aiWinRate, aiConditionProfit);
+    const aiRecommendation = aiWinRate >= 60 ? 'keep' : 
+                           aiWinRate >= 40 ? 'modify' : 'remove';
+
+    console.log(`Condition "${condition.label}" (${condition.type}): ${conditionTrades.length} trades, ${aiWinRate.toFixed(1)}% win rate, $${aiConditionProfit.toFixed(2)} P&L`);
 
     return {
       id: condition.id,
       label: condition.label,
       type: condition.type,
-      aiWinRate: 0, // Không có data thực
-      aiTotalTrades: 0, // Không biết condition này được dùng bao nhiều trades
-      aiWinningTrades: 0,
-      aiLosingTrades: 0,
-      aiBreakEvenTrades: 0,
-      aiImpact: 'low' as const, // Không thể xác định
-      aiProfitLoss: 0, // Không có data riêng cho condition
-      aiAvgProfit: 0,
-      aiRecommendation: 'modify' as const // Đề xuất cải thiện tracking
+      aiWinRate,
+      aiTotalTrades: conditionTrades.length,
+      aiWinningTrades: aiWinningTrades.length,
+      aiLosingTrades: aiLosingTrades.length,
+      aiBreakEvenTrades: aiBreakEvenTrades.length,
+      aiImpact,
+      aiProfitLoss: aiConditionProfit,
+      aiAvgProfit: conditionTrades.length > 0 
+        ? aiConditionProfit / conditionTrades.length 
+        : 0,
+      aiRecommendation
     };
   });
 }
