@@ -254,38 +254,7 @@ export default function SavedStrategyAnalyses() {
             </div>
           </div>
           
-          {/* Condition Performance */}
-          <div className="bg-white dark:bg-background border border-border/40 rounded-xl overflow-hidden">
-            <div className="p-4 border-b border-border/30 bg-muted/20">
-              <h3 className="font-semibold">Condition Performance</h3>
-            </div>
-            
-            <div className="p-4 space-y-3">
-              {selectedAnalysis.data.conditionPerformance.map((condition) => (
-                <div 
-                  key={condition.id}
-                  className="flex items-center justify-between p-3 rounded-lg border border-border/30 bg-muted/10"
-                >
-                  <div className="flex-grow">
-                    <div className="font-medium">{condition.label}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {condition.totalTrades} trades
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3">
-                    <Badge className={getImpactColor(condition.impact)}>
-                      {condition.impact}
-                    </Badge>
-                    
-                    <div className={`text-xl font-bold ${getPerformanceColor(condition.winRate)}`}>
-                      {condition.winRate.toFixed(1)}%
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Condition Performance section has been removed */}
           
           {/* Recommendations */}
           {selectedAnalysis.data.recommendations && selectedAnalysis.data.recommendations.length > 0 && (

@@ -1022,11 +1022,18 @@ async function saveStrategyAnalysis(userId: string, strategyId: string, strategy
       await deleteDoc(doc(analysesRef, oldestAnalysis.id));
     }
     
+    // Prepare data - only save overall performance and recommendations, exclude condition analysis
+    const dataToSave = {
+      overallPerformance: analysisData.overallPerformance,
+      recommendations: analysisData.recommendations,
+      summary: analysisData.summary
+    };
+    
     // Lưu phân tích mới
     const newAnalysisRef = await addDoc(analysesRef, {
       strategyId,
       strategyName,
-      data: analysisData,
+      data: dataToSave,
       createdAt: serverTimestamp()
     });
     
@@ -1035,7 +1042,7 @@ async function saveStrategyAnalysis(userId: string, strategyId: string, strategy
       id: newAnalysisRef.id,
       strategyId,
       strategyName,
-      data: analysisData
+      data: dataToSave
     };
   } catch (error) {
     logError("Error saving strategy analysis:", error);
