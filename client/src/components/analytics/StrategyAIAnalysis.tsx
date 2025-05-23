@@ -472,11 +472,16 @@ export default function StrategyAIAnalysis() {
   // Load strategies
   useEffect(() => {
     const loadStrategies = async () => {
-      if (!userId) return;
+      if (!userId) {
+        console.log('No userId available for loading strategies');
+        return;
+      }
       
+      console.log('Loading strategies for userId:', userId);
       setIsLoadingStrategies(true);
       try {
         const strategiesData = await getStrategies(userId);
+        console.log('Loaded strategies:', strategiesData);
         setStrategies(strategiesData || []);
       } catch (error) {
         console.error('Error loading strategies:', error);
@@ -566,15 +571,6 @@ export default function StrategyAIAnalysis() {
 
   return (
     <div className="space-y-6">
-      {/* Simple Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-foreground">
-          AI Strategy Analysis
-        </h1>
-        <p className="text-muted-foreground">
-          Analyze strategy performance and get AI-powered improvement recommendations
-        </p>
-      </div>
 
       {/* Strategy Selection */}
       <Card>
