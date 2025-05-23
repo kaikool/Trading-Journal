@@ -627,7 +627,7 @@ export default function StrategyAIAnalysis() {
                     <div key={rec.id} className="p-4 sm:p-6 rounded-xl bg-gradient-to-br from-purple-50/50 to-indigo-50/50 dark:from-purple-950/20 dark:to-indigo-950/20 border border-purple-200/30 dark:border-purple-800/30">
                       {/* Mobile-friendly header with badges stacked below title on small screens */}
                       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
-                        <h4 className="font-semibold text-gray-900 dark:text-white text-lg">{rec.title}</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-white text-lg text-justify">{rec.title}</h4>
                         <div className="flex items-center gap-2 self-start">
                           <Badge className={getImpactColor(rec.impact)}>
                             {rec.impact}
@@ -645,7 +645,7 @@ export default function StrategyAIAnalysis() {
                       
                       {rec.condition && (
                         <div className="mt-4 p-3 sm:p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-white/30 dark:border-gray-700/30">
-                          <h5 className="font-medium text-gray-900 dark:text-white mb-3 text-base">{rec.condition.label}</h5>
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-3 text-base text-justify">{rec.condition.label}</h5>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 whitespace-pre-wrap leading-relaxed text-justify">
                             {rec.condition.description}
                           </p>
