@@ -111,8 +111,7 @@ export function SplashScreen({
         className={cn(
           "fixed inset-0 z-[100] flex flex-col items-center justify-center",
           "safe-area-splash backdrop-blur-xl",
-          // Đảm bảo safe area được áp dụng đúng cách
-          "pt-safe pr-safe pb-safe pl-safe",
+          // Đã loại bỏ safe area padding để hiển thị toàn màn hình
           className
         )}
         style={{
