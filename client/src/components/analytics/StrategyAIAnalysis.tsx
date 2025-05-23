@@ -438,11 +438,11 @@ export default function StrategyAIAnalysis() {
                 >
                   {isLoadingAIRecommendations ? (
                     <span className="px-2 py-1">
-                      Phân tích...
+                      ANALYZING...
                     </span>
                   ) : (
                     <span className="px-2 py-1">
-                      Phân tích AI
+                      AI ANALYSIS
                     </span>
                   )}
                 </Button>
