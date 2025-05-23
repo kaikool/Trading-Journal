@@ -305,13 +305,13 @@ function GeminiPanel({
           {/* Suggestions section */}
           <div>
             <h3 className="font-medium text-base mb-3 flex items-center">
-              <Icons.ui.lightbulb className="h-5 w-5 mr-2 text-primary" />
+              <Icons.analytics.lightbulb className="h-5 w-5 mr-2 text-primary" />
               Gợi ý Cải thiện
             </h3>
             
             {!hasSuggestionData || !suggestionAnalysis.data.suggestedConditions?.length ? (
               <div className="text-center p-4 border rounded-md">
-                <Icons.ui.lightbulb className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
+                <Icons.analytics.lightbulb className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
                 <p className="text-muted-foreground">Không có gợi ý cải thiện</p>
               </div>
             ) : (
@@ -373,7 +373,7 @@ function GeminiPanel({
               onClick={onRefreshAnalysis}
               className="text-xs"
             >
-              <Icons.ui.refreshCw className="h-3 w-3 mr-1.5" />
+              <Icons.ui.refresh className="h-3 w-3 mr-1.5" />
               Làm mới phân tích
             </Button>
           </div>
