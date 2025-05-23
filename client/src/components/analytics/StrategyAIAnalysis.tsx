@@ -68,13 +68,38 @@ interface AnalysisResults {
   recommendations: AIRecommendation[];
 }
 
-// Hook for strategy analysis
+// Helper function to calculate stats from trades when analytics data is not available
+const calculateStatsFromTrades = (strategyTrades: any[]) => {
+  const winningTrades = strategyTrades.filter(t => 
+    t.result === 'win' || t.result === 'Win' || 
+    (t.profitLoss && t.profitLoss > 0) ||
+    (t.pips && t.pips > 0)
+  );
+  const losingTrades = strategyTrades.filter(t => 
+    t.result === 'loss' || t.result === 'Loss' ||
+    (t.profitLoss && t.profitLoss < 0) ||
+    (t.pips && t.pips < 0)
+  );
+  const totalProfit = strategyTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
+
+  return {
+    totalTrades: strategyTrades.length,
+    winRate: strategyTrades.length > 0 ? (winningTrades.length / strategyTrades.length) * 100 : 0,
+    profitLoss: totalProfit,
+    avgProfit: strategyTrades.length > 0 ? totalProfit / strategyTrades.length : 0,
+    bestPerformingCondition: '',
+    worstPerformingCondition: ''
+  };
+};
+
+// Hook for strategy analysis - now uses calculated values from analytics system
 function useStrategyAnalysis() {
   const { toast } = useToast();
 
   const analyzeStrategyPerformance = async (
     strategy: TradingStrategy, 
-    trades: any[]
+    trades: any[],
+    analyticsData?: any // Add analytics data parameter to reuse calculated values
   ): Promise<AnalysisResults> => {
     try {
       // Filter trades for this strategy
@@ -87,31 +112,36 @@ function useStrategyAnalysis() {
         throw new Error('Không có dữ liệu giao dịch cho chiến lược này');
       }
 
-      // Debug: Log actual trade data to see the structure
-      console.log('=== ACTUAL TRADE DATA ===');
-      console.log('Strategy Trades:', strategyTrades);
-      console.log('Sample trade:', strategyTrades[0]);
-      console.log('========================');
-
-      // Calculate overall statistics - check different possible result fields
-      const winningTrades = strategyTrades.filter(t => 
-        t.result === 'win' || t.result === 'Win' || 
-        (t.profitLoss && t.profitLoss > 0)
-      );
-      const losingTrades = strategyTrades.filter(t => 
-        t.result === 'loss' || t.result === 'Loss' ||
-        (t.profitLoss && t.profitLoss < 0)
-      );
-      const totalProfit = strategyTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
-
-      const overallStats = {
-        totalTrades: strategyTrades.length,
-        winRate: (winningTrades.length / strategyTrades.length) * 100,
-        profitLoss: totalProfit,
-        avgProfit: totalProfit / strategyTrades.length,
-        bestPerformingCondition: '',
-        worstPerformingCondition: ''
-      };
+      // Use pre-calculated values from analytics if available
+      let overallStats;
+      if (analyticsData?.strategyPerformance) {
+        const strategyPerf = analyticsData.strategyPerformance.find((s: any) => 
+          s.strategy === strategy.name || s.strategy === strategy.id
+        );
+        
+        if (strategyPerf) {
+          // Reuse calculated values from analytics system
+          overallStats = {
+            totalTrades: strategyPerf.trades,
+            winRate: strategyPerf.winRate,
+            profitLoss: strategyPerf.netProfit,
+            avgProfit: strategyPerf.trades > 0 ? strategyPerf.netProfit / strategyPerf.trades : 0,
+            bestPerformingCondition: '',
+            worstPerformingCondition: ''
+          };
+          
+          console.log('=== USING PRE-CALCULATED ANALYTICS DATA ===');
+          console.log('Strategy:', strategy.name);
+          console.log('Reused Stats:', overallStats);
+          console.log('==========================================');
+        } else {
+          // Fallback to manual calculation if strategy not found in analytics
+          overallStats = calculateStatsFromTrades(strategyTrades);
+        }
+      } else {
+        // Fallback to manual calculation if no analytics data provided
+        overallStats = calculateStatsFromTrades(strategyTrades);
+      }
 
       // Analyze each condition performance
       const allConditions = [
