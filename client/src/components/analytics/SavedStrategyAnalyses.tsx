@@ -185,25 +185,6 @@ export default function SavedStrategyAnalyses() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">Saved Strategy Analyses</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            {savedAnalyses.length > 0 
-              ? `${savedAnalyses.length} saved ${savedAnalyses.length === 1 ? 'analysis' : 'analyses'}`
-              : 'No saved analyses yet'
-            }
-          </p>
-        </div>
-        
-        {savedAnalyses.length > 0 && (
-          <Badge variant="outline" className="px-2 py-1 text-xs">
-            <Icons.nav.analytics className="h-3 w-3 mr-1" />
-            {savedAnalyses.length}/5 saved
-          </Badge>
-        )}
-      </div>
 
       {/* Empty State */}
       {savedAnalyses.length === 0 ? (
