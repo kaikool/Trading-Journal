@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardIcon, CardGradient } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -481,59 +481,68 @@ function RecommendationCard({
   const impactConfig = getImpactConfig();
 
   return (
-    <Card className={`border-l-4 ${impactConfig.border} shadow-sm hover:shadow-md transition-all duration-200`}>
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <Icons.analytics.brain className="h-4 w-4 text-primary shrink-0" />
-                <h3 className="font-semibold text-sm text-foreground leading-tight">{recommendation.title}</h3>
+    <Card className="relative overflow-hidden card-spotlight">
+      <CardGradient 
+        variant={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'muted'} 
+        intensity="subtle" 
+        direction="top-right" 
+      />
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardIcon 
+            color={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'muted'} 
+            size="sm"
+            variant="soft"
+          >
+            <Icons.analytics.brain className="h-4 w-4" />
+          </CardIcon>
+          {recommendation.title}
+        </CardTitle>
+        <Button 
+          size="sm" 
+          variant="outline"
+          onClick={() => onApply(recommendation)}
+          className="h-8 px-3 shrink-0"
+        >
+          <Icons.ui.plus className="h-3.5 w-3.5 mr-1" />
+          Apply
+        </Button>
+      </CardHeader>
+      
+      <CardContent className="space-y-3">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {recommendation.description}
+        </p>
+        
+        {recommendation.condition && (
+          <div className="bg-muted/40 rounded-lg p-3 border border-border/20">
+            <div className="font-medium text-sm text-foreground mb-1">{recommendation.condition.label}</div>
+            <div className="text-sm text-muted-foreground leading-relaxed mb-2">{recommendation.condition.description}</div>
+            {(recommendation.condition.indicator || recommendation.condition.timeframe) && (
+              <div className="flex items-center gap-2">
+                {recommendation.condition.indicator && (
+                  <Badge variant="outline" className="text-xs px-2 py-1 bg-primary/5 border-primary/20">
+                    {recommendation.condition.indicator}
+                  </Badge>
+                )}
+                {recommendation.condition.timeframe && (
+                  <Badge variant="outline" className="text-xs px-2 py-1 bg-secondary/50">
+                    {recommendation.condition.timeframe}
+                  </Badge>
+                )}
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {recommendation.description}
-              </p>
-            </div>
-            <Button 
-              size="sm" 
-              variant="outline"
-              onClick={() => onApply(recommendation)}
-              className="h-8 px-3 shrink-0"
-            >
-              <Icons.ui.plus className="h-3.5 w-3.5 mr-1" />
-              Apply
-            </Button>
+            )}
           </div>
-          
-          {recommendation.condition && (
-            <div className="bg-muted/40 rounded-md p-3 border border-border/20">
-              <div className="font-medium text-sm text-foreground mb-1">{recommendation.condition.label}</div>
-              <div className="text-sm text-muted-foreground leading-relaxed mb-2">{recommendation.condition.description}</div>
-              {(recommendation.condition.indicator || recommendation.condition.timeframe) && (
-                <div className="flex items-center gap-2">
-                  {recommendation.condition.indicator && (
-                    <Badge variant="outline" className="text-xs px-2 py-1 bg-primary/5 border-primary/20">
-                      {recommendation.condition.indicator}
-                    </Badge>
-                  )}
-                  {recommendation.condition.timeframe && (
-                    <Badge variant="outline" className="text-xs px-2 py-1 bg-secondary/50">
-                      {recommendation.condition.timeframe}
-                    </Badge>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-          
-          <div className="flex justify-between items-center pt-1">
-            <Badge className={`text-xs px-2 py-1 border-0 ${impactConfig.color}`}>
-              <span className="mr-1.5">{impactConfig.icon}</span>
-              {recommendation.impact} Impact
-            </Badge>
-            <div className="text-xs text-muted-foreground font-medium">
-              {recommendation.confidence}% confidence
-            </div>
+        )}
+        
+        <div className="flex justify-between items-center pt-1">
+          <Badge className={`text-xs px-2 py-1 border-0 ${impactConfig.color}`}>
+            <span className="mr-1.5">{impactConfig.icon}</span>
+            {recommendation.impact} Impact
+          </Badge>
+          <div className="text-xs text-muted-foreground font-medium">
+            {recommendation.confidence}% confidence
           </div>
         </div>
       </CardContent>
