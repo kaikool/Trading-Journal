@@ -22,8 +22,8 @@ import { getStrategies } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import { useTradesQuery } from "@/hooks/use-trades-query";
 
-// Hardcode API Key
-const GEMINI_API_KEY = "AIzaSyAM8ZqOOPoPdkNhDacIJ4Hv2CnSC2z6qiA";
+// Sử dụng API Key từ environment variable
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // Types
 interface ConditionPerformance {
