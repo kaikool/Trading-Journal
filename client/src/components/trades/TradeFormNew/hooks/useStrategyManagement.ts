@@ -164,11 +164,39 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
     );
   }, []);
 
+  // Get used conditions for trade creation
+  const getUsedConditions = useCallback(() => {
+    if (!selectedStrategy) return { usedRules: [], usedEntryConditions: [], usedExitConditions: [] };
+    
+    const checkedConditionIds = strategyChecks
+      .filter(check => check.checked)
+      .map(check => check.conditionId);
+    
+    const usedRules = (selectedStrategy.rules || [])
+      .filter(rule => checkedConditionIds.includes(rule.id))
+      .map(rule => rule.id);
+    
+    const usedEntryConditions = (selectedStrategy.entryConditions || [])
+      .filter(condition => checkedConditionIds.includes(condition.id))
+      .map(condition => condition.id);
+    
+    const usedExitConditions = (selectedStrategy.exitConditions || [])
+      .filter(condition => checkedConditionIds.includes(condition.id))
+      .map(condition => condition.id);
+    
+    return {
+      usedRules,
+      usedEntryConditions,
+      usedExitConditions
+    };
+  }, [selectedStrategy, strategyChecks]);
+
   return {
     strategies,
     isLoadingStrategies,
     selectedStrategy,
     strategyChecks,
-    handleStrategyCheckToggle
+    handleStrategyCheckToggle,
+    getUsedConditions
   };
 }

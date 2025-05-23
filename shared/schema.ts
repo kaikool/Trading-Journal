@@ -61,6 +61,10 @@ export type Trade = {
   status?: string;
   riskRewardRatio?: number;
   isRevenge?: boolean;
+  // Tracking conditions được sử dụng cho trade này
+  usedRules?: string[] | null; // IDs của rules được tích chọn
+  usedEntryConditions?: string[] | null; // IDs của entry conditions được tích chọn  
+  usedExitConditions?: string[] | null; // IDs của exit conditions được tích chọn
   createdAt: Date;
   updatedAt: Date;
 };
@@ -102,6 +106,10 @@ export const insertTradeSchema = z.object({
   notes: z.string().optional(),
   entryImage: z.string().optional(),
   exitImage: z.string().optional(),
+  // Tracking conditions được sử dụng cho trade này
+  usedRules: z.array(z.string()).optional(),
+  usedEntryConditions: z.array(z.string()).optional(),
+  usedExitConditions: z.array(z.string()).optional(),
 });
 
 // Note: Goal schemas are now handled in Firebase

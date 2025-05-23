@@ -129,6 +129,9 @@ export function useTradeForm(props: TradeFormProps) {
       // Get image URLs
       const imageUrls = imageManagement.getAllImageUrls();
       
+      // Get used conditions from strategy checklist
+      const usedConditions = strategyManagement.getUsedConditions();
+      
       // Prepare trade data - lọc bỏ giá trị undefined trước khi gửi lên Firebase
       // Copy dữ liệu form và loại bỏ các giá trị undefined
       const cleanData = Object.fromEntries(
@@ -149,6 +152,10 @@ export function useTradeForm(props: TradeFormProps) {
         exitImage: imageUrls.exitImage1 || null,
         entryImageM15: imageUrls.entryImage2 || null,
         exitImageM15: imageUrls.exitImage2 || null,
+        // Include used conditions from strategy checklist
+        usedRules: usedConditions.usedRules.length > 0 ? usedConditions.usedRules : null,
+        usedEntryConditions: usedConditions.usedEntryConditions.length > 0 ? usedConditions.usedEntryConditions : null,
+        usedExitConditions: usedConditions.usedExitConditions.length > 0 ? usedConditions.usedExitConditions : null,
         userId,
         updatedAt: serverTimestamp(),
         // Chỉ đặt createdAt và isOpen cho giao dịch mới
