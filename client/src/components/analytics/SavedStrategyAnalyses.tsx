@@ -121,13 +121,19 @@ export default function SavedStrategyAnalyses() {
   // Find the selected analysis
   const selectedAnalysis = savedAnalyses.find(a => a.id === selectedAnalysisId);
 
-  // Format date for display
+  // Format date for display with improved readability
   const formatDate = (timestamp: any) => {
     if (!timestamp || !timestamp.toDate) return 'N/A';
     
     try {
       const date = timestamp.toDate();
-      return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
+      // Format to more specific date/time for better readability
+      const timeAgo = formatDistanceToNow(date, { addSuffix: true, locale: enUS });
+      
+      // Make it more readable by shortening and making it more precise
+      return timeAgo
+        .replace('about ', '')
+        .replace('less than a minute ago', 'just now');
     } catch (e) {
       console.error('Error formatting date:', e);
       return 'N/A';
@@ -185,8 +191,8 @@ export default function SavedStrategyAnalyses() {
                 >
                   <div className="space-y-1">
                     <div className="font-medium">{analysis.strategyName}</div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Icons.ui.calendar className="h-3 w-3" />
+                    <div className="text-xs flex items-center gap-1.5 font-medium text-blue-600 dark:text-blue-400">
+                      <Icons.ui.clock className="h-3.5 w-3.5 text-blue-500 dark:text-blue-300" />
                       {formatDate(analysis.createdAt)}
                     </div>
                   </div>
