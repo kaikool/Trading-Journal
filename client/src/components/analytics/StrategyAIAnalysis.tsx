@@ -609,48 +609,88 @@ export default function StrategyAIAnalysis() {
             </Card>
           )}
 
-          {/* AI Recommendations */}
+          {/* AI Recommendations - Enhanced UI */}
           {analysisResults.recommendations.length > 0 && (
-            <Card variant="glass" hover className="border-purple-200/30 dark:border-purple-800/30">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Icons.analytics.brain className="h-5 w-5 text-purple-600" />
-                  AI Recommendations
+            <Card className="shadow-lg border-purple-200/30 dark:border-purple-800/30 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-50/80 to-indigo-50/80 dark:from-purple-950/30 dark:to-indigo-950/30 border-b border-purple-100/50 dark:border-purple-900/50">
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Icons.analytics.brain className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                  Phân tích & Gợi ý từ Gemini AI
                 </CardTitle>
-                <CardDescription>
-                  Intelligent suggestions to optimize your trading strategy
+                <CardDescription className="text-base text-purple-700/70 dark:text-purple-300/70">
+                  Những đề xuất giá trị để tối ưu hóa chiến lược giao dịch của bạn
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {analysisResults.recommendations.map((rec) => (
-                    <div key={rec.id} className="p-6 rounded-xl bg-gradient-to-br from-purple-50/50 to-indigo-50/50 dark:from-purple-950/20 dark:to-indigo-950/20 border border-purple-200/30 dark:border-purple-800/30">
+              <CardContent className="p-6">
+                <div className="space-y-8">
+                  {analysisResults.recommendations.map((rec, index) => (
+                    <div key={rec.id} 
+                      className="p-6 rounded-xl border border-l-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-l-[6px] bg-white dark:bg-gray-800/90"
+                      style={{
+                        borderLeftColor: rec.impact === 'High' ? 'rgb(220, 38, 38)' : 
+                                        rec.impact === 'Medium' ? 'rgb(234, 179, 8)' : 
+                                        'rgb(34, 197, 94)',
+                        borderColor: rec.impact === 'High' ? 'rgba(220, 38, 38, 0.2)' : 
+                                   rec.impact === 'Medium' ? 'rgba(234, 179, 8, 0.2)' : 
+                                   'rgba(34, 197, 94, 0.2)',
+                      }}
+                    >
                       <div className="flex items-start justify-between mb-4">
                         <div className="space-y-2 flex-1">
-                          <h4 className="font-semibold text-gray-900 dark:text-white">{rec.title}</h4>
-                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-sm font-bold">
+                              {index + 1}
+                            </div>
+                            <h4 className="font-bold text-xl text-gray-900 dark:text-white">{rec.title}</h4>
+                          </div>
+                          <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed pl-8">
                             {rec.description}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Badge className={getImpactColor(rec.impact)}>
-                            {rec.impact}
+                        <div className="flex flex-col items-end gap-2 ml-4">
+                          <Badge className={`${getImpactColor(rec.impact)} px-3 py-1 text-sm`}>
+                            {rec.impact === 'High' ? 'Ưu tiên cao' : 
+                             rec.impact === 'Medium' ? 'Ưu tiên trung bình' : 
+                             'Ưu tiên thấp'}
                           </Badge>
-                          <Badge variant="outline" className="bg-white/60 dark:bg-gray-800/60">
-                            {rec.confidence}% confident
-                          </Badge>
+                          <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                            <Icons.analytics.chartBar className="h-4 w-4" />
+                            <span className="font-medium">{rec.confidence}%</span> độ tin cậy
+                          </div>
                         </div>
                       </div>
                       
                       {rec.condition && (
-                        <div className="mt-4 p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-white/30 dark:border-gray-700/30">
-                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">{rec.condition.label}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{rec.condition.description}</p>
+                        <div className="mt-5 p-5 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-inner">
+                          <h5 className="font-semibold text-lg text-gray-900 dark:text-white flex items-center gap-2 mb-3">
+                            <Icons.ui.puzzle className="h-5 w-5 text-purple-600" />
+                            {rec.condition.label}
+                          </h5>
+                          <p className="text-base text-gray-700 dark:text-gray-300 mb-4 pl-7">
+                            {rec.condition.description}
+                          </p>
+                          
                           {rec.condition.indicator && (
-                            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
-                              <span><strong>Indicator:</strong> {rec.condition.indicator}</span>
-                              {rec.condition.timeframe && <span><strong>Timeframe:</strong> {rec.condition.timeframe}</span>}
-                              {rec.condition.expectedValue && <span><strong>Signal:</strong> {rec.condition.expectedValue}</span>}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pl-7">
+                              <div className="flex items-center gap-2 p-2 rounded-md bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/40">
+                                <span className="font-medium text-blue-800 dark:text-blue-300">
+                                  <strong>Indicator:</strong> {rec.condition.indicator}
+                                </span>
+                              </div>
+                              {rec.condition.timeframe && (
+                                <div className="flex items-center gap-2 p-2 rounded-md bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/40">
+                                  <span className="font-medium text-indigo-800 dark:text-indigo-300">
+                                    <strong>Timeframe:</strong> {rec.condition.timeframe}
+                                  </span>
+                                </div>
+                              )}
+                              {rec.condition.expectedValue && (
+                                <div className="flex items-center gap-2 p-2 rounded-md bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/40">
+                                  <span className="font-medium text-purple-800 dark:text-purple-300">
+                                    <strong>Signal:</strong> {rec.condition.expectedValue}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
