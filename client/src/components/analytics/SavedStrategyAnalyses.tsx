@@ -76,8 +76,8 @@ export default function SavedStrategyAnalyses() {
       } catch (error) {
         console.error('Error loading saved analyses:', error);
         toast({
-          title: "Lỗi",
-          description: "Không thể tải các phân tích đã lưu",
+          title: "Error",
+          description: "Could not load saved analyses",
           variant: "destructive",
         });
       } finally {
@@ -105,8 +105,8 @@ export default function SavedStrategyAnalyses() {
       }
       
       toast({
-        title: "Đã xóa phân tích",
-        description: "Phân tích đã được xóa thành công",
+        title: "Analysis Deleted",
+        description: "Analysis has been successfully deleted",
       });
     } catch (error) {
       console.error('Error deleting analysis:', error);
@@ -232,21 +232,21 @@ export default function SavedStrategyAnalyses() {
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Tỷ lệ thắng</p>
+                <p className="text-sm text-muted-foreground mb-1">Win Rate</p>
                 <p className={`text-2xl font-bold ${getPerformanceColor(selectedAnalysis.data.overallPerformance.winRate)}`}>
                   {selectedAnalysis.data.overallPerformance.winRate.toFixed(1)}%
                 </p>
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Lợi nhuận trung bình</p>
+                <p className="text-sm text-muted-foreground mb-1">Average Profit</p>
                 <p className="text-2xl font-bold">
                   ${selectedAnalysis.data.overallPerformance.avgProfit.toFixed(2)}
                 </p>
               </div>
               
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Hệ số lợi nhuận</p>
+                <p className="text-sm text-muted-foreground mb-1">Profit Factor</p>
                 <p className="text-2xl font-bold">
                   {selectedAnalysis.data.overallPerformance.profitFactor.toFixed(2)}
                 </p>
@@ -257,7 +257,7 @@ export default function SavedStrategyAnalyses() {
           {/* Condition Performance */}
           <div className="bg-white dark:bg-background border border-border/40 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-border/30 bg-muted/20">
-              <h3 className="font-semibold">Hiệu suất các điều kiện</h3>
+              <h3 className="font-semibold">Condition Performance</h3>
             </div>
             
             <div className="p-4 space-y-3">
@@ -269,7 +269,7 @@ export default function SavedStrategyAnalyses() {
                   <div className="flex-grow">
                     <div className="font-medium">{condition.label}</div>
                     <div className="text-sm text-muted-foreground">
-                      {condition.totalTrades} giao dịch
+                      {condition.totalTrades} trades
                     </div>
                   </div>
                   
@@ -291,7 +291,7 @@ export default function SavedStrategyAnalyses() {
           {selectedAnalysis.data.recommendations && selectedAnalysis.data.recommendations.length > 0 && (
             <div className="bg-white dark:bg-background border border-border/40 rounded-xl overflow-hidden">
               <div className="p-4 border-b border-border/30 bg-muted/20">
-                <h3 className="font-semibold">Khuyến nghị AI</h3>
+                <h3 className="font-semibold">AI Recommendations</h3>
               </div>
               
               <div className="p-4 space-y-3">
@@ -309,7 +309,7 @@ export default function SavedStrategyAnalyses() {
                       </Badge>
                       
                       <div className="text-sm">
-                        Độ tin cậy: <span className="font-medium">{recommendation.confidence}%</span>
+                        Confidence: <span className="font-medium">{recommendation.confidence}%</span>
                       </div>
                     </div>
                   </div>
