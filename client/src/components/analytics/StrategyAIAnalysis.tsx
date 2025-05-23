@@ -109,16 +109,22 @@ function useStrategyAnalysis() {
       ];
 
       const conditionPerformance: ConditionPerformance[] = allConditions.map(condition => {
-        // Simplified analysis - in real implementation, you'd analyze which trades used this condition
-        const conditionTrades = strategyTrades.filter(trade => {
-          // This is simplified - in reality, you'd need to track which conditions were met for each trade
-          return Math.random() > 0.3; // Simulate some trades using this condition
-        });
-
+        // Use all strategy trades as baseline for condition analysis
+        // In a real implementation, you would track which specific conditions were met per trade
+        // For now, we analyze all trades that used this strategy
+        const conditionTrades = strategyTrades; // All trades for this strategy
+        
         const conditionWins = conditionTrades.filter(t => t.result === 'win');
+        const conditionLosses = conditionTrades.filter(t => t.result === 'loss');
         const conditionProfit = conditionTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
 
         const winRate = conditionTrades.length > 0 ? (conditionWins.length / conditionTrades.length) * 100 : 0;
+        
+        // Determine impact based on condition type and performance
+        let impact: 'high' | 'medium' | 'low' = 'medium';
+        if (condition.type === 'entry' && winRate >= 60) impact = 'high';
+        else if (condition.type === 'exit' && Math.abs(conditionProfit) > 100) impact = 'high';
+        else if (winRate < 40) impact = 'low';
 
         return {
           id: condition.id,
@@ -127,8 +133,8 @@ function useStrategyAnalysis() {
           winRate,
           totalTrades: conditionTrades.length,
           winningTrades: conditionWins.length,
-          losingTrades: conditionTrades.length - conditionWins.length,
-          impact: winRate >= 70 ? 'high' : winRate >= 50 ? 'medium' : 'low',
+          losingTrades: conditionLosses.length,
+          impact,
           profitLoss: conditionProfit,
           avgProfit: conditionTrades.length > 0 ? conditionProfit / conditionTrades.length : 0,
           recommendation: winRate >= 60 ? 'keep' : winRate >= 40 ? 'modify' : 'remove'
@@ -161,7 +167,7 @@ function useStrategyAnalysis() {
     conditionPerformance: ConditionPerformance[]
   ): Promise<AIRecommendation[]> => {
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyAM8ZqOOPoPdkNhDacIJ4Hv2CnSC2z6qiA";
       if (!apiKey) {
         // Return smart recommendations based on data analysis without AI
         return generateSmartRecommendations(strategy, overallStats, conditionPerformance);
