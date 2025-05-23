@@ -639,14 +639,14 @@ export default function StrategyAIAnalysis() {
                       </div>
                       
                       {/* Description with better line height and spacing */}
-                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap mb-4 max-w-prose">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap mb-4 max-w-prose text-justify">
                         {rec.description}
                       </p>
                       
                       {rec.condition && (
                         <div className="mt-4 p-3 sm:p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-white/30 dark:border-gray-700/30">
                           <h5 className="font-medium text-gray-900 dark:text-white mb-3 text-base">{rec.condition.label}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 whitespace-pre-wrap leading-relaxed">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 whitespace-pre-wrap leading-relaxed text-justify">
                             {rec.condition.description}
                           </p>
                           {rec.condition.indicator && (
