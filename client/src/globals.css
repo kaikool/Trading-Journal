@@ -639,12 +639,7 @@ html.dark body {
     padding: 0 !important;
     overflow: hidden;
     z-index: 9999;
-    /* Đảm bảo safe area được xử lý đúng cách */
-    --splash-padding: 0px;
-    padding-top: max(var(--splash-padding), env(safe-area-inset-top, 0px)) !important;
-    padding-right: max(var(--splash-padding), env(safe-area-inset-right, 0px)) !important;
-    padding-bottom: max(var(--splash-padding), env(safe-area-inset-bottom, 0px)) !important;
-    padding-left: max(var(--splash-padding), env(safe-area-inset-left, 0px)) !important;
+    /* Đã loại bỏ safe area padding để hiển thị toàn màn hình */
   }
   
   .pwa-status-bar-area {
