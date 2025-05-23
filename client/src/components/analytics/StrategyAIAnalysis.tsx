@@ -155,8 +155,8 @@ function useStrategyAnalysis() {
       };
 
     } catch (error) {
-      console.error('AI Analysis error:', error);
-      throw error;
+      console.error('AI Analysis error:', error instanceof Error ? error.message : 'Unknown error');
+      throw new Error(error instanceof Error ? error.message : 'AI Analysis failed');
     }
   };
 
@@ -165,24 +165,23 @@ function useStrategyAnalysis() {
     overallStats: any,
     conditionPerformance: ConditionPerformance[]
   ): Promise<AIRecommendation[]> => {
-    try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyAM8ZqOOPoPdkNhDacIJ4Hv2CnSC2z6qiA";
-      if (!apiKey) {
-        // Return smart recommendations based on data analysis without AI
-        return generateSmartRecommendations(strategy, overallStats, conditionPerformance);
-      }
+    // Hardcode API key for testing
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyAM8ZqOOPoPdkNhDacIJ4Hv2CnSC2z6qiA";
+    if (!apiKey) {
+      throw new Error('VITE_GEMINI_API_KEY is required for AI recommendations');
+    }
 
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      // Log data being sent to Gemini for debugging
-      console.log('=== AI DATA SENT TO GEMINI ===');
-      console.log('Strategy:', strategy.name);
-      console.log('Overall Stats:', overallStats);
-      console.log('Condition Performance (AI Calculated):', conditionPerformance);
-      console.log('==============================');
+    // Log data being sent to Gemini for debugging
+    console.log('=== AI DATA SENT TO GEMINI ===');
+    console.log('Strategy:', strategy.name);
+    console.log('Overall Stats:', overallStats);
+    console.log('Condition Performance (AI Calculated):', conditionPerformance);
+    console.log('==============================');
 
-      const prompt = `
+    const prompt = `
 Phân tích chiến lược forex "${strategy.name}" và đưa ra gợi ý cải tiến bằng tiếng Việt:
 
 THỐNG KÊ TỔNG QUAN:
@@ -218,23 +217,13 @@ Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể
   ]
 }`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
-      try {
-        const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-        const parsed = JSON.parse(cleanText);
-        return parsed.recommendations || [];
-      } catch (parseError) {
-        console.warn('Failed to parse AI response, using smart recommendations');
-        return generateSmartRecommendations(strategy, overallStats, conditionPerformance);
-      }
-
-    } catch (error) {
-      console.warn('AI recommendation failed, using smart recommendations');
-      return generateSmartRecommendations(strategy, overallStats, conditionPerformance);
-    }
+    const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const parsed = JSON.parse(cleanText);
+    return parsed.recommendations || [];
   };
 
   const generateSmartRecommendations = (
