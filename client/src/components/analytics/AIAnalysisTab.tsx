@@ -362,9 +362,9 @@ export default function AIAnalysisTab({ data }: { data: any }) {
     }
   };
 
-  const getRulesCount = () => selectedStrategy?.rules?.length || 3;
-  const getEntryCount = () => selectedStrategy?.entryConditions?.length || 2;
-  const getExitCount = () => selectedStrategy?.exitConditions?.length || 1;
+  const getRulesCount = () => selectedStrategy?.rules?.length || 0;
+  const getEntryCount = () => selectedStrategy?.entryConditions?.length || 0;
+  const getExitCount = () => selectedStrategy?.exitConditions?.length || 0;
 
   return (
     <div className="space-y-6 p-6">
@@ -385,7 +385,7 @@ export default function AIAnalysisTab({ data }: { data: any }) {
             <SelectValue placeholder={
               isLoadingStrategies 
                 ? "Loading strategies..." 
-                : "RSI và EMA Ribbon"
+                : "Select a strategy for analysis"
             } />
           </SelectTrigger>
           <SelectContent>
