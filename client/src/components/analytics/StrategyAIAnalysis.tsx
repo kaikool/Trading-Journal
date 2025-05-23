@@ -25,8 +25,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTradesQuery } from "@/hooks/use-trades-query";
 import { Trade } from "@shared/schema";
 
-// API Key from environment
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+// API Key hardcoded for reliability
+const GEMINI_API_KEY = "AIzaSyAM8ZqOOPoPdkNhDacIJ4Hv2CnSC2z6qiA";
 
 // Debug log
 console.log('🔑 GEMINI_API_KEY status:', GEMINI_API_KEY ? 'Available' : 'Missing');
