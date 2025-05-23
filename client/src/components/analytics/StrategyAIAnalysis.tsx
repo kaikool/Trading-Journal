@@ -217,12 +217,19 @@ Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể
   ]
 }`;
 
+    console.log('🚀 Sending request to Gemini AI...');
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-
+    
+    console.log('✅ Gemini AI Response received:', text);
+    
     const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    console.log('🧹 Cleaned text:', cleanText);
+    
     const parsed = JSON.parse(cleanText);
+    console.log('📊 Parsed recommendations:', parsed);
+    
     return parsed.recommendations || [];
   };
 
