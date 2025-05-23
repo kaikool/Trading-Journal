@@ -792,9 +792,8 @@ export default function StrategyAIAnalysis() {
               </div>
             </div>
 
-            <Tabs defaultValue="all" className="space-y-3">
-              <TabsList className="grid w-full grid-cols-4 bg-muted/50">
-                <TabsTrigger value="all" className="text-xs">All ({analysisResults.conditionPerformance.length})</TabsTrigger>
+            <Tabs defaultValue="rules" className="space-y-3">
+              <TabsList className="grid w-full grid-cols-3 bg-muted/50">
                 <TabsTrigger value="rules" className="text-xs">
                   Rules ({analysisResults.conditionPerformance.filter(c => c.type === 'rule').length})
                 </TabsTrigger>
@@ -805,14 +804,6 @@ export default function StrategyAIAnalysis() {
                   Exit ({analysisResults.conditionPerformance.filter(c => c.type === 'exit').length})
                 </TabsTrigger>
               </TabsList>
-
-              <TabsContent value="all" className="space-y-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {analysisResults.conditionPerformance.map((condition) => (
-                    <ConditionCard key={condition.id} condition={condition} />
-                  ))}
-                </div>
-              </TabsContent>
 
               <TabsContent value="rules" className="space-y-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
