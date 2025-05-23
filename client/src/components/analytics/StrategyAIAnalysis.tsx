@@ -649,19 +649,6 @@ export default function StrategyAIAnalysis() {
 
       {analysisResults && (
         <div className="space-y-6">
-          {/* Overall Performance */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Overall Performance</CardTitle>
-              <CardDescription>
-                Key metrics for strategy "{selectedStrategy?.name}"
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <PerformanceStatsCard stats={analysisResults.overallStats} />
-            </CardContent>
-          </Card>
-
           {/* Condition Performance */}
           <Card>
             <CardHeader>
