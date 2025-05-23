@@ -190,12 +190,12 @@ export default function SavedStrategyAnalyses() {
                   onClick={() => setSelectedAnalysisId(analysis.id)}
                 >
                   <div className="space-y-1">
-                    <div className="font-medium">{analysis.strategyName}</div>
-                    <div className="text-xs flex items-center gap-1.5 font-medium">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                        <Icons.ui.calendar className="h-3 w-3 mr-1" />
-                        {formatDate(analysis.createdAt)}
-                      </span>
+                    <div className="font-medium px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                      {analysis.strategyName}
+                    </div>
+                    <div className="text-xs flex items-center gap-1.5 font-medium text-gray-600 dark:text-gray-400">
+                      <Icons.ui.calendar className="h-3 w-3 mr-0.5" />
+                      {formatDate(analysis.createdAt)}
                     </div>
                   </div>
                 </Button>
