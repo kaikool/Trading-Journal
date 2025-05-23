@@ -8,8 +8,8 @@ const StrategiesManagement = lazy(() =>
   import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement }))
 );
 
-const AIAnalysisTab = lazy(() => 
-  import("@/components/analytics/AIAnalysisTab")
+const StrategyAIAnalysis = lazy(() => 
+  import("@/components/analytics/StrategyAIAnalysis")
 );
 
 export default function StrategiesPage() {
@@ -67,7 +67,7 @@ export default function StrategiesPage() {
 
         <TabsContent value="ai-analysis" className="mt-0">
           <Suspense fallback={<div className="h-[400px] bg-background/5 rounded-md"></div>}>
-            <AIAnalysisTab data={{}} />
+            <StrategyAIAnalysis />
           </Suspense>
         </TabsContent>
       </Tabs>
