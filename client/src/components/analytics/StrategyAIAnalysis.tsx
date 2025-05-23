@@ -627,8 +627,8 @@ export default function StrategyAIAnalysis() {
                     <div key={rec.id} className="p-6 rounded-xl bg-gradient-to-br from-purple-50/50 to-indigo-50/50 dark:from-purple-950/20 dark:to-indigo-950/20 border border-purple-200/30 dark:border-purple-800/30">
                       <div className="flex items-start justify-between mb-4">
                         <div className="space-y-2 flex-1">
-                          <h4 className="font-semibold text-gray-900 dark:text-white">{rec.title}</h4>
-                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                          <h4 className="font-semibold text-gray-900 dark:text-white text-lg">{rec.title}</h4>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                             {rec.description}
                           </p>
                         </div>
@@ -644,13 +644,15 @@ export default function StrategyAIAnalysis() {
                       
                       {rec.condition && (
                         <div className="mt-4 p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-white/30 dark:border-gray-700/30">
-                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">{rec.condition.label}</h5>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{rec.condition.description}</p>
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-2 text-base">{rec.condition.label}</h5>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 whitespace-pre-line">
+                            {rec.condition.description}
+                          </p>
                           {rec.condition.indicator && (
-                            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
-                              <span><strong>Indicator:</strong> {rec.condition.indicator}</span>
-                              {rec.condition.timeframe && <span><strong>Timeframe:</strong> {rec.condition.timeframe}</span>}
-                              {rec.condition.expectedValue && <span><strong>Signal:</strong> {rec.condition.expectedValue}</span>}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-gray-500 dark:text-gray-500">
+                              <span className="px-2 py-1 bg-gray-50 dark:bg-gray-900 rounded"><strong>Indicator:</strong> {rec.condition.indicator}</span>
+                              {rec.condition.timeframe && <span className="px-2 py-1 bg-gray-50 dark:bg-gray-900 rounded"><strong>Timeframe:</strong> {rec.condition.timeframe}</span>}
+                              {rec.condition.expectedValue && <span className="px-2 py-1 bg-gray-50 dark:bg-gray-900 rounded"><strong>Signal:</strong> {rec.condition.expectedValue}</span>}
                             </div>
                           )}
                         </div>
