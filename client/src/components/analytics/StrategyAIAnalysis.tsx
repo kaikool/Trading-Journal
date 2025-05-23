@@ -20,7 +20,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
 import { TradingStrategy } from "@/types";
-import { getStrategies, updateStrategy } from "@/lib/firebase";
+import { getStrategies, updateStrategy, saveStrategyAnalysis } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import { useTradesQuery } from "@/hooks/use-trades-query";
 import { Trade } from "@shared/schema";
@@ -82,6 +82,7 @@ export default function StrategyAIAnalysis() {
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
   const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
   const [isLoadingAIRecommendations, setIsLoadingAIRecommendations] = useState(false);
+  const [isSavingAnalysis, setIsSavingAnalysis] = useState(false);
 
   // Load strategies
   useEffect(() => {
@@ -395,6 +396,38 @@ export default function StrategyAIAnalysis() {
     if (winRate >= 40) return 'text-yellow-600 dark:text-yellow-400';
     return 'text-red-600 dark:text-red-400';
   };
+  
+  // Handle saving analysis to Firebase
+  const handleSaveAnalysis = async () => {
+    if (!userId || !selectedStrategy || !analysisResults) {
+      toast({
+        title: "Không thể lưu phân tích",
+        description: "Vui lòng chọn chiến lược và tạo phân tích trước khi lưu",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsSavingAnalysis(true);
+    try {
+      await saveStrategyAnalysis(userId, selectedStrategy.id, selectedStrategy.name, analysisResults);
+      
+      toast({
+        title: "Đã lưu phân tích",
+        description: "Phân tích đã được lưu vào tab Saved Analyses",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error('Error saving analysis:', error);
+      toast({
+        title: "Lỗi khi lưu",
+        description: "Không thể lưu phân tích. Vui lòng thử lại sau.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingAnalysis(false);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -486,6 +519,34 @@ export default function StrategyAIAnalysis() {
         </div>
       )}
 
+      {/* Actions for saving analysis */}
+      {analysisResults && (
+        <div className="flex items-center justify-center mt-6 gap-3 mb-8">
+          <Button 
+            onClick={handleRunAIRecommendations}
+            disabled={isLoadingAIRecommendations}
+            className="relative h-12 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white overflow-hidden group"
+          >
+            <Icons.analytics.brain className="h-5 w-5 mr-2 group-hover:animate-pulse transition-all duration-300" />
+            <span className="font-semibold">
+              {isLoadingAIRecommendations ? 'Đang tạo khuyến nghị...' : 'Tạo khuyến nghị AI'}
+            </span>
+          </Button>
+          
+          <Button 
+            variant="outline"
+            onClick={handleSaveAnalysis}
+            disabled={isSavingAnalysis}
+            className="relative h-12 px-6 py-3 border-blue-500 text-blue-600 hover:bg-blue-50"
+          >
+            <Icons.ui.save className="h-5 w-5 mr-2" />
+            <span className="font-semibold">
+              {isSavingAnalysis ? 'Đang lưu...' : 'Lưu phân tích'}
+            </span>
+          </Button>
+        </div>
+      )}
+      
       {analysisResults && (
         <div className="space-y-8">
           {/* Performance Overview */}
