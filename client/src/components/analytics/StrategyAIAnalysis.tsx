@@ -145,18 +145,34 @@ function useStrategyAnalysis() {
         recommendation: aiCond.aiRecommendation
       }));
 
-      // Generate AI recommendations using Gemini với dữ liệu đã được tính toán từ module AI
-      const recommendations = await generateAIRecommendations(strategy, overallStats, conditionPerformance);
-
       return {
         overallStats,
         conditionPerformance,
-        recommendations
+        recommendations: [] // Will be loaded separately
       };
 
     } catch (error) {
       console.error('AI Analysis error:', error instanceof Error ? error.message : 'Unknown error');
       throw new Error(error instanceof Error ? error.message : 'AI Analysis failed');
+    }
+  };
+
+  const loadAIRecommendations = async (
+    strategy: TradingStrategy,
+    overallStats: any,
+    conditionPerformance: ConditionPerformance[]
+  ) => {
+    try {
+      const recommendations = await generateAIRecommendations(strategy, overallStats, conditionPerformance);
+      return recommendations;
+    } catch (error) {
+      console.error('AI Recommendations error:', error);
+      toast({
+        title: "AI Recommendations Error",
+        description: "Unable to get AI suggestions, but condition analysis is available",
+        variant: "destructive"
+      });
+      return [];
     }
   };
 
@@ -298,7 +314,7 @@ Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể
     return recommendations;
   };
 
-  return { analyzeStrategyPerformance };
+  return { analyzeStrategyPerformance, loadAIRecommendations };
 }
 
 // Performance Statistics Card - Compact modern design
@@ -534,10 +550,10 @@ export default function StrategyAIAnalysis() {
   const [selectedStrategyId, setSelectedStrategyId] = useState<string>('');
   const [selectedStrategy, setSelectedStrategy] = useState<TradingStrategy | null>(null);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isLoadingAIRecommendations, setIsLoadingAIRecommendations] = useState(false);
   const [isLoadingStrategies, setIsLoadingStrategies] = useState(false);
 
-  const { analyzeStrategyPerformance } = useStrategyAnalysis();
+  const { analyzeStrategyPerformance, loadAIRecommendations } = useStrategyAnalysis();
 
   // Load strategies
   useEffect(() => {
@@ -562,15 +578,23 @@ export default function StrategyAIAnalysis() {
           
           // Auto-run analysis for default strategy
           if (trades) {
-            setIsAnalyzing(true);
             try {
               const results = await analyzeStrategyPerformance(defaultStrategy, trades);
               setAnalysisResults(results);
+              
+              // Load AI recommendations in background
+              setIsLoadingAIRecommendations(true);
+              const recommendations = await loadAIRecommendations(
+                defaultStrategy, 
+                results.overallStats, 
+                results.conditionPerformance
+              );
+              setAnalysisResults(prev => prev ? { ...prev, recommendations } : null);
+              setIsLoadingAIRecommendations(false);
             } catch (error) {
               console.error('Auto-analysis error for default strategy:', error);
               setAnalysisResults(null);
-            } finally {
-              setIsAnalyzing(false);
+              setIsLoadingAIRecommendations(false);
             }
           }
         }
@@ -597,43 +621,55 @@ export default function StrategyAIAnalysis() {
     
     // Auto-run condition analysis when strategy is selected
     if (strategy && trades) {
-      setIsAnalyzing(true);
       try {
         const results = await analyzeStrategyPerformance(strategy, trades);
         setAnalysisResults(results);
+        
+        // Load AI recommendations in background
+        setIsLoadingAIRecommendations(true);
+        const recommendations = await loadAIRecommendations(
+          strategy, 
+          results.overallStats, 
+          results.conditionPerformance
+        );
+        setAnalysisResults(prev => prev ? { ...prev, recommendations } : null);
+        setIsLoadingAIRecommendations(false);
       } catch (error) {
         console.error('Auto-analysis error:', error);
         setAnalysisResults(null);
-      } finally {
-        setIsAnalyzing(false);
+        setIsLoadingAIRecommendations(false);
       }
     } else {
       setAnalysisResults(null);
     }
   };
 
-  // Run analysis
-  const handleRunAnalysis = async () => {
-    if (!selectedStrategy || !trades) return;
+  // Run AI recommendations
+  const handleRunAIRecommendations = async () => {
+    if (!selectedStrategy || !analysisResults) return;
 
-    setIsAnalyzing(true);
+    setIsLoadingAIRecommendations(true);
     try {
-      const results = await analyzeStrategyPerformance(selectedStrategy, trades);
-      setAnalysisResults(results);
+      const recommendations = await loadAIRecommendations(
+        selectedStrategy, 
+        analysisResults.overallStats, 
+        analysisResults.conditionPerformance
+      );
+      setAnalysisResults(prev => prev ? { ...prev, recommendations } : null);
       
       toast({
-        title: "Analysis Complete",
-        description: `Analyzed ${results.overallStats.totalTrades} trades for strategy "${selectedStrategy.name}"`,
+        title: "AI Recommendations Complete",
+        description: `Generated ${recommendations.length} AI suggestions for strategy "${selectedStrategy.name}"`,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Analysis failed';
+      const message = error instanceof Error ? error.message : 'AI Recommendations failed';
       toast({
-        title: "Analysis Error",
+        title: "AI Recommendations Error",
         description: message,
         variant: "destructive"
       });
     } finally {
-      setIsAnalyzing(false);
+      setIsLoadingAIRecommendations(false);
     }
   };
 
@@ -715,11 +751,11 @@ export default function StrategyAIAnalysis() {
               </div>
               {analysisResults && (
                 <Button 
-                  onClick={handleRunAnalysis}
-                  disabled={isAnalyzing}
+                  onClick={handleRunAIRecommendations}
+                  disabled={isLoadingAIRecommendations}
                   variant="outline"
                 >
-                  {isAnalyzing ? (
+                  {isLoadingAIRecommendations ? (
                     <>
                       <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
                       Getting AI suggestions...
@@ -737,24 +773,7 @@ export default function StrategyAIAnalysis() {
         </CardContent>
       </Card>
 
-      {/* Loading State */}
-      {isAnalyzing && (
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Icons.ui.spinner className="h-4 w-4 animate-spin" />
-                <span>Analyzing strategy...</span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[...Array(4)].map((_, i) => (
-                  <Skeleton key={i} className="h-20" />
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
 
       {analysisResults && (
         <div className="space-y-4">
