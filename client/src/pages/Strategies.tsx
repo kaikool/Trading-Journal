@@ -31,7 +31,7 @@ export default function StrategiesPage() {
           Trading Strategies
         </h2>
         <p className="text-muted-foreground mt-1 text-sm md:text-base">
-          Quản lý và phân tích chiến lược giao dịch của bạn
+          Manage and analyze your trading strategies
         </p>
       </div>
 
