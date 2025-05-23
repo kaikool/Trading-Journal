@@ -33,6 +33,7 @@ function loadEnvironmentVariables() {
 }
 
 // Ứng dụng không còn phụ thuộc vào API keys bên ngoài nữa
+// Ứng dụng sử dụng lưu trữ trong bộ nhớ, không cần kết nối PostgreSQL
 
 // Tải biến môi trường trước khi bắt đầu ứng dụng
 loadEnvironmentVariables();
