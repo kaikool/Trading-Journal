@@ -135,11 +135,20 @@ function calculateAIOverallStats(aiStrategyTrades: any[]): AIOverallStats {
 
 /**
  * Tính toán performance cho từng condition dành cho AI
+ * 
+ * HẠN CHẾ HIỆN TẠI: Database không track conditions nào được sử dụng cho từng trade
+ * GIẢI PHÁP: Báo cáo minh bạch và chỉ sử dụng dữ liệu thực có sẵn
  */
 function calculateAIConditionPerformance(
   strategy: TradingStrategy,
   aiStrategyTrades: any[]
 ): AIConditionPerformance[] {
+  
+  console.log('=== CONDITION PERFORMANCE LIMITATION ===');
+  console.log('THỰC TRẠNG: Database chưa có field tracking conditions per trade');
+  console.log('SỐ LIỆU HIỆN CÓ: Overall strategy performance từ', aiStrategyTrades.length, 'trades');
+  console.log('KẾT QUẢ: Chỉ có thể phân tích strategy level, không thể phân tích condition level');
+  console.log('========================================');
   
   // Tập hợp tất cả conditions từ strategy
   const allAIConditions = [
@@ -148,56 +157,23 @@ function calculateAIConditionPerformance(
     ...(strategy.exitConditions || []).map(r => ({ ...r, type: 'exit' as const }))
   ];
 
-  return allAIConditions.map(condition => {
-    // TODO: Logic thực tế để xác định trades nào có condition này được "tích chọn"
-    // Hiện tại dùng tất cả trades của strategy làm baseline
-    // Trong tương lai cần track condition selection per trade
-    const aiConditionTrades = aiStrategyTrades;
-    
-    const aiWinningTrades = aiConditionTrades.filter(trade => 
-      isWinningTrade(trade)
-    );
-    const aiLosingTrades = aiConditionTrades.filter(trade => 
-      isLosingTrade(trade)
-    );
-    const aiBreakEvenTrades = aiConditionTrades.filter(trade => 
-      isBreakEvenTrade(trade)
-    );
-    
-    // Tính win rate theo công thức của bạn:
-    // (số giao dịch có profit > 0) / (tổng số - số giao dịch profit = 0) * 100%
-    const aiNonBreakEvenTrades = aiConditionTrades.length - aiBreakEvenTrades.length;
-    const aiWinRate = aiNonBreakEvenTrades > 0 
-      ? (aiWinningTrades.length / aiNonBreakEvenTrades) * 100 
-      : 0;
-    
-    const aiConditionProfit = aiConditionTrades.reduce(
-      (sum, trade) => sum + (trade.profitLoss || 0), 
-      0
-    );
-
-    // TODO: Tính impact thực sự dựa trên thống kê
-    // Hiện tại dùng logic đơn giản
-    const aiImpact = calculateAIImpact(condition, aiWinRate, aiConditionProfit);
-    
-    const aiRecommendation = aiWinRate >= 60 ? 'keep' : 
-                           aiWinRate >= 40 ? 'modify' : 'remove';
+  // Báo cáo rằng không thể phân tích condition-level với dữ liệu hiện có
+  return allAIConditions.map((condition) => {
+    console.log(`Condition "${condition.label}": Không có dữ liệu tracking usage`);
 
     return {
       id: condition.id,
       label: condition.label,
       type: condition.type,
-      aiWinRate,
-      aiTotalTrades: aiConditionTrades.length,
-      aiWinningTrades: aiWinningTrades.length,
-      aiLosingTrades: aiLosingTrades.length,
-      aiBreakEvenTrades: aiBreakEvenTrades.length,
-      aiImpact,
-      aiProfitLoss: aiConditionProfit,
-      aiAvgProfit: aiConditionTrades.length > 0 
-        ? aiConditionProfit / aiConditionTrades.length 
-        : 0,
-      aiRecommendation
+      aiWinRate: 0, // Không có data thực
+      aiTotalTrades: 0, // Không biết condition này được dùng bao nhiều trades
+      aiWinningTrades: 0,
+      aiLosingTrades: 0,
+      aiBreakEvenTrades: 0,
+      aiImpact: 'low' as const, // Không thể xác định
+      aiProfitLoss: 0, // Không có data riêng cho condition
+      aiAvgProfit: 0,
+      aiRecommendation: 'modify' as const // Đề xuất cải thiện tracking
     };
   });
 }
