@@ -305,98 +305,121 @@ Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể
   return { analyzeStrategyPerformance };
 }
 
-// Performance Statistics Card
+// Performance Statistics Card - Compact modern design
 function PerformanceStatsCard({ stats }: { stats: any }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Card>
-        <CardContent className="p-4">
-          <div className="text-2xl font-bold text-primary">{stats.totalTrades}</div>
-          <div className="text-sm text-muted-foreground">Total Trades</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4">
-          <div className={`text-2xl font-bold ${
-            stats.winRate >= 60 ? 'text-green-600' : 
-            stats.winRate >= 40 ? 'text-yellow-600' : 'text-red-600'
-          }`}>
-            {stats.winRate.toFixed(1)}%
+    <Card className="border-0 shadow-sm bg-gradient-to-r from-card to-card/50">
+      <CardContent className="p-4">
+        <div className="grid grid-cols-4 gap-4">
+          <div className="text-center">
+            <div className="text-lg font-semibold text-primary">{stats.totalTrades}</div>
+            <div className="text-xs text-muted-foreground">Trades</div>
           </div>
-          <div className="text-sm text-muted-foreground">Win Rate</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4">
-          <div className={`text-2xl font-bold ${stats.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            ${stats.profitLoss.toFixed(2)}
+          <div className="text-center border-l border-border/30 pl-4">
+            <div className={`text-lg font-semibold ${
+              stats.winRate >= 60 ? 'text-emerald-600' : 
+              stats.winRate >= 40 ? 'text-amber-600' : 'text-red-500'
+            }`}>
+              {stats.winRate.toFixed(1)}%
+            </div>
+            <div className="text-xs text-muted-foreground">Win Rate</div>
           </div>
-          <div className="text-sm text-muted-foreground">Total P&L</div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className="p-4">
-          <div className={`text-2xl font-bold ${stats.avgProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            ${stats.avgProfit.toFixed(2)}
+          <div className="text-center border-l border-border/30 pl-4">
+            <div className={`text-lg font-semibold ${stats.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+              ${Math.abs(stats.profitLoss) >= 1000 ? 
+                `${(stats.profitLoss / 1000).toFixed(1)}k` : 
+                stats.profitLoss.toFixed(0)}
+            </div>
+            <div className="text-xs text-muted-foreground">Total P&L</div>
           </div>
-          <div className="text-sm text-muted-foreground">Avg Per Trade</div>
-        </CardContent>
-      </Card>
-    </div>
+          <div className="text-center border-l border-border/30 pl-4">
+            <div className={`text-lg font-semibold ${stats.avgProfit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+              ${stats.avgProfit.toFixed(1)}
+            </div>
+            <div className="text-xs text-muted-foreground">Avg/Trade</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
-// Condition Performance Card
+// Condition Performance Card - Compact refined design
 function ConditionCard({ condition }: { condition: ConditionPerformance }) {
-  const getStatusColor = () => {
-    if (condition.recommendation === 'keep') return 'border-green-200 bg-green-50';
-    if (condition.recommendation === 'modify') return 'border-yellow-200 bg-yellow-50';
-    return 'border-red-200 bg-red-50';
+  const getStatusConfig = () => {
+    if (condition.recommendation === 'keep') 
+      return { 
+        color: 'border-l-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20', 
+        icon: <Icons.ui.check className="h-3.5 w-3.5 text-emerald-600" />,
+        badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+      };
+    if (condition.recommendation === 'modify') 
+      return { 
+        color: 'border-l-amber-400 bg-amber-50/50 dark:bg-amber-950/20', 
+        icon: <Icons.ui.warning className="h-3.5 w-3.5 text-amber-600" />,
+        badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+      };
+    return { 
+      color: 'border-l-red-400 bg-red-50/50 dark:bg-red-950/20', 
+      icon: <Icons.ui.x className="h-3.5 w-3.5 text-red-600" />,
+      badge: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+    };
   };
 
-  const getStatusIcon = () => {
-    if (condition.recommendation === 'keep') return <Icons.ui.check className="h-4 w-4 text-green-600" />;
-    if (condition.recommendation === 'modify') return <Icons.ui.warning className="h-4 w-4 text-yellow-600" />;
-    return <Icons.ui.x className="h-4 w-4 text-red-600" />;
-  };
+  const statusConfig = getStatusConfig();
 
   return (
-    <Card className={`border ${getStatusColor()}`}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2">
-            {getStatusIcon()}
-            <div>
-              <h3 className="font-medium text-sm">{condition.label}</h3>
-              <Badge variant="outline" className="text-xs">
-                {condition.type}
-              </Badge>
+    <Card className={`border-l-4 ${statusConfig.color} border-r-0 border-t-0 border-b-0 shadow-sm hover:shadow-md transition-all duration-200`}>
+      <CardContent className="p-3">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-start gap-2 flex-1">
+            {statusConfig.icon}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-medium text-sm text-foreground truncate">{condition.label}</h3>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge variant="outline" className={`text-xs px-1.5 py-0.5 ${statusConfig.badge} border-0`}>
+                  {condition.type}
+                </Badge>
+                <span className={`text-xs font-medium ${
+                  condition.winRate >= 60 ? 'text-emerald-600' : 
+                  condition.winRate >= 40 ? 'text-amber-600' : 'text-red-500'
+                }`}>
+                  {condition.winRate.toFixed(1)}%
+                </span>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="space-y-3">
-          <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span>Win Rate</span>
-              <span className="font-medium">{condition.winRate.toFixed(1)}%</span>
-            </div>
-            <Progress value={condition.winRate} className="h-2" />
-          </div>
+        <div className="space-y-2">
+          <Progress 
+            value={condition.winRate} 
+            className={`h-1.5 ${
+              condition.winRate >= 60 ? '[&_div]:bg-emerald-500' : 
+              condition.winRate >= 40 ? '[&_div]:bg-amber-500' : '[&_div]:bg-red-500'
+            }`}
+          />
           
           <div className="grid grid-cols-3 gap-2 text-xs">
-            <div>
+            <div className="text-center">
               <div className="text-muted-foreground">Trades</div>
-              <div className="font-medium">{condition.totalTrades}</div>
+              <div className="font-medium text-foreground">{condition.totalTrades}</div>
             </div>
-            <div>
+            <div className="text-center">
               <div className="text-muted-foreground">Impact</div>
-              <div className="font-medium capitalize">{condition.impact}</div>
+              <div className={`font-medium capitalize ${
+                condition.impact === 'high' ? 'text-red-600' :
+                condition.impact === 'medium' ? 'text-amber-600' : 'text-blue-600'
+              }`}>
+                {condition.impact}
+              </div>
             </div>
-            <div>
+            <div className="text-center">
               <div className="text-muted-foreground">P&L</div>
-              <div className={`font-medium ${condition.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                ${condition.profitLoss.toFixed(1)}
+              <div className={`font-medium ${condition.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                ${Math.abs(condition.profitLoss) >= 100 ? 
+                  `${(condition.profitLoss / 100).toFixed(1)}h` : 
+                  condition.profitLoss.toFixed(0)}
               </div>
             </div>
           </div>
@@ -406,7 +429,7 @@ function ConditionCard({ condition }: { condition: ConditionPerformance }) {
   );
 }
 
-// AI Recommendation Card
+// AI Recommendation Card - Modern compact design
 function RecommendationCard({ 
   recommendation, 
   onApply 
@@ -414,51 +437,90 @@ function RecommendationCard({
   recommendation: AIRecommendation;
   onApply: (rec: AIRecommendation) => void;
 }) {
-  const getImpactColor = () => {
+  const getImpactConfig = () => {
     switch (recommendation.impact) {
-      case 'High': return 'bg-red-100 text-red-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'Low': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'High': 
+        return { 
+          color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+          icon: <Icons.analytics.trendingUp className="h-3 w-3" />,
+          border: 'border-l-red-400'
+        };
+      case 'Medium': 
+        return { 
+          color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+          icon: <Icons.analytics.barChart className="h-3 w-3" />,
+          border: 'border-l-amber-400'
+        };
+      case 'Low': 
+        return { 
+          color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+          icon: <Icons.analytics.activity className="h-3 w-3" />,
+          border: 'border-l-blue-400'
+        };
+      default: 
+        return { 
+          color: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300',
+          icon: <Icons.analytics.activity className="h-3 w-3" />,
+          border: 'border-l-gray-400'
+        };
     }
   };
 
+  const impactConfig = getImpactConfig();
+
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          <div>
-            <h3 className="font-medium text-sm mb-1">{recommendation.title}</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {recommendation.description}
-            </p>
+    <Card className={`border-l-4 ${impactConfig.border} border-r-0 border-t-0 border-b-0 shadow-sm hover:shadow-md transition-all duration-200 bg-gradient-to-r from-card to-card/50`}>
+      <CardContent className="p-3">
+        <div className="space-y-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <Icons.analytics.brain className="h-3.5 w-3.5 text-primary" />
+                <h3 className="font-medium text-sm text-foreground truncate">{recommendation.title}</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                {recommendation.description}
+              </p>
+            </div>
+            <Button 
+              size="sm" 
+              variant="ghost"
+              onClick={() => onApply(recommendation)}
+              className="h-7 w-7 p-0 shrink-0 hover:bg-primary/10"
+            >
+              <Icons.ui.plus className="h-3 w-3" />
+            </Button>
           </div>
           
           {recommendation.condition && (
-            <div className="bg-muted/50 rounded p-3 text-xs">
-              <div className="font-medium mb-1">{recommendation.condition.label}</div>
-              <div className="text-muted-foreground">{recommendation.condition.description}</div>
+            <div className="bg-muted/30 rounded-md p-2 text-xs border border-border/30">
+              <div className="font-medium text-foreground mb-0.5 truncate">{recommendation.condition.label}</div>
+              <div className="text-muted-foreground line-clamp-1">{recommendation.condition.description}</div>
+              {(recommendation.condition.indicator || recommendation.condition.timeframe) && (
+                <div className="flex items-center gap-2 mt-1">
+                  {recommendation.condition.indicator && (
+                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-primary/5 border-primary/20">
+                      {recommendation.condition.indicator}
+                    </Badge>
+                  )}
+                  {recommendation.condition.timeframe && (
+                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-secondary/50">
+                      {recommendation.condition.timeframe}
+                    </Badge>
+                  )}
+                </div>
+              )}
             </div>
           )}
           
           <div className="flex justify-between items-center">
-            <div className="space-y-1">
-              <div className="text-xs">
-                <span className="text-muted-foreground">Confidence: </span>
-                <span className="font-medium">{recommendation.confidence}%</span>
-              </div>
-              <Badge className={`text-xs ${getImpactColor()}`}>
-                {recommendation.impact} Impact
-              </Badge>
+            <Badge className={`text-xs px-2 py-0.5 border-0 ${impactConfig.color}`}>
+              <span className="mr-1">{impactConfig.icon}</span>
+              {recommendation.impact}
+            </Badge>
+            <div className="text-xs text-muted-foreground">
+              {recommendation.confidence}% confidence
             </div>
-            
-            <Button 
-              size="sm" 
-              onClick={() => onApply(recommendation)}
-            >
-              <Icons.ui.check className="h-3 w-3 mr-1" />
-              Apply
-            </Button>
           </div>
         </div>
       </CardContent>
@@ -678,86 +740,102 @@ export default function StrategyAIAnalysis() {
       )}
 
       {analysisResults && (
-        <div className="space-y-6">
-          {/* Condition Performance */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Condition Analysis</CardTitle>
-              <CardDescription>
-                Performance of each condition in the strategy
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="all" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="all">All</TabsTrigger>
-                  <TabsTrigger value="rules">Rules</TabsTrigger>
-                  <TabsTrigger value="entry">Entry</TabsTrigger>
-                  <TabsTrigger value="exit">Exit</TabsTrigger>
-                </TabsList>
+        <div className="space-y-4">
+          {/* Overall Performance - Compact */}
+          <PerformanceStatsCard stats={analysisResults.overallStats} />
 
-                <TabsContent value="all">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {analysisResults.conditionPerformance.map((condition) => (
-                      <ConditionCard key={condition.id} condition={condition} />
-                    ))}
-                  </div>
-                </TabsContent>
+          {/* Condition Performance - Modern compact layout */}
+          <div className="grid gap-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Condition Analysis</h3>
+                <p className="text-sm text-muted-foreground">Performance breakdown by condition type</p>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {analysisResults.conditionPerformance.length} conditions analyzed
+              </div>
+            </div>
 
-                <TabsContent value="rules">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {analysisResults.conditionPerformance
-                      .filter(c => c.type === 'rule')
-                      .map((condition) => (
-                        <ConditionCard key={condition.id} condition={condition} />
-                      ))}
-                  </div>
-                </TabsContent>
+            <Tabs defaultValue="all" className="space-y-3">
+              <TabsList className="grid w-full grid-cols-4 bg-muted/50">
+                <TabsTrigger value="all" className="text-xs">All ({analysisResults.conditionPerformance.length})</TabsTrigger>
+                <TabsTrigger value="rules" className="text-xs">
+                  Rules ({analysisResults.conditionPerformance.filter(c => c.type === 'rule').length})
+                </TabsTrigger>
+                <TabsTrigger value="entry" className="text-xs">
+                  Entry ({analysisResults.conditionPerformance.filter(c => c.type === 'entry').length})
+                </TabsTrigger>
+                <TabsTrigger value="exit" className="text-xs">
+                  Exit ({analysisResults.conditionPerformance.filter(c => c.type === 'exit').length})
+                </TabsTrigger>
+              </TabsList>
 
-                <TabsContent value="entry">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {analysisResults.conditionPerformance
-                      .filter(c => c.type === 'entry')
-                      .map((condition) => (
-                        <ConditionCard key={condition.id} condition={condition} />
-                      ))}
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="exit">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {analysisResults.conditionPerformance
-                      .filter(c => c.type === 'exit')
-                      .map((condition) => (
-                        <ConditionCard key={condition.id} condition={condition} />
-                      ))}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-
-          {/* AI Recommendations */}
-          {analysisResults.recommendations.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>AI Recommendations</CardTitle>
-                <CardDescription>
-                  Suggestions to improve your strategy
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {analysisResults.recommendations.map((recommendation) => (
-                    <RecommendationCard 
-                      key={recommendation.id} 
-                      recommendation={recommendation}
-                      onApply={handleApplyRecommendation}
-                    />
+              <TabsContent value="all" className="space-y-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {analysisResults.conditionPerformance.map((condition) => (
+                    <ConditionCard key={condition.id} condition={condition} />
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </TabsContent>
+
+              <TabsContent value="rules" className="space-y-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {analysisResults.conditionPerformance
+                    .filter(c => c.type === 'rule')
+                    .map((condition) => (
+                      <ConditionCard key={condition.id} condition={condition} />
+                    ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="entry" className="space-y-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {analysisResults.conditionPerformance
+                    .filter(c => c.type === 'entry')
+                    .map((condition) => (
+                      <ConditionCard key={condition.id} condition={condition} />
+                    ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="exit" className="space-y-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {analysisResults.conditionPerformance
+                    .filter(c => c.type === 'exit')
+                    .map((condition) => (
+                      <ConditionCard key={condition.id} condition={condition} />
+                    ))}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* AI Recommendations - Compact modern design */}
+          {analysisResults.recommendations.length > 0 && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                    <Icons.analytics.brain className="h-5 w-5 text-primary" />
+                    AI Recommendations
+                  </h3>
+                  <p className="text-sm text-muted-foreground">Smart suggestions to enhance your strategy</p>
+                </div>
+                <Badge variant="secondary" className="px-2 py-1 text-xs">
+                  {analysisResults.recommendations.length} suggestions
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {analysisResults.recommendations.map((recommendation) => (
+                  <RecommendationCard 
+                    key={recommendation.id} 
+                    recommendation={recommendation}
+                    onApply={handleApplyRecommendation}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
       )}
