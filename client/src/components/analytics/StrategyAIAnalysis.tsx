@@ -432,20 +432,18 @@ export default function StrategyAIAnalysis() {
                     handleRunAIRecommendations();
                   }}
                   disabled={isLoadingAIRecommendations || !GEMINI_API_KEY || !analysisResults}
-                  variant="outline"
+                  variant="default"
                   size="sm"
-                  className="bg-white/80 dark:bg-gray-800/80 backdrop-blur border-white/20 dark:border-gray-700/20 hover:bg-white dark:hover:bg-gray-800"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium px-6 h-10 rounded-md shadow-md hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transition-all duration-200 uppercase tracking-wider"
                 >
                   {isLoadingAIRecommendations ? (
-                    <>
-                      <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
-                      Analyzing...
-                    </>
+                    <span className="px-2 py-1">
+                      Phân tích...
+                    </span>
                   ) : (
-                    <>
-                      <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                      Get AI Insights
-                    </>
+                    <span className="px-2 py-1">
+                      Phân tích AI
+                    </span>
                   )}
                 </Button>
               </div>
