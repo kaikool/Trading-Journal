@@ -293,187 +293,100 @@ Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể
   return { analyzeStrategyPerformance };
 }
 
-// Enhanced Performance Statistics Card
+// Performance Statistics Card
 function PerformanceStatsCard({ stats }: { stats: any }) {
-  const statsData = [
-    {
-      icon: Icons.analytics.lineChart,
-      label: "Total Trades",
-      value: stats.totalTrades,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
-      iconColor: "text-primary"
-    },
-    {
-      icon: Icons.analytics.trending,
-      label: "Win Rate",
-      value: `${stats.winRate.toFixed(1)}%`,
-      color: stats.winRate >= 60 ? "text-emerald-600" : stats.winRate >= 40 ? "text-amber-600" : "text-red-600",
-      bgColor: stats.winRate >= 60 ? "bg-emerald-50" : stats.winRate >= 40 ? "bg-amber-50" : "bg-red-50",
-      iconColor: stats.winRate >= 60 ? "text-emerald-600" : stats.winRate >= 40 ? "text-amber-600" : "text-red-600"
-    },
-    {
-      icon: Icons.general.dollarSign,
-      label: "Total P&L",
-      value: `$${stats.profitLoss.toFixed(2)}`,
-      color: stats.profitLoss >= 0 ? "text-emerald-600" : "text-red-600",
-      bgColor: stats.profitLoss >= 0 ? "bg-emerald-50" : "bg-red-50",
-      iconColor: stats.profitLoss >= 0 ? "text-emerald-600" : "text-red-600"
-    },
-    {
-      icon: Icons.analytics.trending,
-      label: "Avg Per Trade",
-      value: `$${stats.avgProfit.toFixed(2)}`,
-      color: stats.avgProfit >= 0 ? "text-emerald-600" : "text-red-600",
-      bgColor: stats.avgProfit >= 0 ? "bg-emerald-50" : "bg-red-50",
-      iconColor: stats.avgProfit >= 0 ? "text-emerald-600" : "text-red-600"
-    }
-  ];
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {statsData.map((stat, index) => (
-        <Card 
-          key={index}
-          className="relative overflow-hidden border-0 shadow-sm bg-gradient-to-br from-background via-background to-muted/20 hover:shadow-md transition-all duration-300"
-        >
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="space-y-2">
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {stat.label}
-                </div>
-                <div className={`text-xl sm:text-2xl font-bold ${stat.color} leading-none`}>
-                  {stat.value}
-                </div>
-              </div>
-              <div className={`${stat.bgColor} p-3 rounded-full`}>
-                <stat.icon className={`h-5 w-5 ${stat.iconColor}`} />
-              </div>
-            </div>
-            
-            {/* Subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-primary/5 pointer-events-none" />
-          </CardContent>
-        </Card>
-      ))}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <Card>
+        <CardContent className="p-4">
+          <div className="text-2xl font-bold text-primary">{stats.totalTrades}</div>
+          <div className="text-sm text-muted-foreground">Tổng giao dịch</div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-4">
+          <div className={`text-2xl font-bold ${
+            stats.winRate >= 60 ? 'text-green-600' : 
+            stats.winRate >= 40 ? 'text-yellow-600' : 'text-red-600'
+          }`}>
+            {stats.winRate.toFixed(1)}%
+          </div>
+          <div className="text-sm text-muted-foreground">Tỷ lệ thắng</div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-4">
+          <div className={`text-2xl font-bold ${stats.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            ${stats.profitLoss.toFixed(2)}
+          </div>
+          <div className="text-sm text-muted-foreground">Tổng P&L</div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-4">
+          <div className={`text-2xl font-bold ${stats.avgProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            ${stats.avgProfit.toFixed(2)}
+          </div>
+          <div className="text-sm text-muted-foreground">Trung bình/giao dịch</div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-// Enhanced Condition Performance Card
+// Condition Performance Card
 function ConditionCard({ condition }: { condition: ConditionPerformance }) {
-  const getStatusConfig = () => {
-    if (condition.recommendation === 'keep') {
-      return {
-        border: 'border-emerald-200/60',
-        bg: 'bg-gradient-to-br from-emerald-50/50 to-emerald-100/30',
-        icon: Icons.ui.check,
-        iconColor: 'text-emerald-600',
-        iconBg: 'bg-emerald-100',
-        badgeColor: 'bg-emerald-100 text-emerald-700 border-emerald-200'
-      };
-    }
-    if (condition.recommendation === 'modify') {
-      return {
-        border: 'border-amber-200/60',
-        bg: 'bg-gradient-to-br from-amber-50/50 to-amber-100/30',
-        icon: Icons.ui.warning,
-        iconColor: 'text-amber-600',
-        iconBg: 'bg-amber-100',
-        badgeColor: 'bg-amber-100 text-amber-700 border-amber-200'
-      };
-    }
-    return {
-      border: 'border-red-200/60',
-      bg: 'bg-gradient-to-br from-red-50/50 to-red-100/30',
-      icon: Icons.ui.x,
-      iconColor: 'text-red-600',
-      iconBg: 'bg-red-100',
-      badgeColor: 'bg-red-100 text-red-700 border-red-200'
-    };
+  const getStatusColor = () => {
+    if (condition.recommendation === 'keep') return 'border-green-200 bg-green-50';
+    if (condition.recommendation === 'modify') return 'border-yellow-200 bg-yellow-50';
+    return 'border-red-200 bg-red-50';
   };
 
-  const getTypeIcon = () => {
-    switch (condition.type) {
-      case 'rule': return Icons.general.target;
-      case 'entry': return Icons.trade.entry;
-      case 'exit': return Icons.trade.exit;
-      default: return Icons.general.target;
-    }
+  const getStatusIcon = () => {
+    if (condition.recommendation === 'keep') return <Icons.ui.check className="h-4 w-4 text-green-600" />;
+    if (condition.recommendation === 'modify') return <Icons.ui.warning className="h-4 w-4 text-yellow-600" />;
+    return <Icons.ui.x className="h-4 w-4 text-red-600" />;
   };
-
-  const statusConfig = getStatusConfig();
-  const TypeIcon = getTypeIcon();
 
   return (
-    <Card className={`${statusConfig.border} ${statusConfig.bg} hover:shadow-md transition-all duration-300 relative overflow-hidden`}>
-      <CardContent className="p-5">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-start gap-3 flex-1">
-            <div className={`${statusConfig.iconBg} p-2 rounded-lg flex-shrink-0`}>
-              <statusConfig.icon className={`h-4 w-4 ${statusConfig.iconColor}`} />
+    <Card className={`border ${getStatusColor()}`}>
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            {getStatusIcon()}
+            <div>
+              <h3 className="font-medium text-sm">{condition.label}</h3>
+              <Badge variant="outline" className="text-xs">
+                {condition.type}
+              </Badge>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm text-foreground leading-snug mb-1 truncate">
-                {condition.label}
-              </h3>
-              <div className="flex items-center gap-2">
-                <Badge className={`text-xs px-2 py-1 ${statusConfig.badgeColor} font-medium`}>
-                  <TypeIcon className="h-3 w-3 mr-1" />
-                  {condition.type}
-                </Badge>
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          <div>
+            <div className="flex justify-between text-sm mb-1">
+              <span>Tỷ lệ thắng</span>
+              <span className="font-medium">{condition.winRate.toFixed(1)}%</span>
+            </div>
+            <Progress value={condition.winRate} className="h-2" />
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div>
+              <div className="text-muted-foreground">Giao dịch</div>
+              <div className="font-medium">{condition.totalTrades}</div>
+            </div>
+            <div>
+              <div className="text-muted-foreground">Tác động</div>
+              <div className="font-medium capitalize">{condition.impact}</div>
+            </div>
+            <div>
+              <div className="text-muted-foreground">P&L</div>
+              <div className={`font-medium ${condition.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                ${condition.profitLoss.toFixed(1)}
               </div>
             </div>
-          </div>
-        </div>
-        
-        {/* Win Rate Progress */}
-        <div className="space-y-2 mb-4">
-          <div className="flex justify-between items-center">
-            <span className="text-xs font-medium text-muted-foreground">Win Rate</span>
-            <span className="text-sm font-bold text-foreground">{condition.winRate.toFixed(1)}%</span>
-          </div>
-          <div className="relative">
-            <Progress 
-              value={condition.winRate} 
-              className="h-2 bg-muted/50"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-primary/10 rounded-full pointer-events-none" />
-          </div>
-        </div>
-        
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center">
-            <div className="text-xs text-muted-foreground mb-1">Trades</div>
-            <div className="text-sm font-bold text-foreground">{condition.totalTrades}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xs text-muted-foreground mb-1">Impact</div>
-            <div className="text-sm font-bold text-foreground capitalize">{condition.impact}</div>
-          </div>
-          <div className="text-center">
-            <div className="text-xs text-muted-foreground mb-1">P&L</div>
-            <div className={`text-sm font-bold ${condition.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-              ${Math.abs(condition.profitLoss) >= 1000 
-                ? `${(condition.profitLoss / 1000).toFixed(1)}k` 
-                : condition.profitLoss.toFixed(1)}
-            </div>
-          </div>
-        </div>
-
-        {/* Recommendation Badge */}
-        <div className="mt-4 pt-3 border-t border-border/50">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Recommendation</span>
-            <Badge 
-              variant="outline" 
-              className={`text-xs capitalize ${statusConfig.badgeColor} border-0`}
-            >
-              {condition.recommendation}
-            </Badge>
           </div>
         </div>
       </CardContent>
@@ -481,7 +394,7 @@ function ConditionCard({ condition }: { condition: ConditionPerformance }) {
   );
 }
 
-// Enhanced AI Recommendation Card
+// AI Recommendation Card
 function RecommendationCard({ 
   recommendation, 
   onApply 
@@ -489,134 +402,53 @@ function RecommendationCard({
   recommendation: AIRecommendation;
   onApply: (rec: AIRecommendation) => void;
 }) {
-  const getImpactConfig = () => {
+  const getImpactColor = () => {
     switch (recommendation.impact) {
-      case 'High': 
-        return {
-          color: 'bg-gradient-to-r from-red-100 to-red-50 text-red-800 border-red-200',
-          icon: Icons.analytics.trending,
-          iconBg: 'bg-red-100',
-          iconColor: 'text-red-600'
-        };
-      case 'Medium': 
-        return {
-          color: 'bg-gradient-to-r from-amber-100 to-amber-50 text-amber-800 border-amber-200',
-          icon: Icons.analytics.barChart,
-          iconBg: 'bg-amber-100',
-          iconColor: 'text-amber-600'
-        };
-      case 'Low': 
-        return {
-          color: 'bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 border-blue-200',
-          icon: Icons.analytics.lineChart,
-          iconBg: 'bg-blue-100',
-          iconColor: 'text-blue-600'
-        };
-      default: 
-        return {
-          color: 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-800 border-gray-200',
-          icon: Icons.general.info,
-          iconBg: 'bg-gray-100',
-          iconColor: 'text-gray-600'
-        };
+      case 'High': return 'bg-red-100 text-red-800';
+      case 'Medium': return 'bg-yellow-100 text-yellow-800';
+      case 'Low': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
-
-  const getTypeIcon = () => {
-    switch (recommendation.type) {
-      case 'add_condition': return Icons.general.add;
-      case 'modify_condition': return Icons.general.edit;
-      case 'remove_condition': return Icons.general.delete;
-      default: return Icons.general.lightbulb;
-    }
-  };
-
-  const impactConfig = getImpactConfig();
-  const TypeIcon = getTypeIcon();
 
   return (
-    <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-primary/5 hover:shadow-lg transition-all duration-300 relative overflow-hidden group">
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="flex items-start gap-4 mb-4">
-          <div className="bg-primary/10 p-3 rounded-xl flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-            <Icons.analytics.brain className="h-5 w-5 text-primary" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-base text-foreground leading-snug mb-2">
-              {recommendation.title}
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+    <Card>
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <div>
+            <h3 className="font-medium text-sm mb-1">{recommendation.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {recommendation.description}
             </p>
           </div>
-        </div>
-        
-        {/* Condition Details */}
-        {recommendation.condition && (
-          <div className="bg-muted/30 rounded-lg p-4 mb-4 border border-border/50">
-            <div className="flex items-center gap-2 mb-2">
-              <TypeIcon className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold text-foreground">
-                {recommendation.condition.label}
-              </span>
+          
+          {recommendation.condition && (
+            <div className="bg-muted/50 rounded p-3 text-xs">
+              <div className="font-medium mb-1">{recommendation.condition.label}</div>
+              <div className="text-muted-foreground">{recommendation.condition.description}</div>
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              {recommendation.condition.description}
-            </p>
-            {(recommendation.condition.indicator || recommendation.condition.timeframe) && (
-              <div className="flex gap-4 mt-3">
-                {recommendation.condition.indicator && (
-                  <div className="text-xs">
-                    <span className="text-muted-foreground">Indicator: </span>
-                    <span className="font-medium text-foreground">{recommendation.condition.indicator}</span>
-                  </div>
-                )}
-                {recommendation.condition.timeframe && (
-                  <div className="text-xs">
-                    <span className="text-muted-foreground">Timeframe: </span>
-                    <span className="font-medium text-foreground">{recommendation.condition.timeframe}</span>
-                  </div>
-                )}
+          )}
+          
+          <div className="flex justify-between items-center">
+            <div className="space-y-1">
+              <div className="text-xs">
+                <span className="text-muted-foreground">Độ tin cậy: </span>
+                <span className="font-medium">{recommendation.confidence}%</span>
               </div>
-            )}
-          </div>
-        )}
-        
-        {/* Metrics and Action */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {/* Confidence */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
-                <Icons.ui.check className="h-3 w-3 text-emerald-600" />
-                <span className="text-xs text-muted-foreground">Confidence</span>
-              </div>
-              <div className="text-sm font-bold text-foreground">
-                {recommendation.confidence}%
-              </div>
+              <Badge className={`text-xs ${getImpactColor()}`}>
+                {recommendation.impact} Impact
+              </Badge>
             </div>
             
-            {/* Impact Badge */}
-            <Badge className={`text-xs px-3 py-1 ${impactConfig.color} font-medium border`}>
-              <impactConfig.icon className="h-3 w-3 mr-1" />
-              {recommendation.impact} Impact
-            </Badge>
+            <Button 
+              size="sm" 
+              onClick={() => onApply(recommendation)}
+            >
+              <Icons.ui.check className="h-3 w-3 mr-1" />
+              Áp dụng
+            </Button>
           </div>
-          
-          {/* Apply Button */}
-          <Button 
-            size="sm" 
-            onClick={() => onApply(recommendation)}
-            className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white shadow-sm hover:shadow-md transition-all duration-200"
-          >
-            <Icons.ui.check className="h-3 w-3 mr-1.5" />
-            Apply
-          </Button>
         </div>
-
-        {/* Subtle accent line */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       </CardContent>
     </Card>
   );
@@ -733,149 +565,86 @@ export default function StrategyAIAnalysis() {
   };
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-      {/* Enhanced Header */}
-      <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 mb-4">
-          <Icons.analytics.brain className="h-5 w-5 text-primary" />
-          <span className="text-sm font-medium text-primary">AI-Powered Analysis</span>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
-          Strategy Performance Analysis
+    <div className="space-y-6">
+      {/* Simple Header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-foreground">
+          Phân Tích AI
         </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          Phân tích hiệu suất chiến lược giao dịch và nhận gợi ý thông minh từ AI dựa trên dữ liệu thực tế
+        <p className="text-muted-foreground">
+          Phân tích hiệu suất chiến lược và nhận gợi ý cải tiến từ AI
         </p>
       </div>
 
-      {/* Enhanced Strategy Selection */}
-      <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-muted/10">
-        <CardHeader className="space-y-4 pb-6">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 p-2 rounded-lg">
-              <Icons.trade.bookCopy className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle className="text-xl font-bold text-foreground">
-                Chọn Chiến Lược Phân Tích
-              </CardTitle>
-              <CardDescription className="text-base mt-1">
-                Chọn một chiến lược để phân tích hiệu suất dựa trên lịch sử giao dịch của bạn
-              </CardDescription>
-            </div>
-          </div>
+      {/* Strategy Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Chọn Chiến Lược</CardTitle>
+          <CardDescription>
+            Chọn chiến lược để phân tích hiệu suất dựa trên dữ liệu giao dịch
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-foreground">Trading Strategy</label>
-            <Select 
-              value={selectedStrategyId} 
-              onValueChange={handleStrategyChange}
-              disabled={isLoadingStrategies}
-            >
-              <SelectTrigger className="h-12 border-border/50 bg-background/50 hover:bg-background/80 transition-colors">
-                <SelectValue placeholder={
-                  isLoadingStrategies 
-                    ? "Đang tải chiến lược..." 
-                    : "Chọn chiến lược để phân tích..."
-                } />
-              </SelectTrigger>
-              <SelectContent>
-                {strategies.map((strategy) => (
-                  <SelectItem key={strategy.id} value={strategy.id}>
-                    <div className="flex items-center gap-2">
-                      <Icons.general.target className="h-4 w-4 text-primary" />
-                      {strategy.name}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <CardContent className="space-y-4">
+          <Select 
+            value={selectedStrategyId} 
+            onValueChange={handleStrategyChange}
+            disabled={isLoadingStrategies}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={
+                isLoadingStrategies 
+                  ? "Đang tải..." 
+                  : "Chọn chiến lược"
+              } />
+            </SelectTrigger>
+            <SelectContent>
+              {strategies.map((strategy) => (
+                <SelectItem key={strategy.id} value={strategy.id}>
+                  {strategy.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {selectedStrategy && (
-            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 p-2 rounded-lg">
-                    <Icons.analytics.lineChart className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-foreground">
-                      Dữ liệu có sẵn
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {trades?.length || 0} giao dịch để phân tích
-                    </div>
-                  </div>
-                </div>
-                
-                <Button 
-                  onClick={handleRunAnalysis}
-                  disabled={isAnalyzing || !trades || trades.length === 0}
-                  size="lg"
-                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white shadow-sm hover:shadow-md transition-all duration-200"
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <div className="animate-spin mr-2">
-                        <Icons.ui.spinner className="h-4 w-4" />
-                      </div>
-                      Đang phân tích...
-                    </>
-                  ) : (
-                    <>
-                      <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                      Chạy Phân Tích AI
-                    </>
-                  )}
-                </Button>
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+              <div className="text-sm text-muted-foreground">
+                {trades?.length || 0} giao dịch có sẵn
               </div>
+              <Button 
+                onClick={handleRunAnalysis}
+                disabled={isAnalyzing || !trades || trades.length === 0}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
+                    Đang phân tích...
+                  </>
+                ) : (
+                  <>
+                    <Icons.analytics.brain className="h-4 w-4 mr-2" />
+                    Phân tích
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Enhanced Analysis Loading State */}
+      {/* Loading State */}
       {isAnalyzing && (
-        <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-primary/5">
-          <CardContent className="p-8">
-            <div className="text-center space-y-6">
-              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-primary/10">
-                <div className="animate-spin">
-                  <Icons.analytics.brain className="h-5 w-5 text-primary" />
-                </div>
-                <span className="text-sm font-medium text-primary">AI đang phân tích chiến lược của bạn...</span>
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Icons.ui.spinner className="h-4 w-4 animate-spin" />
+                <span>Đang phân tích...</span>
               </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-3/4 mx-auto" />
-                  <Skeleton className="h-4 w-1/2 mx-auto" />
-                </div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className="bg-muted/30 rounded-lg p-4 space-y-3">
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-8 w-16" />
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="bg-muted/30 rounded-lg p-4 space-y-3">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-2 w-full" />
-                      <div className="grid grid-cols-3 gap-2">
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-full" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <Skeleton key={i} className="h-20" />
+                ))}
               </div>
             </div>
           </CardContent>
@@ -883,91 +652,47 @@ export default function StrategyAIAnalysis() {
       )}
 
       {analysisResults && (
-        <div className="space-y-8">
-          {/* Enhanced Overall Performance */}
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-emerald-50/20">
-            <CardHeader className="space-y-4 pb-6">
-              <div className="flex items-center gap-3">
-                <div className="bg-emerald-100 p-2 rounded-lg">
-                  <Icons.analytics.trending className="h-5 w-5 text-emerald-600" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-bold text-foreground">
-                    Tổng Quan Hiệu Suất
-                  </CardTitle>
-                  <CardDescription className="text-base mt-1">
-                    Các chỉ số hiệu suất chính cho chiến lược "{selectedStrategy?.name}"
-                  </CardDescription>
-                </div>
-              </div>
+        <div className="space-y-6">
+          {/* Overall Performance */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Hiệu Suất Tổng Quan</CardTitle>
+              <CardDescription>
+                Các chỉ số chính của chiến lược "{selectedStrategy?.name}"
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent>
               <PerformanceStatsCard stats={analysisResults.overallStats} />
-              
-              {/* Best/Worst Performing Conditions */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-200/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icons.ui.check className="h-4 w-4 text-emerald-600" />
-                    <span className="text-sm font-medium text-emerald-800">Điều kiện tốt nhất</span>
-                  </div>
-                  <p className="text-sm text-emerald-700">{analysisResults.overallStats.bestPerformingCondition}</p>
-                </div>
-                <div className="bg-red-50/50 rounded-lg p-4 border border-red-200/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icons.ui.warning className="h-4 w-4 text-red-600" />
-                    <span className="text-sm font-medium text-red-800">Điều kiện cần cải thiện</span>
-                  </div>
-                  <p className="text-sm text-red-700">{analysisResults.overallStats.worstPerformingCondition}</p>
-                </div>
-              </div>
             </CardContent>
           </Card>
 
-          {/* Enhanced Condition Performance Analysis */}
-          <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-blue-50/20">
-            <CardHeader className="space-y-4 pb-6">
-              <div className="flex items-center gap-3">
-                <div className="bg-blue-100 p-2 rounded-lg">
-                  <Icons.analytics.barChart className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-bold text-foreground">
-                    Phân Tích Hiệu Suất Điều Kiện
-                  </CardTitle>
-                  <CardDescription className="text-base mt-1">
-                    Phân tích hiệu suất chi tiết từng điều kiện trong chiến lược của bạn
-                  </CardDescription>
-                </div>
-              </div>
+          {/* Condition Performance */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Phân Tích Điều Kiện</CardTitle>
+              <CardDescription>
+                Hiệu suất từng điều kiện trong chiến lược
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="all" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-4 lg:w-fit lg:grid-cols-4">
-                  <TabsTrigger value="all" className="text-xs sm:text-sm">
-                    Tất cả
-                  </TabsTrigger>
-                  <TabsTrigger value="rules" className="text-xs sm:text-sm">
-                    Quy tắc
-                  </TabsTrigger>
-                  <TabsTrigger value="entry" className="text-xs sm:text-sm">
-                    Vào lệnh
-                  </TabsTrigger>
-                  <TabsTrigger value="exit" className="text-xs sm:text-sm">
-                    Thoát lệnh
-                  </TabsTrigger>
+              <Tabs defaultValue="all" className="space-y-4">
+                <TabsList>
+                  <TabsTrigger value="all">Tất cả</TabsTrigger>
+                  <TabsTrigger value="rules">Quy tắc</TabsTrigger>
+                  <TabsTrigger value="entry">Vào lệnh</TabsTrigger>
+                  <TabsTrigger value="exit">Thoát lệnh</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="all" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <TabsContent value="all">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {analysisResults.conditionPerformance.map((condition) => (
                       <ConditionCard key={condition.id} condition={condition} />
                     ))}
                   </div>
                 </TabsContent>
 
-                <TabsContent value="rules" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <TabsContent value="rules">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {analysisResults.conditionPerformance
                       .filter(c => c.type === 'rule')
                       .map((condition) => (
@@ -976,8 +701,8 @@ export default function StrategyAIAnalysis() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="entry" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <TabsContent value="entry">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {analysisResults.conditionPerformance
                       .filter(c => c.type === 'entry')
                       .map((condition) => (
@@ -986,8 +711,8 @@ export default function StrategyAIAnalysis() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="exit" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <TabsContent value="exit">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {analysisResults.conditionPerformance
                       .filter(c => c.type === 'exit')
                       .map((condition) => (
@@ -999,26 +724,17 @@ export default function StrategyAIAnalysis() {
             </CardContent>
           </Card>
 
-          {/* Enhanced AI Recommendations */}
+          {/* AI Recommendations */}
           {analysisResults.recommendations.length > 0 && (
-            <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-purple-50/20">
-              <CardHeader className="space-y-4 pb-6">
-                <div className="flex items-center gap-3">
-                  <div className="bg-purple-100 p-2 rounded-lg">
-                    <Icons.analytics.brain className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl font-bold text-foreground">
-                      Gợi Ý Từ AI
-                    </CardTitle>
-                    <CardDescription className="text-base mt-1">
-                      Những đề xuất thông minh để cải thiện chiến lược dựa trên phân tích hiệu suất
-                    </CardDescription>
-                  </div>
-                </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Gợi Ý AI</CardTitle>
+                <CardDescription>
+                  Đề xuất cải thiện chiến lược từ AI
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {analysisResults.recommendations.map((recommendation) => (
                     <RecommendationCard 
                       key={recommendation.id} 
