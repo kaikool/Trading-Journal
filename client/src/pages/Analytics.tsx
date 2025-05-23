@@ -20,6 +20,7 @@ const DisciplineTab = lazy(() => import("@/components/analytics/DisciplineTab"))
 const EmotionTab = lazy(() => import("@/components/analytics/EmotionTab"));
 const AdvancedTab = lazy(() => import("@/components/analytics/AdvancedTab"));
 const AIAnalysisTab = lazy(() => import("@/components/analytics/AIAnalysisTab"));
+const SavedAnalysisTab = lazy(() => import("@/components/analytics/SavedAnalysisTab"));
 const StrategyRecommendationEngine = lazy(() => import("@/components/recommendations/StrategyRecommendationEngine").then(module => ({ default: module.StrategyRecommendationEngine })));
 
 // Thêm khai báo cho window
