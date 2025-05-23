@@ -877,7 +877,7 @@ export default function StrategyAIAnalysis() {
       )}
 
       {/* No data state */}
-      {selectedStrategy && !isAnalyzing && !analysisResults && trades && trades.length === 0 && (
+      {selectedStrategy && !analysisResults && trades && trades.length === 0 && (
         <Alert>
           <Icons.ui.info className="h-4 w-4" />
           <AlertDescription>
