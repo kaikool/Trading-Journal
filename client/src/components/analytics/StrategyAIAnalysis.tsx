@@ -184,20 +184,20 @@ function useStrategyAnalysis() {
       console.log('========================');
 
       const prompt = `
-Analyze forex strategy "${strategy.name}" and provide improvement suggestions:
+Phân tích chiến lược forex "${strategy.name}" và đưa ra gợi ý cải tiến bằng tiếng Việt:
 
-OVERALL STATISTICS:
-- Total Trades: ${overallStats.totalTrades}
-- Win Rate: ${overallStats.winRate.toFixed(1)}%
-- Total P&L: $${overallStats.profitLoss.toFixed(2)}
-- Average Profit: $${overallStats.avgProfit.toFixed(2)}
+THỐNG KÊ TỔNG QUAN:
+- Tổng giao dịch: ${overallStats.totalTrades}
+- Tỷ lệ thắng: ${overallStats.winRate.toFixed(1)}%
+- Tổng P&L: $${overallStats.profitLoss.toFixed(2)}
+- Lợi nhuận trung bình: $${overallStats.avgProfit.toFixed(2)}
 
-CONDITION PERFORMANCE:
+HIỆU SUẤT CÁC ĐIỀU KIỆN:
 ${conditionPerformance.map(c => 
-  `- ${c.label} (${c.type}): Win rate ${c.winRate.toFixed(1)}%, ${c.totalTrades} trades, P&L $${c.profitLoss.toFixed(2)}`
+  `- ${c.label} (${c.type}): Tỷ lệ thắng ${c.winRate.toFixed(1)}%, ${c.totalTrades} giao dịch, P&L $${c.profitLoss.toFixed(2)}`
 ).join('\n')}
 
-Based on this data, provide 2-3 specific improvement recommendations. Return JSON:
+Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể bằng TIẾNG VIỆT. Trả về JSON với nội dung tiếng Việt:
 
 {
   "recommendations": [
