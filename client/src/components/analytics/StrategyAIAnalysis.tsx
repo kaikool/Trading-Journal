@@ -23,6 +23,7 @@ import { TradingStrategy } from "@/types";
 import { getStrategies, updateStrategy } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import { useTradesQuery } from "@/hooks/use-trades-query";
+import { Trade } from "@shared/schema";
 
 // API Key from environment
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
@@ -69,7 +70,7 @@ interface AnalysisResults {
 
 export default function StrategyAIAnalysis() {
   const { userId } = useAuth();
-  const { trades } = useTradesQuery();
+  const { trades } = useTradesQuery() as { trades: Trade[] | undefined };
   const { toast } = useToast();
 
   const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
@@ -115,9 +116,9 @@ export default function StrategyAIAnalysis() {
 
     setIsLoadingAnalysis(true);
     try {
-      const strategyTrades = trades.filter(trade => 
+      const strategyTrades = trades.filter((trade: any) => 
         trade.strategy === selectedStrategy.name || 
-        trade.usedRules?.some(ruleId => selectedStrategy.rules?.some(rule => rule.id === ruleId))
+        trade.usedRules?.some((ruleId: string) => selectedStrategy.rules?.some(rule => rule.id === ruleId))
       );
 
       if (strategyTrades.length === 0) {
@@ -343,7 +344,7 @@ export default function StrategyAIAnalysis() {
                 {strategies.map((strategy) => (
                   <SelectItem key={strategy.id} value={strategy.id}>
                     <div className="flex items-center gap-2">
-                      <Icons.strategy.target className="h-4 w-4" />
+                      <Icons.analytics.target className="h-4 w-4" />
                       {strategy.name}
                     </div>
                   </SelectItem>
@@ -576,7 +577,7 @@ export default function StrategyAIAnalysis() {
         <Card variant="glass" className="border-dashed border-gray-300 dark:border-gray-700">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 mb-6">
-              <Icons.strategy.target className="h-10 w-10 text-blue-600" />
+              <Icons.analytics.target className="h-10 w-10 text-blue-600" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
               Select a Strategy to Analyze
