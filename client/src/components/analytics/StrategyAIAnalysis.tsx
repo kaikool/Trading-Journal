@@ -483,7 +483,7 @@ function RecommendationCard({
   return (
     <Card className="relative overflow-hidden card-spotlight">
       <CardGradient 
-        variant={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'muted'} 
+        variant={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'default'} 
         intensity="subtle" 
         direction="top-right" 
       />
@@ -491,13 +491,13 @@ function RecommendationCard({
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-sm font-semibold flex items-center gap-2">
           <CardIcon 
-            color={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'muted'} 
+            color={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'default'} 
             size="sm"
             variant="soft"
           >
             <Icons.analytics.brain className="h-4 w-4" />
           </CardIcon>
-          {recommendation.title}
+          <span className="leading-tight">{recommendation.title}</span>
         </CardTitle>
         <Button 
           size="sm" 
@@ -847,33 +847,58 @@ export default function StrategyAIAnalysis() {
             </Tabs>
           </div>
 
-          {/* AI Recommendations - Compact modern design */}
-          {analysisResults.recommendations.length > 0 && (
-            <div className="space-y-3">
+          {/* AI Recommendations - Modern professional design */}
+          <Card className="relative overflow-hidden">
+            <CardGradient variant="primary" intensity="subtle" direction="top-right" />
+            
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                    <Icons.analytics.brain className="h-5 w-5 text-primary" />
-                    AI Recommendations
-                  </h3>
-                  <p className="text-sm text-muted-foreground">Smart suggestions to enhance your strategy</p>
+                <div className="flex items-center gap-3">
+                  <CardIcon color="primary" size="md" variant="soft">
+                    <Icons.analytics.brain className="h-5 w-5" />
+                  </CardIcon>
+                  <div>
+                    <CardTitle className="text-base font-semibold">AI Strategy Recommendations</CardTitle>
+                    <CardDescription className="text-sm mt-1">
+                      Smart insights powered by Gemini AI to optimize your trading strategy
+                    </CardDescription>
+                  </div>
                 </div>
-                <Badge variant="secondary" className="px-2 py-1 text-xs">
-                  {analysisResults.recommendations.length} suggestions
-                </Badge>
+                {analysisResults.recommendations.length > 0 && (
+                  <Badge variant="secondary" className="px-3 py-1 text-xs font-medium">
+                    {analysisResults.recommendations.length} suggestion{analysisResults.recommendations.length > 1 ? 's' : ''}
+                  </Badge>
+                )}
               </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {analysisResults.recommendations.map((recommendation) => (
-                  <RecommendationCard 
-                    key={recommendation.id} 
-                    recommendation={recommendation}
-                    onApply={handleApplyRecommendation}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {isLoadingAIRecommendations ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center gap-3 text-muted-foreground">
+                    <Icons.ui.spinner className="h-5 w-5 animate-spin" />
+                    <span className="text-sm font-medium">Analyzing with AI...</span>
+                  </div>
+                </div>
+              ) : analysisResults.recommendations.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4">
+                  {analysisResults.recommendations.map((recommendation) => (
+                    <RecommendationCard 
+                      key={recommendation.id} 
+                      recommendation={recommendation}
+                      onApply={handleApplyRecommendation}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Icons.analytics.brain className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground font-medium">No AI recommendations available</p>
+                  <p className="text-xs text-muted-foreground mt-1">Run analysis to get intelligent suggestions</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 
