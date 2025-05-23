@@ -9,13 +9,13 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Icons } from "@/components/icons/icons";
 import { useToast } from "@/hooks/use-toast";
 import { TradingStrategy } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
 import { getStrategyAnalyses, deleteStrategyAnalysis } from "@/lib/firebase";
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 
 // Interface for a saved analysis
@@ -161,107 +161,187 @@ export default function SavedStrategyAnalyses() {
     return 'text-red-600 dark:text-red-400';
   };
 
+  // Format detailed date with time
+  const formatDetailedDate = (timestamp: any) => {
+    if (!timestamp || !timestamp.toDate) return 'N/A';
+    
+    try {
+      const date = timestamp.toDate();
+      return format(date, 'MMM dd, yyyy \'at\' HH:mm', { locale: enUS });
+    } catch (e) {
+      console.error('Error formatting detailed date:', e);
+      return 'N/A';
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <Icons.ui.spinner className="w-8 h-8 animate-spin text-muted-foreground mb-3" />
+        <p className="text-sm text-muted-foreground">Loading saved analyses...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-8">
-      {/* Header Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 border border-blue-200/30 dark:border-blue-800/30">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05))]" />
-        <div className="relative px-6 py-5">
-          <h2 className="text-xl font-bold mb-4 ml-2">Saved Strategy Analyses</h2>
-          
-          {savedAnalyses.length === 0 ? (
-            <div className="p-6 text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur rounded-xl border border-white/20 dark:border-gray-700/20">
-              <Icons.nav.analytics className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-muted-foreground mb-2">No saved analyses yet</h3>
-              <p className="text-sm text-muted-foreground/80">
-                Analyze strategies in the "AI Analysis" tab and save them for later review
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mx-2">
-              {savedAnalyses.map((analysis) => (
-                <Button
-                  key={analysis.id}
-                  variant={selectedAnalysisId === analysis.id ? "default" : "outline"}
-                  size="sm"
-                  className={`h-auto w-full text-left py-3 px-4 ${
-                    selectedAnalysisId === analysis.id ? 'border-primary/40' : 'bg-white/80 dark:bg-black/20'
-                  }`}
-                  onClick={() => setSelectedAnalysisId(analysis.id)}
-                >
-                  <div className="w-full">
-                    <div className="font-medium mb-2">{analysis.strategyName}</div>
-                    <div className="text-xs">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
-                        <Icons.ui.calendar className="h-3 w-3 mr-1" />
-                        {formatDate(analysis.createdAt)}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">Saved Strategy Analyses</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            {savedAnalyses.length > 0 
+              ? `${savedAnalyses.length} saved ${savedAnalyses.length === 1 ? 'analysis' : 'analyses'}`
+              : 'No saved analyses yet'
+            }
+          </p>
+        </div>
+        
+        {savedAnalyses.length > 0 && (
+          <Badge variant="outline" className="px-2 py-1 text-xs">
+            <Icons.nav.analytics className="h-3 w-3 mr-1" />
+            {savedAnalyses.length}/5 saved
+          </Badge>
+        )}
+      </div>
+
+      {/* Empty State */}
+      {savedAnalyses.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+            <Icons.nav.analytics className="h-8 w-8 text-muted-foreground/40" />
+          </div>
+          <h3 className="text-lg font-medium text-muted-foreground mb-2">No saved analyses yet</h3>
+          <p className="text-sm text-muted-foreground/80 max-w-md">
+            Analyze strategies in the "AI Analysis" tab and save them for later review. 
+            You can save up to 5 analyses.
+          </p>
+        </div>
+      ) : (
+        /* Toggle List */
+        <Accordion type="single" collapsible className="space-y-3">
+          {savedAnalyses.map((analysis) => (
+            <AccordionItem
+              key={analysis.id}
+              value={analysis.id}
+              className="border border-border/50 rounded-lg overflow-hidden bg-card"
+            >
+              <AccordionTrigger className="px-4 py-3 hover:bg-muted/30 transition-colors [&[data-state=open]>div>div:last-child]:rotate-180">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex-shrink-0">
+                      <Icons.nav.analytics className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-sm">{analysis.strategyName}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDetailedDate(analysis.createdAt)}
                       </span>
                     </div>
                   </div>
-                </Button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Analysis Detail */}
-      {selectedAnalysis && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-bold">{selectedAnalysis.strategyName}</h3>
-              <p className="text-sm text-muted-foreground">
-                Analysis from {formatDate(selectedAnalysis.createdAt)}
-              </p>
-            </div>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-              onClick={() => handleDeleteAnalysis(selectedAnalysis.id)}
-            >
-              <Icons.ui.x className="h-4 w-4" />
-              <span className="sr-only">Delete analysis</span>
-            </Button>
-          </div>
-          
-          {/* Overall Performance section has been removed */}
-          
-          {/* Condition Performance section has been removed */}
-          
-          {/* Recommendations */}
-          {selectedAnalysis.data.recommendations && selectedAnalysis.data.recommendations.length > 0 && (
-            <div className="bg-white dark:bg-background border border-border/40 rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-border/30 bg-muted/20">
-                <h3 className="font-semibold">AI Recommendations</h3>
-              </div>
-              
-              <div className="p-4 space-y-3">
-                {selectedAnalysis.data.recommendations.map((recommendation) => (
-                  <div 
-                    key={recommendation.id}
-                    className="p-4 rounded-lg border border-border/30"
-                  >
-                    <h4 className="font-medium mb-2">{recommendation.title}</h4>
-                    <p className="text-sm text-muted-foreground mb-3">{recommendation.description}</p>
+                  
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                      <Icons.trade.trending className="h-3 w-3 mr-1" />
+                      {analysis.data.overallPerformance?.winRate || 0}% win rate
+                    </Badge>
                     
-                    <div className="flex items-center gap-3">
-                      <Badge className={getImpactColor(recommendation.impact)}>
-                        {recommendation.impact}
-                      </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteAnalysis(analysis.id);
+                      }}
+                    >
+                      <Icons.ui.trash className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              </AccordionTrigger>
+              
+              <AccordionContent className="px-4 pb-4 space-y-4">
+                {/* Overall Performance Summary */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted/20 rounded-lg">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold">{analysis.data.overallPerformance?.totalTrades || 0}</div>
+                    <div className="text-xs text-muted-foreground">Total Trades</div>
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-lg font-semibold ${getPerformanceColor(analysis.data.overallPerformance?.winRate || 0)}`}>
+                      {analysis.data.overallPerformance?.winRate || 0}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">Win Rate</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-green-600 dark:text-green-400">
+                      ${analysis.data.overallPerformance?.avgProfit?.toFixed(2) || '0.00'}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Avg Profit</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                      {analysis.data.overallPerformance?.profitFactor?.toFixed(2) || '0.00'}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Profit Factor</div>
+                  </div>
+                </div>
+
+                {/* AI Summary */}
+                {analysis.data.summary && (
+                  <div className="p-4 bg-blue-50/50 dark:bg-blue-950/20 rounded-lg border border-blue-200/30 dark:border-blue-800/30">
+                    <h4 className="font-medium text-sm mb-2 flex items-center">
+                      <Icons.nav.analytics className="h-4 w-4 mr-2 text-blue-600" />
+                      AI Analysis Summary
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {analysis.data.summary}
+                    </p>
+                  </div>
+                )}
+
+                {/* Recommendations */}
+                {analysis.data.recommendations && analysis.data.recommendations.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm flex items-center">
+                      <Icons.ui.lightbulb className="h-4 w-4 mr-2 text-yellow-600" />
+                      AI Recommendations ({analysis.data.recommendations.length})
+                    </h4>
+                    
+                    <div className="space-y-2">
+                      {analysis.data.recommendations.slice(0, 3).map((recommendation) => (
+                        <div 
+                          key={recommendation.id}
+                          className="p-3 rounded-lg border border-border/30 bg-background/50"
+                        >
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h5 className="font-medium text-sm">{recommendation.title}</h5>
+                            <Badge className={`${getImpactColor(recommendation.impact)} text-xs`}>
+                              {recommendation.impact}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mb-2">{recommendation.description}</p>
+                          <div className="text-xs text-muted-foreground">
+                            Confidence: <span className="font-medium">{recommendation.confidence}%</span>
+                          </div>
+                        </div>
+                      ))}
                       
-                      <div className="text-sm">
-                        Confidence: <span className="font-medium">{recommendation.confidence}%</span>
-                      </div>
+                      {analysis.data.recommendations.length > 3 && (
+                        <div className="text-center py-2">
+                          <span className="text-xs text-muted-foreground">
+                            +{analysis.data.recommendations.length - 3} more recommendations
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       )}
     </div>
   );
