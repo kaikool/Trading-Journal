@@ -748,71 +748,134 @@ export default function StrategyAIAnalysis() {
         </p>
       </div>
 
-      {/* Strategy Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Strategy to Analyze</CardTitle>
-          <CardDescription>
-            Choose a strategy to analyze its performance based on your trading history
-          </CardDescription>
+      {/* Enhanced Strategy Selection */}
+      <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-muted/10">
+        <CardHeader className="space-y-4 pb-6">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <Icons.trade.bookCopy className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle className="text-xl font-bold text-foreground">
+                Chọn Chiến Lược Phân Tích
+              </CardTitle>
+              <CardDescription className="text-base mt-1">
+                Chọn một chiến lược để phân tích hiệu suất dựa trên lịch sử giao dịch của bạn
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Select 
-            value={selectedStrategyId} 
-            onValueChange={handleStrategyChange}
-            disabled={isLoadingStrategies}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={
-                isLoadingStrategies 
-                  ? "Loading strategies..." 
-                  : "Select a strategy to analyze"
-              } />
-            </SelectTrigger>
-            <SelectContent>
-              {strategies.map((strategy) => (
-                <SelectItem key={strategy.id} value={strategy.id}>
-                  {strategy.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <label className="text-sm font-medium text-foreground">Trading Strategy</label>
+            <Select 
+              value={selectedStrategyId} 
+              onValueChange={handleStrategyChange}
+              disabled={isLoadingStrategies}
+            >
+              <SelectTrigger className="h-12 border-border/50 bg-background/50 hover:bg-background/80 transition-colors">
+                <SelectValue placeholder={
+                  isLoadingStrategies 
+                    ? "Đang tải chiến lược..." 
+                    : "Chọn chiến lược để phân tích..."
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                {strategies.map((strategy) => (
+                  <SelectItem key={strategy.id} value={strategy.id}>
+                    <div className="flex items-center gap-2">
+                      <Icons.general.target className="h-4 w-4 text-primary" />
+                      {strategy.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
           {selectedStrategy && (
-            <div className="flex gap-4">
-              <Button 
-                onClick={handleRunAnalysis}
-                disabled={isAnalyzing || !trades || trades.length === 0}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              >
-                <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                {isAnalyzing ? 'Analyzing...' : 'Run AI Analysis'}
-              </Button>
-              
-              <div className="text-sm text-muted-foreground flex items-center">
-                <Icons.analytics.lineChart className="h-4 w-4 mr-1" />
-                {trades?.length || 0} trades available
+            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <Icons.analytics.lineChart className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-foreground">
+                      Dữ liệu có sẵn
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {trades?.length || 0} giao dịch để phân tích
+                    </div>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleRunAnalysis}
+                  disabled={isAnalyzing || !trades || trades.length === 0}
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="animate-spin mr-2">
+                        <Icons.ui.spinner className="h-4 w-4" />
+                      </div>
+                      Đang phân tích...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.analytics.brain className="h-4 w-4 mr-2" />
+                      Chạy Phân Tích AI
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Analysis Results */}
+      {/* Enhanced Analysis Loading State */}
       {isAnalyzing && (
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
+        <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-primary/5">
+          <CardContent className="p-8">
+            <div className="text-center space-y-6">
+              <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-primary/10">
                 <div className="animate-spin">
-                  <Icons.ui.spinner className="h-4 w-4" />
+                  <Icons.analytics.brain className="h-5 w-5 text-primary" />
                 </div>
-                <span>Analyzing strategy performance...</span>
+                <span className="text-sm font-medium text-primary">AI đang phân tích chiến lược của bạn...</span>
               </div>
-              <Skeleton className="h-20 w-full" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Skeleton className="h-32" />
-                <Skeleton className="h-32" />
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-3/4 mx-auto" />
+                  <Skeleton className="h-4 w-1/2 mx-auto" />
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="bg-muted/30 rounded-lg p-4 space-y-3">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-8 w-16" />
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                  {[...Array(6)].map((_, i) => (
+                    <div key={i} className="bg-muted/30 rounded-lg p-4 space-y-3">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-2 w-full" />
+                      <div className="grid grid-cols-3 gap-2">
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-full" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -820,39 +883,83 @@ export default function StrategyAIAnalysis() {
       )}
 
       {analysisResults && (
-        <div className="space-y-6">
-          {/* Overall Performance */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Overall Performance</CardTitle>
-              <CardDescription>
-                Key performance metrics for strategy "{selectedStrategy?.name}"
-              </CardDescription>
+        <div className="space-y-8">
+          {/* Enhanced Overall Performance */}
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-emerald-50/20">
+            <CardHeader className="space-y-4 pb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-emerald-100 p-2 rounded-lg">
+                  <Icons.analytics.trending className="h-5 w-5 text-emerald-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-foreground">
+                    Tổng Quan Hiệu Suất
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Các chỉ số hiệu suất chính cho chiến lược "{selectedStrategy?.name}"
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
               <PerformanceStatsCard stats={analysisResults.overallStats} />
+              
+              {/* Best/Worst Performing Conditions */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                <div className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-200/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icons.ui.check className="h-4 w-4 text-emerald-600" />
+                    <span className="text-sm font-medium text-emerald-800">Điều kiện tốt nhất</span>
+                  </div>
+                  <p className="text-sm text-emerald-700">{analysisResults.overallStats.bestPerformingCondition}</p>
+                </div>
+                <div className="bg-red-50/50 rounded-lg p-4 border border-red-200/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icons.ui.warning className="h-4 w-4 text-red-600" />
+                    <span className="text-sm font-medium text-red-800">Điều kiện cần cải thiện</span>
+                  </div>
+                  <p className="text-sm text-red-700">{analysisResults.overallStats.worstPerformingCondition}</p>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Condition Performance Analysis */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Condition Performance Analysis</CardTitle>
-              <CardDescription>
-                Individual performance analysis of each condition in your strategy
-              </CardDescription>
+          {/* Enhanced Condition Performance Analysis */}
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-blue-50/20">
+            <CardHeader className="space-y-4 pb-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-100 p-2 rounded-lg">
+                  <Icons.analytics.barChart className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-foreground">
+                    Phân Tích Hiệu Suất Điều Kiện
+                  </CardTitle>
+                  <CardDescription className="text-base mt-1">
+                    Phân tích hiệu suất chi tiết từng điều kiện trong chiến lược của bạn
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="all" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="all">All Conditions</TabsTrigger>
-                  <TabsTrigger value="rules">Rules</TabsTrigger>
-                  <TabsTrigger value="entry">Entry</TabsTrigger>
-                  <TabsTrigger value="exit">Exit</TabsTrigger>
+              <Tabs defaultValue="all" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-4 lg:w-fit lg:grid-cols-4">
+                  <TabsTrigger value="all" className="text-xs sm:text-sm">
+                    Tất cả
+                  </TabsTrigger>
+                  <TabsTrigger value="rules" className="text-xs sm:text-sm">
+                    Quy tắc
+                  </TabsTrigger>
+                  <TabsTrigger value="entry" className="text-xs sm:text-sm">
+                    Vào lệnh
+                  </TabsTrigger>
+                  <TabsTrigger value="exit" className="text-xs sm:text-sm">
+                    Thoát lệnh
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {analysisResults.conditionPerformance.map((condition) => (
                       <ConditionCard key={condition.id} condition={condition} />
                     ))}
@@ -860,7 +967,7 @@ export default function StrategyAIAnalysis() {
                 </TabsContent>
 
                 <TabsContent value="rules" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {analysisResults.conditionPerformance
                       .filter(c => c.type === 'rule')
                       .map((condition) => (
@@ -870,7 +977,7 @@ export default function StrategyAIAnalysis() {
                 </TabsContent>
 
                 <TabsContent value="entry" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {analysisResults.conditionPerformance
                       .filter(c => c.type === 'entry')
                       .map((condition) => (
@@ -880,7 +987,7 @@ export default function StrategyAIAnalysis() {
                 </TabsContent>
 
                 <TabsContent value="exit" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {analysisResults.conditionPerformance
                       .filter(c => c.type === 'exit')
                       .map((condition) => (
@@ -892,17 +999,26 @@ export default function StrategyAIAnalysis() {
             </CardContent>
           </Card>
 
-          {/* AI Recommendations */}
+          {/* Enhanced AI Recommendations */}
           {analysisResults.recommendations.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>AI Recommendations</CardTitle>
-                <CardDescription>
-                  Intelligent suggestions to improve your strategy based on performance analysis
-                </CardDescription>
+            <Card className="border-0 shadow-sm bg-gradient-to-br from-background via-background to-purple-50/20">
+              <CardHeader className="space-y-4 pb-6">
+                <div className="flex items-center gap-3">
+                  <div className="bg-purple-100 p-2 rounded-lg">
+                    <Icons.analytics.brain className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold text-foreground">
+                      Gợi Ý Từ AI
+                    </CardTitle>
+                    <CardDescription className="text-base mt-1">
+                      Những đề xuất thông minh để cải thiện chiến lược dựa trên phân tích hiệu suất
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {analysisResults.recommendations.map((recommendation) => (
                     <RecommendationCard 
                       key={recommendation.id} 
