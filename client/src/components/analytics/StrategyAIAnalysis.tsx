@@ -519,21 +519,7 @@ export default function StrategyAIAnalysis() {
         </div>
       )}
 
-      {/* AI Analysis Button */}
-      {analysisResults && !analysisResults.recommendations?.length && (
-        <div className="flex items-center justify-center mt-6 mb-8">
-          <Button 
-            onClick={handleRunAIRecommendations}
-            disabled={isLoadingAIRecommendations}
-            className="relative h-12 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white overflow-hidden group"
-          >
-            <Icons.analytics.brain className="h-5 w-5 mr-2 group-hover:animate-pulse transition-all duration-300" />
-            <span className="font-semibold">
-              {isLoadingAIRecommendations ? 'Generating Recommendations...' : 'Generate AI Recommendations'}
-            </span>
-          </Button>
-        </div>
-      )}
+      {/* The Generate AI Recommendations button has been removed */}
       
       {/* Save Analysis Button - Only appears after recommendations are generated */}
       {analysisResults && analysisResults.recommendations?.length > 0 && (
