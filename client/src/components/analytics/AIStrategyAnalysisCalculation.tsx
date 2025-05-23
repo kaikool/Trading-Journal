@@ -59,8 +59,26 @@ export function calculateAIStrategyData(
   console.log('=== AI STRATEGY CALCULATION ===');
   console.log('Strategy:', strategy.name);
   console.log('AI Strategy Trades:', aiStrategyTrades.length);
-  console.log('Sample trade structure:', aiStrategyTrades[0]);
   console.log('==============================');
+  
+  // Debug: Kiểm tra từng trade và conditions được tích chọn
+  console.log('=== DETAILED TRADE ANALYSIS ===');
+  aiStrategyTrades.forEach((trade, index) => {
+    console.log(`Trade ${index + 1}:`, {
+      id: trade.id,
+      pair: trade.pair,
+      result: trade.result,
+      profitLoss: trade.profitLoss,
+      pips: trade.pips,
+      // Kiểm tra xem có field nào track conditions được tích chọn không
+      conditions: trade.conditions || 'No conditions field',
+      selectedRules: trade.selectedRules || 'No selectedRules field',
+      usedConditions: trade.usedConditions || 'No usedConditions field',
+      // Log tất cả fields để tìm field tracking conditions
+      allFields: Object.keys(trade)
+    });
+  });
+  console.log('===============================');
 
   // Tính overall stats cho AI
   const aiOverallStats = calculateAIOverallStats(aiStrategyTrades);
