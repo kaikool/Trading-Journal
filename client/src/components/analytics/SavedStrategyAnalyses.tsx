@@ -166,8 +166,8 @@ export default function SavedStrategyAnalyses() {
       {/* Header Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 border border-blue-200/30 dark:border-blue-800/30">
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05))]" />
-        <div className="relative p-8">
-          <h2 className="text-xl font-bold mb-4">Saved Strategy Analyses</h2>
+        <div className="relative px-6 py-5">
+          <h2 className="text-xl font-bold mb-4 ml-2">Saved Strategy Analyses</h2>
           
           {savedAnalyses.length === 0 ? (
             <div className="p-6 text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur rounded-xl border border-white/20 dark:border-gray-700/20">
@@ -178,7 +178,7 @@ export default function SavedStrategyAnalyses() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mx-2">
               {savedAnalyses.map((analysis) => (
                 <Button
                   key={analysis.id}
