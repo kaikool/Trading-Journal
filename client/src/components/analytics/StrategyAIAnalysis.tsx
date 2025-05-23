@@ -156,8 +156,23 @@ function useStrategyAnalysis() {
         // For now, we analyze all trades that used this strategy
         const conditionTrades = strategyTrades; // All trades for this strategy
         
-        const conditionWins = conditionTrades.filter(t => t.result === 'win');
-        const conditionLosses = conditionTrades.filter(t => t.result === 'loss');
+        // Debug: Log trade structure to understand the data format
+        console.log('=== DEBUGGING CONDITION PERFORMANCE ===');
+        console.log('Sample trade for condition analysis:', conditionTrades[0]);
+        console.log('Available trade fields:', Object.keys(conditionTrades[0] || {}));
+        console.log('=======================================');
+        
+        // Use the same logic as overall stats for consistency
+        const conditionWins = conditionTrades.filter(t => 
+          t.result === 'win' || t.result === 'Win' || 
+          (t.profitLoss && t.profitLoss > 0) ||
+          (t.pips && t.pips > 0)
+        );
+        const conditionLosses = conditionTrades.filter(t => 
+          t.result === 'loss' || t.result === 'Loss' ||
+          (t.profitLoss && t.profitLoss < 0) ||
+          (t.pips && t.pips < 0)
+        );
         const conditionProfit = conditionTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
 
         const winRate = conditionTrades.length > 0 ? (conditionWins.length / conditionTrades.length) * 100 : 0;
