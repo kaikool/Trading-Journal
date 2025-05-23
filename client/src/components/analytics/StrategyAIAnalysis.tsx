@@ -481,42 +481,43 @@ function RecommendationCard({
   const impactConfig = getImpactConfig();
 
   return (
-    <Card className={`border-l-4 ${impactConfig.border} border-r-0 border-t-0 border-b-0 shadow-sm hover:shadow-md transition-all duration-200 bg-gradient-to-r from-card to-card/50`}>
-      <CardContent className="p-3">
-        <div className="space-y-2">
-          <div className="flex items-start justify-between gap-2">
+    <Card className={`border-l-4 ${impactConfig.border} shadow-sm hover:shadow-md transition-all duration-200`}>
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <Icons.analytics.brain className="h-3.5 w-3.5 text-primary" />
-                <h3 className="font-medium text-sm text-foreground truncate">{recommendation.title}</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <Icons.analytics.brain className="h-4 w-4 text-primary shrink-0" />
+                <h3 className="font-semibold text-sm text-foreground leading-tight">{recommendation.title}</h3>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 {recommendation.description}
               </p>
             </div>
             <Button 
               size="sm" 
-              variant="ghost"
+              variant="outline"
               onClick={() => onApply(recommendation)}
-              className="h-7 w-7 p-0 shrink-0 hover:bg-primary/10"
+              className="h-8 px-3 shrink-0"
             >
-              <Icons.ui.plus className="h-3 w-3" />
+              <Icons.ui.plus className="h-3.5 w-3.5 mr-1" />
+              Apply
             </Button>
           </div>
           
           {recommendation.condition && (
-            <div className="bg-muted/30 rounded-md p-2 text-xs border border-border/30">
-              <div className="font-medium text-foreground mb-0.5 truncate">{recommendation.condition.label}</div>
-              <div className="text-muted-foreground line-clamp-1">{recommendation.condition.description}</div>
+            <div className="bg-muted/40 rounded-md p-3 border border-border/20">
+              <div className="font-medium text-sm text-foreground mb-1">{recommendation.condition.label}</div>
+              <div className="text-sm text-muted-foreground leading-relaxed mb-2">{recommendation.condition.description}</div>
               {(recommendation.condition.indicator || recommendation.condition.timeframe) && (
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-2">
                   {recommendation.condition.indicator && (
-                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-primary/5 border-primary/20">
+                    <Badge variant="outline" className="text-xs px-2 py-1 bg-primary/5 border-primary/20">
                       {recommendation.condition.indicator}
                     </Badge>
                   )}
                   {recommendation.condition.timeframe && (
-                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-secondary/50">
+                    <Badge variant="outline" className="text-xs px-2 py-1 bg-secondary/50">
                       {recommendation.condition.timeframe}
                     </Badge>
                   )}
@@ -525,12 +526,12 @@ function RecommendationCard({
             </div>
           )}
           
-          <div className="flex justify-between items-center">
-            <Badge className={`text-xs px-2 py-0.5 border-0 ${impactConfig.color}`}>
-              <span className="mr-1">{impactConfig.icon}</span>
-              {recommendation.impact}
+          <div className="flex justify-between items-center pt-1">
+            <Badge className={`text-xs px-2 py-1 border-0 ${impactConfig.color}`}>
+              <span className="mr-1.5">{impactConfig.icon}</span>
+              {recommendation.impact} Impact
             </Badge>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-muted-foreground font-medium">
               {recommendation.confidence}% confidence
             </div>
           </div>
