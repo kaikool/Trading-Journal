@@ -1000,6 +1000,9 @@ export function StrategiesManagement() {
             }}
             newTimeframe={newTimeframe}
             resetFormFields={resetFormFields}
+            aiAnalysisStrategyId={aiAnalysisStrategyId}
+            onToggleAIAnalysis={setAiAnalysisStrategyId}
+            onAIStrategyUpdate={handleAIStrategyUpdate}
           />
         ))}
       </Accordion>
@@ -1011,9 +1014,11 @@ export function StrategiesManagement() {
     editedStrategy,
     isSaving,
     newTimeframe,
+    aiAnalysisStrategyId,
     handleUpdateStrategy,
     handleDeleteStrategy,
     handleSetDefaultStrategy,
+    handleAIStrategyUpdate,
     resetFormFields
   ]);
   
