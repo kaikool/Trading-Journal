@@ -340,16 +340,16 @@ export default function StrategyAIAnalysis() {
         } : null);
 
         toast({
-          title: "Phân tích AI hoàn tất",
-          description: `Đã tạo ${parsed.recommendations.length} khuyến nghị`,
+          title: "AI Analysis Complete",
+          description: `Generated ${parsed.recommendations.length} recommendations`,
           variant: "default",
         });
       } catch (parseError) {
         console.error('Lỗi khi xử lý phản hồi từ AI:', parseError, text);
         
         toast({
-          title: "Lỗi phân tích",
-          description: "Không thể xử lý phản hồi từ AI. Vui lòng thử lại.",
+          title: "Analysis Error",
+          description: "Could not process AI response. Please try again.",
           variant: "destructive",
         });
       }
