@@ -110,8 +110,8 @@ export function SplashScreen({
       <motion.div 
         className={cn(
           "fixed inset-0 z-[100] flex flex-col items-center justify-center",
-          "safe-area-splash backdrop-blur-xl",
-          // Đã loại bỏ safe area padding để hiển thị toàn màn hình
+          "safe-area-splash",
+          // Đã loại bỏ safe area padding và hiệu ứng backdrop-blur-xl để hiển thị toàn màn hình không trong suốt
           className
         )}
         style={{
@@ -121,54 +121,16 @@ export function SplashScreen({
           maxHeight: '100vh',
           // Sử dụng dynamic viewport height để đảm bảo full screen trên mobile
           minHeight: '100vh',
-          // Hiệu ứng glass
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(12px)',
+          // Đã loại bỏ hiệu ứng trong suốt
+          backgroundColor: 'var(--background)',
+          // Đã loại bỏ backdropFilter blur
         }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
         transition={{ duration: 0.5 }}
       >
-        {/* Glass Effect Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Glassmorphism Particles */}
-          <motion.div 
-            className="absolute inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.5 }}
-          >
-            {/* Glass Particles */}
-            {Array.from({ length: 15 }).map((_, i) => (
-              <motion.div 
-                key={i}
-                className="absolute rounded-full bg-white/10 backdrop-blur-md"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  width: `${30 + Math.random() * 100}px`,
-                  height: `${30 + Math.random() * 100}px`,
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.03))',
-                  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)',
-                  backdropFilter: 'blur(5px)',
-                  opacity: 0.1 + Math.random() * 0.15
-                }}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 0.1 + Math.random() * 0.15 }}
-                transition={{ 
-                  duration: 1 + Math.random() * 2,
-                  delay: Math.random() * 2,
-                  ease: "easeOut"
-                }}
-              />
-            ))}
-          </motion.div>
-          
-          {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-background/10"></div>
-        </div>
+        {/* Removed glass effect background elements for solid background */}
         
         {/* Container đục - không trong suốt */}
         <motion.div 
