@@ -219,40 +219,7 @@ export default function SavedStrategyAnalyses() {
             </Button>
           </div>
           
-          {/* Overall Performance */}
-          <div className="bg-white dark:bg-background border border-border/40 rounded-xl overflow-hidden">
-            <div className="p-4 border-b border-border/30 bg-muted/20">
-              <h3 className="font-semibold">Overall Performance</h3>
-            </div>
-            
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Trades</p>
-                <p className="text-2xl font-bold">{selectedAnalysis.data.overallPerformance.totalTrades}</p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Win Rate</p>
-                <p className={`text-2xl font-bold ${getPerformanceColor(selectedAnalysis.data.overallPerformance.winRate)}`}>
-                  {selectedAnalysis.data.overallPerformance.winRate.toFixed(1)}%
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Average Profit</p>
-                <p className="text-2xl font-bold">
-                  ${selectedAnalysis.data.overallPerformance.avgProfit.toFixed(2)}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Profit Factor</p>
-                <p className="text-2xl font-bold">
-                  {selectedAnalysis.data.overallPerformance.profitFactor.toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* Overall Performance section has been removed */}
           
           {/* Condition Performance section has been removed */}
           

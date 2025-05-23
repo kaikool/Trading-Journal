@@ -1022,9 +1022,8 @@ async function saveStrategyAnalysis(userId: string, strategyId: string, strategy
       await deleteDoc(doc(analysesRef, oldestAnalysis.id));
     }
     
-    // Prepare data - only save overall performance and recommendations, exclude condition analysis
+    // Prepare data - only save recommendations, exclude overall performance and condition analysis
     const dataToSave = {
-      overallPerformance: analysisData.overallPerformance,
       recommendations: analysisData.recommendations,
       summary: analysisData.summary
     };
