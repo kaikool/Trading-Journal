@@ -300,7 +300,7 @@ function PerformanceStatsCard({ stats }: { stats: any }) {
       <Card>
         <CardContent className="p-4">
           <div className="text-2xl font-bold text-primary">{stats.totalTrades}</div>
-          <div className="text-sm text-muted-foreground">Tổng giao dịch</div>
+          <div className="text-sm text-muted-foreground">Total Trades</div>
         </CardContent>
       </Card>
       <Card>
@@ -311,7 +311,7 @@ function PerformanceStatsCard({ stats }: { stats: any }) {
           }`}>
             {stats.winRate.toFixed(1)}%
           </div>
-          <div className="text-sm text-muted-foreground">Tỷ lệ thắng</div>
+          <div className="text-sm text-muted-foreground">Win Rate</div>
         </CardContent>
       </Card>
       <Card>
@@ -319,7 +319,7 @@ function PerformanceStatsCard({ stats }: { stats: any }) {
           <div className={`text-2xl font-bold ${stats.profitLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             ${stats.profitLoss.toFixed(2)}
           </div>
-          <div className="text-sm text-muted-foreground">Tổng P&L</div>
+          <div className="text-sm text-muted-foreground">Total P&L</div>
         </CardContent>
       </Card>
       <Card>
@@ -327,7 +327,7 @@ function PerformanceStatsCard({ stats }: { stats: any }) {
           <div className={`text-2xl font-bold ${stats.avgProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             ${stats.avgProfit.toFixed(2)}
           </div>
-          <div className="text-sm text-muted-foreground">Trung bình/giao dịch</div>
+          <div className="text-sm text-muted-foreground">Avg Per Trade</div>
         </CardContent>
       </Card>
     </div>
@@ -366,7 +366,7 @@ function ConditionCard({ condition }: { condition: ConditionPerformance }) {
         <div className="space-y-3">
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span>Tỷ lệ thắng</span>
+              <span>Win Rate</span>
               <span className="font-medium">{condition.winRate.toFixed(1)}%</span>
             </div>
             <Progress value={condition.winRate} className="h-2" />
@@ -374,11 +374,11 @@ function ConditionCard({ condition }: { condition: ConditionPerformance }) {
           
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div>
-              <div className="text-muted-foreground">Giao dịch</div>
+              <div className="text-muted-foreground">Trades</div>
               <div className="font-medium">{condition.totalTrades}</div>
             </div>
             <div>
-              <div className="text-muted-foreground">Tác động</div>
+              <div className="text-muted-foreground">Impact</div>
               <div className="font-medium capitalize">{condition.impact}</div>
             </div>
             <div>
@@ -432,7 +432,7 @@ function RecommendationCard({
           <div className="flex justify-between items-center">
             <div className="space-y-1">
               <div className="text-xs">
-                <span className="text-muted-foreground">Độ tin cậy: </span>
+                <span className="text-muted-foreground">Confidence: </span>
                 <span className="font-medium">{recommendation.confidence}%</span>
               </div>
               <Badge className={`text-xs ${getImpactColor()}`}>
@@ -445,7 +445,7 @@ function RecommendationCard({
               onClick={() => onApply(recommendation)}
             >
               <Icons.ui.check className="h-3 w-3 mr-1" />
-              Áp dụng
+              Apply
             </Button>
           </div>
         </div>
@@ -569,19 +569,19 @@ export default function StrategyAIAnalysis() {
       {/* Simple Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-foreground">
-          Phân Tích AI
+          AI Strategy Analysis
         </h1>
         <p className="text-muted-foreground">
-          Phân tích hiệu suất chiến lược và nhận gợi ý cải tiến từ AI
+          Analyze strategy performance and get AI-powered improvement recommendations
         </p>
       </div>
 
       {/* Strategy Selection */}
       <Card>
         <CardHeader>
-          <CardTitle>Chọn Chiến Lược</CardTitle>
+          <CardTitle>Select Strategy</CardTitle>
           <CardDescription>
-            Chọn chiến lược để phân tích hiệu suất dựa trên dữ liệu giao dịch
+            Choose a strategy to analyze performance based on trading data
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -593,8 +593,8 @@ export default function StrategyAIAnalysis() {
             <SelectTrigger>
               <SelectValue placeholder={
                 isLoadingStrategies 
-                  ? "Đang tải..." 
-                  : "Chọn chiến lược"
+                  ? "Loading..." 
+                  : "Select strategy"
               } />
             </SelectTrigger>
             <SelectContent>
@@ -609,7 +609,7 @@ export default function StrategyAIAnalysis() {
           {selectedStrategy && (
             <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
               <div className="text-sm text-muted-foreground">
-                {trades?.length || 0} giao dịch có sẵn
+                {trades?.length || 0} trades available
               </div>
               <Button 
                 onClick={handleRunAnalysis}
@@ -618,12 +618,12 @@ export default function StrategyAIAnalysis() {
                 {isAnalyzing ? (
                   <>
                     <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
-                    Đang phân tích...
+                    Analyzing...
                   </>
                 ) : (
                   <>
                     <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                    Phân tích
+                    Analyze
                   </>
                 )}
               </Button>
@@ -639,7 +639,7 @@ export default function StrategyAIAnalysis() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Icons.ui.spinner className="h-4 w-4 animate-spin" />
-                <span>Đang phân tích...</span>
+                <span>Analyzing strategy...</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[...Array(4)].map((_, i) => (
@@ -656,9 +656,9 @@ export default function StrategyAIAnalysis() {
           {/* Overall Performance */}
           <Card>
             <CardHeader>
-              <CardTitle>Hiệu Suất Tổng Quan</CardTitle>
+              <CardTitle>Overall Performance</CardTitle>
               <CardDescription>
-                Các chỉ số chính của chiến lược "{selectedStrategy?.name}"
+                Key metrics for strategy "{selectedStrategy?.name}"
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -669,18 +669,18 @@ export default function StrategyAIAnalysis() {
           {/* Condition Performance */}
           <Card>
             <CardHeader>
-              <CardTitle>Phân Tích Điều Kiện</CardTitle>
+              <CardTitle>Condition Analysis</CardTitle>
               <CardDescription>
-                Hiệu suất từng điều kiện trong chiến lược
+                Performance of each condition in the strategy
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="all" className="space-y-4">
                 <TabsList>
-                  <TabsTrigger value="all">Tất cả</TabsTrigger>
-                  <TabsTrigger value="rules">Quy tắc</TabsTrigger>
-                  <TabsTrigger value="entry">Vào lệnh</TabsTrigger>
-                  <TabsTrigger value="exit">Thoát lệnh</TabsTrigger>
+                  <TabsTrigger value="all">All</TabsTrigger>
+                  <TabsTrigger value="rules">Rules</TabsTrigger>
+                  <TabsTrigger value="entry">Entry</TabsTrigger>
+                  <TabsTrigger value="exit">Exit</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="all">
@@ -728,9 +728,9 @@ export default function StrategyAIAnalysis() {
           {analysisResults.recommendations.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Gợi Ý AI</CardTitle>
+                <CardTitle>AI Recommendations</CardTitle>
                 <CardDescription>
-                  Đề xuất cải thiện chiến lược từ AI
+                  Suggestions to improve your strategy
                 </CardDescription>
               </CardHeader>
               <CardContent>
