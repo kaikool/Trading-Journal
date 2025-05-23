@@ -161,14 +161,14 @@ export default function SavedStrategyAnalyses() {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 border border-blue-200/30 dark:border-blue-800/30">
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05))]" />
         <div className="relative p-8">
-          <h2 className="text-xl font-bold mb-4">Phân tích chiến lược đã lưu</h2>
+          <h2 className="text-xl font-bold mb-4">Saved Strategy Analyses</h2>
           
           {savedAnalyses.length === 0 ? (
             <div className="p-6 text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur rounded-xl border border-white/20 dark:border-gray-700/20">
               <Icons.nav.analytics className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-muted-foreground mb-2">Chưa có phân tích nào</h3>
+              <h3 className="text-lg font-medium text-muted-foreground mb-2">No saved analyses yet</h3>
               <p className="text-sm text-muted-foreground/80">
-                Phân tích chiến lược qua tab "AI Analysis" và lưu lại để xem sau này
+                Analyze strategies in the "AI Analysis" tab and save them for later review
               </p>
             </div>
           ) : (
@@ -204,7 +204,7 @@ export default function SavedStrategyAnalyses() {
             <div>
               <h3 className="text-lg font-bold">{selectedAnalysis.strategyName}</h3>
               <p className="text-sm text-muted-foreground">
-                Phân tích {formatDate(selectedAnalysis.createdAt)}
+                Analysis from {formatDate(selectedAnalysis.createdAt)}
               </p>
             </div>
             
@@ -215,19 +215,19 @@ export default function SavedStrategyAnalyses() {
               onClick={() => handleDeleteAnalysis(selectedAnalysis.id)}
             >
               <Icons.ui.x className="h-4 w-4" />
-              <span className="sr-only">Xóa phân tích</span>
+              <span className="sr-only">Delete analysis</span>
             </Button>
           </div>
           
           {/* Overall Performance */}
           <div className="bg-white dark:bg-background border border-border/40 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-border/30 bg-muted/20">
-              <h3 className="font-semibold">Hiệu suất tổng thể</h3>
+              <h3 className="font-semibold">Overall Performance</h3>
             </div>
             
             <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Tổng số giao dịch</p>
+                <p className="text-sm text-muted-foreground mb-1">Total Trades</p>
                 <p className="text-2xl font-bold">{selectedAnalysis.data.overallPerformance.totalTrades}</p>
               </div>
               

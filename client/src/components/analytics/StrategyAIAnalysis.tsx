@@ -529,7 +529,7 @@ export default function StrategyAIAnalysis() {
           >
             <Icons.analytics.brain className="h-5 w-5 mr-2 group-hover:animate-pulse transition-all duration-300" />
             <span className="font-semibold">
-              {isLoadingAIRecommendations ? 'Đang tạo khuyến nghị...' : 'Tạo khuyến nghị AI'}
+              {isLoadingAIRecommendations ? 'Generating Recommendations...' : 'Generate AI Recommendations'}
             </span>
           </Button>
           
@@ -541,7 +541,7 @@ export default function StrategyAIAnalysis() {
           >
             <Icons.ui.save className="h-5 w-5 mr-2" />
             <span className="font-semibold">
-              {isSavingAnalysis ? 'Đang lưu...' : 'Lưu phân tích'}
+              {isSavingAnalysis ? 'Saving...' : 'Save Analysis'}
             </span>
           </Button>
         </div>
