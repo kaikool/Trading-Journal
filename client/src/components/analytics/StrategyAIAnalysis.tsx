@@ -1,5 +1,5 @@
 /**
- * Strategy AI Analysis Component
+ * Strategy AI Analysis Component - Modern Refined Design
  * 
  * Phân tích hiệu suất chiến lược giao dịch với AI
  * - Thống kê hiệu suất từ dữ liệu giao dịch thực
@@ -9,7 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardIcon, CardGradient } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,12 +23,9 @@ import { TradingStrategy } from "@/types";
 import { getStrategies, updateStrategy } from "@/lib/firebase";
 import { useAuth } from "@/hooks/use-auth";
 import { useTradesQuery } from "@/hooks/use-trades-query";
-import { 
-  calculateAIStrategyData, 
-  formatAIDataForGemini,
-  type AIConditionPerformance,
-  type AIAnalysisResults 
-} from "./AIStrategyAnalysisCalculation";
+
+// API Key from environment
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 // Types for analysis results
 interface ConditionPerformance {
@@ -37,12 +34,8 @@ interface ConditionPerformance {
   type: 'rule' | 'entry' | 'exit';
   winRate: number;
   totalTrades: number;
-  winningTrades: number;
-  losingTrades: number;
-  impact: 'high' | 'medium' | 'low';
-  profitLoss: number;
-  avgProfit: number;
-  recommendation: 'keep' | 'modify' | 'remove';
+  impact: 'High' | 'Medium' | 'Low';
+  effectiveness: number;
 }
 
 interface AIRecommendation {
@@ -51,8 +44,8 @@ interface AIRecommendation {
   description: string;
   confidence: number;
   impact: 'High' | 'Medium' | 'Low';
-  type: 'add_condition' | 'modify_condition' | 'remove_condition';
-  condition: {
+  type: 'add_condition' | 'remove_condition' | 'modify_condition' | 'general_advice';
+  condition?: {
     label: string;
     description: string;
     indicator?: string;
@@ -62,558 +55,45 @@ interface AIRecommendation {
 }
 
 interface AnalysisResults {
-  overallStats: {
+  overallPerformance: {
     totalTrades: number;
     winRate: number;
-    profitLoss: number;
     avgProfit: number;
-    bestPerformingCondition: string;
-    worstPerformingCondition: string;
+    profitFactor: number;
+    maxDrawdown: number;
   };
   conditionPerformance: ConditionPerformance[];
   recommendations: AIRecommendation[];
+  summary: string;
 }
 
-// Helper function to calculate stats from trades when analytics data is not available
-const calculateStatsFromTrades = (strategyTrades: any[]) => {
-  const winningTrades = strategyTrades.filter(t => 
-    t.result === 'win' || t.result === 'Win' || 
-    (t.profitLoss && t.profitLoss > 0) ||
-    (t.pips && t.pips > 0)
-  );
-  const losingTrades = strategyTrades.filter(t => 
-    t.result === 'loss' || t.result === 'Loss' ||
-    (t.profitLoss && t.profitLoss < 0) ||
-    (t.pips && t.pips < 0)
-  );
-  const totalProfit = strategyTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
-
-  return {
-    totalTrades: strategyTrades.length,
-    winRate: strategyTrades.length > 0 ? (winningTrades.length / strategyTrades.length) * 100 : 0,
-    profitLoss: totalProfit,
-    avgProfit: strategyTrades.length > 0 ? totalProfit / strategyTrades.length : 0,
-    bestPerformingCondition: '',
-    worstPerformingCondition: ''
-  };
-};
-
-// Hook for strategy analysis - now uses calculated values from analytics system
-function useStrategyAnalysis() {
-  const { toast } = useToast();
-
-  const analyzeStrategyPerformance = async (
-    strategy: TradingStrategy, 
-    trades: any[],
-    analyticsData?: any // Optional analytics data for fallback
-  ): Promise<AnalysisResults> => {
-    try {
-      // Sử dụng module AI riêng để tính toán
-      const aiResults = calculateAIStrategyData(strategy, trades);
-      
-      // Format dữ liệu cho Gemini AI
-      const aiFormattedData = formatAIDataForGemini(strategy, aiResults);
-      
-      console.log('=== AI CALCULATION MODULE RESULTS ===');
-      console.log('AI Strategy:', aiFormattedData.aiStrategyName);
-      console.log('AI Overall Stats:', aiFormattedData.aiOverallStatsFormatted);
-      console.log('AI Condition Performance:', aiFormattedData.aiConditionPerformanceFormatted);
-      console.log('====================================');
-
-      // Convert AI results to legacy format for compatibility
-      const overallStats = {
-        totalTrades: aiResults.aiOverallStats.aiTotalTrades,
-        winRate: aiResults.aiOverallStats.aiWinRate,
-        profitLoss: aiResults.aiOverallStats.aiProfitLoss,
-        avgProfit: aiResults.aiOverallStats.aiAvgProfit,
-        bestPerformingCondition: aiResults.aiOverallStats.aiBestPerformingCondition,
-        worstPerformingCondition: aiResults.aiOverallStats.aiWorstPerformingCondition
-      };
-
-      // Convert AI condition performance to legacy format
-      const conditionPerformance: ConditionPerformance[] = aiResults.aiConditionPerformance.map(aiCond => ({
-        id: aiCond.id,
-        label: aiCond.label,
-        type: aiCond.type,
-        winRate: aiCond.aiWinRate,
-        totalTrades: aiCond.aiTotalTrades,
-        winningTrades: aiCond.aiWinningTrades,
-        losingTrades: aiCond.aiLosingTrades,
-        impact: aiCond.aiImpact,
-        profitLoss: aiCond.aiProfitLoss,
-        avgProfit: aiCond.aiAvgProfit,
-        recommendation: aiCond.aiRecommendation
-      }));
-
-      return {
-        overallStats,
-        conditionPerformance,
-        recommendations: [] // Will be loaded separately
-      };
-
-    } catch (error) {
-      console.error('AI Analysis error:', error instanceof Error ? error.message : 'Unknown error');
-      throw new Error(error instanceof Error ? error.message : 'AI Analysis failed');
-    }
-  };
-
-  const loadAIRecommendations = async (
-    strategy: TradingStrategy,
-    overallStats: any,
-    conditionPerformance: ConditionPerformance[]
-  ) => {
-    try {
-      const recommendations = await generateAIRecommendations(strategy, overallStats, conditionPerformance);
-      return recommendations;
-    } catch (error) {
-      console.error('AI Recommendations error:', error);
-      toast({
-        title: "AI Recommendations Error",
-        description: "Unable to get AI suggestions, but condition analysis is available",
-        variant: "destructive"
-      });
-      return [];
-    }
-  };
-
-  const generateAIRecommendations = async (
-    strategy: TradingStrategy,
-    overallStats: any,
-    conditionPerformance: ConditionPerformance[]
-  ): Promise<AIRecommendation[]> => {
-    // Hardcode API key for testing
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyAM8ZqOOPoPdkNhDacIJ4Hv2CnSC2z6qiA";
-    if (!apiKey) {
-      throw new Error('VITE_GEMINI_API_KEY is required for AI recommendations');
-    }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    // Log data being sent to Gemini for debugging
-    console.log('=== AI DATA SENT TO GEMINI ===');
-    console.log('Strategy:', strategy.name);
-    console.log('Overall Stats:', overallStats);
-    console.log('Condition Performance (AI Calculated):', conditionPerformance);
-    console.log('==============================');
-
-    const prompt = `
-Phân tích chiến lược forex "${strategy.name}" và đưa ra gợi ý cải tiến bằng tiếng Việt:
-
-THỐNG KÊ TỔNG QUAN:
-- Tổng giao dịch: ${overallStats.totalTrades}
-- Tỷ lệ thắng: ${overallStats.winRate.toFixed(1)}%
-- Tổng P&L: $${overallStats.profitLoss.toFixed(2)}
-- Lợi nhuận trung bình: $${overallStats.avgProfit.toFixed(2)}
-
-HIỆU SUẤT CÁC ĐIỀU KIỆN:
-${conditionPerformance.map(c => 
-  `- ${c.label} (${c.type}): Tỷ lệ thắng ${c.winRate.toFixed(1)}%, ${c.totalTrades} giao dịch, P&L $${c.profitLoss.toFixed(2)}`
-).join('\n')}
-
-Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể bằng TIẾNG VIỆT. Trả về JSON với nội dung tiếng Việt:
-
-{
-  "recommendations": [
-    {
-      "id": "rec-1",
-      "title": "Tiêu đề gợi ý",
-      "description": "Mô tả chi tiết dựa trên phân tích dữ liệu",
-      "confidence": 85,
-      "impact": "High",
-      "type": "add_condition",
-      "condition": {
-        "label": "Điều kiện mới",
-        "description": "Mô tả cách áp dụng",
-        "indicator": "Chỉ báo kỹ thuật",
-        "timeframe": "H1",
-        "expectedValue": "Giá trị mong đợi"
-      }
-    }
-  ]
-}`;
-
-    console.log('🚀 Sending request to Gemini AI...');
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    console.log('✅ Gemini AI Response received:', text);
-    
-    const cleanText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    console.log('🧹 Cleaned text:', cleanText);
-    
-    const parsed = JSON.parse(cleanText);
-    console.log('📊 Parsed recommendations:', parsed);
-    
-    return parsed.recommendations || [];
-  };
-
-  const generateSmartRecommendations = (
-    strategy: TradingStrategy,
-    overallStats: any,
-    conditionPerformance: ConditionPerformance[]
-  ): AIRecommendation[] => {
-    const recommendations: AIRecommendation[] = [];
-
-    // Analyze based on win rate
-    if (overallStats.winRate < 60) {
-      recommendations.push({
-        id: 'rec-winrate',
-        title: 'Cải thiện tỷ lệ thắng',
-        description: `Tỷ lệ thắng hiện tại ${overallStats.winRate.toFixed(1)}% cần được cải thiện. Đề xuất thêm bộ lọc để tăng chất lượng tín hiệu.`,
-        confidence: 88,
-        impact: 'High',
-        type: 'add_condition',
-        condition: {
-          label: 'Xác nhận với multiple timeframes',
-          description: 'Xác nhận tín hiệu trên nhiều khung thời gian trước khi vào lệnh',
-          indicator: 'Multi-TF Analysis',
-          timeframe: 'H1 + H4',
-          expectedValue: 'Cùng hướng trend'
-        }
-      });
-    }
-
-    // Analyze based on profit/loss
-    if (overallStats.avgProfit < 0) {
-      recommendations.push({
-        id: 'rec-risk',
-        title: 'Tối ưu quản lý rủi ro',
-        description: 'Lợi nhuận trung bình âm cho thấy cần cải thiện stop loss và take profit.',
-        confidence: 92,
-        impact: 'High',
-        type: 'add_condition',
-        condition: {
-          label: 'Dynamic Stop Loss dựa trên ATR',
-          description: 'Sử dụng ATR để điều chỉnh stop loss linh hoạt theo volatility thị trường',
-          indicator: 'ATR(14)',
-          timeframe: 'Current',
-          expectedValue: '2x ATR'
-        }
-      });
-    }
-
-    // Analyze poor performing conditions
-    const poorConditions = conditionPerformance.filter(c => c.winRate < 40);
-    if (poorConditions.length > 0) {
-      recommendations.push({
-        id: 'rec-remove',
-        title: 'Loại bỏ điều kiện kém hiệu quả',
-        description: `Điều kiện "${poorConditions[0].label}" có win rate thấp (${poorConditions[0].winRate.toFixed(1)}%). Đề xuất xem xét loại bỏ hoặc thay thế.`,
-        confidence: 75,
-        impact: 'Medium',
-        type: 'remove_condition',
-        condition: {
-          label: poorConditions[0].label,
-          description: 'Xem xét loại bỏ điều kiện này khỏi strategy'
-        }
-      });
-    }
-
-    return recommendations;
-  };
-
-  return { analyzeStrategyPerformance, loadAIRecommendations };
-}
-
-// Performance Statistics Card - Compact modern design
-function PerformanceStatsCard({ stats }: { stats: any }) {
-  return (
-    <Card className="border-0 shadow-sm bg-gradient-to-r from-card to-card/50">
-      <CardContent className="p-4">
-        <div className="grid grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-lg font-semibold text-primary">{stats.totalTrades}</div>
-            <div className="text-xs text-muted-foreground">Trades</div>
-          </div>
-          <div className="text-center border-l border-border/30 pl-4">
-            <div className={`text-lg font-semibold ${
-              stats.winRate >= 60 ? 'text-emerald-600' : 
-              stats.winRate >= 40 ? 'text-amber-600' : 'text-red-500'
-            }`}>
-              {stats.winRate.toFixed(1)}%
-            </div>
-            <div className="text-xs text-muted-foreground">Win Rate</div>
-          </div>
-          <div className="text-center border-l border-border/30 pl-4">
-            <div className={`text-lg font-semibold ${stats.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-              ${Math.abs(stats.profitLoss) >= 1000 ? 
-                `${(stats.profitLoss / 1000).toFixed(1)}k` : 
-                stats.profitLoss.toFixed(0)}
-            </div>
-            <div className="text-xs text-muted-foreground">Total P&L</div>
-          </div>
-          <div className="text-center border-l border-border/30 pl-4">
-            <div className={`text-lg font-semibold ${stats.avgProfit >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-              ${stats.avgProfit.toFixed(1)}
-            </div>
-            <div className="text-xs text-muted-foreground">Avg/Trade</div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Condition Performance Card - Compact refined design
-function ConditionCard({ condition }: { condition: ConditionPerformance }) {
-  const getStatusConfig = () => {
-    if (condition.recommendation === 'keep') 
-      return { 
-        color: 'border-l-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20', 
-        icon: <Icons.ui.check className="h-3.5 w-3.5 text-emerald-600" />,
-        badge: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
-      };
-    if (condition.recommendation === 'modify') 
-      return { 
-        color: 'border-l-amber-400 bg-amber-50/50 dark:bg-amber-950/20', 
-        icon: <Icons.ui.warning className="h-3.5 w-3.5 text-amber-600" />,
-        badge: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-      };
-    return { 
-      color: 'border-l-red-400 bg-red-50/50 dark:bg-red-950/20', 
-      icon: <Icons.ui.x className="h-3.5 w-3.5 text-red-600" />,
-      badge: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-    };
-  };
-
-  const statusConfig = getStatusConfig();
-
-  return (
-    <Card className={`border-l-4 ${statusConfig.color} border-r-0 border-t-0 border-b-0 shadow-sm hover:shadow-md transition-all duration-200`}>
-      <CardContent className="p-3">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-start gap-2 flex-1">
-            {statusConfig.icon}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-medium text-sm text-foreground truncate">{condition.label}</h3>
-              <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className={`text-xs px-1.5 py-0.5 ${statusConfig.badge} border-0`}>
-                  {condition.type}
-                </Badge>
-                <span className={`text-xs font-medium ${
-                  condition.winRate >= 60 ? 'text-emerald-600' : 
-                  condition.winRate >= 40 ? 'text-amber-600' : 'text-red-500'
-                }`}>
-                  {condition.winRate.toFixed(1)}%
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="space-y-2">
-          <Progress 
-            value={condition.winRate} 
-            className={`h-1.5 ${
-              condition.winRate >= 60 ? '[&_div]:bg-emerald-500' : 
-              condition.winRate >= 40 ? '[&_div]:bg-amber-500' : '[&_div]:bg-red-500'
-            }`}
-          />
-          
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="text-center">
-              <div className="text-muted-foreground">Trades</div>
-              <div className="font-medium text-foreground">{condition.totalTrades}</div>
-            </div>
-            <div className="text-center">
-              <div className="text-muted-foreground">Impact</div>
-              <div className={`font-medium capitalize ${
-                condition.impact === 'high' ? 'text-red-600' :
-                condition.impact === 'medium' ? 'text-amber-600' : 'text-blue-600'
-              }`}>
-                {condition.impact}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-muted-foreground">P&L</div>
-              <div className={`font-medium ${condition.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                ${Math.abs(condition.profitLoss) >= 100 ? 
-                  `${(condition.profitLoss / 100).toFixed(1)}h` : 
-                  condition.profitLoss.toFixed(0)}
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// AI Recommendation Card - Modern compact design
-function RecommendationCard({ 
-  recommendation, 
-  onApply 
-}: { 
-  recommendation: AIRecommendation;
-  onApply: (rec: AIRecommendation) => void;
-}) {
-  const getImpactConfig = () => {
-    switch (recommendation.impact) {
-      case 'High': 
-        return { 
-          color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-          icon: <Icons.analytics.trendingUp className="h-3 w-3" />,
-          border: 'border-l-red-400'
-        };
-      case 'Medium': 
-        return { 
-          color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-          icon: <Icons.analytics.barChart className="h-3 w-3" />,
-          border: 'border-l-amber-400'
-        };
-      case 'Low': 
-        return { 
-          color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-          icon: <Icons.analytics.activity className="h-3 w-3" />,
-          border: 'border-l-blue-400'
-        };
-      default: 
-        return { 
-          color: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300',
-          icon: <Icons.analytics.activity className="h-3 w-3" />,
-          border: 'border-l-gray-400'
-        };
-    }
-  };
-
-  const impactConfig = getImpactConfig();
-
-  return (
-    <Card className="relative overflow-hidden card-spotlight">
-      <CardGradient 
-        variant={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'default'} 
-        intensity="subtle" 
-        direction="top-right" 
-      />
-      
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <CardIcon 
-            color={recommendation.impact === 'High' ? 'primary' : recommendation.impact === 'Medium' ? 'warning' : 'default'} 
-            size="sm"
-            variant="soft"
-          >
-            <Icons.analytics.brain className="h-4 w-4" />
-          </CardIcon>
-          <span className="leading-tight">{recommendation.title}</span>
-        </CardTitle>
-        <Button 
-          size="sm" 
-          variant="outline"
-          onClick={() => onApply(recommendation)}
-          className="h-8 px-3 shrink-0"
-        >
-          <Icons.ui.plus className="h-3.5 w-3.5 mr-1" />
-          Apply
-        </Button>
-      </CardHeader>
-      
-      <CardContent className="space-y-3">
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {recommendation.description}
-        </p>
-        
-        {recommendation.condition && (
-          <div className="bg-muted/40 rounded-lg p-3 border border-border/20">
-            <div className="font-medium text-sm text-foreground mb-1">{recommendation.condition.label}</div>
-            <div className="text-sm text-muted-foreground leading-relaxed mb-2">{recommendation.condition.description}</div>
-            {(recommendation.condition.indicator || recommendation.condition.timeframe) && (
-              <div className="flex items-center gap-2">
-                {recommendation.condition.indicator && (
-                  <Badge variant="outline" className="text-xs px-2 py-1 bg-primary/5 border-primary/20">
-                    {recommendation.condition.indicator}
-                  </Badge>
-                )}
-                {recommendation.condition.timeframe && (
-                  <Badge variant="outline" className="text-xs px-2 py-1 bg-secondary/50">
-                    {recommendation.condition.timeframe}
-                  </Badge>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-        
-        <div className="flex justify-between items-center pt-1">
-          <Badge className={`text-xs px-2 py-1 border-0 ${impactConfig.color}`}>
-            <span className="mr-1.5">{impactConfig.icon}</span>
-            {recommendation.impact} Impact
-          </Badge>
-          <div className="text-xs text-muted-foreground font-medium">
-            {recommendation.confidence}% confidence
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-// Main Component
 export default function StrategyAIAnalysis() {
   const { userId } = useAuth();
   const { trades } = useTradesQuery();
   const { toast } = useToast();
-  
-  const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
-  const [selectedStrategyId, setSelectedStrategyId] = useState<string>('');
-  const [selectedStrategy, setSelectedStrategy] = useState<TradingStrategy | null>(null);
-  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
-  const [isLoadingAIRecommendations, setIsLoadingAIRecommendations] = useState(false);
-  const [isLoadingStrategies, setIsLoadingStrategies] = useState(false);
 
-  const { analyzeStrategyPerformance, loadAIRecommendations } = useStrategyAnalysis();
+  const [strategies, setStrategies] = useState<TradingStrategy[]>([]);
+  const [selectedStrategy, setSelectedStrategy] = useState<TradingStrategy | null>(null);
+  const [isLoadingStrategies, setIsLoadingStrategies] = useState(false);
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);
+  const [isLoadingAnalysis, setIsLoadingAnalysis] = useState(false);
+  const [isLoadingAIRecommendations, setIsLoadingAIRecommendations] = useState(false);
 
   // Load strategies
   useEffect(() => {
     const loadStrategies = async () => {
-      if (!userId) {
-        console.log('No userId available for loading strategies');
-        return;
-      }
+      if (!userId) return;
       
-      console.log('Loading strategies for userId:', userId);
       setIsLoadingStrategies(true);
       try {
         const strategiesData = await getStrategies(userId);
-        console.log('Loaded strategies:', strategiesData);
         setStrategies(strategiesData || []);
-        
-        // Auto-select default strategy
-        const defaultStrategy = strategiesData?.find(s => s.isDefault);
-        if (defaultStrategy && !selectedStrategyId) {
-          setSelectedStrategyId(defaultStrategy.id);
-          setSelectedStrategy(defaultStrategy);
-          
-          // Auto-run analysis for default strategy
-          if (trades) {
-            try {
-              const results = await analyzeStrategyPerformance(defaultStrategy, trades);
-              setAnalysisResults(results);
-              
-              // Load AI recommendations in background
-              setIsLoadingAIRecommendations(true);
-              const recommendations = await loadAIRecommendations(
-                defaultStrategy, 
-                results.overallStats, 
-                results.conditionPerformance
-              );
-              setAnalysisResults(prev => prev ? { ...prev, recommendations } : null);
-              setIsLoadingAIRecommendations(false);
-            } catch (error) {
-              console.error('Auto-analysis error for default strategy:', error);
-              setAnalysisResults(null);
-              setIsLoadingAIRecommendations(false);
-            }
-          }
-        }
       } catch (error) {
         console.error('Error loading strategies:', error);
         toast({
           title: "Error",
-          description: "Unable to load strategies",
-          variant: "destructive"
+          description: "Failed to load strategies",
+          variant: "destructive",
         });
       } finally {
         setIsLoadingStrategies(false);
@@ -621,295 +101,491 @@ export default function StrategyAIAnalysis() {
     };
 
     loadStrategies();
-  }, [userId, toast, trades, selectedStrategyId]);
+  }, [userId, toast]);
 
-  // Handle strategy selection
-  const handleStrategyChange = async (value: string) => {
-    setSelectedStrategyId(value);
-    const strategy = strategies.find(s => s.id === value);
-    setSelectedStrategy(strategy || null);
-    
-    // Auto-run condition analysis when strategy is selected
-    if (strategy && trades) {
-      try {
-        const results = await analyzeStrategyPerformance(strategy, trades);
-        setAnalysisResults(results);
-        
-        // Load AI recommendations in background
-        setIsLoadingAIRecommendations(true);
-        const recommendations = await loadAIRecommendations(
-          strategy, 
-          results.overallStats, 
-          results.conditionPerformance
-        );
-        setAnalysisResults(prev => prev ? { ...prev, recommendations } : null);
-        setIsLoadingAIRecommendations(false);
-      } catch (error) {
-        console.error('Auto-analysis error:', error);
-        setAnalysisResults(null);
-        setIsLoadingAIRecommendations(false);
+  // Auto-analyze when strategy changes
+  useEffect(() => {
+    if (selectedStrategy && trades?.length) {
+      handleAnalyzeStrategy();
+    }
+  }, [selectedStrategy, trades]);
+
+  const handleAnalyzeStrategy = async () => {
+    if (!selectedStrategy || !trades?.length) return;
+
+    setIsLoadingAnalysis(true);
+    try {
+      const strategyTrades = trades.filter(trade => 
+        trade.strategy === selectedStrategy.name || 
+        trade.usedRules?.some(ruleId => selectedStrategy.rules?.some(rule => rule.id === ruleId))
+      );
+
+      if (strategyTrades.length === 0) {
+        toast({
+          title: "No Data",
+          description: "No trades found for this strategy",
+          variant: "destructive",
+        });
+        setIsLoadingAnalysis(false);
+        return;
       }
-    } else {
-      setAnalysisResults(null);
+
+      // Calculate performance metrics
+      const totalTrades = strategyTrades.length;
+      const winningTrades = strategyTrades.filter(trade => (trade.profitLoss || 0) > 0).length;
+      const winRate = (winningTrades / totalTrades) * 100;
+      const avgProfit = strategyTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0) / totalTrades;
+      
+      const profits = strategyTrades.filter(trade => (trade.profitLoss || 0) > 0);
+      const losses = strategyTrades.filter(trade => (trade.profitLoss || 0) < 0);
+      const totalProfit = profits.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0);
+      const totalLoss = Math.abs(losses.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0));
+      const profitFactor = totalLoss > 0 ? totalProfit / totalLoss : totalProfit > 0 ? 999 : 0;
+
+      // Calculate condition performance
+      const conditionPerformance: ConditionPerformance[] = [];
+
+      // Analyze rules
+      selectedStrategy.rules?.forEach(rule => {
+        const rulesTrades = strategyTrades.filter(trade => 
+          trade.usedRules?.includes(rule.id)
+        );
+        
+        if (rulesTrades.length > 0) {
+          const ruleWins = rulesTrades.filter(trade => (trade.profitLoss || 0) > 0).length;
+          const ruleWinRate = (ruleWins / rulesTrades.length) * 100;
+          
+          conditionPerformance.push({
+            id: rule.id,
+            label: rule.label,
+            type: 'rule',
+            winRate: ruleWinRate,
+            totalTrades: rulesTrades.length,
+            impact: ruleWinRate > 60 ? 'High' : ruleWinRate > 40 ? 'Medium' : 'Low',
+            effectiveness: ruleWinRate
+          });
+        }
+      });
+
+      // Set analysis results
+      setAnalysisResults({
+        overallPerformance: {
+          totalTrades,
+          winRate,
+          avgProfit,
+          profitFactor,
+          maxDrawdown: 0 // Simplified for now
+        },
+        conditionPerformance,
+        recommendations: [],
+        summary: `Strategy analysis completed for ${totalTrades} trades with ${winRate.toFixed(1)}% win rate.`
+      });
+
+    } catch (error) {
+      console.error('Error analyzing strategy:', error);
+      toast({
+        title: "Analysis Error",
+        description: "Failed to analyze strategy performance",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingAnalysis(false);
     }
   };
 
-  // Run AI recommendations
   const handleRunAIRecommendations = async () => {
-    if (!selectedStrategy || !analysisResults) return;
+    if (!analysisResults || !GEMINI_API_KEY) {
+      toast({
+        title: "API Key Required",
+        description: "Please set your Gemini API key in environment variables",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsLoadingAIRecommendations(true);
     try {
-      const recommendations = await loadAIRecommendations(
-        selectedStrategy, 
-        analysisResults.overallStats, 
-        analysisResults.conditionPerformance
-      );
-      setAnalysisResults(prev => prev ? { ...prev, recommendations } : null);
-      
-      toast({
-        title: "AI Recommendations Complete",
-        description: `Generated ${recommendations.length} AI suggestions for strategy "${selectedStrategy.name}"`,
-      });
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+      const prompt = `
+      Analyze this forex trading strategy performance and provide specific recommendations:
+
+      Overall Performance:
+      - Total Trades: ${analysisResults.overallPerformance.totalTrades}
+      - Win Rate: ${analysisResults.overallPerformance.winRate.toFixed(1)}%
+      - Average Profit: $${analysisResults.overallPerformance.avgProfit.toFixed(2)}
+      - Profit Factor: ${analysisResults.overallPerformance.profitFactor.toFixed(2)}
+
+      Condition Performance:
+      ${analysisResults.conditionPerformance.map(condition => 
+        `- ${condition.label}: ${condition.winRate.toFixed(1)}% win rate (${condition.totalTrades} trades)`
+      ).join('\n')}
+
+      Please provide:
+      1. 3-5 specific recommendations to improve this strategy
+      2. Each recommendation should include:
+         - Title (concise action)
+         - Description (detailed explanation)
+         - Confidence level (0-100)
+         - Impact level (High/Medium/Low)
+         - Specific condition to add/modify if applicable
+
+      Format as JSON with this structure:
+      {
+        "recommendations": [
+          {
+            "id": "rec-1",
+            "title": "Recommendation title",
+            "description": "Detailed description",
+            "confidence": 85,
+            "impact": "High",
+            "type": "add_condition",
+            "condition": {
+              "label": "Condition name",
+              "description": "What this condition does",
+              "indicator": "Technical indicator",
+              "timeframe": "Time frame",
+              "expectedValue": "Expected value/signal"
+            }
+          }
+        ]
+      }
+      `;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      try {
+        const parsed = JSON.parse(text);
+        setAnalysisResults(prev => prev ? {
+          ...prev,
+          recommendations: parsed.recommendations
+        } : null);
+
+        toast({
+          title: "AI Analysis Complete",
+          description: `Generated ${parsed.recommendations.length} recommendations`,
+          variant: "default",
+        });
+      } catch (parseError) {
+        console.error('Failed to parse AI response:', parseError);
+        toast({
+          title: "Analysis Error",
+          description: "Failed to parse AI recommendations",
+          variant: "destructive",
+        });
+      }
+
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'AI Recommendations failed';
+      console.error('Error getting AI recommendations:', error);
       toast({
-        title: "AI Recommendations Error",
-        description: message,
-        variant: "destructive"
+        title: "AI Error",
+        description: "Failed to get AI recommendations. Please check your API key.",
+        variant: "destructive",
       });
     } finally {
       setIsLoadingAIRecommendations(false);
     }
   };
 
-  // Apply recommendation
-  const handleApplyRecommendation = async (recommendation: AIRecommendation) => {
-    if (!selectedStrategy || !userId) return;
-
-    try {
-      if (recommendation.type === 'add_condition') {
-        const newCondition = {
-          id: `cond-${Date.now()}`,
-          label: recommendation.condition.label,
-          order: (selectedStrategy.rules?.length || 0) + 1,
-          description: recommendation.condition.description,
-          indicator: recommendation.condition.indicator,
-          timeframe: recommendation.condition.timeframe,
-          expectedValue: recommendation.condition.expectedValue,
-        };
-
-        const updatedStrategy = {
-          ...selectedStrategy,
-          rules: [...(selectedStrategy.rules || []), newCondition]
-        };
-
-        await updateStrategy(userId, selectedStrategy.id, updatedStrategy);
-        setSelectedStrategy(updatedStrategy);
-        
-        toast({
-          title: "Recommendation Applied",
-          description: `Added "${recommendation.condition.label}" to your strategy`,
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Unable to apply recommendation",
-        variant: "destructive"
-      });
+  const getImpactColor = (impact: string) => {
+    switch (impact) {
+      case 'High': return 'bg-red-500/10 text-red-700 border-red-200 dark:bg-red-500/20 dark:text-red-400 dark:border-red-800';
+      case 'Medium': return 'bg-yellow-500/10 text-yellow-700 border-yellow-200 dark:bg-yellow-500/20 dark:text-yellow-400 dark:border-yellow-800';
+      case 'Low': return 'bg-green-500/10 text-green-700 border-green-200 dark:bg-green-500/20 dark:text-green-400 dark:border-green-800';
+      default: return 'bg-gray-500/10 text-gray-700 border-gray-200 dark:bg-gray-500/20 dark:text-gray-400 dark:border-gray-800';
     }
   };
 
+  const getPerformanceColor = (winRate: number) => {
+    if (winRate >= 60) return 'text-green-600 dark:text-green-400';
+    if (winRate >= 40) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
+  };
+
   return (
-    <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 space-y-6">
-
-      {/* Strategy Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Strategy</CardTitle>
-          <CardDescription>
-            Choose a strategy to analyze performance based on trading data
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Select 
-            value={selectedStrategyId} 
-            onValueChange={handleStrategyChange}
-            disabled={isLoadingStrategies}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={
-                isLoadingStrategies 
-                  ? "Loading..." 
-                  : "Select strategy"
-              } />
-            </SelectTrigger>
-            <SelectContent>
-              {strategies.map((strategy) => (
-                <SelectItem key={strategy.id} value={strategy.id}>
-                  {strategy.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {selectedStrategy && (
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-              <div className="text-sm text-muted-foreground">
-                {trades?.length || 0} trades available • Analysis auto-loaded
-              </div>
-              {analysisResults && (
-                <Button 
-                  onClick={handleRunAIRecommendations}
-                  disabled={isLoadingAIRecommendations}
-                  variant="outline"
-                >
-                  {isLoadingAIRecommendations ? (
-                    <>
-                      <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
-                      Getting AI suggestions...
-                    </>
-                  ) : (
-                    <>
-                      <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                      Get AI Recommendations
-                    </>
-                  )}
-                </Button>
-              )}
+    <div className="space-y-8">
+      {/* Modern Header Section */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 border border-blue-200/30 dark:border-blue-800/30">
+        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05))]" />
+        <div className="relative p-8">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/25">
+              <Icons.analytics.brain className="h-6 w-6 text-white" />
             </div>
-          )}
-        </CardContent>
-      </Card>
-
-
-
-      {analysisResults && (
-        <div className="space-y-4">
-          {/* Overall Performance - Compact */}
-          <PerformanceStatsCard stats={analysisResults.overallStats} />
-
-          {/* Condition Performance - Modern compact layout */}
-          <div className="grid gap-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Condition Analysis</h3>
-                <p className="text-sm text-muted-foreground">Performance breakdown by condition type</p>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {analysisResults.conditionPerformance.length} conditions analyzed
-              </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AI Strategy Analysis</h2>
+              <p className="text-gray-600 dark:text-gray-300">Intelligent insights powered by Gemini AI</p>
             </div>
-
-            <Tabs defaultValue="rules" className="space-y-3">
-              <TabsList className="grid w-full grid-cols-3 bg-muted/50">
-                <TabsTrigger value="rules" className="text-xs">
-                  Rules ({analysisResults.conditionPerformance.filter(c => c.type === 'rule').length})
-                </TabsTrigger>
-                <TabsTrigger value="entry" className="text-xs">
-                  Entry ({analysisResults.conditionPerformance.filter(c => c.type === 'entry').length})
-                </TabsTrigger>
-                <TabsTrigger value="exit" className="text-xs">
-                  Exit ({analysisResults.conditionPerformance.filter(c => c.type === 'exit').length})
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="rules" className="space-y-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {analysisResults.conditionPerformance
-                    .filter(c => c.type === 'rule')
-                    .map((condition) => (
-                      <ConditionCard key={condition.id} condition={condition} />
-                    ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="entry" className="space-y-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {analysisResults.conditionPerformance
-                    .filter(c => c.type === 'entry')
-                    .map((condition) => (
-                      <ConditionCard key={condition.id} condition={condition} />
-                    ))}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="exit" className="space-y-0">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {analysisResults.conditionPerformance
-                    .filter(c => c.type === 'exit')
-                    .map((condition) => (
-                      <ConditionCard key={condition.id} condition={condition} />
-                    ))}
-                </div>
-              </TabsContent>
-            </Tabs>
           </div>
 
-          {/* AI Recommendations - Modern professional design */}
-          <Card className="relative overflow-hidden">
-            <CardGradient variant="primary" intensity="subtle" direction="top-right" />
-            
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <CardIcon color="primary" size="md" variant="soft">
-                    <Icons.analytics.brain className="h-5 w-5" />
-                  </CardIcon>
-                  <div>
-                    <CardTitle className="text-base font-semibold">AI Strategy Recommendations</CardTitle>
-                    <CardDescription className="text-sm mt-1">
-                      Smart insights powered by Gemini AI to optimize your trading strategy
-                    </CardDescription>
-                  </div>
+          {/* Strategy Selection */}
+          <div className="space-y-4">
+            <Select
+              value={selectedStrategy?.id || ''}
+              onValueChange={(value) => {
+                const strategy = strategies.find(s => s.id === value);
+                setSelectedStrategy(strategy || null);
+                setAnalysisResults(null);
+              }}
+              disabled={isLoadingStrategies}
+            >
+              <SelectTrigger className="h-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur border-white/20 dark:border-gray-700/20 shadow-sm">
+                <SelectValue placeholder={
+                  isLoadingStrategies 
+                    ? "Loading strategies..." 
+                    : "Select a strategy to analyze"
+                } />
+              </SelectTrigger>
+              <SelectContent>
+                {strategies.map((strategy) => (
+                  <SelectItem key={strategy.id} value={strategy.id}>
+                    <div className="flex items-center gap-2">
+                      <Icons.strategy.target className="h-4 w-4" />
+                      {strategy.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {selectedStrategy && (
+              <div className="flex items-center justify-between p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur rounded-xl border border-white/20 dark:border-gray-700/20">
+                <div className="text-sm text-gray-600 dark:text-gray-300">
+                  <span className="font-medium">{trades?.length || 0}</span> trades available • Analysis ready
                 </div>
-                {analysisResults.recommendations.length > 0 && (
-                  <Badge variant="secondary" className="px-3 py-1 text-xs font-medium">
-                    {analysisResults.recommendations.length} suggestion{analysisResults.recommendations.length > 1 ? 's' : ''}
-                  </Badge>
+                {analysisResults && (
+                  <Button 
+                    onClick={handleRunAIRecommendations}
+                    disabled={isLoadingAIRecommendations || !GEMINI_API_KEY}
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur border-white/20 dark:border-gray-700/20 hover:bg-white dark:hover:bg-gray-800"
+                  >
+                    {isLoadingAIRecommendations ? (
+                      <>
+                        <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Icons.analytics.brain className="h-4 w-4 mr-2" />
+                        Get AI Insights
+                      </>
+                    )}
+                  </Button>
                 )}
               </div>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              {isLoadingAIRecommendations ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="flex items-center gap-3 text-muted-foreground">
-                    <Icons.ui.spinner className="h-5 w-5 animate-spin" />
-                    <span className="text-sm font-medium">Analyzing with AI...</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Analysis Results */}
+      {isLoadingAnalysis && (
+        <div className="grid gap-6">
+          <Card variant="glass" className="p-6">
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-48" />
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-8 w-full" />
                   </div>
-                </div>
-              ) : analysisResults.recommendations.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4">
-                  {analysisResults.recommendations.map((recommendation) => (
-                    <RecommendationCard 
-                      key={recommendation.id} 
-                      recommendation={recommendation}
-                      onApply={handleApplyRecommendation}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Icons.analytics.brain className="h-12 w-12 text-muted-foreground/50 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground font-medium">No AI recommendations available</p>
-                  <p className="text-xs text-muted-foreground mt-1">Run analysis to get intelligent suggestions</p>
-                </div>
-              )}
-            </CardContent>
+                ))}
+              </div>
+            </div>
           </Card>
         </div>
       )}
 
-      {/* No data state */}
-      {selectedStrategy && !analysisResults && trades && trades.length === 0 && (
-        <Alert>
-          <Icons.ui.info className="h-4 w-4" />
-          <AlertDescription>
-            No trading data available for analysis. Start trading with this strategy to get performance insights.
-          </AlertDescription>
-        </Alert>
+      {analysisResults && (
+        <div className="space-y-8">
+          {/* Performance Overview */}
+          <Card variant="glass" hover className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Icons.analytics.trendingUp className="h-5 w-5 text-blue-600" />
+                Performance Overview
+              </CardTitle>
+              <CardDescription>
+                Overall strategy performance metrics and key indicators
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+                <div className="text-center space-y-2">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {analysisResults.overallPerformance.totalTrades}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Total Trades</div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className={`text-2xl font-bold ${getPerformanceColor(analysisResults.overallPerformance.winRate)}`}>
+                    {analysisResults.overallPerformance.winRate.toFixed(1)}%
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Win Rate</div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className={`text-2xl font-bold ${analysisResults.overallPerformance.avgProfit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    ${analysisResults.overallPerformance.avgProfit.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Avg Profit</div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className={`text-2xl font-bold ${analysisResults.overallPerformance.profitFactor >= 1 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {analysisResults.overallPerformance.profitFactor.toFixed(2)}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Profit Factor</div>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {analysisResults.overallPerformance.maxDrawdown.toFixed(1)}%
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Max Drawdown</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Condition Performance */}
+          {analysisResults.conditionPerformance.length > 0 && (
+            <Card variant="glass" hover>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Icons.analytics.barChart className="h-5 w-5 text-indigo-600" />
+                  Condition Performance Analysis
+                </CardTitle>
+                <CardDescription>
+                  Individual performance metrics for each trading condition
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {analysisResults.conditionPerformance.map((condition) => (
+                    <div key={condition.id} className="p-4 rounded-xl bg-gray-50/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="space-y-1">
+                          <h4 className="font-medium text-gray-900 dark:text-white">{condition.label}</h4>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {condition.type}
+                            </Badge>
+                            <Badge className={getImpactColor(condition.impact)}>
+                              {condition.impact} Impact
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-lg font-bold ${getPerformanceColor(condition.winRate)}`}>
+                            {condition.winRate.toFixed(1)}%
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            {condition.totalTrades} trades
+                          </div>
+                        </div>
+                      </div>
+                      <Progress 
+                        value={condition.winRate} 
+                        className="h-2"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* AI Recommendations */}
+          {analysisResults.recommendations.length > 0 && (
+            <Card variant="glass" hover className="border-purple-200/30 dark:border-purple-800/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Icons.analytics.brain className="h-5 w-5 text-purple-600" />
+                  AI Recommendations
+                </CardTitle>
+                <CardDescription>
+                  Intelligent suggestions to optimize your trading strategy
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {analysisResults.recommendations.map((rec) => (
+                    <div key={rec.id} className="p-6 rounded-xl bg-gradient-to-br from-purple-50/50 to-indigo-50/50 dark:from-purple-950/20 dark:to-indigo-950/20 border border-purple-200/30 dark:border-purple-800/30">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="space-y-2 flex-1">
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{rec.title}</h4>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {rec.description}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Badge className={getImpactColor(rec.impact)}>
+                            {rec.impact}
+                          </Badge>
+                          <Badge variant="outline" className="bg-white/60 dark:bg-gray-800/60">
+                            {rec.confidence}% confident
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      {rec.condition && (
+                        <div className="mt-4 p-4 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-white/30 dark:border-gray-700/30">
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">{rec.condition.label}</h5>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{rec.condition.description}</p>
+                          {rec.condition.indicator && (
+                            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
+                              <span><strong>Indicator:</strong> {rec.condition.indicator}</span>
+                              {rec.condition.timeframe && <span><strong>Timeframe:</strong> {rec.condition.timeframe}</span>}
+                              {rec.condition.expectedValue && <span><strong>Signal:</strong> {rec.condition.expectedValue}</span>}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* No Recommendations State */}
+          {analysisResults.recommendations.length === 0 && selectedStrategy && (
+            <Card variant="glass" className="border-dashed border-gray-300 dark:border-gray-700">
+              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                  <Icons.analytics.brain className="h-8 w-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  Ready for AI Analysis
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 max-w-md">
+                  Click "Get AI Insights" to receive personalized recommendations for improving your strategy performance.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!selectedStrategy && (
+        <Card variant="glass" className="border-dashed border-gray-300 dark:border-gray-700">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 mb-6">
+              <Icons.strategy.target className="h-10 w-10 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              Select a Strategy to Analyze
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 max-w-md">
+              Choose a trading strategy from the dropdown above to start analyzing its performance with AI-powered insights.
+            </p>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
