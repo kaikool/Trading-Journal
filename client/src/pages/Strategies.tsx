@@ -45,14 +45,14 @@ export default function StrategiesPage() {
                 className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
                 <Icons.trade.bookCopy className="h-4 w-4 flex-shrink-0" />
-                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Quản lý</span>
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Management</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="ai-analysis" 
                 className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
               >
                 <Icons.analytics.brain className="h-4 w-4 flex-shrink-0" />
-                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Phân tích AI</span>
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">AI Analysis</span>
               </TabsTrigger>
             </TabsList>
           </div>
