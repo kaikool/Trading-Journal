@@ -93,18 +93,18 @@ export default function StrategyAIAnalysis() {
         const strategiesData = await getStrategies(userId);
         setStrategies(strategiesData || []);
         
-        // Tìm và thiết lập chiến lược mặc định
+        // Tìm và chỉ ưu tiên hiển thị chiến lược mặc định (không loại trừ các chiến lược khác)
         if (strategiesData && strategiesData.length > 0) {
           // Tìm chiến lược được đánh dấu là mặc định
           const defaultStrategy = strategiesData.find(s => s.isDefault === true);
           
-          // Nếu có chiến lược mặc định, sử dụng nó, nếu không thì dùng chiến lược đầu tiên
+          // Nếu có chiến lược mặc định, hiển thị nó đầu tiên, nếu không thì dùng chiến lược đầu tiên
           if (defaultStrategy) {
             setSelectedStrategy(defaultStrategy);
-            console.log('Đã chọn chiến lược mặc định:', defaultStrategy.name);
+            console.log('Ưu tiên hiển thị chiến lược mặc định:', defaultStrategy.name);
           } else if (strategiesData.length > 0) {
             setSelectedStrategy(strategiesData[0]);
-            console.log('Không tìm thấy chiến lược mặc định, sử dụng chiến lược đầu tiên:', strategiesData[0].name);
+            console.log('Không tìm thấy chiến lược mặc định, hiển thị chiến lược đầu tiên:', strategiesData[0].name);
           }
         }
       } catch (error) {
