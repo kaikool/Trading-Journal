@@ -358,15 +358,6 @@ export default function StrategyAIAnalysis() {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 border border-blue-200/30 dark:border-blue-800/30">
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-800 dark:[mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05))]" />
         <div className="relative p-8">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/25">
-              <Icons.analytics.brain className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">AI Strategy Analysis</h2>
-              <p className="text-gray-600 dark:text-gray-300">Intelligent insights powered by Gemini AI</p>
-            </div>
-          </div>
 
           {/* Strategy Selection */}
           <div className="space-y-4">
