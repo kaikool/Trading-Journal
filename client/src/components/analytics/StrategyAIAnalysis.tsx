@@ -397,12 +397,12 @@ export default function StrategyAIAnalysis() {
     return 'text-red-600 dark:text-red-400';
   };
   
-  // Handle saving analysis to Firebase
+  // Handle saving analysis to Firebase - Only save AI recommendations
   const handleSaveAnalysis = async () => {
-    if (!userId || !selectedStrategy || !analysisResults) {
+    if (!userId || !selectedStrategy || !analysisResults || !analysisResults.recommendations || analysisResults.recommendations.length === 0) {
       toast({
         title: "Không thể lưu phân tích",
-        description: "Vui lòng chọn chiến lược và tạo phân tích trước khi lưu",
+        description: "Vui lòng tạo phân tích AI trước khi lưu",
         variant: "destructive",
       });
       return;
@@ -413,8 +413,8 @@ export default function StrategyAIAnalysis() {
       await saveStrategyAnalysis(userId, selectedStrategy.id, selectedStrategy.name, analysisResults);
       
       toast({
-        title: "Đã lưu phân tích",
-        description: "Phân tích đã được lưu vào tab Saved Analyses",
+        title: "Đã lưu phân tích AI",
+        description: "Phân tích AI đã được lưu vào tab Saved Analyses",
         variant: "default",
       });
     } catch (error) {
@@ -519,9 +519,9 @@ export default function StrategyAIAnalysis() {
         </div>
       )}
 
-      {/* Actions for saving analysis */}
-      {analysisResults && (
-        <div className="flex items-center justify-center mt-6 gap-3 mb-8">
+      {/* AI Analysis Button */}
+      {analysisResults && !analysisResults.recommendations?.length && (
+        <div className="flex items-center justify-center mt-6 mb-8">
           <Button 
             onClick={handleRunAIRecommendations}
             disabled={isLoadingAIRecommendations}
@@ -532,7 +532,12 @@ export default function StrategyAIAnalysis() {
               {isLoadingAIRecommendations ? 'Generating Recommendations...' : 'Generate AI Recommendations'}
             </span>
           </Button>
-          
+        </div>
+      )}
+      
+      {/* Save Analysis Button - Only appears after recommendations are generated */}
+      {analysisResults && analysisResults.recommendations?.length > 0 && (
+        <div className="flex items-center justify-center mt-6 mb-8">
           <Button 
             variant="outline"
             onClick={handleSaveAnalysis}
@@ -541,7 +546,7 @@ export default function StrategyAIAnalysis() {
           >
             <Icons.ui.save className="h-5 w-5 mr-2" />
             <span className="font-semibold">
-              {isSavingAnalysis ? 'Saving...' : 'Save Analysis'}
+              {isSavingAnalysis ? 'Saving...' : 'Save AI Analysis'}
             </span>
           </Button>
         </div>
