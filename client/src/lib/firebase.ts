@@ -2114,6 +2114,11 @@ export {
   onStrategiesSnapshot,
   createDefaultStrategiesIfNeeded,
   
+  // Strategy Analysis functions
+  saveStrategyAnalysis,
+  getStrategyAnalyses,
+  deleteStrategyAnalysis,
+  
   // Account linking functions
   linkAccountWithGoogle,
   getLinkedProviders,
