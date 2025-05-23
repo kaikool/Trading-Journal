@@ -22,13 +22,6 @@ export function LoadingProvider({
   
   return (
     <>
-      {/* Hiển thị splash screen khi app đang khởi động */}
-      <SplashScreen 
-        text="Loading..." 
-        minimumDisplayTime={splashMinDisplayTime}
-        brandName="Táo Tầu"
-      />
-      
       {/* Hiển thị thanh progress ở đầu trang */}
       {showProgressBar && (
         <ProgressBar 
@@ -38,7 +31,7 @@ export function LoadingProvider({
         />
       )}
       
-      {/* Nội dung chính của ứng dụng */}
+      {/* Nội dung chính của ứng dụng - không cần SplashScreen cấp page */}
       {children}
     </>
   );
