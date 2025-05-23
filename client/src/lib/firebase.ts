@@ -1000,6 +1000,85 @@ async function updateAccountBalance(userId: string) {
   }
 }
 
+// Strategy Analysis functions
+/**
+ * Lưu kết quả phân tích chiến lược vào Firebase
+ * Giữ tối đa 5 phân tích, nếu vượt quá sẽ xóa phân tích cũ nhất
+ */
+async function saveStrategyAnalysis(userId: string, strategyId: string, strategyName: string, analysisData: any) {
+  try {
+    debug(`Saving analysis for strategy ${strategyId} of user ${userId}`);
+    const analysesRef = collection(db, "users", userId, "strategyAnalyses");
+    
+    // Lấy danh sách phân tích đã lưu để kiểm tra số lượng
+    const q = query(analysesRef, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    const analyses = querySnapshot.docs;
+    
+    // Nếu đã có 5 phân tích, xóa phân tích cũ nhất
+    if (analyses.length >= 5) {
+      debug("Maximum analyses reached, removing oldest one");
+      const oldestAnalysis = analyses[analyses.length - 1];
+      await deleteDoc(doc(analysesRef, oldestAnalysis.id));
+    }
+    
+    // Lưu phân tích mới
+    const newAnalysisRef = await addDoc(analysesRef, {
+      strategyId,
+      strategyName,
+      data: analysisData,
+      createdAt: serverTimestamp()
+    });
+    
+    debug(`Analysis saved with ID: ${newAnalysisRef.id}`);
+    return {
+      id: newAnalysisRef.id,
+      strategyId,
+      strategyName,
+      data: analysisData
+    };
+  } catch (error) {
+    logError("Error saving strategy analysis:", error);
+    throw error;
+  }
+}
+
+/**
+ * Lấy danh sách phân tích chiến lược đã lưu của người dùng
+ */
+async function getStrategyAnalyses(userId: string) {
+  try {
+    debug(`Getting saved analyses for user ${userId}`);
+    const analysesRef = collection(db, "users", userId, "strategyAnalyses");
+    const q = query(analysesRef, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    logError("Error getting strategy analyses:", error);
+    throw error;
+  }
+}
+
+/**
+ * Xóa một phân tích chiến lược đã lưu
+ */
+async function deleteStrategyAnalysis(userId: string, analysisId: string) {
+  try {
+    debug(`Deleting analysis ${analysisId} for user ${userId}`);
+    const analysisRef = doc(db, "users", userId, "strategyAnalyses", analysisId);
+    await deleteDoc(analysisRef);
+    debug("Analysis deleted successfully");
+    return true;
+  } catch (error) {
+    logError("Error deleting strategy analysis:", error);
+    throw error;
+  }
+}
+
 // Strategy functions
 async function getStrategies(userId: string): Promise<Array<TradingStrategy & { id: string }>> {
   try {

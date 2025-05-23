@@ -12,6 +12,10 @@ const StrategyAIAnalysis = lazy(() =>
   import("@/components/analytics/StrategyAIAnalysis")
 );
 
+const SavedStrategyAnalyses = lazy(() => 
+  import("@/components/analytics/SavedStrategyAnalyses")
+);
+
 export default function StrategiesPage() {
   const { isLoading } = useUserDataQuery();
   
@@ -54,6 +58,13 @@ export default function StrategiesPage() {
                 <Icons.analytics.brain className="h-4 w-4 flex-shrink-0" />
                 <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">AI Analysis</span>
               </TabsTrigger>
+              <TabsTrigger 
+                value="saved-analyses" 
+                className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all"
+              >
+                <Icons.nav.history className="h-4 w-4 flex-shrink-0" />
+                <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Saved Analyses</span>
+              </TabsTrigger>
             </TabsList>
           </div>
         </div>
@@ -68,6 +79,12 @@ export default function StrategiesPage() {
         <TabsContent value="ai-analysis" className="mt-0">
           <Suspense fallback={<div className="h-[400px] bg-background/5 rounded-md"></div>}>
             <StrategyAIAnalysis />
+          </Suspense>
+        </TabsContent>
+        
+        <TabsContent value="saved-analyses" className="mt-0">
+          <Suspense fallback={<div className="h-[400px] bg-background/5 rounded-md"></div>}>
+            <SavedStrategyAnalyses />
           </Suspense>
         </TabsContent>
       </Tabs>

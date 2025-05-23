@@ -67,7 +67,7 @@ export default function SavedStrategyAnalyses() {
       setIsLoading(true);
       try {
         const analyses = await getStrategyAnalyses(userId);
-        setSavedAnalyses(analyses || []);
+        setSavedAnalyses(analyses as SavedAnalysis[] || []);
         
         // Auto select the newest analysis if there's any
         if (analyses && analyses.length > 0) {
@@ -165,7 +165,7 @@ export default function SavedStrategyAnalyses() {
           
           {savedAnalyses.length === 0 ? (
             <div className="p-6 text-center bg-white/60 dark:bg-gray-800/60 backdrop-blur rounded-xl border border-white/20 dark:border-gray-700/20">
-              <Icons.ui.empty className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
+              <Icons.nav.analytics className="h-16 w-16 text-muted-foreground/40 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-muted-foreground mb-2">Chưa có phân tích nào</h3>
               <p className="text-sm text-muted-foreground/80">
                 Phân tích chiến lược qua tab "AI Analysis" và lưu lại để xem sau này
@@ -214,7 +214,7 @@ export default function SavedStrategyAnalyses() {
               className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
               onClick={() => handleDeleteAnalysis(selectedAnalysis.id)}
             >
-              <Icons.ui.trash className="h-4 w-4" />
+              <Icons.ui.x className="h-4 w-4" />
               <span className="sr-only">Xóa phân tích</span>
             </Button>
           </div>
