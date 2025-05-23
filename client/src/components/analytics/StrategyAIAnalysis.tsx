@@ -87,9 +87,21 @@ function useStrategyAnalysis() {
         throw new Error('Không có dữ liệu giao dịch cho chiến lược này');
       }
 
-      // Calculate overall statistics
-      const winningTrades = strategyTrades.filter(t => t.result === 'win');
-      const losingTrades = strategyTrades.filter(t => t.result === 'loss');
+      // Debug: Log actual trade data to see the structure
+      console.log('=== ACTUAL TRADE DATA ===');
+      console.log('Strategy Trades:', strategyTrades);
+      console.log('Sample trade:', strategyTrades[0]);
+      console.log('========================');
+
+      // Calculate overall statistics - check different possible result fields
+      const winningTrades = strategyTrades.filter(t => 
+        t.result === 'win' || t.result === 'Win' || 
+        (t.profitLoss && t.profitLoss > 0)
+      );
+      const losingTrades = strategyTrades.filter(t => 
+        t.result === 'loss' || t.result === 'Loss' ||
+        (t.profitLoss && t.profitLoss < 0)
+      );
       const totalProfit = strategyTrades.reduce((sum, t) => sum + (t.profitLoss || 0), 0);
 
       const overallStats = {
