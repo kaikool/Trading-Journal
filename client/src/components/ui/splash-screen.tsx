@@ -40,27 +40,25 @@ export function SplashScreen({
     if (!isAppLoading()) {
       const elapsedTime = Date.now() - startTime;
       
-      // Hàm kết thúc splash screen với hiệu ứng mượt mà hơn
+      // Hàm kết thúc splash screen với hiệu ứng mượt mà hoàn toàn, không có hiện tượng nháy
       const finishSplashScreen = () => {
-        // Bước 1: Chuẩn bị nội dung chính TRƯỚC KHI ẩn splash screen
+        // Bước 1: Chuẩn bị nội dung hoàn toàn TRƯỚC KHI bắt đầu quá trình chuyển tiếp
         document.body.classList.add('app-content-ready');
         
-        // Bước 2: Cho phép browser render các thay đổi cần thiết
-        requestAnimationFrame(() => {
-          // Đảm bảo có đủ thời gian để browser render các class mới
+        // Delay ngắn để đảm bảo DOM cập nhật hoàn chỉnh
+        setTimeout(() => {
+          // Bước 2: Đánh dấu nội dung trang đã sẵn sàng hiển thị
+          document.body.classList.add('app-content-visible');
+          
+          // Bước 3: Bắt đầu quá trình fade-out splash screen
+          setPhase(5); // Phase mờ dần đặc biệt
+          
+          // Bước 4: Đảm bảo splash screen có đủ thời gian để mờ dần hoàn toàn
+          // trước khi thực sự ẩn nó đi, tránh hiệu ứng nhấp nháy
           setTimeout(() => {
-            // Bước 3: Kích hoạt hiệu ứng mờ dần của splash screen
-            setPhase(5); // Phase mờ dần đặc biệt
-            
-            // Bước 4: Chỉ sau khi splash screen đã mờ hoàn toàn, mới ẩn nó đi
-            setTimeout(() => {
-              // Thêm class hiển thị nội dung với hiệu ứng mượt mà
-              document.body.classList.add('app-content-visible');
-              // Đặt flag đã sẵn sàng và ẩn splash screen
-              setVisible(false);
-            }, 400); // Thời gian chuyển tiếp dài hơn để tránh hiệu ứng nháy
-          }, 100);
-        });
+            setVisible(false);
+          }, 800); // Thời gian dài hơn để đảm bảo quá trình chuyển tiếp mượt mà
+        }, 200);
       };
       
       // Xử lý thời gian hiển thị tối thiểu 
