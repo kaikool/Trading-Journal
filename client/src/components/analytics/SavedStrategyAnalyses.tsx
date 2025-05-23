@@ -242,21 +242,19 @@ export default function SavedStrategyAnalyses() {
                   
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <Badge variant="secondary" className="text-xs px-2 py-0.5">
-                      <Icons.trade.trending className="h-3 w-3 mr-1" />
+                      <Icons.trade.profit className="h-3 w-3 mr-1" />
                       {analysis.data.overallPerformance?.winRate || 0}% win rate
                     </Badge>
                     
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    <div 
+                      className="h-8 w-8 rounded-md flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteAnalysis(analysis.id);
                       }}
                     >
-                      <Icons.ui.trash className="h-3.5 w-3.5" />
-                    </Button>
+                      <Icons.ui.x className="h-3.5 w-3.5" />
+                    </div>
                   </div>
                 </div>
               </AccordionTrigger>
@@ -305,7 +303,7 @@ export default function SavedStrategyAnalyses() {
                 {analysis.data.recommendations && analysis.data.recommendations.length > 0 && (
                   <div className="space-y-3">
                     <h4 className="font-medium text-sm flex items-center">
-                      <Icons.ui.lightbulb className="h-4 w-4 mr-2 text-yellow-600" />
+                      <Icons.ui.zap className="h-4 w-4 mr-2 text-yellow-600" />
                       AI Recommendations ({analysis.data.recommendations.length})
                     </h4>
                     
