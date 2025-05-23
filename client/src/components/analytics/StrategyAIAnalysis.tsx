@@ -146,14 +146,14 @@ export default function StrategyAIAnalysis() {
       // Calculate condition performance
       const conditionPerformance: ConditionPerformance[] = [];
 
-      // Analyze rules
+      // Analyze rules từ strategy
       selectedStrategy.rules?.forEach(rule => {
-        const rulesTrades = strategyTrades.filter(trade => 
+        const rulesTrades = strategyTrades.filter((trade: any) => 
           trade.usedRules?.includes(rule.id)
         );
         
         if (rulesTrades.length > 0) {
-          const ruleWins = rulesTrades.filter(trade => (trade.profitLoss || 0) > 0).length;
+          const ruleWins = rulesTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
           const ruleWinRate = (ruleWins / rulesTrades.length) * 100;
           
           conditionPerformance.push({
@@ -167,6 +167,97 @@ export default function StrategyAIAnalysis() {
           });
         }
       });
+
+      // Analyze entry conditions
+      selectedStrategy.entryConditions?.forEach(condition => {
+        const conditionTrades = strategyTrades.filter((trade: any) => 
+          trade.usedEntryConditions?.includes(condition.id)
+        );
+        
+        if (conditionTrades.length > 0) {
+          const conditionWins = conditionTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
+          const conditionWinRate = (conditionWins / conditionTrades.length) * 100;
+          
+          conditionPerformance.push({
+            id: condition.id,
+            label: condition.label,
+            type: 'entry',
+            winRate: conditionWinRate,
+            totalTrades: conditionTrades.length,
+            impact: conditionWinRate > 60 ? 'High' : conditionWinRate > 40 ? 'Medium' : 'Low',
+            effectiveness: conditionWinRate
+          });
+        }
+      });
+
+      // Analyze exit conditions
+      selectedStrategy.exitConditions?.forEach(condition => {
+        const conditionTrades = strategyTrades.filter((trade: any) => 
+          trade.usedExitConditions?.includes(condition.id)
+        );
+        
+        if (conditionTrades.length > 0) {
+          const conditionWins = conditionTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
+          const conditionWinRate = (conditionWins / conditionTrades.length) * 100;
+          
+          conditionPerformance.push({
+            id: condition.id,
+            label: condition.label,
+            type: 'exit',
+            winRate: conditionWinRate,
+            totalTrades: conditionTrades.length,
+            impact: conditionWinRate > 60 ? 'High' : conditionWinRate > 40 ? 'Medium' : 'Low',
+            effectiveness: conditionWinRate
+          });
+        }
+      });
+
+      // Nếu không có condition data chi tiết, tạo demo data từ strategy
+      if (conditionPerformance.length === 0 && strategyTrades.length > 0) {
+        // Tạo phân tích cơ bản từ discipline data
+        const followedPlanTrades = strategyTrades.filter((trade: any) => trade.followedPlan === true);
+        const earlyEntryTrades = strategyTrades.filter((trade: any) => trade.enteredEarly === true);
+        const revengeTrades = strategyTrades.filter((trade: any) => trade.revenge === true);
+
+        if (followedPlanTrades.length > 0) {
+          const wins = followedPlanTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
+          conditionPerformance.push({
+            id: 'followed-plan',
+            label: 'Followed Trading Plan',
+            type: 'rule',
+            winRate: (wins / followedPlanTrades.length) * 100,
+            totalTrades: followedPlanTrades.length,
+            impact: 'High',
+            effectiveness: (wins / followedPlanTrades.length) * 100
+          });
+        }
+
+        if (earlyEntryTrades.length > 0) {
+          const wins = earlyEntryTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
+          conditionPerformance.push({
+            id: 'early-entry',
+            label: 'Early Entry (Negative)',
+            type: 'entry',
+            winRate: (wins / earlyEntryTrades.length) * 100,
+            totalTrades: earlyEntryTrades.length,
+            impact: 'Medium',
+            effectiveness: (wins / earlyEntryTrades.length) * 100
+          });
+        }
+
+        if (revengeTrades.length > 0) {
+          const wins = revengeTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
+          conditionPerformance.push({
+            id: 'revenge-trading',
+            label: 'Revenge Trading (Negative)',
+            type: 'rule',
+            winRate: (wins / revengeTrades.length) * 100,
+            totalTrades: revengeTrades.length,
+            impact: 'High',
+            effectiveness: (wins / revengeTrades.length) * 100
+          });
+        }
+      }
 
       // Set analysis results
       setAnalysisResults({
