@@ -212,52 +212,7 @@ export default function StrategyAIAnalysis() {
         }
       });
 
-      // Nếu không có condition data chi tiết, tạo demo data từ strategy
-      if (conditionPerformance.length === 0 && strategyTrades.length > 0) {
-        // Tạo phân tích cơ bản từ discipline data
-        const followedPlanTrades = strategyTrades.filter((trade: any) => trade.followedPlan === true);
-        const earlyEntryTrades = strategyTrades.filter((trade: any) => trade.enteredEarly === true);
-        const revengeTrades = strategyTrades.filter((trade: any) => trade.revenge === true);
 
-        if (followedPlanTrades.length > 0) {
-          const wins = followedPlanTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
-          conditionPerformance.push({
-            id: 'followed-plan',
-            label: 'Followed Trading Plan',
-            type: 'rule',
-            winRate: (wins / followedPlanTrades.length) * 100,
-            totalTrades: followedPlanTrades.length,
-            impact: 'High',
-            effectiveness: (wins / followedPlanTrades.length) * 100
-          });
-        }
-
-        if (earlyEntryTrades.length > 0) {
-          const wins = earlyEntryTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
-          conditionPerformance.push({
-            id: 'early-entry',
-            label: 'Early Entry (Negative)',
-            type: 'entry',
-            winRate: (wins / earlyEntryTrades.length) * 100,
-            totalTrades: earlyEntryTrades.length,
-            impact: 'Medium',
-            effectiveness: (wins / earlyEntryTrades.length) * 100
-          });
-        }
-
-        if (revengeTrades.length > 0) {
-          const wins = revengeTrades.filter((trade: any) => (trade.profitLoss || 0) > 0).length;
-          conditionPerformance.push({
-            id: 'revenge-trading',
-            label: 'Revenge Trading (Negative)',
-            type: 'rule',
-            winRate: (wins / revengeTrades.length) * 100,
-            totalTrades: revengeTrades.length,
-            impact: 'High',
-            effectiveness: (wins / revengeTrades.length) * 100
-          });
-        }
-      }
 
       // Set analysis results
       setAnalysisResults({
