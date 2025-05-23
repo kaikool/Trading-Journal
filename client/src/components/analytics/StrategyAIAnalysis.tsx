@@ -553,6 +553,27 @@ export default function StrategyAIAnalysis() {
         const strategiesData = await getStrategies(userId);
         console.log('Loaded strategies:', strategiesData);
         setStrategies(strategiesData || []);
+        
+        // Auto-select default strategy
+        const defaultStrategy = strategiesData?.find(s => s.isDefault);
+        if (defaultStrategy && !selectedStrategyId) {
+          setSelectedStrategyId(defaultStrategy.id);
+          setSelectedStrategy(defaultStrategy);
+          
+          // Auto-run analysis for default strategy
+          if (trades) {
+            setIsAnalyzing(true);
+            try {
+              const results = await analyzeStrategyPerformance(defaultStrategy, trades);
+              setAnalysisResults(results);
+            } catch (error) {
+              console.error('Auto-analysis error for default strategy:', error);
+              setAnalysisResults(null);
+            } finally {
+              setIsAnalyzing(false);
+            }
+          }
+        }
       } catch (error) {
         console.error('Error loading strategies:', error);
         toast({
@@ -566,7 +587,7 @@ export default function StrategyAIAnalysis() {
     };
 
     loadStrategies();
-  }, [userId, toast]);
+  }, [userId, toast, trades, selectedStrategyId]);
 
   // Handle strategy selection
   const handleStrategyChange = async (value: string) => {
