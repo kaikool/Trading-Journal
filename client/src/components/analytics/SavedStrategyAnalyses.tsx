@@ -16,7 +16,7 @@ import { TradingStrategy } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
 import { getStrategyAnalyses, deleteStrategyAnalysis } from "@/lib/firebase";
 import { formatDistanceToNow } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 // Interface for a saved analysis
 interface SavedAnalysis {
@@ -111,8 +111,8 @@ export default function SavedStrategyAnalyses() {
     } catch (error) {
       console.error('Error deleting analysis:', error);
       toast({
-        title: "Lỗi",
-        description: "Không thể xóa phân tích",
+        title: "Error",
+        description: "Could not delete the analysis",
         variant: "destructive",
       });
     }
@@ -127,7 +127,7 @@ export default function SavedStrategyAnalyses() {
     
     try {
       const date = timestamp.toDate();
-      return formatDistanceToNow(date, { addSuffix: true, locale: vi });
+      return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
     } catch (e) {
       console.error('Error formatting date:', e);
       return 'N/A';
