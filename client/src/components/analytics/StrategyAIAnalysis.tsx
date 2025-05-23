@@ -394,27 +394,25 @@ export default function StrategyAIAnalysis() {
                 <div className="text-sm text-gray-600 dark:text-gray-300">
                   <span className="font-medium">{trades?.length || 0}</span> trades available • Analysis ready
                 </div>
-                {analysisResults && (
-                  <Button 
-                    onClick={handleRunAIRecommendations}
-                    disabled={isLoadingAIRecommendations || !GEMINI_API_KEY}
-                    variant="outline"
-                    size="sm"
-                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur border-white/20 dark:border-gray-700/20 hover:bg-white dark:hover:bg-gray-800"
-                  >
-                    {isLoadingAIRecommendations ? (
-                      <>
-                        <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
-                        Analyzing...
-                      </>
-                    ) : (
-                      <>
-                        <Icons.analytics.brain className="h-4 w-4 mr-2" />
-                        Get AI Insights
-                      </>
-                    )}
-                  </Button>
-                )}
+                <Button 
+                  onClick={handleRunAIRecommendations}
+                  disabled={isLoadingAIRecommendations || !GEMINI_API_KEY || !analysisResults}
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/80 dark:bg-gray-800/80 backdrop-blur border-white/20 dark:border-gray-700/20 hover:bg-white dark:hover:bg-gray-800"
+                >
+                  {isLoadingAIRecommendations ? (
+                    <>
+                      <Icons.ui.spinner className="h-4 w-4 mr-2 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.analytics.brain className="h-4 w-4 mr-2" />
+                      Get AI Insights
+                    </>
+                  )}
+                </Button>
               </div>
             )}
           </div>
