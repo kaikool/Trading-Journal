@@ -289,7 +289,7 @@ export default function SavedStrategyAnalyses() {
                     </h4>
                     
                     <div className="space-y-2">
-                      {analysis.data.recommendations.slice(0, 3).map((recommendation) => (
+                      {analysis.data.recommendations.map((recommendation) => (
                         <div 
                           key={recommendation.id}
                           className="p-3 rounded-lg border border-border/30 bg-background/50"
@@ -306,14 +306,6 @@ export default function SavedStrategyAnalyses() {
                           </div>
                         </div>
                       ))}
-                      
-                      {analysis.data.recommendations.length > 3 && (
-                        <div className="text-center py-2">
-                          <span className="text-xs text-muted-foreground">
-                            +{analysis.data.recommendations.length - 3} more recommendations
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
