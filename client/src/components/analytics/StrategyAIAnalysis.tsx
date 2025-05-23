@@ -28,6 +28,9 @@ import { Trade } from "@shared/schema";
 // API Key from environment
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
+// Debug log
+console.log('🔑 GEMINI_API_KEY status:', GEMINI_API_KEY ? 'Available' : 'Missing');
+
 // Types for analysis results
 interface ConditionPerformance {
   id: string;
@@ -395,7 +398,13 @@ export default function StrategyAIAnalysis() {
                   <span className="font-medium">{trades?.length || 0}</span> trades available • Analysis ready
                 </div>
                 <Button 
-                  onClick={handleRunAIRecommendations}
+                  onClick={() => {
+                    console.log('🚀 Button clicked!');
+                    console.log('📊 analysisResults:', analysisResults ? 'Available' : 'Missing');
+                    console.log('🔄 isLoadingAIRecommendations:', isLoadingAIRecommendations);
+                    console.log('🔑 GEMINI_API_KEY:', GEMINI_API_KEY ? 'Available' : 'Missing');
+                    handleRunAIRecommendations();
+                  }}
                   disabled={isLoadingAIRecommendations || !GEMINI_API_KEY || !analysisResults}
                   variant="outline"
                   size="sm"
