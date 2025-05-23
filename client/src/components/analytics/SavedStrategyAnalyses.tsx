@@ -207,13 +207,13 @@ export default function SavedStrategyAnalyses() {
               value={analysis.id}
               className="border border-border/50 rounded-lg overflow-hidden bg-card"
             >
-              <AccordionTrigger className="px-4 py-3 hover:bg-muted/30 transition-colors [&[data-state=open]>div>div:last-child]:rotate-180">
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3 text-left">
+              <AccordionTrigger className="px-4 py-3 hover:bg-muted/30 transition-colors">
+                <div className="flex items-center justify-between w-full pr-4">
+                  <div className="flex items-center gap-3 text-left flex-1">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex-shrink-0">
                       <Icons.nav.analytics className="h-5 w-5 text-primary" />
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col flex-1">
                       <span className="font-medium text-sm">{analysis.strategyName}</span>
                       <span className="text-xs text-muted-foreground">
                         {formatDetailedDate(analysis.createdAt)}
@@ -228,7 +228,7 @@ export default function SavedStrategyAnalyses() {
                     </Badge>
                     
                     <div 
-                      className="h-8 w-8 rounded-md flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer transition-colors"
+                      className="h-8 w-8 rounded-md flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer transition-colors z-10"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteAnalysis(analysis.id);
