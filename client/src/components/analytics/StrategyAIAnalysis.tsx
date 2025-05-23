@@ -176,21 +176,28 @@ function useStrategyAnalysis() {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+      // Log data being sent to Gemini for debugging
+      console.log('=== DATA SENT TO GEMINI ===');
+      console.log('Strategy:', strategy.name);
+      console.log('Overall Stats:', overallStats);
+      console.log('Condition Performance:', conditionPerformance);
+      console.log('========================');
+
       const prompt = `
-Phân tích chiến lược forex "${strategy.name}" và đưa ra gợi ý cải tiến:
+Analyze forex strategy "${strategy.name}" and provide improvement suggestions:
 
-THỐNG KÊ TỔNG QUAN:
-- Tổng giao dịch: ${overallStats.totalTrades}
-- Tỷ lệ thắng: ${overallStats.winRate.toFixed(1)}%
-- Lợi nhuận: ${overallStats.profitLoss.toFixed(2)}
-- Lợi nhuận trung bình: ${overallStats.avgProfit.toFixed(2)}
+OVERALL STATISTICS:
+- Total Trades: ${overallStats.totalTrades}
+- Win Rate: ${overallStats.winRate.toFixed(1)}%
+- Total P&L: $${overallStats.profitLoss.toFixed(2)}
+- Average Profit: $${overallStats.avgProfit.toFixed(2)}
 
-HIỆU SUẤT CÁC ĐIỀU KIỆN:
+CONDITION PERFORMANCE:
 ${conditionPerformance.map(c => 
-  `- ${c.label} (${c.type}): Win rate ${c.winRate.toFixed(1)}%, ${c.totalTrades} trades, P&L ${c.profitLoss.toFixed(2)}`
+  `- ${c.label} (${c.type}): Win rate ${c.winRate.toFixed(1)}%, ${c.totalTrades} trades, P&L $${c.profitLoss.toFixed(2)}`
 ).join('\n')}
 
-Dựa trên dữ liệu này, hãy đưa ra 2-3 gợi ý cải tiến cụ thể. Trả về JSON:
+Based on this data, provide 2-3 specific improvement recommendations. Return JSON:
 
 {
   "recommendations": [
