@@ -14,7 +14,7 @@ export enum SkeletonLevel {
   AVATAR = "avatar",
 }
 
-interface AppSkeletonProps {
+export interface AppSkeletonProps {
   level: SkeletonLevel;
   className?: string;
   repeat?: number;
@@ -25,6 +25,9 @@ interface AppSkeletonProps {
   hasTitle?: boolean;
   hasPicture?: boolean;
   hasFooter?: boolean;
+  title?: string;
+  description?: string;
+  count?: number;
 }
 
 export function AppSkeleton({
@@ -38,6 +41,9 @@ export function AppSkeleton({
   hasTitle = true,
   hasPicture = false,
   hasFooter = false,
+  title,
+  description,
+  count = 1,
 }: AppSkeletonProps) {
   const renderSkeleton = (index: number) => {
     const key = `skeleton-${level}-${index}`;
@@ -102,7 +108,18 @@ export function AppSkeleton({
               className
             )}
           >
-            {hasTitle && <TextSkeleton className="w-1/2 mb-2" height={24} animation={animation} />}
+            {(hasTitle || title) && (
+              <div className="mb-2">
+                {title ? (
+                  <h3 className="text-lg font-medium">{title}</h3>
+                ) : (
+                  <TextSkeleton className="w-1/2" height={24} animation={animation} />
+                )}
+                {description && (
+                  <p className="text-sm text-muted-foreground mt-1">{description}</p>
+                )}
+              </div>
+            )}
             <div className="space-y-2">
               <TextSkeleton className="w-1/4" animation={animation} />
               <RectSkeleton height={40} className="w-full" animation={animation} />
@@ -264,7 +281,7 @@ export function AppSkeleton({
         className="flex flex-col" 
         style={{ gap: `${gap * 0.25}rem` }}
       >
-        {[...Array(repeat)].map((_, index) => renderSkeleton(index))}
+        {[...Array(count || repeat)].map((_, index) => renderSkeleton(index))}
       </div>
     );
   }

@@ -6,7 +6,7 @@
 // Các route phổ biến được sử dụng trong ứng dụng
 const COMMON_ROUTES = [
   '/dashboard',
-  '/trade/history',
+  '/history',
   '/analytics',
   '/settings',
 ];
@@ -15,8 +15,8 @@ const COMMON_ROUTES = [
 // Sử dụng comment để đảm bảo webpack sẽ tạo chunk riêng cho từng route
 const ROUTE_TO_MODULE_MAP: Record<string, () => Promise<unknown>> = {
   '/dashboard': () => import(/* webpackChunkName: "page-dashboard" */ '../pages/Dashboard'),
-  '/trade/history': () => import(/* webpackChunkName: "page-trade-history" */ '../pages/TradeHistory'),
-  '/trade/new': () => import(/* webpackChunkName: "page-new-trade" */ '../pages/NewTrade'),
+  '/history': () => import(/* webpackChunkName: "page-trade-history" */ '../pages/TradeHistory'),
+  '/trade/new': () => import(/* webpackChunkName: "page-new-trade" */ '../pages/Trade'),
   '/analytics': () => import(/* webpackChunkName: "page-analytics" */ '../pages/Analytics'),
   '/settings': () => import(/* webpackChunkName: "page-settings" */ '../pages/Settings'),
 };
@@ -28,7 +28,7 @@ const ROUTE_DEPENDENCIES: Record<string, Array<() => Promise<unknown>>> = {
     () => import(/* webpackChunkName: "dashboard-account-summary" */ '../components/dashboard/AccountSummaryCard'),
     () => import(/* webpackChunkName: "dashboard-trading-stats" */ '../components/dashboard/TradingStatsCard'),
   ],
-  '/trade/history': [
+  '/history': [
     () => import(/* webpackChunkName: "trade-history-card" */ '../components/trades/LazyTradeHistoryCard'),
   ],
   '/analytics': [
