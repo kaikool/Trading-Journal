@@ -19,31 +19,31 @@ const optionGroups = {
     { 
       value: "greedy", 
       label: "Greedy", 
-      icon: "DollarSign",
+      emoji: "🤑",
       color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" 
     },
     { 
       value: "revenge", 
       label: "Revenge", 
-      icon: "Flame",
+      emoji: "😡",
       color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" 
     },
     { 
       value: "uncertain", 
       label: "Uncertain", 
-      icon: "HelpCircle",
+      emoji: "🤔",
       color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" 
     },
     { 
       value: "neutral", 
       label: "Neutral", 
-      icon: "Minus",
+      emoji: "😐",
       color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" 
     },
     { 
       value: "confident", 
       label: "Confident", 
-      icon: "TrendingUp",
+      emoji: "😎",
       color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" 
     }
   ],
@@ -104,29 +104,19 @@ const EmotionPicker = ({
         >
 
           
-          {/* Icon with subtle glow effect when selected */}
-          <motion.div
+          {/* Emoji with subtle glow effect when selected */}
+          <motion.span
             className={cn(
-              "relative z-10 flex items-center justify-center",
+              "relative z-10 block text-xl",
               isSelected && "drop-shadow-sm"
             )}
             animate={isSelected ? {
-              filter: ["drop-shadow(0 0 0px rgba(59, 130, 246, 0))", "drop-shadow(0 0 4px rgba(59, 130, 246, 0.4))", "drop-shadow(0 0 0px rgba(59, 130, 246, 0))"],
+              textShadow: ["0 0 0px rgba(59, 130, 246, 0)", "0 0 8px rgba(59, 130, 246, 0.3)", "0 0 0px rgba(59, 130, 246, 0)"],
               transition: { duration: 2, repeat: Infinity }
             } : {}}
           >
-            {(() => {
-              const iconComponents = {
-                DollarSign,
-                Flame,
-                HelpCircle,
-                Minus,
-                TrendingUp
-              };
-              const IconComponent = iconComponents[option.icon as keyof typeof iconComponents];
-              return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
-            })()}
-          </motion.div>
+            {option.emoji}
+          </motion.span>
           
           {/* Ripple effect on click */}
           {isSelected && (
