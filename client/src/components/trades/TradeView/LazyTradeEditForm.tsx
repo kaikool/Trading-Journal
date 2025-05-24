@@ -3,7 +3,7 @@ import { Trade } from '@/types';
 import { lazy } from 'react';
 
 // Lazy load the main form component
-const TradeFormNew = lazy(() => import('./TradeFormNew'));
+const TradeFormNew = lazy(() => import('../Trade'));
 
 interface LazyTradeEditFormProps {
   trade: Trade;
