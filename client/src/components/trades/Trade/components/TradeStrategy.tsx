@@ -10,6 +10,7 @@ import { StrategyChecklist } from '../StrategyChecklistComponent';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 // Options with colors for various categories
 const optionGroups = {
@@ -71,23 +72,75 @@ const EmotionPicker = ({
   value: string | undefined; 
   onChange: (value: string) => void; 
 }) => (
-  <div className="flex gap-2">
+  <div className="flex gap-2 flex-wrap">
     {options.map(option => {
       const isSelected = value === option.value;
       return (
-        <div
-          key={option.value} 
+        <motion.div
+          key={option.value}
+          whileHover={{ 
+            scale: 1.08, 
+            y: -2,
+            transition: { duration: 0.2, ease: "easeOut" }
+          }}
+          whileTap={{ 
+            scale: 0.95,
+            transition: { duration: 0.1 }
+          }}
+          animate={isSelected ? {
+            scale: [1, 1.1, 1],
+            transition: { duration: 0.3, ease: "easeOut" }
+          } : {}}
           className={cn(
-            "cursor-pointer p-2 rounded-lg border transition-all hover:scale-105 text-lg",
+            "cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 text-xl relative overflow-hidden",
+            "hover:shadow-lg hover:border-primary/50",
             isSelected 
-              ? "bg-primary/10 border-primary/30 shadow-sm" 
-              : "border-border/40 hover:bg-muted/40"
+              ? "bg-gradient-to-br from-primary/15 to-primary/5 border-primary shadow-md ring-2 ring-primary/20" 
+              : "border-border/40 hover:bg-muted/50 bg-background/80 backdrop-blur-sm"
           )}
           onClick={() => onChange(option.value)}
           title={option.label}
         >
-          {option.emoji}
-        </div>
+          {/* Selected indicator with pulse effect */}
+          {isSelected && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.2 }}
+              className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center"
+            >
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-2 h-2 bg-white rounded-full"
+              />
+            </motion.div>
+          )}
+          
+          {/* Emoji with subtle glow effect when selected */}
+          <motion.span
+            className={cn(
+              "relative z-10 block",
+              isSelected && "drop-shadow-sm"
+            )}
+            animate={isSelected ? {
+              textShadow: ["0 0 0px rgba(59, 130, 246, 0)", "0 0 8px rgba(59, 130, 246, 0.3)", "0 0 0px rgba(59, 130, 246, 0)"],
+              transition: { duration: 2, repeat: Infinity }
+            } : {}}
+          >
+            {option.emoji}
+          </motion.span>
+          
+          {/* Ripple effect on click */}
+          {isSelected && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0.8 }}
+              animate={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0 bg-primary/20 rounded-xl"
+            />
+          )}
+        </motion.div>
       );
     })}
   </div>
