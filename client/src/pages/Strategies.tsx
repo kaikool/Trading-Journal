@@ -5,7 +5,7 @@ import { Icons } from "@/components/icons/icons";
 
 // Lazy load the components
 const StrategiesManagement = lazy(() => 
-  import("@/components/settings/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement }))
+  import("@/components/strategies/StrategiesManagement").then(mod => ({ default: mod.StrategiesManagement }))
 );
 
 const StrategyAIAnalysis = lazy(() => 

@@ -9,7 +9,7 @@ import { useUserDataQuery } from "@/hooks/use-user-data-query";
 
 // Lazy load the component
 const AchievementsTab = lazy(() => 
-  import("@/components/settings/AchievementsTab").then(mod => ({ default: mod.AchievementsTab }))
+  import("@/components/achievements/AchievementsTab").then(mod => ({ default: mod.AchievementsTab }))
 );
 
 export default function AchievementsPage() {
