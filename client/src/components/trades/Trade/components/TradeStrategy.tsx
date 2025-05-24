@@ -17,31 +17,31 @@ const optionGroups = {
     { 
       value: "greedy", 
       label: "Greedy", 
-      icon: Icons.ui.dollarSign,
+      emoji: "🤑",
       color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" 
     },
     { 
       value: "revenge", 
       label: "Revenge", 
-      icon: Icons.trade.loss,
+      emoji: "😡",
       color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" 
     },
     { 
       value: "uncertain", 
       label: "Uncertain", 
-      icon: Icons.ui.circle,
+      emoji: "😕",
       color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" 
     },
     { 
       value: "neutral", 
       label: "Neutral", 
-      icon: Icons.ui.minus,
+      emoji: "😐",
       color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" 
     },
     { 
       value: "confident", 
       label: "Confident", 
-      icon: Icons.ui.circleCheck,
+      emoji: "😎",
       color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" 
     }
   ],
@@ -61,7 +61,7 @@ const optionGroups = {
   ]
 };
 
-// Emotion picker with icons
+// Emotion picker with emojis
 const EmotionPicker = ({ 
   options, 
   value, 
@@ -73,13 +73,12 @@ const EmotionPicker = ({
 }) => (
   <div className="flex gap-2">
     {options.map(option => {
-      const Icon = option.icon;
       const isSelected = value === option.value;
       return (
         <div
           key={option.value} 
           className={cn(
-            "cursor-pointer p-2.5 rounded-lg border transition-all hover:scale-105",
+            "cursor-pointer p-2 rounded-lg border transition-all hover:scale-105 text-lg",
             isSelected 
               ? "bg-primary/10 border-primary/30 shadow-sm" 
               : "border-border/40 hover:bg-muted/40"
@@ -87,10 +86,7 @@ const EmotionPicker = ({
           onClick={() => onChange(option.value)}
           title={option.label}
         >
-          <Icon className={cn(
-            "h-4 w-4",
-            isSelected ? "text-primary" : "text-muted-foreground"
-          )} />
+          {option.emoji}
         </div>
       );
     })}
