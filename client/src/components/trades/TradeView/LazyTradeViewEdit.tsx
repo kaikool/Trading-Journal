@@ -26,7 +26,7 @@ import { TradeStatus } from "@/lib/trade-status-config";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartImageDialog } from "./ChartImageDialog";
-import DirectionBadge, { Direction } from "./DirectionBadge";
+import DirectionBadge, { Direction } from "../History/DirectionBadge";
 import TradeStatusBadge from "./TradeStatusBadge";
 
 // Lazy load the components
