@@ -80,53 +80,24 @@ const EmotionPicker = ({
         <motion.div
           key={option.value}
           whileHover={{ 
-            scale: 1.08, 
-            y: -2,
+            scale: 1.05,
             transition: { duration: 0.2, ease: "easeOut" }
           }}
           whileTap={{ 
-            scale: 0.95,
+            scale: 0.98,
             transition: { duration: 0.1 }
           }}
-          animate={isSelected ? {
-            scale: [1, 1.1, 1],
-            transition: { duration: 0.3, ease: "easeOut" }
-          } : {}}
           className={cn(
-            "cursor-pointer p-4 rounded-full border-2 transition-all duration-300 text-xl relative overflow-hidden min-w-[60px] min-h-[60px] flex items-center justify-center",
-            "hover:shadow-lg hover:border-primary/50 hover:shadow-primary/10",
+            "cursor-pointer px-3 py-2 rounded-full transition-all duration-200 text-sm font-medium",
+            "flex items-center gap-2 border select-none",
             isSelected 
-              ? "bg-gradient-to-br from-primary/20 to-primary/5 border-primary shadow-lg ring-4 ring-primary/15 shadow-primary/20" 
-              : "border-border/30 hover:bg-muted/40 bg-background/90 backdrop-blur-sm hover:shadow-md"
+              ? "bg-primary text-primary-foreground border-primary shadow-sm" 
+              : "bg-background hover:bg-muted border-border hover:border-primary/30"
           )}
           onClick={() => onChange(option.value)}
-          title={option.label}
         >
-
-          
-          {/* Emoji with subtle glow effect when selected */}
-          <motion.span
-            className={cn(
-              "relative z-10 block text-xl",
-              isSelected && "drop-shadow-sm"
-            )}
-            animate={isSelected ? {
-              textShadow: ["0 0 0px rgba(59, 130, 246, 0)", "0 0 8px rgba(59, 130, 246, 0.3)", "0 0 0px rgba(59, 130, 246, 0)"],
-              transition: { duration: 2, repeat: Infinity }
-            } : {}}
-          >
-            {option.emoji}
-          </motion.span>
-          
-          {/* Ripple effect on click */}
-          {isSelected && (
-            <motion.div
-              initial={{ scale: 0, opacity: 0.8 }}
-              animate={{ scale: 2, opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              className="absolute inset-0 bg-primary/20 rounded-xl"
-            />
-          )}
+          <span className="text-base">{option.emoji}</span>
+          <span>{option.label}</span>
         </motion.div>
       );
     })}
