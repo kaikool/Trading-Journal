@@ -9,11 +9,11 @@ const StrategiesManagement = lazy(() =>
 );
 
 const StrategyAIAnalysis = lazy(() => 
-  import("@/components/analytics/StrategyAIAnalysis")
+  import("@/components/strategies/StrategyAIAnalysis")
 );
 
 const SavedStrategyAnalyses = lazy(() => 
-  import("@/components/analytics/SavedStrategyAnalyses")
+  import("@/components/strategies/SavedStrategyAnalyses")
 );
 
 export default function StrategiesPage() {
