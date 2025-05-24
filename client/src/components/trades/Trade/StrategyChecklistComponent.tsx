@@ -217,11 +217,11 @@ export function StrategyChecklist({
         <div className="bg-background border p-2 rounded-md mb-1">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <div>
+              <div className="flex items-center gap-2">
                 <h3 className="text-sm font-medium">Strategy Checklist</h3>
-                <p className="text-xs text-muted-foreground">
-                  {value.filter(c => c.checked && c.passed).length} of {(strategy.rules?.length || 0) + (strategy.entryConditions?.length || 0)} conditions met
-                </p>
+                <Badge variant="outline" className="h-5 px-1.5 bg-primary/5 border-primary/20 text-xs">
+                  {value.filter(c => c.checked && c.passed).length}/{(strategy.rules?.length || 0) + (strategy.entryConditions?.length || 0)}
+                </Badge>
               </div>
             </div>
           </div>
