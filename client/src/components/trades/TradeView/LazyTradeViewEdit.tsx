@@ -27,7 +27,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartImageDialog } from "./ChartImageDialog";
 import DirectionBadge, { Direction } from "../History/DirectionBadge";
-import TradeStatusBadge from "./TradeStatusBadge";
+import TradeStatusBadge from "../History/TradeStatusBadge";
 
 // Lazy load the components
 const LazyTradeEditForm = lazy(() => import("./LazyTradeEditForm"));
