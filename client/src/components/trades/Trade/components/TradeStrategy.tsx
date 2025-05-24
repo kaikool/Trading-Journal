@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/icons/icons';
 import { TradeFormValues } from '../types';
 import { TradingStrategy, StrategyConditionCheck } from '@/types';
-import { StrategyChecklist } from '../../StrategyChecklistComponent';
+import { StrategyChecklist } from '../StrategyChecklistComponent';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
