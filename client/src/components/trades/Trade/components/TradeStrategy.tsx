@@ -14,16 +14,36 @@ import { cn } from '@/lib/utils';
 // Options with colors for various categories
 const optionGroups = {
   emotion: [
-    { value: "calm", label: "Calm", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
-    { value: "confident", label: "Confident", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-    { value: "fearful", label: "Fearful", color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" },
-    { value: "greedy", label: "Greedy", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" },
-    { value: "anxious", label: "Anxious", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
-    { value: "excited", label: "Excited", color: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300" },
-    { value: "impatient", label: "Impatient", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-    { value: "uncertain", label: "Uncertain", color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" },
-    { value: "frustrated", label: "Frustrated", color: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300" },
-    { value: "regretful", label: "Regretful", color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" }
+    { 
+      value: "greedy", 
+      label: "Greedy", 
+      icon: Icons.ui.dollarSign,
+      color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" 
+    },
+    { 
+      value: "revenge", 
+      label: "Revenge", 
+      icon: Icons.trade.loss,
+      color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" 
+    },
+    { 
+      value: "uncertain", 
+      label: "Uncertain", 
+      icon: Icons.ui.circle,
+      color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" 
+    },
+    { 
+      value: "neutral", 
+      label: "Neutral", 
+      icon: Icons.ui.minus,
+      color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" 
+    },
+    { 
+      value: "confident", 
+      label: "Confident", 
+      icon: Icons.ui.circleCheck,
+      color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" 
+    }
   ],
   market: [
     { value: "trending", label: "Trending", color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
@@ -41,7 +61,43 @@ const optionGroups = {
   ]
 };
 
-// Reusable components
+// Emotion picker with icons
+const EmotionPicker = ({ 
+  options, 
+  value, 
+  onChange
+}: { 
+  options: any[]; 
+  value: string | undefined; 
+  onChange: (value: string) => void; 
+}) => (
+  <div className="flex gap-2">
+    {options.map(option => {
+      const Icon = option.icon;
+      const isSelected = value === option.value;
+      return (
+        <div
+          key={option.value} 
+          className={cn(
+            "cursor-pointer p-2.5 rounded-lg border transition-all hover:scale-105",
+            isSelected 
+              ? "bg-primary/10 border-primary/30 shadow-sm" 
+              : "border-border/40 hover:bg-muted/40"
+          )}
+          onClick={() => onChange(option.value)}
+          title={option.label}
+        >
+          <Icon className={cn(
+            "h-4 w-4",
+            isSelected ? "text-primary" : "text-muted-foreground"
+          )} />
+        </div>
+      );
+    })}
+  </div>
+);
+
+// Regular option badges for other categories
 const OptionBadges = ({ 
   options, 
   value, 
@@ -327,12 +383,21 @@ export function TradeStrategy({
             name="emotion"
             render={({ field }) => (
               <FormItem>
-                <CategorySection
-                  title="Emotional State"
-                  options={optionGroups.emotion}
-                  value={field.value}
-                  onChange={field.onChange}
-                />
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">Emotional State</Label>
+                    {field.value && (
+                      <Badge variant="outline" className="text-xs px-1.5 py-0 h-5 bg-primary/5 border-primary/10">
+                        {optionGroups.emotion.find(o => o.value === field.value)?.label}
+                      </Badge>
+                    )}
+                  </div>
+                  <EmotionPicker 
+                    options={optionGroups.emotion} 
+                    value={field.value} 
+                    onChange={field.onChange}
+                  />
+                </div>
                 <FormMessage />
               </FormItem>
             )}
