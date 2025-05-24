@@ -99,7 +99,7 @@ export function RecentTradesCard({
 
   // Function to navigate to all trades - tối ưu với useCallback để tránh tạo lại hàm
   const handleViewAllTrades = useCallback(() => {
-    setLocation("/trade/history");
+    setLocation("/history");
   }, [setLocation]);
   
   // Dùng useMemoWithPerf thay vì useMemo để tối ưu hiệu năng trên các thiết bị khác nhau

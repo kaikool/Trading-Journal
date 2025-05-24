@@ -138,7 +138,7 @@ export default function ViewTradeOptimized() {
       });
       // Không cần navigate vì observer đã xử lý
       // Nhưng vẫn giữ lại để đảm bảo UI nhất quán
-      navigate("/trade/history");
+      navigate("/history");
     } catch (error) {
       logError("Error deleting trade:", error);
       toast({
@@ -187,7 +187,6 @@ export default function ViewTradeOptimized() {
         <AppSkeleton 
           level={SkeletonLevel.FORM} 
           className="py-4"
-          count={1}
         />
       ) : error ? (
         <Card className="mb-4 overflow-hidden">

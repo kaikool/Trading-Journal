@@ -54,7 +54,7 @@ export default function TradePage() {
         title: "Trade saved successfully",
         description: "Your trade has been recorded and added to your journal.",
       });
-      setLocation("/trade/history");
+      setLocation("/history");
     },
     onError: (error: unknown) => {
       toast({
@@ -129,10 +129,9 @@ export default function TradePage() {
               <AppSkeleton 
                 level={SkeletonLevel.FORM}
                 className="py-4"
-                customProps={{
-                  title: "Saving trade...",
-                  description: "Recording your trade details and processing uploaded images"
-                }}
+                animation="pulse"
+                title="Saving trade..."
+                description="Recording your trade details and processing uploaded images"
               />
             </CardContent>
           </Card>
@@ -218,7 +217,7 @@ export default function TradePage() {
                 isEditMode={false}
                 isFormSubmitting={isFormSubmitting}
                 hasDraft={hasDraft}
-                onCancel={() => setLocation("/trade/history")}
+                onCancel={() => setLocation("/history")}
                 clearDraft={clearDraft}
               />
             </div>

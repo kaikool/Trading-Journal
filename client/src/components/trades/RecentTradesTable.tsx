@@ -143,7 +143,7 @@ export default function RecentTradesTable({
         <Button 
           variant="link" 
           className="text-sm p-0 h-auto"
-          onClick={() => setLocation("/trade/history")}
+          onClick={() => setLocation("/history")}
         >
           View all trades
         </Button>
