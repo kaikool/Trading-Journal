@@ -93,11 +93,11 @@ const EmotionPicker = ({
             transition: { duration: 0.3, ease: "easeOut" }
           } : {}}
           className={cn(
-            "cursor-pointer p-3 rounded-xl border-2 transition-all duration-300 text-xl relative overflow-hidden",
-            "hover:shadow-lg hover:border-primary/50",
+            "cursor-pointer p-4 rounded-full border-2 transition-all duration-300 text-xl relative overflow-hidden min-w-[60px] min-h-[60px] flex items-center justify-center",
+            "hover:shadow-lg hover:border-primary/50 hover:shadow-primary/10",
             isSelected 
-              ? "bg-gradient-to-br from-primary/15 to-primary/5 border-primary shadow-md ring-2 ring-primary/20" 
-              : "border-border/40 hover:bg-muted/50 bg-background/80 backdrop-blur-sm"
+              ? "bg-gradient-to-br from-primary/20 to-primary/5 border-primary shadow-lg ring-4 ring-primary/15 shadow-primary/20" 
+              : "border-border/30 hover:bg-muted/40 bg-background/90 backdrop-blur-sm hover:shadow-md"
           )}
           onClick={() => onChange(option.value)}
           title={option.label}
