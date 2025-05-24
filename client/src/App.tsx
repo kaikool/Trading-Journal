@@ -33,8 +33,8 @@ const Login = lazy(() => import("@/pages/auth/Login"));
 const Register = lazy(() => import("@/pages/auth/Register"));
 
 // Less frequently used pages - can be in separate chunks
-const TradeForm = lazy(() => import("@/pages/trade"));
-const ViewTrade = lazy(() => import("@/pages/ViewTradeOptimized"));
+const TradeForm = lazy(() => import("@/pages/Trade"));
+const ViewTrade = lazy(() => import("@/pages/TradeView"));
 const Analytics = lazy(() => import("@/pages/Analytics"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const Strategies = lazy(() => import("@/pages/Strategies"));
@@ -311,7 +311,6 @@ function MainContent() {
             <Route path="/trade/new" component={TradeForm} />
             <Route path="/trade/edit/:tradeId" component={ViewTrade} />
             <Route path="/trade/view/:tradeId" component={ViewTrade} />
-            <Route path="/trade/history" component={TradeHistory} />
             <Route path="/history" component={TradeHistory} />
             <Route path="/analytics" component={Analytics} />
             {/* Settings page render */}

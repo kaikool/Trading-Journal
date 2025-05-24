@@ -85,7 +85,7 @@ export default function ViewTradeOptimized() {
               title: "Trade deleted",
               description: "This trade has been deleted"
             });
-            navigate("/trade/history");
+            navigate("/history");
             return;
           }
           
@@ -113,7 +113,7 @@ export default function ViewTradeOptimized() {
 
   // Navigate back
   const handleBack = () => {
-    navigate("/trade/history");
+    navigate("/history");
   };
 
   // Handle initiating delete trade
