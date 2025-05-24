@@ -88,16 +88,16 @@ const EmotionPicker = ({
             transition: { duration: 0.1 }
           }}
           className={cn(
-            "cursor-pointer px-3 py-2 rounded-full transition-all duration-200 text-sm font-medium",
-            "flex items-center gap-2 border select-none",
+            "cursor-pointer px-3 py-2 rounded-full transition-all duration-200",
+            "flex items-center justify-center border select-none min-w-[48px] min-h-[48px]",
             isSelected 
               ? "bg-primary text-primary-foreground border-primary shadow-sm" 
               : "bg-background hover:bg-muted border-border hover:border-primary/30"
           )}
           onClick={() => onChange(option.value)}
+          title={option.label}
         >
-          <span className="text-base">{option.emoji}</span>
-          <span>{option.label}</span>
+          <span className="text-lg">{option.emoji}</span>
         </motion.div>
       );
     })}
