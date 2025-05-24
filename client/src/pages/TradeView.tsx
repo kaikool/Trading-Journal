@@ -8,7 +8,7 @@ import { Icons } from "@/components/icons/icons";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { Trade } from "@/types";
 import { useLocation } from "wouter";
-import { LazyTradeViewEdit } from "@/components/trades/LazyTradeViewEdit";
+import { LazyTradeViewEdit } from "@/components/trades/TradeView/LazyTradeViewEdit";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import {

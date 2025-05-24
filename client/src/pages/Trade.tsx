@@ -4,7 +4,7 @@ import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { FormProvider } from "react-hook-form";
-import { useTradeForm } from "@/components/trades/TradeFormNew/hooks";
+import { useTradeForm } from "@/components/trades/Trade/hooks";
 
 // UI Components
 import {
@@ -19,11 +19,11 @@ import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import {
   FormHeader,
   TabbedTradeForm,
-} from "@/components/trades/TradeFormNew/components";
-import { FormActions } from "@/components/trades/TradeFormNew/components/FormActions";
+} from "@/components/trades/Trade/components";
+import { FormActions } from "@/components/trades/Trade/components/FormActions";
 
 // Types
-import { TradeFormProps } from "@/components/trades/TradeFormNew/types";
+import { TradeFormProps } from "@/components/trades/Trade/types";
 
 export default function TradePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
