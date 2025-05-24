@@ -24,6 +24,7 @@ import { ChartImageDialog } from "../TradeView/ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
 import { debug } from "@/lib/debug";
+import { memoWithPerf } from '@/lib/performance';
 // Component này không gọi trực tiếp TradeUpdateService
 // được cập nhật qua:
 // 1. Key prop dựa trên updateTrigger trong TradeHistory.tsx
@@ -501,7 +502,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
 }
 
 // Sử dụng memoWithPerf từ performance.ts để tối ưu memoization
-import { memoWithPerf } from '@/lib/performance';
 
 export default memoWithPerf(LazyTradeHistoryCard, (prevProps, nextProps) => {
   // Tối ưu hóa cơ chế so sánh (giống dashboard) - đảm bảo chỉ re-render khi có thay đổi quan trọng
