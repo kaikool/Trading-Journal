@@ -24,7 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import LazyTradeHistoryCard from "@/components/trades/History/LazyTradeHistoryCard";
+import HistoryCard from "@/components/trades/History/HistoryCard";
 import { FilterTags } from "@/components/trades/History/FilterTags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1014,7 +1014,7 @@ export default function TradeHistory() {
                       exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
                       className="w-full overflow-hidden"
                     >
-                      <LazyTradeHistoryCard 
+                      <HistoryCard 
                         key={`${trade.id}-${updateTrigger}`} 
                         trade={trade} 
                         onEdit={() => setLocation(`/trade/edit/${trade.id}`)}

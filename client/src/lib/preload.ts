@@ -29,7 +29,7 @@ const ROUTE_DEPENDENCIES: Record<string, Array<() => Promise<unknown>>> = {
     () => import(/* webpackChunkName: "dashboard-trading-stats" */ '../components/dashboard/TradingStatsCard'),
   ],
   '/history': [
-    () => import(/* webpackChunkName: "trade-history-card" */ '../components/trades/History/LazyTradeHistoryCard'),
+    () => import(/* webpackChunkName: "history-card" */ '../components/trades/History/HistoryCard'),
   ],
   '/analytics': [
     () => import(/* webpackChunkName: "performance-chart" */ '../components/dashboard/PerformanceChart'),
