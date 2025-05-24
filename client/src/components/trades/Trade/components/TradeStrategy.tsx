@@ -4,6 +4,7 @@ import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/f
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Icons } from '@/components/icons/icons';
+import { DollarSign, Flame, HelpCircle, Minus, TrendingUp } from 'lucide-react';
 import { TradeFormValues } from '../types';
 import { TradingStrategy, StrategyConditionCheck } from '@/types';
 import { StrategyChecklist } from '../StrategyChecklistComponent';
@@ -18,31 +19,31 @@ const optionGroups = {
     { 
       value: "greedy", 
       label: "Greedy", 
-      emoji: "💸",
+      icon: "DollarSign",
       color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" 
     },
     { 
       value: "revenge", 
       label: "Revenge", 
-      emoji: "😠",
+      icon: "Flame",
       color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" 
     },
     { 
       value: "uncertain", 
       label: "Uncertain", 
-      emoji: "😟",
+      icon: "HelpCircle",
       color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" 
     },
     { 
       value: "neutral", 
       label: "Neutral", 
-      emoji: "😑",
+      icon: "Minus",
       color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" 
     },
     { 
       value: "confident", 
       label: "Confident", 
-      emoji: "😌",
+      icon: "TrendingUp",
       color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" 
     }
   ],
@@ -103,19 +104,29 @@ const EmotionPicker = ({
         >
 
           
-          {/* Emoji with subtle glow effect when selected */}
-          <motion.span
+          {/* Icon with subtle glow effect when selected */}
+          <motion.div
             className={cn(
-              "relative z-10 block",
+              "relative z-10 flex items-center justify-center",
               isSelected && "drop-shadow-sm"
             )}
             animate={isSelected ? {
-              textShadow: ["0 0 0px rgba(59, 130, 246, 0)", "0 0 8px rgba(59, 130, 246, 0.3)", "0 0 0px rgba(59, 130, 246, 0)"],
+              filter: ["drop-shadow(0 0 0px rgba(59, 130, 246, 0))", "drop-shadow(0 0 4px rgba(59, 130, 246, 0.4))", "drop-shadow(0 0 0px rgba(59, 130, 246, 0))"],
               transition: { duration: 2, repeat: Infinity }
             } : {}}
           >
-            {option.emoji}
-          </motion.span>
+            {(() => {
+              const iconComponents = {
+                DollarSign,
+                Flame,
+                HelpCircle,
+                Minus,
+                TrendingUp
+              };
+              const IconComponent = iconComponents[option.icon as keyof typeof iconComponents];
+              return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
+            })()}
+          </motion.div>
           
           {/* Ripple effect on click */}
           {isSelected && (
