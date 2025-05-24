@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import { useLocation } from "wouter";
 import { determineTradeStatus } from "@/lib/trade-status-helpers";
 import { Trade as AppTrade } from "@/types";
-import DirectionBadge from "../trades/DirectionBadge";
+import DirectionBadge from "../trades/History/DirectionBadge";
 import { useMemoWithPerf } from "@/lib/performance";
 import { formatCurrency, formatProfitLoss } from "@/utils/format-number";
 

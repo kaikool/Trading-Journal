@@ -17,11 +17,11 @@ export const LazyRecentTradesCard = lazy(() =>
 );
 
 // Form components with lazy loading
-export const LazyCloseTradeForm = lazy(() => import('../trades/LazyCloseTradeForm'));
+export const LazyCloseTradeForm = lazy(() => import('../trades/TradeView/LazyCloseTradeForm'));
 
 // Image related components with lazy loading
 export const LazyTradeImageManager = lazy(() => 
-  import('../trades/TradeImageManager').then(module => ({ 
+  import('../trades/TradeView/TradeImageManager').then(module => ({ 
     default: module.TradeImageManager 
   }))
 );
