@@ -18,31 +18,31 @@ const optionGroups = {
     { 
       value: "greedy", 
       label: "Greedy", 
-      emoji: "💎",
+      emoji: "💸",
       color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" 
     },
     { 
       value: "revenge", 
       label: "Revenge", 
-      emoji: "⚡",
+      emoji: "😠",
       color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" 
     },
     { 
       value: "uncertain", 
       label: "Uncertain", 
-      emoji: "🌊",
+      emoji: "😟",
       color: "bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300" 
     },
     { 
       value: "neutral", 
       label: "Neutral", 
-      emoji: "🎭",
+      emoji: "😑",
       color: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300" 
     },
     { 
       value: "confident", 
       label: "Confident", 
-      emoji: "🦅",
+      emoji: "😌",
       color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" 
     }
   ],
