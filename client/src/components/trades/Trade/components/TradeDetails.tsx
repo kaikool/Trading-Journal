@@ -4,7 +4,7 @@ import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/f
 import { Label } from '@/components/ui/label';
 import { NumberInput } from '@/components/ui/number-input';
 import { Icons } from '@/components/icons/icons';
-import { GetPriceButton } from '../../GetPriceButton';
+import { GetPriceButton } from '../GetPriceButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
