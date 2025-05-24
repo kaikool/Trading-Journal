@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatPips, formatProfitLoss } from "@/utils/format-number";
 import { TradeStatus } from "@/lib/trade-status-config";
-import TradeStatusBadge from "./TradeStatusBadge";
+import TradeStatusBadge from "../History/TradeStatusBadge";
 // Lưu ý: Component này không cần import trực tiếp tradeUpdateService
 // vì updateTrade từ firebase.ts đã tích hợp thông báo tới TradeUpdateService
 // khi đóng giao dịch (isClosingTrade = true trong updateTrade)
