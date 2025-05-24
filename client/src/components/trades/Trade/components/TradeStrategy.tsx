@@ -204,8 +204,11 @@ export function TradeStrategy({
       {selectedStrategy && strategyChecks.length > 0 && (
         <Card className="border-border/30 shadow-sm bg-card/50">
           <CardHeader className="pb-2 pt-3 px-4">
-            <CardTitle className="text-sm font-medium">
-              Strategy Checklist
+            <CardTitle className="text-sm font-medium flex items-center justify-between">
+              <span>Strategy Checklist</span>
+              <Badge variant="outline" className="h-5 px-1.5 bg-primary/5 border-primary/20 text-xs">
+                {strategyChecks.filter(c => c.checked && c.passed).length}/{strategyChecks.length}
+              </Badge>
             </CardTitle>
             <CardDescription className="text-xs">
               Confirm your strategy conditions
@@ -216,6 +219,7 @@ export function TradeStrategy({
             <StrategyChecklist
               strategy={selectedStrategy}
               value={strategyChecks}
+              showCompliance={false}
               onChange={(checks) => {
                 if (checks.length > 0) {
                   for (const check of checks) {
