@@ -19,7 +19,7 @@ import { SidebarHint } from "./SidebarHint";
 const SIDEBAR_LINKS = [
   { icon: <Icons.nav.dashboard className="h-5 w-5" />, label: "Dashboard", href: "/" },
   { icon: <Icons.nav.newTrade className="h-5 w-5" />, label: "New Trade", href: "/trade/new" },
-  { icon: <Icons.nav.history className="h-5 w-5" />, label: "History", href: "/trade/history" },
+  { icon: <Icons.nav.history className="h-5 w-5" />, label: "History", href: "/history" },
   { icon: <Icons.nav.analytics className="h-5 w-5" />, label: "Analytics", href: "/analytics" },
   { icon: <Icons.nav.strategies className="h-5 w-5" />, label: "Strategies", href: "/strategies" },
   { icon: <Icons.nav.goals className="h-5 w-5" />, label: "Goals", href: "/goals" },
