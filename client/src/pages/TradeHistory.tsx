@@ -24,8 +24,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-import LazyTradeHistoryCard from "@/components/trades/LazyTradeHistoryCard";
-import { FilterTags } from "@/components/trades/FilterTags";
+import LazyTradeHistoryCard from "@/components/trades/History/LazyTradeHistoryCard";
+import { FilterTags } from "@/components/trades/History/FilterTags";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
