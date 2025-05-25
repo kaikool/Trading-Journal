@@ -1,11 +1,4 @@
-/**
- * TradingView Chart Capture Service
- * 
- * Sử dụng Puppeteer và browserless API để tự động lấy ảnh từ TradingView
- * Hỗ trợ các timeframe H4 và M15 cho currency pairs
- * 
- * Updated: Bổ sung hệ thống logging chi tiết để debug
- */
+
 
 import puppeteer from 'puppeteer-core';
 import { promises as fs } from 'fs';
@@ -118,46 +111,35 @@ interface CaptureResult {
  * Tạo URL TradingView cho cặp tiền và timeframe cụ thể
  */
 function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLogger): string {
-  logger.log('🔧 URL_BUILD_START', `Bắt đầu tạo URL cho ${pair} ${timeframe}`);
-  
-  // Chuyển đổi format pair từ EURUSD thành EURUSD
   const formattedPair = pair.replace('/', '').toUpperCase();
-  logger.log('📝 PAIR_FORMAT', `Cặp tiền được format: ${pair} -> ${formattedPair}`);
   
-  // Mapping timeframe để tương thích với TradingView
   const timeframeMap: Record<string, string> = {
-    'H4': '240',  // 4 hours = 240 minutes
-    'M15': '15'   // 15 minutes
+    'H4': '240',
+    'M15': '15'
   };
   
   const tvTimeframe = timeframeMap[timeframe] || '240';
-  logger.log('⏰ TIMEFRAME_MAP', `Timeframe mapping: ${timeframe} -> ${tvTimeframe} minutes`);
   
-  // Construct TradingView URL với nền trắng và tự động căn giữa giá hiện tại
   const baseUrl = 'https://www.tradingview.com/chart/';
   const params = new URLSearchParams({
     symbol: `FX:${formattedPair}`,
     interval: tvTimeframe,
-    theme: 'light', // Nền trắng
-    style: '1', // Candlestick
+    theme: 'light',
+    style: '1',
     timezone: 'Etc/UTC',
-    toolbar: '0', // Hide toolbar
-    withdateranges: '0', // Hide date ranges
-    hideideas: '1', // Hide ideas
-    hidevolume: '1', // Hide volume
+    toolbar: '0',
+    withdateranges: '0',
+    hideideas: '1',
+    hidevolume: '1',
     studies_overrides: '{}',
     enabled_features: '[move_logo_to_main_pane]',
     disabled_features: '[header_symbol_search,header_resolutions,header_chart_type,header_settings,header_indicators,header_compare,header_undo_redo,header_screenshot,header_fullscreen_button,left_toolbar,timeframes_toolbar]',
-    // Tự động căn giữa chart vào khu vực giá hiện tại
-    'range': 'auto', // Tự động điều chỉnh phạm vi
-    'time': Math.floor(Date.now() / 1000).toString(), // Thời gian hiện tại
-    'hide_side_toolbar': '1' // Ẩn sidebar
+    'range': 'auto',
+    'time': Math.floor(Date.now() / 1000).toString(),
+    'hide_side_toolbar': '1'
   });
   
-  const finalUrl = `${baseUrl}?${params.toString()}`;
-  logger.log('🔗 URL_BUILD_COMPLETE', `URL được tạo thành công: ${finalUrl}`);
-  
-  return finalUrl;
+  return `${baseUrl}?${params.toString()}`;
 }
 
 /**
@@ -275,8 +257,8 @@ export async function captureAllTimeframes(pair: string): Promise<{
     await batchLogger.saveToFile();
     
     return {
-      h4: h4Final,
-      m15: m15Final
+      h4: h4Result,
+      m15: m15Result
     };
     
   } catch (error) {
