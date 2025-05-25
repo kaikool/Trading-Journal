@@ -14,40 +14,24 @@ import {
 import { cn } from '@/lib/utils';
 import { ImageState } from '../types';
 
-/**
- * Custom hook for responsive design
- * Returns true if the media query matches
- * 
- * @param query CSS media query string
- * @returns boolean indicating if the query matches
- */
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState<boolean>(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
-    
-    // Set initial value
     setMatches(mediaQuery.matches);
 
-    // Create event handler
     const handleChange = (event: MediaQueryListEvent) => {
       setMatches(event.matches);
     };
 
-    // Add listener
     mediaQuery.addEventListener('change', handleChange);
-    
-    // Clean up
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [query]);
 
   return matches;
 }
 
-// Tab configuration for the trade form with proper section separation
 const TRADE_FORM_TABS = [
   {
     id: 'entry',
@@ -82,7 +66,6 @@ const TRADE_FORM_TABS = [
 ] as const;
 
 interface TabbedTradeFormProps {
-  // Trade details props
   isCalculatingLotSize: boolean;
   isCalculatingTakeProfit: boolean;
   accountBalance: number;
@@ -92,15 +75,11 @@ interface TabbedTradeFormProps {
   calculateOptimalTakeProfit: () => void;
   riskRewardRatio: number;
   setRiskRewardRatio: (value: number) => void;
-  
-  // Strategy props
   strategies: any[];
   isLoadingStrategies: boolean;
   selectedStrategy: any;
   strategyChecks: any[];
   handleStrategyCheckToggle: (id: string, checked: boolean) => void;
-  
-  // Image props
   entryImage1: ImageState;
   entryImage2: ImageState;
   exitImage1: ImageState;
@@ -112,7 +91,6 @@ interface TabbedTradeFormProps {
 }
 
 export function TabbedTradeForm({
-  // Trade details props
   isCalculatingLotSize,
   isCalculatingTakeProfit,
   accountBalance,
@@ -122,15 +100,11 @@ export function TabbedTradeForm({
   calculateOptimalTakeProfit,
   riskRewardRatio,
   setRiskRewardRatio,
-  
-  // Strategy props
   strategies,
   isLoadingStrategies,
   selectedStrategy,
   strategyChecks,
   handleStrategyCheckToggle,
-  
-  // Image props
   entryImage1,
   entryImage2,
   exitImage1,
@@ -140,64 +114,36 @@ export function TabbedTradeForm({
   removeEntryImage,
   removeExitImage,
 }: TabbedTradeFormProps) {
-  // State for active tab - set to 'entry' to match the first tab in TRADE_FORM_TABS
   const [activeTab, setActiveTab] = useState('entry');
-  
-  // Check if screen is mobile
   const isMobile = useMediaQuery('(max-width: 640px)');
-  
-  // States to track scrollability
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  
-  // Reference to the tab list element
   const tabListRef = useRef<HTMLDivElement>(null);
   
-  // Function to check scrollability in both directions
   const checkScrollability = useCallback(() => {
     if (tabListRef.current) {
       const { scrollWidth, clientWidth, scrollLeft } = tabListRef.current;
-      
-      // Can scroll left if we're not at the beginning
       setCanScrollLeft(scrollLeft > 0);
       
-      // Cách tính toán mới:
-      // 1. Lấy kích thước của tab list
-      // 2. Kiểm tra vị trí cuối cùng của tab "Notes" có nằm trong tầm nhìn không
-      
-      // Tìm tab cuối cùng
       const lastTabElement = tabListRef.current.querySelector('[value="notes"]');
-      
       if (lastTabElement) {
-        // Vị trí của tab cuối và độ rộng của nó
         const lastTabRight = lastTabElement.getBoundingClientRect().right;
         const tabListRight = tabListRef.current.getBoundingClientRect().right;
-        
-        // Nếu phần bên phải của tab cuối cùng đã nằm trong phạm vi của tablist
-        // thì không hiển thị mũi tên nữa
-        const isLastTabVisible = lastTabRight <= tabListRight + 5; // thêm 5px margin
-        
+        const isLastTabVisible = lastTabRight <= tabListRight + 5;
         setCanScrollRight(!isLastTabVisible);
       } else {
-        // Dự phòng, sử dụng phương pháp cũ nếu không tìm thấy tab cuối
         const margin = 50;
         setCanScrollRight(scrollLeft < (scrollWidth - clientWidth - margin));
       }
     }
   }, []);
   
-  // Set up listeners to check scrollability
   useEffect(() => {
     if (isMobile) {
       const tabListElement = tabListRef.current;
       if (tabListElement) {
-        // Initial check
         checkScrollability();
-        
-        // Check on scroll
         tabListElement.addEventListener('scroll', checkScrollability);
-        
-        // Check on resize
         window.addEventListener('resize', checkScrollability);
         
         return () => {
@@ -208,21 +154,17 @@ export function TabbedTradeForm({
     }
   }, [checkScrollability, isMobile]);
   
-  // Animation variants for tab content
   const tabContentVariants = {
     hidden: { opacity: 0, x: 5 },
     visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
   };
   
-  // Find the current tab index
   const currentTabIndex = TRADE_FORM_TABS.findIndex(tab => tab.id === activeTab);
   
-  // Get tab navigation helpers
   const goToNextTab = useCallback(() => {
     if (currentTabIndex < TRADE_FORM_TABS.length - 1) {
       const nextTab = TRADE_FORM_TABS[currentTabIndex + 1].id;
       setActiveTab(nextTab);
-      // Tab changed via swipe left
     }
   }, [currentTabIndex, setActiveTab]);
   
@@ -230,11 +172,9 @@ export function TabbedTradeForm({
     if (currentTabIndex > 0) {
       const prevTab = TRADE_FORM_TABS[currentTabIndex - 1].id;
       setActiveTab(prevTab);
-      // Tab changed via swipe right
     }
   }, [currentTabIndex, setActiveTab]);
   
-  // Setup swipe handlers
   const swipeHandlers = useSwipeable({
     onSwipedLeft: goToNextTab,
     onSwipedRight: goToPrevTab,

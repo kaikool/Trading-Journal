@@ -13,26 +13,20 @@ import {
 } from './components';
 
 export default function TradeFormNew(props: TradeFormProps) {
-  // Handle onCancel prop for edit mode
   const onCancel = props.mode === "edit" && props.hasOwnProperty('onCancel') 
     ? (props as any).onCancel 
     : undefined;
   
-  // Use the main custom hook that integrates all functionality
   const {
     form,
     isEditMode,
     isFormSubmitting,
-    
-    // Draft management
     hasDraft,
     showDraftNotice,
     isDraftLoading,
     setShowDraftNotice,
     loadDraft,
     clearDraft,
-    
-    // Image management
     entryImage1,
     entryImage2,
     exitImage1,
@@ -41,15 +35,11 @@ export default function TradeFormNew(props: TradeFormProps) {
     handleExitImageChange,
     removeEntryImage,
     removeExitImage,
-    
-    // Strategy management
     strategies,
     isLoadingStrategies,
     selectedStrategy,
     strategyChecks,
     handleStrategyCheckToggle,
-    
-    // Trade calculations
     accountBalance,
     riskPercentage,
     setRiskPercentage,
@@ -58,15 +48,12 @@ export default function TradeFormNew(props: TradeFormProps) {
     isCalculatingTakeProfit,
     calculateOptimalLotSize,
     calculateOptimalTakeProfit,
-    
-    // Form submission
     onSubmit
   } = useTradeForm(props);
   
   return (
     <FormProvider {...form}>
       <form onSubmit={onSubmit} className="space-y-6 overflow-hidden relative">
-        {/* Draft notice if available */}
         <FormHeader 
           isEditMode={isEditMode}
           hasDraft={hasDraft}
@@ -77,7 +64,6 @@ export default function TradeFormNew(props: TradeFormProps) {
           clearDraft={clearDraft}
         />
         
-        {/* Main form content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <Card>
@@ -123,7 +109,6 @@ export default function TradeFormNew(props: TradeFormProps) {
           </div>
         </div>
         
-        {/* Chart images section */}
         <Card>
           <CardContent className="pt-6">
             <TradeImages 
@@ -139,7 +124,6 @@ export default function TradeFormNew(props: TradeFormProps) {
           </CardContent>
         </Card>
         
-        {/* Form actions */}
         <FormActions 
           isEditMode={isEditMode}
           isFormSubmitting={isFormSubmitting}
