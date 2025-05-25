@@ -124,14 +124,13 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
   const formattedPair = pair.replace('/', '').toUpperCase();
   logger.log('📝 PAIR_FORMAT', `Cặp tiền được format: ${pair} -> ${formattedPair}`);
   
-  // H4 sử dụng hoàn toàn cùng setup như M15 (M15 là chuẩn)
-  // Cả H4 và M15 đều sử dụng cùng interval để có chất lượng như nhau
+  // Mapping timeframe để tương thích với TradingView
   const timeframeMap: Record<string, string> = {
-    'H4': '15',   // Sử dụng M15 setup cho H4 
-    'M15': '15'   // M15 giữ nguyên
+    'H4': '240',  // 4 hours = 240 minutes
+    'M15': '15'   // 15 minutes
   };
   
-  const tvTimeframe = timeframeMap[timeframe] || '15';
+  const tvTimeframe = timeframeMap[timeframe] || '240';
   logger.log('⏰ TIMEFRAME_MAP', `Timeframe mapping: ${timeframe} -> ${tvTimeframe} minutes`);
   
   // Construct TradingView URL với nền trắng và tự động căn giữa giá hiện tại
@@ -165,7 +164,7 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
  * Chụp ảnh chart từ TradingView sử dụng Browserless REST API
  */
 export async function captureTradingViewChart(options: CaptureOptions): Promise<CaptureResult> {
-  // H4 sử dụng hoàn toàn cùng thiết lập như M15 (M15 là setup chuẩn)
+  // Đảm bảo cả H4 và M15 đều sử dụng cùng kích thước fullsize
   const { pair, timeframe, width = 1600, height = 900 } = options;
   
   // Tạo session ID duy nhất để tracking
