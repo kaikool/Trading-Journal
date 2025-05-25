@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Icons } from '@/components/icons/icons';
 import { Badge } from '@/components/ui/badge';
