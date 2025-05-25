@@ -186,10 +186,10 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
         type: 'png',
         fullPage: false,
         clip: {
-          x: 150,        // Bỏ qua sidebar trái
-          y: 50,         // Bỏ qua header
-          width: width - 300,  // Trừ sidebar và padding
-          height: height - 150 // Trừ header và footer
+          x: 80,         // Giảm để lấy nhiều nội dung hơn
+          y: 40,         // Giảm để lấy nhiều nội dung hơn
+          width: width - 160,  // Lấy nhiều nội dung hơn
+          height: height - 100 // Lấy nhiều nội dung hơn
         }
       },
       gotoOptions: {
