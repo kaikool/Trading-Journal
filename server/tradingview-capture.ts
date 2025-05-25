@@ -164,6 +164,7 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
  * Chụp ảnh chart từ TradingView sử dụng Browserless REST API
  */
 export async function captureTradingViewChart(options: CaptureOptions): Promise<CaptureResult> {
+  // Đảm bảo cả H4 và M15 đều sử dụng cùng kích thước fullsize
   const { pair, timeframe, width = 1600, height = 900 } = options;
   
   // Tạo session ID duy nhất để tracking
@@ -184,16 +185,18 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
     const browserlessUrl = `https://production-sfo.browserless.io/screenshot?token=${BROWSERLESS_TOKEN}`;
     logger.log('🔑 API_ENDPOINT', `Endpoint: ${browserlessUrl.replace(BROWSERLESS_TOKEN, '***TOKEN***')}`);
     
+    // Cùng thiết lập fullsize cho cả H4 và M15
     const requestPayload = {
       url: url,
       options: {
         type: 'png',
         fullPage: false,
+        quality: 100,  // Chất lượng tối đa
         clip: {
-          x: 50,         // Giảm thêm để lấy nhiều nội dung hơn
-          y: 30,         // Giảm thêm để lấy nhiều nội dung hơn
-          width: width - 100,  // Rộng hơn nữa
-          height: height - 80  // Cao hơn nữa
+          x: 50,         // Cùng vị trí crop cho cả H4 và M15
+          y: 30,         // Cùng vị trí crop cho cả H4 và M15
+          width: width - 100,  // Cùng kích thước cho cả H4 và M15
+          height: height - 80  // Cùng kích thước cho cả H4 và M15
         }
       },
       gotoOptions: {
@@ -201,8 +204,8 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
         timeout: 30000
       },
       viewport: {
-        width: width,
-        height: height
+        width: width,    // Cùng viewport cho cả H4 và M15
+        height: height   // Cùng viewport cho cả H4 và M15
       }
     };
     
