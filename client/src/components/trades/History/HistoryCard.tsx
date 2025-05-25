@@ -24,7 +24,7 @@ import { ChartImageDialog } from "../TradeView/ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
 import { debug } from "@/lib/debug";
-import { memoWithPerf } from '@/lib/performance';
+
 // Component này không gọi trực tiếp TradeUpdateService
 // được cập nhật qua:
 // 1. Key prop dựa trên updateTrigger trong TradeHistory.tsx
@@ -501,68 +501,4 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
   );
 }
 
-// Sử dụng memoWithPerf từ performance.ts để tối ưu memoization
-
-export default memoWithPerf(LazyTradeHistoryCard, (prevProps, nextProps) => {
-  // Tối ưu hóa cơ chế so sánh (giống dashboard) - đảm bảo chỉ re-render khi có thay đổi quan trọng
-  
-  // BƯỚC 1: Luôn cập nhật nếu key prop thay đổi (do cơ chế updateTrigger) - cần thiết cho realtime
-  if (prevProps.key !== nextProps.key) {
-    debug(`[REALTIME-DEBUG][LazyTradeHistoryCard] Force update due to key change: ${prevProps.key} → ${nextProps.key}`);
-    return false; // trả về false = cần re-render
-  }
-  
-  // BƯỚC 2: Kiểm tra trường ID (so sánh nhanh) - bắt buộc re-render nếu ID khác
-  if (prevProps.trade.id !== nextProps.trade.id) {
-    debug(`[REALTIME-DEBUG][LazyTradeHistoryCard] Different trade ID: ${prevProps.trade.id} → ${nextProps.trade.id}`);
-    return false; // cần re-render
-  }
-  
-  // BƯỚC 3: Kiểm tra timestamp để phát hiện cập nhật từ server
-  // Sử dụng updatedAt là trường quan trọng nhất để xác định thay đổi từ server
-  if (prevProps.trade.updatedAt !== nextProps.trade.updatedAt) {
-    debug(`[REALTIME-DEBUG][LazyTradeHistoryCard] Trade ${prevProps.trade.id} updated, refreshing...`);
-    return false; // cần re-render
-  }
-  
-  // BƯỚC 4: Các trường quan trọng ảnh hưởng đến hiển thị
-  try {
-    // Kiểm tra các trường quan trọng có thay đổi không (theo độ ưu tiên)
-    const criticalFieldsChanged = 
-      // Trạng thái lệnh giao dịch (mở/đóng)
-      prevProps.trade.isOpen !== nextProps.trade.isOpen ||
-      prevProps.trade.closeDate !== nextProps.trade.closeDate ||
-      // Kết quả và P/L
-      prevProps.trade.result !== nextProps.trade.result ||
-      prevProps.trade.profitLoss !== nextProps.trade.profitLoss ||
-      // Giá vào/ra
-      prevProps.trade.exitPrice !== nextProps.trade.exitPrice ||
-      prevProps.trade.entryPrice !== nextProps.trade.entryPrice ||
-      // Trạng thái
-      prevProps.trade.status !== nextProps.trade.status;
-    
-    if (criticalFieldsChanged) {
-      debug(`[REALTIME-DEBUG][LazyTradeHistoryCard] Critical fields changed for trade ${prevProps.trade.id}`);
-      return false; // cần re-render
-    }
-    
-    // BƯỚC 5: Ảnh biểu đồ (quan trọng cho UX)
-    const chartImagesChanged =
-      prevProps.trade.entryImage !== nextProps.trade.entryImage ||
-      prevProps.trade.exitImage !== nextProps.trade.exitImage ||
-      prevProps.trade.entryImageM15 !== nextProps.trade.entryImageM15 ||
-      prevProps.trade.exitImageM15 !== nextProps.trade.exitImageM15;
-    
-    if (chartImagesChanged) {
-      debug(`[REALTIME-DEBUG][LazyTradeHistoryCard] Chart images changed for trade ${prevProps.trade.id}`);
-      return false; // cần re-render
-    }
-    
-    // Không có thay đổi quan trọng, giữ nguyên component
-    return true;
-  } catch (error) {
-    // Xử lý lỗi khi so sánh (ví dụ với null/undefined) - luôn re-render để đảm bảo an toàn
-    debug(`[REALTIME-DEBUG][LazyTradeHistoryCard] Error during comparison, forcing update: ${error}`);
-    return false; // cần re-render để đảm bảo hiển thị đúng
-  }
-});
+export default LazyTradeHistoryCard;

@@ -1,5 +1,5 @@
-import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons/icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -19,7 +19,7 @@ interface DirectionBadgeProps {
  * Một component badge nhất quán để hiển thị hướng giao dịch trong toàn bộ ứng dụng
  * Sử dụng forwardRef để hoạt động chính xác với Tooltip và các component khác
  */
-const DirectionBadge = React.forwardRef<HTMLDivElement, DirectionBadgeProps>(
+const DirectionBadge = forwardRef<HTMLDivElement, DirectionBadgeProps>(
   function DirectionBadge(props, ref) {
     const {
       direction,
