@@ -1,10 +1,4 @@
-/**
- * AIAnalysisTab.tsx
- * 
- * Component phân tích chiến lược AI giống y hệt design gốc
- */
-
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from '@google/generative-ai';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

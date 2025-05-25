@@ -1,4 +1,4 @@
-import { useMemo, memo } from "react";
+import { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -45,8 +45,7 @@ interface KPICardProps {
   };
 }
 
-// Tối ưu hóa KPICard với memo để giảm re-render
-const KPICard = memo(function KPICard({ title, value, description, icon, trend }: KPICardProps) {
+const KPICard = ({ title, value, description, icon, trend }: KPICardProps) => {
   // Xác định màu gradient dựa trên loại trend
   const gradientVariant = trend?.direction === 'up' 
     ? 'success' 
@@ -134,7 +133,7 @@ const KPICard = memo(function KPICard({ title, value, description, icon, trend }
       </CardContent>
     </Card>
   );
-});
+};
 
 interface OverviewTabProps {
   data: {
@@ -302,8 +301,8 @@ function OverviewTabContent({ data }: OverviewTabProps) {
   // Chart colors from configuration
   const COLORS = CHART_CONFIG.COLORS;
 
-  // Custom tooltip for the equity curve - Tối ưu hóa với memo
-  const EquityCurveTooltip = memo(({ active, payload }: any) => {
+  // Custom tooltip for the equity curve
+  const EquityCurveTooltip = ({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     
     return (
@@ -327,8 +326,8 @@ function OverviewTabContent({ data }: OverviewTabProps) {
     );
   });
 
-  // Custom tooltip for the trading activity chart - Tối ưu hóa với memo
-  const TradingActivityTooltip = memo(({ active, payload }: any) => {
+  // Custom tooltip for the trading activity chart
+  const TradingActivityTooltip = ({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     
     const data = payload[0].payload;
