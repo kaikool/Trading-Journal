@@ -133,12 +133,12 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
   const tvTimeframe = timeframeMap[timeframe] || '240';
   logger.log('⏰ TIMEFRAME_MAP', `Timeframe mapping: ${timeframe} -> ${tvTimeframe} minutes`);
   
-  // Construct TradingView URL with minimal UI
+  // Construct TradingView URL với nền trắng và tối ưu hiển thị
   const baseUrl = 'https://www.tradingview.com/chart/';
   const params = new URLSearchParams({
     symbol: `FX:${formattedPair}`,
     interval: tvTimeframe,
-    theme: 'dark',
+    theme: 'light', // Nền trắng
     style: '1', // Candlestick
     timezone: 'Etc/UTC',
     toolbar: '0', // Hide toolbar
@@ -146,8 +146,8 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
     hideideas: '1', // Hide ideas
     hidevolume: '1', // Hide volume
     studies_overrides: '{}',
-    enabled_features: '[]',
-    disabled_features: '[header_symbol_search,header_resolutions,header_chart_type,header_settings,header_indicators,header_compare,header_undo_redo,header_screenshot,header_fullscreen_button]'
+    enabled_features: '[move_logo_to_main_pane]',
+    disabled_features: '[header_symbol_search,header_resolutions,header_chart_type,header_settings,header_indicators,header_compare,header_undo_redo,header_screenshot,header_fullscreen_button,left_toolbar,timeframes_toolbar]'
   });
   
   const finalUrl = `${baseUrl}?${params.toString()}`;
