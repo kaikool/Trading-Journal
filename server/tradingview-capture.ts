@@ -160,7 +160,7 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
  * Chụp ảnh chart từ TradingView sử dụng Browserless REST API
  */
 export async function captureTradingViewChart(options: CaptureOptions): Promise<CaptureResult> {
-  const { pair, timeframe, width = 1400, height = 800 } = options;
+  const { pair, timeframe, width = 1600, height = 900 } = options;
   
   // Tạo session ID duy nhất để tracking
   const sessionId = `${pair}_${timeframe}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -184,17 +184,16 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       url: url,
       options: {
         type: 'png',
-        fullPage: false,
-        clip: {
-          x: 0,
-          y: 60,  // Bỏ qua header toolbar TradingView
-          width: width,
-          height: height - 120  // Bỏ qua footer và bottom controls
-        }
+        fullPage: true,  // Chụp toàn bộ trang
+        quality: 95      // Chất lượng cao
       },
       gotoOptions: {
         waitUntil: 'networkidle2',
         timeout: 30000
+      },
+      viewport: {
+        width: width,
+        height: height
       }
     };
     
