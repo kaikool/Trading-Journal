@@ -191,7 +191,7 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       options: {
         type: 'png',
         fullPage: false,
-        quality: 100,  // Chất lượng tối đa
+        // Bỏ quality vì PNG không hỗ trợ tham số này
         clip: {
           x: 50,         // Cùng vị trí crop cho cả H4 và M15
           y: 30,         // Cùng vị trí crop cho cả H4 và M15
