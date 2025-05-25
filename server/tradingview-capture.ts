@@ -9,7 +9,7 @@ import puppeteer from 'puppeteer-core';
 
 // Browserless API configuration
 const BROWSERLESS_TOKEN = '2SNEoq2by4gxiCk0a5f541b86a7b35f16883c01d0e808ed67';
-const BROWSERLESS_ENDPOINT = `wss://chrome.browserless.io?token=${BROWSERLESS_TOKEN}`;
+const BROWSERLESS_ENDPOINT = `https://chrome.browserless.io`;
 
 interface CaptureOptions {
   pair: string;
@@ -70,9 +70,9 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
   try {
     console.log(`📸 Bắt đầu chụp ảnh ${pair} ${timeframe}...`);
     
-    // Kết nối đến browserless
+    // Sử dụng browserless với limit và retry
     browser = await puppeteer.connect({
-      browserWSEndpoint: BROWSERLESS_ENDPOINT,
+      browserWSEndpoint: `wss://chrome.browserless.io?token=${BROWSERLESS_TOKEN}&--window-size=${width},${height}`,
     });
     
     const page = await browser.newPage();

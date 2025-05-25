@@ -32,39 +32,26 @@ export function TradeImages({
 
   // Handler để set ảnh được capture từ TradingView
   const handleTradingViewCapture = (timeframe: 'H4' | 'M15', imageUrl: string) => {
-    // Set ảnh trực tiếp vào preview state thay vì qua file upload
-    if (timeframe === 'H4') {
-      // Set cho entry image 1 (H4)
-      const setState = entryImage1.setPreview;
-      const setFile = entryImage1.setFile;
-      
-      setState?.(imageUrl);
-      
-      // Tạo file object để có thể upload sau
-      fetch(imageUrl)
-        .then(res => res.blob())
-        .then(blob => {
-          const file = new File([blob], `tradingview_${selectedPair}_H4.png`, { type: 'image/png' });
-          setFile?.(file);
-        })
-        .catch(console.error);
+    // Tạo file object từ URL để trigger upload logic hiện có
+    fetch(imageUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], `tradingview_${selectedPair}_${timeframe}.png`, { type: 'image/png' });
         
-    } else if (timeframe === 'M15') {
-      // Set cho entry image 2 (M15)
-      const setState = entryImage2.setPreview;
-      const setFile = entryImage2.setFile;
-      
-      setState?.(imageUrl);
-      
-      // Tạo file object để có thể upload sau
-      fetch(imageUrl)
-        .then(res => res.blob())
-        .then(blob => {
-          const file = new File([blob], `tradingview_${selectedPair}_M15.png`, { type: 'image/png' });
-          setFile?.(file);
-        })
-        .catch(console.error);
-    }
+        // Tạo synthetic event để trigger upload logic hiện có
+        const syntheticEvent = {
+          target: {
+            files: [file]
+          }
+        } as React.ChangeEvent<HTMLInputElement>;
+
+        if (timeframe === 'H4') {
+          handleEntryImageChange(1)(syntheticEvent);
+        } else if (timeframe === 'M15') {
+          handleEntryImageChange(2)(syntheticEvent);
+        }
+      })
+      .catch(console.error);
   };
 
   return (
