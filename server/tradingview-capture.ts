@@ -4,17 +4,10 @@ import puppeteer from 'puppeteer-core';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// Browserless API configuration
 const BROWSERLESS_TOKEN = '2SNFWNm3X1hjs1m0c442cdb7b81440b4c7068211b7b3956a5';
-const BROWSERLESS_ENDPOINT = `https://chrome.browserless.io`;
-
-// Debug configuration
-const DEBUG_MODE = true; // Force debug mode untuk debugging
-const ORIGINAL_DEBUG_MODE = process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development';
 const LOG_TO_FILE = process.env.LOG_TRADINGVIEW === 'true';
 const LOG_DIR = path.join(process.cwd(), 'logs');
 
-// Logging utility
 class CaptureLogger {
   private logEntries: string[] = [];
   private startTime: number = Date.now();
@@ -31,13 +24,8 @@ class CaptureLogger {
     const logMessage = `[${timestamp}] [+${elapsed}ms] ${prefix} ${step}: ${message}`;
     this.logEntries.push(logMessage);
 
-    // Console logging based on debug mode
-    if (DEBUG_MODE || isError) {
-      if (isError) {
-        console.error(logMessage);
-      } else {
-        console.log(logMessage);
-      }
+    if (isError) {
+      console.error(logMessage);
     }
   }
 
@@ -277,12 +265,10 @@ export async function captureAllTimeframes(pair: string): Promise<{
  */
 export function getDebugInfo() {
   return {
-    debugMode: DEBUG_MODE,
     logToFile: LOG_TO_FILE,
     logDirectory: LOG_DIR,
     environment: process.env.NODE_ENV,
     configuration: {
-      DEBUG: process.env.DEBUG,
       LOG_TRADINGVIEW: process.env.LOG_TRADINGVIEW,
       NODE_ENV: process.env.NODE_ENV
     }
