@@ -60,98 +60,65 @@ function buildTradingViewUrl(pair: string, timeframe: string): string {
 }
 
 /**
- * Chụp ảnh chart từ TradingView
+ * Chụp ảnh chart từ TradingView sử dụng Browserless REST API
  */
 export async function captureTradingViewChart(options: CaptureOptions): Promise<CaptureResult> {
   const { pair, timeframe, width = 1200, height = 600 } = options;
   
-  let browser;
-  
   try {
     console.log(`📸 Bắt đầu chụp ảnh ${pair} ${timeframe}...`);
-    
-    // Sử dụng browserless với limit và retry
-    browser = await puppeteer.connect({
-      browserWSEndpoint: `wss://chrome.browserless.io?token=${BROWSERLESS_TOKEN}&--window-size=${width},${height}`,
-    });
-    
-    const page = await browser.newPage();
-    
-    // Thiết lập kích thước viewport
-    await page.setViewport({ width, height });
-    
-    // Thiết lập User Agent để tránh detection
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
     
     // Tạo URL TradingView
     const url = buildTradingViewUrl(pair, timeframe);
     console.log(`🔗 Đang truy cập: ${url}`);
     
-    // Navigate to TradingView
-    await page.goto(url, { 
-      waitUntil: 'networkidle2',
-      timeout: 30000 
+    // Sử dụng Browserless REST API để chụp screenshot
+    const response = await fetch(`https://production-sfo.browserless.io/screenshot?token=${BROWSERLESS_TOKEN}`, {
+      method: 'POST',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        url: url,
+        options: {
+          type: 'png',
+          fullPage: false,
+          viewport: {
+            width: width,
+            height: height
+          }
+        },
+        gotoOptions: {
+          waitUntil: 'networkidle2',
+          timeout: 30000
+        },
+        waitFor: 5000, // Đợi 5 giây để chart load
+        evaluate: `
+          // Ẩn các popup, banner và toolbar
+          const popups = document.querySelectorAll('[data-name="popup"], [class*="popup"], [class*="modal"], [class*="banner"]');
+          popups.forEach(popup => popup.style.display = 'none');
+          
+          const toolbars = document.querySelectorAll('[data-name="toolbar"], [class*="toolbar"], header, [class*="header"]');
+          toolbars.forEach(toolbar => toolbar.style.display = 'none');
+          
+          const sidebars = document.querySelectorAll('[class*="sidebar"], [data-name="sidebar"]');
+          sidebars.forEach(sidebar => sidebar.style.display = 'none');
+          
+          const footers = document.querySelectorAll('footer, [class*="footer"]');
+          footers.forEach(footer => footer.style.display = 'none');
+          
+          const notifications = document.querySelectorAll('[class*="notification"], [class*="toast"]');
+          notifications.forEach(notification => notification.style.display = 'none');
+        `
+      })
     });
-    
-    // Đợi chart load xong
-    console.log('⏳ Đang đợi chart load...');
-    
-    // Đợi chart container xuất hiện
-    await page.waitForSelector('[data-name="legend-source-item"]', { timeout: 15000 });
-    
-    // Đợi thêm để chart render đầy đủ
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Ẩn các popup, banner và toolbar
-    await page.evaluate(() => {
-      // Ẩn các popup thông báo
-      const popups = document.querySelectorAll('[data-name="popup"], [class*="popup"], [class*="modal"], [class*="banner"]');
-      popups.forEach((popup: Element) => {
-        (popup as HTMLElement).style.display = 'none';
-      });
-      
-      // Ẩn toolbar và header
-      const toolbars = document.querySelectorAll('[data-name="toolbar"], [class*="toolbar"], header, [class*="header"]');
-      toolbars.forEach((toolbar: Element) => {
-        (toolbar as HTMLElement).style.display = 'none';
-      });
-      
-      // Ẩn các widget sidebar
-      const sidebars = document.querySelectorAll('[class*="sidebar"], [data-name="sidebar"]');
-      sidebars.forEach((sidebar: Element) => {
-        (sidebar as HTMLElement).style.display = 'none';
-      });
-      
-      // Ẩn footer
-      const footers = document.querySelectorAll('footer, [class*="footer"]');
-      footers.forEach((footer: Element) => {
-        (footer as HTMLElement).style.display = 'none';
-      });
-      
-      // Ẩn các notification
-      const notifications = document.querySelectorAll('[class*="notification"], [class*="toast"]');
-      notifications.forEach((notification: Element) => {
-        (notification as HTMLElement).style.display = 'none';
-      });
-    });
-    
-    // Tìm chart container và chụp ảnh chỉ vùng chart
-    const chartElement = await page.$('[data-name="legend-source-item"]').then(() => {
-      // Tìm chart container chính
-      return page.$('div[id*="tradingview_"]') || page.$('[class*="chart-container"]') || page.$('body');
-    });
-    
-    if (!chartElement) {
-      throw new Error('Không tìm thấy chart container');
+
+    if (!response.ok) {
+      throw new Error(`Browserless API error: ${response.status} ${response.statusText}`);
     }
-    
-    console.log('📷 Đang chụp ảnh chart...');
-    
-    // Chụp ảnh chỉ vùng chart
-    const imageBuffer = Buffer.from(await chartElement.screenshot({
-      type: 'png',
-      omitBackground: false,
-    }));
+
+    const imageBuffer = Buffer.from(await response.arrayBuffer());
     
     console.log(`✅ Chụp ảnh thành công ${pair} ${timeframe}`);
     
@@ -166,10 +133,6 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'
     };
-  } finally {
-    if (browser) {
-      await browser.disconnect();
-    }
   }
 }
 
