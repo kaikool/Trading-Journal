@@ -1,5 +1,5 @@
-import React from "react";
 import { Badge } from "@/components/ui/badge";
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import { TradeStatus, getTradeStatusConfig } from "@/lib/trade-status-config";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -16,7 +16,7 @@ interface TradeStatusBadgeProps {
  * A consistent badge component to display trade status across the application
  * Uses forwardRef to properly work with Tooltip and other components that pass refs
  */
-const TradeStatusBadge = React.forwardRef<HTMLDivElement, TradeStatusBadgeProps>(({
+const TradeStatusBadge = forwardRef<HTMLDivElement, TradeStatusBadgeProps>(({
   status,
   className,
   size = 'md',
