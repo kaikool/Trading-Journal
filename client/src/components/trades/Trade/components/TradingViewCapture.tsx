@@ -191,11 +191,17 @@ export function TradingViewCapture({
           totalCount
         });
 
+        // Đảm bảo toast hiển thị đúng
+        const toastTitle = successCount === 2 ? "All Charts Captured!" : "Charts Partially Captured";
+        const toastDescription = successCount === 2 
+          ? `Successfully captured both H4 and M15 charts from TradingView.`
+          : `Captured ${successCount}/${totalCount} charts from TradingView. ${successCount === 1 ? 'One chart may have failed due to rate limits.' : ''}`;
+        
+        console.log('Toast will show:', { toastTitle, toastDescription, successCount });
+        
         toast({
-          title: successCount === 2 ? "All Charts Captured!" : "Charts Partially Captured",
-          description: successCount === 2 
-            ? `Successfully captured both H4 and M15 charts from TradingView.`
-            : `Captured ${successCount}/${totalCount} charts from TradingView. ${successCount === 1 ? 'One chart may have failed due to rate limits.' : ''}`,
+          title: toastTitle,
+          description: toastDescription,
           variant: successCount === 2 ? "default" : "destructive"
         });
 
