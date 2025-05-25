@@ -167,11 +167,13 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
   const logger = new CaptureLogger(sessionId, pair, timeframe);
   
   try {
+    console.log('🔥 DEBUG: New logging system started!', { sessionId, pair, timeframe });
     logger.log('📸 CAPTURE_START', `Khởi tạo capture với viewport ${width}x${height}`);
     
     // Bước 1: Tạo URL TradingView
     logger.log('🔧 URL_GENERATION', 'Bắt đầu tạo URL TradingView...');
     const url = buildTradingViewUrl(pair, timeframe, logger);
+    console.log('🔥 DEBUG: URL created:', url);
     
     // Bước 2: Chuẩn bị request đến Browserless API
     logger.log('🌐 API_PREPARATION', 'Chuẩn bị request đến Browserless API...');
