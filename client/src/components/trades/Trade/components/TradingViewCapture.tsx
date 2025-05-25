@@ -180,7 +180,7 @@ export function TradingViewCapture({
           message: 'All charts captured successfully!'
         });
 
-        const successCount = (response.results.h4?.success ? 1 : 0) + (response.results.m15?.success ? 1 : 0);
+        const successCount = (data.results.h4?.success ? 1 : 0) + (data.results.m15?.success ? 1 : 0);
         const totalCount = 2;
 
         toast({
@@ -198,7 +198,7 @@ export function TradingViewCapture({
         }, 2000);
 
       } else {
-        throw new Error(response.message || 'Failed to capture charts');
+        throw new Error(data.message || 'Failed to capture charts');
       }
 
     } catch (error) {
