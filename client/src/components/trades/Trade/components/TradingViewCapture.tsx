@@ -63,18 +63,16 @@ export function TradingViewCapture({
     });
 
     try {
-      const response = await apiRequest({
-        url: '/api/tradingview/capture',
-        method: 'POST',
-        body: {
-          pair,
-          timeframe,
-          userId,
-          tradeId
-        }
+      const response = await apiRequest('POST', '/api/tradingview/capture', {
+        pair,
+        timeframe,
+        userId,
+        tradeId
       });
 
-      if (response.success) {
+      const data = await response.json();
+
+      if (data.success) {
         setCaptureProgress({
           status: 'completed',
           timeframe,
@@ -83,7 +81,7 @@ export function TradingViewCapture({
         });
 
         // Gọi callback để cập nhật UI
-        onImageCaptured(timeframe, response.imageUrl);
+        onImageCaptured(timeframe, data.imageUrl);
 
         toast({
           title: "Chart Captured",
@@ -100,7 +98,7 @@ export function TradingViewCapture({
         }, 2000);
 
       } else {
-        throw new Error(response.message || 'Failed to capture chart');
+        throw new Error(data.message || 'Failed to capture chart');
       }
 
     } catch (error) {
@@ -149,17 +147,15 @@ export function TradingViewCapture({
     });
 
     try {
-      const response = await apiRequest({
-        url: '/api/tradingview/capture-all',
-        method: 'POST',
-        body: {
-          pair,
-          userId,
-          tradeId
-        }
+      const response = await apiRequest('POST', '/api/tradingview/capture-all', {
+        pair,
+        userId,
+        tradeId
       });
 
-      if (response.success) {
+      const data = await response.json();
+
+      if (data.success) {
         setCaptureProgress({
           status: 'uploading',
           timeframe: 'both',
@@ -168,13 +164,13 @@ export function TradingViewCapture({
         });
 
         // Xử lý kết quả H4
-        if (response.results.h4?.success) {
-          onImageCaptured('H4', response.results.h4.imageUrl);
+        if (data.results.h4?.success) {
+          onImageCaptured('H4', data.results.h4.imageUrl);
         }
 
         // Xử lý kết quả M15
-        if (response.results.m15?.success) {
-          onImageCaptured('M15', response.results.m15.imageUrl);
+        if (data.results.m15?.success) {
+          onImageCaptured('M15', data.results.m15.imageUrl);
         }
 
         setCaptureProgress({
