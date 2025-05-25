@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TradeFormValues } from '../types';
-import { motion } from 'framer-motion';
+
 import { formatRiskReward } from '@/utils/format-number';
 
 
@@ -41,34 +41,10 @@ export function TradeDetails({
     ? formatRiskReward(riskRewardRatio, { formatAsRatio: true, minimumFractionDigits: 2 }) 
     : "1:0";
   
-  // Animation variants
-  const containerAnimation = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
-      }
-    }
-  };
-  
-  const itemAnimation = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 }
-  };
-  
   return (
-    <motion.div
-      initial="hidden"
-      animate="show"
-      variants={containerAnimation}
-      className="space-y-4"
-    >
-      {/* Entry Details Only */}
+    <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        {/* Left Column */}
         <div className="space-y-4">
-          {/* Direction Buttons - Moved to the top */}
           <FormField
             control={form.control}
             name="direction"
@@ -323,6 +299,6 @@ export function TradeDetails({
           />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
