@@ -40,8 +40,7 @@ export async function uploadImage(
       resource_type: 'image',
       use_filename: true,
       unique_filename: true,
-      overwrite: true,
-      context: metadata
+      overwrite: true
     };
 
     if (publicId) {

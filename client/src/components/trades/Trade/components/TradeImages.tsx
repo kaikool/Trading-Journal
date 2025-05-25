@@ -2,6 +2,9 @@ import React from 'react';
 import { ImageUpload } from './ImageUpload';
 import { ImageState } from '../types';
 import { Badge } from '@/components/ui/badge';
+import { TradingViewCapture } from './TradingViewCapture';
+import { useFormContext } from 'react-hook-form';
+import { TradeFormValues } from '../types';
 
 interface TradeImagesProps {
   entryImage1: ImageState;
@@ -24,8 +27,42 @@ export function TradeImages({
   removeEntryImage,
   removeExitImage
 }: TradeImagesProps) {
+  const form = useFormContext<TradeFormValues>();
+  const selectedPair = form.watch("pair");
+
+  // Handler để set ảnh được capture từ TradingView
+  const handleTradingViewCapture = (timeframe: 'H4' | 'M15', imageUrl: string) => {
+    // Tạo một File object từ URL để tương thích với logic upload hiện có
+    fetch(imageUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const file = new File([blob], `tradingview_${selectedPair}_${timeframe}.png`, { type: 'image/png' });
+        
+        // Trigger event change để sử dụng logic upload hiện có
+        const event = {
+          target: {
+            files: [file]
+          }
+        } as any;
+
+        if (timeframe === 'H4') {
+          handleEntryImageChange(1)(event);
+        } else if (timeframe === 'M15') {
+          handleEntryImageChange(2)(event);
+        }
+      })
+      .catch(console.error);
+  };
+
   return (
     <div className="space-y-5">
+      {/* TradingView Auto Capture */}
+      <TradingViewCapture
+        pair={selectedPair}
+        onImageCaptured={handleTradingViewCapture}
+        disabled={!selectedPair}
+      />
+
       {/* Entry Charts */}
       <div>
         <div className="flex items-center mb-2">

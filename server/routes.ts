@@ -326,8 +326,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           uploadResults.h4 = {
             success: true,
-            imageUrl: uploadResult.secure_url,
-            publicId: uploadResult.public_id
+            imageUrl: uploadResult.imageUrl,
+            publicId: uploadResult.publicId
           };
         } catch (error) {
           uploadResults.h4 = {
@@ -362,8 +362,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           uploadResults.m15 = {
             success: true,
-            imageUrl: uploadResult.secure_url,
-            publicId: uploadResult.public_id
+            imageUrl: uploadResult.imageUrl,
+            publicId: uploadResult.publicId
           };
         } catch (error) {
           uploadResults.m15 = {

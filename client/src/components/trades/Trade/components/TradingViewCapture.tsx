@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Icons } from '@/components/icons';
+import { Icons } from '@/components/icons/icons';
 import { cn } from '@/lib/utils';
 import { apiRequest } from '@/lib/queryClient';
 
