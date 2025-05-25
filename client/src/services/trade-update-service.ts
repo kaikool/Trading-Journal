@@ -54,18 +54,9 @@ class TradeUpdateService {
    * @param tradeId ID giao dịch mới (tùy chọn)
    */
   public notifyTradeCreated(userId: string, tradeId?: string) {
-    debug(`[REALTIME-DEBUG] TradeUpdateService: Trade created notification (ID: ${tradeId || 'unknown'})`);
-    
-    // Đảm bảo invalidation xong trước khi thông báo cho observers
-    debug(`[REALTIME-DEBUG] Invalidating queries for userId: ${userId}`);
+    debug(`[REALTIME-DEBUG] Trade created notification (ID: ${tradeId || 'unknown'})`);
     this._invalidateTradeQueries(userId);
-    
-    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
-    debug(`[REALTIME-DEBUG] Scheduling notification to observers with delay`);
-    setTimeout(() => {
-      debug(`[REALTIME-DEBUG] Notifying observers about new trade: ${tradeId}`);
-      this._notifyObservers('create', tradeId);
-    }, 10); // Tăng delay lên 10ms để đảm bảo invalidation hoàn tất
+    this._notifyObservers('create', tradeId);
   }
   
   /**
@@ -75,28 +66,9 @@ class TradeUpdateService {
    * @param tradeId ID giao dịch cập nhật
    */
   public notifyTradeUpdated(userId: string, tradeId: string) {
-    debug(`TradeUpdateService: Trade updated notification (ID: ${tradeId})`);
+    debug(`[REALTIME-DEBUG] Trade updated notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    // Tăng độ trễ để đảm bảo invalidation hoàn tất và dữ liệu mới đã được lấy
-    setTimeout(() => {
-      debug(`[REALTIME-DEBUG] Notifying observers about updated trade after cache invalidation: ${tradeId}`);
-      this._notifyObservers('update', tradeId);
-      
-      // Vô hiệu hóa lần thứ hai sau khoảng thời gian ngắn
-      // Đây là phương pháp "double invalidation" để đảm bảo dữ liệu được cập nhật đầy đủ
-      setTimeout(() => {
-        if (queryClientInstance) {
-          debug(`[REALTIME-DEBUG] Performing second invalidation for tradeId: ${tradeId}`);
-          queryClientInstance.invalidateQueries({ 
-            predicate: (query) => {
-              const key = query.queryKey;
-              return Array.isArray(key) && key[0] === TRADE_QUERY_ROOT_KEY;
-            },
-            refetchType: 'active',
-          });
-        }
-      }, 100);
-    }, 50);
+    this._notifyObservers('update', tradeId);
   }
   
   /**
@@ -106,12 +78,9 @@ class TradeUpdateService {
    * @param tradeId ID giao dịch đã xóa
    */
   public notifyTradeDeleted(userId: string, tradeId: string) {
-    debug(`TradeUpdateService: Trade deleted notification (ID: ${tradeId})`);
+    debug(`[REALTIME-DEBUG] Trade deleted notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
-    setTimeout(() => {
-      this._notifyObservers('delete', tradeId);
-    }, 0);
+    this._notifyObservers('delete', tradeId);
   }
   
   /**
@@ -121,12 +90,9 @@ class TradeUpdateService {
    * @param tradeId ID giao dịch đã đóng
    */
   public notifyTradeClosed(userId: string, tradeId: string) {
-    debug(`TradeUpdateService: Trade closed notification (ID: ${tradeId})`);
+    debug(`[REALTIME-DEBUG] Trade closed notification (ID: ${tradeId})`);
     this._invalidateTradeQueries(userId);
-    // Thêm micro-delay để đảm bảo invalidation hoàn tất trước khi thông báo
-    setTimeout(() => {
-      this._notifyObservers('close', tradeId);
-    }, 0);
+    this._notifyObservers('close', tradeId);
   }
   
   /**
