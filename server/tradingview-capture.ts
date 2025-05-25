@@ -16,7 +16,8 @@ const BROWSERLESS_TOKEN = '2SNFWNm3X1hjs1m0c442cdb7b81440b4c7068211b7b3956a5';
 const BROWSERLESS_ENDPOINT = `https://chrome.browserless.io`;
 
 // Debug configuration
-const DEBUG_MODE = process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development';
+const DEBUG_MODE = true; // Force debug mode untuk debugging
+const ORIGINAL_DEBUG_MODE = process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development';
 const LOG_TO_FILE = process.env.LOG_TRADINGVIEW === 'true';
 const LOG_DIR = path.join(process.cwd(), 'logs');
 
