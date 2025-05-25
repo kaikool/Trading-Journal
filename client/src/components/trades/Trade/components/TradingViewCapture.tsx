@@ -284,12 +284,12 @@ export function TradingViewCapture({
           >
             {isLoading && captureProgress.timeframe === 'both' ? (
               <>
-                <Icons.ui.loader className="h-4 w-4 mr-2 animate-spin" />
+                <Icons.ui.refresh className="h-4 w-4 mr-2 animate-spin" />
                 Capturing...
               </>
             ) : (
               <>
-                <Icons.ui.download className="h-4 w-4 mr-2" />
+                <Icons.ui.upload className="h-4 w-4 mr-2" />
                 Capture Both (H4 + M15)
               </>
             )}
@@ -307,12 +307,12 @@ export function TradingViewCapture({
             >
               {isLoading && captureProgress.timeframe === 'H4' ? (
                 <>
-                  <Icons.ui.loader className="h-3 w-3 mr-1 animate-spin" />
+                  <Icons.ui.refresh className="h-3 w-3 mr-1 animate-spin" />
                   H4
                 </>
               ) : (
                 <>
-                  <Icons.ui.camera className="h-3 w-3 mr-1" />
+                  <Icons.ui.upload className="h-3 w-3 mr-1" />
                   H4 Only
                 </>
               )}
@@ -328,12 +328,12 @@ export function TradingViewCapture({
             >
               {isLoading && captureProgress.timeframe === 'M15' ? (
                 <>
-                  <Icons.ui.loader className="h-3 w-3 mr-1 animate-spin" />
+                  <Icons.ui.refresh className="h-3 w-3 mr-1 animate-spin" />
                   M15
                 </>
               ) : (
                 <>
-                  <Icons.ui.camera className="h-3 w-3 mr-1" />
+                  <Icons.ui.upload className="h-3 w-3 mr-1" />
                   M15 Only
                 </>
               )}
