@@ -304,26 +304,22 @@ export async function captureAllTimeframes(pair: string): Promise<{
   batchLogger.log('🎯 BATCH_START', `Bắt đầu chụp ảnh batch cho ${pair} - cả H4 và M15`);
   
   try {
-    batchLogger.log('🚀 PARALLEL_CAPTURE', 'Khởi tạo capture song song H4 và M15...');
+    batchLogger.log('🚀 SEQUENTIAL_CAPTURE', 'Khởi tạo capture tuần tự H4 rồi M15 để tránh rate limit...');
     const startTime = Date.now();
     
-    const [h4Result, m15Result] = await Promise.allSettled([
-      captureTradingViewChart({ pair, timeframe: 'H4' }),
-      captureTradingViewChart({ pair, timeframe: 'M15' })
-    ]);
+    // Capture tuần tự để tránh rate limit
+    batchLogger.log('🔄 H4_START', 'Bắt đầu capture H4...');
+    const h4Result = await captureTradingViewChart({ pair, timeframe: 'H4' });
+    
+    batchLogger.log('🔄 M15_START', 'Bắt đầu capture M15...');
+    const m15Result = await captureTradingViewChart({ pair, timeframe: 'M15' });
     
     const batchDuration = Date.now() - startTime;
     batchLogger.log('⏱️ BATCH_COMPLETE', `Batch capture hoàn thành sau ${batchDuration}ms`);
     
-    // Kiểm tra kết quả H4
-    const h4Final = h4Result.status === 'fulfilled' 
-      ? h4Result.value 
-      : { success: false, error: 'Failed to capture H4', logSummary: undefined };
-    
-    // Kiểm tra kết quả M15
-    const m15Final = m15Result.status === 'fulfilled' 
-      ? m15Result.value 
-      : { success: false, error: 'Failed to capture M15', logSummary: undefined };
+    // Kiểm tra kết quả H4 và M15
+    const h4Final = h4Result;
+    const m15Final = m15Result;
     
     // Log kết quả tổng hợp
     const successCount = (h4Final.success ? 1 : 0) + (m15Final.success ? 1 : 0);
