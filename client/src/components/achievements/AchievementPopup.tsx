@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Icons } from '@/components/icons/icons';
 import { cn } from '@/lib/utils';
 import { Achievement } from '@/types';
@@ -12,12 +12,12 @@ interface AchievementPopupProps {
   onClose: () => void;
 }
 
-const AchievementPopup: React.FC<AchievementPopupProps> = ({
+const AchievementPopup = ({
   achievement,
   isLevelUp = false,
   newLevel = 0,
   onClose
-}) => {
+}: AchievementPopupProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const { toast } = useToast();
   
@@ -25,7 +25,6 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
     if (achievement || isLevelUp) {
       setIsVisible(true);
       
-      // Auto hide after 5 seconds
       const timer = setTimeout(() => {
         setIsVisible(false);
       }, 5000);
@@ -34,7 +33,6 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
     }
   }, [achievement, isLevelUp]);
   
-  // Show toast notification alongside popup
   useEffect(() => {
     if (achievement) {
       toast({
@@ -51,12 +49,11 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
     }
   }, [achievement, isLevelUp, newLevel, toast]);
   
-  // If component is not visible, trigger onClose after animation completes
   useEffect(() => {
     if (!isVisible) {
       const timer = setTimeout(() => {
         onClose();
-      }, 300); // match the CSS transition duration
+      }, 300);
       
       return () => clearTimeout(timer);
     }
@@ -64,6 +61,8 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
   
   if (!achievement && !isLevelUp) return null;
   
+  const handleClose = () => setIsVisible(false);
+
   return (
     <>
       {isVisible && (
@@ -90,9 +89,10 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                         achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].bg,
                         achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].border,
                       )}>
-                        {React.createElement(getIconByName(achievement.icon), {
-                          className: cn("w-8 h-8", achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].icon)
-                        })}
+                        {(() => {
+                          const IconComponent = getIconByName(achievement.icon);
+                          return <IconComponent className={cn("w-8 h-8", achievementLevelColors[achievement.level as keyof typeof achievementLevelColors].icon)} />;
+                        })()}
                       </div>
                       <div className="absolute inset-0 rounded-full animate-pulse">
                         <div className={cn(
@@ -114,13 +114,10 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                           </p>
                         </div>
                         <button
-                          onClick={() => setIsVisible(false)}
+                          onClick={handleClose}
                           className="rounded-full p-1 text-muted-foreground hover:bg-background/80"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                          </svg>
+                          <Icons.ui.close className="w-4 h-4" />
                           <span className="sr-only">Close</span>
                         </button>
                       </div>
@@ -151,9 +148,7 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
             )}
             
             {isLevelUp && !achievement && (
-              <div
-                className="rounded-lg shadow-lg overflow-hidden border pointer-events-auto bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20 bg-background/95 backdrop-blur-sm animate-slide-up"
-              >
+              <div className="rounded-lg shadow-lg overflow-hidden border pointer-events-auto bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20 bg-background/95 backdrop-blur-sm animate-slide-up">
                 <div className="p-4 sm:p-6">
                   <div className="flex items-center">
                     <div className="relative">
@@ -174,13 +169,10 @@ const AchievementPopup: React.FC<AchievementPopupProps> = ({
                           </p>
                         </div>
                         <button
-                          onClick={() => setIsVisible(false)}
+                          onClick={handleClose}
                           className="rounded-full p-1 text-muted-foreground hover:bg-background/80"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                          </svg>
+                          <Icons.ui.close className="w-4 h-4" />
                           <span className="sr-only">Close</span>
                         </button>
                       </div>
