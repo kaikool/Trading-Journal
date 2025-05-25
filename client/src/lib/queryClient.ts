@@ -52,10 +52,10 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 1000 * 60 * 2, // 2 phút
-      retry: 1, // Thử lại 1 lần trong trường hợp lỗi mạng
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
-      gcTime: DEFAULT_CACHE_TIME, // Thời gian cache
+      staleTime: 1000 * 60 * 5, // 5 phút để giảm network calls
+      retry: 1,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      gcTime: 1000 * 60 * 10, // 10 phút cache để tối ưu memory
     },
     mutations: {
       retry: 1, // Thử lại 1 lần trong trường hợp lỗi mạng
