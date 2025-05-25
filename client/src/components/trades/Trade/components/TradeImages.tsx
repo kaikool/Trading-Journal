@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ImageUpload } from './ImageUpload';
 import { ImageState } from '../types';
 import { Badge } from '@/components/ui/badge';
