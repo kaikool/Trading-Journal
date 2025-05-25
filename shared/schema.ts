@@ -56,8 +56,6 @@ export type Trade = {
   notes?: string | null;
   entryImage?: string | null;
   exitImage?: string | null;
-  entryImageM15?: string | null;
-  exitImageM15?: string | null;
   status?: string;
   riskRewardRatio?: number;
   isRevenge?: boolean;
