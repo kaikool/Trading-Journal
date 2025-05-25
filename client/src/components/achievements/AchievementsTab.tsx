@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMemoWithPerf } from "@/lib/performance";
 import { useQuery } from "@tanstack/react-query";
 import { auth } from "@/lib/firebase";
@@ -49,8 +49,7 @@ interface AchievementCardProps {
   };
 }
 
-// Card displaying an achievement - memoized for performance
-const AchievementCard = React.memo(function AchievementCard({ achievement, userProgress }: AchievementCardProps) {
+const AchievementCard = ({ achievement, userProgress }: AchievementCardProps) => {
   const { id, name, description, icon, category, level, points } = achievement;
   const { isComplete, progress = 0, dateEarned } = userProgress;
   
@@ -140,10 +139,9 @@ const AchievementCard = React.memo(function AchievementCard({ achievement, userP
       )}
     </Card>
   );
-});
+};
 
-// Component for level and progress - memoized
-const LevelProgress = React.memo(function LevelProgress({ level, totalPoints }: { level: number; totalPoints: number }) {
+const LevelProgress = ({ level, totalPoints }: { level: number; totalPoints: number }) => {
   const progress = calculateLevelProgress(totalPoints);
   
   return (
@@ -177,13 +175,15 @@ const LevelProgress = React.memo(function LevelProgress({ level, totalPoints }: 
       </div>
     </div>
   );
-});
+};
 
-// AchievementsTab Component - Achievements section in Settings
-export const AchievementsTab: React.FC<{
+export const AchievementsTab = ({ 
+  showNotifications, 
+  onToggleNotifications 
+}: {
   showNotifications: boolean;
   onToggleNotifications: (show: boolean) => void;
-}> = ({ showNotifications, onToggleNotifications }) => {
+}) => {
   const userId = auth.currentUser?.uid || "";
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isRefreshing, setIsRefreshing] = useState(false);
