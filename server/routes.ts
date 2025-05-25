@@ -6,7 +6,7 @@ import {
   insertUserSchema, 
   insertTradeSchema
 } from "@shared/schema";
-import { captureTradingViewChart, captureAllTimeframes } from "./tradingview-capture";
+import { captureTradingViewChart, captureAllTimeframes, getDebugInfo } from "./tradingview-capture";
 import { uploadImage } from "./cloudinary-service";
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -213,6 +213,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+  // Debug route để kiểm tra trạng thái logging TradingView
+  app.get("/api/tradingview/debug", async (req, res) => {
+    try {
+      const debugInfo = getDebugInfo();
+      res.json({
+        success: true,
+        debug: debugInfo,
+        timestamp: new Date().toISOString(),
+        help: {
+          enableDebug: "Thêm DEBUG=true vào file .env để bật debug mode",
+          enableFileLogging: "Thêm LOG_TRADINGVIEW=true vào file .env để lưu log ra file",
+          logLocation: debugInfo.logDirectory + "/tradingview-capture-*.log"
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to get debug info"
+      });
+    }
+  });
+
   // TradingView Chart Capture API
   app.post("/api/tradingview/capture", async (req, res) => {
     try {
@@ -225,13 +247,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`🎯 Bắt đầu capture ${pair} ${timeframe}`);
 
-      // Capture ảnh từ TradingView
+      // Capture ảnh từ TradingView với logging chi tiết
       const captureResult = await captureTradingViewChart({ pair, timeframe });
       
       if (!captureResult.success || !captureResult.imageBuffer) {
         return res.status(500).json({
           success: false,
-          message: captureResult.error || 'Failed to capture chart'
+          message: captureResult.error || 'Failed to capture chart',
+          logSummary: captureResult.logSummary // Bao gồm thông tin debug
         });
       }
 
@@ -267,7 +290,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           imageUrl: uploadResult.imageUrl,
           publicId: uploadResult.publicId,
           pair,
-          timeframe
+          timeframe,
+          logSummary: captureResult.logSummary // Bao gồm thông tin debug
         });
 
       } catch (uploadError) {
