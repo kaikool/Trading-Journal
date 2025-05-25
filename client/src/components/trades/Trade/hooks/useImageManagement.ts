@@ -120,7 +120,6 @@ export function useImageManagement({
 
   // Handle image change for entry images
   const handleEntryImageChange = useCallback((index: 1 | 2) => async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     
     if (!e.target.files || e.target.files.length === 0) {
       return;
@@ -201,7 +200,6 @@ export function useImageManagement({
 
   // Handle image change for exit images
   const handleExitImageChange = useCallback((index: 1 | 2) => async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
     
     if (!e.target.files || e.target.files.length === 0) {
       return;
