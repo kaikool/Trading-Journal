@@ -31,7 +31,6 @@ cloudinary.config({
 export async function uploadImage(
   filePath: string,
   folder: string,
-  metadata: Record<string, any> = {},
   publicId?: string,
   tags?: string[]
 ) {

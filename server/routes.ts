@@ -6,6 +6,10 @@ import {
   insertUserSchema, 
   insertTradeSchema
 } from "@shared/schema";
+import { captureTradingViewChart, captureAllTimeframes } from "./tradingview-capture";
+import { uploadImage } from "./cloudinary-service";
+import { promises as fs } from 'fs';
+import path from 'path';
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -209,7 +213,185 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
-  // Batch API endpoints removed as they were not implemented
+  // TradingView Chart Capture API
+  app.post("/api/tradingview/capture", async (req, res) => {
+    try {
+      const { pair, timeframe, userId, tradeId } = z.object({
+        pair: z.string(),
+        timeframe: z.enum(['H4', 'M15']),
+        userId: z.string().optional(),
+        tradeId: z.string().optional()
+      }).parse(req.body);
+
+      console.log(`🎯 Bắt đầu capture ${pair} ${timeframe}`);
+
+      // Capture ảnh từ TradingView
+      const captureResult = await captureTradingViewChart({ pair, timeframe });
+      
+      if (!captureResult.success || !captureResult.imageBuffer) {
+        return res.status(500).json({
+          success: false,
+          message: captureResult.error || 'Failed to capture chart'
+        });
+      }
+
+      // Tạo temporary file để upload lên Cloudinary
+      const tempDir = path.join(process.cwd(), 'temp');
+      try {
+        await fs.mkdir(tempDir, { recursive: true });
+      } catch (e) {
+        // Directory already exists
+      }
+
+      const fileName = `tradingview_${pair}_${timeframe}_${Date.now()}.png`;
+      const tempFilePath = path.join(tempDir, fileName);
+      
+      // Ghi buffer vào file tạm
+      await fs.writeFile(tempFilePath, captureResult.imageBuffer);
+
+      try {
+        // Upload lên Cloudinary
+        const folder = userId && tradeId ? `trades/${userId}/${tradeId}` : 'tradingview_captures';
+        const publicId = `${pair}_${timeframe}_${Date.now()}`;
+        const tags = ['tradingview', 'auto-capture', pair, timeframe];
+
+        const uploadResult = await uploadImage(tempFilePath, folder, publicId, tags);
+
+        // Xóa file tạm
+        await fs.unlink(tempFilePath).catch(() => {});
+
+        console.log(`✅ Upload thành công: ${uploadResult.imageUrl}`);
+
+        res.json({
+          success: true,
+          imageUrl: uploadResult.imageUrl,
+          publicId: uploadResult.publicId,
+          pair,
+          timeframe
+        });
+
+      } catch (uploadError) {
+        // Xóa file tạm nếu upload thất bại
+        await fs.unlink(tempFilePath).catch(() => {});
+        
+        console.error('❌ Lỗi upload Cloudinary:', uploadError);
+        
+        res.status(500).json({
+          success: false,
+          message: 'Captured chart but failed to upload to Cloudinary'
+        });
+      }
+
+    } catch (error) {
+      console.error('❌ Lỗi capture TradingView:', error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to capture TradingView chart'
+      });
+    }
+  });
+
+  // Capture cả H4 và M15 cùng lúc
+  app.post("/api/tradingview/capture-all", async (req, res) => {
+    try {
+      const { pair, userId, tradeId } = z.object({
+        pair: z.string(),
+        userId: z.string().optional(),
+        tradeId: z.string().optional()
+      }).parse(req.body);
+
+      console.log(`🎯 Bắt đầu capture tất cả timeframes cho ${pair}`);
+
+      const results = await captureAllTimeframes(pair);
+      const uploadResults: any = {};
+      
+      // Process H4 result
+      if (results.h4.success && results.h4.imageBuffer) {
+        try {
+          // Tạo temporary file
+          const tempDir = path.join(process.cwd(), 'temp');
+          await fs.mkdir(tempDir, { recursive: true }).catch(() => {});
+          
+          const fileName = `tradingview_${pair}_H4_${Date.now()}.png`;
+          const tempFilePath = path.join(tempDir, fileName);
+          
+          await fs.writeFile(tempFilePath, results.h4.imageBuffer);
+          
+          const folder = userId && tradeId ? `trades/${userId}/${tradeId}` : 'tradingview_captures';
+          const publicId = `${pair}_H4_${Date.now()}`;
+          const tags = ['tradingview', 'auto-capture', pair, 'H4'];
+          
+          const uploadResult = await uploadImage(tempFilePath, folder, publicId, tags);
+          await fs.unlink(tempFilePath).catch(() => {});
+          
+          uploadResults.h4 = {
+            success: true,
+            imageUrl: uploadResult.secure_url,
+            publicId: uploadResult.public_id
+          };
+        } catch (error) {
+          uploadResults.h4 = {
+            success: false,
+            error: 'Failed to upload H4 chart'
+          };
+        }
+      } else {
+        uploadResults.h4 = {
+          success: false,
+          error: results.h4.error || 'Failed to capture H4 chart'
+        };
+      }
+
+      // Process M15 result
+      if (results.m15.success && results.m15.imageBuffer) {
+        try {
+          const tempDir = path.join(process.cwd(), 'temp');
+          await fs.mkdir(tempDir, { recursive: true }).catch(() => {});
+          
+          const fileName = `tradingview_${pair}_M15_${Date.now()}.png`;
+          const tempFilePath = path.join(tempDir, fileName);
+          
+          await fs.writeFile(tempFilePath, results.m15.imageBuffer);
+          
+          const folder = userId && tradeId ? `trades/${userId}/${tradeId}` : 'tradingview_captures';
+          const publicId = `${pair}_M15_${Date.now()}`;
+          const tags = ['tradingview', 'auto-capture', pair, 'M15'];
+          
+          const uploadResult = await uploadImage(tempFilePath, folder, publicId, tags);
+          await fs.unlink(tempFilePath).catch(() => {});
+          
+          uploadResults.m15 = {
+            success: true,
+            imageUrl: uploadResult.secure_url,
+            publicId: uploadResult.public_id
+          };
+        } catch (error) {
+          uploadResults.m15 = {
+            success: false,
+            error: 'Failed to upload M15 chart'
+          };
+        }
+      } else {
+        uploadResults.m15 = {
+          success: false,
+          error: results.m15.error || 'Failed to capture M15 chart'
+        };
+      }
+
+      res.json({
+        success: true,
+        results: uploadResults,
+        pair
+      });
+
+    } catch (error) {
+      console.error('❌ Lỗi capture all timeframes:', error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to capture charts'
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
