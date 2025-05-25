@@ -187,9 +187,9 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
         fullPage: false,
         clip: {
           x: 0,
-          y: 50,  // Bỏ qua header toolbar phía trên
+          y: 60,  // Bỏ qua header toolbar TradingView
           width: width,
-          height: height - 100  // Bỏ qua footer và các control phía dưới
+          height: height - 120  // Bỏ qua footer và bottom controls
         }
       },
       gotoOptions: {
