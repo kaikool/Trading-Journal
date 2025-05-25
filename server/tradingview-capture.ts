@@ -12,7 +12,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 // Browserless API configuration
-const BROWSERLESS_TOKEN = '2SNFWNm3X1hjs1m0c442cdb7b81440b4c7068211b7b3956a5';
+const BROWSERLESS_TOKEN = '2SN3svn0usKzOwO7e739eb7aa11e0186c9d37a8a5c0ae09de';
 const BROWSERLESS_ENDPOINT = `https://chrome.browserless.io`;
 
 // Debug configuration
