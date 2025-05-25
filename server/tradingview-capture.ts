@@ -83,7 +83,7 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
         url: url,
         options: {
           type: 'png',
-          fullPage: false,
+          fullPage: true,
           viewport: {
             width: width,
             height: height
@@ -93,40 +93,7 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
           waitUntil: 'networkidle2',
           timeout: 30000
         },
-        waitFor: 8000, // Đợi 8 giây để chart load đầy đủ
-        evaluate: `
-          // Đợi chart render
-          new Promise(resolve => {
-            let attempts = 0;
-            const checkChart = () => {
-              attempts++;
-              const chart = document.querySelector('#chart-container') || 
-                           document.querySelector('[id*="tradingview"]') ||
-                           document.querySelector('.chart-container') ||
-                           document.querySelector('[data-name="chart"]');
-              
-              if (chart || attempts > 20) {
-                // Ẩn các popup, banner và toolbar
-                const elementsToHide = [
-                  '[data-name="popup"]', '[class*="popup"]', '[class*="modal"]', '[class*="banner"]',
-                  '[data-name="toolbar"]', '[class*="toolbar"]', 'header', '[class*="header"]',
-                  '[class*="sidebar"]', '[data-name="sidebar"]',
-                  'footer', '[class*="footer"]',
-                  '[class*="notification"]', '[class*="toast"]'
-                ];
-                
-                elementsToHide.forEach(selector => {
-                  document.querySelectorAll(selector).forEach(el => el.style.display = 'none');
-                });
-                
-                resolve();
-              } else {
-                setTimeout(checkChart, 500);
-              }
-            };
-            checkChart();
-          });
-        `
+        waitFor: 3000 // Đợi 3 giây cho chart load
       })
     });
 
