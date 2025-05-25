@@ -9,12 +9,7 @@ import { TradeFormValues } from '../types';
 import { Icons } from '@/components/icons/icons';
 import { CurrencyPair, PIP_SIZE } from '@/lib/forex-calculator';
 
-/**
- * TradeRiskReward Component - Tối giản hóa
- * 
- * Phiên bản gọn gàng, tối giản hơn của component quản lý risk:reward
- * Loại bỏ các animations và hiển thị lặp lại không cần thiết
- */
+
 
 interface TradeRiskRewardProps {
   accountBalance: number;
@@ -32,31 +27,24 @@ export function TradeRiskReward({
   setRiskRewardRatio
 }: TradeRiskRewardProps) {
   const form = useFormContext<TradeFormValues>();
-  
-  // Màu sắc theo risk và ratio
   const getRiskColor = (value: number) => {
     if (value > 2) return "text-red-500";
     if (value > 1) return "text-amber-500";
     return "text-emerald-500";
   };
 
-  // Màu sắc cho Risk:Reward (giờ là 1:X thay vì X:1)
   const getRRColor = (value: number) => {
     if (value >= 2) return "text-emerald-500";
     if (value >= 1) return "text-amber-500";
     return "text-red-500";
   };
 
-  // Các giá trị cần thiết
   const riskAmount = accountBalance * (riskPercentage / 100);
-  
-  // Xác định cặp tiền tệ và tính pips
   const currencyPair = form.watch("pair") as CurrencyPair || "EURUSD";
   const entryPrice = Number(form.watch("entryPrice") || 0);
   const stopLoss = Number(form.watch("stopLoss") || 0);
   const takeProfit = Number(form.watch("takeProfit") || 0);
   
-  // Tính pips - chỉ tính khi có đủ giá trị
   const pipsAtRisk = (entryPrice && stopLoss) 
     ? Math.abs(entryPrice - stopLoss) / PIP_SIZE[currencyPair]
     : 0;
@@ -68,7 +56,6 @@ export function TradeRiskReward({
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
-        {/* Header tinh tế */}
         <div className="border-b px-4 py-2.5 flex items-center justify-between bg-muted/20">
           <div className="flex items-center gap-1.5">
             <Icons.analytics.chartLine className="h-4 w-4 text-primary/70" />
@@ -79,9 +66,7 @@ export function TradeRiskReward({
           </Badge>
         </div>
         
-        {/* Nội dung chính - layout tinh tế và phù hợp với Entry Details */}
         <div className="px-4 py-3 grid grid-cols-1 gap-4">
-          {/* Phần Risk Slider */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium">Risk per Trade</Label>
@@ -110,9 +95,7 @@ export function TradeRiskReward({
             </div>
           </div>
           
-          {/* Thông tin Risk:Reward - Tối giản và tinh tế */}
           <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border/20">
-            {/* Hiển thị cô đọng pips at risk và potential profit */}
             <div className="flex flex-col">
               <span className="text-sm text-muted-foreground mb-0.5">Pips at Risk</span>
               <span className="text-base font-medium">{formatPips(pipsAtRisk)}</span>
@@ -124,7 +107,6 @@ export function TradeRiskReward({
             </div>
           </div>
           
-          {/* Risk:Reward Ratio - Thiết kế tinh tế */}
           <div className="pt-2 border-t border-border/20">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Risk:Reward Ratio</span>
@@ -144,27 +126,20 @@ export function TradeRiskReward({
                 step={0.1}
                 disabled={!entryPrice || !stopLoss}
                 onValueChange={(values) => {
-                  // Lấy giá trị mới của Risk:Reward từ slider
                   const newRR = values[0];
-                  
-                  // Cập nhật state với giá trị mới
                   setRiskRewardRatio(newRR);
                   
-                  // Tính toán Take Profit mới dựa trên Risk:Reward
                   if (entryPrice && stopLoss) {
                     const priceDiff = Math.abs(entryPrice - stopLoss);
                     const direction = form.watch("direction");
                     
                     let newTakeProfit = 0;
                     if (direction === "BUY") {
-                      // Nếu BUY, TP = Entry + (Entry - SL) * RR
                       newTakeProfit = entryPrice + (priceDiff * newRR);
                     } else {
-                      // Nếu SELL, TP = Entry - (SL - Entry) * RR
                       newTakeProfit = entryPrice - (priceDiff * newRR);
                     }
                     
-                    // Cập nhật form với giá trị Take Profit mới (chuyển về số)
                     const formattedTP = parseFloat(newTakeProfit.toFixed(5));
                     form.setValue("takeProfit", formattedTP, {
                       shouldValidate: true,

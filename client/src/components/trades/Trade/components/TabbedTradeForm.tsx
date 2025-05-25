@@ -243,7 +243,6 @@ export function TabbedTradeForm({
       >
         <TabsContent value="entry" className="mt-0 pt-2 overflow-visible">
           <div className="space-y-6">
-            {/* Entry details section */}
             <TradeDetails
               isCalculatingLotSize={isCalculatingLotSize}
               isCalculatingTakeProfit={isCalculatingTakeProfit}
@@ -255,7 +254,6 @@ export function TabbedTradeForm({
               riskRewardRatio={riskRewardRatio}
             />
             
-            {/* Risk reward section - đơn giản hóa */}
             <TradeRiskReward
               accountBalance={accountBalance}
               riskPercentage={riskPercentage}

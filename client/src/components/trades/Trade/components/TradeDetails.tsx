@@ -12,12 +12,7 @@ import { TradeFormValues } from '../types';
 import { motion } from 'framer-motion';
 import { formatRiskReward } from '@/utils/format-number';
 
-/**
- * TradeDetails Component
- * 
- * REFACTORED: Now only contains the entry details section
- * Other sections were moved to separate components to follow proper layout structure
- */
+
 
 interface TradeDetailsProps {
   isCalculatingLotSize: boolean;
@@ -41,11 +36,7 @@ export function TradeDetails({
   riskRewardRatio = 0
 }: TradeDetailsProps) {
   const form = useFormContext<TradeFormValues>();
-  
-  // Get pair from form for price button
   const selectedPair = form.watch("pair");
-  
-  // Format risk:reward ratio for display using formatRiskReward utility
   const formattedRatio = riskRewardRatio !== undefined 
     ? formatRiskReward(riskRewardRatio, { formatAsRatio: true, minimumFractionDigits: 2 }) 
     : "1:0";
