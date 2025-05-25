@@ -1,4 +1,9 @@
-
+/**
+ * TradingView Auto Capture Component
+ * 
+ * Tích hợp tính năng tự động lấy ảnh chart từ TradingView
+ * cho các timeframe H4 và M15
+ */
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -39,6 +44,7 @@ export function TradingViewCapture({
     message: 'Ready to capture'
   });
 
+  // Capture một timeframe cụ thể
   const captureSingleTimeframe = async (timeframe: 'H4' | 'M15') => {
     if (!pair) {
       toast({
@@ -122,6 +128,7 @@ export function TradingViewCapture({
     }
   };
 
+  // Capture cả H4 và M15 cùng lúc
   const captureAllTimeframes = async () => {
     if (!pair) {
       toast({
