@@ -164,39 +164,29 @@ function buildTradingViewUrl(pair: string, timeframe: string, logger: CaptureLog
  * Chụp ảnh chart từ TradingView sử dụng Browserless REST API
  */
 export async function captureTradingViewChart(options: CaptureOptions): Promise<CaptureResult> {
-  // Đảm bảo cả H4 và M15 đều sử dụng cùng kích thước fullsize
   const { pair, timeframe, width = 1600, height = 900 } = options;
   
-  // Tạo session ID duy nhất để tracking
   const sessionId = `${pair}_${timeframe}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const logger = new CaptureLogger(sessionId, pair, timeframe);
   
   try {
-    console.log('🔥 DEBUG: New logging system started!', { sessionId, pair, timeframe });
     logger.log('📸 CAPTURE_START', `Khởi tạo capture với viewport ${width}x${height}`);
     
-    // Bước 1: Tạo URL TradingView
-    logger.log('🔧 URL_GENERATION', 'Bắt đầu tạo URL TradingView...');
     const url = buildTradingViewUrl(pair, timeframe, logger);
-    console.log('🔥 DEBUG: URL created:', url);
     
-    // Bước 2: Chuẩn bị request đến Browserless API
-    logger.log('🌐 API_PREPARATION', 'Chuẩn bị request đến Browserless API...');
     const browserlessUrl = `https://production-sfo.browserless.io/screenshot?token=${BROWSERLESS_TOKEN}`;
-    logger.log('🔑 API_ENDPOINT', `Endpoint: ${browserlessUrl.replace(BROWSERLESS_TOKEN, '***TOKEN***')}`);
     
-    // Cùng thiết lập fullsize cho cả H4 và M15
     const requestPayload = {
       url: url,
       options: {
         type: 'png',
         fullPage: false,
-        quality: 100,  // Chất lượng tối đa
+        quality: 100,
         clip: {
-          x: 50,         // Cùng vị trí crop cho cả H4 và M15
-          y: 30,         // Cùng vị trí crop cho cả H4 và M15
-          width: width - 100,  // Cùng kích thước cho cả H4 và M15
-          height: height - 80  // Cùng kích thước cho cả H4 và M15
+          x: 50,
+          y: 30,
+          width: width - 100,
+          height: height - 80
         }
       },
       gotoOptions: {
@@ -204,15 +194,11 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
         timeout: 30000
       },
       viewport: {
-        width: width,    // Cùng viewport cho cả H4 và M15
-        height: height   // Cùng viewport cho cả H4 và M15
+        width: width,
+        height: height
       }
     };
     
-    logger.log('📋 REQUEST_PAYLOAD', `Payload: ${JSON.stringify(requestPayload, null, 2)}`);
-    
-    // Bước 3: Gửi request đến Browserless
-    logger.log('🚀 API_REQUEST_START', 'Gửi request đến Browserless API...');
     const startRequestTime = Date.now();
     
     const response = await fetch(browserlessUrl, {
@@ -227,33 +213,17 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
     const requestDuration = Date.now() - startRequestTime;
     logger.log('⏱️ API_REQUEST_COMPLETE', `Request hoàn thành sau ${requestDuration}ms`);
     
-    // Bước 4: Kiểm tra response status
-    logger.log('🔍 RESPONSE_CHECK', `Status: ${response.status} ${response.statusText}`);
-    
     if (!response.ok) {
       logger.error('❌ API_ERROR', `Browserless API error: ${response.status} ${response.statusText}`);
-      
-      // Thử đọc error body nếu có
-      try {
-        const errorBody = await response.text();
-        logger.error('📄 ERROR_BODY', errorBody);
-      } catch (e) {
-        logger.error('📄 ERROR_BODY_READ_FAILED', 'Không thể đọc error response body');
-      }
-      
       throw new Error(`Browserless API error: ${response.status} ${response.statusText}`);
     }
     
-    // Bước 5: Xử lý response data
-    logger.log('📥 DATA_PROCESSING', 'Bắt đầu xử lý response data...');
     const startProcessTime = Date.now();
-    
     const imageBuffer = Buffer.from(await response.arrayBuffer());
     const processTime = Date.now() - startProcessTime;
     
     logger.log('📊 BUFFER_INFO', `Buffer size: ${imageBuffer.length} bytes, xử lý trong ${processTime}ms`);
     
-    // Bước 6: Validation
     if (imageBuffer.length === 0) {
       logger.error('❌ EMPTY_BUFFER', 'Image buffer rỗng');
       throw new Error('Received empty image buffer');
@@ -263,9 +233,7 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       logger.error('❌ SUSPICIOUSLY_SMALL', `Image buffer quá nhỏ: ${imageBuffer.length} bytes`);
     }
     
-    // Bước 7: Lưu log file nếu được bật
     await logger.saveToFile();
-    
     logger.log('✅ CAPTURE_SUCCESS', `Chụp ảnh thành công! Total duration: ${Date.now() - logger['startTime']}ms`);
     
     return {
@@ -276,21 +244,6 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
     
   } catch (error) {
     logger.error('❌ CAPTURE_FAILED', error);
-    
-    // Phân loại lỗi để debug dễ hơn
-    if (error instanceof Error) {
-      if (error.message.includes('fetch')) {
-        logger.error('🌐 NETWORK_ERROR', 'Lỗi kết nối mạng đến Browserless API');
-      } else if (error.message.includes('timeout')) {
-        logger.error('⏰ TIMEOUT_ERROR', 'Timeout khi chờ page load hoặc API response');
-      } else if (error.message.includes('401') || error.message.includes('403')) {
-        logger.error('🔑 AUTH_ERROR', 'Lỗi xác thực Browserless API token');
-      } else if (error.message.includes('429')) {
-        logger.error('📊 RATE_LIMIT_ERROR', 'Đã vượt quá rate limit Browserless API');
-      }
-    }
-    
-    // Lưu log file cho debugging
     await logger.saveToFile();
     
     return {
@@ -312,43 +265,13 @@ export async function captureAllTimeframes(pair: string): Promise<{
   const batchSessionId = `batch_${pair}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const batchLogger = new CaptureLogger(batchSessionId, pair, 'H4+M15');
   
-  batchLogger.log('🎯 BATCH_START', `Bắt đầu chụp ảnh batch cho ${pair} - cả H4 và M15`);
-  
   try {
-    batchLogger.log('🚀 SEQUENTIAL_CAPTURE', 'Khởi tạo capture tuần tự H4 rồi M15 để tránh rate limit...');
-    const startTime = Date.now();
-    
-    // Capture tuần tự để tránh rate limit
-    batchLogger.log('🔄 H4_START', 'Bắt đầu capture H4...');
     const h4Result = await captureTradingViewChart({ pair, timeframe: 'H4' });
-    
-    batchLogger.log('🔄 M15_START', 'Bắt đầu capture M15...');
     const m15Result = await captureTradingViewChart({ pair, timeframe: 'M15' });
     
-    const batchDuration = Date.now() - startTime;
-    batchLogger.log('⏱️ BATCH_COMPLETE', `Batch capture hoàn thành sau ${batchDuration}ms`);
-    
-    // Kiểm tra kết quả H4 và M15
-    const h4Final = h4Result;
-    const m15Final = m15Result;
-    
-    // Log kết quả tổng hợp
-    const successCount = (h4Final.success ? 1 : 0) + (m15Final.success ? 1 : 0);
+    const successCount = (h4Result.success ? 1 : 0) + (m15Result.success ? 1 : 0);
     batchLogger.log('📊 BATCH_SUMMARY', `Kết quả: ${successCount}/2 thành công`);
     
-    if (h4Final.success) {
-      batchLogger.log('✅ H4_SUCCESS', 'H4 capture thành công');
-    } else {
-      batchLogger.error('❌ H4_FAILED', h4Final.error || 'H4 capture thất bại');
-    }
-    
-    if (m15Final.success) {
-      batchLogger.log('✅ M15_SUCCESS', 'M15 capture thành công');
-    } else {
-      batchLogger.error('❌ M15_FAILED', m15Final.error || 'M15 capture thất bại');
-    }
-    
-    // Lưu batch log
     await batchLogger.saveToFile();
     
     return {
