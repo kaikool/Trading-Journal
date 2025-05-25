@@ -32,26 +32,39 @@ export function TradeImages({
 
   // Handler để set ảnh được capture từ TradingView
   const handleTradingViewCapture = (timeframe: 'H4' | 'M15', imageUrl: string) => {
-    // Tạo một File object từ URL để tương thích với logic upload hiện có
-    fetch(imageUrl)
-      .then(res => res.blob())
-      .then(blob => {
-        const file = new File([blob], `tradingview_${selectedPair}_${timeframe}.png`, { type: 'image/png' });
+    // Set ảnh trực tiếp vào preview state thay vì qua file upload
+    if (timeframe === 'H4') {
+      // Set cho entry image 1 (H4)
+      const setState = entryImage1.setPreview;
+      const setFile = entryImage1.setFile;
+      
+      setState?.(imageUrl);
+      
+      // Tạo file object để có thể upload sau
+      fetch(imageUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], `tradingview_${selectedPair}_H4.png`, { type: 'image/png' });
+          setFile?.(file);
+        })
+        .catch(console.error);
         
-        // Trigger event change để sử dụng logic upload hiện có
-        const event = {
-          target: {
-            files: [file]
-          }
-        } as any;
-
-        if (timeframe === 'H4') {
-          handleEntryImageChange(1)(event);
-        } else if (timeframe === 'M15') {
-          handleEntryImageChange(2)(event);
-        }
-      })
-      .catch(console.error);
+    } else if (timeframe === 'M15') {
+      // Set cho entry image 2 (M15)
+      const setState = entryImage2.setPreview;
+      const setFile = entryImage2.setFile;
+      
+      setState?.(imageUrl);
+      
+      // Tạo file object để có thể upload sau
+      fetch(imageUrl)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], `tradingview_${selectedPair}_M15.png`, { type: 'image/png' });
+          setFile?.(file);
+        })
+        .catch(console.error);
+    }
   };
 
   return (
