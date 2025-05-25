@@ -324,7 +324,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
         </div>
       </div>
     );
-  });
+  };
 
   // Custom tooltip for the trading activity chart
   const TradingActivityTooltip = ({ active, payload }: any) => {
@@ -361,7 +361,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
         </div>
       </div>
     );
-  });
+  };
 
   return (
     <div className="space-y-6">
@@ -781,6 +781,4 @@ function OverviewTabContent({ data }: OverviewTabProps) {
   );
 }
 
-// Export with memo for performance optimization
-const OverviewTab = memo(OverviewTabContent);
-export default OverviewTab;
+export default OverviewTabContent;
