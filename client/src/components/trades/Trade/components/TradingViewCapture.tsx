@@ -182,10 +182,21 @@ export function TradingViewCapture({
 
         const successCount = (data.results.h4?.success ? 1 : 0) + (data.results.m15?.success ? 1 : 0);
         const totalCount = 2;
+        
+        // Debug log để kiểm tra data
+        console.log('Capture results:', {
+          h4: data.results.h4,
+          m15: data.results.m15,
+          successCount,
+          totalCount
+        });
 
         toast({
-          title: "Charts Captured",
-          description: `Successfully captured ${successCount}/${totalCount} charts from TradingView.`
+          title: successCount === 2 ? "All Charts Captured!" : "Charts Partially Captured",
+          description: successCount === 2 
+            ? `Successfully captured both H4 and M15 charts from TradingView.`
+            : `Captured ${successCount}/${totalCount} charts from TradingView. ${successCount === 1 ? 'One chart may have failed due to rate limits.' : ''}`,
+          variant: successCount === 2 ? "default" : "destructive"
         });
 
         // Reset sau 2 giây
