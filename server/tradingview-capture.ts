@@ -11,9 +11,9 @@ import puppeteer from 'puppeteer-core';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// ScrapingBee API configuration - Alternative scraper service
-const SCRAPINGBEE_API_KEY = 'demo-key'; // Will be replaced with real key
-const SCRAPINGBEE_ENDPOINT = 'https://app.scrapingbee.com/api/v1/';
+// Browserless API configuration
+const BROWSERLESS_TOKEN = '2SKsewWCZXbHNPUf14eb4d9b99fab2a60e49e81b2148b78e2';
+const BROWSERLESS_ENDPOINT = `https://chrome.browserless.io`;
 
 // Debug configuration
 const DEBUG_MODE = true; // Force debug mode untuk debugging
