@@ -184,8 +184,10 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       url: url,
       options: {
         type: 'png',
-        fullPage: true,
-        viewport: {
+        fullPage: false,
+        clip: {
+          x: 0,
+          y: 0,
           width: width,
           height: height
         }
@@ -193,8 +195,7 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       gotoOptions: {
         waitUntil: 'networkidle2',
         timeout: 30000
-      },
-      waitFor: 3000 // Đợi 3 giây cho chart load
+      }
     };
     
     logger.log('📋 REQUEST_PAYLOAD', `Payload: ${JSON.stringify(requestPayload, null, 2)}`);
