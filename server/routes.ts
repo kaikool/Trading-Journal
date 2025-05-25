@@ -6,7 +6,7 @@ import {
   insertUserSchema, 
   insertTradeSchema
 } from "@shared/schema";
-import { captureTradingViewChart, captureAllTimeframes, getDebugInfo } from "./tradingview-capture";
+
 import { uploadImage } from "./cloudinary-service";
 import { promises as fs } from 'fs';
 import path from 'path';
