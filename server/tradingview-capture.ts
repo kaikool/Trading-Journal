@@ -93,23 +93,39 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
           waitUntil: 'networkidle2',
           timeout: 30000
         },
-        waitFor: 5000, // Đợi 5 giây để chart load
+        waitFor: 8000, // Đợi 8 giây để chart load đầy đủ
         evaluate: `
-          // Ẩn các popup, banner và toolbar
-          const popups = document.querySelectorAll('[data-name="popup"], [class*="popup"], [class*="modal"], [class*="banner"]');
-          popups.forEach(popup => popup.style.display = 'none');
-          
-          const toolbars = document.querySelectorAll('[data-name="toolbar"], [class*="toolbar"], header, [class*="header"]');
-          toolbars.forEach(toolbar => toolbar.style.display = 'none');
-          
-          const sidebars = document.querySelectorAll('[class*="sidebar"], [data-name="sidebar"]');
-          sidebars.forEach(sidebar => sidebar.style.display = 'none');
-          
-          const footers = document.querySelectorAll('footer, [class*="footer"]');
-          footers.forEach(footer => footer.style.display = 'none');
-          
-          const notifications = document.querySelectorAll('[class*="notification"], [class*="toast"]');
-          notifications.forEach(notification => notification.style.display = 'none');
+          // Đợi chart render
+          new Promise(resolve => {
+            let attempts = 0;
+            const checkChart = () => {
+              attempts++;
+              const chart = document.querySelector('#chart-container') || 
+                           document.querySelector('[id*="tradingview"]') ||
+                           document.querySelector('.chart-container') ||
+                           document.querySelector('[data-name="chart"]');
+              
+              if (chart || attempts > 20) {
+                // Ẩn các popup, banner và toolbar
+                const elementsToHide = [
+                  '[data-name="popup"]', '[class*="popup"]', '[class*="modal"]', '[class*="banner"]',
+                  '[data-name="toolbar"]', '[class*="toolbar"]', 'header', '[class*="header"]',
+                  '[class*="sidebar"]', '[data-name="sidebar"]',
+                  'footer', '[class*="footer"]',
+                  '[class*="notification"]', '[class*="toast"]'
+                ];
+                
+                elementsToHide.forEach(selector => {
+                  document.querySelectorAll(selector).forEach(el => el.style.display = 'none');
+                });
+                
+                resolve();
+              } else {
+                setTimeout(checkChart, 500);
+              }
+            };
+            checkChart();
+          });
         `
       })
     });
