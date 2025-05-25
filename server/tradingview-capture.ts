@@ -185,7 +185,12 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       options: {
         type: 'png',
         fullPage: false,
-        omitBackground: false
+        clip: {
+          x: 150,        // Bỏ qua sidebar trái
+          y: 50,         // Bỏ qua header
+          width: width - 300,  // Trừ sidebar và padding
+          height: height - 150 // Trừ header và footer
+        }
       },
       gotoOptions: {
         waitUntil: 'networkidle2',
@@ -193,8 +198,7 @@ export async function captureTradingViewChart(options: CaptureOptions): Promise<
       },
       viewport: {
         width: width,
-        height: height,
-        deviceScaleFactor: 2  // Độ phân giải cao hơn
+        height: height
       }
     };
     
