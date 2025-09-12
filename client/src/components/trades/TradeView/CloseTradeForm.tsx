@@ -23,16 +23,13 @@ import {
 import { Icons } from "@/components/icons/icons";
 import { updateTrade } from "@/lib/firebase";
 import { calculateProfit, calculatePips, formatPrice } from "@/lib/forex-calculator";
-import { uploadTradeImage } from "@/lib/api-service";
+import { captureTradeImages } from "@/lib/api-service"; // ✅ dùng API capture
 import { Timestamp } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatPips, formatProfitLoss } from "@/utils/format-number";
 import { TradeStatus } from "@/lib/trade-status-config";
 import TradeStatusBadge from "../History/TradeStatusBadge";
-// Lưu ý: Component này không cần import trực tiếp tradeUpdateService
-// vì updateTrade từ firebase.ts đã tích hợp thông báo tới TradeUpdateService
-// khi đóng giao dịch (isClosingTrade = true trong updateTrade)
 
 // Schema validation for trade closing form
 const closeTradeSchema = z.object({
@@ -41,6 +38,7 @@ const closeTradeSchema = z.object({
     message: "Exit price must be a valid number"
   }),
   closingNote: z.string().optional(),
+  // giữ optional để không vỡ kiểu cũ, nhưng không dùng nữa:
   exitImage: z.any().optional(),
   exitImageM15: z.any().optional(),
 });
@@ -57,9 +55,9 @@ interface CloseTradeFormProps {
 export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: CloseTradeFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false); // dùng cho trạng thái capture
   const [activeTab, setActiveTab] = useState("main");
-  
+
   // Calculation results when price changes
   const [previewResult, setPreviewResult] = useState<{
     pips: number;
@@ -79,10 +77,10 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   const { setValue, watch, register } = form;
   const watchedResult = watch("result");
   const watchedExitPrice = watch("exitPrice");
-  const [exitImage, setExitImage] = useState<File | null>(null);
-  const [exitImageM15, setExitImageM15] = useState<File | null>(null);
-  const [exitImagePreview, setExitImagePreview] = useState<string | null>(null);
-  const [exitImageM15Preview, setExitImageM15Preview] = useState<string | null>(null);
+
+  // ✅ chỉ giữ URL preview (không lưu File nữa)
+  const [exitImagePreview, setExitImagePreview] = useState<string | null>(null);     // H4
+  const [exitImageM15Preview, setExitImageM15Preview] = useState<string | null>(null); // M15
 
   // Update exit price based on result selection
   const updateExitPrice = (result: TradeResult) => {
@@ -124,7 +122,6 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
 
   // Calculate pips and profit
   const calculateTradeResult = (exitPrice: number) => {
-    // Calculate pips
     const pips = calculatePips(
       trade.pair as CurrencyPair,
       trade.direction as Direction,
@@ -132,31 +129,57 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       exitPrice
     );
 
-    // Calculate profit/loss based on price difference
     const profitLoss = calculateProfit({
       pair: trade.pair as CurrencyPair,
       direction: trade.direction as Direction,
       entryPrice: trade.entryPrice as number,
       exitPrice: exitPrice,
       lotSize: trade.lotSize as number,
-      accountCurrency: "USD" // Default currency
+      accountCurrency: "USD"
     });
-    
-    // Kết quả tính toán đã được chuẩn hóa, trả về trực tiếp
-    return { 
-      pips: pips, 
-      profitLoss: profitLoss 
-    };
+
+    return { pips, profitLoss };
+  };
+
+  // ✅ Capture ảnh Exit (H4 & M15) qua API — có thể bấm trước trong tab "Charts"
+  const handleCaptureExitCharts = async () => {
+    try {
+      setIsUploading(true);
+      const { h4, m15 } = await captureTradeImages(trade.pair);
+      if (h4) setExitImagePreview(h4);
+      if (m15) setExitImageM15Preview(m15);
+
+      if (!h4 && !m15) {
+        toast({
+          variant: "destructive",
+          title: "Capture failed",
+          description: "API did not return any image."
+        });
+      } else {
+        toast({
+          title: "Captured charts",
+          description: `H4 ${h4 ? "✓" : "×"} • M15 ${m15 ? "✓" : "×"}`
+        });
+      }
+    } catch (e: any) {
+      toast({
+        variant: "destructive",
+        title: "Capture error",
+        description: String(e?.message || e)
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Form submit handler
   const onSubmit = async (data: CloseTradeFormValues) => {
     try {
       setIsSubmitting(true);
-      
+
       // Parse exit price
       const exitPrice = parseFloat(data.exitPrice.replace(",", "."));
-      
+
       // Validate
       if (isNaN(exitPrice)) {
         toast({
@@ -167,155 +190,66 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
         setIsSubmitting(false);
         return;
       }
-      
+
       // Calculate results
       const { pips, profitLoss } = calculateTradeResult(exitPrice);
-      
-      // Upload images (if any) với tối ưu hóa
-      let exitImageUrl = "";
-      let exitImageM15Url = "";
-      
-      // Hàm upload tối ưu - giảm code trùng lặp và logging không cần thiết
-      const uploadImagesBatch = async () => {
+
+      // ✅ Lấy URL ảnh: nếu user đã bấm Capture trước → dùng preview; nếu chưa → thử capture ngay khi submit
+      let exitImageUrl = exitImagePreview || "";
+      let exitImageM15Url = exitImageM15Preview || "";
+
+      if (!exitImageUrl && !exitImageM15Url) {
         try {
           setIsUploading(true);
-          
-          // Tạo mảng promises để tải lên song song
-          const uploadPromises = [];
-          const uploadResults = {
-            exitImage: null as string | null,
-            exitImageM15: null as string | null
-          };
-          
-          // Chỉ thêm promise nếu có ảnh để tránh xử lý không cần thiết
-          if (exitImage) {
-            uploadPromises.push(
-              uploadTradeImage(
-                trade.userId,
-                trade.id,
-                exitImage,
-                "exit",
-                (progress) => {
-                  // Silent progress - có thể thêm state để cập nhật UI nếu cần
-                }
-              ).then(result => {
-                if (result.success) {
-                  uploadResults.exitImage = result.imageUrl;
-                }
-                return result;
-              }).catch(() => {
-                toast({
-                  variant: "destructive",
-                  title: "Image Upload Error",
-                  description: "Could not upload exit chart. You can continue closing the trade."
-                });
-                return null;
-              })
-            );
+          const { h4, m15 } = await captureTradeImages(trade.pair);
+          if (h4) {
+            exitImageUrl = h4;
+            setExitImagePreview(h4);
           }
-          
-          if (exitImageM15) {
-            uploadPromises.push(
-              uploadTradeImage(
-                trade.userId,
-                trade.id,
-                exitImageM15,
-                "exitM15",
-                (progress) => {
-                  // Silent progress - có thể thêm state để cập nhật UI nếu cần
-                }
-              ).then(result => {
-                if (result.success) {
-                  uploadResults.exitImageM15 = result.imageUrl;
-                }
-                return result;
-              }).catch(() => {
-                toast({
-                  variant: "destructive",
-                  title: "Image Upload Error",
-                  description: "Could not upload M15 chart. You can continue closing the trade."
-                });
-                return null;
-              })
-            );
+          if (m15) {
+            exitImageM15Url = m15;
+            setExitImageM15Preview(m15);
           }
-          
-          // Chỉ chạy Promise.all nếu có ít nhất một ảnh cần upload
-          if (uploadPromises.length > 0) {
-            // Sử dụng Promise.allSettled để đảm bảo không fail nếu một trong các uploads lỗi
-            await Promise.allSettled(uploadPromises);
-            
-            // Lấy URLs đã upload
-            exitImageUrl = uploadResults.exitImage || "";
-            exitImageM15Url = uploadResults.exitImageM15 || "";
-          }
-          
-          return { exitImageUrl, exitImageM15Url };
-        } catch (error) {
-          // Chỉ toast khi có lỗi nghiêm trọng
-          toast({
-            variant: "destructive",
-            title: "Warning",
-            description: "Error uploading images. The trade will be closed without images."
-          });
-          return { exitImageUrl: "", exitImageM15Url: "" };
+        } catch {
+          // im lặng nếu fail – đóng lệnh không ảnh
         } finally {
           setIsUploading(false);
         }
-      };
-      
-      // Thực hiện upload
-      const { exitImageUrl: exitImgUrl, exitImageM15Url: exitImgM15Url } = await uploadImagesBatch();
-      exitImageUrl = exitImgUrl;
-      exitImageM15Url = exitImgM15Url;
-      
+      }
+
       // Update data
-      console.log("Closing trade and calculating profit/loss");
       const updateData: Partial<Trade> = {
         isOpen: false,
         closeDate: Timestamp.now(),
         exitPrice: exitPrice,
         result: data.result as TradeResult,
-        pips: pips,
-        profitLoss: profitLoss,
+        pips,
+        profitLoss,
         closingNote: data.closingNote || "",
         updatedAt: Timestamp.now()
       };
-      
-      // Add image URLs if uploaded successfully
+
+      // Add image URLs if any
       if (exitImageUrl) {
-        updateData.exitImage = exitImageUrl;
+        updateData.exitImage = exitImageUrl;       // H4
       }
-      
       if (exitImageM15Url) {
-        updateData.exitImageM15 = exitImageM15Url;
+        updateData.exitImageM15 = exitImageM15Url; // M15
       }
-      
-      // Cập nhật giao dịch trong database thông qua firebase.updateTrade
-      // Lưu ý: Hàm updateTrade đã được tích hợp với TradeUpdateService để thông báo
-      // tới tất cả các component đang theo dõi giao dịch (tham khảo trong firebase.ts)
-      // Tham số option sử dụng để đảm bảo hành vi đóng giao dịch hoạt động đúng
-      // updateTrade tự động phát hiện đây là thao tác đóng giao dịch và gọi notifyTradeClosed
+
       await updateTrade(trade.userId, trade.id, updateData, {
-        useBatch: true // Force sử dụng batch operation để bảo đảm cập nhật đồng bộ với balances
+        useBatch: true
       });
-      
-      // Log kết quả đóng giao dịch 
-      console.log(`Trade closed with result: ${data.result}, pips: ${pips}, P/L: ${profitLoss}`);
-      
-      // Success notification
+
       toast({
         title: "Trade has been closed",
         description: `${profitLoss > 0 ? "Profit" : "Loss"}: ${formatCurrency(profitLoss)}`,
         variant: profitLoss >= 0 ? "default" : "destructive"
       });
-      
-      // Execute callbacks
-      if (typeof onSuccess === 'function') {
-        onSuccess();
-      }
+
+      onSuccess?.();
       onClose();
-      
+
     } catch (error) {
       console.error("Error closing trade:", error);
       toast({
@@ -327,7 +261,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       setIsSubmitting(false);
     }
   };
-  
+
   // Format functions
   const formatTradeProfit = (value?: number) => {
     if (value === undefined || value === null) return "+$0.00";
@@ -347,7 +281,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   // Get preview result class
   const getPreviewResultClass = () => {
     if (!previewResult) return "border-border/30 bg-muted/20";
-    
+
     if (previewResult.profitLoss > 0) {
       return "border-success/30 bg-success/5";
     } else if (previewResult.profitLoss < 0) {
@@ -587,11 +521,11 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
               </div>
             </TabsContent>
 
-            {/* Tab 2: Images - Add chart images */}
+            {/* Tab 2: Images - Capture chart images */}
             <TabsContent value="images" className="p-0 m-0">
               <div className="px-4 py-3 space-y-3">
                 <div className="text-xs text-muted-foreground mb-2">
-                  Add chart images when closing trade (optional)
+                  Capture exit charts via API (H4 & M15)
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -609,7 +543,6 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                           type="button"
                           onClick={() => {
                             setExitImagePreview(null);
-                            setExitImage(null);
                           }}
                           className="absolute top-1 right-1 bg-black/70 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                         >
@@ -617,29 +550,8 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                         </button>
                       </div>
                     ) : (
-                      <div>
-                        <input
-                          type="file"
-                          id="exitImage"
-                          accept="image/*"
-                          className="sr-only"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              setExitImage(file);
-                              setValue("exitImage", file);
-                              const url = URL.createObjectURL(file);
-                              setExitImagePreview(url);
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor="exitImage"
-                          className="flex flex-col items-center justify-center aspect-video cursor-pointer rounded-md border border-dashed border-border bg-muted/20 hover:bg-muted/40"
-                        >
-                          <Icons.ui.simpleUpload className="h-5 w-5 mb-1 text-muted-foreground/70" />
-                          <span className="text-xs text-muted-foreground">Upload</span>
-                        </label>
+                      <div className="flex items-center justify-center aspect-video rounded-md border border-dashed border-border bg-muted/20">
+                        <span className="text-xs text-muted-foreground">No image</span>
                       </div>
                     )}
                   </div>
@@ -658,7 +570,6 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                           type="button"
                           onClick={() => {
                             setExitImageM15Preview(null);
-                            setExitImageM15(null);
                           }}
                           className="absolute top-1 right-1 bg-black/70 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                         >
@@ -666,33 +577,21 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                         </button>
                       </div>
                     ) : (
-                      <div>
-                        <input
-                          type="file"
-                          id="exitImageM15"
-                          accept="image/*"
-                          className="sr-only"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              setExitImageM15(file);
-                              setValue("exitImageM15", file);
-                              const url = URL.createObjectURL(file);
-                              setExitImageM15Preview(url);
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor="exitImageM15"
-                          className="flex flex-col items-center justify-center aspect-video cursor-pointer rounded-md border border-dashed border-border bg-muted/20 hover:bg-muted/40"
-                        >
-                          <Icons.ui.simpleUpload className="h-5 w-5 mb-1 text-muted-foreground/70" />
-                          <span className="text-xs text-muted-foreground">Upload</span>
-                        </label>
+                      <div className="flex items-center justify-center aspect-video rounded-md border border-dashed border-border bg-muted/20">
+                        <span className="text-xs text-muted-foreground">No image</span>
                       </div>
                     )}
                   </div>
                 </div>
+
+                <Button
+                  type="button"
+                  onClick={handleCaptureExitCharts}
+                  disabled={isUploading}
+                  className="w-full"
+                >
+                  {isUploading ? "Capturing…" : "Capture via API (H4 & M15)"}
+                </Button>
               </div>
             </TabsContent>
 
@@ -733,7 +632,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                 {isSubmitting 
                   ? "Processing..." 
                   : isUploading 
-                    ? "Uploading..." 
+                    ? "Capturing..." 
                     : "Close Trade"
                 }
               </Button>

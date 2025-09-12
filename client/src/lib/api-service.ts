@@ -299,3 +299,23 @@ export async function deleteTradeImage(
     return false;
   }
 }
+// ====== NEW: dùng API để chụp 2 timeframe và trả URL ======
+import { requestCaptureWithRetry } from './capture';
+
+export async function captureTradeImages(
+  pair: string
+): Promise<{ entryH4?: string; entryM15?: string }> {
+  // H4
+  const h4 = await requestCaptureWithRetry("H4", pair);
+  // M15
+  const m15 = await requestCaptureWithRetry("M15", pair);
+
+  const result: { entryH4?: string; entryM15?: string } = {};
+  if (h4.ok && h4.url) result.entryH4 = h4.url;
+  if (m15.ok && m15.url) result.entryM15 = m15.url;
+
+  if (!result.entryH4 && !result.entryM15) {
+    throw new Error(h4.error || m15.error || "Capture failed");
+  }
+  return result;
+}

@@ -3,6 +3,7 @@ import { getAuth, signOut, updateProfile, createUserWithEmailAndPassword, signIn
 import { calculatePips, calculateProfit } from './forex-calculator';
 import { DASHBOARD_CONFIG } from './config';
 import { debug, logError, logWarning } from './debug';
+import { captureTradeImages } from "@/lib/api-service";
 import { processTradeTrigger as originalProcessTradeTrigger } from './achievements-service';
 import { debounce } from './utils';
 import { tradeUpdateService } from '@/services/trade-update-service';
@@ -310,23 +311,52 @@ async function addTrade(userId: string, tradeData: any) {
   try {
     debug("Adding new trade to Firestore", { userId });
     const tradesRef = collection(db, "users", userId, "trades");
-    
+
     // Add document to Firestore
     const docRef = await addDoc(tradesRef, {
       ...tradeData,
       createdAt: serverTimestamp(),
     });
-    
+
     debug("Trade added successfully with ID:", docRef.id);
-    
-    // Cải tiến hiệu suất: Sử dụng debounce để xử lý thành tích (vẫn giữ lại để tương thích)
+
+    // Xử lý achievements (đã có sẵn)
     processTradeTrigger(userId, 'create');
-    
-    // Sử dụng TradeUpdateService để thông báo cập nhật UI đồng bộ
+
+    // Realtime update cho UI (đã có sẵn)
     debug(`[REALTIME-DEBUG] Notifying trade creation via TradeUpdateService for ID: ${docRef.id}`);
     tradeUpdateService.notifyTradeCreated(userId, docRef.id);
-    
-    // Return success response with id for easier access
+
+    // ✅ AUTO-CAPTURE tuần tự ngay sau khi tạo (không block UI)
+    // ✅ AUTO-CAPTURE tuần tự sau khi tạo (KHÔNG block UI)
+    (async () => {
+      try {
+        const pair: string = String(tradeData?.pair || "").trim().toUpperCase();
+        if (!pair) return;
+
+        const { h4, m15 } = await captureTradeImages(pair);
+
+        // ⚠️ SỬA Ở ĐÂY: ghi đúng field mà UI dùng để hiển thị
+        const updatePayload: any = {
+          updatedAt: serverTimestamp(),
+          captureStatus: (h4 || m15) ? "uploaded" : "empty",
+        };
+
+        if (h4)  updatePayload.entryImage     = h4;  // H4 → entryImage
+        if (m15) updatePayload.entryImageM15 = m15; // M15 → entryImageM15
+
+        await updateDoc(docRef, updatePayload);
+      } catch (err: any) {
+        await updateDoc(docRef, {
+          updatedAt: serverTimestamp(),
+          captureStatus: "error",
+          errorMessage: String(err?.message || err),
+        });
+        logError("[autoCapture-after-create] ", err);
+      }
+    })().catch(logError);
+
+    // Return success response with id
     return {
       success: true,
       id: docRef.id
