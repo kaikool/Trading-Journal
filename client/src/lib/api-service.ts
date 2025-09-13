@@ -1,40 +1,30 @@
 /**
  * API Service for image upload and management
- * 
- * This service handles image uploads directly to Cloudinary API
+ *
+ * Cloudinary đã bị loại bỏ hoàn toàn.
+ * Giữ nguyên chữ ký hàm để tránh vỡ chỗ gọi, nhưng không còn thực hiện upload/xoá Cloudinary.
  */
 
 import { debug } from './debug';
-import CLOUDINARY_CONFIG from './cloudinary-config';
+// ====== NEW: dùng API để chụp 2 timeframe và trả URL ======
+import { requestCaptureWithRetry } from './capture';
 
 /**
- * Mapping between image types in UI and image types in storage
- * 
- * This is how we synchronize names between UI and backend
+ * Mapping giữa UI image type và storage type (vẫn giữ để đồng bộ tên)
  */
 const IMAGE_TYPE_MAP = {
-  // UI frontend name: Storage folder name
   'h4chart': 'entry-h4',
   'm15chart': 'entry-m15',
   'h4exit': 'exit-h4',
   'm15exit': 'exit-m15'
 } as const;
 
-// Type definitions to ensure type safety
 type UiImageType = keyof typeof IMAGE_TYPE_MAP;
 type StorageImageType = typeof IMAGE_TYPE_MAP[UiImageType];
 
 /**
- * Upload an image for a trade directly to Cloudinary using unsigned upload
- * 
- * Sử dụng API Cloudinary trực tiếp với upload preset không cần chữ ký
- * 
- * @param userId - User ID (sử dụng làm một phần của folder path và tags)
- * @param tradeId - Trade ID (sử dụng làm một phần của folder path và tags)
- * @param file - File ảnh cần upload
- * @param imageType - Loại ảnh (h4chart, m15chart, h4exit, m15exit)
- * @param progressCallback - Callback để cập nhật tiến độ upload
- * @returns Promise với kết quả {success, imageUrl, publicId}
+ * Upload ảnh trade — ĐÃ TẮT (Cloudinary removed).
+ * Vẫn giữ chữ ký để caller không lỗi runtime, nhưng trả về lỗi rõ ràng.
  */
 export async function uploadTradeImage(
   userId: string,
@@ -43,279 +33,57 @@ export async function uploadTradeImage(
   imageType: string,
   progressCallback?: (progress: number) => void
 ): Promise<{ success: boolean; imageUrl: string; publicId?: string }> {
-  debug(`API Service: Tải lên ảnh loại ${imageType}`);
-  
-  // Kiểm tra đầu vào
+  debug(`API Service: uploadTradeImage(type=${imageType}) — Cloudinary removed`);
+
   if (!file) {
     throw new Error('Không có file để tải lên');
   }
-
   if (file.size > 5 * 1024 * 1024) {
-    throw new Error(`Kích thước file vượt quá giới hạn 5MB (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
+    throw new Error(
+      `Kích thước file vượt quá giới hạn 5MB (${(file.size / 1024 / 1024).toFixed(2)}MB)`
+    );
   }
 
-  // Chuyển đổi loại ảnh từ UI sang storage type
+  // Chuyển kiểu (để giữ logic cũ nếu nơi khác có log)
   const storageType = (IMAGE_TYPE_MAP[imageType as UiImageType] || 'entry-h4') as StorageImageType;
   debug(`Đã chuyển đổi từ UI type "${imageType}" sang storage type "${storageType}"`);
-  
-  try {
-    // Cập nhật tiến trình ban đầu
-    if (progressCallback) progressCallback(5);
-    
-    // Simulate progress since we can't track it directly through fetch
-    let progressInterval: NodeJS.Timeout | null = null;
-    let currentProgress = 5;
-    
-    if (progressCallback) {
-      progressInterval = setInterval(() => {
-        currentProgress += 5;
-        if (currentProgress >= 90) {
-          clearInterval(progressInterval!);
-          progressInterval = null;
-        }
-        progressCallback(currentProgress);
-      }, 200);
-    }
-    
-    debug('Tải lên trực tiếp đến Cloudinary...');
-    
-    // Xác định folder dựa vào context
-    const folder = CLOUDINARY_CONFIG.folders.trades(userId, tradeId);
-    
-    debug(`Chuẩn bị upload đến Cloudinary. Cloud name: ${CLOUDINARY_CONFIG.cloud_name}, Upload preset: ${CLOUDINARY_CONFIG.upload_preset}`);
-    debug(`File details: name=${file.name}, type=${file.type}, size=${file.size} bytes`);
-    
-    // Tạo form data để gửi lên Cloudinary theo chuẩn unsigned upload
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_CONFIG.upload_preset); // Upload preset cho phép unsigned upload
-    formData.append('cloud_name', CLOUDINARY_CONFIG.cloud_name); // Tên cloud - quan trọng cho unsigned upload
-    formData.append('folder', folder); // Folder trong Cloudinary để lưu trữ ảnh
-    formData.append('tags', `user:${userId},trade:${tradeId},type:${storageType}`); // Tags để phân loại ảnh
-    
-    // Thêm một số tùy chọn hữu ích
-    formData.append('resource_type', 'image'); // Xác định loại tài nguyên
-    formData.append('multiple', 'false'); // Không cho phép nhiều file
-    
-    // Lưu ý: Các tham số transformation không được phép khi sử dụng unsigned upload
-    // Các transformation nên được cấu hình trong upload preset trên Cloudinary Dashboard
-    // hoặc áp dụng sau khi upload thông qua URL
-    
-    // Log URL being used
-    debug(`Gửi POST request đến: ${CLOUDINARY_CONFIG.upload_url}`);
-    
-    // Gửi request trực tiếp đến Cloudinary
-    const response = await fetch(CLOUDINARY_CONFIG.upload_url, {
-      method: 'POST',
-      body: formData
-    });
-    
-    // Clear progress interval if it exists
-    if (progressInterval) {
-      clearInterval(progressInterval);
-      progressInterval = null;
-    }
-    
-    // Handle response with detailed error information
-    if (!response.ok) {
-      try {
-        // Thử phân tích JSON response để lấy thông tin lỗi chi tiết
-        const errorData = await response.json();
-        debug(`Upload failed with error: ${JSON.stringify(errorData)}`);
-        
-        // Trích xuất thông báo lỗi chi tiết từ Cloudinary
-        const errorMessage = errorData.error?.message || 
-                            errorData.message || 
-                            `Tải lên Cloudinary thất bại: ${response.statusText}`;
-        
-        throw new Error(errorMessage);
-      } catch (jsonError) {
-        // Nếu không phân tích được JSON, lấy text thô
-        const errorText = await response.text();
-        debug(`Upload failed with text: ${errorText}`);
-        throw new Error(`Tải lên Cloudinary thất bại: ${response.statusText} - ${errorText.substring(0, 100)}`);
-      }
-    }
-    
-    // Parse response from Cloudinary
-    const cloudinaryData = await response.json();
-    
-    // Đảm bảo tiến trình hoàn thành là 100%
-    if (progressCallback) progressCallback(100);
-    
-    debug('Tải lên Cloudinary thành công: ' + cloudinaryData.secure_url);
-    
-    return {
-      success: true, 
-      imageUrl: cloudinaryData.secure_url,
-      publicId: cloudinaryData.public_id
-    };
-  } catch (error) {
-    console.error("Lỗi tải ảnh lên Cloudinary:", error);
-    
-    // Đặt tiến trình về 0 để thể hiện lỗi
-    if (progressCallback) progressCallback(0);
-    
-    // Tái định dạng thông báo lỗi để UI dễ hiểu
-    let errorMessage = "Không thể tải ảnh lên";
-    
-    if (error instanceof Error) {
-      if (error.message.includes("unauthorized") || error.message.includes("permission-denied")) {
-        errorMessage = "Không có quyền tải lên. Vui lòng đăng nhập lại.";
-      } else if (error.message.includes("network")) {
-        errorMessage = "Lỗi kết nối mạng. Vui lòng thử lại sau.";
-      } else {
-        errorMessage = error.message;
-      }
-    }
-    
-    throw new Error(errorMessage);
-  }
+
+  // Tắt tiến trình (nếu UI có thanh progress)
+  if (progressCallback) progressCallback(0);
+
+  // THÔNG BÁO RÕ RÀNG: Upload đã bị vô hiệu hoá vì Cloudinary đã bỏ
+  throw new Error('Upload ảnh đã bị tắt (Cloudinary removed).');
 }
 
 /**
- * Trích xuất Public ID từ URL Cloudinary
- * 
- * @param url - URL Cloudinary của ảnh
- * @returns Public ID của ảnh hoặc null nếu không thể trích xuất
- */
-function extractPublicIdFromCloudinaryUrl(url: string): string | null {
-  if (!url || !url.includes('cloudinary.com')) {
-    return null;
-  }
-
-  try {
-    // URL Cloudinary có dạng: https://res.cloudinary.com/cloud-name/image/upload/[transformations]/public-id
-    const urlParts = url.split('/upload/');
-    if (urlParts.length !== 2) {
-      return null;
-    }
-
-    // Phần sau upload/ có thể có transformations, nên cần tách từ sau dấu /
-    let parts = urlParts[1].split('/');
-    // Phần cuối cùng chứa public_id
-    const publicIdWithExt = parts[parts.length - 1];
-    
-    // Loại bỏ phần extension để lấy public_id gốc
-    const extIndex = publicIdWithExt.lastIndexOf('.');
-    if (extIndex !== -1) {
-      return publicIdWithExt.substring(0, extIndex);
-    }
-
-    return publicIdWithExt;
-  } catch (e) {
-    debug(`Lỗi khi trích xuất publicId từ URL: ${e}`);
-    return null;
-  }
-}
-
-/**
- * Delete a trade image directly from Cloudinary
- * 
- * @param userId - User ID
- * @param tradeId - Trade ID
- * @param imageData - Can be:
- *   1. Full URL of the image (Cloudinary URL)
- *   2. Public ID of the Cloudinary image
- * @returns Promise with result as boolean
+ * Xoá ảnh trade — ĐÃ TẮT (Cloudinary removed).
+ * Trả về false để UI xử lý êm.
  */
 export async function deleteTradeImage(
   userId: string,
   tradeId: string,
   imageData: string
 ): Promise<boolean> {
-  debug(`API Service: Xóa ảnh ${imageData.substring(0, 30)}...`);
-  
-  try {
-    let publicId: string | null = null;
-    
-    // Xác định loại dữ liệu được truyền vào
-    if (imageData.startsWith('http') || imageData.startsWith('https')) {
-      // Là một URL
-      if (imageData.includes('cloudinary.com')) {
-        debug('URL Cloudinary được phát hiện, trích xuất public_id...');
-        publicId = extractPublicIdFromCloudinaryUrl(imageData);
-      } else {
-        debug('URL không được hỗ trợ');
-        return false;
-      }
-    } 
-    // Nếu đây là public ID của Cloudinary
-    else if (!imageData.startsWith('http') && !imageData.includes('/')) {
-      publicId = imageData;
-      debug('Đã nhận diện Public ID Cloudinary');
-    }
-    // Nếu không xác định được loại
-    else {
-      debug('Không thể xác định loại dữ liệu ảnh, không thể xóa');
-      return false;
-    }
-    
-    if (!publicId) {
-      debug('Không thể trích xuất public_id, không thể xóa ảnh');
-      return false;
-    }
-    
-    debug(`Đã xác định public_id: ${publicId}`);
-    
-    // Không thể xóa ảnh trực tiếp từ client vì cần phải ký chữ ký bảo mật
-    // và chúng ta không muốn chia sẻ secret key với client. 
-    // Vì vậy chúng ta vẫn phải gọi API server để xóa.
-    
-    // Tạo query params
-    const params = new URLSearchParams();
-    params.append('publicId', publicId);
-    
-    // Gọi API để xóa ảnh
-    debug('Gửi request xóa ảnh đến server');
-    
-    const response = await fetch(`/api/images/delete?${params.toString()}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      debug(`Xóa ảnh thất bại: ${response.status} - ${errorText}`);
-      return false;
-    }
-    
-    const result = await response.json();
-    
-    debug(`Kết quả xóa ảnh: ${result.success ? 'Thành công' : 'Thất bại'}`);
-    
-    return result.success;
-  } catch (error) {
-    console.error(`Lỗi khi xóa ảnh:`, error);
-    
-    // Ghi log chi tiết hơn về lỗi
-    if (error instanceof Error) {
-      debug(`Lỗi xóa ảnh: ${error.message}`);
-    }
-    
-    // Không ném lỗi, trả về false để UI có thể xử lý một cách êm dịu
-    return false;
-  }
+  debug(`API Service: deleteTradeImage(${imageData?.slice(0, 30)}) — Cloudinary removed`);
+  // Không ném lỗi để UI không crash; chỉ trả về false.
+  return false;
 }
-// ====== NEW: dùng API để chụp 2 timeframe và trả URL ======
-import { requestCaptureWithRetry } from './capture';
 
+/**
+ * Capture ảnh H4 & M15 qua service riêng (giữ nguyên, không liên quan Cloudinary)
+ */
 export async function captureTradeImages(
   pair: string
 ): Promise<{ entryH4?: string; entryM15?: string }> {
-  // H4
-  const h4 = await requestCaptureWithRetry("H4", pair);
-  // M15
-  const m15 = await requestCaptureWithRetry("M15", pair);
+  const h4 = await requestCaptureWithRetry('H4', pair);
+  const m15 = await requestCaptureWithRetry('M15', pair);
 
   const result: { entryH4?: string; entryM15?: string } = {};
   if (h4.ok && h4.url) result.entryH4 = h4.url;
   if (m15.ok && m15.url) result.entryM15 = m15.url;
 
   if (!result.entryH4 && !result.entryM15) {
-    throw new Error(h4.error || m15.error || "Capture failed");
+    throw new Error(h4.error || m15.error || 'Capture failed');
   }
   return result;
 }

@@ -124,18 +124,6 @@ export function TradeImageManager({
     
     try {
       setIsDeleting(true);
-      
-      // Xử lý trường hợp ảnh từ Cloudinary
-      if (imageUrl.includes('cloudinary.com')) {
-        console.log(`Phát hiện URL Cloudinary (không còn hỗ trợ) cho trade ${tradeId}: ${imageUrl}`);
-        
-        toast({
-          title: 'URL không được hỗ trợ',
-          description: 'URL Cloudinary không còn được hỗ trợ. Vui lòng tải lên ảnh mới.',
-          variant: 'destructive',
-        });
-        
-        // Cho phép client xóa tham chiếu đến ảnh Cloudinary không còn hoạt động
         onImageDeleted();
         setIsDeleting(false);
         return;

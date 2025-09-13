@@ -71,7 +71,7 @@ export function TradeImages({
             inputId="exitImage1"
           />
 
-          <ImageUpload
+        <ImageUpload
             title="M15"
             subtitle="Lower Timeframe"
             imageState={exitImage2}

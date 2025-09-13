@@ -7,7 +7,6 @@ import {
   insertTradeSchema
 } from "@shared/schema";
 
-import { uploadImage } from "./cloudinary-service";
 import { promises as fs } from 'fs';
 import path from 'path';
 
