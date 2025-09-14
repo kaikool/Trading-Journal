@@ -78,7 +78,7 @@ function useReducedMotion() {
 function MainContent() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useIsMobile();
   const currentRoute = location;
@@ -249,18 +249,10 @@ function MainContent() {
 
   // If not on auth/public page and user is not logged in, redirect to login page
   useEffect(() => {
-    if (!loading && !hasUser && !isPublicPage) {
+    if (!loading && !hasUser && !isPublicPage && location !== "/auth/login") {
       console.log("Not authenticated, navigation to login required");
-      // For desktop/larger screens, add a small delay to ensure the app has time to render first
-      if (window.innerWidth > 768) {
-        // Give the app time to hydrate and render first
-        setTimeout(() => {
-          window.location.href = "/auth/login";
-        }, 300);
-      } else {
-        // For mobile, redirect immediately for faster experience
-        window.location.href = "/auth/login";
-      }
+      // Use client-side navigation instead of full page reload
+      setLocation("/auth/login");
     }
   }, [loading, hasUser, isPublicPage]);
 

@@ -9,7 +9,7 @@ import {
 import { calculatePips, calculateProfit } from "./forex-calculator";
 import { DASHBOARD_CONFIG } from "./config";
 import { debug, logError, logWarning } from "./debug";
-import { captureTradeImages } from "@/lib/capture";
+// captureTradeImages dynamically imported where needed to avoid module load issues
 import { processTradeTrigger as originalProcessTradeTrigger } from "./achievements-service";
 import { debounce } from "./utils";
 import { tradeUpdateService } from "@/services/trade-update-service";
@@ -271,6 +271,7 @@ async function addTrade(userId: string, tradeData: any) {
           .toUpperCase();
         if (!pair) return;
 
+        const { captureTradeImages } = await import("@/lib/capture");
         const { entryH4, entryM15 } = await captureTradeImages(pair);
 
         const updatePayload: any = {
@@ -593,7 +594,8 @@ async function updateTrade(
             .toUpperCase();
           if (!pair) return;
 
-          const { entryH4, entryM15 } = await captureTradeImages(pair);
+          const { captureTradeImages } = await import("@/lib/capture");
+        const { entryH4, entryM15 } = await captureTradeImages(pair);
           const payload: any = {
             updatedAt: serverTimestamp(),
             // đánh dấu trạng thái nếu muốn
