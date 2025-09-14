@@ -66,7 +66,7 @@ export default function Login() {
     if (auth.currentUser) {
       setLocation("/");
     }
-  }, [setLocation]);
+  }, []); // Empty dependency array - only run once on mount
 
   return (
     <AuthLayout>
