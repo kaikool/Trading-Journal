@@ -841,6 +841,40 @@ async function updateAccountBalance(userId: string) {
 /* =========================
  * Strategies
  * ========================= */
+
+// Helper function to normalize strategy conditions arrays
+function normalizeStrategyConditions(conditions: any[], prefix: string): any[] {
+  if (!Array.isArray(conditions)) {
+    return [];
+  }
+  
+  return conditions.map((condition: any, index: number) => {
+    // Ensure basic structure
+    const normalized: any = {
+      id: typeof condition.id === "string" 
+        ? condition.id 
+        : `${prefix}-${Math.random().toString(36).substr(2, 9)}`,
+      label: typeof condition.label === "string" ? condition.label : "",
+      order: typeof condition.order === "number" ? condition.order : index,
+    };
+    
+    // Add optional fields only if they exist and are not empty
+    if (condition.indicator && typeof condition.indicator === "string") {
+      normalized.indicator = condition.indicator;
+    }
+    if (condition.timeframe && typeof condition.timeframe === "string") {
+      normalized.timeframe = condition.timeframe;
+    }
+    if (condition.expectedValue && typeof condition.expectedValue === "string") {
+      normalized.expectedValue = condition.expectedValue;
+    }
+    if (condition.description && typeof condition.description === "string") {
+      normalized.description = condition.description;
+    }
+    
+    return normalized;
+  });
+}
 async function saveStrategyAnalysis(
   userId: string,
   strategyId: string,
@@ -910,12 +944,35 @@ async function getStrategies(
   userId: string
 ): Promise<Array<TradingStrategy & { id: string }>> {
   try {
-    debug(`Getting strategies for user ${userId}`);
+    debug(`[getStrategies] Getting strategies for user ${userId}`);
     const strategiesRef = collection(db, "users", userId, "strategies");
     const querySnapshot = await getDocs(strategiesRef);
+    
     return querySnapshot.docs.map((doc) => {
-      const data = doc.data() as TradingStrategy;
-      return { ...data, id: doc.id };
+      const data = doc.data();
+      
+      // Ensure arrays are properly mapped to interface
+      const strategy: TradingStrategy & { id: string } = {
+        id: doc.id,
+        userId: data.userId || userId,
+        name: data.name || "",
+        description: data.description || "",
+        rules: Array.isArray(data.rules) ? data.rules : [],
+        entryConditions: Array.isArray(data.entryConditions) ? data.entryConditions : [],
+        exitConditions: Array.isArray(data.exitConditions) ? data.exitConditions : [],
+        timeframes: Array.isArray(data.timeframes) ? data.timeframes : [],
+        riskRewardRatio: data.riskRewardRatio,
+        notes: data.notes,
+        isDefault: data.isDefault,
+        createdAt: data.createdAt || Timestamp.now(),
+        updatedAt: data.updatedAt,
+        // Backward compatibility fields
+        rulesText: data.rulesText,
+        entryConditionsText: data.entryConditionsText,
+        exitConditionsText: data.exitConditionsText,
+      };
+      
+      return strategy;
     });
   } catch (error) {
     logError("Error getting strategies:", error);
@@ -928,17 +985,42 @@ function onStrategiesSnapshot(
   callback: (strategies: any[]) => void
 ) {
   if (!userId) return () => {};
+  
+  debug(`[onStrategiesSnapshot] Setting up snapshot listener for user ${userId}`);
   const strategiesRef = collection(db, "users", userId, "strategies");
   let isActive = true;
+  
   const unsubscribe = onSnapshot(
     strategiesRef,
     (snapshot) => {
       if (!isActive) return;
+      
       try {
-        const strategies = snapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+        const strategies = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          
+          // Map to proper interface with fallbacks
+          return {
+            id: doc.id,
+            userId: data.userId || userId,
+            name: data.name || "",
+            description: data.description || "",
+            rules: Array.isArray(data.rules) ? data.rules : [],
+            entryConditions: Array.isArray(data.entryConditions) ? data.entryConditions : [],
+            exitConditions: Array.isArray(data.exitConditions) ? data.exitConditions : [],
+            timeframes: Array.isArray(data.timeframes) ? data.timeframes : [],
+            riskRewardRatio: data.riskRewardRatio,
+            notes: data.notes,
+            isDefault: data.isDefault,
+            createdAt: data.createdAt || Timestamp.now(),
+            updatedAt: data.updatedAt,
+            // Backward compatibility
+            rulesText: data.rulesText,
+            entryConditionsText: data.entryConditionsText,
+            exitConditionsText: data.exitConditionsText,
+          };
+        });
+        
         callback(strategies);
       } catch (error) {
         logError("Error in strategies snapshot callback:", error);
@@ -946,7 +1028,9 @@ function onStrategiesSnapshot(
     },
     (error) => logError("Error in strategies snapshot:", error)
   );
+  
   return () => {
+    debug(`[onStrategiesSnapshot] Unsubscribing snapshot listener for user ${userId}`);
     isActive = false;
     unsubscribe();
   };
@@ -954,11 +1038,38 @@ function onStrategiesSnapshot(
 
 async function getStrategyById(userId: string, strategyId: string) {
   try {
+    debug(`[getStrategyById] Getting strategy ${strategyId} for user ${userId}`);
     const docRef = doc(db, "users", userId, "strategies", strategyId);
     const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) throw new Error("Strategy not found");
+    
+    if (!docSnap.exists()) {
+      throw new Error("Strategy not found");
+    }
+    
     const data = docSnap.data();
-    return { ...data, id: docSnap.id };
+    
+    // Map to proper TradingStrategy interface
+    const strategy = {
+      id: docSnap.id,
+      userId: data.userId || userId,
+      name: data.name || "",
+      description: data.description || "",
+      rules: Array.isArray(data.rules) ? data.rules : [],
+      entryConditions: Array.isArray(data.entryConditions) ? data.entryConditions : [],
+      exitConditions: Array.isArray(data.exitConditions) ? data.exitConditions : [],
+      timeframes: Array.isArray(data.timeframes) ? data.timeframes : [],
+      riskRewardRatio: data.riskRewardRatio,
+      notes: data.notes,
+      isDefault: data.isDefault,
+      createdAt: data.createdAt || Timestamp.now(),
+      updatedAt: data.updatedAt,
+      // Backward compatibility fields
+      rulesText: data.rulesText,
+      entryConditionsText: data.entryConditionsText,
+      exitConditionsText: data.exitConditionsText,
+    };
+    
+    return strategy;
   } catch (error) {
     logError("Error getting strategy by ID:", error);
     throw error;
@@ -967,12 +1078,43 @@ async function getStrategyById(userId: string, strategyId: string) {
 
 async function addStrategy(userId: string, strategyData: any) {
   try {
+    debug("[addStrategy] Adding new strategy to Firestore", { userId, strategyData });
     const strategiesRef = collection(db, "users", userId, "strategies");
-    const docRef = await addDoc(strategiesRef, {
-      ...strategyData,
-      createdAt: serverTimestamp(),
+    
+    // Clean and normalize strategy data
+    const cleanData = { ...strategyData };
+    
+    // Ensure arrays are properly formatted and have IDs
+    cleanData.rules = normalizeStrategyConditions(cleanData.rules || [], "rule");
+    cleanData.entryConditions = normalizeStrategyConditions(cleanData.entryConditions || [], "entry");
+    cleanData.exitConditions = normalizeStrategyConditions(cleanData.exitConditions || [], "exit");
+    
+    // Ensure userId is set
+    cleanData.userId = userId;
+    
+    // Remove any undefined values
+    Object.keys(cleanData).forEach((key) => {
+      if (cleanData[key] === undefined) delete cleanData[key];
     });
-    return { ...strategyData, id: docRef.id };
+    
+    debug("[addStrategy] Normalized strategy data:", cleanData);
+    
+    const docRef = await addDoc(strategiesRef, {
+      ...cleanData,
+      userId, // Ensure userId is set in document for queries/analytics
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    
+    debug("[addStrategy] Strategy added successfully with ID:", docRef.id);
+    
+    return { 
+      ...cleanData,
+      id: docRef.id,
+      userId,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    };
   } catch (error) {
     logError("Error adding strategy:", error);
     throw error;
@@ -985,75 +1127,58 @@ async function updateStrategy(
   strategyData: any
 ) {
   try {
+    debug("[updateStrategy] Updating strategy", { userId, strategyId, strategyData });
     const strategyRef = doc(db, "users", userId, "strategies", strategyId);
+    
     const cleanData = { ...strategyData };
-    delete cleanData.updatedAt;
-    cleanData.updatedAt = serverTimestamp();
+    
+    // Remove top-level id before updateDoc
     delete cleanData.id;
-
-    if (Array.isArray(cleanData.rules)) {
-      cleanData.rules = cleanData.rules.map((rule: any) => ({
-        id:
-          typeof rule.id === "string"
-            ? rule.id
-            : `rule-${Math.random().toString(36).substr(2, 9)}`,
-        label: typeof rule.label === "string" ? rule.label : "",
-        order: typeof rule.order === "number" ? rule.order : 0,
-        ...(rule.indicator && { indicator: rule.indicator }),
-        ...(rule.timeframe && { timeframe: rule.timeframe }),
-        ...(rule.expectedValue && { expectedValue: rule.expectedValue }),
-        ...(rule.description && { description: rule.description }),
-      }));
+    delete cleanData.updatedAt;
+    
+    // Set updatedAt to serverTimestamp
+    cleanData.updatedAt = serverTimestamp();
+    
+    // Normalize arrays - ensure they are proper serializable objects
+    if ("rules" in cleanData) {
+      cleanData.rules = normalizeStrategyConditions(cleanData.rules || [], "rule");
     }
-    if (Array.isArray(cleanData.entryConditions)) {
-      cleanData.entryConditions = cleanData.entryConditions.map(
-        (condition: any) => ({
-          id:
-            typeof condition.id === "string"
-              ? condition.id
-              : `entry-${Math.random().toString(36).substr(2, 9)}`,
-          label: typeof condition.label === "string" ? condition.label : "",
-          order: typeof condition.order === "number" ? condition.order : 0,
-          ...(condition.indicator && { indicator: condition.indicator }),
-          ...(condition.timeframe && { timeframe: condition.timeframe }),
-          ...(condition.expectedValue && { expectedValue: condition.expectedValue }),
-          ...(condition.description && { description: condition.description }),
-        })
-      );
+    if ("entryConditions" in cleanData) {
+      cleanData.entryConditions = normalizeStrategyConditions(cleanData.entryConditions || [], "entry");
     }
-    if (Array.isArray(cleanData.exitConditions)) {
-      cleanData.exitConditions = cleanData.exitConditions.map(
-        (condition: any) => ({
-          id:
-            typeof condition.id === "string"
-              ? condition.id
-              : `exit-${Math.random().toString(36).substr(2, 9)}`,
-          label: typeof condition.label === "string" ? condition.label : "",
-          order: typeof condition.order === "number" ? condition.order : 0,
-          ...(condition.indicator && { indicator: condition.indicator }),
-          ...(condition.timeframe && { timeframe: condition.timeframe }),
-          ...(condition.expectedValue && { expectedValue: condition.expectedValue }),
-          ...(condition.description && { description: condition.description }),
-        })
-      );
+    if ("exitConditions" in cleanData) {
+      cleanData.exitConditions = normalizeStrategyConditions(cleanData.exitConditions || [], "exit");
     }
+    
+    // Remove undefined values (but don't accidentally delete entire arrays)
     Object.keys(cleanData).forEach((key) => {
-      if (cleanData[key] === undefined) delete cleanData[key];
+      if (cleanData[key] === undefined) {
+        delete cleanData[key];
+      }
     });
+    
+    debug("[updateStrategy] Normalized update data:", cleanData);
+    
     await updateDoc(strategyRef, cleanData);
-    return { ...strategyData, id: strategyId };
+    
+    debug("[updateStrategy] Strategy updated successfully:", strategyId);
+    
+    return { ...strategyData, id: strategyId, updatedAt: Timestamp.now() };
   } catch (error) {
     logError("Error updating strategy:", error);
-    if (error instanceof Error)
+    if (error instanceof Error) {
       console.error(`Error type: ${error.name}, message: ${error.message}`);
+    }
     throw error;
   }
 }
 
 async function deleteStrategy(userId: string, strategyId: string) {
   try {
+    debug("[deleteStrategy] Deleting strategy", { userId, strategyId });
     const strategyRef = doc(db, "users", userId, "strategies", strategyId);
     await deleteDoc(strategyRef);
+    debug("[deleteStrategy] Strategy deleted successfully:", strategyId);
     return true;
   } catch (error) {
     logError("Error deleting strategy:", error);
@@ -1121,9 +1246,10 @@ async function createDefaultStrategiesIfNeeded(userId: string) {
  * ========================= */
 async function addGoal(userId: string, goalData: any) {
   try {
-    debug("Adding new goal to Firestore", { userId });
+    debug("[addGoal] Adding new goal to Firestore", { userId, goalData });
     const goalsRef = collection(db, "users", userId, "goals");
 
+    // Normalize date fields: Date -> Timestamp.fromDate
     const processedData = {
       ...goalData,
       startDate:
@@ -1138,15 +1264,20 @@ async function addGoal(userId: string, goalData: any) {
 
     const docRef = await addDoc(goalsRef, {
       ...processedData,
-      userId,
+      userId, // Ensure userId is set in document for queries/analytics
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
 
-    debug("Goal added successfully with ID:", docRef.id);
+    debug("[addGoal] Goal added successfully with ID:", docRef.id);
+    
+    // Return proper goal data structure
     return {
-      ...docRef,
       id: docRef.id,
+      ...processedData,
+      userId,
+      createdAt: Timestamp.now(), // For immediate return
+      updatedAt: Timestamp.now(),
     };
   } catch (error) {
     logError("Error adding goal:", error);
@@ -1264,6 +1395,7 @@ async function getGoalById(
 
 async function updateGoal(userId: string, goalId: string, goalData: any) {
   try {
+    debug("[updateGoal] Updating goal", { userId, goalId, goalData });
     const goalRef = doc(db, "users", userId, "goals", goalId);
     const processedData = { ...goalData };
     if (goalData.startDate instanceof Date) {
@@ -1280,7 +1412,7 @@ async function updateGoal(userId: string, goalId: string, goalData: any) {
     };
 
     await updateDoc(goalRef, dataToUpdate);
-    debug("Goal updated successfully:", goalId);
+    debug("[updateGoal] Goal updated successfully:", goalId);
 
     return getGoalById(userId, goalId);
   } catch (error) {
@@ -1316,10 +1448,11 @@ async function deleteMilestonesForGoal(userId: string, goalId: string) {
 
 async function deleteGoal(userId: string, goalId: string) {
   try {
+    debug("[deleteGoal] Deleting goal and milestones", { userId, goalId });
     await deleteMilestonesForGoal(userId, goalId);
     const goalRef = doc(db, "users", userId, "goals", goalId);
     await deleteDoc(goalRef);
-    debug("Goal deleted successfully:", goalId);
+    debug("[deleteGoal] Goal deleted successfully:", goalId);
   } catch (error) {
     logError("Error deleting goal:", error);
     throw error;
@@ -1415,7 +1548,7 @@ async function addMilestone(
   milestoneData: any
 ) {
   try {
-    debug(`Adding new milestone for goal ${goalId}`);
+    debug(`[addMilestone] Adding new milestone for goal ${goalId}`, { milestoneData });
     const milestonesRef = collection(
       db,
       "users",
@@ -1425,6 +1558,7 @@ async function addMilestone(
       "milestones"
     );
 
+    // Convert completedDate if it's a Date
     const processedData = { ...milestoneData };
     if (milestoneData.completedDate instanceof Date) {
       processedData.completedDate = Timestamp.fromDate(
@@ -1439,10 +1573,15 @@ async function addMilestone(
       updatedAt: serverTimestamp(),
     });
 
-    debug("Milestone added successfully with ID:", docRef.id);
+    debug("[addMilestone] Milestone added successfully with ID:", docRef.id);
+    
+    // Return proper milestone data structure
     return {
-      ...docRef,
       id: docRef.id,
+      ...processedData,
+      goalId,
+      createdAt: Timestamp.now(), // For immediate return
+      updatedAt: Timestamp.now(),
     };
   } catch (error) {
     logError("Error adding milestone:", error);
@@ -1457,6 +1596,7 @@ async function updateMilestone(
   milestoneData: any
 ) {
   try {
+    debug("[updateMilestone] Updating milestone", { userId, goalId, milestoneId, milestoneData });
     const milestoneRef = doc(
       db,
       "users",
@@ -1480,7 +1620,7 @@ async function updateMilestone(
     };
 
     await updateDoc(milestoneRef, dataToUpdate);
-    debug("Milestone updated successfully:", milestoneId);
+    debug("[updateMilestone] Milestone updated successfully:", milestoneId);
   } catch (error) {
     logError("Error updating milestone:", error);
     throw error;
@@ -1493,6 +1633,7 @@ async function deleteMilestone(
   milestoneId: string
 ) {
   try {
+    debug("[deleteMilestone] Deleting milestone", { userId, goalId, milestoneId });
     const milestoneRef = doc(
       db,
       "users",
@@ -1503,7 +1644,7 @@ async function deleteMilestone(
       milestoneId
     );
     await deleteDoc(milestoneRef);
-    debug("Milestone deleted successfully:", milestoneId);
+    debug("[deleteMilestone] Milestone deleted successfully:", milestoneId);
   } catch (error) {
     logError("Error deleting milestone:", error);
     throw error;

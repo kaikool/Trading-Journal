@@ -254,7 +254,7 @@ function MainContent() {
       // Use client-side navigation instead of full page reload
       setLocation("/auth/login");
     }
-  }, [loading, hasUser, isPublicPage]);
+  }, [loading, hasUser, isPublicPage, location, setLocation]);
 
   // Sử dụng Splash Screen tối giản
   if (loading) {
