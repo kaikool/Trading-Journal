@@ -43,7 +43,7 @@ import firebaseConfig from "./firebase-config";
 /* =========================
  * Firebase init (lazy)
  * ========================= */
-if (process.env.NODE_ENV === "development") {
+if (import.meta.env.DEV) {
   const { projectId, storageBucket } = firebaseConfig;
   debug("Firebase config:", { projectId, storageBucket });
 }
@@ -69,7 +69,7 @@ function initFirebase() {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  if (process.env.NODE_ENV === "development") {
+  if (import.meta.env.DEV) {
     debug("Firebase has been initialized:");
     debug("- Auth Domain:", firebaseConfig.authDomain);
     debug("- Project ID:", firebaseConfig.projectId);

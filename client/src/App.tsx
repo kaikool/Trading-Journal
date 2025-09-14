@@ -247,14 +247,14 @@ function MainContent() {
   const isPublicPage = isAuthPage;
   const hasUser = user;
 
-  // If not on auth/public page and user is not logged in, redirect to login page
-  useEffect(() => {
-    if (!loading && !hasUser && !isPublicPage && location !== "/auth/login") {
-      console.log("Not authenticated, navigation to login required");
-      // Use client-side navigation instead of full page reload
-      setLocation("/auth/login");
-    }
-  }, [loading, hasUser, isPublicPage, location]); // Remove setLocation from dependencies
+  // GuardRedirect component for handling unauthenticated routes
+  const GuardRedirect = ({ to }: { to: string }) => {
+    const [, setLocation] = useLocation();
+    useEffect(() => {
+      setLocation(to);
+    }, [to, setLocation]);
+    return null;
+  };
 
   // Sử dụng Splash Screen tối giản
   if (loading) {
@@ -322,15 +322,46 @@ function MainContent() {
     </div>
   );
   
-  // Auth pages không cần layout
-  if (isAuthPage) {
-    return renderPageContent();
+  // Split router into public vs protected trees to prevent blank page
+  // If user is not authenticated, only render auth routes
+  if (!hasUser) {
+    return (
+      <div
+        key={currentRoute}
+        className={cn(
+          "transition-opacity app-main-content",
+          "min-h-[calc(100vh-4rem)]",
+          !isPageReady && "pointer-events-none opacity-80"
+        )}
+        style={{
+          transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
+        }}
+      >
+        <ErrorBoundary>
+          <Suspense fallback={
+            <div className="container max-w-7xl mx-auto px-4 sm:px-6 mt-8">
+              <AppSkeleton level={SkeletonLevel.PAGE} animation="pulse" hasTitle hasFooter />
+            </div>
+          }>
+            <Switch>
+              {/* Public auth routes */}
+              <Route path="/auth/login" component={Login} />
+              <Route path="/auth/register" component={Register} />
+              <Route path="/auth" component={() => <GuardRedirect to="/auth/login" />} />
+              {/* Explicit root redirect for unauthenticated users */}
+              <Route path="/" component={() => <GuardRedirect to="/auth/login" />} />
+              {/* Catch-all redirect to login for unauthenticated users */}
+              <Route path="/:rest*" component={() => <GuardRedirect to="/auth/login" />} />
+            </Switch>
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+    );
   }
   
+  // If user is authenticated, render protected routes with AppLayout
   return (
     <>
-      {/* ScrollToTop được quản lý bởi ScrollToTop component trong AppLayout */}
-      
       {/* Unified layout system with new Sidebar - bọc bởi ErrorBoundary */}
       <SafeAppLayout>
         {renderPageContent()}
