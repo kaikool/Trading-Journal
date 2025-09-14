@@ -5,7 +5,10 @@ import { useToast } from './use-toast';
 import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, getGoals } from '@/lib/firebase';
 import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
 import { useEffect, useState, useCallback } from 'react';
-import { debug } from '@/lib/debug';
+
+const log = (...a: any[]) => console.log('[use-goal-data]', ...a);
+const warn = (...a: any[]) => console.warn('[use-goal-data]', ...a);
+const err  = (...a: any[]) => console.error('[use-goal-data]', ...a);
 
 type GoalProgressData = {
   activeGoals: GoalProgressItem[];
@@ -52,334 +55,221 @@ export function useGoalData() {
   const { userData } = useUserDataQuery();
   const { userId: firebaseUserId } = useAuth();
 
-  // State for goal data from Firebase
   const [goalsData, setGoalsData] = useState<any[]>([]);
   const [isLoadingGoals, setIsLoadingGoals] = useState(true);
   const [goalsError, setGoalsError] = useState<Error | null>(null);
 
-  // State for goal progress data
   const [goalProgressData, setGoalProgressData] = useState<GoalProgressData | undefined>(undefined);
   const [isLoadingProgress, setIsLoadingProgress] = useState(true);
   const [progressError, setProgressError] = useState<Error | null>(null);
 
-  // Hàm để lấy dữ liệu mục tiêu từ Firebase
   const fetchGoalData = useCallback(async () => {
     if (!firebaseUserId) {
+      warn('fetchGoalData: missing firebaseUserId -> skip');
       setIsLoadingGoals(false);
       return;
     }
-
     setIsLoadingGoals(true);
-
     try {
-      // Lấy dữ liệu mục tiêu từ Firebase trực tiếp
+      log('fetchGoalData: start for uid=', firebaseUserId);
       const goals = await getGoals(firebaseUserId);
-      debug(`Received ${goals.length} goals from Firebase`);
-      setGoalsData(goals);
+      log('fetchGoalData: received goals count=', goals?.length, goals);
+      setGoalsData(goals || []);
       setIsLoadingGoals(false);
-
-      // Khi có dữ liệu mục tiêu mới, tính toán dữ liệu tiến độ
-      calculateGoalProgressData(goals);
-    } catch (error) {
-      debug('Error fetching goals:', error);
-      setGoalsError(error as Error);
+      calculateGoalProgressData(goals || []);
+    } catch (e: any) {
+      err('fetchGoalData: error=', e?.message || e);
+      setGoalsError(e as Error);
       setIsLoadingGoals(false);
     }
   }, [firebaseUserId]);
 
-  // Effect để tải dữ liệu ban đầu và thiết lập polling cập nhật
   useEffect(() => {
     if (!firebaseUserId) {
+      warn('useEffect:init: no uid -> not fetching');
       setIsLoadingGoals(false);
       return;
     }
-
-    // Tải dữ liệu ban đầu
+    log('useEffect:init: uid=', firebaseUserId);
     fetchGoalData();
 
-    // Thiết lập polling cập nhật mỗi 30 giây
-    const intervalId = setInterval(() => {
-      fetchGoalData();
-    }, 30000);
-
-    // Cleanup khi component unmounts
+    // DEBUG: giảm polling xuống 5s trong lúc bắt lỗi
+    const intervalId = setInterval(fetchGoalData, 5000);
     return () => clearInterval(intervalId);
   }, [firebaseUserId, fetchGoalData]);
 
-  // Function to calculate goal progress data
   const calculateGoalProgressData = (goals: any[]) => {
     try {
       setIsLoadingProgress(true);
-
-      // Calculate current date
       const now = new Date();
-
-      // Prepare goal data with progress information
       const goalsWithProgress = goals.map((goal) => {
-        // Calculate days remaining
         const endDate = new Date(goal.endDate?.toDate ? goal.endDate.toDate() : goal.endDate);
         const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-
-        // Calculate goal progress as integer
         const progressPercentage = Math.round(Math.min(100, (goal.currentValue / goal.targetValue) * 100 || 0));
-
-        // Calculate progress for each milestone as integer
-        const milestonesWithProgress = (goal.milestones || []).map((milestone: any) => {
-          const milestoneProgress =
-            goal.currentValue >= milestone.targetValue
-              ? 100
-              : Math.round(Math.min(100, (goal.currentValue / milestone.targetValue) * 100));
-
-          return {
-            ...milestone,
-            progressPercentage: milestoneProgress,
-          };
+        const milestonesWithProgress = (goal.milestones || []).map((m: any) => {
+          const p = goal.currentValue >= m.targetValue ? 100 : Math.round(Math.min(100, (goal.currentValue / m.targetValue) * 100));
+          return { ...m, progressPercentage: p };
         });
-
-        return {
-          ...goal,
-          daysLeft,
-          progressPercentage,
-          milestones: milestonesWithProgress,
-        };
+        return { ...goal, daysLeft, progressPercentage, milestones: milestonesWithProgress };
       });
 
-      // Categorize goals into active and completed
-      const activeGoals = goalsWithProgress.filter((goal) => !goal.isCompleted);
-      const completedGoals = goalsWithProgress.filter((goal) => goal.isCompleted);
+      const activeGoals = goalsWithProgress.filter((g) => !g.isCompleted);
+      const completedGoals = goalsWithProgress.filter((g) => g.isCompleted);
 
-      // Find upcoming milestones
-      const allMilestones = goalsWithProgress.flatMap((goal) =>
-        (goal.milestones || []).map((milestone: any) => ({
-          id: milestone.id,
-          goalId: goal.id,
-          goalTitle: goal.title,
-          title: milestone.title,
-          targetValue: milestone.targetValue,
-          progressPercentage: milestone.progressPercentage,
+      const allMilestones = goalsWithProgress.flatMap((g) =>
+        (g.milestones || []).map((m: any) => ({
+          id: m.id, goalId: g.id, goalTitle: g.title,
+          title: m.title, targetValue: m.targetValue,
+          progressPercentage: m.progressPercentage,
         })),
       );
 
       const upcomingMilestones = allMilestones
-        .filter((milestone: any) => milestone.progressPercentage < 100)
+        .filter((m: any) => m.progressPercentage < 100)
         .sort((a: any, b: any) => b.progressPercentage - a.progressPercentage)
         .slice(0, 5);
 
-      // Calculate overall progress as integer
       const totalGoals = goals.length;
       const completedGoalsCount = completedGoals.length;
       const overallProgressPercentage = totalGoals > 0 ? Math.round((completedGoalsCount / totalGoals) * 100) : 0;
 
-      // Update state
       setGoalProgressData({
         activeGoals,
         completedGoals,
         upcomingMilestones,
-        overallProgress: {
-          totalGoals,
-          completedGoals: completedGoalsCount,
-          progressPercentage: overallProgressPercentage,
-        },
+        overallProgress: { totalGoals, completedGoals: completedGoalsCount, progressPercentage: overallProgressPercentage },
       });
 
       setIsLoadingProgress(false);
-    } catch (error) {
-      debug('Error calculating goal progress data:', error);
-      setProgressError(error as Error);
+      log('calculateGoalProgressData: done');
+    } catch (e: any) {
+      err('calculateGoalProgressData: error=', e?.message || e);
+      setProgressError(e as Error);
       setIsLoadingProgress(false);
     }
   };
 
-  // Create a new goal
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: any) => {
+      log('createGoal: invoked with uid=', firebaseUserId, 'payload=', goalData);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Format the goal data
-      const formattedData = {
-        ...goalData,
-        userId: firebaseUserId,
-      };
-
-      // Call the Firebase add goal function
-      return addGoal(firebaseUserId, formattedData);
+      const formatted = { ...goalData, userId: firebaseUserId };
+      return addGoal(firebaseUserId, formatted);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (res: any) => {
+      log('createGoal:onSuccess result=', res);
       fetchGoalData();
-
-      toast({
-        title: 'Goal Created',
-        description: 'Your new goal has been created successfully.',
-      });
+      toast({ title: 'Goal Created', description: 'Your new goal has been created successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Creating Goal',
-        description: error?.message || 'An error occurred while creating the goal.',
-      });
+    onError: (e: any) => {
+      err('createGoal:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Creating Goal', description: e?.message || 'Create goal failed' });
     },
   });
 
-  // Update an existing goal
   const updateGoalMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      log('updateGoal: invoked uid=', firebaseUserId, 'id=', id, 'data=', data);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Call the Firebase update goal function
       return updateGoal(firebaseUserId, id, data);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (r: any) => {
+      log('updateGoal:onSuccess=', r);
       fetchGoalData();
-
-      toast({
-        title: 'Goal Updated',
-        description: 'Your goal has been updated successfully.',
-      });
+      toast({ title: 'Goal Updated', description: 'Your goal has been updated successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Updating Goal',
-        description: error?.message || 'An error occurred while updating the goal.',
-      });
+    onError: (e: any) => {
+      err('updateGoal:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Updating Goal', description: e?.message || 'Update goal failed' });
     },
   });
 
-  // Delete a goal
   const deleteGoalMutation = useMutation({
     mutationFn: async (goalId: string) => {
+      log('deleteGoal: invoked uid=', firebaseUserId, 'id=', goalId);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Call the Firebase delete goal function
       return deleteGoal(firebaseUserId, goalId);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (r: any) => {
+      log('deleteGoal:onSuccess=', r);
       fetchGoalData();
-
-      toast({
-        title: 'Goal Deleted',
-        description: 'The goal has been deleted successfully.',
-      });
+      toast({ title: 'Goal Deleted', description: 'The goal has been deleted successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Deleting Goal',
-        description: error?.message || 'An error occurred while deleting the goal.',
-      });
+    onError: (e: any) => {
+      err('deleteGoal:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Deleting Goal', description: e?.message || 'Delete goal failed' });
     },
   });
 
-  // Create a milestone
   const createMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, data }: { goalId: string; data: any }) => {
+      log('createMilestone: invoked uid=', firebaseUserId, 'goalId=', goalId, 'data=', data);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Call the Firebase add milestone function
       return addMilestone(firebaseUserId, goalId, data);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (r: any) => {
+      log('createMilestone:onSuccess=', r);
       fetchGoalData();
-
-      toast({
-        title: 'Milestone Created',
-        description: 'New milestone has been created successfully.',
-      });
+      toast({ title: 'Milestone Created', description: 'New milestone has been created successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Creating Milestone',
-        description: error?.message || 'An error occurred while creating the milestone.',
-      });
+    onError: (e: any) => {
+      err('createMilestone:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Creating Milestone', description: e?.message || 'Create milestone failed' });
     },
   });
 
-  // Update a milestone
   const updateMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, milestoneId, data }: { goalId: string; milestoneId: string; data: any }) => {
+      log('updateMilestone: invoked uid=', firebaseUserId, 'goalId=', goalId, 'milestoneId=', milestoneId, 'data=', data);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Call the Firebase update milestone function
       return updateMilestone(firebaseUserId, goalId, milestoneId, data);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (r: any) => {
+      log('updateMilestone:onSuccess=', r);
       fetchGoalData();
-
-      toast({
-        title: 'Milestone Updated',
-        description: 'Milestone has been updated successfully.',
-      });
+      toast({ title: 'Milestone Updated', description: 'Milestone has been updated successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Updating Milestone',
-        description: error?.message || 'An error occurred while updating the milestone.',
-      });
+    onError: (e: any) => {
+      err('updateMilestone:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Updating Milestone', description: e?.message || 'Update milestone failed' });
     },
   });
 
-  // Delete a milestone
   const deleteMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, milestoneId }: { goalId: string; milestoneId: string }) => {
+      log('deleteMilestone: invoked uid=', firebaseUserId, 'goalId=', goalId, 'milestoneId=', milestoneId);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Call the Firebase delete milestone function
       return deleteMilestone(firebaseUserId, goalId, milestoneId);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (r: any) => {
+      log('deleteMilestone:onSuccess=', r);
       fetchGoalData();
-
-      toast({
-        title: 'Milestone Deleted',
-        description: 'Milestone has been deleted successfully.',
-      });
+      toast({ title: 'Milestone Deleted', description: 'Milestone has been deleted successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Deleting Milestone',
-        description: error?.message || 'An error occurred while deleting the milestone.',
-      });
+    onError: (e: any) => {
+      err('deleteMilestone:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Deleting Milestone', description: e?.message || 'Delete milestone failed' });
     },
   });
 
-  // Calculate goal progress
   const calculateGoalProgressMutation = useMutation({
     mutationFn: async (goalId: string) => {
+      log('calculateProgress: invoked uid=', firebaseUserId, 'goalId=', goalId);
       if (!firebaseUserId) throw new Error('User is not logged in');
-
-      // Call the Firebase calculate progress function
       return calculateGoalProgress(firebaseUserId, goalId);
     },
-    onSuccess: () => {
-      // Refetch ngay để UI cập nhật
+    onSuccess: (r: any) => {
+      log('calculateProgress:onSuccess=', r);
       fetchGoalData();
-
-      toast({
-        title: 'Progress Updated',
-        description: 'Goal progress has been recalculated successfully.',
-      });
+      toast({ title: 'Progress Updated', description: 'Goal progress has been recalculated successfully.' });
     },
-    onError: (error: any) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error Calculating Progress',
-        description: error?.message || 'An error occurred while calculating goal progress.',
-      });
+    onError: (e: any) => {
+      err('calculateProgress:onError=', e?.message || e);
+      toast({ variant: 'destructive', title: 'Error Calculating Progress', description: e?.message || 'Calculate progress failed' });
     },
   });
 
   return {
-    // Queries
     goals: goalsData,
     goalProgress: goalProgressData,
     isLoadingGoals,
@@ -387,7 +277,6 @@ export function useGoalData() {
     goalsError,
     progressError,
 
-    // Mutations
     createGoal: createGoalMutation.mutate,
     updateGoal: updateGoalMutation.mutate,
     deleteGoal: deleteGoalMutation.mutate,
@@ -396,7 +285,6 @@ export function useGoalData() {
     deleteMilestone: deleteMilestoneMutation.mutate,
     calculateGoalProgress: calculateGoalProgressMutation.mutate,
 
-    // Mutation states
     isCreatingGoal: createGoalMutation.isPending,
     isUpdatingGoal: updateGoalMutation.isPending,
     isDeletingGoal: deleteGoalMutation.isPending,
