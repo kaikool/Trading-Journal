@@ -249,10 +249,13 @@ function MainContent() {
 
   // GuardRedirect component for handling unauthenticated routes
   const GuardRedirect = ({ to }: { to: string }) => {
-    const [, setLocation] = useLocation();
+    const [location, setLocation] = useLocation();
     useEffect(() => {
-      setLocation(to);
-    }, [to, setLocation]);
+      // Only redirect if we're not already at the target location
+      if (location !== to) {
+        setLocation(to);
+      }
+    }, [to, location, setLocation]);
     return null;
   };
 
