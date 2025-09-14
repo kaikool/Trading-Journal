@@ -65,17 +65,33 @@ const processTradeTrigger = debounce(
 
 function initFirebase() {
   if (isInitialized) return { app, auth, db };
-  isInitialized = true;
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  if (import.meta.env.DEV) {
-    debug("Firebase has been initialized:");
-    debug("- Auth Domain:", firebaseConfig.authDomain);
-    debug("- Project ID:", firebaseConfig.projectId);
+  
+  try {
+    isInitialized = true;
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    
+    if (import.meta.env.DEV) {
+      debug("Firebase has been initialized:");
+      debug("- Auth Domain:", firebaseConfig.authDomain);
+      debug("- Project ID:", firebaseConfig.projectId);
+    }
+    
+    return { app, auth, db };
+  } catch (error) {
+    logError("Firebase initialization failed:", error);
+    console.error("Firebase configuration error - app will continue but authentication features may not work:", error);
+    isInitialized = false;
+    // Don't throw to prevent app crash - create fallback objects
+    auth = {} as any;
+    db = {} as any;
+    app = {} as any;
+    return { app, auth, db };
   }
-  return { app, auth, db };
 }
+
+// Initialize Firebase with error handling 
 initFirebase();
 
 /* =========================

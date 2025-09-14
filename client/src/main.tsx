@@ -4,8 +4,8 @@ import "./index.css";
 import { registerServiceWorker } from "./lib/pwa-helper";
 import { preloadCriticalResources } from "./lib/preload";
 
-// Preload critical resources
-preloadCriticalResources();
+// Temporarily commented out to avoid startup issues
+// preloadCriticalResources();
 
 // Clear any existing service workers and caches in development mode
 if (!import.meta.env.PROD && 'serviceWorker' in navigator) {
