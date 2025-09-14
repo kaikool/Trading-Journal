@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useUserDataQuery } from './use-user-data-query';
 import { useAuth } from './use-auth';
 import { useToast } from './use-toast';
-import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, getGoals } from '@/lib/firebase'; 
+import { addGoal, updateGoal, deleteGoal, calculateGoalProgress, getGoals } from '@/lib/firebase';
 import { addMilestone, updateMilestone, deleteMilestone } from '@/lib/firebase';
 import { useEffect, useState, useCallback } from 'react';
 import { debug } from '@/lib/debug';
@@ -49,7 +49,6 @@ type GoalProgressItem = {
 
 export function useGoalData() {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const { userData } = useUserDataQuery();
   const { userId: firebaseUserId } = useAuth();
 
@@ -71,18 +70,18 @@ export function useGoalData() {
     }
 
     setIsLoadingGoals(true);
-    
+
     try {
       // Lấy dữ liệu mục tiêu từ Firebase trực tiếp
       const goals = await getGoals(firebaseUserId);
       debug(`Received ${goals.length} goals from Firebase`);
       setGoalsData(goals);
       setIsLoadingGoals(false);
-      
+
       // Khi có dữ liệu mục tiêu mới, tính toán dữ liệu tiến độ
       calculateGoalProgressData(goals);
     } catch (error) {
-      debug("Error fetching goals:", error);
+      debug('Error fetching goals:', error);
       setGoalsError(error as Error);
       setIsLoadingGoals(false);
     }
@@ -97,81 +96,80 @@ export function useGoalData() {
 
     // Tải dữ liệu ban đầu
     fetchGoalData();
-    
-    // Thiết lập polling cập nhật mỗi 30 giây
 
+    // Thiết lập polling cập nhật mỗi 30 giây
     const intervalId = setInterval(() => {
       fetchGoalData();
     }, 30000);
-    
+
     // Cleanup khi component unmounts
     return () => clearInterval(intervalId);
-  }, [firebaseUserId]);
+  }, [firebaseUserId, fetchGoalData]);
 
   // Function to calculate goal progress data
   const calculateGoalProgressData = (goals: any[]) => {
     try {
       setIsLoadingProgress(true);
-      
+
       // Calculate current date
       const now = new Date();
-      
+
       // Prepare goal data with progress information
-      const goalsWithProgress = goals.map(goal => {
+      const goalsWithProgress = goals.map((goal) => {
         // Calculate days remaining
         const endDate = new Date(goal.endDate?.toDate ? goal.endDate.toDate() : goal.endDate);
         const daysLeft = Math.max(0, Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-        
+
         // Calculate goal progress as integer
         const progressPercentage = Math.round(Math.min(100, (goal.currentValue / goal.targetValue) * 100 || 0));
-        
+
         // Calculate progress for each milestone as integer
         const milestonesWithProgress = (goal.milestones || []).map((milestone: any) => {
-          const milestoneProgress = goal.currentValue >= milestone.targetValue ? 100 : 
-            Math.round(Math.min(100, (goal.currentValue / milestone.targetValue) * 100));
-          
+          const milestoneProgress =
+            goal.currentValue >= milestone.targetValue
+              ? 100
+              : Math.round(Math.min(100, (goal.currentValue / milestone.targetValue) * 100));
+
           return {
             ...milestone,
-            progressPercentage: milestoneProgress
+            progressPercentage: milestoneProgress,
           };
         });
-        
+
         return {
           ...goal,
           daysLeft,
           progressPercentage,
-          milestones: milestonesWithProgress
+          milestones: milestonesWithProgress,
         };
       });
-      
+
       // Categorize goals into active and completed
-      const activeGoals = goalsWithProgress.filter(goal => !goal.isCompleted);
-      const completedGoals = goalsWithProgress.filter(goal => goal.isCompleted);
-      
+      const activeGoals = goalsWithProgress.filter((goal) => !goal.isCompleted);
+      const completedGoals = goalsWithProgress.filter((goal) => goal.isCompleted);
+
       // Find upcoming milestones
-      const allMilestones = goalsWithProgress.flatMap(goal => 
+      const allMilestones = goalsWithProgress.flatMap((goal) =>
         (goal.milestones || []).map((milestone: any) => ({
           id: milestone.id,
           goalId: goal.id,
           goalTitle: goal.title,
           title: milestone.title,
           targetValue: milestone.targetValue,
-          progressPercentage: milestone.progressPercentage
-        }))
+          progressPercentage: milestone.progressPercentage,
+        })),
       );
-      
+
       const upcomingMilestones = allMilestones
         .filter((milestone: any) => milestone.progressPercentage < 100)
         .sort((a: any, b: any) => b.progressPercentage - a.progressPercentage)
         .slice(0, 5);
-      
+
       // Calculate overall progress as integer
       const totalGoals = goals.length;
       const completedGoalsCount = completedGoals.length;
-      const overallProgressPercentage = totalGoals > 0 
-        ? Math.round((completedGoalsCount / totalGoals) * 100)
-        : 0;
-      
+      const overallProgressPercentage = totalGoals > 0 ? Math.round((completedGoalsCount / totalGoals) * 100) : 0;
+
       // Update state
       setGoalProgressData({
         activeGoals,
@@ -180,13 +178,13 @@ export function useGoalData() {
         overallProgress: {
           totalGoals,
           completedGoals: completedGoalsCount,
-          progressPercentage: overallProgressPercentage
-        }
+          progressPercentage: overallProgressPercentage,
+        },
       });
-      
+
       setIsLoadingProgress(false);
     } catch (error) {
-      debug("Error calculating goal progress data:", error);
+      debug('Error calculating goal progress data:', error);
       setProgressError(error as Error);
       setIsLoadingProgress(false);
     }
@@ -195,19 +193,21 @@ export function useGoalData() {
   // Create a new goal
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: any) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Format the goal data
       const formattedData = {
         ...goalData,
-        userId: firebaseUserId
+        userId: firebaseUserId,
       };
-      
+
       // Call the Firebase add goal function
       return addGoal(firebaseUserId, formattedData);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Goal Created',
         description: 'Your new goal has been created successfully.',
@@ -225,13 +225,15 @@ export function useGoalData() {
   // Update an existing goal
   const updateGoalMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Call the Firebase update goal function
       return updateGoal(firebaseUserId, id, data);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Goal Updated',
         description: 'Your goal has been updated successfully.',
@@ -249,13 +251,15 @@ export function useGoalData() {
   // Delete a goal
   const deleteGoalMutation = useMutation({
     mutationFn: async (goalId: string) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Call the Firebase delete goal function
       return deleteGoal(firebaseUserId, goalId);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Goal Deleted',
         description: 'The goal has been deleted successfully.',
@@ -273,13 +277,15 @@ export function useGoalData() {
   // Create a milestone
   const createMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, data }: { goalId: string; data: any }) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Call the Firebase add milestone function
       return addMilestone(firebaseUserId, goalId, data);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Milestone Created',
         description: 'New milestone has been created successfully.',
@@ -297,13 +303,15 @@ export function useGoalData() {
   // Update a milestone
   const updateMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, milestoneId, data }: { goalId: string; milestoneId: string; data: any }) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Call the Firebase update milestone function
       return updateMilestone(firebaseUserId, goalId, milestoneId, data);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Milestone Updated',
         description: 'Milestone has been updated successfully.',
@@ -321,13 +329,15 @@ export function useGoalData() {
   // Delete a milestone
   const deleteMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, milestoneId }: { goalId: string; milestoneId: string }) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Call the Firebase delete milestone function
       return deleteMilestone(firebaseUserId, goalId, milestoneId);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Milestone Deleted',
         description: 'Milestone has been deleted successfully.',
@@ -345,13 +355,15 @@ export function useGoalData() {
   // Calculate goal progress
   const calculateGoalProgressMutation = useMutation({
     mutationFn: async (goalId: string) => {
-      if (!firebaseUserId) throw new Error("User is not logged in");
-      
+      if (!firebaseUserId) throw new Error('User is not logged in');
+
       // Call the Firebase calculate progress function
       return calculateGoalProgress(firebaseUserId, goalId);
     },
     onSuccess: () => {
-      // No need to invalidate query as snapshot listener will auto-update
+      // Refetch ngay để UI cập nhật
+      fetchGoalData();
+
       toast({
         title: 'Progress Updated',
         description: 'Goal progress has been recalculated successfully.',
