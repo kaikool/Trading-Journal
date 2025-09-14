@@ -7,6 +7,17 @@ import { preloadCriticalResources } from "./lib/preload";
 // Preload critical resources
 preloadCriticalResources();
 
+// Clear any existing service workers and caches in development mode
+if (!import.meta.env.PROD && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => 
+    registrations.forEach(registration => registration.unregister())
+  );
+  if ('caches' in window) {
+    caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+  }
+  console.log("Development mode: Cleared service workers and caches");
+}
+
 // Render the application
 createRoot(document.getElementById("root")!).render(<App />);
 

@@ -25,21 +25,20 @@ import { LayoutProvider } from "@/contexts/LayoutContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { DialogProvider } from "@/contexts/DialogContext";
 
-// Improved dynamic imports with proper code splitting
-// Core/frequently used pages - higher priority
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
-const TradeHistory = lazy(() => import("@/pages/TradeHistory"));
-const Login = lazy(() => import("@/pages/auth/Login"));
-const Register = lazy(() => import("@/pages/auth/Register"));
+// Regular imports for critical components to avoid lazy loading issues
+import Dashboard from "@/pages/Dashboard";
+import TradeHistory from "@/pages/TradeHistory";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
+import Goals from "@/pages/Goals";
 
-// Less frequently used pages - can be in separate chunks
+// Keep lazy loading for less critical pages
 const TradeForm = lazy(() => import("@/pages/Trade"));
 const ViewTrade = lazy(() => import("@/pages/TradeView"));
 const Analytics = lazy(() => import("@/pages/Analytics"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const Strategies = lazy(() => import("@/pages/Strategies"));
 const Achievements = lazy(() => import("@/pages/Achievements"));
-const Goals = lazy(() => import("@/pages/Goals"));
 
 // Note: Layout components are now imported from @/contexts/LayoutContext
 // Tạo layout component được bọc bởi ErrorBoundary
@@ -157,13 +156,13 @@ function MainContent() {
   useEffect(() => {
     // Preload potentially next route modules when current route is viewed
     const preloadNextRoutes = () => {
-      // Map of current route to likely next routes
+      // Map of current route to likely next routes  
       const routeMap: Record<string, string[]> = {
-        '/': ['/trade/history', '/analytics'],
-        '/dashboard': ['/trade/history', '/analytics'],
-        '/trade/history': ['/trade/new', '/analytics'],
-        '/analytics': ['/trade/history', '/settings'],
-        '/trade/new': ['/trade/history'],
+        '/': ['/history', '/analytics'],
+        '/dashboard': ['/history', '/analytics'], 
+        '/history': ['/trade/new', '/analytics'],
+        '/analytics': ['/history', '/settings'],
+        '/trade/new': ['/history'],
       };
       
       // Get potential next routes based on current location
@@ -188,12 +187,20 @@ function MainContent() {
           // Use requestIdleCallback when available to avoid blocking main thread
           if ('requestIdleCallback' in window) {
             (window as any).requestIdleCallback(() => {
-              preloadRoute(route);
+              try {
+                preloadRoute(route);
+              } catch (error) {
+                // Ignore preload failures to prevent breaking Suspense
+              }
             }, { timeout: 2000 });
           } else {
             // Fallback to setTimeout with a delay
             setTimeout(() => {
-              preloadRoute(route);
+              try {
+                preloadRoute(route);
+              } catch (error) {
+                // Ignore preload failures to prevent breaking Suspense
+              }
             }, 1000);
           }
         });
@@ -253,7 +260,7 @@ function MainContent() {
     useEffect(() => {
       // Only redirect if we're not already at the target location
       if (location !== to) {
-        setLocation(to);
+        setLocation(to, { replace: true });
       }
     }, [to, location, setLocation]);
     return null;
@@ -296,11 +303,7 @@ function MainContent() {
           </div>
         }>
           <Switch>
-            {/* Auth routes */}
-            <Route path="/auth/login" component={Login} />
-            <Route path="/auth/register" component={Register} />
-            
-            {/* Protected routes */}
+            {/* Protected routes - no auth routes here */}
             <Route path="/" component={Dashboard} />
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/trade/new" component={TradeForm} />

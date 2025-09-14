@@ -61,12 +61,7 @@ export default function Login() {
     }
   }
 
-  // Check if user is already logged in and redirect if necessary
-  useEffect(() => {
-    if (auth.currentUser) {
-      setLocation("/");
-    }
-  }, []); // Empty dependency array - only run once on mount
+  // Note: Removed auto-redirect logic - let App.tsx handle auth-based routing
 
   return (
     <AuthLayout>
