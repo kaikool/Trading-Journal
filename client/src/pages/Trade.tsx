@@ -197,15 +197,7 @@ export default function TradePage() {
                 strategyChecks={strategyChecks}
                 handleStrategyCheckToggle={handleStrategyCheckToggle}
                 
-                // Image props
-                entryImage1={entryImage1}
-                entryImage2={entryImage2}
-                exitImage1={exitImage1}
-                exitImage2={exitImage2}
-                handleEntryImageChange={handleEntryImageChange}
-                handleExitImageChange={handleExitImageChange}
-                removeEntryImage={removeEntryImage}
-                removeExitImage={removeExitImage}
+                // Image props removed - auto-capture handles images in background
               />
             </CardContent>
           </Card>

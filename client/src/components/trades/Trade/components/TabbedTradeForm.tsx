@@ -8,11 +8,9 @@ import {
   TradeRiskReward,
   TradeStrategy,
   TradePsychology,
-  TradeImages,
   NotesSection,
 } from './';
 import { cn } from '@/lib/utils';
-import { ImageState } from '../types';
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState<boolean>(false);
@@ -52,12 +50,6 @@ const TRADE_FORM_TABS = [
     mobileLabel: 'Psych',
   },
   {
-    id: 'images',
-    label: 'Charts',
-    icon: <Icons.analytics.barChart className="h-4 w-4" />,
-    mobileLabel: 'Charts',
-  },
-  {
     id: 'notes',
     label: 'Notes',
     icon: <Icons.general.clipboard className="h-4 w-4" />,
@@ -80,14 +72,7 @@ interface TabbedTradeFormProps {
   selectedStrategy: any;
   strategyChecks: any[];
   handleStrategyCheckToggle: (id: string, checked: boolean) => void;
-  entryImage1: ImageState;
-  entryImage2: ImageState;
-  exitImage1: ImageState;
-  exitImage2: ImageState;
-  handleEntryImageChange: (index: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
-  handleExitImageChange: (index: 1 | 2) => (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
-  removeEntryImage: (index: 1 | 2) => () => void;
-  removeExitImage: (index: 1 | 2) => () => void;
+  // Image props removed - auto-capture handles images in background
 }
 
 export function TabbedTradeForm({
@@ -105,14 +90,6 @@ export function TabbedTradeForm({
   selectedStrategy,
   strategyChecks,
   handleStrategyCheckToggle,
-  entryImage1,
-  entryImage2,
-  exitImage1,
-  exitImage2,
-  handleEntryImageChange,
-  handleExitImageChange,
-  removeEntryImage,
-  removeExitImage,
 }: TabbedTradeFormProps) {
   const [activeTab, setActiveTab] = useState('entry');
   const isMobile = useMediaQuery('(max-width: 640px)');
@@ -278,18 +255,7 @@ export function TabbedTradeForm({
           <TradePsychology />
         </TabsContent>
         
-        <TabsContent value="images" className="mt-0 pt-2 overflow-visible">
-          <TradeImages
-            entryImage1={entryImage1}
-            entryImage2={entryImage2}
-            exitImage1={exitImage1}
-            exitImage2={exitImage2}
-            handleEntryImageChange={handleEntryImageChange}
-            handleExitImageChange={handleExitImageChange}
-            removeEntryImage={removeEntryImage}
-            removeExitImage={removeExitImage}
-          />
-        </TabsContent>
+        {/* Manual image capture removed - auto-capture handles this in background */}
         
         <TabsContent value="notes" className="mt-0 pt-2 overflow-visible">
           <NotesSection />

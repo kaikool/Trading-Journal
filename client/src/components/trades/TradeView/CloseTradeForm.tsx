@@ -23,7 +23,7 @@ import {
 import { Icons } from "@/components/icons/icons";
 import { updateTrade } from "@/lib/firebase";
 import { calculateProfit, calculatePips, formatPrice } from "@/lib/forex-calculator";
-import { captureTradeImages } from "@/lib/capture"; // ✅ dùng API capture
+// Auto-capture functionality is handled in firebase.ts
 import { Timestamp } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -55,7 +55,7 @@ interface CloseTradeFormProps {
 export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: CloseTradeFormProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploading, setIsUploading] = useState(false); // dùng cho trạng thái capture
+  // Auto-capture handles images - no upload state needed
   const [activeTab, setActiveTab] = useState("main");
 
   // Calculation results when price changes
@@ -78,9 +78,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   const watchedResult = watch("result");
   const watchedExitPrice = watch("exitPrice");
 
-  // ✅ chỉ giữ URL preview (không lưu File nữa)
-  const [exitImagePreview, setExitImagePreview] = useState<string | null>(null);     // H4
-  const [exitImageM15Preview, setExitImageM15Preview] = useState<string | null>(null); // M15
+  // Auto-capture handles images in background - no manual UI needed
 
   // Update exit price based on result selection
   const updateExitPrice = (result: TradeResult) => {
@@ -141,36 +139,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
     return { pips, profitLoss };
   };
 
-  // ✅ Capture ảnh Exit (H4 & M15) qua API — có thể bấm trước trong tab "Charts"
-  const handleCaptureExitCharts = async () => {
-    try {
-      setIsUploading(true);
-      const { entryH4, entryM15 } = await captureTradeImages(trade.pair);
-      if (entryH4) setExitImagePreview(entryH4);
-      if (entryM15) setExitImageM15Preview(entryM15);
-
-      if (!entryH4 && !entryM15) {
-        toast({
-          variant: "destructive",
-          title: "Capture failed",
-          description: "API did not return any image."
-        });
-      } else {
-        toast({
-          title: "Captured charts",
-          description: `H4 ${entryH4 ? "✓" : "×"} • M15 ${entryM15 ? "✓" : "×"}`
-        });
-      }
-    } catch (e: any) {
-      toast({
-        variant: "destructive",
-        title: "Capture error",
-        description: String(e?.message || e)
-      });
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  // Manual capture removed - auto-capture handles this in background
 
   // Form submit handler
   const onSubmit = async (data: CloseTradeFormValues) => {
@@ -194,28 +163,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       // Calculate results
       const { pips, profitLoss } = calculateTradeResult(exitPrice);
 
-      // ✅ Lấy URL ảnh: nếu user đã bấm Capture trước → dùng preview; nếu chưa → thử capture ngay khi submit
-      let exitImageUrl = exitImagePreview || "";
-      let exitImageM15Url = exitImageM15Preview || "";
-
-      if (!exitImageUrl && !exitImageM15Url) {
-        try {
-          setIsUploading(true);
-          const { entryH4, entryM15 } = await captureTradeImages(trade.pair);
-          if (entryH4) {
-            exitImageUrl = entryH4;
-            setExitImagePreview(entryH4);
-          }
-          if (entryM15) {
-            exitImageM15Url = entryM15;
-            setExitImageM15Preview(entryM15);
-          }
-        } catch {
-          // im lặng nếu fail – đóng lệnh không ảnh
-        } finally {
-          setIsUploading(false);
-        }
-      }
+      // Auto-capture will handle exit images in background after trade is closed
 
       // Update data
       const updateData: Partial<Trade> = {
@@ -229,13 +177,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
         updatedAt: Timestamp.now()
       };
 
-      // Add image URLs if any
-      if (exitImageUrl) {
-        updateData.exitImage = exitImageUrl;       // H4
-      }
-      if (exitImageM15Url) {
-        updateData.exitImageM15 = exitImageM15Url; // M15
-      }
+      // Exit images will be captured automatically by firebase.ts after trade update
 
       await updateTrade(trade.userId, trade.id, updateData, {
         useBatch: true
@@ -313,14 +255,10 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
 
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Tabs defaultValue="main" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full grid grid-cols-3 h-10 rounded-none border-b bg-muted/30">
+            <TabsList className="w-full grid grid-cols-2 h-10 rounded-none border-b bg-muted/30">
               <TabsTrigger value="main" className="rounded-none">
                 <Icons.general.target className="h-3.5 w-3.5 mr-1.5" />
                 <span className="text-xs">Close Position</span>
-              </TabsTrigger>
-              <TabsTrigger value="images" className="rounded-none">
-                <Icons.general.image className="h-3.5 w-3.5 mr-1.5" />
-                <span className="text-xs">Charts</span>
               </TabsTrigger>
               <TabsTrigger value="note" className="rounded-none">
                 <Icons.ui.info className="h-3.5 w-3.5 mr-1.5" />
@@ -521,79 +459,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
               </div>
             </TabsContent>
 
-            {/* Tab 2: Images - Capture chart images */}
-            <TabsContent value="images" className="p-0 m-0">
-              <div className="px-4 py-3 space-y-3">
-                <div className="text-xs text-muted-foreground mb-2">
-                  Capture exit charts via API (H4 & M15)
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {/* H4 Timeframe */}
-                  <div className="space-y-1.5">
-                    <div className="text-xs text-muted-foreground">H4 Timeframe</div>
-                    {exitImagePreview ? (
-                      <div className="relative aspect-video rounded-md overflow-hidden border border-border group">
-                        <img 
-                          src={exitImagePreview} 
-                          alt="Exit chart H4" 
-                          className="w-full h-full object-cover"
-                        />
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setExitImagePreview(null);
-                          }}
-                          className="absolute top-1 right-1 bg-black/70 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Icons.ui.close className="h-3 w-3 text-white" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center aspect-video rounded-md border border-dashed border-border bg-muted/20">
-                        <span className="text-xs text-muted-foreground">No image</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* M15 Timeframe */}
-                  <div className="space-y-1.5">
-                    <div className="text-xs text-muted-foreground">M15 Timeframe</div>
-                    {exitImageM15Preview ? (
-                      <div className="relative aspect-video rounded-md overflow-hidden border border-border group">
-                        <img 
-                          src={exitImageM15Preview} 
-                          alt="Exit chart M15" 
-                          className="w-full h-full object-cover"
-                        />
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setExitImageM15Preview(null);
-                          }}
-                          className="absolute top-1 right-1 bg-black/70 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Icons.ui.close className="h-3 w-3 text-white" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center aspect-video rounded-md border border-dashed border-border bg-muted/20">
-                        <span className="text-xs text-muted-foreground">No image</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Button
-                  type="button"
-                  onClick={handleCaptureExitCharts}
-                  disabled={isUploading}
-                  className="w-full"
-                >
-                  {isUploading ? "Capturing…" : "Capture via API (H4 & M15)"}
-                </Button>
-              </div>
-            </TabsContent>
+            {/* Manual capture removed - auto-capture handles this in background */}
 
             {/* Tab 3: Note - Add trade notes */}
             <TabsContent value="note" className="p-0 m-0">
@@ -617,24 +483,19 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
                 type="button" 
                 variant="outline" 
                 onClick={onClose} 
-                disabled={isSubmitting || isUploading}
+                disabled={isSubmitting}
                 className="flex-1"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                disabled={isSubmitting || isUploading || !watchedExitPrice}
+                disabled={isSubmitting || !watchedExitPrice}
                 className="flex-1 gap-1"
                 variant={previewResult?.profitLoss && previewResult.profitLoss > 0 ? "default" : "destructive"}
               >
                 <Icons.ui.lock className="h-4 w-4" />
-                {isSubmitting 
-                  ? "Processing..." 
-                  : isUploading 
-                    ? "Capturing..." 
-                    : "Close Trade"
-                }
+                {isSubmitting ? "Processing..." : "Close Trade"}
               </Button>
             </div>
           </DialogFooter>
