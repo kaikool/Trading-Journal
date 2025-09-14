@@ -103,15 +103,23 @@ function normalizeTicker(pair: string): string {
 
 /**
  * Fetch JSON an toàn: kiểm tra content-type, nếu là HTML => ném lỗi có ngữ cảnh.
+ * Bao gồm timeout để tránh hang
  */
-async function safeJsonFetch(url: string): Promise<any> {
-  const res = await fetch(url, {
-    method: 'GET',
-    mode: 'cors',
-    headers: {
-      'Accept': 'application/json'
-    }
-  });
+async function safeJsonFetch(url: string, timeoutMs: number = 15000): Promise<any> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      signal: controller.signal,
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    clearTimeout(timeoutId);
 
   const ct = (res.headers.get('content-type') || '').toLowerCase();
 
@@ -129,7 +137,14 @@ async function safeJsonFetch(url: string): Promise<any> {
     throw new Error(errorMsg);
   }
 
-  return res.json();
+    return res.json();
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error(`Request timeout after ${timeoutMs}ms`);
+    }
+    throw error;
+  }
 }
 
 /**
@@ -176,81 +191,94 @@ export async function requestCaptureWithRetry(
 
   while (attempt <= maxRetries) {
     for (const key of paramOrders) {
-      try {
-        const url = buildUrl(key);
-        debug(`[capture] ${url} (attempt ${attempt + 1}/${maxRetries + 1}, key=${key})`);
-        const data = await safeJsonFetch(url);
+      // Inner loop để retry cùng parameter key khi gặp rate limit
+      let keyRetrySuccess = false;
+      
+      while (!keyRetrySuccess) {
+        try {
+          const url = buildUrl(key);
+          debug(`[capture] ${url} (attempt ${attempt + 1}/${maxRetries + 1}, key=${key}, rateLimitAttempt=${rateLimitAttempt})`);
+          const data = await safeJsonFetch(url);
 
-        if (!data?.ok) {
-          const errorMsg = String(data?.error || 'Capture/Upload failed');
-          // Phát hiện rate limiting từ response data
-          if (errorMsg.includes('429') || errorMsg.includes('Too Many Requests')) {
-            const rateLimitError = new Error(`Rate limit detected: ${errorMsg}`);
-            (rateLimitError as any).isRateLimit = true;
-            throw rateLimitError;
+          if (!data?.ok) {
+            const errorMsg = String(data?.error || 'Capture/Upload failed');
+            // Phát hiện rate limiting từ response data
+            if (errorMsg.includes('429') || errorMsg.includes('Too Many Requests')) {
+              const rateLimitError = new Error(`Rate limit detected: ${errorMsg}`);
+              (rateLimitError as any).isRateLimit = true;
+              throw rateLimitError;
+            }
+            throw new Error(errorMsg);
           }
-          throw new Error(errorMsg);
-        }
-        if (typeof data.url !== 'string' || !data.url) throw new Error('Response missing "url"');
+          if (typeof data.url !== 'string' || !data.url) throw new Error('Response missing "url"');
 
-        // Lưu vào cache khi thành công
-        setCachedResult(cacheKey, {
-          url: data.url,
-          timestamp: Date.now(),
-          public_id: data.public_id,
-          width: data.width,
-          height: data.height,
-          bytes: data.bytes
-        });
+          // Lưu vào cache khi thành công
+          setCachedResult(cacheKey, {
+            url: data.url,
+            timestamp: Date.now(),
+            public_id: data.public_id,
+            width: data.width,
+            height: data.height,
+            bytes: data.bytes
+          });
 
-        debug(`[capture] OK tf=${tf} key=${key} url=${String(data.url).slice(0, 120)}…`);
-        return {
-          ok: true,
-          url: data.url,
-          public_id: data.public_id,
-          width: data.width,
-          height: data.height,
-          bytes: data.bytes
-        };
-      } catch (err: any) {
-        lastErr = err;
-        debug(`[capture] tf=${tf} key=${key} error: ${err?.message || err}`);
-        
-        // Xử lý rate limiting với exponential backoff
-        if (isRateLimitError(err) || err.isRateLimit) {
-          if (rateLimitAttempt < RATE_LIMIT_MAX_RETRIES) {
-            const rateLimitDelay = calculateRateLimitDelay(rateLimitAttempt);
-            logWarning('[Capture API] Rate limit detected, waiting with exponential backoff:', {
-              rateLimitAttempt: rateLimitAttempt + 1,
-              maxAttempts: RATE_LIMIT_MAX_RETRIES,
-              delayMs: Math.round(rateLimitDelay),
-              delaySeconds: Math.round(rateLimitDelay / 1000)
-            });
-            
-            await sleep(rateLimitDelay);
-            rateLimitAttempt++;
-            continue; // Retry cùng parameter thay vì chuyển sang parameter khác
+          debug(`[capture] OK tf=${tf} key=${key} url=${String(data.url).slice(0, 120)}…`);
+          return {
+            ok: true,
+            url: data.url,
+            public_id: data.public_id,
+            width: data.width,
+            height: data.height,
+            bytes: data.bytes
+          };
+        } catch (err: any) {
+          lastErr = err;
+          debug(`[capture] tf=${tf} key=${key} error: ${err?.message || err}`);
+          
+          // Xử lý rate limiting với exponential backoff
+          if (isRateLimitError(err) || err.isRateLimit) {
+            if (rateLimitAttempt < RATE_LIMIT_MAX_RETRIES) {
+              const rateLimitDelay = calculateRateLimitDelay(rateLimitAttempt);
+              logWarning('[Capture API] Rate limit detected, waiting with exponential backoff:', {
+                rateLimitAttempt: rateLimitAttempt + 1,
+                maxAttempts: RATE_LIMIT_MAX_RETRIES,
+                delayMs: Math.round(rateLimitDelay),
+                delaySeconds: Math.round(rateLimitDelay / 1000),
+                paramKey: key
+              });
+              
+              await sleep(rateLimitDelay);
+              rateLimitAttempt++;
+              // Tiếp tục retry cùng key trong while loop
+              continue;
+            } else {
+              logError('[Capture API] Rate limit retries exhausted for key:', {
+                timeframe: tf,
+                pair: ticker,
+                paramKey: key,
+                rateLimitAttempts: rateLimitAttempt,
+                finalError: err?.message || String(err)
+              });
+              // Thoát khỏi key retry loop, chuyển sang parameter key tiếp theo
+              keyRetrySuccess = true;
+            }
           } else {
-            logError('[Capture API] Rate limit retries exhausted:', {
+            // Lỗi khác (không phải rate limit), thoát retry cho key này
+            keyRetrySuccess = true;
+          }
+          
+          // Log critical errors to production as well
+          if (attempt === maxRetries && key === paramOrders[paramOrders.length - 1]) {
+            logError('[Capture API] Final attempt failed:', {
               timeframe: tf,
               pair: ticker,
+              attempt: attempt + 1,
+              maxRetries: maxRetries + 1,
               rateLimitAttempts: rateLimitAttempt,
-              finalError: err?.message || String(err)
+              error: err?.message || String(err),
+              url: buildUrl(key)
             });
           }
-        }
-        
-        // Log critical errors to production as well
-        if (attempt === maxRetries && key === paramOrders[paramOrders.length - 1]) {
-          logError('[Capture API] Final attempt failed:', {
-            timeframe: tf,
-            pair: ticker,
-            attempt: attempt + 1,
-            maxRetries: maxRetries + 1,
-            rateLimitAttempts: rateLimitAttempt,
-            error: err?.message || String(err),
-            url: buildUrl(key)
-          });
         }
       }
     }
