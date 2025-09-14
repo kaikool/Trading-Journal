@@ -1,255 +1,135 @@
-// client/src/lib/capture.ts
 /**
- * TradingView Capture Client
- * - Gọi API: https://tradingviewcapture-721483185057.asia-southeast1.run.app/
- * - Tự xếp hàng (queue) để đảm bảo mỗi lượt cách nhau ~35-40s theo yêu cầu.
- * - Retry với backoff khi lỗi mạng/5xx.
- *
- * API (kỳ vọng) trả JSON:
- *  { "ok": true, "url": "https://.../tradingview/130925_1806_XAUUSD_M15.png", "public_id": "...", ... }
- *
- * Hàm public:
- *  - requestCaptureWithRetry(timeframe, pair): Promise<{ ok: boolean; url?: string; error?: string }>
+ * TradingView Capture API client (frontend)
+ * Gọi API Cloud Run để chụp chart H4 & M15, trả về URL Cloudinary.
  */
 
-export type Timeframe = 'M15' | 'H4' | string;
+import { debug } from './debug';
 
-export interface CaptureSuccess {
-  ok: true;
-  url: string;
-  public_id?: string;
-  width?: number;
-  height?: number;
-  bytes?: number;
-  // các field khác nếu API có
-  [k: string]: any;
-}
+const CAPTURE_API_ORIGIN = 'https://tradingviewcapture-721483185057.asia-southeast1.run.app';
+const CAPTURE_PATH = '/capture';
+const CAPTURE_ENDPOINT = `${CAPTURE_API_ORIGIN}${CAPTURE_PATH}`;
 
-export interface CaptureFail {
-  ok: false;
-  error: string;
-  status?: number;
-  // các field khác nếu API có
-  [k: string]: any;
-}
+const DEFAULT_WIDTH = 1440;
+const DEFAULT_HEIGHT = 900;
 
-export type CaptureResult = CaptureSuccess | CaptureFail;
+const MAX_RETRIES = 2;           // tổng 3 lần: 1 chính + 2 retry
+const RETRY_DELAY_MS = 4000;
+const INTER_CALL_DELAY_MS = 2000;
 
-const BASE_URL = 'https://tradingviewcapture-721483185057.asia-southeast1.run.app/';
-
-// ===== Queue & Throttle config =====
-const MIN_GAP_MS = 35_000;        // nghỉ tối thiểu giữa 2 lượt (theo yêu cầu “~30s và mỗi lượt/session”)
-const DEFAULT_TIMEOUT_MS = 60_000; // timeout 60s cho 1 call (API có thể mất ~30s)
-const MAX_RETRIES = 2;            // tổng 1 lần chính + 2 retry = 3 nỗ lực
-const INITIAL_BACKOFF_MS = 3_000; // backoff khi lỗi
-
-// Hàng đợi tuần tự
-let queue: Array<() => Promise<void>> = [];
-let running = false;
-let lastRunAt = 0;
-
-// Tiện ích sleep
 function sleep(ms: number) {
-  return new Promise((res) => setTimeout(res, ms));
+  return new Promise(res => setTimeout(res, ms));
 }
 
-// Chạy hàng đợi
-async function runQueue() {
-  if (running) return;
-  running = true;
-  try {
-    while (queue.length > 0) {
-      const now = Date.now();
-      const gap = now - lastRunAt;
-      if (gap < MIN_GAP_MS) {
-        await sleep(MIN_GAP_MS - gap);
-      }
-      const task = queue.shift();
-      if (!task) break;
-      lastRunAt = Date.now();
-      await task();
-    }
-  } finally {
-    running = false;
-  }
+function normalizeTicker(pair: string): string {
+  const p = String(pair || '').trim().toUpperCase();
+  if (!p) return 'OANDA:XAUUSD';
+  if (p.includes(':')) return p;
+  return `OANDA:${p}`;
 }
 
 /**
- * Đẩy một lời gọi API vào hàng đợi và nhận kết quả.
+ * Fetch JSON an toàn: kiểm tra content-type, nếu là HTML => ném lỗi có ngữ cảnh.
  */
-function enqueue<T>(fn: () => Promise<T>): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    queue.push(async () => {
-      try {
-        const out = await fn();
-        resolve(out);
-      } catch (err) {
-        reject(err);
-      }
-    });
-    // kích hoạt chạy queue
-    runQueue().catch(() => {
-      /* nuốt lỗi queue runner */
-    });
+async function safeJsonFetch(url: string): Promise<any> {
+  const res = await fetch(url, {
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+      'Accept': 'application/json'
+    }
   });
-}
 
-/**
- * Gọi fetch với timeout.
- */
-async function fetchWithTimeout(input: RequestInfo, init: RequestInit = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(input, { ...init, signal: controller.signal });
-    return res;
-  } finally {
-    clearTimeout(t);
-  }
-}
+  const ct = (res.headers.get('content-type') || '').toLowerCase();
 
-/**
- * Chuẩn hóa symbol/pair: loại bỏ khoảng trắng, upper-case.
- */
-function normalizePair(pair: string): string {
-  return String(pair || '').trim().toUpperCase();
-}
-
-/**
- * Xây URL GET dạng: ?tf=M15&pair=XAUUSD
- * (Nhiều triển khai Cloud Run cho phép GET hoặc POST. Ta ưu tiên GET với query.)
- */
-function buildCaptureUrl(timeframe: Timeframe, pair: string): string {
-  const tf = encodeURIComponent(String(timeframe).toUpperCase());
-  const p = encodeURIComponent(normalizePair(pair));
-  const url = `${BASE_URL}?tf=${tf}&pair=${p}`;
-  return url;
-}
-
-/**
- * Parse JSON an toàn.
- */
-async function safeJson(res: Response): Promise<any> {
-  try {
-    return await res.json();
-  } catch {
-    // fallback text → wrap
-    try {
-      const text = await res.text();
-      return { ok: false, error: text || 'Invalid JSON' };
-    } catch {
-      return { ok: false, error: 'Unknown response' };
-    }
-  }
-}
-
-/**
- * Gọi API 1 lần (không retry).
- */
-async function callOnce(timeframe: Timeframe, pair: string): Promise<CaptureResult> {
-  const url = buildCaptureUrl(timeframe, pair);
-
-  // Một số backend yêu cầu POST. Ta thử GET trước, nếu 405 -> fallback POST.
-  let res: Response | null = null;
-  try {
-    res = await fetchWithTimeout(url, { method: 'GET' });
-    if (res.status === 405) {
-      // Fallback POST JSON
-      res = await fetchWithTimeout(BASE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tf: timeframe, pair: normalizePair(pair) }),
-      });
-    }
-  } catch (e: any) {
-    return { ok: false, error: e?.message || 'Network error' };
-  }
-
-  const data = await safeJson(res);
   if (!res.ok) {
-    return {
-      ok: false,
-      error: data?.error || data?.message || `HTTP ${res.status}`,
-      status: res.status,
-      ...data,
-    };
+    const text = await res.text().catch(() => '');
+    throw new Error(`Capture HTTP ${res.status} — ${text.slice(0, 200)}`);
   }
 
-  // Đảm bảo field url tồn tại khi ok
-  if (data?.ok && typeof data?.url === 'string' && data.url) {
-    return data as CaptureSuccess;
+  if (!ct.includes('application/json')) {
+    const snippet = await res.text().catch(() => '');
+    throw new Error(
+      `Capture returned non-JSON (${ct || 'unknown'}). Có thể gọi sai endpoint/params. Body: ${snippet.slice(0, 200)}`
+    );
   }
 
-  // Một số backend trả {ok:true} nhưng chưa có url ngay → coi như lỗi “no url”
-  if (data?.ok && !data?.url) {
-    return { ok: false, error: 'Capture ok but no URL returned', ...data };
-  }
-
-  return {
-    ok: false,
-    error: data?.error || 'Unknown error',
-    ...data,
-  };
+  return res.json();
 }
 
 /**
- * Gọi API với retry + backoff, được xếp hàng để đảm bảo khoảng nghỉ giữa lượt.
+ * EXPORT công khai: gọi API chụp 1 timeframe với retry.
+ * Thử lần 1 dùng param 'ticker', nếu fail (non-JSON/404...) thử lại bằng 'symbol'.
  */
 export async function requestCaptureWithRetry(
-  timeframe: Timeframe,
+  tf: 'M15' | 'H4' | 'H1' | 'D1' | string,
   pair: string,
-  opts?: { timeoutMs?: number; retries?: number }
-): Promise<CaptureResult> {
-  const retries = Math.max(0, opts?.retries ?? MAX_RETRIES);
-  const timeoutMs = opts?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  opts?: { width?: number; height?: number; maxRetries?: number; retryDelayMs?: number }
+): Promise<{ ok: boolean; url?: string; error?: string; public_id?: string; width?: number; height?: number; bytes?: number }> {
+  const ticker = normalizeTicker(pair);
+  const w = opts?.width ?? DEFAULT_WIDTH;
+  const h = opts?.height ?? DEFAULT_HEIGHT;
+  const maxRetries = opts?.maxRetries ?? MAX_RETRIES;
+  const retryDelay = opts?.retryDelayMs ?? RETRY_DELAY_MS;
 
   let attempt = 0;
-  let lastError: string | undefined;
-  let backoff = INITIAL_BACKOFF_MS;
+  let lastErr: any = null;
 
-  return enqueue<CaptureResult>(async () => {
-    while (attempt <= retries) {
-      attempt += 1;
-      const result = await callOnce(timeframe, pair);
-      if (result.ok) {
-        return result;
-      }
-      lastError = result.error || `Unknown error (attempt ${attempt})`;
+  const buildUrl = (symbolKey: 'ticker' | 'symbol') => {
+    const p = new URLSearchParams({ tf: String(tf), w: String(w), h: String(h) });
+    p.set(symbolKey, ticker);
+    return `${CAPTURE_ENDPOINT}?${p.toString()}`;
+  };
 
-      // Không retry cho lỗi 4xx “logic” (ví dụ 400 input bad)
-      const status = (result as any)?.status as number | undefined;
-      if (status && status >= 400 && status < 500 && status !== 429) {
-        // 429 (Too Many Requests) vẫn có thể retry
-        break;
-      }
+  const paramOrders: Array<'ticker' | 'symbol'> = ['ticker', 'symbol'];
 
-      if (attempt <= retries) {
-        await sleep(backoff);
-        backoff = Math.min(backoff * 2, 20_000); // giới hạn backoff
+  while (attempt <= maxRetries) {
+    for (const key of paramOrders) {
+      try {
+        const url = buildUrl(key);
+        debug(`[capture] ${url} (attempt ${attempt + 1}/${maxRetries + 1}, key=${key})`);
+        const data = await safeJsonFetch(url);
+
+        if (!data?.ok) throw new Error(String(data?.error || 'Capture/Upload failed'));
+        if (typeof data.url !== 'string' || !data.url) throw new Error('Response missing "url"');
+
+        debug(`[capture] OK tf=${tf} key=${key} url=${String(data.url).slice(0, 120)}…`);
+        return {
+          ok: true,
+          url: data.url,
+          public_id: data.public_id,
+          width: data.width,
+          height: data.height,
+          bytes: data.bytes
+        };
+      } catch (err: any) {
+        lastErr = err;
+        debug(`[capture] tf=${tf} key=${key} error: ${err?.message || err}`);
       }
     }
-    return { ok: false, error: lastError || 'Capture failed' };
-  });
+    if (attempt === maxRetries) break;
+    await sleep(retryDelay);
+    attempt++;
+  }
+
+  return { ok: false, error: lastErr?.message || 'Capture failed' };
 }
 
 /**
- * Tiện ích gọi H4 rồi M15 tuần tự với khoảng nghỉ tự động từ queue.
- * Trả về { entryH4?: url, entryM15?: url }
+ * EXPORT công khai: capture ảnh H4 & M15, gọi tuần tự + delay giữa 2 lượt.
  */
-export async function captureH4AndM15(
+export async function captureTradeImages(
   pair: string
-): Promise<{ entryH4?: string; entryM15?: string; errors?: Record<string, string> }> {
-  const errors: Record<string, string> = {};
-  const out: { entryH4?: string; entryM15?: string } = {};
-  const p = normalizePair(pair);
+): Promise<{ entryH4?: string; entryM15?: string }> {
+  const h4 = await requestCaptureWithRetry('H4', pair);
+  await sleep(INTER_CALL_DELAY_MS);
+  const m15 = await requestCaptureWithRetry('M15', pair);
 
-  const h4 = await requestCaptureWithRetry('H4', p);
-  if (h4.ok) out.entryH4 = h4.url;
-  else errors.H4 = h4.error || 'unknown';
+  const result: { entryH4?: string; entryM15?: string } = {};
+  if (h4.ok && h4.url)  result.entryH4  = h4.url;
+  if (m15.ok && m15.url) result.entryM15 = m15.url;
 
-  const m15 = await requestCaptureWithRetry('M15', p);
-  if (m15.ok) out.entryM15 = m15.url;
-  else errors.M15 = m15.error || 'unknown';
-
-  return Object.keys(errors).length ? { ...out, errors } : out;
+  if (!result.entryH4 && !result.entryM15) {
+    throw new Error(h4.error || m15.error || 'Capture failed');
+  }
+  return result;
 }

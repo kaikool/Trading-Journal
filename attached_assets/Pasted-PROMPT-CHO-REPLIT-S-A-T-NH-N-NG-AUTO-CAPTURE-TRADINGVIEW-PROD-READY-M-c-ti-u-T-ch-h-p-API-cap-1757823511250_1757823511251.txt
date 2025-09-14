@@ -1,0 +1,145 @@
+PROMPT CHO REPLIT – SỬA TÍNH NĂNG AUTO CAPTURE TRADINGVIEW (PROD-READY)
+
+Mục tiêu:
+
+Tích hợp API capture tại https://tradingviewcapture-721483185057.asia-southeast1.run.app/ để tự động lấy ảnh chart hai timeframe H4 và M15 cho mỗi giao dịch (khi save trade và khi close trade).
+
+Không chặn UI: lưu giao dịch lên Firestore ngay, hiển thị trade trong danh sách/trade view, sau đó khi API trả URL ảnh thì tự cập nhật lại Firestore (các field ảnh) và UI tự render lại.
+
+API có thời gian chạy lâu (~30s) và bị giới hạn session/lượt → gọi tuần tự H4 rồi đợi delay ngắn, sau đó M15. Có retry cho mỗi call.
+
+Áp dụng cho cả saveTrade (entry images: entryImage, entryImageM15) và closeTrade (exit images: exitImage, exitImageM15).
+
+Close trade: xử lý update Firestore trước (trạng thái, P/L…), không block. Ảnh sẽ đổ về sau.
+
+Loại bỏ hoàn toàn UI upload/capture thủ công (tab chart trong TradeForm, chart trong CloseTradeForm, các nút Capture/Upload/Replace).
+
+Yêu cầu kỹ thuật & chỗ cần sửa:
+
+Tạo/điều chỉnh module capture PROD
+
+File: client/src/lib/capture.ts
+
+Export đúng 2 hàm (để tránh lỗi “does not provide an export named …”):
+
+export async function requestCaptureWithRetry(tf: 'H4'|'M15'|string, pair: string, opts?: { width?: number; height?: number; maxRetries?: number; retryDelayMs?: number }): Promise<{ ok: boolean; url?: string; error?: string; public_id?: string; width?: number; height?: number; bytes?: number }>
+
+export async function captureTradeImages(pair: string): Promise<{ entryH4?: string; entryM15?: string }>
+
+Triển khai:
+
+Gọi GET {ORIGIN}/capture?tf=H4|M15&ticker=OANDA:{PAIR}&w=1440&h=900
+
+Chuẩn hoá ticker: nếu người dùng nhập XAUUSD → dùng OANDA:XAUUSD. Nếu đã có prefix (VD: OANDA:EURUSD) thì giữ nguyên.
+
+Parse JSON theo spec: { ok: true, url, public_id, width, height, bytes }. Nếu ok!==true hoặc không có url → throw error.
+
+Retry: 2 lần retry (tổng 3 lần), delay 4s/ lần.
+
+Tuần tự: gọi H4 xong await sleep(2s) rồi mới gọi M15 (để né limit theo lượt).
+
+Trả về object { entryH4?: string; entryM15?: string } (có key nào thì gán key đó).
+
+Tích hợp vào flow Save Trade (create)
+
+File: client/src/lib/firebase-service.ts (hoặc nơi đang chứa trade CRUD).
+
+Trong addTrade(userId, tradeData):
+
+Khi addDoc(...) xong, KHÔNG chờ capture; set các field mặc định:
+
+captureStatus: 'pending'
+
+(không set ảnh chưa có)
+
+Khởi chạy async task (không block UI):
+
+Gọi captureTradeImages(tradeData.pair)
+
+Nếu có URL: entryImage ← H4, entryImageM15 ← M15.
+
+Update document: updatedAt=serverTimestamp(), captureStatus = (có ảnh)? 'uploaded' : 'empty'
+
+Notify real-time nếu có tradeUpdateService.
+
+Nếu lỗi capture: captureStatus='error', errorMessage=..., vẫn giữ trade đã tạo.
+
+Tích hợp vào flow Close Trade (update)
+
+Trong updateTrade(userId, tradeId, tradeData, ...):
+
+Nếu đây là hành động đóng lệnh (tức isOpen chuyển true -> false), thì vẫn update Firestore ngay (P/L, exitPrice, v.v.).
+
+Sau khi update xong, chạy async task:
+
+Gọi captureTradeImages(pair) (pair ưu tiên từ tradeData.pair nếu có, fallback từ currentTrade.pair).
+
+Gán exitImage (H4) và exitImageM15 (M15) nếu có.
+
+Cập nhật captureStatus và updatedAt tương tự phần create.
+
+Mục tiêu: Close trade nhanh, ảnh đến sau.
+
+UI/UX & đồng bộ Realtime
+
+Loại bỏ toàn bộ UI upload thủ công:
+
+Xoá/ẩn TradeImages, ImageUpload, các props/hook liên quan file input, nút Capture/Upload/Replace.
+
+Loại tab Chart trong TradeForm và CloseTradeForm.
+
+Ở TradeHistory/TradeView:
+
+Hiển thị placeholder khi captureStatus === 'pending'.
+
+Khi entryImage, entryImageM15, exitImage, exitImageM15 xuất hiện, tự render lại (đã có onSnapshot hoặc query invalidation).
+
+Không còn gọi bất kỳ API Cloudinary cũ hoặc upload thủ công.
+
+Sản xuất (Production)
+
+Mọi call tới capture API là HTTPS GET (CORS), không cần credentials.
+
+Không chạm process.env trong client cho URL capture (hardcode hẳn origin ở file capture.ts) để build prod chạy ngay.
+
+Đảm bảo Vite không cố import sai MIME (tránh lỗi text/hhtml). Sửa import đường dẫn chính xác: import { captureTradeImages, requestCaptureWithRetry } from '@/lib/capture' (không thêm .ts).
+
+Build không lỗi tree-shaking: các export phải đúng tên.
+
+Kiểm tra nhập liệu
+
+pair phải là string hợp lệ. Trước khi call capture, chuẩn hoá về uppercase.
+
+Nếu pair rỗng → bỏ qua capture, nhưng không fail create/update.
+
+Logging & lỗi
+
+Log gọn gàng khi call: attempt, status, error message.
+
+Không để lỗi capture làm fail luồng chính (create/close vẫn thành công).
+
+Dọn sạch code thừa
+
+Xoá toàn bộ code gọi upload file thủ công (Cloudinary/local).
+
+Xoá TradeImageManager nếu chỉ còn nút replace/delete; nếu vẫn cần delete local thì giữ phần delete local, nhưng remove Replace/Upload.
+
+Đảm bảo không còn import/usage của ImageUpload, TradeImages trong form.
+
+Tiêu chí nghiệm thu:
+
+Tạo trade mới: record xuất hiện ngay trong Trade History (không ảnh), vài chục giây sau tự hiển thị entryImage (H4) và entryImageM15 (M15) khi API trả về.
+
+Đóng trade: trade được đóng ngay (P/L, status cập nhật), sau đó tự có exitImage và exitImageM15 khi API trả về.
+
+Không còn tab chart/ nút capture trong form.
+
+Build production chạy thành công, không còn lỗi import, không còn lỗi MIME.
+
+Không có lệnh/đoạn code upload thủ công (Cloudinary) còn sót.
+
+Nếu thiếu file/đường dẫn, tự tìm và áp tương ứng trong project (React + Vite). Giữ naming các field ảnh chính xác:
+
+entry: entryImage, entryImageM15
+
+exit: exitImage, exitImageM15
