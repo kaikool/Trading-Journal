@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { captureTradeImages } from '@/lib/api-service';
+import { captureTradeImages } from '@/lib/capture';
 import { logError } from '@/lib/debug';
 import { ImageState } from '../types';
 
@@ -124,13 +124,13 @@ export function useImageManagement({
     setEntryImage2(prev => ({ ...prev, isUploading: true, uploadProgress: 10, error: null }));
 
     try {
-      const { h4, m15 } = await captureTradeImages(pair);
+      const { entryH4, entryM15 } = await captureTradeImages(pair);
 
-      if (h4) {
+      if (entryH4) {
         setEntryImage1({
           file: null,
-          preview: h4,
-          downloadUrl: h4,
+          preview: entryH4,
+          downloadUrl: entryH4,
           error: null,
           uploadProgress: 100,
           uploadSuccess: true,
@@ -140,11 +140,11 @@ export function useImageManagement({
         setEntryImage1(prev => ({ ...prev, isUploading: false }));
       }
 
-      if (m15) {
+      if (entryM15) {
         setEntryImage2({
           file: null,
-          preview: m15,
-          downloadUrl: m15,
+          preview: entryM15,
+          downloadUrl: entryM15,
           error: null,
           uploadProgress: 100,
           uploadSuccess: true,
@@ -172,13 +172,13 @@ export function useImageManagement({
     setExitImage2(prev => ({ ...prev, isUploading: true, uploadProgress: 10, error: null }));
 
     try {
-      const { h4, m15 } = await captureTradeImages(pair);
+      const { entryH4, entryM15 } = await captureTradeImages(pair);
 
-      if (h4) {
+      if (entryH4) {
         setExitImage1({
           file: null,
-          preview: h4,
-          downloadUrl: h4,
+          preview: entryH4,
+          downloadUrl: entryH4,
           error: null,
           uploadProgress: 100,
           uploadSuccess: true,
@@ -188,11 +188,11 @@ export function useImageManagement({
         setExitImage1(prev => ({ ...prev, isUploading: false }));
       }
 
-      if (m15) {
+      if (entryM15) {
         setExitImage2({
           file: null,
-          preview: m15,
-          downloadUrl: m15,
+          preview: entryM15,
+          downloadUrl: entryM15,
           error: null,
           uploadProgress: 100,
           uploadSuccess: true,

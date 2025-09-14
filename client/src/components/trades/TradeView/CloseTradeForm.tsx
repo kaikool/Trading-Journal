@@ -23,7 +23,7 @@ import {
 import { Icons } from "@/components/icons/icons";
 import { updateTrade } from "@/lib/firebase";
 import { calculateProfit, calculatePips, formatPrice } from "@/lib/forex-calculator";
-import { captureTradeImages } from "@/lib/api-service"; // ✅ dùng API capture
+import { captureTradeImages } from "@/lib/capture"; // ✅ dùng API capture
 import { Timestamp } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -145,11 +145,11 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   const handleCaptureExitCharts = async () => {
     try {
       setIsUploading(true);
-      const { h4, m15 } = await captureTradeImages(trade.pair);
-      if (h4) setExitImagePreview(h4);
-      if (m15) setExitImageM15Preview(m15);
+      const { entryH4, entryM15 } = await captureTradeImages(trade.pair);
+      if (entryH4) setExitImagePreview(entryH4);
+      if (entryM15) setExitImageM15Preview(entryM15);
 
-      if (!h4 && !m15) {
+      if (!entryH4 && !entryM15) {
         toast({
           variant: "destructive",
           title: "Capture failed",
@@ -158,7 +158,7 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       } else {
         toast({
           title: "Captured charts",
-          description: `H4 ${h4 ? "✓" : "×"} • M15 ${m15 ? "✓" : "×"}`
+          description: `H4 ${entryH4 ? "✓" : "×"} • M15 ${entryM15 ? "✓" : "×"}`
         });
       }
     } catch (e: any) {
@@ -201,14 +201,14 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
       if (!exitImageUrl && !exitImageM15Url) {
         try {
           setIsUploading(true);
-          const { h4, m15 } = await captureTradeImages(trade.pair);
-          if (h4) {
-            exitImageUrl = h4;
-            setExitImagePreview(h4);
+          const { entryH4, entryM15 } = await captureTradeImages(trade.pair);
+          if (entryH4) {
+            exitImageUrl = entryH4;
+            setExitImagePreview(entryH4);
           }
-          if (m15) {
-            exitImageM15Url = m15;
-            setExitImageM15Preview(m15);
+          if (entryM15) {
+            exitImageM15Url = entryM15;
+            setExitImageM15Preview(entryM15);
           }
         } catch {
           // im lặng nếu fail – đóng lệnh không ảnh

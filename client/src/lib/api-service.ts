@@ -75,31 +75,9 @@ export async function deleteTradeImage(
 }
 
 /* =========================
-   HÀM CHÍNH: CAPTURE TIMEFRAMES
-   ========================= */
-
-/**
- * Capture ảnh H4 & M15 qua API mới.
- * - Gọi TUẦN TỰ để tránh đụng giới hạn session/lượt.
- * - Có retry + delay built-in (xử lý trong capture.ts).
- * - Trả về object chứa url (nếu có). Caller (firebase.ts) sẽ update Firestore hậu kỳ.
- *
- * @param pair Ví dụ: "XAUUSD" hoặc "OANDA:XAUUSD"
- * @returns { entryH4?: string; entryM15?: string }
- */
-export async function captureTradeImages(
-  pair: string,
-): Promise<{ entryH4?: string; entryM15?: string }> {
-  const h4 = await requestCaptureWithRetry("H4", pair);
-  const m15 = await requestCaptureWithRetry("M15", pair);
-
-  const result: { entryH4?: string; entryM15?: string } = {};
-  if (h4.ok && h4.url) result.entryH4 = h4.url;
-  if (m15.ok && m15.url) result.entryM15 = m15.url;
-
-  if (!result.entryH4 && !result.entryM15) {
-    throw new Error(h4.error || m15.error || "Capture failed");
-  }
-
-  return result;
-}
+   CAPTURE FUNCTIONALITY MOVED TO @/lib/capture
+   ========================= 
+   
+   Note: captureTradeImages function has been moved to @/lib/capture.ts
+   Import from there instead: import { captureTradeImages } from "@/lib/capture";
+*/
