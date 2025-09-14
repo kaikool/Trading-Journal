@@ -179,3 +179,45 @@ export const COLOR_CONFIG = {
     NEUTRAL: "hsl(218, 85%, 32%)",  // Matches theme.json primary color
   }
 }
+
+/* =========================================================================
+ * CAPTURE SERVICE CONFIG (TradingView capture API)
+ * Dùng cho tính năng auto-capture H4 & M15 khi Save/Close trade.
+ * ========================================================================= */
+export const CAPTURE_CONFIG = {
+  BASE_URL: "https://tradingviewcapture-721483185057.asia-southeast1.run.app",
+  ENDPOINT: "/capture",                 // full path = BASE_URL + ENDPOINT
+  DEFAULT_WIDTH: 1440,
+  DEFAULT_HEIGHT: 900,
+  // Thứ tự gọi để tránh đụng giới hạn "per session"
+  ORDER: ["H4", "M15"] as const,
+  // Retry & delay
+  MAX_RETRIES: 2,           // tổng retry thêm (1 lần chính + 2 retry = 3 lần)
+  RETRY_DELAY_MS: 4000,     // delay giữa các lần retry
+  INTER_CALL_DELAY_MS: 2000,// delay giữa các timeframe
+  // Ticker mặc định fallback (khi pair rỗng)
+  DEFAULT_TICKER_PREFIX: "OANDA:",     // normalize "XAUUSD" -> "OANDA:XAUUSD"
+  FALLBACK_TICKER: "OANDA:XAUUSD",
+  // Field mapping để đồng bộ Firestore/UI
+  FIELD_MAP: {
+    H4: "entryImage",       // URL H4 -> field entryImage (Trade)
+    M15: "entryImageM15",   // URL M15 -> field entryImageM15 (Trade)
+  } as const,
+  // Trạng thái hiển thị trong UI
+  STATUS: {
+    PENDING: "pending",
+    UPLOADED: "uploaded",
+    ERROR: "error",
+    EMPTY: "empty",
+  } as const,
+} as const;
+
+/* =========================================================================
+ * DANH SÁCH FIELD ẢNH TRONG TRADE (phục vụ đồng bộ, clean code)
+ * ========================================================================= */
+export const TRADE_IMAGE_FIELDS = [
+  "entryImage",
+  "entryImageM15",
+  "exitImage",
+  "exitImageM15",
+] as const;

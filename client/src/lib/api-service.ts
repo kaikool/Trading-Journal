@@ -1,26 +1,29 @@
 /**
- * API Service for image upload and management
+ * API Service for image capture and management
  *
  * Cloudinary đã bị loại bỏ hoàn toàn.
- * Giữ nguyên chữ ký hàm để tránh vỡ chỗ gọi, nhưng không còn thực hiện upload/xoá Cloudinary.
+ * File này chỉ còn tích hợp API Capture TradingView để lấy ảnh chart theo timeframe.
  */
 
-import { debug } from './debug';
-// ====== NEW: dùng API để chụp 2 timeframe và trả URL ======
-import { requestCaptureWithRetry } from './capture';
+import { debug } from "./debug";
+import { requestCaptureWithRetry } from "./capture";
 
-/**
- * Mapping giữa UI image type và storage type (vẫn giữ để đồng bộ tên)
- */
+/* =========================
+   GIỮ MAP CŨ (để không vỡ log/enum)
+   ========================= */
 const IMAGE_TYPE_MAP = {
-  'h4chart': 'entry-h4',
-  'm15chart': 'entry-m15',
-  'h4exit': 'exit-h4',
-  'm15exit': 'exit-m15'
+  h4chart: "entry-h4",
+  m15chart: "entry-m15",
+  h4exit: "exit-h4",
+  m15exit: "exit-m15",
 } as const;
 
 type UiImageType = keyof typeof IMAGE_TYPE_MAP;
-type StorageImageType = typeof IMAGE_TYPE_MAP[UiImageType];
+type StorageImageType = (typeof IMAGE_TYPE_MAP)[UiImageType];
+
+/* =========================
+   GIỮ CHỮ KÝ CŨ (Upload/Delete) — vô hiệu hoá
+   ========================= */
 
 /**
  * Upload ảnh trade — ĐÃ TẮT (Cloudinary removed).
@@ -31,28 +34,29 @@ export async function uploadTradeImage(
   tradeId: string,
   file: File,
   imageType: string,
-  progressCallback?: (progress: number) => void
+  progressCallback?: (progress: number) => void,
 ): Promise<{ success: boolean; imageUrl: string; publicId?: string }> {
-  debug(`API Service: uploadTradeImage(type=${imageType}) — Cloudinary removed`);
+  debug(
+    `API Service: uploadTradeImage(type=${imageType}) — Cloudinary removed`,
+  );
 
   if (!file) {
-    throw new Error('Không có file để tải lên');
+    throw new Error("Không có file để tải lên");
   }
   if (file.size > 5 * 1024 * 1024) {
     throw new Error(
-      `Kích thước file vượt quá giới hạn 5MB (${(file.size / 1024 / 1024).toFixed(2)}MB)`
+      `Kích thước file vượt quá giới hạn 5MB (${(file.size / 1024 / 1024).toFixed(2)}MB)`,
     );
   }
 
-  // Chuyển kiểu (để giữ logic cũ nếu nơi khác có log)
-  const storageType = (IMAGE_TYPE_MAP[imageType as UiImageType] || 'entry-h4') as StorageImageType;
-  debug(`Đã chuyển đổi từ UI type "${imageType}" sang storage type "${storageType}"`);
+  const storageType = (IMAGE_TYPE_MAP[imageType as UiImageType] ||
+    "entry-h4") as StorageImageType;
+  debug(
+    `Đã chuyển đổi từ UI type "${imageType}" sang storage type "${storageType}"`,
+  );
 
-  // Tắt tiến trình (nếu UI có thanh progress)
   if (progressCallback) progressCallback(0);
-
-  // THÔNG BÁO RÕ RÀNG: Upload đã bị vô hiệu hoá vì Cloudinary đã bỏ
-  throw new Error('Upload ảnh đã bị tắt (Cloudinary removed).');
+  throw new Error("Upload ảnh thủ công đã bị tắt (đang dùng API capture).");
 }
 
 /**
@@ -62,28 +66,40 @@ export async function uploadTradeImage(
 export async function deleteTradeImage(
   userId: string,
   tradeId: string,
-  imageData: string
+  imageData: string,
 ): Promise<boolean> {
-  debug(`API Service: deleteTradeImage(${imageData?.slice(0, 30)}) — Cloudinary removed`);
-  // Không ném lỗi để UI không crash; chỉ trả về false.
+  debug(
+    `API Service: deleteTradeImage(${imageData?.slice(0, 30)}) — Cloudinary removed`,
+  );
   return false;
 }
 
+/* =========================
+   HÀM CHÍNH: CAPTURE TIMEFRAMES
+   ========================= */
+
 /**
- * Capture ảnh H4 & M15 qua service riêng (giữ nguyên, không liên quan Cloudinary)
+ * Capture ảnh H4 & M15 qua API mới.
+ * - Gọi TUẦN TỰ để tránh đụng giới hạn session/lượt.
+ * - Có retry + delay built-in (xử lý trong capture.ts).
+ * - Trả về object chứa url (nếu có). Caller (firebase.ts) sẽ update Firestore hậu kỳ.
+ *
+ * @param pair Ví dụ: "XAUUSD" hoặc "OANDA:XAUUSD"
+ * @returns { entryH4?: string; entryM15?: string }
  */
 export async function captureTradeImages(
-  pair: string
+  pair: string,
 ): Promise<{ entryH4?: string; entryM15?: string }> {
-  const h4 = await requestCaptureWithRetry('H4', pair);
-  const m15 = await requestCaptureWithRetry('M15', pair);
+  const h4 = await requestCaptureWithRetry("H4", pair);
+  const m15 = await requestCaptureWithRetry("M15", pair);
 
   const result: { entryH4?: string; entryM15?: string } = {};
   if (h4.ok && h4.url) result.entryH4 = h4.url;
   if (m15.ok && m15.url) result.entryM15 = m15.url;
 
   if (!result.entryH4 && !result.entryM15) {
-    throw new Error(h4.error || m15.error || 'Capture failed');
+    throw new Error(h4.error || m15.error || "Capture failed");
   }
+
   return result;
 }

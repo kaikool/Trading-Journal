@@ -12,13 +12,13 @@ export interface User {
 
 // Object containing a specific condition of the strategy
 export interface StrategyCondition {
-  id: string;                   // Unique ID for this condition
-  label: string;                // Display label (e.g., "EMA 50 uptrend")
-  indicator?: string;           // Indicator used (e.g., "EMA", "RSI", "Bollinger Bands")
-  timeframe?: string;           // Timeframe (e.g., "M5", "M15", "H1", "H4", "D1")
-  expectedValue?: string;       // Expected value (e.g., "Uptrend", "Above 30", "Cross up")
-  description?: string;         // Detailed description of the condition
-  order: number;                // Display order in the list
+  id: string; // Unique ID for this condition
+  label: string; // Display label (e.g., "EMA 50 uptrend")
+  indicator?: string; // Indicator used (e.g., "EMA", "RSI", "Bollinger Bands")
+  timeframe?: string; // Timeframe (e.g., "M5", "M15", "H1", "H4", "D1")
+  expectedValue?: string; // Expected value (e.g., "Uptrend", "Above 30", "Cross up")
+  description?: string; // Detailed description of the condition
+  order: number; // Display order in the list
 }
 
 export interface TradingStrategy {
@@ -26,18 +26,18 @@ export interface TradingStrategy {
   userId: string;
   name: string;
   description: string;
-  
+
   // New structure with specific conditions
-  rules: StrategyCondition[];        // General rules of the strategy
+  rules: StrategyCondition[]; // General rules of the strategy
   entryConditions: StrategyCondition[]; // Entry conditions
-  exitConditions: StrategyCondition[];  // Exit conditions
-  
+  exitConditions: StrategyCondition[]; // Exit conditions
+
   // Old fields for backward compatibility
   // Will be automatically converted from the new structure
   rulesText?: string[];
   entryConditionsText?: string[];
   exitConditionsText?: string[];
-  
+
   // Other fields remain unchanged
   timeframes: string[];
   riskRewardRatio?: number;
@@ -49,10 +49,21 @@ export interface TradingStrategy {
 
 // Results of checking strategy conditions when creating a trade
 export interface StrategyConditionCheck {
-  conditionId: string;         // ID of the strategy condition
-  checked: boolean;            // Whether it has been checked
-  passed: boolean;             // Whether the condition is satisfied
-  notes?: string;              // Notes about the condition check
+  conditionId: string; // ID of the strategy condition
+  checked: boolean; // Whether it has been checked
+  passed: boolean; // Whether the condition is satisfied
+  notes?: string; // Notes about the condition check
+}
+
+/** Trạng thái xử lý ảnh auto-capture */
+export type CaptureStatus = "pending" | "uploaded" | "empty" | "error";
+
+/** Metadata tùy chọn của ảnh (nếu muốn lưu kèm) */
+export interface ImageMeta {
+  width?: number;
+  height?: number;
+  bytes?: number;
+  publicId?: string; // public_id từ API (nếu có)
 }
 
 export interface Trade {
@@ -62,38 +73,37 @@ export interface Trade {
   direction: Direction;
   entryPrice: number;
   stopLoss: number;
-  takeProfit: number;          // Expected TP price when opening a position
+  takeProfit: number; // Expected TP price when opening a position
   lotSize: number;
 
-  
   // Trade status
-  isOpen?: boolean;            // true = position is open, false = position is closed
-  
+  isOpen?: boolean; // true = position is open, false = position is closed
+
   // Information when closing a position
   closeDate?: Timestamp;
-  exitPrice?: number;          // Actual price when closing the position
+  exitPrice?: number; // Actual price when closing the position
   result?: TradeResult;
   pips?: number;
   profitLoss?: number;
-  closingNote?: string;        // Notes when closing the position
-  
+  closingNote?: string; // Notes when closing the position
+
   // Analysis information
-  strategy: string;            // Strategy name
-  strategyId?: string;         // ID of the strategy used
-  
+  strategy: string; // Strategy name
+  strategyId?: string; // ID of the strategy used
+
   // Strategy checking - new structure
   strategyChecks?: {
-    rules?: StrategyConditionCheck[];         // Check rules
+    rules?: StrategyConditionCheck[]; // Check rules
     entryConditions?: StrategyConditionCheck[]; // Check entry conditions
-    exitConditions?: StrategyConditionCheck[];  // Check exit conditions
-    
+    exitConditions?: StrategyConditionCheck[]; // Check exit conditions
+
     // Strategy check summary
-    rulesCompliance: number;         // Rules compliance percentage (0-100)
-    entryCompliance: number;         // Entry conditions compliance percentage (0-100)
-    exitCompliance?: number;         // Exit conditions compliance percentage (0-100, optional for new trades)
-    overallCompliance: number;       // Overall compliance percentage (0-100)
+    rulesCompliance: number; // Rules compliance percentage (0-100)
+    entryCompliance: number; // Entry conditions compliance percentage (0-100)
+    exitCompliance?: number; // Exit conditions compliance percentage (0-100, optional for new trades)
+    overallCompliance: number; // Overall compliance percentage (0-100)
   };
-  
+
   techPattern: string;
   emotion: string;
   discipline: {
@@ -106,14 +116,29 @@ export interface Trade {
   marketCondition: string;
   sessionType: string;
   hasNews: boolean;
-  
+
   // Notes and images
   notes?: string;
-  entryImage?: string;           // H4 analysis image at entry
-  entryImageM15?: string;        // M15 analysis image at entry
-  exitImage?: string;            // H4 analysis image after closing
-  exitImageM15?: string;         // M15 analysis image after closing
-  
+
+  /** Hình phân tích khi vào lệnh */
+  entryImage?: string; // H4 analysis image at entry
+  entryImageM15?: string; // M15 analysis image at entry
+  /** Hình phân tích khi đóng lệnh */
+  exitImage?: string; // H4 analysis image after closing
+  exitImageM15?: string; // M15 analysis image after closing
+
+  /** Metadata ảnh (tùy chọn lưu) */
+  entryImageMeta?: ImageMeta;
+  entryImageM15Meta?: ImageMeta;
+  exitImageMeta?: ImageMeta;
+  exitImageM15Meta?: ImageMeta;
+
+  /** Trạng thái capture & lỗi (dùng cho cả entry/exit theo flow hiện tại) */
+  captureStatus?: CaptureStatus; // 'pending' | 'uploaded' | 'empty' | 'error'
+  errorMessage?: string; // Lưu thông điệp lỗi khi capture thất bại
+  captureRequestedAt?: Timestamp; // Tùy chọn: thời điểm trigger capture
+  captureCompletedAt?: Timestamp; // Tùy chọn: thời điểm nhận đủ ảnh
+
   // Timestamps
   createdAt: Timestamp;
   updatedAt?: Timestamp;
@@ -181,12 +206,21 @@ export interface Achievement {
   name: string;
   description: string;
   icon: string;
-  category: 'discipline' | 'performance' | 'consistency' | 'learning';
-  level: 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond' | 'sapphire' | 'ruby' | 'emerald' | 'master';
+  category: "discipline" | "performance" | "consistency" | "learning";
+  level:
+    | "bronze"
+    | "silver"
+    | "gold"
+    | "platinum"
+    | "diamond"
+    | "sapphire"
+    | "ruby"
+    | "emerald"
+    | "master";
   criteria: {
     metricName: string;
     metricValue: number;
-    comparison: 'greater' | 'equals' | 'less';
+    comparison: "greater" | "equals" | "less";
     streak?: boolean; // Achievement streak effect
   };
   points: number; // Points awarded when achieved
@@ -204,7 +238,7 @@ export interface UserAchievements {
       isComplete: boolean;
       dateEarned?: string;
       progress?: number;
-    }
+    };
   };
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -216,13 +250,19 @@ export interface Goal {
   userId: string;
   title: string;
   description?: string;
-  targetType: 'profit' | 'winRate' | 'profitFactor' | 'riskRewardRatio' | 'balance' | 'trades';
+  targetType:
+    | "profit"
+    | "winRate"
+    | "profitFactor"
+    | "riskRewardRatio"
+    | "balance"
+    | "trades";
   targetValue: number;
   currentValue: number;
   startDate: Timestamp | Date;
   endDate: Timestamp | Date;
   isCompleted: boolean;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   color?: string;
   createdAt: Timestamp;
   updatedAt?: Timestamp;
@@ -234,9 +274,9 @@ export interface Milestone {
   goalId: string;
   title: string;
   description?: string;
-  targetType?: string;           // Thêm targetType để tương thích với code hiện tại
+  targetType?: string; // Thêm targetType để tương thích với code hiện tại
   targetValue: number;
-  currentValue?: number;         // Thêm currentValue để tương thích với code hiện tại
+  currentValue?: number; // Thêm currentValue để tương thích với code hiện tại
   isCompleted: boolean;
   completedDate?: Timestamp | null;
   createdAt: Timestamp;
@@ -244,17 +284,17 @@ export interface Milestone {
 }
 
 export interface AppSettings {
-  theme: 'light' | 'dark' | 'system';
-  currency: 'USD' | 'EUR' | 'GBP' | 'JPY';
+  theme: "light" | "dark" | "system";
+  currency: "USD" | "EUR" | "GBP" | "JPY";
   defaultRiskPerTrade: number;
   defaultRiskRewardRatio: number;
   defaultLotSize: number;
-  language: 'en' | 'fr' | 'de' | 'es' | 'ja';
+  language: "en" | "fr" | "de" | "es" | "ja";
   notifications: boolean;
-  dateFormat: 'MM/DD/YYYY' | 'DD/MM/YYYY' | 'YYYY-MM-DD';
+  dateFormat: "MM/DD/YYYY" | "DD/MM/YYYY" | "YYYY-MM-DD";
   showBalanceHistory: boolean;
   autoCalculateLotSize: boolean;
-  defaultTimeframe: 'M5' | 'M15' | 'H1' | 'H4' | 'D1';
+  defaultTimeframe: "M5" | "M15" | "H1" | "H4" | "D1";
   showAchievements?: boolean; // Show notification when achievement is earned
 }
 
@@ -272,7 +312,7 @@ export interface TradeHistoryChartData {
 
 export interface RecentActivity {
   id: string;
-  type: 'trade' | 'deposit' | 'withdrawal';
+  type: "trade" | "deposit" | "withdrawal";
   pair?: CurrencyPair;
   direction?: Direction;
   amount: number;

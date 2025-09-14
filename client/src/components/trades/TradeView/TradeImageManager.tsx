@@ -7,9 +7,8 @@ interface TradeImageManagerProps {
   userId: string;
   tradeId: string;
   imageUrl: string | null;
-  imageType: 'entryImage' | 'entryImageM15' | 'exitImage' | 'exitImageM15';
+  imageType: 'entryImage' | 'entryImageM15' | 'exitImage' | 'exitImageM15'; // giữ để không vỡ API cũ, nhưng không dùng
   onImageDeleted: () => void;
-  onReplaceClick: () => void;
   readOnly?: boolean;
 }
 
@@ -17,41 +16,32 @@ export function TradeImageManager({
   userId,
   tradeId,
   imageUrl,
-  imageType, // hiện chưa dùng, giữ để không vỡ API
+  imageType, // hiện chưa dùng
   onImageDeleted,
-  onReplaceClick,
   readOnly = false
 }: TradeImageManagerProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Lấy tên file từ URL để hiển thị/log (không bắt buộc cho API delete)
+  // Helper: lấy tên file chỉ để hiển thị/log
   const getFilenameFromUrl = (url: string): string => {
     if (!url) return '';
-    // Firebase Storage URL
-    if (url.includes('firebasestorage.googleapis.com')) {
-      try {
+    try {
+      if (url.includes('firebasestorage.googleapis.com')) {
         const encodedPath = url.split('/o/')[1]?.split('?')[0];
-        if (!encodedPath) return '';
-        const decodedPath = decodeURIComponent(encodedPath);
-        const parts = decodedPath.split('/');
-        const lastPart = parts[parts.length - 1] || '';
-        return lastPart || '';
-      } catch {
-        return url.split('/').pop()?.split('?')[0] || '';
+        const decodedPath = encodedPath ? decodeURIComponent(encodedPath) : '';
+        return decodedPath.split('/').pop() || '';
       }
-    }
-    // test-uploads/...
-    if (url.includes('test-uploads/')) {
-      const parts = url.split('/');
-      return parts[parts.length - 1] || '';
-    }
-    // local uploads
-    if (url.startsWith('/uploads/')) {
+      if (url.includes('test-uploads/')) {
+        return url.split('/').pop() || '';
+      }
+      if (url.startsWith('/uploads/')) {
+        return url.split('/').pop() || '';
+      }
       return url.split('/').pop() || '';
+    } catch {
+      return url.split('/').pop()?.split('?')[0] || '';
     }
-    // fallback
-    return url.split('/').pop() || '';
   };
 
   const handleDelete = async () => {
@@ -60,7 +50,7 @@ export function TradeImageManager({
     try {
       setIsDeleting(true);
 
-      // Nếu là ảnh lưu local (/uploads/...), gọi API delete của server
+      // Chỉ xoá được ảnh lưu local (/uploads/...). URL ngoài chỉ gỡ liên kết trong DB/UI.
       if (imageUrl.startsWith('/uploads/')) {
         const res = await fetch(`/api/uploads/delete?path=${encodeURIComponent(imageUrl)}`, {
           method: 'DELETE',
@@ -77,18 +67,15 @@ export function TradeImageManager({
           description: `Đã xóa: ${getFilenameFromUrl(imageUrl)}`,
           variant: 'default',
         });
-
-        onImageDeleted();
-        return;
+      } else {
+        toast({
+          title: 'Gỡ liên kết ảnh',
+          description: 'Ảnh không thuộc lưu trữ nội bộ, đã gỡ liên kết khỏi giao dịch.',
+          variant: 'default',
+        });
       }
 
-      // Nếu là URL ngoài (Firebase/HTTP khác), không xóa được từ client:
-      // -> chỉ gỡ liên kết lưu trong DB/UI
-      toast({
-        title: 'Gỡ liên kết ảnh',
-        description: 'Ảnh không thuộc lưu trữ nội bộ, đã gỡ liên kết khỏi giao dịch.',
-        variant: 'default',
-      });
+      // Thông báo cho parent xoá field ảnh trong Firestore/UI
       onImageDeleted();
     } catch (error) {
       console.error('Error deleting image:', error);
@@ -107,28 +94,16 @@ export function TradeImageManager({
   return (
     <div className="absolute top-2 right-2 flex gap-1">
       {!readOnly && (
-        <>
-          <Button
-            variant="destructive"
-            size="icon"
-            className="h-7 w-7 bg-red-600/90 hover:bg-red-700 shadow-md"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            aria-label="Delete image"
-          >
-            <Icons.ui.close className="h-3.5 w-3.5" />
-          </Button>
-
-          <Button
-            variant="secondary"
-            size="icon"
-            className="h-7 w-7 bg-blue-600/90 hover:bg-blue-700 shadow-md"
-            onClick={onReplaceClick}
-            aria-label="Replace image"
-          >
-            <Icons.ui.upload className="h-3.5 w-3.5" />
-          </Button>
-        </>
+        <Button
+          variant="destructive"
+          size="icon"
+          className="h-7 w-7 bg-red-600/90 hover:bg-red-700 shadow-md"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          aria-label="Delete image"
+        >
+          <Icons.ui.close className="h-3.5 w-3.5" />
+        </Button>
       )}
     </div>
   );

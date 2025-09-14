@@ -7,9 +7,6 @@ interface TradeImagesProps {
   entryImage2: ImageState;
   exitImage1: ImageState;
   exitImage2: ImageState;
-  // giữ nguyên chữ ký props cũ để không vỡ caller
-  handleEntryImageChange: (index: 1 | 2) => (e?: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
-  handleExitImageChange: (index: 1 | 2) => (e?: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   removeEntryImage: (index: 1 | 2) => () => void;
   removeExitImage: (index: 1 | 2) => () => void;
 }
@@ -19,8 +16,6 @@ export function TradeImages({
   entryImage2,
   exitImage1,
   exitImage2,
-  handleEntryImageChange,
-  handleExitImageChange,
   removeEntryImage,
   removeExitImage
 }: TradeImagesProps) {
@@ -30,7 +25,12 @@ export function TradeImages({
       {/* Entry Charts */}
       <div>
         <div className="flex items-center mb-2">
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 px-3 py-0.5">Entry Analysis</Badge>
+          <Badge 
+            variant="outline" 
+            className="bg-primary/10 text-primary border-primary/30 px-3 py-0.5"
+          >
+            Entry Analysis
+          </Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -38,19 +38,14 @@ export function TradeImages({
             title="H4"
             subtitle="Higher Timeframe"
             imageState={entryImage1}
-            // ✅ gọi hàm capture khi bấm nút (không dùng input file nữa)
-            onCaptureClick={() => handleEntryImageChange(1)()}
             onRemoveImage={removeEntryImage(1)}
-            inputId="entryImage1"
           />
 
           <ImageUpload
             title="M15"
             subtitle="Lower Timeframe"
             imageState={entryImage2}
-            onCaptureClick={() => handleEntryImageChange(2)()}
             onRemoveImage={removeEntryImage(2)}
-            inputId="entryImage2"
           />
         </div>
       </div>
@@ -58,7 +53,12 @@ export function TradeImages({
       {/* Exit Charts */}
       <div>
         <div className="flex items-center mb-2">
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 px-3 py-0.5">Exit Analysis</Badge>
+          <Badge 
+            variant="outline" 
+            className="bg-primary/10 text-primary border-primary/30 px-3 py-0.5"
+          >
+            Exit Analysis
+          </Badge>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -66,18 +66,14 @@ export function TradeImages({
             title="H4"
             subtitle="Higher Timeframe"
             imageState={exitImage1}
-            onCaptureClick={() => handleExitImageChange(1)()}
             onRemoveImage={removeExitImage(1)}
-            inputId="exitImage1"
           />
 
-        <ImageUpload
+          <ImageUpload
             title="M15"
             subtitle="Lower Timeframe"
             imageState={exitImage2}
-            onCaptureClick={() => handleExitImageChange(2)()}
             onRemoveImage={removeExitImage(2)}
-            inputId="exitImage2"
           />
         </div>
       </div>
