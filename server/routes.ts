@@ -9,6 +9,7 @@ import {
 
 import { promises as fs } from 'fs';
 import path from 'path';
+import axios from 'axios';
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -211,8 +212,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
-
+  // Debug endpoint để test capture API từ backend (bypass CORS)
+  app.post("/api/debug/test-capture", async (req, res) => {
+    try {
+      const { tf = 'H4', pair = 'XAUUSD', width = 1440, height = 900 } = req.body;
+      
+      // Normalize ticker
+      const normalizeTicker = (pair: string): string => {
+        const p = String(pair || '').trim().toUpperCase();
+        if (!p) return 'OANDA:XAUUSD';
+        if (p.includes(':')) return p;
+        return `OANDA:${p}`;
+      };
+      
+      const ticker = normalizeTicker(pair);
+      const CAPTURE_API_ORIGIN = 'https://tradingviewcapture-721483185057.asia-southeast1.run.app';
+      
+      // Test với cả 2 parameter formats
+      const testResults = [];
+      
+      for (const paramKey of ['ticker', 'symbol']) {
+        const params = new URLSearchParams({ 
+          tf: String(tf), 
+          w: String(width), 
+          h: String(height) 
+        });
+        params.set(paramKey, ticker);
+        const testUrl = `${CAPTURE_API_ORIGIN}/capture?${params.toString()}`;
+        
+        console.log(`[Debug] Testing capture API: ${testUrl}`);
+        
+        const startTime = Date.now();
+        try {
+          const response = await axios.get(testUrl, {
+            timeout: 15000,
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'TradingJournal-Debug/1.0'
+            }
+          });
+          const duration = Date.now() - startTime;
+          
+          testResults.push({
+            paramKey,
+            success: true,
+            duration,
+            status: response.status,
+            headers: {
+              'content-type': response.headers['content-type'],
+              'content-length': response.headers['content-length']
+            },
+            data: response.data,
+            url: testUrl
+          });
+          
+        } catch (error: any) {
+          const duration = Date.now() - startTime;
+          testResults.push({
+            paramKey,
+            success: false,
+            duration,
+            error: {
+              message: error.message,
+              code: error.code,
+              status: error.response?.status,
+              statusText: error.response?.statusText,
+              headers: error.response?.headers,
+              data: error.response?.data
+            },
+            url: testUrl
+          });
+        }
+      }
+      
+      res.json({ 
+        success: true, 
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'unknown',
+        results: testResults,
+        summary: {
+          totalTests: testResults.length,
+          successCount: testResults.filter(r => r.success).length,
+          failCount: testResults.filter(r => !r.success).length
+        }
+      });
+      
+    } catch (error) {
+      console.error('[Debug] Capture test error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: error instanceof Error ? error.message : "Debug test failed",
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
