@@ -9,7 +9,7 @@ import {
 import { calculatePips, calculateProfit } from "./forex-calculator";
 import { DASHBOARD_CONFIG } from "./config";
 import { debug, logError, logWarning } from "./debug";
-import { captureTradeImages } from "@/lib/capture";
+import { captureTradeImages } from "/lib/api-service";
 import { processTradeTrigger as originalProcessTradeTrigger } from "./achievements-service";
 import { debounce } from "./utils";
 import { tradeUpdateService } from "@/services/trade-update-service";
