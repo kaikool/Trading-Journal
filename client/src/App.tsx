@@ -251,8 +251,14 @@ function MainContent() {
 
   // Check if user is on auth page
   const isAuthPage = location.startsWith("/auth");
-  const isPublicPage = isAuthPage;
-  const hasUser = user;
+  const hasUser = !!user;
+
+  // NEW: Add logic to redirect after login
+  useEffect(() => {
+    if (hasUser && isAuthPage) {
+      setLocation("/");
+    }
+  }, [hasUser, isAuthPage, setLocation]);
 
   // GuardRedirect component for handling unauthenticated routes
   const GuardRedirect = ({ to }: { to: string }) => {

@@ -92,10 +92,6 @@ export function useGoalData() {
     }
     log('useEffect:init: uid=', firebaseUserId);
     fetchGoalData();
-
-    // DEBUG: giảm polling xuống 5s trong lúc bắt lỗi
-    const intervalId = setInterval(fetchGoalData, 5000);
-    return () => clearInterval(intervalId);
   }, [firebaseUserId, fetchGoalData]);
 
   const calculateGoalProgressData = (goals: any[]) => {

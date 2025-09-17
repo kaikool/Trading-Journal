@@ -38,7 +38,7 @@ const goalFormSchema = z.object({
   title: z.string().min(1, 'Title cannot be empty'),
   description: z.string().optional(),
   targetType: z.enum(['profit', 'winRate', 'profitFactor', 'riskRewardRatio', 'balance', 'trades']),
-  targetValue: z.coerce.number().positive('Target value must be greater than 0'),
+  targetValue: z.coerce.number().min(0, 'Target value must be a positive number'),
   startDate: z.date(),
   endDate: z.date(),
   priority: z.enum(['low', 'medium', 'high']),
@@ -94,7 +94,7 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
       title: '',
       description: '',
       targetType: 'profit',
-      targetValue: 0,
+      targetValue: undefined, // Set to undefined to avoid initial NaN
       startDate: today,
       endDate: nextMonth,
       priority: 'medium',
@@ -209,7 +209,13 @@ export function GoalForm({ defaultValues, onSubmit, onCancel, isSubmitting = fal
                     min="0"
                     placeholder="Ex: 1000"
                     {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                    value={field.value ?? ''} // Use empty string if value is null/undefined
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // This prevents NaN. An empty string is coerced to 0 by Zod,
+                      // which is then validated by .positive()
+                      field.onChange(val === '' ? '' : parseFloat(val));
+                    }}
                   />
                 </FormControl>
                 <FormDescription>

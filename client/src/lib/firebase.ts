@@ -1265,34 +1265,33 @@ async function addGoal(userId: string, goalData: any) {
     debug("[addGoal] Adding new goal to Firestore", { userId, goalData });
     const goalsRef = collection(db, "users", userId, "goals");
 
-    // Normalize date fields: Date -> Timestamp.fromDate
-    const processedData = {
-      ...goalData,
-      startDate:
-        goalData.startDate instanceof Date
-          ? Timestamp.fromDate(goalData.startDate)
-          : goalData.startDate,
-      endDate:
-        goalData.endDate instanceof Date
-          ? Timestamp.fromDate(goalData.endDate)
-          : goalData.endDate,
-    };
+    // Tách userId ra khỏi goalData nếu có để tránh nhầm lẫn
+    const { userId: temp, ...restOfGoalData } = goalData;
 
-    const docRef = await addDoc(goalsRef, {
-      ...processedData,
-      userId, // Ensure userId is set in document for queries/analytics
+    const dataToSave = {
+      ...restOfGoalData,
+      userId: userId, // Luôn sử dụng userId từ tham số truyền vào
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-    });
+      // Chuyển đổi Date object sang Firebase Timestamp ngay trước khi lưu
+      startDate:
+        restOfGoalData.startDate instanceof Date
+          ? Timestamp.fromDate(restOfGoalData.startDate)
+          : restOfGoalData.startDate,
+      endDate:
+        restOfGoalData.endDate instanceof Date
+          ? Timestamp.fromDate(restOfGoalData.endDate)
+          : restOfGoalData.endDate,
+    };
 
+    const docRef = await addDoc(goalsRef, dataToSave);
     debug("[addGoal] Goal added successfully with ID:", docRef.id);
     
-    // Return proper goal data structure
+    // Trả về một đối tượng Goal hoàn chỉnh để client có thể cập nhật UI
     return {
       id: docRef.id,
-      ...processedData,
-      userId,
-      createdAt: Timestamp.now(), // For immediate return
+      ...dataToSave,
+      createdAt: Timestamp.now(), // Dùng timestamp cục bộ để cập nhật UI ngay lập tức
       updatedAt: Timestamp.now(),
     };
   } catch (error) {
