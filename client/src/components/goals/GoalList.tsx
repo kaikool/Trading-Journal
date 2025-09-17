@@ -188,7 +188,7 @@ export function GoalList() {
 
         {/* New goal dialog */}
         <DialogWithContext isOpen={openCreateDialog} onOpenChange={(open: boolean) => !open && setOpenCreateDialog(false)}>
-          <DialogContent variant="form" className="keyboard-aware-dialog safe-area-p">
+          <DialogContent className="keyboard-aware-dialog safe-area-p">
             <DialogHeader>
               <DialogTitle>Create New Goal</DialogTitle>
               <DialogDescription>

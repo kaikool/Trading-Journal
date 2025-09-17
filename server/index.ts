@@ -124,7 +124,13 @@ app.use((req, res, next) => {
     }
 
     // Khởi động server
-    const port = 5000;
+    const args = process.argv.slice(2);
+    let port = 5000; // Default port
+    const portIndex = args.indexOf('--port');
+    if (portIndex > -1 && args[portIndex + 1]) {
+      port = parseInt(args[portIndex + 1]);
+    }
+
     server.listen({
       port,
       host: "0.0.0.0",

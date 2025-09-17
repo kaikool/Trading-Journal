@@ -1037,18 +1037,33 @@ html.dark body {
     max-width: 100vw;
   }
   
-  /* Apply when either in mobile or PWA mode using CSS variables */
-  @supports (--css: variables) {
+  @media (max-width: 768px), (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
     body {
-      /* These styles only apply when --is-mobile-or-pwa equals 1 */
-      height: calc(100vh * var(--is-mobile-or-pwa, 0));
-      height: calc(100dvh * var(--is-mobile-or-pwa, 0));
-      overflow: calc(hidden * var(--is-mobile-or-pwa, 0));
-      position: calc(fixed * var(--is-mobile-or-pwa, 0));
-      width: calc(100% * var(--is-mobile-or-pwa, 0));
-      top: calc(0px * var(--is-mobile-or-pwa, 0));
-      left: calc(0px * var(--is-mobile-or-pwa, 0));
-      /* Đã xóa giới hạn overscroll để cho phép cử chỉ vuốt mặc định */
+      height: 100dvh;          /* chỉ mobile/PWA */
+      overflow: hidden;        /* ngăn double scroll ở mobile/PWA */
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+  }
+  
+  /* 3) ĐẢM BẢO desktop scroll bình thường */
+  html, body {
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;          /* quan trọng cho desktop */
+  }
+  
+  /* 4) Nếu bạn có layout cao toàn màn (đang có):
+  .app-layout-container { height: 100vh; overflow: hidden; }
+  => Với desktop thường gây “cụt” khi nội dung dài hơn 1 màn hình.
+     Nên nới ra thế này: */
+  @media (min-width: 769px) {
+    .app-layout-container {
+      height: auto;            /* cho phép cao theo nội dung */
+      min-height: 100vh;       /* vẫn tràn đủ chiều cao viewport */
+      overflow: visible;       /* để nội dung không bị cắt */
     }
   }
   
@@ -1985,7 +2000,6 @@ html.dark body {
   .container,
   form,
   .grid,
-  .flex,
   .space-y-6,
   .space-y-8,
   [class*="grid-cols-"],
