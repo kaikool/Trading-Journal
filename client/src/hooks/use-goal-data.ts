@@ -147,22 +147,39 @@ export function useGoalData() {
 
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: any) => {
-      log('createGoal: invoked with uid=', firebaseUserId, 'payload=', goalData);
-      if (!firebaseUserId) throw new Error('User is not logged in');
-      const formatted = { ...goalData, userId: firebaseUserId };
-      return addGoal(firebaseUserId, formatted);
+      // --- BƯỚC GỠ LỖI 1: IN RA DỮ LIỆU GỐC TỪ FORM ---
+      console.log("--- DEBUG STEP 1: Dữ liệu nhận từ form ---");
+      console.log(JSON.stringify(goalData, null, 2));
+
+      // --- BƯỚC GỠ LỖI 2: KIỂM TRA USER ID ---
+      console.log("--- DEBUG STEP 2: User ID lấy từ useAuth() ---");
+      console.log(firebaseUserId);
+
+      if (!firebaseUserId) {
+        console.error("--- LỖI DEBUG: User ID không tồn tại! Quá trình dừng lại. ---");
+        throw new Error('User is not logged in');
+      }
+
+      const formattedGoal = { ...goalData, userId: firebaseUserId };
+
+      // --- BƯỚC GỠ LỖI 3: DỮ LIỆU CUỐI CÙNG TRƯỚC KHI GỬI ĐI ---
+      console.log("--- DEBUG STEP 3: Đối tượng cuối cùng gửi đến addGoal ---");
+      console.log(JSON.stringify(formattedGoal, null, 2));
+      
+      return addGoal(formattedGoal);
     },
     onSuccess: (res: any) => {
-      log('createGoal:onSuccess result=', res);
+      console.log('--- DEBUG STEP 4: THÀNH CÔNG! ---');
+      console.log(res);
       fetchGoalData();
       toast({ title: 'Goal Created', description: 'Your new goal has been created successfully.' });
     },
     onError: (e: any) => {
-      err('createGoal:onError=', e?.message || e);
+      console.error('--- LỖI DEBUG STEP 4: THẤT BẠI! ---');
+      console.error(e);
       toast({ variant: 'destructive', title: 'Error Creating Goal', description: e?.message || 'Create goal failed' });
     },
   });
-
   const updateGoalMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
       log('updateGoal: invoked uid=', firebaseUserId, 'id=', id, 'data=', data);

@@ -62,17 +62,17 @@ export function GoalList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('active');
 
-  // Handle creating a new goal
+  // Handle creating a new goal - CORRECTED
   const handleCreateGoal = (data: any) => {
-    if (!userData) return;
-    
+    // The useGoalData hook is responsible for adding the userId.
+    // This component should only prepare the data from the form.
     const goalData = {
       ...data,
-      userId: userData.id,
       currentValue: 0,
       isCompleted: false,
     };
     
+    // Call the mutation. It will handle adding userId and authentication checks.
     createGoal(goalData);
     setOpenCreateDialog(false);
   };

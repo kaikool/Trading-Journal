@@ -1260,20 +1260,22 @@ async function createDefaultStrategiesIfNeeded(userId: string) {
 /* =========================
  * Goals / Milestones
  * ========================= */
-async function addGoal(userId: string, goalData: any) {
-  try {
-    debug("[addGoal] Adding new goal to Firestore", { userId, goalData });
-    const goalsRef = collection(db, "users", userId, "goals");
+async function addGoal(goalData: any) {
+  const { userId, ...restOfGoalData } = goalData;
+  if (!userId) {
+    logError("Error adding goal: userId is missing from goalData");
+    throw new Error("Cannot add goal without a userId.");
+  }
 
-    // Tách userId ra khỏi goalData nếu có để tránh nhầm lẫn
-    const { userId: temp, ...restOfGoalData } = goalData;
+  try {
+    debug("[addGoal] Adding new goal to Firestore", { userId, goalData: restOfGoalData });
+    const goalsRef = collection(db, "users", userId, "goals");
 
     const dataToSave = {
       ...restOfGoalData,
-      userId: userId, // Luôn sử dụng userId từ tham số truyền vào
+      userId: userId, // Đảm bảo userId được lấy từ đối tượng
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-      // Chuyển đổi Date object sang Firebase Timestamp ngay trước khi lưu
       startDate:
         restOfGoalData.startDate instanceof Date
           ? Timestamp.fromDate(restOfGoalData.startDate)
@@ -1287,11 +1289,10 @@ async function addGoal(userId: string, goalData: any) {
     const docRef = await addDoc(goalsRef, dataToSave);
     debug("[addGoal] Goal added successfully with ID:", docRef.id);
     
-    // Trả về một đối tượng Goal hoàn chỉnh để client có thể cập nhật UI
     return {
       id: docRef.id,
       ...dataToSave,
-      createdAt: Timestamp.now(), // Dùng timestamp cục bộ để cập nhật UI ngay lập tức
+      createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
   } catch (error) {
