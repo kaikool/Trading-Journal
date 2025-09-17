@@ -429,37 +429,33 @@ export default function Analytics() {
         <EmptyState />
       ) : (
         <Tabs defaultValue="overview" className="w-full">
-          <div className="overflow-x-auto mb-4 sm:mb-6 touch-pan-x">
-            <div className="min-w-max mx-auto px-1">
-              <TabsList className="w-fit sm:w-auto flex flex-nowrap h-auto justify-start p-1 space-x-1 rounded-xl bg-muted/80">
-                <TabsTrigger value="overview" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <Icons.analytics.barChart className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Overview</span>
-                </TabsTrigger>
-                <TabsTrigger value="strategy" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <Icons.analytics.lineChart className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Strategy</span>
-                </TabsTrigger>
-                <TabsTrigger value="discipline" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <Icons.analytics.trending className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Discipline</span>
-                </TabsTrigger>
-                <TabsTrigger value="emotion" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <Icons.analytics.pieChart className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Emotion</span>
-                </TabsTrigger>
-                <TabsTrigger value="advanced" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <Icons.analytics.stats className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Advanced</span>
-                </TabsTrigger>
-                
-                <TabsTrigger value="recommendations" className="flex items-center justify-center h-9 px-2 sm:px-4 gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all">
-                  <Icons.analytics.lightbulb className="h-4 w-4 flex-shrink-0" />
-                  <span className="inline whitespace-nowrap text-xs sm:text-sm font-medium">Recommendations</span>
-                </TabsTrigger>
-
-              </TabsList>
-            </div>
+          <div className="overflow-x-auto sm:overflow-visible mb-4 sm:mb-6 touch-pan-x">
+            <TabsList className="flex sm:grid sm:grid-cols-6 h-auto p-1 space-x-1 sm:space-x-0 rounded-xl bg-muted/80">
+              <TabsTrigger value="overview" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
+                <Icons.analytics.barChart className="h-4 w-4" />
+                <span className="whitespace-nowrap">Overview</span>
+              </TabsTrigger>
+              <TabsTrigger value="strategy" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
+                <Icons.analytics.lineChart className="h-4 w-4" />
+                <span className="whitespace-nowrap">Strategy</span>
+              </TabsTrigger>
+              <TabsTrigger value="discipline" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
+                <Icons.analytics.trending className="h-4 w-4" />
+                <span className="whitespace-nowrap">Discipline</span>
+              </TabsTrigger>
+              <TabsTrigger value="emotion" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
+                <Icons.analytics.pieChart className="h-4 w-4" />
+                <span className="whitespace-nowrap">Emotion</span>
+              </TabsTrigger>
+              <TabsTrigger value="advanced" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
+                <Icons.analytics.stats className="h-4 w-4" />
+                <span className="whitespace-nowrap">Advanced</span>
+              </TabsTrigger>
+              <TabsTrigger value="recommendations" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
+                <Icons.analytics.lightbulb className="h-4 w-4" />
+                <span className="whitespace-nowrap">Recommendations</span>
+              </TabsTrigger>
+            </TabsList>
           </div>
           
           {/* Tabs content với Suspense cho dynamic import */}

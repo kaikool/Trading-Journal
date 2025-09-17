@@ -187,7 +187,7 @@ export function TabbedTradeForm({
           ref={tabListRef}
           className={cn(
             "w-full bg-muted/50 rounded-lg p-1", 
-            isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x scrollbar-hide" : "grid grid-cols-5 overflow-hidden"
+            isMobile ? "flex overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory touch-pan-x scrollbar-hide" : "grid grid-cols-4 overflow-hidden"
           )}
         >
           {TRADE_FORM_TABS.map((tab) => (
