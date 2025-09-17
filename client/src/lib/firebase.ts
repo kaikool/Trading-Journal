@@ -707,112 +707,6 @@ async function deleteTrade(userId: string, tradeId: string) {
   }
 }
 
-/* ---------------------------------------------------------
- * Image helpers (local uploads only)
- * --------------------------------------------------------- */
-async function getStorageDownloadUrl(path: string): Promise<string> {
-  try {
-    debug(`Getting image URL: ${path}`);
-    if (path.startsWith("http")) return path;
-    return path;
-  } catch (error) {
-    logError(`Error getting URL for image:`, error);
-    return path;
-  }
-}
-
-async function uploadTradeImage(
-  userId: string,
-  tradeId: string,
-  file: File,
-  type: "h4before" | "m15before" | "h4after" | "m15after",
-  progressCallback?: (progress: number) => void
-): Promise<string> {
-  try {
-    debug("===== UPLOAD IMAGE: START =====");
-    const { auth } = initFirebase();
-
-    if (!auth.currentUser) {
-      logError("UPLOAD ERROR: Người dùng chưa đăng nhập");
-      try {
-        await signInAnonymously(auth);
-        debug("Đã đăng nhập ẩn danh để tải ảnh");
-        return await uploadTradeImage(userId, tradeId, file, type, progressCallback);
-      } catch (error: any) {
-        logError("Không thể đăng nhập ẩn danh:", error);
-        throw new Error("Không thể xác thực để tải ảnh lên. Vui lòng thử lại.");
-      }
-    }
-
-    debug(`Người dùng đã đăng nhập: ${auth.currentUser.uid}`);
-    if (auth.currentUser.uid !== userId) {
-      logWarning(`User ID không khớp: ${auth.currentUser.uid} vs ${userId}`);
-    }
-
-    if (!file) throw new Error("File không được cung cấp");
-    if (!userId) throw new Error("ID người dùng là bắt buộc");
-    if (!tradeId) tradeId = "temp-" + Date.now();
-
-    debug(
-      `File gốc: ${file.name} (${(file.size / 1024).toFixed(2)}KB), type: ${
-        file.type
-      }`
-    );
-    debug(`User ID: ${userId}, Trade ID: ${tradeId}, Image type: ${type}`);
-
-    if (progressCallback) progressCallback(10);
-
-    const imageType = type.replace("before", "chart").replace("after", "exit");
-
-    const form = new FormData();
-    form.append("file", file);
-    form.append("userId", userId);
-    form.append("tradeId", tradeId);
-    form.append("type", imageType);
-
-    const res = await fetchWithAuth("/api/uploads", { method: "POST", body: form });
-
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Upload failed: ${res.status} ${txt.slice(0, 200)}`);
-    }
-
-    const data = await res.json().catch(() => ({} as any));
-    const url = data?.url || data?.imageUrl || "";
-    if (!url) throw new Error("Upload succeeded but no URL returned");
-
-    if (progressCallback) progressCallback(100);
-    debug(`Upload complete, URL: ${url}`);
-    return url;
-  } catch (error) {
-    logError("Error in uploadTradeImage:", error);
-    throw error;
-  }
-}
-
-async function deleteTradeImage(path: string): Promise<boolean> {
-  try {
-    if (!path) return false;
-    debug(`Deleting image: ${path}`);
-
-    if (path.startsWith("/uploads/") || path.startsWith("uploads/")) {
-      const res = await fetchWithAuth(
-        `/api/uploads/delete?path=${encodeURIComponent(path)}`,
-        { method: "DELETE" }
-      );
-      if (!res.ok) throw new Error(await res.text());
-      debug("Image deleted successfully");
-      return true;
-    }
-
-    debug("Skip deleting external image (non-local)");
-    return false;
-  } catch (error) {
-    logError("Error deleting image:", error);
-    return false;
-  }
-}
-
 /* =========================
  * Account balance
  * ========================= */
@@ -2033,11 +1927,6 @@ export {
   updateTrade,
   updateTradeWithBatch,
   deleteTrade,
-
-  // Image
-  getStorageDownloadUrl,
-  uploadTradeImage,
-  deleteTradeImage,
 
   // Helper
   updateAccountBalance,
