@@ -279,37 +279,6 @@ async function addTrade(userId: string, tradeData: any) {
     processTradeTrigger(userId, "create");
     tradeUpdateService.notifyTradeCreated(userId, docRef.id);
 
-    // Auto-capture H4 + M15 (không block UI)
-    (async () => {
-      try {
-        const pair: string = String(tradeData?.pair || "")
-          .trim()
-          .toUpperCase();
-        if (!pair) return;
-
-        const { captureTradeImages } = await import("@/lib/capture");
-        const { entryH4, entryM15 } = await captureTradeImages(pair);
-
-        const updatePayload: any = {
-          updatedAt: serverTimestamp(),
-          captureStatus: entryH4 || entryM15 ? "uploaded" : "empty",
-        };
-        if (entryH4) updatePayload.entryImage = entryH4; // H4
-        if (entryM15) updatePayload.entryImageM15 = entryM15; // M15
-
-        await updateDoc(docRef, updatePayload);
-        tradeUpdateService.notifyTradeUpdated(userId, docRef.id);
-      } catch (err: any) {
-        await updateDoc(docRef, {
-          updatedAt: serverTimestamp(),
-          captureStatus: "error",
-          errorMessage: String(err?.message || err),
-        });
-        logError("[autoCapture-after-create]", err);
-        tradeUpdateService.notifyTradeUpdated(userId, docRef.id);
-      }
-    })().catch(logError);
-
     return { success: true, id: docRef.id };
   } catch (error) {
     logError("Error adding trade:", error);
@@ -600,38 +569,7 @@ async function updateTrade(
       debug(`[REALTIME-DEBUG] Notifying trade closed: ${tradeId}`);
       tradeUpdateService.notifyTradeClosed(userId, tradeId);
 
-      // Auto-capture khi đóng lệnh -> ghi vào exitImage/exitImageM15 (không block UI)
-      (async () => {
-        try {
-          const pair: string = String(
-            tradeData?.pair || currentTrade?.pair || ""
-          )
-            .trim()
-            .toUpperCase();
-          if (!pair) return;
-
-          const { captureTradeImages } = await import("@/lib/capture");
-        const { entryH4, entryM15 } = await captureTradeImages(pair);
-          const payload: any = {
-            updatedAt: serverTimestamp(),
-            // đánh dấu trạng thái nếu muốn
-            captureStatus: entryH4 || entryM15 ? "uploaded" : "empty",
-          };
-          if (entryH4) payload.exitImage = entryH4;
-          if (entryM15) payload.exitImageM15 = entryM15;
-
-          await updateDoc(tradeRef, payload);
-          tradeUpdateService.notifyTradeUpdated(userId, tradeId);
-        } catch (err: any) {
-          await updateDoc(tradeRef, {
-            updatedAt: serverTimestamp(),
-            captureStatus: "error",
-            errorMessage: String(err?.message || err),
-          });
-          logError("[autoCapture-after-close]", err);
-          tradeUpdateService.notifyTradeUpdated(userId, tradeId);
-        }
-      })().catch(logError);
+      
     } else {
       debug(`[REALTIME-DEBUG] Notifying trade updated: ${tradeId}`);
       tradeUpdateService.notifyTradeUpdated(userId, tradeId);

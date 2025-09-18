@@ -3,8 +3,6 @@ export * from './TradeDetails';
 export * from './TradeRiskReward';
 export * from './TradeStrategy';
 export * from './TradePsychology';
-export * from './TradeImages';
 export * from './NotesSection';
 export * from './FormActions';
-export * from './ImageUpload';
 export * from './TabbedTradeForm';

@@ -12,7 +12,6 @@ import {
   CardContent,
   CardGradient
 } from "@/components/ui/card";
-import { Icons } from "@/components/icons/icons";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 
 // Trade Form Components
@@ -30,7 +29,6 @@ export default function TradePage() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
   
-  // Get userId from Firebase auth
   const [userId, setUserId] = useState<string | undefined>(auth.currentUser?.uid);
   
   useEffect(() => {
@@ -44,7 +42,6 @@ export default function TradePage() {
     return null;
   }
 
-  // Setup trade form props for the custom hook
   const tradeFormProps: TradeFormProps = {
     mode: "new",
     userId,
@@ -66,7 +63,6 @@ export default function TradePage() {
     }
   };
   
-  // Use the main custom hook that integrates all functionality
   const {
     form,
     isFormSubmitting,
@@ -78,16 +74,6 @@ export default function TradePage() {
     setShowDraftNotice,
     loadDraft,
     clearDraft,
-    
-    // Image management
-    entryImage1,
-    entryImage2,
-    exitImage1,
-    exitImage2,
-    handleEntryImageChange,
-    handleExitImageChange,
-    removeEntryImage,
-    removeExitImage,
     
     // Strategy management
     strategies,
@@ -131,7 +117,7 @@ export default function TradePage() {
                 className="py-4"
                 animation="pulse"
                 title="Saving trade..."
-                description="Recording your trade details and processing uploaded images"
+                description="Recording your trade details. Images will be captured in the background."
               />
             </CardContent>
           </Card>
@@ -140,11 +126,8 @@ export default function TradePage() {
     );
   }
 
-  // Removed debug logging
-
   return (
     <div className="px-0 sm:px-6 lg:px-8">
-      {/* Header with consistent styling across app */}
       <div className="mb-4">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           New Trade
@@ -156,7 +139,6 @@ export default function TradePage() {
 
       <FormProvider {...form}>
         <form onSubmit={onSubmit} className="space-y-5 overflow-visible">
-          {/* Draft notice */}
           {hasDraft && showDraftNotice && (
             <FormHeader 
               isEditMode={false}
@@ -169,7 +151,6 @@ export default function TradePage() {
             />
           )}
 
-          {/* Main Trade Form Card with Tabbed Interface */}
           <Card className="relative mb-5 border-border/60">
             <CardGradient 
               variant="primary" 
@@ -179,7 +160,6 @@ export default function TradePage() {
             
             <CardContent className="p-5 overflow-visible">
               <TabbedTradeForm
-                // Trade details props
                 isCalculatingLotSize={isCalculatingLotSize}
                 isCalculatingTakeProfit={isCalculatingTakeProfit}
                 accountBalance={accountBalance}
@@ -190,19 +170,15 @@ export default function TradePage() {
                 riskRewardRatio={riskRewardRatio}
                 setRiskRewardRatio={setRiskRewardRatio}
                 
-                // Strategy props
                 strategies={strategies}
                 isLoadingStrategies={isLoadingStrategies}
                 selectedStrategy={selectedStrategy}
                 strategyChecks={strategyChecks}
                 handleStrategyCheckToggle={handleStrategyCheckToggle}
-                
-                // Image props removed - auto-capture handles images in background
               />
             </CardContent>
           </Card>
 
-          {/* Form Actions - Sticky Footer */}
           <div className="sticky bottom-4 mt-4">
             <div className="bg-card rounded-lg border shadow-sm px-4 py-3">
               <FormActions 

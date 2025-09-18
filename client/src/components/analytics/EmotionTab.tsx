@@ -381,9 +381,6 @@ export default function EmotionTab({ data }: EmotionTabProps) {
     return null;
   };
 
-  // No longer using InsufficientDataCard component
-
-
   return (
     <div className="space-y-6">
       {/* Emotion Insights or Insufficient Data Message */}

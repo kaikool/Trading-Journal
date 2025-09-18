@@ -177,9 +177,8 @@ class TradeMetricsService {
    */
   async countUniquePairsTraded(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
-      const q = query(tradesRef, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
+      const tradesRef = collection(db, 'users', userId, 'trades');
+      const querySnapshot = await getDocs(tradesRef);
       
       // Dùng Set để đếm các giá trị duy nhất
       const uniquePairs = new Set<string>();
@@ -203,9 +202,8 @@ class TradeMetricsService {
    */
   async countUniqueStrategies(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
-      const q = query(tradesRef, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
+      const tradesRef = collection(db, 'users', userId, 'trades');
+      const querySnapshot = await getDocs(tradesRef);
       
       // Dùng Set để đếm các giá trị duy nhất
       const uniqueStrategies = new Set<string>();
@@ -230,9 +228,8 @@ class TradeMetricsService {
    */
   async countProfitableStrategies(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
-      const q = query(tradesRef, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
+      const tradesRef = collection(db, 'users', userId, 'trades');
+      const querySnapshot = await getDocs(tradesRef);
       
       // Nhóm giao dịch theo chiến lược
       const strategiesMap = new Map<string, {
@@ -283,10 +280,9 @@ class TradeMetricsService {
    */
   async calculateNoRevengeTradesStreak(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
+      const tradesRef = collection(db, 'users', userId, 'trades');
       const q = query(
         tradesRef, 
-        where('userId', '==', userId),
         orderBy('createdAt', 'desc'),
         limit(50) // Giới hạn số lượng giao dịch kiểm tra để tối ưu hiệu suất
       );
@@ -321,10 +317,9 @@ class TradeMetricsService {
    */
   async calculateNotEnteredEarlyStreak(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
+      const tradesRef = collection(db, 'users', userId, 'trades');
       const q = query(
         tradesRef, 
-        where('userId', '==', userId),
         orderBy('createdAt', 'desc'),
         limit(50)
       );
@@ -356,10 +351,9 @@ class TradeMetricsService {
    */
   async calculateNotMovedStopLossStreak(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
+      const tradesRef = collection(db, 'users', userId, 'trades');
       const q = query(
         tradesRef, 
-        where('userId', '==', userId),
         orderBy('createdAt', 'desc'),
         limit(50)
       );
@@ -391,10 +385,9 @@ class TradeMetricsService {
    */
   async calculateWinningStreak(userId: string): Promise<{current: number, longest: number}> {
     try {
-      const tradesRef = collection(db, 'trades');
+      const tradesRef = collection(db, 'users', userId, 'trades');
       const q = query(
         tradesRef, 
-        where('userId', '==', userId),
         orderBy('createdAt', 'desc')
       );
       
@@ -456,9 +449,8 @@ class TradeMetricsService {
    */
   async calculatePlanAdherence(userId: string): Promise<{adherencePercent: number, minTrades: boolean}> {
     try {
-      const tradesRef = collection(db, 'trades');
-      const q = query(tradesRef, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
+      const tradesRef = collection(db, 'users', userId, 'trades');
+      const querySnapshot = await getDocs(tradesRef);
       
       let totalTrades = 0;
       let followedPlanCount = 0;
@@ -522,10 +514,9 @@ class TradeMetricsService {
    */
   async calculateTradesWithNotesStreak(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
+      const tradesRef = collection(db, 'users', userId, 'trades');
       const q = query(
         tradesRef, 
-        where('userId', '==', userId),
         orderBy('createdAt', 'desc'),
         limit(50)
       );
@@ -556,10 +547,9 @@ class TradeMetricsService {
    */
   async calculatePerfectEmotionalControlStreak(userId: string): Promise<number> {
     try {
-      const tradesRef = collection(db, 'trades');
+      const tradesRef = collection(db, 'users', userId, 'trades');
       const q = query(
         tradesRef, 
-        where('userId', '==', userId),
         orderBy('createdAt', 'desc'),
         limit(100) // Kiểm tra nhiều hơn vì thành tựu này yêu cầu 100 giao dịch
       );
@@ -599,9 +589,8 @@ class TradeMetricsService {
    */
   async checkAllMarketConditionsProfitable(userId: string): Promise<boolean> {
     try {
-      const tradesRef = collection(db, 'trades');
-      const q = query(tradesRef, where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
+      const tradesRef = collection(db, 'users', userId, 'trades');
+      const querySnapshot = await getDocs(tradesRef);
       
       // Định nghĩa các loại điều kiện thị trường
       const marketConditions = [

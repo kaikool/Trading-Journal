@@ -71,7 +71,7 @@ export function useCachedImage(
   } = options;
 
   // State
-  const [url, setUrl] = useState<string | null>(placeholder || null);
+  const [url, setUrl] = useState<string | null>(placeholder ? placeholder : null);
   const [isLoading, setIsLoading] = useState<boolean>(!!path && fetchOnMount);
   const [error, setError] = useState<Error | null>(null);
   const [retries, setRetries] = useState<number>(0);
@@ -80,7 +80,7 @@ export function useCachedImage(
   const invalidate = useCallback(() => {
     if (path) {
       invalidateImageCache(path);
-      setUrl(placeholder || null);
+      setUrl(placeholder ? placeholder : null);
     }
   }, [path, placeholder]);
 
@@ -137,7 +137,7 @@ export function useCachedImage(
       fetchImage();
     } else if (!path) {
       // Nếu không có path, đặt lại state
-      setUrl(placeholder || null);
+      setUrl(placeholder ? placeholder : null);
       setIsLoading(false);
       setError(null);
     }

@@ -172,8 +172,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
 
   // Monthly performance data for equity curve
   const equityCurveData = useMemo(() => {
-    // Đã xóa console.log để tăng hiệu suất
-    
+     
     // Sử dụng tiện ích timestamp để tạo dữ liệu biểu đồ từ trades
     return timestamp.createTimeSeriesData(trades, initialBalance, { sortByDate: true });
   }, [trades, initialBalance, timestamp]);
@@ -471,7 +470,7 @@ function OverviewTabContent({ data }: OverviewTabProps) {
                       />
                     </linearGradient>
                   </defs>
-                  {/* Đã xóa CartesianGrid theo yêu cầu */}
+                
                   <XAxis 
                     dataKey="date" 
                     tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
