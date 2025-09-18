@@ -61,7 +61,8 @@ export function useTradeForm(props: TradeFormProps) {
       sessionType: "",
       hasNews: false,
       notes: "",
-      isOpen: true
+      isOpen: true,
+      captureStatus: 'pending' // Kích hoạt chụp ảnh khi TẠO MỚI
     }
   });
 
@@ -85,7 +86,6 @@ export function useTradeForm(props: TradeFormProps) {
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (!isEditMode && !isSuccess) {
-        // Pass empty object for imageUrls as it's no longer handled here
         draftManagement.saveDraft({});
       }
     };
@@ -113,7 +113,8 @@ export function useTradeForm(props: TradeFormProps) {
         }
       });
 
-      // Image fields are removed from here. They will be added by the Cloud Function.
+      const isClosingTrade = isEditMode && initialValues?.isOpen && data.exitPrice;
+
       const tradeData = {
         ...cleanData,
         usedRules: usedConditions.usedRules.length > 0 ? usedConditions.usedRules : null,
@@ -122,10 +123,13 @@ export function useTradeForm(props: TradeFormProps) {
         userId,
         updatedAt: serverTimestamp(),
         ...(isEditMode
-          ? {}
+          ? {
+             ...(isClosingTrade && { captureStatus: 'pending' }) // Kích hoạt chụp ảnh khi ĐÓNG LỆNH
+            }
           : {
               createdAt: serverTimestamp(),
-              isOpen: true
+              isOpen: true,
+              captureStatus: 'pending' // Giữ nguyên cho trường hợp tạo mới
             }
         )
       };
@@ -169,7 +173,7 @@ export function useTradeForm(props: TradeFormProps) {
     riskRewardRatio: calculations.riskRewardRatio,
     setRiskRewardRatio: calculations.setRiskRewardRatio,
     isCalculatingLotSize: calculations.isCalculatingLotSize,
-isCalculatingTakeProfit: calculations.isCalculatingTakeProfit,
+    isCalculatingTakeProfit: calculations.isCalculatingTakeProfit,
     calculateOptimalLotSize: calculations.calculateOptimalLotSize,
     calculateOptimalTakeProfit: calculations.calculateOptimalTakeProfit,
     onSubmit: form.handleSubmit(onSubmit)
