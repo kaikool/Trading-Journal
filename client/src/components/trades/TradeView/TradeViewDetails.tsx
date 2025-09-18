@@ -15,10 +15,13 @@ import { cn } from "@/lib/utils";
 import { formatPriceForPair, formatPips, formatProfitLoss, formatRiskReward } from "@/utils/format-number";
 import { TradeStatus } from "@/lib/trade-status-config";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ChartImageDialog } from "./ChartImageDialog";
 import DirectionBadge, { Direction } from "../History/DirectionBadge";
 import TradeStatusBadge from "../History/TradeStatusBadge";
 import { formatDistanceStrict } from 'date-fns';
+
+// 1. Import the gallery and its styles
+import 'photoswipe/dist/photoswipe.css';
+import { Gallery, Item } from 'react-photoswipe-gallery';
 
 interface TradeViewDetailsProps {
   trade: Trade;
@@ -83,7 +86,8 @@ export function TradeViewDetails({
   onBack
 }: TradeViewDetailsProps) {
   const isMobile = useIsMobile();
-  const [showChartDialog, setShowChartDialog] = useState(false);
+  // We no longer need the state for the old dialog
+  // const [showChartDialog, setShowChartDialog] = useState(false);
   const [strategyName, setStrategyName] = useState<string>("");
 
   useEffect(() => {
@@ -107,6 +111,17 @@ export function TradeViewDetails({
 
   const tradeDuration = getTradeDuration(trade.createdAt, trade.closeDate);
   const calculatedRR = calculateRiskRewardRatio(trade);
+
+  // 2. Prepare the list of images for the gallery
+  const galleryImages = [
+    { src: trade.entryImage, caption: 'Entry Chart (H4)' },
+    { src: trade.entryImageM15, caption: 'Entry Chart (M15)' },
+    { src: trade.exitImage, caption: 'Exit Chart (H4)' },
+    { src: trade.exitImageM15, caption: 'Exit Chart (M15)' },
+  ].filter(img => img.src); // Only include images that exist
+
+  // Determine the primary image to show in the thumbnail
+  const displayImage = trade.exitImage || trade.entryImage;
 
   const disciplineIssues = trade.discipline ? Object.entries(trade.discipline)
     .filter(([key, value]) => key !== 'followedPlan' && value === true)
@@ -132,7 +147,7 @@ export function TradeViewDetails({
 
   return (
     <>
-      <ChartImageDialog isOpen={showChartDialog} onClose={() => setShowChartDialog(false)} entryImage={trade.entryImage} entryImageM15={trade.entryImageM15} exitImage={trade.exitImage} exitImageM15={trade.exitImageM15} isTradeOpen={!trade.closeDate} tradePair={trade.pair} />
+      {/* 3. The old ChartImageDialog is now removed */}
       
       <Card className="mb-4 overflow-hidden relative border-border/50 card-spotlight">
         <CardGradient variant={!trade.result ? 'default' : (trade.result === 'WIN' || Number(trade.profitLoss) > 0 ? 'success' : (trade.result === 'LOSS' || Number(trade.profitLoss) < 0 ? 'destructive' : 'warning'))} intensity="subtle" direction="top-right" />
@@ -152,15 +167,58 @@ export function TradeViewDetails({
           <div className="p-4">
             {/* Top Section: Image, Pair, etc. */}
             <div className="flex flex-col md:flex-row gap-4">
-                <div className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden rounded-md border border-border/30 shadow-sm bg-card/40" onClick={() => setShowChartDialog(true)}>
-                    {trade.entryImage ? (
-                        <div className="trade-card-image-container"><img src={trade.entryImage} alt={`${trade.pair} ${trade.direction} trade chart`} className="trade-card-image loaded" /><div className="trade-card-zoom-overlay"><Icons.ui.maximize className="h-6 w-6 text-white" /></div></div>
+              {/* 4. Implement the Gallery */}
+              <Gallery withCaption>
+                <div className="relative w-full md:w-48 h-48 flex-shrink-0 group overflow-hidden rounded-md border border-border/30 shadow-sm bg-card/40">
+                    
+                    {galleryImages.length > 0 ? (
+                      // The first Item is the visible thumbnail
+                      <Item
+                        original={galleryImages[0].src!}
+                        thumbnail={displayImage!}
+                        caption={galleryImages[0].caption}
+                        width="1920"
+                        height="1080"
+                      >
+                        {({ ref, open }) => (
+                          <div ref={ref as React.RefObject<HTMLDivElement>} onClick={open} className="w-full h-full cursor-pointer">
+                            <img src={displayImage!} alt={`${trade.pair} trade thumbnail`} className="trade-card-image loaded" />
+                            <div className="trade-card-zoom-overlay"><Icons.ui.maximize className="h-6 w-6 text-white" /></div>
+                          </div>
+                        )}
+                      </Item>
                     ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/10"><Icons.ui.maximize className="h-8 w-8 mb-2 opacity-40" /><span>No Chart Image</span></div>
+                      <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground bg-muted/10">
+                        <Icons.ui.maximize className="h-8 w-8 mb-2 opacity-40" />
+                        <span>No Chart Image</span>
+                      </div>
                     )}
+
+                    {/* These are the hidden items that complete the gallery */}
+                    <div style={{ display: 'none' }}>
+                      {galleryImages.slice(1).map((image, index) => (
+                        <Item
+                          key={index}
+                          original={image.src!}
+                          thumbnail={image.src!}
+                          caption={image.caption}
+                          width="1920"
+                          height="1080"
+                        >
+                          {/* These only need the ref to be part of the gallery */}
+                          {({ ref }) => <div ref={ref as React.RefObject<HTMLDivElement>}></div>}
+                        </Item>
+                      ))}
+                    </div>
+                    
                     <div className="trade-direction-badge"><DirectionBadge direction={trade.direction as Direction} showTooltip={false} size="sm" variant="modern" /></div>
                     {trade.result && <div className="trade-result-badge"><TradeStatusBadge status={trade.result as TradeStatus} showTooltip={false} size="sm" /></div>}
                 </div>
+              </Gallery>
+
+                {/* ================================================================== */}
+                {/* EVERYTHING BELOW THIS LINE IS UNCHANGED AND KEPT IN ITS ORIGINAL STATE */}
+                {/* ================================================================== */}
 
                 <div className="p-0 flex-grow">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
@@ -205,7 +263,7 @@ export function TradeViewDetails({
                       <div key={issue} className="flex items-center text-xs py-1 px-2.5 rounded-full bg-destructive/10 text-destructive-foreground">
                         <Icons.ui.alertTriangle className="h-3 w-3 mr-1.5" /> {issue}
                       </div>
-                    ))}
+                    ))}\
                   </div>
                 </div>
               )}

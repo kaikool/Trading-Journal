@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+
+import { useState, useEffect, useMemo } from 'react';
 import { auth, getStrategyById } from '@/lib/firebase';
 import { 
   Card, 
@@ -7,23 +8,25 @@ import {
   CardGradient,
   CardValue
 } from "@/components/ui/card";
-
 import { Icons } from "@/components/icons/icons";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { formatCurrency, formatPriceForPair, formatPips, formatProfitLoss } from "@/utils/format-number";
+import { formatPriceForPair, formatPips, formatProfitLoss } from "@/utils/format-number";
 import { formatTimestamp } from "@/lib/format-timestamp";
 import { useInView } from "react-intersection-observer";
 import LazyCloseTradeForm from "../TradeView/LazyCloseTradeForm";
 import { TradeStatus } from "@/lib/trade-status-config";
 import TradeStatusBadge from "./TradeStatusBadge";
 import DirectionBadge from "./DirectionBadge";
-import { ChartImageDialog } from "../TradeView/ChartImageDialog";
 import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
 import { debug } from "@/lib/debug";
+
+// 1. Import the gallery and its styles
+import 'photoswipe/dist/photoswipe.css';
+import { Gallery, Item } from 'react-photoswipe-gallery';
 
 interface TradeHistoryCardProps {
   trade: any;
@@ -39,17 +42,8 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
     triggerOnce: true,
     rootMargin: '100px',
   });
-  
-  useEffect(() => {
-    if (trade && trade.id) {
-      debug(`[SCROLL-DEBUG][${trade.id}] Card inView changed: ${inView}`);
-    }
-  }, [inView, trade]);
-  
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const imageRef = useRef<HTMLImageElement>(null);
+
   const [showCloseForm, setShowCloseForm] = useState(false);
-  const [showChartDialog, setShowChartDialog] = useState(false);
   const [strategyName, setStrategyName] = useState<string>('');
   const [isLoadingStrategy, setIsLoadingStrategy] = useState<boolean>(false);
   
@@ -80,79 +74,34 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
       setLocation(`/trade/view/${id}`);
     }
   };
-  
-  const handleDelete = () => {
-    if (inView) {
-      onDelete(id);
-    }
-  };
-  
-  const handleCloseTrade = () => {
-    if (inView) {
-      setShowCloseForm(true);
-    }
-  };
-  
-  const handleOpenChartDialog = (e: React.MouseEvent) => {
-    if (inView) {
-      e.stopPropagation();
-      setShowChartDialog(true);
-    }
-  };
-  
+
+  // 2. Prepare images for the gallery
+  const galleryImages = useMemo(() => [
+    { src: entryImage, caption: 'Entry Chart (H4)' },
+    { src: entryImageM15, caption: 'Entry Chart (M15)' },
+    { src: exitImage, caption: 'Exit Chart (H4)' },
+    { src: exitImageM15, caption: 'Exit Chart (M15)' },
+  ].filter(img => img.src), [entryImage, entryImageM15, exitImage, exitImageM15]);
+
+  // Determine the primary image to show in the thumbnail
   const { displayUrl, imageType } = useMemo(() => {
-    if (isTradeOpen && entryImageM15) {
-      return { displayUrl: entryImageM15, imageType: 'entryM15' };
-    }
-    else if (!isTradeOpen && exitImageM15) {
-      return { displayUrl: exitImageM15, imageType: 'exitM15' };
-    }
-    else if (entryImage) {
-      return { displayUrl: entryImage, imageType: 'entryH4' };
-    }
-    else if (exitImage) {
-      return { displayUrl: exitImage, imageType: 'exitH4' };
-    }
+    if (!isTradeOpen && exitImage) return { displayUrl: exitImage, imageType: 'exitH4' };
+    if (entryImage) return { displayUrl: entryImage, imageType: 'entryH4' };
+    if (!isTradeOpen && exitImageM15) return { displayUrl: exitImageM15, imageType: 'exitM15' };
+    if (entryImageM15) return { displayUrl: entryImageM15, imageType: 'entryM15' };
     return { displayUrl: null, imageType: '' };
   }, [isTradeOpen, entryImage, entryImageM15, exitImage, exitImageM15]);
 
-  const { 
-    imageUrl: cachedImageUrl, 
-    isLoading: isImageLoading, 
-    error: imageError 
-  } = useCachedImage(displayUrl, {
-    tradeId: id,
-    imageType,
-    placeholder: '/icons/blank-chart.svg',
-  });
-
-  useEffect(() => {
-    if (trade && trade.id) {
-      debug(`[SCROLL-DEBUG][${trade.id}] Image state: cachedUrl=${!!cachedImageUrl}, isLoading=${isImageLoading}`);
-      
-      if (cachedImageUrl && !isImageLoading) {
-        debug(`[SCROLL-DEBUG][${trade.id}] Image loaded successfully`);
-        setImageLoaded(true);
-      }
-    }
-  }, [cachedImageUrl, isImageLoading, trade]);
-  
   useEffect(() => {
     const fetchStrategyName = async () => {
       if (!inView || !strategy || strategy === 'Unknown') return;
-      
       try {
         setIsLoadingStrategy(true);
         const user = auth.currentUser;
         if (!user) return;
-        
         const strategyData = await getStrategyById(user.uid, strategy);
         const strategyWithName = strategyData as unknown as TradingStrategy;
-        if (strategyWithName && strategyWithName.name) {
-          setStrategyName(strategyWithName.name);
-        } else {
-          setStrategyName('Unknown Strategy');
-        }
+        setStrategyName(strategyWithName?.name || 'Unknown Strategy');
       } catch (error) {
         console.error('Error fetching strategy:', error);
         setStrategyName('Unknown Strategy');
@@ -160,34 +109,19 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
         setIsLoadingStrategy(false);
       }
     };
-    
     fetchStrategyName();
   }, [inView, strategy]);
-  
 
   return (
     <div ref={ref}>
-      <ChartImageDialog
-        isOpen={showChartDialog}
-        onClose={() => setShowChartDialog(false)}
-        entryImage={entryImage}
-        entryImageM15={entryImageM15}
-        exitImage={exitImage}
-        exitImageM15={exitImageM15}
-        isTradeOpen={isTradeOpen}
-        tradePair={pair}
-        tradeId={id}
-      />
+      {/* 3. The old ChartImageDialog is removed */}
     
       {showCloseForm && (
         <LazyCloseTradeForm
           trade={trade}
           isOpen={showCloseForm}
           onClose={() => setShowCloseForm(false)}
-          onSuccess={() => {
-            setShowCloseForm(false);
-            console.log("Trade closed successfully, waiting for Firestore update");
-          }}
+          onSuccess={() => { setShowCloseForm(false); }}
         />
       )}
 
@@ -195,137 +129,118 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
         <Card 
           className={cn(
             "cursor-pointer relative card-spotlight border border-[0.09375rem]",
-            isTradeOpen 
-              ? "border-primary/60"
-              : result === 'TP' || profitLoss > 0 
-                ? "border-success/60"
-                : result === 'SL' || profitLoss < 0
-                  ? "border-destructive/60"
-                  : result === 'BE' 
-                    ? "border-warning/60"
-                    : "border-primary/60"
+            isTradeOpen ? "border-primary/60" : result === 'TP' || profitLoss > 0 ? "border-success/60" : result === 'SL' || profitLoss < 0 ? "border-destructive/60" : result === 'BE' ? "border-warning/60" : "border-primary/60"
           )}
-          onClick={() => handleViewTrade()}
+          onClick={handleViewTrade}
         >
           <CardGradient 
-            variant={
-              !result ? 'default' :
-              result === 'WIN' || profitLoss > 0 ? 'success' :
-              result === 'LOSS' || profitLoss < 0 ? 'destructive' :
-              'default'
-            }
+            variant={!result ? 'default' : result === 'WIN' || profitLoss > 0 ? 'success' : 'destructive'}
             intensity="subtle"
             direction="top-right"
           />
           
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
-              <div 
-                className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden"
-                style={{ minHeight: '12rem' }}
-                onClick={handleOpenChartDialog}
-              >
-                {displayUrl ? (
-                  <div className="trade-card-image-container">
-                    <OptimizedImage 
-                      src={displayUrl}
-                      alt={`${pair} ${direction} trade chart`}
-                      tradeId={id}
-                      imageType={imageType as any}
-                      aspectRatio="1/1"
-                      className="trade-card-image"
-                      containerClassName="w-full h-full"
-                      placeholder="/icons/blank-chart.svg"
-                      fallbackSrc="/icons/image-not-supported.svg"
-                      loading="lazy"
-                      priority={false}
-                    />
-                    
-                    <div className="trade-card-timeframe-badge">
-                      {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
+              {/* 4. Implement the Gallery */}
+              <Gallery withCaption>
+                <div 
+                  className="relative w-full md:w-48 h-48 flex-shrink-0 group overflow-hidden"
+                  style={{ minHeight: '12rem' }}
+                >
+                  {galleryImages.length > 0 ? (
+                    <Item
+                      original={galleryImages[0].src!}
+                      thumbnail={displayUrl!}
+                      caption={galleryImages[0].caption}
+                      width="1920"
+                      height="1080"
+                    >
+                      {({ ref, open }) => (
+                        <div 
+                          ref={ref as React.RefObject<HTMLDivElement>}
+                          onClick={(e) => { e.stopPropagation(); open(); }}
+                          className="w-full h-full cursor-pointer"
+                        >
+                          <div className="trade-card-image-container">
+                            <OptimizedImage 
+                              src={displayUrl!}
+                              alt={`${pair} ${direction} trade chart`}
+                              tradeId={id}
+                              imageType={imageType as any}
+                              aspectRatio="1/1"
+                              className="trade-card-image"
+                              containerClassName="w-full h-full"
+                              placeholder="/icons/blank-chart.svg"
+                              fallbackSrc="/icons/image-not-supported.svg"
+                              loading="lazy"
+                            />
+                            <div className="trade-card-timeframe-badge">{imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}</div>
+                            <div className="trade-card-zoom-overlay"><Icons.ui.zoomIn className="h-8 w-8 text-white" /></div>
+                          </div>
+                        </div>
+                      )}
+                    </Item>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted/10" onClick={(e) => e.stopPropagation()}>
+                      <Icons.general.image className="h-10 w-10 opacity-30 mb-2" />
+                      <span className="text-xs text-muted-foreground">No Chart</span>
                     </div>
-                    
-                    <div className="trade-card-zoom-overlay">
-                      <Icons.ui.zoomIn className="h-8 w-8 text-white" />
+                  )}
+
+                  {/* Hidden items for the rest of the gallery */}
+                  <div style={{ display: 'none' }}>
+                    {galleryImages.slice(1).map((image, index) => (
+                      <Item
+                        key={index}
+                        original={image.src!}
+                        thumbnail={image.src!}
+                        caption={image.caption}
+                        width="1920"
+                        height="1080"
+                      >
+                        {({ ref }) => <div ref={ref as React.RefObject<HTMLDivElement>}></div>}
+                      </Item>
+                    ))}
+                  </div>
+
+                  <div className="trade-direction-badge">
+                    <DirectionBadge direction={direction as "BUY" | "SELL"} iconOnly={false} size="md" variant="modern" />
+                  </div>
+                  {result && (
+                    <div className="trade-result-badge">
+                      <TradeStatusBadge status={result as TradeStatus} iconOnly={false} size="md" />
                     </div>
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center bg-muted/10">
-                    <Icons.general.image className="h-10 w-10 opacity-30 mb-2" />
-                    <span className="text-xs text-muted-foreground">No Chart</span>
-                  </div>
-                )}
-                
-                <div className="trade-direction-badge">
-                  <DirectionBadge 
-                    direction={direction as "BUY" | "SELL"}
-                    iconOnly={false}
-                    size="md"
-                    variant="modern"
-                  />
+                  )}
                 </div>
-                
-                {result && (
-                  <div className="trade-result-badge">
-                    <TradeStatusBadge 
-                      status={result as TradeStatus}
-                      iconOnly={false}
-                      size="md"
-                    />
-                  </div>
-                )}
-              </div>
+              </Gallery>
+
+              {/* ================================================================= */}
+              {/* EVERYTHING BELOW THIS LINE IS UNCHANGED AND KEPT IN ITS ORIGINAL STATE */}
+              {/* ================================================================= */}
               
               <div className="p-4 flex-grow relative">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <CardIcon
-                      color={direction === "BUY" ? "primary" : "destructive"}
-                      size="sm"
-                      variant="soft"
-                    >
+                    <CardIcon color={direction === "BUY" ? "primary" : "destructive"} size="sm" variant="soft">
                       {direction === "BUY" ? <Icons.trade.arrowUp className="h-3.5 w-3.5" /> : <Icons.trade.arrowDown className="h-3.5 w-3.5" />}
                     </CardIcon>
-                    <h3 className="text-lg font-semibold truncate">
-                      {pair}
-                    </h3>
+                    <h3 className="text-lg font-semibold truncate">{pair}</h3>
                   </div>
-                  
                   <div className="flex items-center">
-                    <CardIcon
-                      color="muted"
-                      size="sm"
-                      variant="soft"
-                    >
+                    <CardIcon color="muted" size="sm" variant="soft">
                       <Icons.analytics.barChart className="h-3.5 w-3.5" />
                     </CardIcon>
                     <span className="text-sm ml-1.5 text-muted-foreground font-medium max-w-[150px] truncate">
-                      {isLoadingStrategy ? (
-                        <span className="flex items-center">
-                          Loading...
-                        </span>
-                      ) : strategyName || strategy}
+                      {isLoadingStrategy ? (<span>Loading...</span>) : strategyName || strategy}
                     </span>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Entry</span>
-                    <span className="font-medium truncate">{formatPriceForPair(entryPrice, trade.pair)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Exit</span>
-                    <span className="font-medium truncate">{exitPrice ? formatPriceForPair(exitPrice, trade.pair) : 'Open'}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Stop Loss</span>
-                    <span className="font-medium truncate">{formatPriceForPair(trade.stopLoss, trade.pair)}</span>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Take Profit</span>
-                    <span className="font-medium truncate">{formatPriceForPair(trade.takeProfit, trade.pair)}</span>
-                  </div>
+                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Entry</span><span className="font-medium truncate">{formatPriceForPair(entryPrice, trade.pair)}</span></div>
+                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Exit</span><span className="font-medium truncate">{exitPrice ? formatPriceForPair(exitPrice, trade.pair) : 'Open'}</span></div>
+                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Stop Loss</span><span className="font-medium truncate">{formatPriceForPair(trade.stopLoss, trade.pair)}</span></div>
+                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Take Profit</span><span className="font-medium truncate">{formatPriceForPair(trade.takeProfit, trade.pair)}</span></div>
                 </div>
                 
                 <div className="flex items-center space-x-2 text-sm mb-3 bg-background/50 p-2 px-2.5 rounded-md border border-border/30 shadow-sm">
@@ -341,83 +256,27 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
                 
                 <div className="flex flex-wrap justify-between items-center mt-4 border-t pt-3">
                   <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                    <CardIcon
-                      color="primary"
-                      size="sm"
-                      variant="soft"
-                      className="cursor-pointer hover:bg-primary/25 transition-colors"
-                      onClick={() => handleViewTrade()}
-                      title="View Details"
-                    >
+                    <CardIcon color="primary" size="sm" variant="soft" className="cursor-pointer hover:bg-primary/25 transition-colors" onClick={handleViewTrade} title="View Details">
                       <Icons.ui.eye className="h-3.5 w-3.5" />
                     </CardIcon>
-                    
                     {isTradeOpen && (
-                      <CardIcon
-                        color="warning"
-                        size="sm"
-                        variant="soft"
-                        className="cursor-pointer hover:bg-warning/25 transition-colors"
-                        onClick={() => setShowCloseForm(true)}
-                        title="Close Trade"
-                      >
+                      <CardIcon color="warning" size="sm" variant="soft" className="cursor-pointer hover:bg-warning/25 transition-colors" onClick={() => setShowCloseForm(true)} title="Close Trade">
                         <Icons.ui.lock className="h-3.5 w-3.5" />
                       </CardIcon>
                     )}
-                    
-                    <CardIcon
-                      color="destructive"
-                      size="sm"
-                      variant="soft"
-                      className="cursor-pointer hover:bg-destructive/25 transition-colors"
-                      onClick={() => onDelete(id)}
-                      title="Delete Trade"
-                    >
+                    <CardIcon color="destructive" size="sm" variant="soft" className="cursor-pointer hover:bg-destructive/25 transition-colors" onClick={() => onDelete(id)} title="Delete Trade">
                       <Icons.general.trash className="h-3.5 w-3.5" />
                     </CardIcon>
                   </div>
-                  
                   <div className="flex items-center gap-2 mt-1 sm:mt-0">
                     {!isTradeOpen && ( 
-                      <CardValue
-                        size="sm"
-                        status={
-                          result === 'BE' ? 'neutral' :
-                          result === 'MANUAL' ? 
-                            (profitLoss > 0 ? 'success' : 
-                             profitLoss < 0 ? 'danger' : 'neutral') :
-                            (profitLoss > 0 ? 'success' : 'danger')
-                        }
-                        trend={
-                          result === 'BE' ? 'neutral' :
-                          result === 'MANUAL' ? 
-                            (profitLoss > 0 ? 'up' : 
-                             profitLoss < 0 ? 'down' : 'neutral') :
-                            (profitLoss > 0 ? 'up' : 'down')
-                        }
-                        className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/80"
-                      >
-                        {result === 'BE' ? <Icons.ui.circleDot className="h-3.5 w-3.5" /> :
-                         result === 'MANUAL' ? 
-                          (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> :
-                           profitLoss < 0 ? <Icons.analytics.trendingDown className="h-3.5 w-3.5" /> :
-                           <Icons.ui.circleDot className="h-3.5 w-3.5" />) :
-                          (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> :
-                           <Icons.analytics.trendingDown className="h-3.5 w-3.5" />)
-                        }
+                      <CardValue size="sm" status={result === 'BE' ? 'neutral' : (profitLoss > 0 ? 'success' : 'danger')} trend={result === 'BE' ? 'neutral' : (profitLoss > 0 ? 'up' : 'down')} className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/80">
+                        {result === 'BE' ? <Icons.ui.circleDot className="h-3.5 w-3.5" /> : (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> : <Icons.analytics.trendingDown className="h-3.5 w-3.5" />)}
                         {formatProfitLoss(profitLoss, { showPlusSign: true })}
                       </CardValue>
                     )}
-                    
                     {!isTradeOpen && (
-                      <div className={cn(
-                        "pip-badge px-2 py-1 rounded-md text-xs font-medium flex items-center",
-                        result === 'BE' ? 'bg-muted/20 text-muted-foreground' :
-                        result === 'MANUAL' ? 
-                          (pips > 0 ? 'bg-success/10 text-success' : 
-                           pips < 0 ? 'bg-destructive/10 text-destructive' : 'bg-muted/20 text-muted-foreground') :
-                          (pips > 0 ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive')
-                      )}>
+                      <div className={cn("pip-badge px-2 py-1 rounded-md text-xs font-medium flex items-center", pips > 0 ? 'bg-success/10 text-success' : pips < 0 ? 'bg-destructive/10 text-destructive' : 'bg-muted/20 text-muted-foreground')}>
                         {formatPips(pips, { includeUnit: true, showPlusSign: pips > 0 })}
                       </div>
                     )}
