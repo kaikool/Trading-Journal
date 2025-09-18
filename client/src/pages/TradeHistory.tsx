@@ -1017,7 +1017,6 @@ export default function TradeHistory() {
                       <HistoryCard 
                         key={`${trade.id}-${updateTrigger}`} 
                         trade={trade} 
-                        onEdit={() => setLocation(`/trade/edit/${trade.id}`)}
                         onDelete={() => {
                           setTradeToDelete(trade);
                           setIsDeleteDialogOpen(true);

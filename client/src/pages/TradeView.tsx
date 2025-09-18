@@ -8,7 +8,7 @@ import { Icons } from "@/components/icons/icons";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { Trade } from "@/types";
 import { useLocation } from "wouter";
-import { LazyTradeViewEdit } from "@/components/trades/TradeView/LazyTradeViewEdit";
+import TradeViewDetails from "@/components/trades/TradeView/TradeViewDetails";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import {
@@ -65,37 +65,21 @@ export default function TradeView() {
     fetchTrade();
   }, [tradeId, userId]);
   
-  // Đăng ký observer để lắng nghe sự thay đổi của trade
-  // Sử dụng TradeUpdateService làm trung tâm thông báo thay vì sử dụng cơ chế revalidate
-  // hoặc invalidate trực tiếp từ queryClient (cách tiếp cận chuẩn hóa toàn bộ ứng dụng)
+  // Observer for real-time updates
   useEffect(() => {
     if (!userId || !tradeId) return;
     
-    // Tạo observer để cập nhật UI khi trade thay đổi - pattern Observer
-    // Interface TradeChangeObserver được định nghĩa trong trade-update-service.ts
     const observer: TradeChangeObserver = {
       onTradesChanged: async (action, changedTradeId) => {
-        // Chỉ cập nhật khi thao tác liên quan đến trade hiện tại
         if (changedTradeId === tradeId) {
-          debug(`Trade ${tradeId} changed, action: ${action}, refreshing view`);
-          
           if (action === 'delete') {
-            // Trở về trang lịch sử nếu trade bị xóa
-            toast({
-              title: "Trade deleted",
-              description: "This trade has been deleted"
-            });
+            toast({ title: "Trade deleted", description: "This trade has been deleted" });
             navigate("/history");
             return;
           }
-          
           try {
-            // Lấy dữ liệu mới nhất sau khi cập nhật
-            // Không cần gọi queryClient.invalidateQueries vì TradeUpdateService đã xử lý
             const updatedTrade = await getTradeById(userId, tradeId);
-            if (updatedTrade) {
-              setTrade(updatedTrade as Trade);
-            }
+            if (updatedTrade) setTrade(updatedTrade as Trade);
           } catch (error) {
             logError("Failed to refresh trade after update:", error);
           }
@@ -103,75 +87,28 @@ export default function TradeView() {
       }
     };
     
-    // Đăng ký observer với TradeUpdateService để nhận thông báo cập nhật
-    // tradeUpdateService là singleton nên tất cả các component dùng chung một instance
     const unregister = tradeUpdateService.registerObserver(observer);
-    
-    // Hủy đăng ký khi component unmount
     return unregister;
   }, [userId, tradeId, navigate, toast]);
 
-  // Navigate back
-  const handleBack = () => {
-    navigate("/history");
-  };
-
-  // Handle initiating delete trade
-  const handleDelete = (tradeId: string) => {
-    if (!userId) return;
-    setIsDeleteDialogOpen(true);
-  };
+  const handleBack = () => navigate("/history");
+  const handleDelete = () => setIsDeleteDialogOpen(true);
   
-  // Handle trade deletion after confirmation
   const handleDeleteConfirm = async () => {
     if (!userId || !tradeId) return;
     
     try {
       setIsLoading(true);
-      // Sử dụng deleteTrade từ firebase.ts
-      // deleteTrade đã được cập nhật để gọi tradeUpdateService.notifyTradeDeleted
-      // Không cần cập nhật UI thủ công - TradeUpdateService sẽ thông báo cho observers
       await deleteTrade(userId, tradeId);
-      toast({
-        title: "Trade deleted",
-        description: "The trade has been permanently deleted",
-      });
-      // Không cần navigate vì observer đã xử lý
-      // Nhưng vẫn giữ lại để đảm bảo UI nhất quán
+      toast({ title: "Trade deleted", description: "The trade has been permanently deleted" });
       navigate("/history");
     } catch (error) {
       logError("Error deleting trade:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete trade. Please try again.",
-      });
+      toast({ variant: "destructive", title: "Error", description: "Failed to delete trade. Please try again." });
       setIsLoading(false);
     } finally {
       setIsDeleteDialogOpen(false);
     }
-  };
-
-  // Handle edit success
-  const handleEditSuccess = () => {
-    toast({
-      title: "Trade updated",
-      description: "Your trade has been updated successfully",
-    });
-    // Không cần refresh thủ công - TradeUpdateService sẽ xử lý
-  };
-
-  // Handle edit error
-  const handleEditError = (error: unknown) => {
-    toast({
-      variant: "destructive",
-      title: "Failed to update trade",
-      description: typeof error === 'string' 
-        ? error 
-        : error instanceof Error 
-          ? error.message 
-          : "An error occurred",
-    });
   };
 
   return (
@@ -184,76 +121,42 @@ export default function TradeView() {
       </div>
       
       {isLoading ? (
-        <AppSkeleton 
-          level={SkeletonLevel.FORM} 
-          className="py-4"
-        />
+        <AppSkeleton level={SkeletonLevel.FORM} className="py-4" />
       ) : error ? (
         <Card className="mb-4 overflow-hidden">
           <CardContent className="py-8 px-4 sm:p-6 text-center">
             <h3 className="text-lg font-medium text-destructive mb-2">{error}</h3>
-            <p className="text-muted-foreground mb-4">
-              The trade could not be loaded. Please try again later.
-            </p>
-            <Button 
-              variant="outline" 
-              onClick={handleBack}
-            >
-              Return to Trade History
-            </Button>
+            <p className="text-muted-foreground mb-4">The trade could not be loaded. Please try again later.</p>
+            <Button variant="outline" onClick={handleBack}>Return to Trade History</Button>
           </CardContent>
         </Card>
       ) : trade ? (
-        <>
-          <LazyTradeViewEdit
+        <TradeViewDetails
             trade={trade}
-            userId={userId || ""}
-            isLoading={isLoading}
-            onEdit={(isSubmitting) => setIsLoading(isSubmitting)}
-            onSuccess={handleEditSuccess}
-            onError={handleEditError}
             onDelete={handleDelete}
             onBack={handleBack}
-          />
-        </>
+        />
       ) : (
         <Card className="mb-4 overflow-hidden">
           <CardContent className="py-8 px-4 sm:p-6 text-center">
             <h3 className="text-lg font-medium text-destructive mb-2">Trade not found</h3>
-            <p className="text-muted-foreground mb-4">
-              The trade you're looking for doesn't exist or might have been deleted.
-            </p>
-            <Button 
-              variant="outline" 
-              onClick={handleBack}
-            >
-              Return to Trade History
-            </Button>
+            <p className="text-muted-foreground mb-4">The trade you're looking for doesn't exist or might have been deleted.</p>
+            <Button variant="outline" onClick={handleBack}>Return to Trade History</Button>
           </CardContent>
         </Card>
       )}
       
-      {/* Dialog xác nhận xóa giao dịch */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent className="safe-area-p">
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Trade Deletion</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this 
-              <strong> {trade?.pair} {trade?.direction} </strong>
-              trade? This action cannot be undone.
+              Are you sure you want to delete this <strong> {trade?.pair} {trade?.direction} </strong> trade? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteConfirm}
-              className="bg-destructive hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

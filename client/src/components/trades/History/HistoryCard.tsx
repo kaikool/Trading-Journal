@@ -25,55 +25,34 @@ import { useCachedImage } from "@/hooks/use-cached-image";
 import { TradingStrategy } from "@/types";
 import { debug } from "@/lib/debug";
 
-// Component này không gọi trực tiếp TradeUpdateService
-// được cập nhật qua:
-// 1. Key prop dựa trên updateTrigger trong TradeHistory.tsx
-// 2. Tham chiếu tới prop trade mới khi danh sách trades thay đổi
-// 3. Memo hóa để tối ưu hiệu suất khi không cần thiết re-render
-
 interface TradeHistoryCardProps {
   trade: any;
-  onEdit: () => void;
   onDelete: (tradeId: string) => void;
 }
 
-/**
- * LazyTradeHistoryCard - Card component for displaying trade history with lazy loading
- * 
- * This component:
- * 1. Uses lazy loading for images with threshold and IntersectionObserver
- * 2. Has been optimized for performance with memo, useRef, and callback functions
- * 3. Only renders content when in viewport (using react-intersection-observer)
- */
-function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps) {
+function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
   const [, setLocation] = useLocation();
   const isMobile = useIsMobile();
   
-  // Sử dụng react-intersection-observer để chỉ render khi card nằm trong viewport
   const { ref, inView } = useInView({
-    threshold: 0.1,     // Trigger khi 10% card hiện ra trong viewport
-    triggerOnce: true,  // Chỉ trigger một lần để tránh re-render liên tục
-    rootMargin: '100px', // Giảm khoảng cách pre-load để giảm số lượng card cần theo dõi
+    threshold: 0.1,
+    triggerOnce: true,
+    rootMargin: '100px',
   });
   
-  // Log trạng thái inView để debug
   useEffect(() => {
     if (trade && trade.id) {
       debug(`[SCROLL-DEBUG][${trade.id}] Card inView changed: ${inView}`);
     }
   }, [inView, trade]);
   
-  // Lazy state cho hình ảnh
   const [imageLoaded, setImageLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const [showCloseForm, setShowCloseForm] = useState(false);
-  // State cho dialog xem ảnh biểu đồ
   const [showChartDialog, setShowChartDialog] = useState(false);
-  // State cho strategy name
   const [strategyName, setStrategyName] = useState<string>('');
   const [isLoadingStrategy, setIsLoadingStrategy] = useState<boolean>(false);
   
-  // Lấy giá trị từ trade một cách an toàn
   const {
     id = '', 
     pair = '',
@@ -92,23 +71,13 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     exitImageM15
   } = trade || {};
   
-  // Calculate time difference in user-friendly format
   const createdDateStr = createdAt ? formatTimestamp(createdAt) : 'Unknown';
   const closeDateStr = closeDate ? formatTimestamp(closeDate) : 'Open';
-  
-  // Kiểm tra nếu giao dịch đang mở (chưa có closeDate hoặc result)
   const isTradeOpen = !closeDate && !result;
   
-  // Only handle user interaction if card is in view
   const handleViewTrade = () => {
     if (inView) {
       setLocation(`/trade/view/${id}`);
-    }
-  };
-  
-  const handleEdit = () => {
-    if (inView) {
-      onEdit();
     }
   };
   
@@ -124,7 +93,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     }
   };
   
-  // Handler để mở dialog xem ảnh
   const handleOpenChartDialog = (e: React.MouseEvent) => {
     if (inView) {
       e.stopPropagation();
@@ -132,29 +100,22 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     }
   };
   
-  // Xác định ảnh nào sẽ hiển thị dựa trên trạng thái lệnh và loại ảnh
   const { displayUrl, imageType } = useMemo(() => {
-    // Nếu lệnh chưa đóng, hiển thị ảnh M15 lúc vào lệnh
     if (isTradeOpen && entryImageM15) {
       return { displayUrl: entryImageM15, imageType: 'entryM15' };
     }
-    // Nếu lệnh đã đóng, hiển thị ảnh M15 lúc đóng lệnh (nếu có)
     else if (!isTradeOpen && exitImageM15) {
       return { displayUrl: exitImageM15, imageType: 'exitM15' };
     }
-    // Fallback: ảnh H4 lúc vào lệnh nếu có
     else if (entryImage) {
       return { displayUrl: entryImage, imageType: 'entryH4' };
     }
-    // Fallback: ảnh H4 lúc đóng lệnh nếu có
     else if (exitImage) {
       return { displayUrl: exitImage, imageType: 'exitH4' };
     }
-    // Không có ảnh
     return { displayUrl: null, imageType: '' };
   }, [isTradeOpen, entryImage, entryImageM15, exitImage, exitImageM15]);
 
-  // Sử dụng hook cache ảnh cho hiệu suất tốt hơn
   const { 
     imageUrl: cachedImageUrl, 
     isLoading: isImageLoading, 
@@ -165,7 +126,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     placeholder: '/icons/blank-chart.svg',
   });
 
-  // Theo dõi trạng thái ảnh
   useEffect(() => {
     if (trade && trade.id) {
       debug(`[SCROLL-DEBUG][${trade.id}] Image state: cachedUrl=${!!cachedImageUrl}, isLoading=${isImageLoading}`);
@@ -177,7 +137,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
     }
   }, [cachedImageUrl, isImageLoading, trade]);
   
-  // Load strategy name from ID when component is in view
   useEffect(() => {
     const fetchStrategyName = async () => {
       if (!inView || !strategy || strategy === 'Unknown') return;
@@ -188,7 +147,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
         if (!user) return;
         
         const strategyData = await getStrategyById(user.uid, strategy);
-        // TypeScript cast to make sure we have the right type
         const strategyWithName = strategyData as unknown as TradingStrategy;
         if (strategyWithName && strategyWithName.name) {
           setStrategyName(strategyWithName.name);
@@ -207,11 +165,8 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
   }, [inView, strategy]);
   
 
-
-  // Optimized rendering with conditions
   return (
     <div ref={ref}>
-      {/* Dialog cho xem ảnh biểu đồ */}
       <ChartImageDialog
         isOpen={showChartDialog}
         onClose={() => setShowChartDialog(false)}
@@ -224,7 +179,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
         tradeId={id}
       />
     
-      {/* Form đóng giao dịch */}
       {showCloseForm && (
         <LazyCloseTradeForm
           trade={trade}
@@ -241,20 +195,18 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
         <Card 
           className={cn(
             "cursor-pointer relative card-spotlight border border-[0.09375rem]",
-            // Thêm viền màu theo trạng thái giao dịch
             isTradeOpen 
-              ? "border-primary/60" // Giao dịch đang mở
+              ? "border-primary/60"
               : result === 'TP' || profitLoss > 0 
-                ? "border-success/60" // Take profit hoặc lãi
+                ? "border-success/60"
                 : result === 'SL' || profitLoss < 0
-                  ? "border-destructive/60" // Stop loss hoặc lỗ
+                  ? "border-destructive/60"
                   : result === 'BE' 
-                    ? "border-warning/60" // Break even
-                    : "border-primary/60" // Mặc định hoặc đóng thủ công
+                    ? "border-warning/60"
+                    : "border-primary/60"
           )}
           onClick={() => handleViewTrade()}
         >
-          {/* Gradient background phù hợp với loại giao dịch */}
           <CardGradient 
             variant={
               !result ? 'default' :
@@ -268,10 +220,9 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
           
           <CardContent className="p-0">
             <div className="flex flex-col md:flex-row">
-              {/* Thumbnail container with CardImage */}
               <div 
                 className="relative w-full md:w-48 h-48 flex-shrink-0 cursor-pointer group overflow-hidden"
-                style={{ minHeight: '12rem' }} // Đặt chiều cao tối thiểu để tránh layout shift
+                style={{ minHeight: '12rem' }}
                 onClick={handleOpenChartDialog}
               >
                 {displayUrl ? (
@@ -290,12 +241,10 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       priority={false}
                     />
                     
-                    {/* Timeframe badge */}
                     <div className="trade-card-timeframe-badge">
                       {imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}
                     </div>
                     
-                    {/* Zoom overlay icon that appears on hover */}
                     <div className="trade-card-zoom-overlay">
                       <Icons.ui.zoomIn className="h-8 w-8 text-white" />
                     </div>
@@ -307,7 +256,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                   </div>
                 )}
                 
-                {/* Trade direction badge */}
                 <div className="trade-direction-badge">
                   <DirectionBadge 
                     direction={direction as "BUY" | "SELL"}
@@ -317,7 +265,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                   />
                 </div>
                 
-                {/* Result badge if trade is closed */}
                 {result && (
                   <div className="trade-result-badge">
                     <TradeStatusBadge 
@@ -329,7 +276,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 )}
               </div>
               
-              {/* Trade details */}
               <div className="p-4 flex-grow relative">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -395,7 +341,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                 
                 <div className="flex flex-wrap justify-between items-center mt-4 border-t pt-3">
                   <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                    {/* Nút action icons với CardIcon */}
                     <CardIcon
                       color="primary"
                       size="sm"
@@ -405,17 +350,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
                       title="View Details"
                     >
                       <Icons.ui.eye className="h-3.5 w-3.5" />
-                    </CardIcon>
-                    
-                    <CardIcon
-                      color="primary"
-                      size="sm"
-                      variant="soft"
-                      className="cursor-pointer hover:bg-primary/25 transition-colors"
-                      onClick={() => onEdit()}
-                      title="Edit Trade"
-                    >
-                      <Icons.general.edit className="h-3.5 w-3.5" />
                     </CardIcon>
                     
                     {isTradeOpen && (
@@ -494,7 +428,6 @@ function LazyTradeHistoryCard({ trade, onEdit, onDelete }: TradeHistoryCardProps
           </CardContent>
         </Card>
       ) : (
-        // Empty placeholder when not in view
         <div className="w-full h-48 bg-background/5 rounded-md"></div>
       )}
     </div>

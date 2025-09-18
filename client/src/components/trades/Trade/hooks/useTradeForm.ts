@@ -52,7 +52,7 @@ export function useTradeForm(props: TradeFormProps) {
       strategy: "",
       techPattern: "",
       emotion: "",
-      followedPlan: true,
+      followedPlan: false,
       enteredEarly: false,
       revenge: false,
       overLeveraged: false,
