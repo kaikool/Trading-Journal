@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams } from "wouter";
-import { auth, getTradeById, deleteTrade } from "@/lib/firebase";
+import { useParams, useLocation } from "wouter";
+// Bỏ getTradeById, thêm onTradeSnapshot
+import { auth, onTradeSnapshot, deleteTrade } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Icons } from "@/components/icons/icons";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { Trade } from "@/types";
-import { useLocation } from "wouter";
 import TradeViewDetails from "@/components/trades/TradeView/TradeViewDetails";
-import { debug, logError } from "@/lib/debug";
-import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
+import { logError, debug } from "@/lib/debug";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +20,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+// LazyCloseTradeForm được chuyển vào đây để quản lý trạng thái đóng lệnh
+import { LazyCloseTradeForm } from "@/components/trades/TradeView/LazyCloseTradeForm";
 
 export default function TradeView() {
   const { tradeId } = useParams();
@@ -31,65 +32,39 @@ export default function TradeView() {
   const userId = auth.currentUser?.uid;
   const [_, navigate] = useLocation();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  // State để quản lý việc mở/đóng form
+  const [isCloseFormOpen, setCloseFormOpen] = useState(false);
 
-  // Fetch trade data
+  // === LOGIC LẤY DỮ LIỆU MỚI, SỬ DỤNG ONTRADESNAPSHOT ===
   useEffect(() => {
-    const fetchTrade = async () => {
-      if (!tradeId || !userId) {
-        setError("Trade ID or user ID is missing");
-        setIsLoading(false);
-        return;
+    if (!userId || !tradeId) {
+      setError("User or Trade ID is missing.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Bắt đầu lắng nghe thay đổi của trade trong thời gian thực
+    const unsubscribe = onTradeSnapshot(userId, tradeId, (tradeData) => {
+      if (tradeData) {
+        debug("Real-time update received for trade:", tradeData);
+        setTrade(tradeData as Trade);
+        setError(null);
+      } else {
+        // Xử lý trường hợp trade bị xóa hoặc không tìm thấy
+        setError("Trade not found or you do not have permission to view it.");
+        setTrade(null);
+        toast({ title: "Trade Removed", description: "This trade may have been deleted." });
       }
-
-      try {
-        debug(`Fetching trade with ID: ${tradeId}`);
-        const tradeData = await getTradeById(userId, tradeId);
-
-        if (!tradeData) {
-          setError("Trade not found");
-          setIsLoading(false);
-          return;
-        }
-
-        debug("Trade data loaded:", tradeData);
-        const trade = tradeData as Trade;
-        setTrade(trade);
-      } catch (err) {
-        logError("Error fetching trade:", err);
-        setError("Failed to load trade data");
-      } finally {
+      // Dừng loading chỉ sau lần fetch dữ liệu đầu tiên
+      if (isLoading) {
         setIsLoading(false);
       }
-    };
+    });
 
-    fetchTrade();
-  }, [tradeId, userId]);
-  
-  // Observer for real-time updates
-  useEffect(() => {
-    if (!userId || !tradeId) return;
+    // Quan trọng: Dọn dẹp listener khi component bị hủy
+    return () => unsubscribe();
     
-    const observer: TradeChangeObserver = {
-      onTradesChanged: async (action, changedTradeId) => {
-        if (changedTradeId === tradeId) {
-          if (action === 'delete') {
-            toast({ title: "Trade deleted", description: "This trade has been deleted" });
-            navigate("/history");
-            return;
-          }
-          try {
-            const updatedTrade = await getTradeById(userId, tradeId);
-            if (updatedTrade) setTrade(updatedTrade as Trade);
-          } catch (error) {
-            logError("Failed to refresh trade after update:", error);
-          }
-        }
-      }
-    };
-    
-    const unregister = tradeUpdateService.registerObserver(observer);
-    return unregister;
-  }, [userId, tradeId, navigate, toast]);
+  }, [tradeId, userId, isLoading]); // Thêm `isLoading` để kiểm soát lần đầu
 
   const handleBack = () => navigate("/history");
   const handleDelete = () => setIsDeleteDialogOpen(true);
@@ -97,19 +72,43 @@ export default function TradeView() {
   const handleDeleteConfirm = async () => {
     if (!userId || !tradeId) return;
     
+    setIsDeleteDialogOpen(false); // Đóng dialog ngay
     try {
-      setIsLoading(true);
       await deleteTrade(userId, tradeId);
-      toast({ title: "Trade deleted", description: "The trade has been permanently deleted" });
+      toast({ title: "Trade Deleted", description: "The trade has been permanently deleted." });
       navigate("/history");
-    } catch (error) {
-      logError("Error deleting trade:", error);
-      toast({ variant: "destructive", title: "Error", description: "Failed to delete trade. Please try again." });
-      setIsLoading(false);
-    } finally {
-      setIsDeleteDialogOpen(false);
+    } catch (err) {
+      logError("Error deleting trade:", err);
+      toast({ variant: "destructive", title: "Error", description: "Failed to delete trade." });
     }
   };
+
+  // === RENDER LOGIC ===
+  if (isLoading) {
+    return (
+      <div className="container max-w-5xl px-0 sm:px-4 mt-12">
+        <AppSkeleton level={SkeletonLevel.FORM} className="py-4" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container max-w-5xl px-0 sm:px-4 mt-4">
+        <Card className="mb-4 overflow-hidden">
+          <CardContent className="py-8 px-4 sm:p-6 text-center">
+            <h3 className="text-lg font-medium text-destructive mb-2">{error}</h3>
+            <Button variant="outline" onClick={handleBack}>Return to Trade History</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!trade) {
+    // Trường hợp này đã được xử lý bởi `error` state, nhưng vẫn để dự phòng
+    return null;
+  }
 
   return (
     <div className="container max-w-5xl px-0 sm:px-4">
@@ -120,30 +119,37 @@ export default function TradeView() {
         </Button>
       </div>
       
-      {isLoading ? (
-        <AppSkeleton level={SkeletonLevel.FORM} className="py-4" />
-      ) : error ? (
-        <Card className="mb-4 overflow-hidden">
-          <CardContent className="py-8 px-4 sm:p-6 text-center">
-            <h3 className="text-lg font-medium text-destructive mb-2">{error}</h3>
-            <p className="text-muted-foreground mb-4">The trade could not be loaded. Please try again later.</p>
-            <Button variant="outline" onClick={handleBack}>Return to Trade History</Button>
-          </CardContent>
-        </Card>
-      ) : trade ? (
-        <TradeViewDetails
-            trade={trade}
-            onDelete={handleDelete}
-            onBack={handleBack}
+      <TradeViewDetails
+        trade={trade}
+        onDelete={handleDelete}
+        onBack={handleBack}
+      />
+      
+      {/* Nút Close Trade chỉ hiện khi trade đang mở */}
+      {trade.isOpen && (
+        <div className="mt-6 flex justify-center sm:justify-end">
+          <Button onClick={() => setCloseFormOpen(true)} size="lg" className="w-full sm:w-auto">
+            <Icons.ui.unlock className="mr-2 h-4 w-4" />
+            Close Trade Position
+          </Button>
+        </div>
+      )}
+
+      {/* Form đóng lệnh được tải lười */}
+      {isCloseFormOpen && (
+        <LazyCloseTradeForm 
+          trade={trade} 
+          isOpen={isCloseFormOpen} 
+          onClose={() => setCloseFormOpen(false)} 
+          onSuccess={() => {
+            // Listener sẽ tự động cập nhật UI, chúng ta chỉ cần đóng form
+            setCloseFormOpen(false);
+            toast({
+              title: "Trade Closed",
+              description: "The trade details are being updated.",
+            });
+          }}
         />
-      ) : (
-        <Card className="mb-4 overflow-hidden">
-          <CardContent className="py-8 px-4 sm:p-6 text-center">
-            <h3 className="text-lg font-medium text-destructive mb-2">Trade not found</h3>
-            <p className="text-muted-foreground mb-4">The trade you're looking for doesn't exist or might have been deleted.</p>
-            <Button variant="outline" onClick={handleBack}>Return to Trade History</Button>
-          </CardContent>
-        </Card>
       )}
       
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

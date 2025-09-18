@@ -384,6 +384,42 @@ async function getTradeById(userId: string, tradeId: string) {
   throw new Error("Trade not found");
 }
 
+function onTradeSnapshot(
+  userId: string,
+  tradeId: string,
+  callback: (trade: any) => void
+) {
+  if (!userId || !tradeId) {
+    logWarning("onTradeSnapshot called with invalid userId or tradeId");
+    return () => {}; // Trả về một hàm unsubscribe rỗng
+  }
+
+  const tradeRef = doc(db, "users", userId, "trades", tradeId);
+
+  debug(`Setting up snapshot listener for trade: ${tradeId}`);
+
+  const unsubscribe = onSnapshot(
+    tradeRef,
+    (docSnap) => {
+      if (docSnap.exists()) {
+        debug(`[REALTIME-UPDATE] Snapshot received for trade ${tradeId}`);
+        // Gọi callback với dữ liệu mới nhất
+        callback({ id: docSnap.id, ...docSnap.data() });
+      } else {
+        logWarning(`Trade ${tradeId} not found in snapshot listener.`);
+        // Báo cho component biết rằng trade không còn tồn tại
+        callback(null);
+      }
+    },
+    (error) => {
+      logError(`Error in onTradeSnapshot for trade ${tradeId}:`, error);
+    }
+  );
+
+  // Trả về hàm unsubscribe để cleanup
+  return unsubscribe;
+}
+
 /* ---------------------------------------------------------
  * Batch update helper
  * --------------------------------------------------------- */
@@ -545,7 +581,13 @@ async function updateTrade(
     const isClosingTrade =
       tradeData.isOpen === false &&
       (currentTrade.isOpen === true || currentTrade.isOpen === undefined);
-
+    
+    // Nếu đây là hành động đóng lệnh, hãy yêu cầu backend chụp ảnh.
+    if (isClosingTrade) {
+      tradeData.captureStatus = "pending";
+      debug(`Trade ${tradeId} is closing, setting captureStatus to 'pending'`);
+    }
+    
     if (isClosingTrade || options.useBatch) {
       await updateTradeWithBatch(userId, tradeId, tradeData);
     } else {
@@ -1862,6 +1904,7 @@ export {
   getAllTrades,
   getPaginatedTrades,
   getTradeById,
+  onTradeSnapshot,
   updateTrade,
   updateTradeWithBatch,
   deleteTrade,
