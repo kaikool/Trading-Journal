@@ -84,13 +84,19 @@ export default function CloseTradeForm({ trade, isOpen, onClose, onSuccess }: Cl
   const updateExitPrice = (result: TradeResult) => {
     switch (result) {
       case "TP":
-        setValue("exitPrice", trade.takeProfit?.toString() || "");
+        if (trade.takeProfit) {
+          setValue("exitPrice", formatPrice(trade.takeProfit, trade.pair as CurrencyPair));
+        }
         break;
       case "SL":
-        setValue("exitPrice", trade.stopLoss?.toString() || "");
+        if (trade.stopLoss) {
+          setValue("exitPrice", formatPrice(trade.stopLoss, trade.pair as CurrencyPair));
+        }
         break;
       case "BE":
-        setValue("exitPrice", trade.entryPrice?.toString() || "");
+        if (trade.entryPrice) {
+          setValue("exitPrice", formatPrice(trade.entryPrice, trade.pair as CurrencyPair));
+        }
         break;
       case "MANUAL":
         // Reset price only if coming from preset options
