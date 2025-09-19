@@ -75,7 +75,6 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
     }
   };
 
-  // 2. Prepare images for the gallery
   const galleryImages = useMemo(() => [
     { src: entryImage, caption: 'Entry Chart (H4)' },
     { src: entryImageM15, caption: 'Entry Chart (M15)' },
@@ -83,7 +82,6 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
     { src: exitImageM15, caption: 'Exit Chart (M15)' },
   ].filter(img => img.src), [entryImage, entryImageM15, exitImage, exitImageM15]);
 
-  // Determine the primary image to show in the thumbnail
   const { displayUrl, imageType } = useMemo(() => {
     if (!isTradeOpen && exitImage) return { displayUrl: exitImage, imageType: 'exitH4' };
     if (entryImage) return { displayUrl: entryImage, imageType: 'entryH4' };
@@ -114,8 +112,6 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
 
   return (
     <div ref={ref}>
-      {/* 3. The old ChartImageDialog is removed */}
-    
       {showCloseForm && (
         <LazyCloseTradeForm
           trade={trade}
@@ -140,12 +136,11 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
           />
           
           <CardContent className="p-0">
-            <div className="flex flex-col md:flex-row">
-              {/* 4. Implement the Gallery */}
+            <div className="flex flex-col">
               <Gallery withCaption>
                 <div 
-                  className="relative w-full md:w-48 h-48 flex-shrink-0 group overflow-hidden"
-                  style={{ minHeight: '12rem' }}
+                  className="relative w-full h-56 group overflow-hidden"
+                  style={{ minHeight: '18rem' }}
                 >
                   {galleryImages.length > 0 ? (
                     <Item
@@ -187,7 +182,6 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
                     </div>
                   )}
 
-                  {/* Hidden items for the rest of the gallery */}
                   <div style={{ display: 'none' }}>
                     {galleryImages.slice(1).map((image, index) => (
                       <Item
@@ -214,44 +208,42 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
                 </div>
               </Gallery>
 
-              {/* ================================================================= */}
-              {/* EVERYTHING BELOW THIS LINE IS UNCHANGED AND KEPT IN ITS ORIGINAL STATE */}
-              {/* ================================================================= */}
-              
-              <div className="p-4 flex-grow relative">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <CardIcon color={direction === "BUY" ? "primary" : "destructive"} size="sm" variant="soft">
-                      {direction === "BUY" ? <Icons.trade.arrowUp className="h-3.5 w-3.5" /> : <Icons.trade.arrowDown className="h-3.5 w-3.5" />}
-                    </CardIcon>
-                    <h3 className="text-lg font-semibold truncate">{pair}</h3>
+              <div className="p-4 relative flex flex-col flex-grow justify-between min-h-[16rem]">
+                <div>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <CardIcon color={direction === "BUY" ? "primary" : "destructive"} size="sm" variant="soft">
+                        {direction === "BUY" ? <Icons.trade.arrowUp className="h-3.5 w-3.5" /> : <Icons.trade.arrowDown className="h-3.5 w-3.5" />}
+                      </CardIcon>
+                      <h3 className="text-lg font-semibold truncate">{pair}</h3>
+                    </div>
+                    <div className="flex items-center mt-2 sm:mt-0">
+                      <CardIcon color="muted" size="sm" variant="soft">
+                        <Icons.analytics.barChart className="h-3.5 w-3.5" />
+                      </CardIcon>
+                      <span className="text-sm ml-1.5 text-muted-foreground font-medium max-w-[150px] truncate">
+                        {isLoadingStrategy ? (<span>Loading...</span>) : strategyName || strategy}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center">
-                    <CardIcon color="muted" size="sm" variant="soft">
-                      <Icons.analytics.barChart className="h-3.5 w-3.5" />
-                    </CardIcon>
-                    <span className="text-sm ml-1.5 text-muted-foreground font-medium max-w-[150px] truncate">
-                      {isLoadingStrategy ? (<span>Loading...</span>) : strategyName || strategy}
-                    </span>
+                  
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+                    <div className="flex flex-col"><span className="text-xs text-muted-foreground">Entry</span><span className="font-medium truncate">{formatPriceForPair(entryPrice, trade.pair)}</span></div>
+                    <div className="flex flex-col"><span className="text-xs text-muted-foreground">Exit</span><span className="font-medium truncate">{exitPrice ? formatPriceForPair(exitPrice, trade.pair) : 'Open'}</span></div>
+                    <div className="flex flex-col"><span className="text-xs text-muted-foreground">Stop Loss</span><span className="font-medium truncate">{formatPriceForPair(trade.stopLoss, trade.pair)}</span></div>
+                    <div className="flex flex-col"><span className="text-xs text-muted-foreground">Take Profit</span><span className="font-medium truncate">{formatPriceForPair(trade.takeProfit, trade.pair)}</span></div>
                   </div>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
-                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Entry</span><span className="font-medium truncate">{formatPriceForPair(entryPrice, trade.pair)}</span></div>
-                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Exit</span><span className="font-medium truncate">{exitPrice ? formatPriceForPair(exitPrice, trade.pair) : 'Open'}</span></div>
-                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Stop Loss</span><span className="font-medium truncate">{formatPriceForPair(trade.stopLoss, trade.pair)}</span></div>
-                  <div className="flex flex-col"><span className="text-xs text-muted-foreground">Take Profit</span><span className="font-medium truncate">{formatPriceForPair(trade.takeProfit, trade.pair)}</span></div>
-                </div>
-                
-                <div className="flex items-center space-x-2 text-sm mb-3 bg-background/50 p-2 px-2.5 rounded-md border border-border/30 shadow-sm">
-                  <span className="text-xs text-muted-foreground">Date:</span> 
-                  <span className="font-medium truncate">{createdDateStr}</span>
-                  {closeDate && (
-                    <>
-                      <span className="text-muted-foreground/60 mx-1">→</span>
-                      <span className="font-medium truncate">{closeDateStr}</span>
-                    </>
-                  )}
+                  
+                  <div className="flex items-center space-x-2 text-sm mb-3 bg-background/50 p-2 px-2.5 rounded-md border border-border/30 shadow-sm">
+                    <span className="text-xs text-muted-foreground">Date:</span> 
+                    <span className="font-medium truncate">{createdDateStr}</span>
+                    {closeDate && (
+                      <>
+                        <span className="text-muted-foreground/60 mx-1">→</span>
+                        <span className="font-medium truncate">{closeDateStr}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="flex flex-wrap justify-between items-center mt-4 border-t pt-3">
@@ -268,7 +260,7 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
                       <Icons.general.trash className="h-3.5 w-3.5" />
                     </CardIcon>
                   </div>
-                  <div className="flex items-center gap-2 mt-1 sm:mt-0">
+                  <div className="flex items-center gap-2 mt-2 sm:mt-0">
                     {!isTradeOpen && ( 
                       <CardValue size="sm" status={result === 'BE' ? 'neutral' : (profitLoss > 0 ? 'success' : 'danger')} trend={result === 'BE' ? 'neutral' : (profitLoss > 0 ? 'up' : 'down')} className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/80">
                         {result === 'BE' ? <Icons.ui.circleDot className="h-3.5 w-3.5" /> : (profitLoss > 0 ? <Icons.analytics.trendingUp className="h-3.5 w-3.5" /> : <Icons.analytics.trendingDown className="h-3.5 w-3.5" />)}

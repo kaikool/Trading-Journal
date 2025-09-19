@@ -75,7 +75,8 @@ export function useTradeForm(props: TradeFormProps) {
 
   const strategyManagement = useStrategyManagement({
     form,
-    userId
+    userId,
+    isEditMode
   });
 
   const calculations = useTradeCalculations({

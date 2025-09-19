@@ -1003,7 +1003,7 @@ export default function TradeHistory() {
       <div className="w-full space-y-5 overflow-hidden">
         {!isLoading && trades.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
               <AnimatePresence>
                 {trades
                   .filter(trade => !deletingTradeIds.includes(trade.id))

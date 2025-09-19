@@ -845,7 +845,7 @@ async function getStrategies(
       const strategy: TradingStrategy & { id: string } = {
         id: doc.id,
         userId: data.userId || userId,
-        name: data.name || "",
+        name: data.name || "Unnamed Strategy",
         description: data.description || "",
         rules: Array.isArray(data.rules) ? data.rules : [],
         entryConditions: Array.isArray(data.entryConditions) ? data.entryConditions : [],
@@ -893,7 +893,7 @@ function onStrategiesSnapshot(
           return {
             id: doc.id,
             userId: data.userId || userId,
-            name: data.name || "",
+            name: data.name || "Unnamed Strategy",
             description: data.description || "",
             rules: Array.isArray(data.rules) ? data.rules : [],
             entryConditions: Array.isArray(data.entryConditions) ? data.entryConditions : [],
@@ -942,7 +942,7 @@ async function getStrategyById(userId: string, strategyId: string) {
     const strategy = {
       id: docSnap.id,
       userId: data.userId || userId,
-      name: data.name || "",
+      name: data.name || "Unnamed Strategy",
       description: data.description || "",
       rules: Array.isArray(data.rules) ? data.rules : [],
       entryConditions: Array.isArray(data.entryConditions) ? data.entryConditions : [],

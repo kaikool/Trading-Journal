@@ -1,9 +1,21 @@
 
 import { useFormContext } from "react-hook-form";
-import { FormField, FormItem, FormControl } from "@/components/ui/form";
+import { FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { TradeFormValues } from '../types';
+
+// Options for the emotion dropdown
+const EMOTION_OPTIONS = [
+  { value: "excited", label: "Excited" },
+  { value: "fearful", label: "Fearful" },
+  { value: "greedy", label: "Greedy" },
+  { value: "patient", label: "Patient" },
+  { value: "neutral", label: "Neutral" },
+  { value: "anxious", label: "Anxious" },
+  { value: "confident", label: "Confident" },
+];
 
 export function TradePsychology() {
   const form = useFormContext<TradeFormValues>();
@@ -11,6 +23,32 @@ export function TradePsychology() {
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold tracking-tight">Psychology & Discipline</h3>
+
+      {/* Emotion Dropdown */}
+      <FormField
+        control={form.control}
+        name="emotion"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Emotion at Entry</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your dominant emotion" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {EMOTION_OPTIONS.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
       
       {/* Trade Discipline - Followed trading plan */}
       <FormField

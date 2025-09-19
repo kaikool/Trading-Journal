@@ -1,7 +1,6 @@
 
 import { useFormContext } from "react-hook-form";
-import { FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
-import { Label } from '@/components/ui/label';
+import { FormField, FormItem, FormControl, FormMessage, FormLabel } from "@/components/ui/form";
 import { NumberInput } from '@/components/ui/number-input';
 import { Icons } from '@/components/icons/icons';
 import { GetPriceButton } from '../GetPriceButton';
@@ -9,10 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { TradeFormValues } from '../types';
-
 import { formatRiskReward } from '@/utils/format-number';
-
-
 
 interface TradeDetailsProps {
   isCalculatingLotSize: boolean;
@@ -44,26 +40,21 @@ export function TradeDetails({
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        {/* --- LEFT COLUMN --- */}
         <div className="space-y-4">
+          {/* Direction Buttons */}
           <FormField
             control={form.control}
             name="direction"
             render={({ field }) => (
               <FormItem>
-                <div className="h-6 flex items-center">
-                  <Label className="text-sm font-medium">
-                    Direction
-                  </Label>
-                </div>
+                <FormLabel>Direction</FormLabel>
                 <FormControl>
-                  <div className="grid grid-cols-2 gap-2 mt-[5px]">
+                  <div className="grid grid-cols-2 gap-2">
                     <Button
                       type="button"
                       size="sm"
-                      onClick={() => {
-                        field.onChange("BUY");
-                        form.trigger("direction");
-                      }}
+                      onClick={() => field.onChange("BUY")}
                       variant={field.value === "BUY" ? "default" : "outline"}
                       className={cn(
                         "h-9 transition-all",
@@ -76,10 +67,7 @@ export function TradeDetails({
                     <Button
                       type="button"
                       size="sm"
-                      onClick={() => {
-                        field.onChange("SELL");
-                        form.trigger("direction");
-                      }}
+                      onClick={() => field.onChange("SELL")}
                       variant={field.value === "SELL" ? "default" : "outline"}
                       className={cn(
                         "h-9 transition-all",
@@ -104,39 +92,23 @@ export function TradeDetails({
               name="pair"
               render={({ field }) => (
                 <FormItem>
-                  <div className="h-6 flex items-center">
-                    <Label htmlFor="pair" className="text-sm font-medium">
-                      Currency Pair
-                    </Label>
-                  </div>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    value={field.value}
-                  >
+                  <FormLabel>Currency Pair</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
                     <FormControl>
-                      <SelectTrigger 
-                        id="pair" 
-                        className="h-9 text-sm"
-                      >
+                      <SelectTrigger id="pair" className="h-9 text-sm">
                         <SelectValue placeholder="Select pair" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent 
-                      className="max-h-[200px] overflow-hidden"
-                      onCloseAutoFocus={(e) => e.preventDefault()}
-                    >
-                      <div className="flex flex-col">
-                        <SelectItem value="EURUSD">EUR/USD</SelectItem>
-                        <SelectItem value="GBPUSD">GBP/USD</SelectItem>
-                        <SelectItem value="USDJPY">USD/JPY</SelectItem>
-                        <SelectItem value="AUDUSD">AUD/USD</SelectItem>
-                        <SelectItem value="USDCAD">USD/CAD</SelectItem>
-                        <SelectItem value="NZDUSD">NZD/USD</SelectItem>
-                        <SelectItem value="EURGBP">EUR/GBP</SelectItem>
-                        <SelectItem value="USDCHF">USD/CHF</SelectItem>
-                        <SelectItem value="XAUUSD">XAU/USD</SelectItem>
-                      </div>
+                    <SelectContent>
+                      <SelectItem value="EURUSD">EUR/USD</SelectItem>
+                      <SelectItem value="GBPUSD">GBP/USD</SelectItem>
+                      <SelectItem value="USDJPY">USD/JPY</SelectItem>
+                      <SelectItem value="AUDUSD">AUD/USD</SelectItem>
+                      <SelectItem value="USDCAD">USD/CAD</SelectItem>
+                      <SelectItem value="NZDUSD">NZD/USD</SelectItem>
+                      <SelectItem value="EURGBP">EUR/GBP</SelectItem>
+                      <SelectItem value="USDCHF">USD/CHF</SelectItem>
+                      <SelectItem value="XAUUSD">XAU/USD</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -144,43 +116,26 @@ export function TradeDetails({
               )}
             />
 
-            {/* Entry Price with GetPrice button inside the input */}
+            {/* Entry Price */}
             <FormField
               control={form.control}
               name="entryPrice"
               render={({ field }) => (
                 <FormItem>
-                  <div className="h-6 flex items-center justify-between">
-                    <Label htmlFor="entryPrice" className="text-sm font-medium">
-                      Entry Price
-                    </Label>
-                  </div>
+                  <FormLabel>Entry Price</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <NumberInput
-                        id="entryPrice"
                         placeholder="0.00000"
                         value={field.value}
                         onChange={field.onChange}
-                        onBlur={field.onBlur}
-                        min={0}
-                        allowNegative={false}
-                        step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                        decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4} // Định dạng theo cặp tiền
-                        className="h-9 pr-9" /* Added padding-right for the button */
+                        decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4}
+                        className="h-9 pr-9"
                       />
-                      {/* Luôn hiển thị nút fetch giá */}
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                         <GetPriceButton
-                          symbol={selectedPair || "XAUUSD"} /* Sử dụng XAUUSD là giá trị mặc định nếu chưa chọn */
-                          size="sm"
-                          variant="ghost" /* Remove background */
-                          onPriceReceived={(price) => {
-                            form.setValue("entryPrice", price);
-                            form.trigger("entryPrice");
-                          }}
-                          tooltipText={`Get current ${selectedPair || "XAUUSD"} price`}
-                          className="text-primary hover:text-primary/80" /* Styling for the button */
+                          symbol={selectedPair || "XAUUSD"}
+                          onPriceReceived={(price) => form.setValue("entryPrice", price, { shouldValidate: true })}
                         />
                       </div>
                     </div>
@@ -192,7 +147,7 @@ export function TradeDetails({
           </div>
         </div>
         
-        {/* Right Column */}
+        {/* --- RIGHT COLUMN --- */}
         <div className="space-y-4">
           {/* Stop Loss and Take Profit in one row */}
           <div className="grid grid-cols-2 gap-4">
@@ -202,22 +157,13 @@ export function TradeDetails({
               name="stopLoss"
               render={({ field }) => (
                 <FormItem>
-                  <div className="h-6 flex items-center">
-                    <Label htmlFor="stopLoss" className="text-sm font-medium">
-                      Stop Loss
-                    </Label>
-                  </div>
+                  <FormLabel>Stop Loss</FormLabel>
                   <FormControl>
                     <NumberInput
-                      id="stopLoss"
                       placeholder="0.00000"
                       value={field.value}
                       onChange={field.onChange}
-                      onBlur={field.onBlur}
-                      min={0}
-                      allowNegative={false}
-                      step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                      decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4} // Định dạng theo cặp tiền
+                      decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4}
                       className="h-9"
                     />
                   </FormControl>
@@ -232,25 +178,16 @@ export function TradeDetails({
               name="takeProfit"
               render={({ field }) => (
                 <FormItem>
-                  <div className="h-6 flex items-center">
-                    <div className="flex items-center gap-1">
-                      <Label htmlFor="takeProfit" className="text-sm font-medium">
-                        Take Profit
-                      </Label>
-                      <span className="text-xs text-muted-foreground italic bg-muted px-1 rounded">Auto</span>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <FormLabel>Take Profit</FormLabel>
+                    <span className="text-xs text-muted-foreground italic bg-muted px-1 rounded">Auto</span>
                   </div>
                   <FormControl>
                     <NumberInput
-                      id="takeProfit"
                       placeholder="0.00000"
                       value={field.value}
                       onChange={field.onChange}
-                      onBlur={field.onBlur}
-                      min={0}
-                      allowNegative={false}
-                      step={0.00001} // Giá trị nhỏ để cho phép nhập linh hoạt
-                      decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4} // Định dạng theo cặp tiền
+                      decimalPlaces={selectedPair === "XAUUSD" || selectedPair === "USDJPY" ? 2 : 4}
                       className="h-9"
                     />
                   </FormControl>
@@ -266,10 +203,8 @@ export function TradeDetails({
             name="lotSize"
             render={({ field }) => (
               <FormItem>
-                <div className="h-6 flex items-center justify-between">
-                  <Label htmlFor="lotSize" className="text-sm font-medium">
-                    Lot Size
-                  </Label>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Lot Size</FormLabel>
                   <Button
                     type="button"
                     size="sm"
@@ -283,11 +218,9 @@ export function TradeDetails({
                 </div>
                 <FormControl>
                   <NumberInput
-                    id="lotSize"
                     placeholder="0.01"
                     value={field.value}
                     onChange={field.onChange}
-                    onBlur={field.onBlur}
                     min={0.01}
                     step={0.01}
                     className="h-9"

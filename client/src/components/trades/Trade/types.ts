@@ -45,7 +45,6 @@ export const tradeFormSchema = z.object({
   overLeveraged: z.boolean().default(false),
   movedStopLoss: z.boolean().default(false),
   marketCondition: z.string().optional(),
-  sessionType: z.string().optional(),
   hasNews: z.boolean().default(false),
   notes: z.string().optional(),
   // Fields related to closing trades

@@ -1,3 +1,4 @@
+
 import { FormProvider } from "react-hook-form";
 import { Card, CardContent } from '@/components/ui/card';
 import { useTradeForm } from './hooks';
@@ -7,16 +8,17 @@ import {
   TradeDetails,
   TradeStrategy,
   TradePsychology,
-  TradeImages,
   NotesSection,
   FormActions
 } from './components';
+import TradeImages from "./components/TradeImages";
 
 export default function TradeFormNew(props: TradeFormProps) {
   const onCancel = props.mode === "edit" && props.hasOwnProperty('onCancel') 
     ? (props as any).onCancel 
     : undefined;
   
+  // Destructuring all necessary values from the corrected useTradeForm hook
   const {
     form,
     isEditMode,
@@ -37,9 +39,9 @@ export default function TradeFormNew(props: TradeFormProps) {
     removeExitImage,
     strategies,
     isLoadingStrategies,
-    selectedStrategy,
-    strategyChecks,
-    handleStrategyCheckToggle,
+    selectedStrategy,       // Prop is now available
+    strategyChecks,         // Prop is now available
+    handleStrategyCheckToggle, // Prop is now available
     accountBalance,
     riskPercentage,
     setRiskPercentage,
@@ -83,6 +85,7 @@ export default function TradeFormNew(props: TradeFormProps) {
             
             <Card>
               <CardContent className="pt-6">
+                {/* Passing all the necessary props down to the dumb component */}
                 <TradeStrategy 
                   strategies={strategies}
                   isLoadingStrategies={isLoadingStrategies}

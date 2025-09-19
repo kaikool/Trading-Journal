@@ -140,7 +140,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             </Badge>
           </div>
           <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
-            <TrendingUp size="var(--goal-icon-size)" />
+            <TrendingUp className="goal-icon" />
             <span>{targetTypeLabels[goal.targetType] || goal.targetType}</span>
           </CardDescription>
         </CardHeader>
@@ -177,7 +177,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
           
           <div className="flex justify-between text-sm mb-[var(--goal-inner-gap)]">
             <div className="flex items-center gap-[var(--goal-inner-gap)]">
-              <Calendar size="var(--goal-icon-size)" className="text-muted-foreground" />
+              <Calendar className="goal-icon text-muted-foreground" />
               <span className="text-muted-foreground">
                 {isOverdue ? 'Overdue' : `${goal.daysLeft} days left`}
               </span>
@@ -185,14 +185,14 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
             
             {goal.isCompleted && (
               <div className="flex items-center gap-[var(--goal-inner-gap)] text-success">
-                <Award size="var(--goal-icon-size)" />
+                <Award className="goal-icon" />
                 <span>Completed</span>
               </div>
             )}
             
             {isOverdue && !goal.isCompleted && (
               <div className="flex items-center gap-[var(--goal-inner-gap)] text-destructive">
-                <AlertCircle size="var(--goal-icon-size)" />
+                <AlertCircle className="goal-icon" />
                 <span>Overdue</span>
               </div>
             )}
@@ -243,7 +243,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                       className="h-[var(--goal-button-height)] w-[var(--goal-button-icon-only-width)]"
                       onClick={() => onEdit && onEdit()}
                     >
-                      <Pencil size="var(--goal-button-icon-size)" />
+                      <Pencil className="goal-button-icon" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -261,7 +261,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                       className="h-[var(--goal-button-height)] w-[var(--goal-button-icon-only-width)] text-destructive"
                       onClick={() => onDelete && onDelete()}
                     >
-                      <Trash2 size="var(--goal-button-icon-size)" />
+                      <Trash2 className="goal-button-icon" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -279,7 +279,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                 className="h-[var(--goal-button-height)] flex items-center gap-[var(--goal-inner-gap)] px-[var(--spacing-2)] sm:px-[var(--spacing-3)]"
                 onClick={() => onAddMilestone && onAddMilestone()}
               >
-                <Plus size="var(--goal-button-icon-size)" />
+                <Plus className="goal-button-icon" />
                 <span>Add Milestone</span>
               </Button>
               
@@ -292,7 +292,7 @@ export function GoalCard({ goal, onEdit, onDelete, onAddMilestone }: GoalCardPro
                       className="h-[var(--goal-button-height)] w-[var(--goal-button-icon-only-width)]"
                       onClick={() => calculateGoalProgress(goal.id.toString())}
                     >
-                      <RefreshCw size="var(--goal-button-icon-size)" />
+                      <RefreshCw className="goal-button-icon" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>

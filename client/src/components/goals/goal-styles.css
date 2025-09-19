@@ -12,7 +12,7 @@
   
   /* Kích thước icon */
   --goal-icon-size: var(--icon-xs); /* 12px */
-  --goal-button-icon-size: var(--icon-xs); /* 12px */
+  --goal-button-icon-size: var(--icon-sm); /* 16px, was --icon-xs */
   
   /* Typography */
   --goal-title-size: var(--text-xl); /* 20px */
@@ -31,6 +31,17 @@
   --goal-card-radius: var(--radius);
   --goal-card-shadow: var(--shadow-sm);
   --goal-card-hover-shadow: var(--shadow-md);
+}
+
+/* Icon size classes to fix SVG attribute error */
+.goal-icon {
+  width: var(--goal-icon-size);
+  height: var(--goal-icon-size);
+}
+
+.goal-button-icon {
+  width: var(--goal-button-icon-size);
+  height: var(--goal-button-icon-size);
 }
 
 /* Override Scrollbar in goal sections */
