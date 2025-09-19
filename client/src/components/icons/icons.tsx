@@ -215,7 +215,11 @@ export const Icons = {
     trash: LucideIcons.Trash2,
     download: LucideIcons.Download,
     info: LucideIcons.Info,
-    dollarSign: LucideIcons.DollarSign
+    dollarSign: LucideIcons.DollarSign,
+    userCog: LucideIcons.UserCog,
+    notebook: LucideIcons.Notebook,
+    notebookText: LucideIcons.NotebookText,
+    globe: LucideIcons.Globe,
   },
   
   // Logo và App identity

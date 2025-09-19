@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Icons } from "@/components/icons/icons";
 import { Trade, TradingStrategy } from "@/types";
-import { auth, getStrategyById } from "@/lib/firebase";
+import { auth, getStrategyById, updateTrade } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -22,6 +22,8 @@ import { formatDistanceStrict } from 'date-fns';
 // 1. Import the gallery and its styles
 import 'photoswipe/dist/photoswipe.css';
 import { Gallery, Item } from 'react-photoswipe-gallery';
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
 interface TradeViewDetailsProps {
   trade: Trade;
@@ -89,6 +91,37 @@ export function TradeViewDetails({
   // We no longer need the state for the old dialog
   // const [showChartDialog, setShowChartDialog] = useState(false);
   const [strategyName, setStrategyName] = useState<string>("");
+  const [notes, setNotes] = useState(trade.notes || '');
+  const [closingNote, setClosingNote] = useState(trade.closingNote || '');
+  const { toast } = useToast();
+
+  const handleSaveNotes = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in to save notes.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await updateTrade(user.uid, trade.id, { notes, closingNote });
+      toast({
+        title: "Success",
+        description: "Your notes have been saved.",
+      });
+    } catch (error) {
+      console.error("Error saving notes:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem saving your notes. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
 
   useEffect(() => {
     const fetchStrategyName = async () => {
@@ -263,7 +296,7 @@ export function TradeViewDetails({
                       <div key={issue} className="flex items-center text-xs py-1 px-2.5 rounded-full bg-destructive/10 text-destructive-foreground">
                         <Icons.ui.alertTriangle className="h-3 w-3 mr-1.5" /> {issue}
                       </div>
-                    ))}\
+                    ))}
                   </div>
                 </div>
               )}
@@ -285,18 +318,30 @@ export function TradeViewDetails({
 
             {/* --- Notes Section --- */}
             <div className="mt-6 space-y-4">
-              {trade.notes && (
-                  <div className="app-accordion-content-section p-4">
-                      <h4 className="text-base font-semibold mb-2 flex items-center"><Icons.general.notebook className="h-4 w-4 mr-2 text-primary" />Entry Notes</h4>
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap pl-1">{trade.notes}</p>
-                  </div>
-              )}
-              {trade.closingNote && (
-                  <div className="app-accordion-content-section p-4">
-                      <h4 className="text-base font-semibold mb-2 flex items-center"><Icons.general.notebookText className="h-4 w-4 mr-2" />Closing Notes</h4>
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap pl-1">{trade.closingNote}</p>
-                  </div>
-              )}
+                <div className="app-accordion-content-section p-4">
+                    <h4 className="text-base font-semibold mb-2 flex items-center"><Icons.general.notebook className="h-4 w-4 mr-2 text-primary" />Entry Notes</h4>
+                    <Textarea 
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="Add notes about your trade entry..."
+                        className="text-sm"
+                    />
+                </div>
+                <div className="app-accordion-content-section p-4">
+                    <h4 className="text-base font-semibold mb-2 flex items-center"><Icons.general.notebookText className="h-4 w-4 mr-2" />Closing Notes</h4>
+                    <Textarea 
+                        value={closingNote}
+                        onChange={(e) => setClosingNote(e.target.value)}
+                        placeholder="Add notes about your trade exit, what you learned, etc."
+                        className="text-sm"
+                    />
+                </div>
+                <div className="px-4">
+                    <Button onClick={handleSaveNotes} size="sm">
+                        <Icons.ui.save className="h-3.5 w-3.5 mr-2" />
+                        Save Notes
+                    </Button>
+                </div>
             </div>
 
           </div>
