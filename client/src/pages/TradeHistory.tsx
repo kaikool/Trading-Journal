@@ -10,7 +10,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { debug, logError } from "@/lib/debug";
 import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update-service";
 import { useQueryClient } from "@tanstack/react-query";
-
+import { getAllTrades } from "@/lib/firebase";
+import { exportTradesToCSV } from "@/lib/csv-exporter";
 
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -93,6 +94,37 @@ export default function TradeHistory() {
   // Lấy danh sách giao dịch từ data
   const trades = data?.trades || [];
   
+  // Trạng thái export CSV
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Hàm xuất CSV
+  const handleExportCSV = async () => {
+    if (!userId) {
+      toast({ title: "Error", description: "You must be logged in to export trades.", variant: "destructive" });
+      return;
+    }
+
+    setIsExporting(true);
+    toast({ title: "Exporting...", description: "Preparing your trade history. This may take a moment." });
+
+    try {
+      const allTrades = await getAllTrades(userId) as Trade[];
+      if (allTrades.length === 0) {
+        toast({ title: "No Trades", description: "There are no trades to export." });
+        return;
+      }
+      // Gọi hàm xuất CSV
+      exportTradesToCSV(allTrades);
+      toast({ title: "Export Successful", description: "Your trade history has been downloaded as a CSV file." });
+    } catch (error) {
+      logError("Error exporting trades to CSV:", error);
+      toast({ title: "Export Failed", description: "Could not export your trades. Please try again.", variant: "destructive" });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+
   // Tham chiếu để theo dõi thời gian của lần cập nhật cuối
   const lastTradesUpdateRef = useRef<number>(0);
   
@@ -415,6 +447,9 @@ export default function TradeHistory() {
             )}
           </Button>
           
+          
+          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
@@ -474,6 +509,20 @@ export default function TradeHistory() {
               </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={handleExportCSV} 
+            disabled={isExporting}
+          >
+            {isExporting ? (
+              <Icons.ui.spinner className="h-4 w-4 animate-spin" />
+            ) : (
+              <Icons.pwa.download className="h-4 w-4" />
+            )}
+            <span className="sr-only">Export to CSV</span>
+          </Button>
         </div>
       </div>
 
