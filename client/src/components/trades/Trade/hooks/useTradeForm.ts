@@ -118,9 +118,9 @@ export function useTradeForm(props: TradeFormProps) {
 
       const tradeData = {
         ...cleanData,
-        usedRules: usedConditions.usedRules.length > 0 ? usedConditions.usedRules : null,
-        usedEntryConditions: usedConditions.usedEntryConditions.length > 0 ? usedConditions.usedEntryConditions : null,
-        usedExitConditions: usedConditions.usedExitConditions.length > 0 ? usedConditions.usedExitConditions : null,
+        usedRules: usedConditions.usedRules?.length ? usedConditions.usedRules : null,
+        usedEntryConditions: usedConditions.usedEntryConditions?.length ? usedConditions.usedEntryConditions : null,
+        usedExitConditions: usedConditions.usedExitConditions?.length ? usedConditions.usedExitConditions : null,
         userId,
         updatedAt: serverTimestamp(),
         ...(isEditMode
