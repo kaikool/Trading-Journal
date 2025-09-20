@@ -1997,6 +1997,7 @@
     padding-top: var(--safe-top);
     padding-left: var(--safe-left);
     padding-right: var(--safe-right);
+    background-color: hsl(var(--background));
   }
   
   /* App content container - unified styles */
