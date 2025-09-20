@@ -205,9 +205,9 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
                   <div className="trade-direction-badge">
                     <DirectionBadge direction={direction as "BUY" | "SELL"} iconOnly={false} size="md" variant="modern" />
                   </div>
-                  {result && (
+                  {(result || isTradeOpen) && (
                     <div className="trade-result-badge">
-                      <TradeStatusBadge status={result as TradeStatus} iconOnly={false} size="md" />
+                      <TradeStatusBadge status={(isTradeOpen ? 'OPEN' : result) as TradeStatus} iconOnly={false} size="md" />
                     </div>
                   )}
                 </div>
@@ -232,7 +232,7 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
+                  <div className="flex w-full justify-between flex-wrap gap-y-2 mb-3 text-sm bg-background/50 p-2.5 rounded-md border border-border/30 shadow-sm">
                     <div className="flex flex-col"><span className="text-xs text-muted-foreground">Entry</span><span className="font-medium truncate">{formatPriceForPair(entryPrice, trade.pair)}</span></div>
                     <div className="flex flex-col"><span className="text-xs text-muted-foreground">Exit</span><span className="font-medium truncate">{exitPrice ? formatPriceForPair(exitPrice, trade.pair) : 'Open'}</span></div>
                     <div className="flex flex-col"><span className="text-xs text-muted-foreground">Stop Loss</span><span className="font-medium truncate">{formatPriceForPair(trade.stopLoss, trade.pair)}</span></div>
