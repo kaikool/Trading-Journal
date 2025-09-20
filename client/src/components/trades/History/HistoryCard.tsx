@@ -83,10 +83,15 @@ function LazyTradeHistoryCard({ trade, onDelete }: TradeHistoryCardProps) {
   ].filter(img => img.src), [entryImage, entryImageM15, exitImage, exitImageM15]);
 
   const { displayUrl, imageType } = useMemo(() => {
-    if (!isTradeOpen && exitImage) return { displayUrl: exitImage, imageType: 'exitH4' };
-    if (entryImage) return { displayUrl: entryImage, imageType: 'entryH4' };
+    // Priority 1: Exit M15
     if (!isTradeOpen && exitImageM15) return { displayUrl: exitImageM15, imageType: 'exitM15' };
+    // Priority 2: Entry M15
     if (entryImageM15) return { displayUrl: entryImageM15, imageType: 'entryM15' };
+    // Priority 3: Exit H4 (fallback)
+    if (!isTradeOpen && exitImage) return { displayUrl: exitImage, imageType: 'exitH4' };
+    // Priority 4: Entry H4 (fallback)
+    if (entryImage) return { displayUrl: entryImage, imageType: 'entryH4' };
+    // Default
     return { displayUrl: null, imageType: '' };
   }, [isTradeOpen, entryImage, entryImageM15, exitImage, exitImageM15]);
 

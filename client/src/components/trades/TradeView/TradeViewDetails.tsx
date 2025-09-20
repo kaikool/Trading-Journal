@@ -181,7 +181,21 @@ export function TradeViewDetails({
     { src: trade.exitImageM15, caption: 'Exit Chart (M15)' },
   ].filter(img => img.src);
 
-  const displayImage = trade.exitImage || trade.entryImage;
+  const isTradeOpen = !trade.closeDate && !trade.result;
+
+  const { displayUrl, imageType } = useMemo(() => {
+    // Priority 1: Exit M15
+    if (!isTradeOpen && trade.exitImageM15) return { displayUrl: trade.exitImageM15, imageType: 'exitM15' };
+    // Priority 2: Entry M15
+    if (trade.entryImageM15) return { displayUrl: trade.entryImageM15, imageType: 'entryM15' };
+    // Priority 3: Exit H4 (fallback)
+    if (!isTradeOpen && trade.exitImage) return { displayUrl: trade.exitImage, imageType: 'exitH4' };
+    // Priority 4: Entry H4 (fallback)
+    if (trade.entryImage) return { displayUrl: trade.entryImage, imageType: 'entryH4' };
+    // Default
+    return { displayUrl: null, imageType: '' };
+  }, [isTradeOpen, trade.entryImage, trade.entryImageM15, trade.exitImage, trade.exitImageM15]);
+
 
   const AnalysisSection = ({ title, icon, children, emptyText }: { title: string, icon: JSX.Element, children: React.ReactNode, emptyText: string }) => {
     const childrenArray = Children.toArray(children);
@@ -219,17 +233,17 @@ export function TradeViewDetails({
             
             <Gallery withCaption>
               <div className="relative w-full aspect-video group overflow-hidden rounded-md border border-border/30 shadow-sm bg-card/40 mb-4">
-                  {galleryImages.length > 0 ? (
+                  {galleryImages.length > 0 && displayUrl ? (
                     <Item
                       original={galleryImages[0].src!}
-                      thumbnail={displayImage!}
+                      thumbnail={displayUrl!}
                       caption={galleryImages[0].caption}
                       width="1920"
                       height="1080"
                     >
                       {({ ref, open }) => (
                         <div ref={ref as React.RefObject<HTMLDivElement>} onClick={open} className="w-full h-full cursor-pointer">
-                          <img src={displayImage!} alt={`${trade.pair} trade thumbnail`} className="trade-card-image loaded w-full h-full object-cover" />
+                          <img src={displayUrl!} alt={`${trade.pair} trade thumbnail`} className="trade-card-image loaded w-full h-full object-cover" />
                           <div className="trade-card-zoom-overlay"><Icons.ui.maximize className="h-8 w-8 text-white" /></div>
                         </div>
                       )}
@@ -251,6 +265,7 @@ export function TradeViewDetails({
                   
                   <div className="trade-direction-badge"><DirectionBadge direction={trade.direction as Direction} showTooltip={false} size="sm" variant="modern" /></div>
                   {trade.result && <div className="trade-result-badge"><TradeStatusBadge status={trade.result as TradeStatus} showTooltip={false} size="sm" /></div>}
+                  {imageType && <div className="trade-card-timeframe-badge">{imageType.includes('M15') ? 'M15' : 'H4'} - {imageType.includes('entry') ? 'Entry' : 'Exit'}</div>}
               </div>
             </Gallery>
 
