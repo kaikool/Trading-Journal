@@ -12,7 +12,15 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-// This component is now a "dumb" component. It receives all its data and handlers via props.
+// Define the suggested candlestick patterns in English
+const candlePatterns = [
+  "Bullish Engulfing",
+  "Bearish Engulfing",
+  "Morning Star",
+  "Evening Star",
+  "Three White Soldiers"
+];
+
 interface TradeStrategyProps {
   strategies: TradingStrategy[];
   isLoadingStrategies: boolean;
@@ -91,7 +99,6 @@ export function TradeStrategy({
         </CardContent>
       </Card>
 
-      {/* This section now correctly receives its state from the parent */}
       {selectedStrategy && (
         <Card className="border-border/30 shadow-sm bg-card/50">
           <CardHeader className="pb-2 pt-3 px-4">
@@ -116,12 +123,26 @@ export function TradeStrategy({
       <Card className="border-border/30 shadow-sm bg-card/50">
         <CardContent className="pt-3 px-4 pb-4">
           <div className="space-y-2">
-            <div className="flex items-center justify-between gap-1 mb-1">
+            <div className="flex items-center justify-between gap-1 mb-2">
               <div className="flex items-center gap-1">
                 <Icons.analytics.chartLine className="h-3.5 w-3.5 text-primary" />
                 <Label htmlFor="techPattern" className="text-sm">Technical Pattern</Label>
               </div>
             </div>
+
+            <div className="flex flex-wrap gap-1.5 pb-2">
+              {candlePatterns.map(pattern => (
+                <Badge
+                  key={pattern}
+                  variant={form.watch("techPattern") === pattern ? "default" : "outline"}
+                  onClick={() => form.setValue("techPattern", form.watch("techPattern") === pattern ? "" : pattern, { shouldValidate: true })}
+                  className="cursor-pointer transition-all hover:bg-primary/10"
+                >
+                  {pattern}
+                </Badge>
+              ))}
+            </div>
+            
             <FormField
               control={form.control}
               name="techPattern"
@@ -130,7 +151,7 @@ export function TradeStrategy({
                   <FormControl>
                     <Input
                       id="techPattern"
-                      placeholder="e.g., Double Top, Engulfing Pattern"
+                      placeholder="Select a pattern above or type your own"
                       className="h-8 text-sm"
                       {...field}
                     />
