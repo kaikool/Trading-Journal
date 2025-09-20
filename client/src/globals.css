@@ -1988,7 +1988,17 @@
     padding-right: var(--safe-right);
     background-color: hsl(var(--background)); /* FIX: Ensures notch area has correct background color */
   }
-  
+  /* 
+  * On desktop, allow the container to grow beyond the viewport height 
+  * to prevent content from being cut off.
+  */
+  @media (min-width: 769px) {
+  .app-layout-container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+  }  
   /* App content container - unified styles */
   .app-content-container {
     flex: 1;
