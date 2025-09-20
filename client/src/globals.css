@@ -151,7 +151,7 @@
 .pwa-container{ width:100%; margin:0 auto; padding-left:max(var(--safe-left), var(--min-side-padding)); padding-right:max(var(--safe-right), var(--min-side-padding)); padding-top:var(--safe-top); padding-bottom:var(--spacing-bottom-safe); }
 .pwa-top-inset{ padding-top:max(var(--safe-top), 0.5rem); }
 .safe-area-splash{ position:fixed; inset:0; width:100vw !important; height:100vh !important; max-width:100vw !important; max-height:100vh !important; margin:0 !important; padding:0 !important; overflow:hidden; z-index:9999; }
-.pwa-status-bar-area{ padding-top:var(--safe-top); height:calc(var(--status-bar-height) + var(--safe-top)); display:flex; align-items:flex-end; }
+.pwa-status-bar-area{padding-top:var(--safe-top);height:calc(var(--status-bar-height) + var(--safe-top));background-color:hsl(var(--background));position:sticky; top:0; z-index:9999;display:flex; align-items:flex-end;}
 
 .pwa-full-bleed{ width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); }
 @supports (width:100vw){ .pwa-full-bleed{ width:100vw; margin-left:calc(50% - 50vw + var(--safe-left)); margin-right:calc(50% - 50vw + var(--safe-right)); } }
@@ -383,7 +383,7 @@
 
 .no-scroll{ overflow:hidden !important; pointer-events:auto !important; user-select:none !important; -webkit-user-select:none !important; }
 
-.mobile-header{ --mobile-header-blur:0.75rem; backdrop-filter:blur(var(--mobile-header-blur)); -webkit-backdrop-filter:blur(var(--mobile-header-blur)); border-bottom:1px solid hsla(var(--border),0.35); background-color:hsla(var(--background),0.92); box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+.mobile-header{ --mobile-header-blur:0.75rem; padding-top:var(--safe-top); backdrop-filter:blur(var(--mobile-header-blur)); -webkit-backdrop-filter:blur(var(--mobile-header-blur)); border-bottom:1px solid hsla(var(--border),0.35); background-color:hsla(var(--background),0.92); box-shadow:0 1px 3px rgba(0,0,0,0.02); }
 .mobile-sidebar{ background-color:hsl(var(--background)); box-shadow:var(--shadow-lg); transition:transform 0.3s ease-in-out; }
 
 /* =====================================================
