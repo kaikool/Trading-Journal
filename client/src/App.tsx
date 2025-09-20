@@ -227,7 +227,20 @@ function MainContent() {
     // Log thông tin hữu ích cho debug
     console.log('App startup took:', `${performance.now().toFixed(1)}ms before preloading routes`);
   }, []);
-  
+
+  // SAFE-TOP COLLAPSE ON SCROLL: thêm class để thu gọn safe-area top sau khi cuộn
+  useEffect(() => {
+    const root = document.documentElement;
+    const onScroll = () => {
+      if (window.scrollY > 8) root.classList.add('safe-top-collapsed');
+      else root.classList.remove('safe-top-collapsed');
+    };
+    onScroll(); // set state ban đầu
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+
   // Quản lý quá trình khởi tạo ứng dụng với loading system mới
   useEffect(() => {
     // Bắt đầu trạng thái loading cho toàn bộ ứng dụng
@@ -376,6 +389,7 @@ function MainContent() {
     <>
       {/* Unified layout system with new Sidebar - bọc bởi ErrorBoundary */}
       <SafeAppLayout>
+        <div className="statusbar-shim" />
         {renderPageContent()}
       </SafeAppLayout>
     </>

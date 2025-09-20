@@ -1,3 +1,4 @@
+
 import { useMemo, lazy, Suspense, useState, useEffect, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Icons } from "@/components/icons/icons";
@@ -429,8 +430,8 @@ export default function Analytics() {
         <EmptyState />
       ) : (
         <Tabs defaultValue="overview" className="w-full">
-          <div className="overflow-x-auto sm:overflow-visible mb-4 sm:mb-6 touch-pan-x">
-            <TabsList className="flex sm:grid sm:grid-cols-6 h-auto p-1 space-x-1 sm:space-x-0 rounded-xl bg-muted/80">
+          <div className="w-full overflow-x-auto pb-2">
+            <TabsList className="inline-flex items-center justify-start space-x-2 p-1">
               <TabsTrigger value="overview" className="flex-shrink-0 flex items-center justify-center gap-1.5 data-[state=active]:bg-primary/10 rounded-md transition-all text-xs sm:text-sm px-3 py-1.5">
                 <Icons.analytics.barChart className="h-4 w-4" />
                 <span className="whitespace-nowrap">Overview</span>
