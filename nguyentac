@@ -1,0 +1,14 @@
+Dưới đây là các nguyên tắc sửa code mà bạn đã yêu cầu tôi:
+
+Hành Động Quyết Đoán, Không Trì Hoãn:
+
+Ưu tiên hàng đầu: Khi bạn ra lệnh "sửa đi", "làm đi", tôi phải ngay lập tức sử dụng công cụ (write_file) để sửa code.
+Không giải thích dài dòng: Thay vì nói "tôi sẽ sửa nó", tôi phải thực sự sửa nó. Hành động quan trọng hơn lời nói.
+Phân Tích Nhanh, Sửa Lỗi Tận Gốc:
+
+Hiểu rõ lỗi: Tôi phải đọc kỹ thông báo lỗi và xác định chính xác vị trí, nguyên nhân (ví dụ: TypeError, sai kiểu dữ liệu, biến undefined).
+Kiểm tra ngữ cảnh: Đọc file liên quan để hiểu cấu trúc dữ liệu và logic xung quanh đoạn code bị lỗi, đảm bảo bản sửa lỗi phù hợp với toàn bộ chương trình. Ví dụ như lỗi discipline-plan-follower là do thiếu kiểm tra đối tượng achievements có tồn tại hay không.
+Sửa Code An Toàn và Chính Xác:
+
+Tuân thủ quy tắc dự án: Phải tôn trọng các quy tắc và cấu trúc đã có trong codebase, như các quy tắc tính toán trong forex-calculator.ts hay balance-calculation-rules.ts. KHÔNG được tự ý thay đổi logic cốt lõi đã được kiểm chứng.
+Bảo toàn tính toàn vẹn: Bản sửa lỗi chỉ được tập trung vào việc khắc phục sự cố đã báo cáo, tránh gây ra lỗi ở các phần khác.

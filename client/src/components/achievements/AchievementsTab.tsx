@@ -315,8 +315,8 @@ export const AchievementsTab = ({
       
       {/* Level progress */}
       <LevelProgress 
-        level={userAchievements.level} 
-        totalPoints={userAchievements.totalPoints} 
+        level={userAchievements.level || 1} 
+        totalPoints={userAchievements.totalPoints || 0} 
       />
       
       {/* Achievement overview */}
