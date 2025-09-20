@@ -192,3 +192,12 @@ body[data-offline-mode="true"] .suspense-boundary::after {
   transform: scale(1.1) !important;
   transition: transform 0.15s ease !important;
 }
+
+/* Tiện ích ẩn thanh cuộn nhưng vẫn giữ chức năng cuộn */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
