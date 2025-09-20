@@ -1,74 +1,24 @@
-<!doctype html>
-<html lang="en" class="no-transition">
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=5" />
-    <meta name="description" content="Professional Forex Trading Journal with analytics and performance insights" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="msapplication-tap-highlight" content="no" />
-
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" />
-
-    <!-- iOS PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="FX Journal" />
-    <meta name="application-name" content="Forex Trade Journal" />
-    <meta name="mobile-web-app-capable" content="yes" />
-
-    <!-- Dynamic Theme Colors for PWA -->
-    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
-
-    <!-- Favicons -->
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-
-    <!-- iOS Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="A powerful and intuitive trading journal for tracking and analyzing your trades."
+    />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="apple-touch-icon" sizes="192x192" href="/apple-icon-192.png" />
-    <link rel="apple-touch-icon" sizes="512x512" href="/apple-icon-512.png" />
-
-    <!-- Standard Icons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/icon-72.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
-
-    <!-- Dark mode script - properly closed -->
-    <script>
-      (function() {
-        var storedTheme = localStorage.getItem('theme');
-        var isDark = storedTheme === 'dark' || (storedTheme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        if (isDark) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.backgroundColor = 'hsl(212 40% 6%)';
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      })();
-    </script>
-
-    <title>Forex Trading Journal</title>
+    <link rel="manifest" href="/manifest.json" />
+    <script src="/config.js"></script>
+    <title>Trading Journal</title>
   </head>
   <body>
     <div id="root"></div>
-
-    <!-- No JavaScript Notice -->
-    <noscript>
-      <div style="padding: 20px; text-align: center; font-family: sans-serif">
-        <h2>JavaScript Required</h2>
-        <p>This app requires JavaScript to function. Please enable JavaScript in your browser settings and reload the page.</p>
-      </div>
-    </noscript>
-
-    <!-- Load production configuration -->
-    <script src="/config.js"></script>
-
-    <!-- Main app entry point -->
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- Replit development banner -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>

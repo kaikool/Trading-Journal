@@ -103,15 +103,6 @@
   /* Chart component configuration - Reference định nghĩa đầy đủ trong khối :root phía dưới */
 }
 
-/* Page transition fix for dark mode */
-/* Đảm bảo dark mode không có flash khi chuyển trang */
-html.dark {
-  background-color: hsl(212 40% 6%);
-}
-
-html.dark body {
-  background-color: hsl(212 40% 6%);
-}
 
 /* Vô hiệu hóa transition trong dark mode để tránh flash */
 .dark * {
@@ -989,7 +980,7 @@ html.dark body {
   html, body {
     height: 100%;
     margin: 0;
-    @apply antialiased overflow-x-hidden;
+    @apply bg-background antialiased overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
     width: 100%;
     position: relative;
