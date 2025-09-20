@@ -977,29 +977,27 @@
     @apply border-border;
   }
   
-  html, body {
-    height: 100%;
-    margin: 0;
-    @apply bg-background antialiased overflow-x-hidden;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
-    width: 100%;
-    position: relative;
-    max-width: 100vw;
-    -webkit-overflow-scrolling: touch; /* Cải thiện trải nghiệm cuộn trên iOS */
-    scroll-behavior: smooth; /* Cải thiện hiệu ứng cuộn mượt */
-    /* Đã xóa ngăn chặn hiệu ứng bounce để cho phép vuốt mặc định */
+  html {
+      height: 100%;
+      margin: 0;
+      /* Di chuyển màu nền và font-feature ra thẻ html */
+      @apply bg-background antialiased; 
+      font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
+      width: 100%;
+      overflow-x: hidden;
   }
-  
+
   body {
-    @apply bg-background text-foreground font-sans overflow-x-hidden;
-    max-width: 100vw;
-    /* Cải thiện hiệu suất cuộn cho PWA */
-    will-change: scroll-position; /* Gợi ý trình duyệt tối ưu hiệu năng cuộn */
-    text-rendering: optimizeSpeed; /* Tối ưu hiển thị văn bản khi cuộn */
-    backface-visibility: hidden; /* Giảm hiện tượng flickering */
-    touch-action: auto; /* Cho phép tất cả các cử chỉ cảm ứng, bao gồm vuốt để điều hướng Safari */
+      height: 100%;
+      margin: 0;
+      @apply text-foreground font-sans;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
   }
-  
+    
   /* Tối ưu cho trình duyệt WebKit trên iOS */
   @supports (-webkit-touch-callout: none) {
     body {
@@ -1030,14 +1028,14 @@
   
   @media (max-width: 768px), (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
     body {
-      height: 100dvh;          /* chỉ mobile/PWA */
-      overflow: hidden;        /* ngăn double scroll ở mobile/PWA */
-      position: fixed;
-      width: 100%;
-      top: 0;
-      left: 0;
+        height: 100dvh;          /* chỉ mobile/PWA */
+        overflow: hidden;        /* ngăn double scroll ở mobile/PWA */
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
     }
-  }
+}
   
   /* 3) ĐẢM BẢO desktop scroll bình thường */
   html, body {
