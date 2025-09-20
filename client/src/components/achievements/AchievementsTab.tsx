@@ -239,10 +239,10 @@ export const AchievementsTab = ({
       if (selectedCategory === "all") {
         return achievementsList;
       } else if (selectedCategory === "completed") {
-        return achievementsList.filter(a => userAchievements?.achievements[a.id]?.isComplete);
+        return achievementsList.filter(a => userAchievements?.achievements?.[a.id]?.isComplete);
       } else if (selectedCategory === "in-progress") {
-        return achievementsList.filter(a => !userAchievements?.achievements[a.id]?.isComplete &&
-          (userAchievements?.achievements[a.id]?.progress || 0) > 0);
+        return achievementsList.filter(a => !userAchievements?.achievements?.[a.id]?.isComplete &&
+          (userAchievements?.achievements?.[a.id]?.progress || 0) > 0);
       } else {
         return achievementsList.filter(a => a.category === selectedCategory);
       }
@@ -256,13 +256,13 @@ export const AchievementsTab = ({
     () => {
       // Count completed achievements
       const completed = achievementsList.filter(
-        a => userAchievements?.achievements[a.id]?.isComplete
+        a => userAchievements?.achievements?.[a.id]?.isComplete
       ).length;
       
       // Count in-progress achievements
       const inProgress = achievementsList.filter(
-        a => !userAchievements?.achievements[a.id]?.isComplete &&
-          (userAchievements?.achievements[a.id]?.progress || 0) > 0
+        a => !userAchievements?.achievements?.[a.id]?.isComplete &&
+          (userAchievements?.achievements?.[a.id]?.progress || 0) > 0
       ).length;
       
       return { completedCount: completed, inProgressCount: inProgress };
@@ -271,11 +271,11 @@ export const AchievementsTab = ({
     true // force memoization even on high-performance devices
   );
   
-  if (isLoading) {
-    return null;
+  if (isLoading || !userAchievements) {
+    return null; // Return null during initial load or if userAchievements is not available
   }
   
-  if (error || !enhancedAchievementsData || !userAchievements) {
+  if (error || !enhancedAchievementsData) {
     return (
       <div className="p-6 text-center">
         <Icons.ui.alertCircle className="h-8 w-8 mx-auto mb-3 text-destructive" />
@@ -456,7 +456,7 @@ export const AchievementsTab = ({
                   <AchievementCard
                     key={achievement.id}
                     achievement={achievement}
-                    userProgress={userAchievements.achievements[achievement.id] || {
+                    userProgress={userAchievements.achievements?.[achievement.id] || {
                       isComplete: false,
                       progress: 0
                     }}
