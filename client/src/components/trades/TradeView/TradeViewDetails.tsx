@@ -23,7 +23,7 @@ import { Gallery, Item } from 'react-photoswipe-gallery';
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-
+import { useStrategies } from '@/hooks/use-strategies';
 // --- SUB-COMPONENTS (Moved to top-level) ---
 
 const ChecklistItem = ({ label, value, isBoolean = false }: { label: string, value: string | boolean, isBoolean?: boolean }) => (
@@ -105,7 +105,7 @@ export function TradeViewDetails({
   onBack
 }: TradeViewDetailsProps) {
   const isMobile = useIsMobile();
-  const [strategy, setStrategy] = useState<TradingStrategy | null>(null);
+  const { data: strategies = [] } = useStrategies();
   const [notes, setNotes] = useState(trade.notes || '');
   const [closingNote, setClosingNote] = useState(trade.closingNote || '');
   const { toast } = useToast();
@@ -125,24 +125,13 @@ export function TradeViewDetails({
     }
   };
 
-  useEffect(() => {
-    const fetchStrategy = async () => {
-      if (!trade.strategy) {
-        setStrategy(null);
-        return;
-      }
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
-        const strategyData = await getStrategyById(user.uid, trade.strategy) as TradingStrategy;
-        setStrategy(strategyData);
-      } catch (error) {
-        console.error('Error fetching strategy:', error);
-        setStrategy(null);
-      }
-    };
-    fetchStrategy();
-  }, [trade.strategy]);
+  const strategy: TradingStrategy | undefined = useMemo(() => {
+    const strategyId = trade?.strategy;
+    if (!strategyId || !strategies.length) {
+      return undefined; // Trả về undefined nếu không có ID hoặc không có danh sách strategies
+    }
+    return strategies.find(s => s.id === strategyId);
+  }, [trade?.strategy, strategies]);
   
   const tradingRulesChecklist = useMemo(() => {
     if (!strategy || !strategy.rules) return [];
@@ -261,7 +250,7 @@ export function TradeViewDetails({
                         <CardIcon color="muted" size="sm" variant="soft" className="mr-1.5">
                             <Icons.analytics.barChart className="h-3.5 w-3.5" />
                         </CardIcon>
-                        <span className="text-sm text-muted-foreground font-medium">{strategy?.name || 'No Strategy'}</span>
+                        <span className="text-sm text-muted-foreground font-medium">{strategy?.name || trade.strategy || 'N/A'}</span>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm app-accordion-content-section">

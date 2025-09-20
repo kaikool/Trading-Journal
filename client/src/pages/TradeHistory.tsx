@@ -12,7 +12,7 @@ import { tradeUpdateService, TradeChangeObserver } from "@/services/trade-update
 import { useQueryClient } from "@tanstack/react-query";
 import { getAllTrades } from "@/lib/firebase";
 import { exportTradesToCSV } from "@/lib/csv-exporter";
-
+import { useStrategies } from '@/hooks/use-strategies';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -96,7 +96,7 @@ export default function TradeHistory() {
   
   // Trạng thái export CSV
   const [isExporting, setIsExporting] = useState(false);
-
+  const { data: strategies = [] } = useStrategies();
   // Hàm xuất CSV
   const handleExportCSV = async () => {
     if (!userId) {
@@ -114,7 +114,7 @@ export default function TradeHistory() {
         return;
       }
       // Gọi hàm xuất CSV
-      exportTradesToCSV(allTrades);
+      exportTradesToCSV(allTrades, strategies);
       toast({ title: "Export Successful", description: "Your trade history has been downloaded as a CSV file." });
     } catch (error) {
       logError("Error exporting trades to CSV:", error);

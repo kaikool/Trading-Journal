@@ -1,5 +1,5 @@
 
-import { Trade } from "@/types";
+import { Trade, TradingStrategy } from "@/types";
 import { format } from 'date-fns';
 
 // Helper function to safely escape CSV fields
@@ -35,7 +35,7 @@ const formatValue = (value: any): string => {
     return String(value);
 };
 
-export const exportTradesToCSV = (trades: Trade[]) => {
+export const exportTradesToCSV = (trades: Trade[], strategies: TradingStrategy[]) => {
     if (!trades || trades.length === 0) {
         alert("No trades to export.");
         return;
@@ -58,6 +58,14 @@ export const exportTradesToCSV = (trades: Trade[]) => {
 
     for (const trade of trades) {
         const row = headers.map(header => {
+            if (header === 'strategy') {
+                const strategyId = trade.strategy;
+                if (strategyId) {
+                    const foundStrategy = strategies.find(s => s.id === strategyId);
+                    return escapeCSV(foundStrategy?.name || strategyId); // Dùng tên, fallback về ID
+                }
+                return escapeCSV(''); // Không có strategy ID
+            }
             const value = formatValue((trade as any)[header]);
             return escapeCSV(value);
         });
