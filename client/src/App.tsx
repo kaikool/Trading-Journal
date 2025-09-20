@@ -389,7 +389,7 @@ function MainContent() {
     <>
       {/* Unified layout system with new Sidebar - bọc bởi ErrorBoundary */}
       <SafeAppLayout>
-        <div className="statusbar-shim" />
+        <div className="safe-top-pad">
         {renderPageContent()}
       </SafeAppLayout>
     </>

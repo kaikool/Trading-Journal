@@ -575,26 +575,23 @@ h3.card-title{ line-height:1.5 !important; padding:0.125rem 0 !important; height
 .interactive-hover:active, .interactive-element:active{ transform:translateY(0); filter:brightness(0.95); }
 /* ===== StatusBar shim + collapse-on-scroll ===== */
 
-/* 1) Thanh shim fill đúng màu nền ở vùng notch lúc mới mở app */
-.statusbar-shim {
-  position: sticky; /* dính ở top khi scroll */
-  top: 0;
-  height: env(safe-area-inset-top, 0px); /* đúng chiều cao safe area */
-  background-color: hsl(var(--background)); /* khớp theme nền app */
-  z-index: 9999;
-  transition: height 220ms ease; /* hiệu ứng thu gọn */
-  will-change: height;
-}
 
-/* 2) Khi thu gọn (sau khi user cuộn), set height = 0 để “lộ” content lên vùng notch */
-.safe-top-collapsed .statusbar-shim {
-  height: 0;
-}
-
-/* (Optional) Nếu muốn header bám sát ngay dưới shim lúc đầu */
-.mobile-header {
-  padding-top: 0; /* đã có statusbar-shim nên không cần pad thêm */
-}
+/* ===== Safe-top pad that collapses on scroll ===== */
+.safe-top-pad {
+   padding-top: env(safe-area-inset-top, 0px);
+   transition: padding-top 220ms ease;
+   will-change: padding-top;
+ }
+ 
+ /* Khi người dùng đã cuộn => bỏ khoảng pad để tràn fullscreen */
+ .safe-top-collapsed .safe-top-pad {
+   padding-top: 0;
+ }
+ 
+ /* Đảm bảo màu nền đồng nhất ở đỉnh để không lộ viền */
+ html, body, #root {
+   background-color: hsl(var(--background));
+ }
 /* =====================================================
    MINOR FIXES / MISC MERGES
    ===================================================== */
