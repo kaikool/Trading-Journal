@@ -391,6 +391,7 @@ function MainContent() {
       <SafeAppLayout>
         <div className="safe-top-pad">
         {renderPageContent()}
+        </div>
       </SafeAppLayout>
     </>
   );
