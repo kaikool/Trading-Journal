@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo, Children } from "react";
+import { useState, useEffect, useMemo, Children, ReactNode } from "react";
 import { Icons } from "@/components/icons/icons";
 import { Trade, TradingStrategy } from "@/types";
 import { auth, getStrategyById, updateTrade } from "@/lib/firebase";
@@ -24,13 +24,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
-interface TradeViewDetailsProps {
-  trade: Trade;
-  onDelete: (tradeId: string) => void;
-  onBack: () => void;
-}
+// --- SUB-COMPONENTS (Moved to top-level) ---
 
-// A generic component to render checklist items
 const ChecklistItem = ({ label, value, isBoolean = false }: { label: string, value: string | boolean, isBoolean?: boolean }) => (
     <div className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
         <span className="text-muted-foreground">{label}</span>
@@ -42,7 +37,25 @@ const ChecklistItem = ({ label, value, isBoolean = false }: { label: string, val
     </div>
 );
 
-// Helper to calculate trade duration
+const AnalysisSection = ({ title, icon, children, emptyText }: { title: string, icon: JSX.Element, children: ReactNode, emptyText: string }) => {
+  const childrenArray = Children.toArray(children);
+  const hasChildren = childrenArray.length > 0 && childrenArray.some(child => child !== null && child !== false && child !== undefined);
+
+  return (
+      <div>
+          <h4 className="text-base font-semibold mb-3 flex items-center">{icon} {title}</h4>
+          {hasChildren ? (
+              <div className="space-y-2">{children}</div>
+          ) : (
+              <p className="text-sm text-muted-foreground px-2">{emptyText}</p>
+          )}
+      </div>
+  );
+};
+
+
+// --- HELPER FUNCTIONS ---
+
 const getTradeDuration = (start: any, end: any): string => {
   if (!end) return 'Open';
   try {
@@ -56,7 +69,6 @@ const getTradeDuration = (start: any, end: any): string => {
   }
 };
 
-// Helper to calculate Risk/Reward ratio
 const calculateRiskRewardRatio = (trade: Trade): number | null => {
     if (trade.riskRewardRatio != null) return trade.riskRewardRatio;
     const entry = parseFloat(trade.entryPrice as string);
@@ -78,6 +90,14 @@ const calculateRiskRewardRatio = (trade: Trade): number | null => {
     }
     return null;
 };
+
+// --- MAIN COMPONENT ---
+
+interface TradeViewDetailsProps {
+  trade: Trade;
+  onDelete: (tradeId: string) => void;
+  onBack: () => void;
+}
 
 export function TradeViewDetails({
   trade,
@@ -124,94 +144,56 @@ export function TradeViewDetails({
     fetchStrategy();
   }, [trade.strategy]);
   
-  // --- Checklist Logic ---
-
   const tradingRulesChecklist = useMemo(() => {
-    if (!strategy || !strategy.rules) {
-      return [];
-    }
+    if (!strategy || !strategy.rules) return [];
     const usedIds = new Set(trade.usedRules || []);
-    return strategy.rules.map(rule => ({
-      label: rule.label, // FIX: Use .label instead of .name
-      value: usedIds.has(rule.id),
-    }));
+    return strategy.rules.map(rule => ({ label: rule.label, value: usedIds.has(rule.id) }));
   }, [strategy, trade.usedRules]);
 
   const entryConditionsChecklist = useMemo(() => {
-    if (!strategy || !strategy.entryConditions) {
-      return [];
-    }
+    if (!strategy || !strategy.entryConditions) return [];
     const usedIds = new Set(trade.usedEntryConditions || []);
-    return strategy.entryConditions.map(condition => ({
-      label: condition.label, // FIX: Use .label instead of .name
-      value: usedIds.has(condition.id),
-    }));
+    return strategy.entryConditions.map(condition => ({ label: condition.label, value: usedIds.has(condition.id) }));
   }, [strategy, trade.usedEntryConditions]);
 
-  const disciplineChecklist = useMemo(() => {
-    const checks = [
+  const disciplineChecklist = useMemo(() => [
       { label: 'Followed Plan', value: trade.followedPlan !== false },
       { label: 'Entered Early', value: trade.enteredEarly === true },
       { label: 'Revenge Trading', value: trade.revenge === true },
       { label: 'Over Leveraged', value: trade.overLeveraged === true },
       { label: 'Moved Stop Loss', value: trade.movedStopLoss === true },
-    ];
-    return checks;
-  }, [trade]);
+  ], [trade]);
 
   const marketContextList = useMemo(() => {
-    const context = [];
-    if (trade.sessionType) context.push({ label: 'Session', value: trade.sessionType });
-    if (trade.emotion) context.push({ label: 'Emotion', value: trade.emotion });
-    if (trade.marketCondition) context.push({ label: 'Market Condition', value: trade.marketCondition });
-    if (trade.techPattern) context.push({ label: 'Technical Pattern', value: trade.techPattern });
-    context.push({ label: 'News Impact', value: trade.hasNews === true, isBoolean: true });
-    return context.filter(item => item.value !== '' && item.value !== undefined);
+    const context = [
+      trade.sessionType && { label: 'Session', value: trade.sessionType },
+      trade.emotion && { label: 'Emotion', value: trade.emotion },
+      trade.marketCondition && { label: 'Market Condition', value: trade.marketCondition },
+      trade.techPattern && { label: 'Technical Pattern', value: trade.techPattern },
+      { label: 'News Impact', value: trade.hasNews === true, isBoolean: true }
+    ].filter(Boolean);
+    return context;
   }, [trade]);
-
-  // --- End of Logic ---
 
   const tradeDuration = getTradeDuration(trade.createdAt, trade.closeDate);
   const calculatedRR = calculateRiskRewardRatio(trade);
 
-  const galleryImages = [
+  const galleryImages = useMemo(() => [
     { src: trade.entryImage, caption: 'Entry Chart (H4)' },
     { src: trade.entryImageM15, caption: 'Entry Chart (M15)' },
     { src: trade.exitImage, caption: 'Exit Chart (H4)' },
     { src: trade.exitImageM15, caption: 'Exit Chart (M15)' },
-  ].filter(img => img.src);
+  ].filter(img => img.src), [trade]);
 
   const isTradeOpen = !trade.closeDate && !trade.result;
 
   const { displayUrl, imageType } = useMemo(() => {
-    // Priority 1: Exit M15
     if (!isTradeOpen && trade.exitImageM15) return { displayUrl: trade.exitImageM15, imageType: 'exitM15' };
-    // Priority 2: Entry M15
     if (trade.entryImageM15) return { displayUrl: trade.entryImageM15, imageType: 'entryM15' };
-    // Priority 3: Exit H4 (fallback)
     if (!isTradeOpen && trade.exitImage) return { displayUrl: trade.exitImage, imageType: 'exitH4' };
-    // Priority 4: Entry H4 (fallback)
     if (trade.entryImage) return { displayUrl: trade.entryImage, imageType: 'entryH4' };
-    // Default
     return { displayUrl: null, imageType: '' };
-  }, [isTradeOpen, trade.entryImage, trade.entryImageM15, trade.exitImage, trade.exitImageM15]);
-
-
-  const AnalysisSection = ({ title, icon, children, emptyText }: { title: string, icon: JSX.Element, children: React.ReactNode, emptyText: string }) => {
-    const childrenArray = Children.toArray(children);
-    const hasChildren = childrenArray.length > 0 && childrenArray.some(child => child !== null && child !== false);
-
-    return (
-        <div>
-            <h4 className="text-base font-semibold mb-3 flex items-center">{icon} {title}</h4>
-            {hasChildren ? (
-                <div className="space-y-2">{children}</div>
-            ) : (
-                <p className="text-sm text-muted-foreground px-2">{emptyText}</p>
-            )}
-        </div>
-    );
-  };
+  }, [isTradeOpen, trade]);
 
   return (
     <>
@@ -235,15 +217,15 @@ export function TradeViewDetails({
               <div className="relative w-full aspect-video group overflow-hidden rounded-md border border-border/30 shadow-sm bg-card/40 mb-4">
                   {galleryImages.length > 0 && displayUrl ? (
                     <Item
-                      original={galleryImages[0].src!}
-                      thumbnail={displayUrl!}
-                      caption={galleryImages[0].caption}
+                      original={displayUrl}
+                      thumbnail={displayUrl}
+                      caption={`${imageType.includes('entry') ? 'Entry' : 'Exit'} Chart (${imageType.includes('M15') ? 'M15' : 'H4'})`}
                       width="1920"
                       height="1080"
                     >
                       {({ ref, open }) => (
                         <div ref={ref as React.RefObject<HTMLDivElement>} onClick={open} className="w-full h-full cursor-pointer">
-                          <img src={displayUrl!} alt={`${trade.pair} trade thumbnail`} className="trade-card-image loaded w-full h-full object-cover" />
+                          <img src={displayUrl} alt={`${trade.pair} trade thumbnail`} className="trade-card-image loaded w-full h-full object-cover" />
                           <div className="trade-card-zoom-overlay"><Icons.ui.maximize className="h-8 w-8 text-white" /></div>
                         </div>
                       )}
@@ -256,7 +238,7 @@ export function TradeViewDetails({
                   )}
 
                   <div style={{ display: 'none' }}>
-                    {galleryImages.slice(1).map((image, index) => (
+                    {galleryImages.filter(img => img.src !== displayUrl).map((image, index) => (
                       <Item key={index} original={image.src!} thumbnail={image.src!} caption={image.caption} width="1920" height="1080">
                         {({ ref }) => <div ref={ref as React.RefObject<HTMLDivElement>}></div>}
                       </Item>
@@ -301,11 +283,8 @@ export function TradeViewDetails({
                     icon={<Icons.trade.listChecks className="h-4 w-4 mr-2 text-primary" />}
                     emptyText="No trading rules were assigned to this strategy, or none were met."
                 >
-                    {tradingRulesChecklist.length > 0 && tradingRulesChecklist.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
-                            <span className="text-muted-foreground">{item.label}</span>
-                            <Badge variant={item.value ? "success" : "secondary"}>{item.value ? 'Met' : 'Not Met'}</Badge>
-                        </div>
+                    {tradingRulesChecklist.map((item, index) => (
+                        <ChecklistItem key={index} label={item.label} value={item.value} isBoolean={true} />
                     ))}
                 </AnalysisSection>
 
@@ -314,11 +293,8 @@ export function TradeViewDetails({
                     icon={<Icons.trade.checklist className="h-4 w-4 mr-2 text-primary" />}
                     emptyText="No entry conditions were assigned to this strategy, or none were met."
                 >
-                    {entryConditionsChecklist.length > 0 && entryConditionsChecklist.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
-                            <span className="text-muted-foreground">{item.label}</span>
-                            <Badge variant={item.value ? "success" : "secondary"}>{item.value ? 'Met' : 'Not Met'}</Badge>
-                        </div>
+                    {entryConditionsChecklist.map((item, index) => (
+                         <ChecklistItem key={index} label={item.label} value={item.value} isBoolean={true} />
                     ))}
                 </AnalysisSection>
 
@@ -343,7 +319,7 @@ export function TradeViewDetails({
                     emptyText="No market context was recorded for this trade."
                 >
                     {marketContextList.map((item, index) => (
-                        <ChecklistItem key={index} label={item.label} value={item.value} isBoolean={item.isBoolean} />
+                        item && <ChecklistItem key={index} label={item.label} value={item.value} isBoolean={item.isBoolean} />
                     ))}
                 </AnalysisSection>
             </div>

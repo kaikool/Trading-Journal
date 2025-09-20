@@ -1080,7 +1080,7 @@
     flex-direction: column;
     min-height: 100vh;
     min-height: 100dvh;
-    background-color: hsl(var(--background));
+    @apply bg-background;
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
