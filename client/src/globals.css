@@ -1,880 +1,272 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import './components/goals/goal-styles.css';
 
-/* Xóa bỏ tất cả các hiệu ứng animate-spin trong ứng dụng */
-.animate-spin {
-  animation: none !important;
-}
+/* =====================================================
+   GLOBAL REFACTOR NOTES (read once, keep in file)
+   - Consolidated duplicate rules (e.g., progress-animate, trade badges, pagination)
+   - Normalized spacing to a 4px scale
+   - Single source of truth for variables in :root and .dark
+   - Safe-area / PWA logic centralized under Utilities
+   - Kept class names and behaviors intact for backward compatibility
+   ===================================================== */
 
-/* Utility class to hide scrollbars while allowing scrolling */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
-}
+/* ===== Hard Overrides ===== */
+/* Kill all animate-spin globally (requested) */
+.animate-spin { animation: none !important; }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari and Opera */
-}
+/* ===== Scrollbar Utilities ===== */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* 
- * =======================================================
- * CSS VARIABLES SYSTEM
- * =======================================================
- *
- * Centralized configuration for responsive layouts,
- * typography, spacing, and visual components
- */
+/* ===== Transition/Animation Utilities ===== */
+.dark * { transition: none !important; }
 
-:root {
-  /* CSS Variables for Safe Area Management */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  
-  /* PWA Detection - Can be used to toggle behavior based on display mode */
-  --is-pwa: var(--display-pwa, 0);
-  --is-mobile-or-pwa: clamp(0, 
-    (var(--is-mobile, 0) > 0 || var(--is-pwa, 0) > 0) ? 1 : 0, 
-    1
-  );
-  
-  /* Typography scale - Standard font sizes */
-  --text-xs: 0.75rem;   /* 12px */
-  --text-sm: 0.875rem;  /* 14px */
-  --text-base: 1rem;    /* 16px */
-  --text-lg: 1.125rem;  /* 18px */
-  --text-xl: 1.25rem;   /* 20px */
-  --text-2xl: 1.5rem;   /* 24px */
-  --text-3xl: 1.875rem; /* 30px */
-  --text-4xl: 2.25rem;  /* 36px */
-  
-  /* Spacing scale - Following 4px spacing rule */
-  --spacing-0: 0px;
-  --spacing-px: 1px;
-  --spacing-0-5: 0.125rem; /* 2px */
-  --spacing-1: 0.25rem;    /* 4px */
-  --spacing-1-5: 0.375rem; /* 6px */
-  --spacing-2: 0.5rem;     /* 8px */
-  --spacing-2-5: 0.625rem; /* 10px */
-  --spacing-3: 0.75rem;    /* 12px */
-  --spacing-3-5: 0.875rem; /* 14px */
-  --spacing-4: 1rem;       /* 16px */
-  --spacing-5: 1.25rem;    /* 20px */
-  --spacing-6: 1.5rem;     /* 24px */
-  --spacing-8: 2rem;       /* 32px */
-  --spacing-10: 2.5rem;    /* 40px */
-  --spacing-12: 3rem;      /* 48px */
-  --spacing-16: 4rem;      /* 64px */
-  
-  /* Card component system */
-  --card-title-size: var(--text-xl);     /* 20px */
-  --card-title-weight: 600;              /* semibold */
-  --card-subtitle-size: var(--text-sm);  /* 14px */
-  --card-subtitle-weight: 500;           /* medium */
-  --card-icon-size: 1.25rem;             /* 20px */
-  --card-padding: var(--spacing-4);      /* 16px */
-  --card-radius: var(--radius);
-  --card-shadow: var(--shadow-sm);
-  
-  /* Mobile navigation system */
-  --mobile-nav-height: 4rem; /* 64px by default */
-  --mobile-nav-inset-spacer: calc(var(--safe-bottom));
-  --mobile-nav-total-height: calc(var(--mobile-nav-height) + var(--mobile-nav-inset-spacer));
-  --mobile-nav-blur: 8px;
-  --mobile-nav-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
-  
-  /* Mobile navigation item configuration */
-  --mobile-nav-icon-size: 1.5rem; /* 24px matches Material Design spec */
-  --mobile-nav-icon-spacing: 0.25rem; /* 4px */
-  --mobile-nav-item-padding: 0.5rem; /* 8px */
-  --mobile-nav-text-size: 0.75rem; /* 12px for better readability */
-  --mobile-nav-inactive-weight: 400;
-  --mobile-nav-active-weight: 500;
-  --mobile-nav-indicator-width: 3rem; /* 48px */
-  --mobile-nav-indicator-height: 3px;
-  --mobile-nav-anim-speed: 0.2s;
-  --mobile-nav-anim-easing: ease-in-out;
-  
-  /* Mobile layout configuration */
-  --mobile-layout-max-width: 640px;
-  --mobile-header-height: 3.5rem; /* 56px */
-  
-  /* Chart component configuration - Reference định nghĩa đầy đủ trong khối :root phía dưới */
-}
+.progress-animate { transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
+.fade-in { opacity: 1; transition: opacity 0.3s ease-in-out; }
+.fade-in.loaded { opacity: 1; }
+.fade-in.initially-hidden { opacity: 0; }
 
-/* Vô hiệu hóa transition trong dark mode để tránh flash */
-.dark * {
-  transition: none !important;
-}
+/* Image fade helpers */
+.trade-image, .trade-form-image { max-width: 100%; opacity: 0; transition: opacity 0.3s ease-in-out; }
+.trade-image.loaded, .trade-form-image.loaded { opacity: 1; }
 
-/* Animation utility classes */
-.progress-animate {
-  transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+/* =====================================================
+   TRADE CARD IMAGE SYSTEM
+   ===================================================== */
+.trade-card-image-container { position: relative; width: 100%; height: 100%; }
+.trade-card-placeholder { position: absolute; inset: 0; display:flex; align-items:center; justify-content:center; transition: opacity 0.3s ease-in-out; }
+.trade-card-placeholder-hidden { opacity: 0; }
+.trade-card-placeholder-visible { opacity: 1; }
+.trade-card-image { position: absolute; inset: 0; transition: opacity 0.3s ease-in-out; opacity: 0; }
+.trade-card-image.loaded { opacity: 1; }
+.trade-card-zoom-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background-color:rgba(0,0,0,0.3); opacity:0; transition:opacity 0.2s ease-in-out; }
+.group:hover .trade-card-zoom-overlay { opacity: 1; }
+.trade-card-timeframe-badge { position:absolute; bottom:8px; right:8px; background-color:rgba(0,0,0,0.7); color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:4px; }
+.trade-direction-badge { position:absolute; top:8px; left:8px; z-index:5; }
+.trade-result-badge { position:absolute; top:8px; right:8px; z-index:5; }
 
-.fade-in {
-  opacity: 1; /* Mặc định hiển thị để tránh các thành phần bị ẩn */
-  transition: opacity 0.3s ease-in-out;
-}
+/* =====================================================
+   P/L INDICATORS & PIP BADGES
+   ===================================================== */
+.pnl-indicator { display:flex; align-items:center; gap:0.25rem; }
+.pnl-profit { color: hsl(145 80% 35%); }
+.dark .pnl-profit { color: hsl(145 75% 55%); }
+.pnl-loss { color: hsl(354 90% 45%); }
+.dark .pnl-loss { color: hsl(354 85% 65%); }
+.pnl-neutral { color: hsl(36 95% 48%); }
+.dark .pnl-neutral { color: hsl(36 90% 60%); }
 
-.fade-in.loaded {
-  opacity: 1;
-}
+.pip-badge { font-size:0.75rem; padding:0.125rem 0.625rem; border-radius:9999px; }
+.pip-badge-profit { background-color: hsla(145,80%,35%,0.12); color:hsl(145 80% 30%); }
+.dark .pip-badge-profit { background-color: hsla(145,75%,45%,0.15); color:hsl(145 75% 70%); }
+.pip-badge-loss { background-color: hsla(354,90%,45%,0.12); color:hsl(354 90% 35%); }
+.dark .pip-badge-loss { background-color: hsla(354,85%,60%,0.15); color:hsl(354 85% 75%); }
+.pip-badge-neutral { background-color: hsla(36,95%,48%,0.12); color:hsl(36 95% 35%); }
+.dark .pip-badge-neutral { background-color: hsla(36,90%,55%,0.15); color:hsl(36 90% 70%); }
 
-/* Nếu cần ẩn thì sử dụng lớp này thay vì thay đổi mặc định */
-.fade-in.initially-hidden {
-  opacity: 0;
-}
+/* =====================================================
+   ACTION BUTTONS
+   ===================================================== */
+.action-button { height:1.75rem; width:1.75rem; padding:0; border-radius:9999px; }
+.action-button-icon { height:0.875rem; width:0.875rem; }
+.action-button-view { color:hsl(212 92% 45%); }
+.action-button-view:hover { background-color:hsla(212,92%,45%,0.12); }
+.dark .action-button-view { color:hsl(212 92% 58%); }
+.dark .action-button-view:hover { background-color:hsla(212,92%,58%,0.15); }
+.action-button-edit { color:hsl(36 95% 48%); }
+.action-button-edit:hover { background-color:hsla(36,95%,48%,0.12); }
+.dark .action-button-edit { color:hsl(36 90% 55%); }
+.dark .action-button-edit:hover { background-color:hsla(36,90%,55%,0.15); }
+.action-button-close { color:hsl(145 80% 35%); }
+.action-button-close:hover { background-color:hsla(145,80%,35%,0.12); }
+.dark .action-button-close { color:hsl(145 75% 55%); }
+.dark .action-button-close:hover { background-color:hsla(145,75%,55%,0.15); }
+.action-button-delete { color:hsl(354 90% 45%); }
+.action-button-delete:hover { background-color:hsla(354,90%,45%,0.12); }
+.dark .action-button-delete { color:hsl(354 85% 60%); }
+.dark .action-button-delete:hover { background-color:hsla(354,85%,60%,0.15); }
 
-/* Image transitions in forms */
-.trade-image {
-  max-width: 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
+/* =====================================================
+   PLACEHOLDERS & SKELETONS
+   ===================================================== */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.image-placeholder { width:100%; height:180px; background-color:hsl(var(--muted)/0.3); animation:pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; display:flex; align-items:center; justify-content:center; }
+@media (min-width:640px){ .image-placeholder{ height:200px; } }
 
-.trade-image.loaded {
-  opacity: 1;
-}
+.activity-placeholder { padding:0.75rem; border-radius:0.5rem; background-color:hsl(var(--muted)/0.3); animation:pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; border:1px solid hsl(var(--border)/0.2); }
+.placeholder-circle { width:2rem; height:2rem; border-radius:9999px; background-color:hsl(var(--muted)/0.6); }
+.placeholder-text { height:1rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
+.placeholder-text-sm { height:0.75rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
 
-/* Trade form image transitions */
-.trade-form-image {
-  max-width: 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
+.stat-skeleton-tile { background-color:hsl(var(--muted)/0.05); border-radius:0.5rem; padding:1rem; }
+.stat-skeleton-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; }
+.stat-skeleton-label { height:1rem; width:6rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
 
-.trade-form-image.loaded {
-  opacity: 1;
-}
+.balance-skeleton-container { display:flex; flex-direction:column; gap:0.5rem; }
+.balance-skeleton-amount { height:3rem; width:10rem; margin-bottom:0.5rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
+.balance-skeleton-subtitle { height:1.5rem; width:7rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
+.balance-skeleton-bar { height:0.5rem; width:100%; border-radius:9999px; background-color:hsl(var(--muted)/0.6); }
 
-/* Milestone list styling */
-.milestone-list {
-  padding: 0; /* Loại bỏ padding tại đây vì chúng ta sẽ sử dụng padding của CardContent */
-  max-height: 8rem;
-  overflow-y: auto;
-  /* space-y được quản lý bởi Tailwind nên không cần định nghĩa ở đây */
-}
+/* Milestones */
+.milestone-list { padding:0; max-height:8rem; overflow-y:auto; }
 
-/* Trade card image transition system */
-.trade-card-image-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.trade-card-placeholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.trade-card-placeholder-hidden {
-  opacity: 0;
-}
-
-.trade-card-placeholder-visible {
-  opacity: 1;
-}
-
-.trade-card-image {
-  position: absolute;
-  inset: 0;
-  transition: opacity 0.3s ease-in-out;
-  opacity: 0;
-}
-
-.trade-card-image.loaded {
-  opacity: 1;
-}
-
-.trade-card-zoom-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.group:hover .trade-card-zoom-overlay {
-  opacity: 1;
-}
-
-.trade-card-timeframe-badge {
-  position: absolute;
-  bottom: 8px; /* Standardized to 4px rule (from 0.5rem) */
-  right: 8px; /* Standardized to 4px rule (from 0.5rem) */
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  font-size: 0.75rem;
-  padding: 4px 8px; /* Standardized to 4px rule (from 0.25rem 0.5rem) */
-  border-radius: 4px; /* Standardized to 4px rule (from 0.25rem) */
-}
-
-.trade-direction-badge {
-  position: absolute;
-  top: 8px; /* Standardized to 4px rule (from 0.5rem) */
-  left: 8px; /* Standardized to 4px rule (from 0.5rem) */
-  z-index: 5;
-}
-
-.trade-result-badge {
-  position: absolute;
-  top: 8px; /* Standardized to 4px rule (from 0.5rem) */
-  right: 8px; /* Standardized to 4px rule (from 0.5rem) */
-  z-index: 5;
-}
-
-/* Profit/Loss indicators styling */
-.pnl-indicator {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.pnl-profit {
-  color: hsl(145 80% 35%); /* Refined success green */
-}
-
-.dark .pnl-profit {
-  color: hsl(145 75% 55%); /* Brighter for dark mode with equal contrast */
-}
-
-.pnl-loss {
-  color: hsl(354 90% 45%); /* Refined destructive red */
-}
-
-.dark .pnl-loss {
-  color: hsl(354 85% 65%); /* Brighter for dark mode with equal contrast */
-}
-
-.pnl-neutral {
-  color: hsl(36 95% 48%); /* Refined warning amber */
-}
-
-.dark .pnl-neutral {
-  color: hsl(36 90% 60%); /* Brighter for dark mode with equal contrast */
-}
-
-/* Pip badge styling */
-.pip-badge {
-  font-size: 0.75rem;
-  padding: 0.125rem 0.625rem;
-  border-radius: 9999px;
-}
-
-.pip-badge-profit {
-  background-color: hsla(145, 80%, 35%, 0.12);
-  color: hsl(145 80% 30%);
-}
-
-.dark .pip-badge-profit {
-  background-color: hsla(145, 75%, 45%, 0.15);
-  color: hsl(145 75% 70%);
-}
-
-.pip-badge-loss {
-  background-color: hsla(354, 90%, 45%, 0.12);
-  color: hsl(354 90% 35%);
-}
-
-.dark .pip-badge-loss {
-  background-color: hsla(354, 85%, 60%, 0.15);
-  color: hsl(354 85% 75%);
-}
-
-.pip-badge-neutral {
-  background-color: hsla(36, 95%, 48%, 0.12);
-  color: hsl(36 95% 35%);
-}
-
-.dark .pip-badge-neutral {
-  background-color: hsla(36, 90%, 55%, 0.15);
-  color: hsl(36 90% 70%);
-}
-
-/* Action button styling */
-.action-button {
-  height: 1.75rem;
-  width: 1.75rem;
-  padding: 0;
-  border-radius: 9999px;
-}
-
-.action-button-icon {
-  height: 0.875rem;
-  width: 0.875rem;
-}
-
-.action-button-view {
-  color: hsl(212 92% 45%);
-}
-.action-button-view:hover {
-  background-color: hsla(212, 92%, 45%, 0.12);
-}
-.dark .action-button-view {
-  color: hsl(212 92% 58%);
-}
-.dark .action-button-view:hover {
-  background-color: hsla(212, 92%, 58%, 0.15);
-}
-
-.action-button-edit {
-  color: hsl(36 95% 48%);
-}
-.action-button-edit:hover {
-  background-color: hsla(36, 95%, 48%, 0.12);
-}
-.dark .action-button-edit {
-  color: hsl(36 90% 55%);
-}
-.dark .action-button-edit:hover {
-  background-color: hsla(36, 90%, 55%, 0.15);
-}
-
-.action-button-close {
-  color: hsl(145 80% 35%);
-}
-.action-button-close:hover {
-  background-color: hsla(145, 80%, 35%, 0.12);
-}
-.dark .action-button-close {
-  color: hsl(145 75% 55%);
-}
-.dark .action-button-close:hover {
-  background-color: hsla(145, 75%, 55%, 0.15);
-}
-
-.action-button-delete {
-  color: hsl(354 90% 45%);
-}
-.action-button-delete:hover {
-  background-color: hsla(354, 90%, 45%, 0.12);
-}
-.dark .action-button-delete {
-  color: hsl(354 85% 60%);
-}
-.dark .action-button-delete:hover {
-  background-color: hsla(354, 85%, 60%, 0.15);
-}
-
-/* Image placeholder styling */
-.image-placeholder {
-  width: 100%;
-  height: 180px;
-  background-color: hsl(var(--muted) / 0.3);
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (min-width: 640px) {
-  .image-placeholder {
-    height: 200px;
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-/* Activity item placeholder styling */
-.activity-placeholder {
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  background-color: hsl(var(--muted) / 0.3);
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  border: 1px solid hsl(var(--border) / 0.2);
-}
-
-.placeholder-circle {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 9999px;
-  background-color: hsl(var(--muted) / 0.6);
-}
-
-.placeholder-text {
-  height: 1rem;
-  background-color: hsl(var(--muted) / 0.6);
-  border-radius: 0.375rem;
-}
-
-.placeholder-text-sm {
-  height: 0.75rem;
-  background-color: hsl(var(--muted) / 0.6);
-  border-radius: 0.375rem;
-}
-
-/* Stat card skeleton styling */
-.stat-skeleton-tile {
-  background-color: hsl(var(--muted) / 0.05);
-  border-radius: 0.5rem;
-  padding: 1rem;
-}
-
-.stat-skeleton-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.stat-skeleton-label {
-  height: 1rem;
-  width: 6rem;
-  background-color: hsl(var(--muted) / 0.6);
-  border-radius: 0.375rem;
-}
-
-/* Balance card skeleton styling */
-.balance-skeleton-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.balance-skeleton-amount {
-  height: 3rem;
-  width: 10rem;
-  margin-bottom: 0.5rem;
-  background-color: hsl(var(--muted) / 0.6);
-  border-radius: 0.375rem;
-}
-
-.balance-skeleton-subtitle {
-  height: 1.5rem;
-  width: 7rem;
-  background-color: hsl(var(--muted) / 0.6);
-  border-radius: 0.375rem;
-}
-
-.balance-skeleton-bar {
-  height: 0.5rem;
-  width: 100%;
-  border-radius: 9999px;
-  background-color: hsl(var(--muted) / 0.6);
-}
-
-/* 
- * =======================================================
- * SAFE AREA UTILITY CLASSES
- * =======================================================
- * 
- * Unified safe area handling system for the entire application
- * All components use CSS variables defined in :root
- */
+/* =====================================================
+   SAFE AREA / PWA UTILITIES (single source of truth)
+   ===================================================== */
 @layer utilities {
-  /* Hide scrollbars while maintaining scroll functionality */
-  .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;     /* Firefox */
-  }
-  
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari, Opera */
-  }
-  
-  /* Safe area padding utilities - using CSS variables */
-  .pt-safe { padding-top: var(--safe-top); }
-  .pr-safe { padding-right: var(--safe-right); }
+  .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
+  .no-scrollbar::-webkit-scrollbar { display:none; }
 
-  .pb-safe { padding-bottom: var(--spacing-bottom-safe); }
-  .pl-safe { padding-left: var(--safe-left); }
-  
-  /* Combined padding utilities */
-  .px-safe {
-    padding-left: var(--safe-left);
-    padding-right: var(--safe-right);
-  }
-  .py-safe {
-    padding-top: var(--safe-top);
-    padding-bottom: var(--spacing-bottom-safe);
-  }
-  /* Sử dụng các biến chuẩn hóa cho padding đầy đủ */
-  .p-safe {
-    padding: 
-      var(--safe-top)
-      var(--safe-right)
-      var(--spacing-bottom-safe)
-      var(--safe-left);
-  }
-  
-  /* Safe area margin utilities */
-  .mt-safe { margin-top: var(--safe-top); }
-  .mr-safe { margin-right: var(--safe-right); }
+  .pt-safe{ padding-top:var(--safe-top); }
+  .pr-safe{ padding-right:var(--safe-right); }
+  .pb-safe{ padding-bottom:var(--spacing-bottom-safe); }
+  .pl-safe{ padding-left:var(--safe-left); }
+  .px-safe{ padding-left:var(--safe-left); padding-right:var(--safe-right); }
+  .py-safe{ padding-top:var(--safe-top); padding-bottom:var(--spacing-bottom-safe); }
+  .p-safe{ padding: var(--safe-top) var(--safe-right) var(--spacing-bottom-safe) var(--safe-left); }
 
-  .mb-safe { margin-bottom: var(--spacing-bottom-safe); }
-  .ml-safe { margin-left: var(--safe-left); }
-  
-  /* Height utilities adjusted for safe areas */
-  .h-screen-safe {
-    height: 100vh; /* Fallback */
-    height: calc(100vh - var(--safe-top) - var(--safe-bottom));
-    height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
-  }
-  
-  .min-h-screen-safe {
-    min-height: 100vh; /* Fallback */
-    min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
-    min-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
-  }
-  
-  /* 
-   * PWA MEDIA QUERY HELPERS - CENTRALIZED APPROACH
-   * Centralized media queries for PWA detection
-   * Benefits:
-   * 1. Single source of truth for all PWA detection
-   * 2. Simplified maintenance - change one place affects all uses
-   * 3. Standard coverage for all PWA display modes
-   */
-  
-  /* Define variables at root */
-  :root {
-    --is-pwa: 0; /* Default: not in PWA mode */
-    --is-mobile: 0; /* Default: not in mobile view */
-    --is-mobile-or-pwa: 0; /* Default: neither mobile nor PWA */
-  }
-  
-  /* PRIMARY MEDIA QUERY: Detect PWA mode via standard display-mode */
-  @media (display-mode: standalone),
-         (display-mode: fullscreen),
-         (display-mode: minimal-ui) {
-    :root {
-      --is-pwa: 1; /* Flag when in any PWA mode */
-      --is-mobile-or-pwa: 1; /* Also set combined flag */
-    }
-  }
-  
-  /* PRIMARY MEDIA QUERY: Detect mobile viewport */
-  @media (max-width: 768px) {
-    :root {
-      --is-mobile: 1; /* Flag when in mobile viewport */
-      --is-mobile-or-pwa: 1; /* Also set combined flag */
-    }
-  }
-  
-  /* Helper classes to utilize in CSS selectors */
-  html[data-pwa-mode="true"] {
-    --is-pwa: 1;
-  }
-  
-  /* Mobile viewport specific attributes get captured here */
-  /* These CSS variables can be used anywhere in the stylesheet */
+  .mt-safe{ margin-top:var(--safe-top); }
+  .mr-safe{ margin-right:var(--safe-right); }
+  .mb-safe{ margin-bottom:var(--spacing-bottom-safe); }
+  .ml-safe{ margin-left:var(--safe-left); }
+
+  .h-screen-safe{ height:100vh; height:calc(100vh - var(--safe-top) - var(--safe-bottom)); height:calc(100dvh - var(--safe-top) - var(--safe-bottom)); }
+  .min-h-screen-safe{ min-height:100vh; min-height:calc(100vh - var(--safe-top) - var(--safe-bottom)); min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom)); }
+
+  :root{ --is-pwa:0; --is-mobile:0; --is-mobile-or-pwa:0; }
+  @media (display-mode:standalone),(display-mode:fullscreen),(display-mode:minimal-ui){ :root{ --is-pwa:1; --is-mobile-or-pwa:1; } }
+  @media (max-width:768px){ :root{ --is-mobile:1; --is-mobile-or-pwa:1; } }
+  html[data-pwa-mode="true"]{ --is-pwa:1; }
 }
 
-  .has-nav-spacing {
-    padding-bottom: var(--spacing-bottom-nav) !important;
-  }
-  
-  .has-nav-spacing-safe {
-    padding-bottom: var(--spacing-bottom-nav-safe) !important;
-  }
-  
-  .has-safe-bottom {
-    padding-bottom: var(--spacing-bottom-safe) !important;
-  }
-  
-  .has-nav-spacing-margin {
-    margin-bottom: var(--spacing-bottom-nav) !important;
-  }
-  
-  .has-nav-spacing-safe-margin {
-    margin-bottom: var(--spacing-bottom-nav-safe) !important;
-  }
-  
-  .has-safe-bottom-margin {
-    margin-bottom: var(--spacing-bottom-safe) !important;
-  }
-  
-  .mobile-content-with-navigation {
-    padding-bottom: var(--spacing-bottom-nav-safe) !important;
-  }
-  
-  .pwa-container {
-    width: 100%;
-    margin: 0 auto;
-    padding-left: max(var(--safe-left), var(--min-side-padding));
-    padding-right: max(var(--safe-right), var(--min-side-padding));
-    padding-top: var(--safe-top);
-    padding-bottom: var(--spacing-bottom-safe);
-  }
-  
-  .pwa-top-inset {
-    padding-top: max(var(--safe-top), 0.5rem);
-  }
-  
-  /* Class đặc biệt cho splash screen, đảm bảo hiển thị full màn hình */
-  .safe-area-splash {
-    position: fixed;
-    inset: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    max-width: 100vw !important;
-    max-height: 100vh !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden;
-    z-index: 9999;
-    /* Đã loại bỏ safe area padding để hiển thị toàn màn hình */
-  }
-  
-  .pwa-status-bar-area {
-    padding-top: var(--safe-top);
-    height: calc(var(--status-bar-height) + var(--safe-top));
-    display: flex;
-    align-items: flex-end;
-  }
-  
-  /* Full-bleed content that respects safe areas - Standardized */
-  .pwa-full-bleed {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    
-    @supports (width: 100vw) {
-      width: 100vw;
-      margin-left: calc(50% - 50vw + var(--safe-left));
-      margin-right: calc(50% - 50vw + var(--safe-right));
-    }
-  }
+.has-nav-spacing{ padding-bottom:var(--spacing-bottom-nav) !important; }
+.has-nav-spacing-safe{ padding-bottom:var(--spacing-bottom-nav-safe) !important; }
+.has-safe-bottom{ padding-bottom:var(--spacing-bottom-safe) !important; }
+.has-nav-spacing-margin{ margin-bottom:var(--spacing-bottom-nav) !important; }
+.has-nav-spacing-safe-margin{ margin-bottom:var(--spacing-bottom-nav-safe) !important; }
+.has-safe-bottom-margin{ margin-bottom:var(--spacing-bottom-safe) !important; }
+.mobile-content-with-navigation{ padding-bottom:var(--spacing-bottom-nav-safe) !important; }
 
-/* Style enhancements for accordions */
-.app-accordion-item {
-  --item-radius: 0.75rem;
-  --item-shadow-normal: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --item-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --transition-timing: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  border-radius: var(--item-radius);
-  transition: all var(--transition-timing);
-  box-shadow: var(--item-shadow-normal);
-  background: var(--background);
-}
+.pwa-container{ width:100%; margin:0 auto; padding-left:max(var(--safe-left), var(--min-side-padding)); padding-right:max(var(--safe-right), var(--min-side-padding)); padding-top:var(--safe-top); padding-bottom:var(--spacing-bottom-safe); }
+.pwa-top-inset{ padding-top:max(var(--safe-top), 0.5rem); }
+.safe-area-splash{ position:fixed; inset:0; width:100vw !important; height:100vh !important; max-width:100vw !important; max-height:100vh !important; margin:0 !important; padding:0 !important; overflow:hidden; z-index:9999; }
+.pwa-status-bar-area{ padding-top:var(--safe-top); height:calc(var(--status-bar-height) + var(--safe-top)); display:flex; align-items:flex-end; }
 
-.app-accordion-item[data-state="open"] {
-  background-color: hsl(var(--card));
-  border-color: hsl(var(--primary) / 0.3);
-  box-shadow: var(--item-shadow-hover);
-}
+.pwa-full-bleed{ width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); }
+@supports (width:100vw){ .pwa-full-bleed{ width:100vw; margin-left:calc(50% - 50vw + var(--safe-left)); margin-right:calc(50% - 50vw + var(--safe-right)); } }
 
-.app-accordion-content {
-  background: hsl(var(--card) / 0.7);
-}
+/* Safe-area helpers (env) */
+.safe-area-inset{ padding-left:env(safe-area-inset-left,0px); padding-right:env(safe-area-inset-right,0px); padding-bottom:env(safe-area-inset-bottom,0px); padding-top:env(safe-area-inset-top,0px); }
+.safe-area-bottom{ padding-bottom:env(safe-area-inset-bottom,0px); }
+.safe-area-top{ padding-top:env(safe-area-inset-top,0px); }
+.safe-area-left{ padding-left:env(safe-area-inset-left,0px); }
+.safe-area-right{ padding-right:env(safe-area-inset-right,0px); }
 
-.app-accordion-content-section {
-  background-color: hsl(var(--background));
-  border: 1px solid hsl(var(--border) / 0.3);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  transition: all var(--transition-timing);
-}
+/* =====================================================
+   ACCORDION ENHANCEMENTS
+   ===================================================== */
+.app-accordion-item{ --item-radius:0.75rem; --item-shadow-normal:0 1px 3px rgba(0,0,0,0.1); --item-shadow-hover:0 4px 12px rgba(0,0,0,0.12); --transition-timing:0.25s cubic-bezier(0.4,0,0.2,1); border-radius:var(--item-radius); transition:all var(--transition-timing); box-shadow:var(--item-shadow-normal); background:var(--background); }
+.app-accordion-item[data-state="open"]{ background-color:hsl(var(--card)); border-color:hsl(var(--primary)/0.3); box-shadow:var(--item-shadow-hover); }
+.app-accordion-content{ background:hsl(var(--card)/0.7); }
+.app-accordion-content-section{ background-color:hsl(var(--background)); border:1px solid hsl(var(--border)/0.3); border-radius:0.5rem; padding:1rem; margin-bottom:1rem; transition:all var(--transition-timing); }
+.app-accordion-content-section:hover{ border-color:hsl(var(--border)/0.6); box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.app-accordion-heading{ font-weight:600; margin-bottom:0.5rem; background-image:linear-gradient(to right, hsl(var(--primary)/0.9), hsl(var(--primary)/0.7)); background-clip:text; -webkit-background-clip:text; color:transparent; }
 
-.app-accordion-content-section:hover {
-  border-color: hsl(var(--border) / 0.6);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.app-accordion-heading {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  background-image: linear-gradient(to right, hsl(var(--primary) / 0.9), hsl(var(--primary) / 0.7));
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-/* Add these custom safe area classes */
-.safe-area-inset {
-  padding-left: env(safe-area-inset-left, 0px);
-  padding-right: env(safe-area-inset-right, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  padding-top: env(safe-area-inset-top, 0px);
-}
-
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-.safe-area-top {
-  padding-top: env(safe-area-inset-top, 0px);
-}
-
-.safe-area-left {
-  padding-left: env(safe-area-inset-left, 0px);
-}
-
-.safe-area-right {
-  padding-right: env(safe-area-inset-right, 0px);
-}
-
-/* ======================================= */
-/* Base layer definitions */
-/* ======================================= */
+/* =====================================================
+   BASE LAYER & THEME TOKENS
+   ===================================================== */
 @layer base {
-  :root {
-    /* Safe area insets - base definitions */
+  :root{
+    /* Safe areas */
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
-    
-    /* Min padding values - using relative units instead of fixed px */
-    --min-top-padding: 0.25rem; /* Was 4px */
-    --min-side-padding: 1rem; /* Was 16px */
-    
-    /* Unified bottom spacing system - Single source of truth for all bottom spacing */
+
+    /* Minimum paddings */
+    --min-top-padding: 0.25rem; /* 4px */
+    --min-side-padding: 1rem;   /* 16px */
+
+    /* Unified bottom spacing */
+    --mobile-nav-height: 3.5rem; /* 56px */
     --spacing-bottom-nav: var(--mobile-nav-height);
     --spacing-bottom-nav-safe: calc(var(--mobile-nav-height) + var(--safe-bottom));
     --spacing-bottom-safe: var(--safe-bottom);
-    
-    /* Standard values for mobile layout components */
-    --status-bar-height: 3rem; /* Using relative units for better scaling */
-    
-    /* Mobile Navigation - THE SINGLE SOURCE OF TRUTH FOR ALL VALUES 
-     * Following Apple Human Interface Guidelines for Tab Bar and Material Design
-     * https://developer.apple.com/design/human-interface-guidelines/components/navigation/tab-bars
-     * https://material.io/components/bottom-navigation/specs
-     */
-    
-    /* UPDATED: Base mobile navigation height increased for better tap targets and visual prominence
-     * - Using exactly 3.5rem = 56px at default font size (16px)
-     * - This matches Material Design minimum height recommendation (56px) 
-     * - Provides larger tap targets for better accessibility
-     * - Allows for properly sized icons (24px) with appropriate padding
-     */
-    --mobile-nav-height: 3.5rem; /* 56px - standard size, increased from 48px */
-    --mobile-nav-z-index: 50;  /* Keep it above everything else */
-    --mobile-nav-blur: 0.75rem;   /* Subtle blur for glass effect */
+
+    --status-bar-height: 3rem;
+
+    /* Mobile nav tokens */
+    --mobile-nav-z-index: 50;
+    --mobile-nav-blur: 0.75rem;
     --mobile-nav-anim-speed: 300ms;
     --mobile-nav-anim-easing: ease-in-out;
     --mobile-nav-shadow: var(--shadow-sm);
     --mobile-nav-active-color: hsl(var(--primary));
     --mobile-nav-inactive-color: hsl(var(--muted-foreground));
-    
-    /* UPDATED: Icon and Label specs per standard guidelines */
-    --mobile-nav-icon-size: 1.5rem;   /* 24px - Standard mobile icon size */
-    --mobile-nav-text-size: 0.75rem;  /* 12px - Increased for better readability (was 10px) */
-    --mobile-nav-icon-spacing: 0.375rem; /* 6px - Increased spacing for better visual hierarchy (was 4px) */
-    --mobile-nav-item-padding: 0.75rem; /* 12px - Standard padding around items for proper spacing */
-    
-    /* Active indicator specs - enhanced for better visibility */
-    --mobile-nav-indicator-height: 0.125rem; /* 2px */
-    --mobile-nav-indicator-width: 1.5rem;    /* 24px - Increased for better visibility (was 16px) */
-    --mobile-nav-active-weight: 600;    /* Semi-bold for active state */
-    --mobile-nav-inactive-weight: 400;  /* Regular for inactive state */
-    
-    /* Base colors - Modern financial app, iOS 17/macOS Sonoma inspired */
+    --mobile-nav-icon-size: 1.5rem;
+    --mobile-nav-text-size: 0.75rem;
+    --mobile-nav-icon-spacing: 0.375rem;
+    --mobile-nav-item-padding: 0.75rem;
+    --mobile-nav-indicator-height: 0.125rem;
+    --mobile-nav-indicator-width: 1.5rem;
+    --mobile-nav-active-weight: 600;
+    --mobile-nav-inactive-weight: 400;
+
+    /* Palette (light) */
     --background: 210 25% 98%;
     --foreground: 212 50% 12%;
-    
-    /* Card colors - Distinct elevation with clear boundaries */
     --card: 0 0% 100%;
     --card-foreground: 212 50% 14%;
-    
-    /* Popover colors - Elevated surfaces with subtle differentiation */
     --popover: 0 0% 100%;
     --popover-foreground: 212 50% 14%;
-    
-    /* Primary colors - Professional blue with perfect 7:1 WCAG contrast ratio */
     --primary: 212 92% 45%;
     --primary-foreground: 0 0% 100%;
-    
-    /* Secondary colors - Refined cool gray with improved visual hierarchy */
     --secondary: 212 18% 94%;
     --secondary-foreground: 212 55% 20%;
-    
-    /* Muted colors - Clear but gentle differentiation for secondary elements */
     --muted: 212 25% 96%;
     --muted-foreground: 212 25% 42%;
-    
-    /* Accent colors - Subtle highlight that complements the primary palette */
     --accent: 212 75% 96%;
     --accent-foreground: 212 60% 15%;
-    
-    /* State colors - High visibility with semantic meanings and 7:1 contrast */
     --destructive: 354 90% 45%;
     --destructive-foreground: 0 0% 100%;
-    
     --success: 145 80% 35%;
     --success-foreground: 0 0% 100%;
-    
     --warning: 36 95% 48%;
     --warning-foreground: 0 0% 100%;
-    
-    /* Border and other UI elements - Soft, balanced distinction */
     --border: 212 25% 92%;
     --input: 212 25% 92%;
     --ring: 212 92% 45%;
-    
-    /* Additional state colors for clear status indication */
     --info: 212 92% 48%;
     --info-foreground: 0 0% 100%;
-    
-    /* Chart colors - Enhanced for financial data visualization with clear differentiation */
-    --chart-1: 212 92% 45%;  /* Primary blue - matches primary */
-    --chart-2: 255 85% 60%;  /* Purple - complementary to blue */
-    --chart-3: 330 85% 55%;  /* Pink - high contrast */
-    --chart-4: 36 95% 48%;   /* Orange - matches warning */
-    --chart-5: 145 80% 35%;  /* Green - matches success */
-    
-    /* Typography - Standardized text sizes for all components */
-    --text-xs: 0.75rem;    /* 12px */
-    --text-sm: 0.875rem;   /* 14px */
-    --text-base: 1rem;     /* 16px */
-    --text-lg: 1.125rem;   /* 18px */
-    --text-xl: 1.25rem;    /* 20px */
-    --text-2xl: 1.5rem;    /* 24px */
-    --text-3xl: 1.875rem;  /* 30px */
-    --text-4xl: 2.25rem;   /* 36px */
-    
-    /* Font weights - Standardized for all components */
-    --font-normal: 400;
-    --font-medium: 500;
-    --font-semibold: 600;
-    --font-bold: 700;
-    
-    /* Standard icon sizes for all visual components */
-    --icon-xs: 0.75rem;    /* 12px */
-    --icon-sm: 1rem;       /* 16px */
-    --icon-md: 1.25rem;    /* 20px */
-    --icon-lg: 1.5rem;     /* 24px */
-    --icon-xl: 2rem;       /* 32px */
-    
-    /* Visual component spàcing - Based on 4px grid system */
-    --spacing-0: 0;
-    --spacing-1: 0.25rem;  /* 4px */
-    --spacing-2: 0.5rem;   /* 8px */
-    --spacing-3: 0.75rem;  /* 12px */
-    --spacing-4: 1rem;     /* 16px */
-    --spacing-5: 1.25rem;  /* 20px */
-    --spacing-6: 1.5rem;   /* 24px */
-    --spacing-8: 2rem;     /* 32px */
-    
-    /* Card component system defaults */
-    --card-padding: var(--spacing-4);     /* Standard card padding */
-    --card-title-size: var(--text-xl);    /* Standard card title size */
-    --card-icon-size: var(--icon-md);     /* Standard card icon size */
-    --card-title-weight: var(--font-semibold); /* Standard card title weight */
-    --card-value-size: var(--text-3xl);   /* Standard value display size */
-    --card-subtitle-size: var(--text-sm); /* Standard subtitle size */
-    
-    /* Sidebar colors - Modern financial desktop-inspired design */
+
+    /* Chart colors */
+    --chart-1: 212 92% 45%;
+    --chart-2: 255 85% 60%;
+    --chart-3: 330 85% 55%;
+    --chart-4: 36 95% 48%;
+    --chart-5: 145 80% 35%;
+
+    /* Typography scale */
+    --text-xs: 0.75rem; --text-sm: 0.875rem; --text-base: 1rem; --text-lg: 1.125rem;
+    --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem; --text-4xl: 2.25rem;
+    --font-normal:400; --font-medium:500; --font-semibold:600; --font-bold:700;
+
+    /* Icon sizes */
+    --icon-xs:0.75rem; --icon-sm:1rem; --icon-md:1.25rem; --icon-lg:1.5rem; --icon-xl:2rem;
+
+    /* 4px grid */
+    --spacing-0:0; --spacing-1:0.25rem; --spacing-2:0.5rem; --spacing-3:0.75rem; --spacing-4:1rem; --spacing-5:1.25rem; --spacing-6:1.5rem; --spacing-8:2rem;
+
+    /* Card defaults */
+    --card-padding: var(--spacing-4);
+    --card-title-size: var(--text-xl);
+    --card-icon-size: var(--icon-md);
+    --card-title-weight: var(--font-semibold);
+    --card-value-size: var(--text-3xl);
+    --card-subtitle-size: var(--text-sm);
+
+    /* Sidebar (dark surface) */
     --sidebar-background: 212 40% 12%;
     --sidebar-foreground: 212 30% 98%;
     --sidebar-primary: 212 92% 45%;
@@ -883,1445 +275,274 @@
     --sidebar-accent-foreground: 212 30% 98%;
     --sidebar-border: 212 30% 16%;
     --sidebar-ring: 212 92% 45%;
-    
-    /* Shadows - Modern iOS/MacOS inspired with subtle elevation */
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-    --shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 2px 4px 0 rgba(0, 0, 0, 0.03);
-    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.06), 0 2px 6px -1px rgba(0,
-    0, 0, 0.04);
-    --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.09), 0 8px 16px -8px rgba(0, 0, 0, 0.06);
-    --shadow-xl: 0 20px 30px -10px rgba(0, 0, 0, 0.12), 0 10px 20px -10px rgba(0, 0, 0, 0.08);
-    
-    /* Card and interactive element shadows for clean elevation */
-    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.02);
-    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06), 0 3px 6px rgba(0, 0, 0, 0.04);
-    --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.04);
-    --shadow-elevated: 0 8px 30px rgba(0, 0, 0, 0.12);
-    --shadow-focus: 0 0 0 3px hsla(var(--primary) / 0.35);
-    
-    /* Border radius */
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.04), 0 1px 2px 0 rgba(0,0,0,0.02);
+    --shadow:    0 2px 8px 0 rgba(0,0,0,0.04), 0 2px 4px 0 rgba(0,0,0,0.03);
+    --shadow-md: 0 4px 12px -2px rgba(0,0,0,0.06), 0 2px 6px -1px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.09), 0 8px 16px -8px rgba(0,0,0,0.06);
+    --shadow-xl: 0 20px 30px -10px rgba(0,0,0,0.12), 0 10px 20px -10px rgba(0,0,0,0.08);
+
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.02);
+    --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.06), 0 3px 6px rgba(0,0,0,0.04);
+    --shadow-button: 0 1px 3px rgba(0,0,0,0.04);
+    --shadow-elevated: 0 8px 30px rgba(0,0,0,0.12);
+    --shadow-focus: 0 0 0 3px hsla(var(--primary)/0.35);
+
     --radius: 0.75rem;
   }
-  
-  .dark {
-    /* Base colors - Modern OS dark theme-inspired (iOS 17/macOS Sonoma) with improved contrast */
+
+  .dark{
     --background: 212 40% 6%;
     --foreground: 210 25% 98%;
-    
-    /* Card colors - Distinct elevated surfaces with clear component boundaries */
     --card: 212 35% 10%;
-    --card-foreground: 210 25% 98%; 
-    
-    /* Popover colors - Elevated above standard cards for visual hierarchy */
+    --card-foreground: 210 25% 98%;
     --popover: 212 40% 12%;
     --popover-foreground: 210 25% 98%;
-    
-    /* Primary colors - Vibrant but comfortable for extended viewing */
     --primary: 212 92% 58%;
     --primary-foreground: 0 0% 100%;
-    
-    /* Secondary colors - Proper dark mode hierarchy with visible boundaries */
     --secondary: 212 30% 16%;
     --secondary-foreground: 210 25% 98%;
-    
-    /* Muted colors - Better contrast for secondary content with reduced eye strain */
     --muted: 212 30% 14%;
     --muted-foreground: 210 20% 80%;
-    
-    /* Accent colors - Subtle highlights with proper distinction */
     --accent: 212 35% 18%;
     --accent-foreground: 210 25% 98%;
-    
-    /* State colors - Enhanced visibility in dark environments */
     --destructive: 354 90% 65%;
     --destructive-foreground: 0 0% 100%;
-    
     --success: 145 80% 45%;
     --success-foreground: 0 0% 100%;
-    
     --warning: 36 95% 55%;
     --warning-foreground: 0 0% 100%;
-    
-    /* Border and other UI elements - Visible but not distracting */
     --border: 212 30% 20%;
     --input: 212 30% 20%;
     --ring: 212 92% 58%;
-    
-    /* Additional state colors for clear status indications */
     --info: 212 92% 58%;
     --info-foreground: 0 0% 100%;
-    
-    /* Chart colors - Enhanced for dark mode financial data visualization */
-    --chart-1: 212 92% 58%;  /* Primary blue - matches primary */
-    --chart-2: 255 85% 65%;  /* Purple - brighter for dark backgrounds */
-    --chart-3: 330 85% 65%;  /* Pink - brighter for dark backgrounds */
-    --chart-4: 36 95% 55%;   /* Orange - matches warning */
-    --chart-5: 145 80% 45%;  /* Green - matches success */
-    
-    /* Shadows for dark mode - More subtle glow effect typical in modern dark UIs */
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    --shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.3), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 12px -1px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(0, 0, 0, 0.35);
-    --shadow-xl: 0 16px 24px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(0, 0, 0, 0.4);
 
-    /* Card and interactive element shadows - subtle glow for dark mode */
-    --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
-    --shadow-button: 0 1px 3px rgba(0, 0, 0, 0.4);
-    --shadow-elevated: 0 8px 18px rgba(0, 0, 0, 0.6);
-    --shadow-focus: 0 0 0 3px hsla(var(--primary) / 0.45);
+    --chart-1: 212 92% 58%;
+    --chart-2: 255 85% 65%;
+    --chart-3: 330 85% 65%;
+    --chart-4: 36 95% 55%;
+    --chart-5: 145 80% 45%;
+
+    --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.3), 0 1px 2px 0 rgba(0,0,0,0.2);
+    --shadow:    0 2px 6px 0 rgba(0,0,0,0.3), 0 1px 3px 0 rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 12px -1px rgba(0,0,0,0.4), 0 2px 6px -1px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 16px rgba(0,0,0,0.45), 0 4px 10px rgba(0,0,0,0.35);
+    --shadow-xl: 0 16px 24px rgba(0,0,0,0.5), 0 6px 12px rgba(0,0,0,0.4);
+    --shadow-card: 0 2px 6px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-card-hover: 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.4);
+    --shadow-button: 0 1px 3px rgba(0,0,0,0.4);
+    --shadow-elevated: 0 8px 18px rgba(0,0,0,0.6);
+    --shadow-focus: 0 0 0 3px hsla(var(--primary)/0.45);
   }
 
-  * {
-    @apply border-border;
-  }
-  
-  html {
-      height: 100%;
-      margin: 0;
-      /* Di chuyển màu nền và font-feature ra thẻ html */
-      @apply bg-background antialiased; 
-      font-feature-settings: "cv02", "cv03", "cv04", "cv09", "cv11";
-      width: 100%;
-      overflow-x: hidden;
-  }
+  * { @apply border-border; }
 
-  body {
-      height: 100%;
-      margin: 0;
-      @apply text-foreground font-sans;
-      width: 100%;
-      max-width: 100vw;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      position: relative;
-  }
-    
-  /* Tối ưu cho trình duyệt WebKit trên iOS */
-  @supports (-webkit-touch-callout: none) {
-    body {
-      -webkit-text-size-adjust: none; /* Tránh thay đổi kích thước chữ tự động */
-      -webkit-font-smoothing: antialiased; /* Làm mượt font */
-    }
-  }
-  
-  /* Root element - basic container */
-  #root {
-    @apply bg-background;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    min-height: 100dvh;
-    width: 100%;
-    position: relative;
-    overflow-x: hidden;
-  }
-  
-  /* Mobile-optimized body styling for both PWA and mobile views
-   * Using CSS variables instead of duplicating media queries
-   */
-  body {
-    /* Base styles for all modes */
-    @apply bg-background text-foreground;
-    max-width: 100vw;
-  }
-     
-  /* 3) ĐẢM BẢO desktop scroll bình thường */
-  html, body {
-    min-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;          /* quan trọng cho desktop */
-  }
-  
-  
-  /* Fallback for browsers that don't support CSS variables */
-  @supports not (--css: variables) {
-    @media (max-width: 768px), (display-mode: standalone) {
-      body {
-        height: 100vh; 
-        height: 100dvh;
-        overflow: hidden;
-        position: fixed;
-        width: 100%;
-        top: 0;
-        left: 0;
-        /* Đã xóa giới hạn overscroll để cho phép cử chỉ vuốt mặc định */
-      }
-    }
-  }
-  
-  /* Base mobile layout container */
-  .mobile-layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    min-height: 100dvh;
-    @apply bg-background;
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    overflow-y: auto; /* Cho phép cuộn dọc cho nội dung */
-    position: relative; /* Đảm bảo vị trí tương đối cho các con absolute */
-  }
-  
-  /* Unified mobile layout styles for both regular and PWA modes
-   * This ensures consistent behavior across all environments
-   */
-  .mobile-layout {
-    /* Base layout styling */
-    max-height: 100dvh; /* Dynamic viewport height */
-    /* Đã xóa: cho phép tính năng pull-to-refresh */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    /* Apply safe area to top automatically */
-    padding-top: var(--safe-top);
-    touch-action: auto; /* Cho phép tất cả các cử chỉ cảm ứng, bao gồm vuốt để điều hướng Safari */
-  }
-  
-  /* Bottom spacing is now handled through a unified system:
-   * 1. CSS Variables: --spacing-bottom-nav, --spacing-bottom-nav-safe, --spacing-bottom-safe
-   * 2. Utility classes: .has-nav-spacing, .has-nav-spacing-safe, .has-safe-bottom
-   * 3. See bottom-spacing-audit.md for complete documentation
-   */
-  /* Main content container - Core layout container */
-  .app-content-container {
-    /* Standard side padding */
-    padding-left: max(var(--safe-left), var(--min-side-padding));
-    padding-right: max(var(--safe-right), var(--min-side-padding));
-    padding-top: 0;
-  }
-  
-  /* The component that applies bottom spacing with safe area */
-  .mobile-content-with-navigation {
-    /* Only applies padding-bottom with unified CSS variable */
-    padding-bottom: var(--spacing-bottom-nav-safe) !important;
-  }
-  
-  /* 
-   * SPACING FOR MOBILE NAVIGATION IS NOW FULLY HANDLED BY CSS VARIABLES AND SAFE AREAS
-   * 
-   * In previous versions, we used a bottom-nav-spacer element to create spacing.
-   * Now, we utilize CSS safe-area variables (--safe-bottom) and proper positioning
-   * to ensure content is always visible and properly spaced without extra DOM elements.
-   *
-   * This approach is:
-   * 1. More efficient (fewer DOM elements)
-   * 2. More reliable across different devices 
-   * 3. Better compatibility with PWA environments
-   */
-  
-  /* 
-   * =======================================================
-   * MOBILE NAVIGATION COMPONENT SYSTEM
-   * =======================================================
-   * 
-   * Unified styling for the MobileNavigator component
-   * All styles defined in one place to ensure consistency and responsive behavior
-   * Organized with CSS variables for better maintainability
-   */
-  
-  /* MOBILE NAVIGATION - THE SINGLE SOURCE OF TRUTH FOR POSITIONING
-   * ‼️ THIS IS THE ONLY PLACE THAT DEFINES POSITION RULES FOR MOBILE NAVIGATOR ‼️
-   * Any changes to Mobile Navigator positioning MUST be made here,
-   * NOT in component props, inline styles, or other CSS files.
-   * 
-   * All CSS variables are now defined in :root for consistent access across components
-   */
-  .mobile-nav {
-    /* ‼️ CORE POSITIONING RULES - NEVER OVERRIDE THESE ‼️ */
-    position: fixed !important; /* Use !important to prevent any override */
-    bottom: 0 !important;       /* Bottom 0 is critical and must never be changed */
-    left: 0 !important;         /* Full width requires left 0 */
-    right: 0 !important;        /* Full width requires right 0 */
-    width: 100% !important;     /* Explicit 100% width to avoid any layout issues */
-    z-index: var(--mobile-nav-z-index) !important; /* Ensure navigation stays on top */
-    
-    /* UNIFIED HEIGHT CALCULATION - HANDLES ALL DEVICES AUTOMATICALLY
-     * This automatically adjusts for safe area insets on all devices
-     * Using the new unified spacing system
-     */
-    height: var(--spacing-bottom-nav-safe) !important;
-    
-    /* Ngăn chặn cuộn nhưng vẫn cho phép vuốt ngang Safari */
-    overflow: hidden !important;
-    /* Cho phép mọi cử chỉ touch mặc định */
-    touch-action: auto;
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    
-    /* Safe area padding applied consistently */
-    padding-bottom: var(--safe-bottom) !important;
-    
-    /* Visual appearance - enhanced for modern iOS/Android look */
-    background-color: hsla(var(--background), 0.9);
-    border-top: 1px solid hsla(var(--border), 0.35);
-    backdrop-filter: blur(var(--mobile-nav-blur));
-    -webkit-backdrop-filter: blur(var(--mobile-nav-blur));
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
-    
-    /* Force GPU acceleration for smoother rendering on all devices */
-    transform: translateZ(0);
-    
-    /* Transitions affect ONLY appearance, never position or structure */
-    transition: 
-      background-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
-      border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
-  }
+  html{ height:100%; margin:0; @apply bg-background antialiased; font-feature-settings:"cv02","cv03","cv04","cv09","cv11"; width:100%; overflow-x:hidden; }
+  body{ height:100%; margin:0; @apply text-foreground font-sans; width:100%; max-width:100vw; overflow-x:hidden; -webkit-overflow-scrolling:touch; position:relative; }
 
-  /* Enhanced PWA mode styling - use CSS variables for detection
-   * Unified approach using --is-pwa flag instead of repeating media queries
-   */
-  
-  /* Apply PWA specific styles using the CSS variable approach */
-  @supports (--css: variables) {
-    /* Style specific for PWA mode */
-    .mobile-nav {
-      /* Only apply when in PWA mode using the variable multiplier pattern */
-      border-top-color: color-mix(
-        in srgb,
-        hsl(var(--border) / 0.4) calc(100% - (var(--is-pwa) * 100%)),
-        hsl(var(--border) / 0.6) calc(var(--is-pwa) * 100%)
-      );
-      
-      /* These properties are already !important in core styles */
-      /* We don't need to apply them again */
-    }
+  @supports (-webkit-touch-callout:none){ body{ -webkit-text-size-adjust:none; -webkit-font-smoothing:antialiased; } }
 
-    /* PWA safe area adjustments using variables */
-    html {
-      /* When --is-pwa is 1, these become 0 effectively */
-      padding-bottom: calc(var(--padding-bottom, auto) * (1 - var(--is-pwa)));
-      margin-bottom: calc(var(--margin-bottom, auto) * (1 - var(--is-pwa)));
-    }
+  #root{ @apply bg-background; min-height:100vh; min-height:-webkit-fill-available; min-height:100dvh; width:100%; position:relative; overflow-x:hidden; }
 
-    /* Mobile layout PWA specifics */
-    .mobile-layout {
-      /* Only set to 0 when in PWA mode */
-      padding-bottom: calc(var(--padding-bottom, auto) * (1 - var(--is-pwa)));
-      margin-bottom: calc(var(--margin-bottom, auto) * (1 - var(--is-pwa)));
-    }
-    
-    /* Bottom spacing is now handled by unified classes and CSS variables */
-  }
-  
-  /* Fallback for browsers that don't support CSS variables */
-  @supports not (--css: variables) {
-    @media (display-mode: standalone),
-           (display-mode: fullscreen),
-           (display-mode: minimal-ui) {
-      .mobile-nav {
-        border-top: 1px solid hsl(var(--border) / 0.6);
-      }
-      
-      html, #root, .mobile-layout {
-        padding-bottom: 0 !important;
-        margin-bottom: 0 !important;
-      }
-      
+  html, body{ min-height:100%; overflow-x:hidden; overflow-y:auto; }
 
+  @supports not (--css: variables){
+    @media (max-width:768px), (display-mode:standalone){
+      body{ height:100vh; height:100dvh; overflow:hidden; position:fixed; width:100%; top:0; left:0; }
     }
-  }
-  
-  /* Navigation item container - follows unified design standards
-   * Enhanced for better accessibility, visibility, and touch targets
-   * Combines best practices from Apple HIG and Material Design
-   */
-  .mobile-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    
-    /* UPDATED: Full-height touch targets to maximize tap area */
-    height: 100%;
-    
-    /* UPDATED: Added standard padding for better visual balance */
-    padding: var(--mobile-nav-item-padding) 0.5rem;
-    
-    position: relative; /* Chỉ giữ lại một lần khai báo position */
-    overflow: hidden;
-    color: var(--mobile-nav-inactive-color);
-    transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
-    
-    /* Touch optimization for mobile standards - cho phép vuốt Safari */
-    touch-action: auto;
-    -webkit-tap-highlight-color: transparent;
-    
-    /* UPDATED: Increased minimum touch target size to 56px
-     * Following Material Design minimum touch target guidelines
-     */
-    min-height: 3.5rem; /* 56px - Matches Material Design standard */
-  }
-  
-  /* Add feedback for active/pressed state */
-  .mobile-nav-item:active {
-    opacity: 0.8;
-  }
-  
-  /* UPDATED: Active state indicator - more prominent positioning and sizing
-   * Material Design often uses a colored indicator for active state
-   */
-  .mobile-nav-indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    
-    /* UPDATED: Increased width for better visibility */
-    width: var(--mobile-nav-indicator-width);
-    height: var(--mobile-nav-indicator-height);
-    background-color: var(--mobile-nav-active-color);
-    border-radius: 9999px;
-    
-    /* UPDATED: Add subtle transition effect */
-    transition: width 0.2s ease-in-out;
-  }
-  
-  /* UPDATED: Icon container - standard 24px mobile icons with proper spacing */
-  .mobile-nav-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    /* UPDATED: Standard mobile icon size of 24px (1.5rem) */
-    font-size: var(--mobile-nav-icon-size);
-    width: var(--mobile-nav-icon-size);
-    height: var(--mobile-nav-icon-size);
-    
-    /* UPDATED: Increased spacing for better visual hierarchy */
-    margin-bottom: var(--mobile-nav-icon-spacing);
-    margin-left: auto;
-    margin-right: auto;
-    
-    /* Ensures proper vertical alignment */
-    line-height: 1;
-    flex-shrink: 0; /* Prevents icon from shrinking */
-    
-    /* UPDATED: Create a subtle container effect for the icon */
-    position: relative;
-    z-index: 1;
-  }
-  
-  /* UPDATED: Label text - increased size and improved visual hierarchy */
-  .mobile-nav-label {
-    /* UPDATED: Increased size from 10px to 12px (0.75rem) for better readability */
-    font-size: var(--mobile-nav-text-size);
-    font-weight: var(--mobile-nav-inactive-weight);
-    line-height: 1.2; /* Slightly increased for better readability */
-    transition: 
-      color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing),
-      font-weight var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90%; /* UPDATED: Prevent overflow issues */
-    letter-spacing: -0.01em; /* Slight tightening for iOS feel */
-    
-    /* UPDATED: Increased horizontal padding for better spacing */
-    padding: 0 0.375rem; /* 6px - standard spacing (increased from 4px) */
-  }
-  
-  /* UPDATED: Active tab styling - more prominent and better contrast */
-  .mobile-nav-item.active,
-  .mobile-nav-item:active {
-    color: var(--mobile-nav-active-color);
-  }
-  
-  /* UPDATED: Active label text - enhanced visibility and emphasis */
-  .mobile-nav-label.active {
-    font-weight: var(--mobile-nav-active-weight);
-    color: var(--mobile-nav-active-color);
-    
-    /* UPDATED: Added subtle emphasis for better visual hierarchy */
-    letter-spacing: -0.02em;
-  }
-  
-  /* Class để ngăn chặn cuộn nhưng vẫn cho phép điều hướng Safari */
-  .no-scroll {
-    overflow: hidden !important;
-    /* Đã xóa giới hạn overscroll để cho phép cử chỉ vuốt mặc định */
-    /* Cho phép tất cả các cử chỉ touch mặc định */
-    pointer-events: auto !important;
-    /* Loại bỏ -webkit-overflow-scrolling: none để không can thiệp vào Safari */
-    user-select: none !important;
-    -webkit-user-select: none !important;
-  }
-  
-  /* Mobile header bar - enhanced modern design */
-  .mobile-header {
-    --mobile-header-blur: 0.75rem; /* Increased for subtle glass effect */
-    
-    backdrop-filter: blur(var(--mobile-header-blur));
-    -webkit-backdrop-filter: blur(var(--mobile-header-blur));
-    border-bottom: 1px solid hsla(var(--border), 0.35);
-    background-color: hsla(var(--background), 0.92);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-  }
-  
-  /* Mobile sidebar navigation wrapper */
-  .mobile-sidebar {
-    background-color: hsl(var(--background));
-    box-shadow: var(--shadow-lg);
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  /* 
-   * =======================================================
-   * CHART DIALOG COMPONENT SYSTEM
-   * =======================================================
-   * 
-   * Unified styling for the ChartImageDialog component
-   * All styles defined in one place to ensure consistency and responsive behavior
-   * Organized with CSS variables for better maintainability
-   */
-  
-  /* Chart Dialog CSS Variables */
-  :root {
-    /* CSS Variables for chart components - CHÍNH THỨC VÀ THỐNG NHẤT */
-    --chart-dialog-radius: 0.75rem; /* 12px - Giá trị thống nhất (cũ 1rem) */
-    --chart-dialog-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
-    --chart-dialog-bg: hsl(var(--card));
-    --chart-dialog-z-index: 50;
-    --chart-anim-speed: 300ms; /* Áp dụng cho tất cả animations trong các chart components */
-    --chart-mobile-breakpoint: 640px;
-    
-    /* Chart spacing system - Sử dụng spacing toàn cục để đảm bảo tính nhất quán */
-    --chart-spacing-xs: var(--spacing-2);  /* 8px - Using global spacing scale */
-    --chart-spacing-sm: var(--spacing-3); /* 12px - Using global spacing scale */
-    --chart-spacing-md: var(--spacing-4); /* 16px - Using global spacing scale */
-    --chart-spacing-lg: var(--spacing-6); /* 24px - Using global spacing scale */
-    
-    /* Typography settings */
-    --chart-title-font-size: var(--text-sm); /* 14px - Using global typography scale */
-    --chart-title-font-weight: 500;
-    --chart-subtitle-font-size: var(--text-xs); /* 12px - Using global typography scale */
-    --chart-subtitle-color: hsl(var(--muted-foreground));
-    
-    /* Control and button sizes - following 4px spacing rule */
-    --chart-control-size: 2.5rem; /* 40px - Increased for better touch targets */
-    --chart-control-icon-size: 1.25rem; /* 20px */
-    --chart-mobile-control-size: 2rem; /* 32px - Increased for better touch targets */
-    --chart-mobile-control-icon-size: 1rem; /* 16px */
-    
-    /* Pagination indicators */
-    --chart-dot-size: 0.625rem; /* 10px */
-    --chart-dot-spacing: 0.625rem; /* 10px */
-    
-    /* Zoom and interaction settings */
-    --chart-image-max-scale: 3; /* Maximum zoom scale for pinch gesture */
-    --chart-image-transition: transform 0.2s ease-out;
-  }
-  
-  /* Chart typography classes */
-  .chart-title {
-    font-size: var(--chart-title-font-size);
-    font-weight: var(--chart-title-font-weight);
-  }
-  
-  .chart-subtitle {
-    font-size: var(--chart-subtitle-font-size);
-    color: var(--chart-subtitle-color);
-  }
-  
-  /* Chart content - main viewing area */
-  .chart-content {
-    background-color: hsl(var(--background) / 0.95);
-    position: relative;
-    overflow: hidden;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.375rem; /* 6px - Standard padding for all devices to maximize image display area */
-    
-    /* Dark mode adjustments */
-    .dark & {
-      background-color: hsl(var(--background) / 0.98);
-    }
-    
-    /* Mobile adjustments */
-    @media (max-width: 640px) {
-      padding: 0.375rem; /* 6px - Consistently using 0.375rem across all devices */
-    }
-  }
-  
-  /* Safe area padding adjustments for charts on mobile and PWA */
-  @media (max-width: 640px), (display-mode: standalone) {
-    .chart-content {
-      /* Use max() to ensure sufficient padding at bottom for devices with notches/safe areas */
-      padding-top: 0.375rem; /* 6px */
-      padding-right: 0.375rem; /* 6px */
-      padding-left: 0.375rem; /* 6px */
-      padding-bottom: max(0.375rem, calc(var(--safe-bottom) + 0.375rem)); /* Ensure safe area is respected while maintaining 6px minimum */
-    }
-  }
-  
-  /* Chart image viewport - container that handles zoom and pan */
-  .chart-image-viewport {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: grab;
-  }
-  
-  .chart-image-viewport:active {
-    cursor: grabbing;
-  }
-  
-  /* Chart image container */
-  .chart-image-container {
-    /* Base styling */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    transition: opacity var(--chart-anim-speed) ease; 
-    position: relative;
-    transform-origin: center;
-    will-change: transform; /* Optimize performance for transforms */
-    overflow: hidden; /* Thêm overflow hidden để ngăn phần thừa màu đen hiển thị */
-    border-radius: 0.5rem; /* Thêm border-radius cho container */
-  }
-  
-  /* Zoom states for image container */
-  .chart-image-container.zoomed-in {
-    cursor: grab;
-  }
-  
-  .chart-image-container.dragging {
-    cursor: grabbing;
-  }
-  
-  /* No transform state */
-  .chart-image-container.no-transform {
-    transform: none;
-  }
-  
-  /* Add custom transform class that will be set via JavaScript */
-  .chart-image-container.custom-transform {
-    /* Empty rule - transform will be set inline */
-  }
-  
-  /* Chart image - with zoom support */
-  .chart-image {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    transform-origin: center;
-    transition: var(--chart-image-transition);
-    border-radius: 0.5rem; /* Thêm border-radius đồng bộ */
-    background-color: transparent; /* Đảm bảo không có background */
-    
-    /* Enable pan gestures only (pinch is handled by JS) */
-    touch-action: auto;
-    
-    /* Mobile optimizations - using 0.375rem (6px) padding standard */
-    @media (max-width: 640px) {
-      max-height: calc(100% - 48px); /* Reduced padding to maximize image display area */
-    }
-  }
-  
-  /* Adjustments for chart images on devices with safe areas */
-  @media (max-width: 640px), (display-mode: standalone) {
-    .chart-image {
-      /* Ensure image isn't hidden by navigation bar and home indicator */
-      /* Using 6px (0.375rem) padding standard to maximize image display area */
-      max-height: calc(100% - var(--safe-bottom) - 0.375rem);
-    }
-  }
-  
-  /* Zoom controls UI */
-  .chart-zoom-controls {
-    position: absolute;
-    right: 0.375rem; /* 6px - Standard padding */
-    bottom: calc(0.375rem + var(--safe-bottom)); /* 6px + safe area */
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem; /* 4px */
-    z-index: 30;
-  }
-  
-  .chart-zoom-button {
-    width: var(--chart-control-size);
-    height: var(--chart-control-size);
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.4);
-    color: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    
-    /* Smaller size on mobile */
-    @media (max-width: 640px) {
-      width: var(--chart-mobile-control-size);
-      height: var(--chart-mobile-control-size);
-    }
-  }
-  
-  .chart-zoom-button:hover {
-    background-color: rgba(0, 0, 0, 0.6);
-  }
-  
-  /* Chart pagination - dots and buttons navigation */
-  .chart-pagination {
-    position: absolute;
-    bottom: max(0.375rem, calc(var(--safe-bottom) + 0.25rem)); /* 6px or safe area + 4px */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
-    display: flex;
-    justify-content: center;
-    
-    /* Increased backdrop blur for better visibility */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    
-    /* Use consistent spacing on all devices */
-    @media (max-width: 640px) {
-      bottom: max(0.375rem, calc(var(--safe-bottom) + 0.375rem)); /* 6px or safe area + 6px */
-    }
-  }
-  
-  /* Pagination dots container */
-  .chart-pagination-dots {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem; /* 4px - even smaller spacing between dots */
-    padding: 0.25rem 0.375rem; /* 4px 6px - very compact padding */
-    background: rgba(0, 0, 0, 0.45);
-    border-radius: 9999px;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-  
-  /* Individual pagination dot */
-  .chart-pagination-dot {
-    width: 0.25rem; /* 4px - smaller dots */
-    height: 0.25rem; /* 4px */
-    border-radius: 9999px;
-    transition: all 0.15s ease;
-  }
-  
-  /* Active pagination dot */
-  .chart-pagination-dot-active {
-    width: 0.375rem; /* 6px - slightly larger for active state */
-    height: 0.375rem; /* 6px */
-    background-color: white;
-  }
-  
-  /* Inactive pagination dot */
-  .chart-pagination-dot-inactive {
-    background-color: rgba(255, 255, 255, 0.35);
-  }
-  
-  /* Chart navigation buttons - Standardized using CSS variables */
-  .chart-nav-button {
-    background-color: rgba(0, 0, 0, 0.4);
-    color: rgba(255, 255, 255, 0.9);
-    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-sm);
-
-    position: absolute;
-    top: 50%;
-    width: var(--chart-control-size);
-    height: var(--chart-control-size);
-    border-radius: 50%;
-    transform: translateY(-50%);
-    z-index: 20;
-    
-    /* Position the prev/next buttons using 6px (0.375rem) padding standard */
-    &.chart-nav-button-prev {
-      left: 0.375rem; /* 6px standard padding */
-    }
-    
-    &.chart-nav-button-next {
-      right: 0.375rem; /* 6px standard padding */
-    }
-    
-    /* Consistent positioning on all devices */
-    @media (max-width: 640px) {
-      &.chart-nav-button-prev {
-        left: 0.375rem; /* 6px standard padding */
-      }
-      
-      &.chart-nav-button-next {
-        right: 0.375rem; /* 6px standard padding */
-      }
-    }
-    
-    /* Show on larger screens */
-    @media (min-width: 640px) {
-      display: flex !important;
-    }
-    
-    /* Size adjustments for mobile */
-    @media (max-width: 640px) {
-      width: var(--chart-mobile-control-size);
-      height: var(--chart-mobile-control-size);
-    }
-  }
-  
-  .chart-nav-button:hover {
-    background-color: rgba(0, 0, 0, 0.6);
-    transform: translateY(-50%) scale(1.05);
-  }
-  
-  .chart-nav-button:active {
-    background-color: rgba(0, 0, 0, 0.7);
-    transform: translateY(-50%) scale(0.95);
-  }
-  
-
-  
-  /* Disabled state for buttons */
-  .chart-zoom-button:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  
-  /* 
-   * =======================================================
-   * STAT CARD COMPONENT SYSTEM
-   * =======================================================
-   * 
-   * Unified styling for the StatCard component
-   * All styles defined in one place to ensure consistency and responsive behavior
-   * Organized with CSS variables for better maintainability
-   */
-  
-  /* Stat Card Base Container */
-  .stat-card {
-    /* Central configuration through CSS variables following 4px spacing rule */
-    --stat-card-padding: 1rem; /* 16px - Tailwind p-4 */
-    --stat-card-radius: var(--radius);
-    --stat-card-border-opacity: 0.3;
-    --stat-card-shadow: var(--shadow-sm);
-    --stat-card-hover-shadow: var(--shadow-md);
-    --stat-card-anim-speed: 200ms;
-    --stat-card-z-index: 10;
-    
-    /* Value and title typography */
-    --stat-value-font-size: 1.75rem;
-    --stat-value-font-weight: 600;
-    --stat-title-font-size: 0.875rem;
-    --stat-title-font-weight: 500;
-    --stat-suffix-font-size: 1.125rem;
-    
-    /* Icon configuration */
-    --stat-icon-size: 1.25rem;
-    --stat-icon-container-size: 2rem;
-    --stat-icon-container-padding: 0.375rem; /* 6px - Tailwind p-1.5 */
-    --stat-icon-container-radius: 9999px;
-    
-    /* Progress bar config */
-    --stat-progress-height: 0.25rem; /* 4px - Following 4px spacing rule */
-    --stat-progress-radius: 9999px;
-    
-    /* Base container styling */
-    padding: var(--stat-card-padding);
-    border-radius: var(--stat-card-radius);
-    box-shadow: var(--stat-card-shadow);
-    border: 1px solid hsl(var(--border) / var(--stat-card-border-opacity));
-    overflow: hidden;
-    position: relative;
-    transition: all var(--stat-card-anim-speed) ease-in-out;
-  }
-  
-  /* Compact variant for stat cards in grid layout */
-  .stat-card-compact {
-    --stat-card-padding: 0.75rem; /* 12px - Following 4px rule - Tailwind p-3 */
-    --stat-value-font-size: 1.5rem;
-    padding: var(--stat-card-padding);
-  }
-  
-  /* Hover effects */
-  .stat-card:hover {
-    box-shadow: var(--stat-card-hover-shadow);
-  }
-  
-  /* Background gradient effect - enhanced with modern styling */
-  .stat-card-bg {
-    position: absolute;
-    inset: 0;
-    opacity: 0.6;
-    transition: all var(--stat-card-anim-speed) cubic-bezier(0.4, 0, 0.2, 1);
-    background-blend-mode: soft-light;
-    backdrop-filter: blur(8px) saturate(1.1);
-    mix-blend-mode: normal;
-  }
-  
-  .stat-card:hover .stat-card-bg {
-    opacity: 0.8;
-    backdrop-filter: blur(12px) saturate(1.2);
-  }
-  
-  /* Header container */
-  .stat-card-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.75rem;
-    position: relative;
-    z-index: var(--stat-card-z-index);
-  }
-  
-  /* Stat card title */
-  .stat-card-title {
-    font-size: var(--stat-title-font-size);
-    font-weight: var(--stat-title-font-weight);
-    color: hsl(var(--muted-foreground));
-  }
-  
-  /* Icon container */
-  .stat-card-icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--stat-icon-container-padding);
-    border-radius: var(--stat-icon-container-radius);
-  }
-  
-  /* Main value display */
-  .stat-card-value {
-    font-size: var(--stat-value-font-size);
-    font-weight: var(--stat-value-font-weight);
-    margin-bottom: 0.5rem;
-    position: relative;
-    z-index: var(--stat-card-z-index);
-    letter-spacing: -0.025em;
-  }
-  
-  /* Value suffix */
-  .stat-card-suffix {
-    font-size: var(--stat-suffix-font-size);
-    margin-left: 0.25rem;
-    opacity: 0.8;
-  }
-  
-  /* Progress bar container */
-  .stat-card-progress-container {
-    width: 100%;
-    background-color: hsl(var(--muted) / 0.4);
-    border-radius: var(--stat-progress-radius);
-    height: var(--stat-progress-height);
-    margin-top: 0.5rem;
-    position: relative;
-    z-index: var(--stat-card-z-index);
-  }
-  
-  /* Progress bar */
-  .stat-card-progress {
-    height: 100%;
-    border-radius: var(--stat-progress-radius);
-  }
-  
-  /* Supporting text */
-  .stat-card-supporting-text {
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: var(--stat-card-z-index);
-    margin-top: 0.5rem;
-  }
-  
-  /* Loading/skeleton state */
-  .stat-card-skeleton {
-    padding: var(--stat-card-padding);
-    border-radius: var(--stat-card-radius);
-    box-shadow: var(--stat-card-shadow);
-    height: 138px;
-    border: 1px solid hsl(var(--border) / var(--stat-card-border-opacity));
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
-  /* 
-   * =======================================================
-   * MODERN CARD COMPONENT ENHANCEMENTS
-   * =======================================================
-   */
-   
-  /* Card gradients - các hiệu ứng gradient cho card */
-  .gradient-card {
-    position: relative;
-  }
-  
-  /* Radial gradient background for cards */
-  .bg-radial {
-    background: radial-gradient(circle at top right, var(--gradient-from), var(--gradient-to));
-  }
-  
-  /* Soft gradient colors for cards in light mode */
-  .card-gradient-primary {
-    --gradient-from: hsl(var(--primary) / 0.12);
-    --gradient-to: hsl(var(--primary) / 0.02);
-  }
-  
-  .card-gradient-success {
-    --gradient-from: hsl(var(--success) / 0.12);
-    --gradient-to: hsl(var(--success) / 0.02);
-  }
-  
-  .card-gradient-warning {
-    --gradient-from: hsl(var(--warning) / 0.12);
-    --gradient-to: hsl(var(--warning) / 0.02);
-  }
-  
-  .card-gradient-destructive {
-    --gradient-from: hsl(var(--destructive) / 0.12);
-    --gradient-to: hsl(var(--destructive) / 0.02);
-  }
-  
-  .card-gradient-muted {
-    --gradient-from: hsl(var(--muted) / 0.15);
-    --gradient-to: hsl(var(--muted) / 0.03);
-  }
-  
-  /* Soft gradient colors for cards in dark mode - enhanced for better visibility */
-  .dark .card-gradient-primary {
-    --gradient-from: hsl(var(--primary) / 0.18);
-    --gradient-to: hsl(var(--primary) / 0.03);
-  }
-  
-  .dark .card-gradient-success {
-    --gradient-from: hsl(var(--success) / 0.18);
-    --gradient-to: hsl(var(--success) / 0.03);
-  }
-  
-  .dark .card-gradient-warning {
-    --gradient-from: hsl(var(--warning) / 0.18);
-    --gradient-to: hsl(var(--warning) / 0.03);
-  }
-  
-  .dark .card-gradient-destructive {
-    --gradient-from: hsl(var(--destructive) / 0.18);
-    --gradient-to: hsl(var(--destructive) / 0.03);
-  }
-  
-  .dark .card-gradient-muted {
-    --gradient-from: hsl(var(--muted) / 0.20);
-    --gradient-to: hsl(var(--muted) / 0.04);
-  }
-  
-  /* Các class bổ sung cho card */
-  .card-value {
-    font-size: var(--card-value-size, 1.75rem);
-    font-weight: var(--card-value-weight, 600);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-  }
-  
-  .card-label {
-    font-size: var(--card-label-size, 0.875rem);
-    font-weight: var(--card-label-weight, 500);
-    color: hsl(var(--muted-foreground));
-  }
-  
-  /* Spotlight effect - tạo hiệu ứng focus vào card khi hover */
-  .card-spotlight {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .card-spotlight::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(
-      circle at var(--x, 50%) var(--y, 50%),
-      hsl(var(--primary) / 0.12) 0%,
-      transparent 25%
-    );
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 0;
-    pointer-events: none;
-  }
-  
-  .card-spotlight:hover::before {
-    opacity: 1;
-  }
-
-  /* Fix scrolling issues - both horizontal and vertical for desktop */
-  .container,
-  form,
-  .grid,
-  .space-y-6,
-  .space-y-8,
-  [class*="grid-cols-"],
-  [class*="gap-"] {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-  
-  /* Unified container for all layouts */
-  .app-layout-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Fallback for older browsers */
-    height: 100dvh;
-    overflow: hidden;
-    max-width: 100%;
-    padding-top: var(--safe-top);
-    padding-left: var(--safe-left);
-    padding-right: var(--safe-right);
-    background-color: hsl(var(--background)); /* FIX: Ensures notch area has correct background color */
-  }
-  /* 
-  * On desktop, allow the container to grow beyond the viewport height 
-  * to prevent content from being cut off.
-  */
-  @media (min-width: 769px) {
-  .app-layout-container {
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
-  }
-  }  
-  /* App content container - unified styles */
-  .app-content-container {
-    flex: 1;
-    position: relative;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    max-width: 1200px;
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-bottom: 0;
-  }
-  
-  /* Chart legend styling */
-  .chart-legend {
-    padding-top: 8px; /* Following 4px spacing rule */
-    font-size: 12px; /* Following 4px spacing rule */
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 4px;
-  }
-  
-  /* Trade badge positions - used for consistent placement */
-  .trade-direction-badge {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-  }
-  
-  .trade-result-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-  }
-  
-  /* Trade badge system moved to TradeStatusBadge component */
-  
-
-  /* Chart pagination - removed duplicate declaration and merged with the above definition */
-  
-
-  
-  /* Form container styles */
-  .form-container {
-    max-width: 100%;
-    overflow-x: visible;
-    padding: 0;
-    margin: 0 auto;
-  }
-  
-  /* Card title fix - ensure proper rendering on all devices */
-  h3.card-title {
-    line-height: 1.5 !important;
-    padding: 0.125rem 0 !important;
-    height: auto !important;
-    display: flex !important;
-    align-items: center !important;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Standardize muted text with consistent opacity */
-  .text-muted-foreground {
-    @apply text-foreground/70;
-  }
-  
-  /* Scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
-    border-radius: 8px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--muted-foreground) / 0.5);
-    border-radius: 8px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground) / 0.7);
-  }
-  
-
-  
-  /* Glass morphism */
-  .glass {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  
-  /* 
-   * =======================================================
-   * BALANCE CHART COMPONENT SYSTEM
-   * =======================================================
-   * 
-   * Unified styling for the PerformanceChart/BalanceChart component
-   * All styles defined in one place to ensure consistency and responsive behavior
-   * Organized with CSS variables for better maintainability
-   */
-  
-  /* Balance Chart Base Container */
-  .balance-chart {
-    /* Central configuration through CSS variables */
-    --balance-chart-height: 220px;
-    --balance-chart-radius: var(--radius);
-    --balance-chart-border-opacity: 0.3;
-    --balance-chart-shadow: var(--shadow-sm);
-    --balance-chart-hover-shadow: var(--shadow-md);
-    
-    /* Typography configuration */
-    --balance-chart-title-size: 1.25rem;
-    --balance-chart-label-size: 0.75rem;
-    --balance-chart-value-size: 1rem;
-    
-    /* Margins and paddings - following 4px spacing rule */
-    --balance-chart-padding: 1rem; /* 16px - equivalent to Tailwind p-4 */
-    --balance-chart-margin: 0.5rem; /* 8px - equivalent to Tailwind m-2 */
-    
-    /* Chart specific configuration */
-    --balance-chart-point-size: 4px; /* Adjusted from 6px to 4px to follow spacing rule */
-    --balance-chart-line-width: 2px; /* Maintained width for visual clarity */
-    --balance-chart-gradient-opacity-top: 0.2;
-    --balance-chart-gradient-opacity-bottom: 0;
-    
-    /* Tooltip configuration - following 4px spacing rule */
-    --balance-chart-tooltip-shadow: var(--shadow-md);
-    --balance-chart-tooltip-border-radius: 0.5rem; /* 8px - following standard spacing */
-    --balance-chart-tooltip-padding: 0.75rem; /* 12px - equivalent to Tailwind p-3 */
-    
-    /* Animation speeds */
-    --balance-chart-anim-speed: 1000ms; /* Match animation-duration for chart */
-    
-    /* Media query breakpoints */
-    --balance-chart-mobile-breakpoint: 640px;
-    --balance-chart-tablet-breakpoint: 768px;
-    --balance-chart-desktop-breakpoint: 1024px;
-    
-    /* Base container styling */
-    border-radius: var(--balance-chart-radius);
-    /*box-shadow: var(--balance-chart-shadow);
-    border: 1px solid hsl(var(--border) / var(--balance-chart-border-opacity));*/
-    transition: box-shadow 0.2s ease-in-out;
-  }
-  
-  /* Chart container dimensions */
-  .balance-chart-container {
-    height: var(--balance-chart-height);
-    width: 100%;
-    position: relative;
-    min-height: 200px; /* Ensure minimum height even if variables fail to load */
-  }
-  
-  /* Chart percentage badge */
-  .balance-chart-badge {
-    display: flex;
-    align-items: center;
-    padding: 0 0.75rem;
-    height: 1.5rem;
-    border-radius: 9999px;
-    font-size: var(--balance-chart-label-size);
-    font-weight: 500;
-  }
-  
-  /* Balance value display */
-  .balance-chart-value {
-    font-weight: 600;
-    font-size: var(--balance-chart-value-size);
-  }
-  
-  /* Tooltip styling */
-  .balance-chart-tooltip {
-    background-color: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    box-shadow: var(--balance-chart-tooltip-shadow);
-    border-radius: var(--balance-chart-tooltip-border-radius);
-    padding: var(--balance-chart-tooltip-padding);
-    font-size: 0.875rem;
-  }
-  
-  .balance-chart-tooltip-date {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
-  
-  .balance-chart-tooltip-value {
-    font-weight: 700;
-  }
-  
-  /* Empty state */
-  .balance-chart-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: var(--balance-chart-height);
-    text-align: center;
-    padding: var(--balance-chart-padding);
-  }
-  
-  .balance-chart-empty-icon {
-    color: hsl(var(--muted-foreground) / 0.3);
-    width: 2rem;
-    height: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .balance-chart-empty-title {
-    font-weight: 500;
-    color: hsl(var(--muted-foreground));
-    margin-bottom: 0.25rem;
-  }
-  
-  .balance-chart-empty-subtitle {
-    font-size: 0.875rem;
-    color: hsl(var(--muted-foreground) / 0.7);
-  }
-  
-  /* Gradient backgrounds */
-  .balance-card-gradient {
-    background: linear-gradient(145deg, hsl(213 92% 45%), hsl(222 47% 30%));
-  }
-  
-  .profit-gradient {
-    background: linear-gradient(145deg, hsl(142 72% 45% / 0.1), hsl(142 72% 45% / 0.05));
-  }
-  
-  .loss-gradient {
-    background: linear-gradient(145deg, hsl(0 84% 60% / 0.1), hsl(0 84% 60% / 0.05));
-  }
-  
-  /* Chart tooltip dynamic colors */
-  .chart-tooltip-text-color-1 { color: hsl(var(--chart-1)); }
-  .chart-tooltip-text-color-2 { color: hsl(var(--chart-2)); }
-  .chart-tooltip-text-color-3 { color: hsl(var(--chart-3)); }
-  .chart-tooltip-text-color-4 { color: hsl(var(--chart-4)); }
-  .chart-tooltip-text-color-5 { color: hsl(var(--chart-5)); }
-  
-  /* Custom animations */
-  .progress-animate {
-    animation: progress 1s ease-in-out;
-  }
-  
-  /* Progress animation keyframes - needed for StatCard progress bars */
-  @keyframes progress {
-    0% { width: 0; }
-    100% { width: var(--progress-width, 0%); }
-  }
-  
-  /* Custom inputs */
-  .custom-input {
-    transition: all 0.2s ease-in-out;
-  }
-  
-
-  
-  .custom-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.5rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-  }
-  
-  /* Profit/Loss text styling */
-  .profit-text {
-    color: hsl(var(--success));
-  }
-  
-  .loss-text {
-    color: hsl(var(--destructive));
-  }
-  
-  /* Trading discipline indicator */
-  .discipline-indicator {
-    height: 0.5rem;
-    width: 0.5rem;
-    border-radius: 9999px;
-    margin-right: 0.375rem;
-  }
-  
-  .discipline-indicator-yes {
-    background-color: hsl(var(--success));
-  }
-  
-  .discipline-indicator-no {
-    background-color: hsl(var(--destructive));
-  }
-  
-  /* Interactive elements standardized hover/focus effects */
-  .interactive-hover {
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .interactive-hover:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .interactive-hover:active {
-    transform: translateY(0);
-  }
-  
-  /* Interactive element hover class (use instead of direct element selectors) */
-  .interactive-element {
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .interactive-element:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-  }
-  
-  .interactive-element:active {
-    transform: translateY(0);
-    filter: brightness(0.95);
   }
 }
+
+/* =====================================================
+   MOBILE NAVIGATION (single authority for positioning)
+   ===================================================== */
+.mobile-nav{ position:fixed !important; bottom:0 !important; left:0 !important; right:0 !important; width:100% !important; z-index:var(--mobile-nav-z-index) !important; height:var(--spacing-bottom-nav-safe) !important; overflow:hidden !important; touch-action:auto; user-select:none !important; -webkit-user-select:none !important; -moz-user-select:none !important; -ms-user-select:none !important; padding-bottom:var(--safe-bottom) !important; background-color:hsla(var(--background),0.9); border-top:1px solid hsla(var(--border),0.35); backdrop-filter:blur(var(--mobile-nav-blur)); -webkit-backdrop-filter:blur(var(--mobile-nav-blur)); box-shadow:0 -4px 10px rgba(0,0,0,0.03); transform:translateZ(0); transition: background-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing), border-color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing); }
+
+@supports (--css: variables){
+  .mobile-nav{ border-top-color: color-mix(in srgb, hsl(var(--border)/0.4) calc(100% - (var(--is-pwa)*100%)), hsl(var(--border)/0.6) calc(var(--is-pwa)*100%)); }
+  html{ padding-bottom:calc(var(--padding-bottom,0px) * (1 - var(--is-pwa))); margin-bottom:calc(var(--margin-bottom,0px) * (1 - var(--is-pwa))); }
+  .mobile-layout{ padding-bottom:calc(var(--padding-bottom,0px) * (1 - var(--is-pwa))); margin-bottom:calc(var(--margin-bottom,0px) * (1 - var(--is-pwa))); }
+}
+
+@supports not (--css: variables){
+  @media (display-mode:standalone),(display-mode:fullscreen),(display-mode:minimal-ui){
+    .mobile-nav{ border-top:1px solid hsl(var(--border)/0.6); }
+    html, #root, .mobile-layout{ padding-bottom:0 !important; margin-bottom:0 !important; }
+  }
+}
+
+.mobile-nav-item{ display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:var(--mobile-nav-item-padding) 0.5rem; position:relative; overflow:hidden; color:var(--mobile-nav-inactive-color); transition:color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing); touch-action:auto; -webkit-tap-highlight-color:transparent; min-height:3.5rem; }
+.mobile-nav-item:active{ opacity:0.8; }
+.mobile-nav-indicator{ position:absolute; top:0; left:0; right:0; margin:0 auto; width:var(--mobile-nav-indicator-width); height:var(--mobile-nav-indicator-height); background-color:var(--mobile-nav-active-color); border-radius:9999px; transition:width 0.2s ease-in-out; }
+.mobile-nav-icon{ display:flex; align-items:center; justify-content:center; font-size:var(--mobile-nav-icon-size); width:var(--mobile-nav-icon-size); height:var(--mobile-nav-icon-size); margin-bottom:var(--mobile-nav-icon-spacing); margin-left:auto; margin-right:auto; line-height:1; flex-shrink:0; position:relative; z-index:1; }
+.mobile-nav-label{ font-size:var(--mobile-nav-text-size); font-weight:var(--mobile-nav-inactive-weight); line-height:1.2; transition: color var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing), font-weight var(--mobile-nav-anim-speed) var(--mobile-nav-anim-easing); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; letter-spacing:-0.01em; padding:0 0.375rem; }
+.mobile-nav-item.active, .mobile-nav-item:active{ color:var(--mobile-nav-active-color); }
+.mobile-nav-label.active{ font-weight:var(--mobile-nav-active-weight); color:var(--mobile-nav-active-color); letter-spacing:-0.02em; }
+
+.no-scroll{ overflow:hidden !important; pointer-events:auto !important; user-select:none !important; -webkit-user-select:none !important; }
+
+.mobile-header{ --mobile-header-blur:0.75rem; backdrop-filter:blur(var(--mobile-header-blur)); -webkit-backdrop-filter:blur(var(--mobile-header-blur)); border-bottom:1px solid hsla(var(--border),0.35); background-color:hsla(var(--background),0.92); box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+.mobile-sidebar{ background-color:hsl(var(--background)); box-shadow:var(--shadow-lg); transition:transform 0.3s ease-in-out; }
+
+/* =====================================================
+   CHART DIALOG / IMAGE VIEWER
+   ===================================================== */
+:root{
+  --chart-dialog-radius: 0.75rem; --chart-dialog-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.15); --chart-dialog-bg: hsl(var(--card)); --chart-dialog-z-index: 50; --chart-anim-speed: 300ms; --chart-mobile-breakpoint: 640px; --chart-spacing-xs: var(--spacing-2); --chart-spacing-sm: var(--spacing-3); --chart-spacing-md: var(--spacing-4); --chart-spacing-lg: var(--spacing-6); --chart-title-font-size: var(--text-sm); --chart-title-font-weight: 500; --chart-subtitle-font-size: var(--text-xs); --chart-subtitle-color: hsl(var(--muted-foreground)); --chart-control-size: 2.5rem; --chart-control-icon-size: 1.25rem; --chart-mobile-control-size: 2rem; --chart-mobile-control-icon-size: 1rem; --chart-dot-size: 0.625rem; --chart-dot-spacing: 0.625rem; --chart-image-max-scale: 3; --chart-image-transition: transform 0.2s ease-out;
+}
+.chart-title{ font-size:var(--chart-title-font-size); font-weight:var(--chart-title-font-weight); }
+.chart-subtitle{ font-size:var(--chart-subtitle-font-size); color:var(--chart-subtitle-color); }
+
+.chart-content{ background-color:hsl(var(--background)/0.95); position:relative; overflow:hidden; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0.375rem; }
+.dark .chart-content{ background-color:hsl(var(--background)/0.98); }
+@media (max-width:640px){ .chart-content{ padding:0.375rem; } }
+@media (max-width:640px),(display-mode:standalone){ .chart-content{ padding-top:0.375rem; padding-right:0.375rem; padding-left:0.375rem; padding-bottom:max(0.375rem, calc(var(--safe-bottom) + 0.375rem)); } }
+
+.chart-image-viewport{ width:100%; height:100%; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:grab; }
+.chart-image-viewport:active{ cursor:grabbing; }
+.chart-image-container{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; transition:opacity var(--chart-anim-speed) ease; position:relative; transform-origin:center; will-change:transform; overflow:hidden; border-radius:0.5rem; }
+.chart-image-container.zoomed-in{ cursor:grab; }
+.chart-image-container.dragging{ cursor:grabbing; }
+.chart-image-container.no-transform{ transform:none; }
+.chart-image-container.custom-transform{ /* transform set inline */ }
+.chart-image{ max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; user-select:none; -webkit-touch-callout:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; transform-origin:center; transition:var(--chart-image-transition); border-radius:0.5rem; background-color:transparent; touch-action:auto; }
+@media (max-width:640px){ .chart-image{ max-height:calc(100% - 48px); } }
+@media (max-width:640px),(display-mode:standalone){ .chart-image{ max-height:calc(100% - var(--safe-bottom) - 0.375rem); } }
+
+.chart-zoom-controls{ position:absolute; right:0.375rem; bottom:calc(0.375rem + var(--safe-bottom)); display:flex; flex-direction:column; gap:0.25rem; z-index:30; }
+.chart-zoom-button{ width:var(--chart-control-size); height:var(--chart-control-size); border-radius:50%; background-color:rgba(0,0,0,0.4); color:rgba(255,255,255,0.9); display:flex; align-items:center; justify-content:center; border:none; box-shadow:var(--shadow-sm); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+@media (max-width:640px){ .chart-zoom-button{ width:var(--chart-mobile-control-size); height:var(--chart-mobile-control-size); } }
+.chart-zoom-button:hover{ background-color:rgba(0,0,0,0.6); }
+.chart-zoom-button:disabled{ opacity:0.4; cursor:not-allowed; background-color:rgba(0,0,0,0.3); }
+
+.chart-pagination{ position:absolute; bottom:max(0.375rem, calc(var(--safe-bottom) + 0.25rem)); left:50%; transform:translateX(-50%); z-index:20; display:flex; justify-content:center; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+@media (max-width:640px){ .chart-pagination{ bottom:max(0.375rem, calc(var(--safe-bottom) + 0.375rem)); } }
+.chart-pagination-dots{ display:flex; align-items:center; gap:0.25rem; padding:0.25rem 0.375rem; background:rgba(0,0,0,0.45); border-radius:9999px; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
+.chart-pagination-dot{ width:0.25rem; height:0.25rem; border-radius:9999px; transition:all 0.15s ease; }
+.chart-pagination-dot-active{ width:0.375rem; height:0.375rem; background-color:#fff; }
+.chart-pagination-dot-inactive{ background-color:rgba(255,255,255,0.35); }
+
+.chart-nav-button{ background-color:rgba(0,0,0,0.4); color:rgba(255,255,255,0.9); transition:background-color 0.2s ease-in-out, transform 0.2s ease-in-out; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); position:absolute; top:50%; width:var(--chart-control-size); height:var(--chart-control-size); border-radius:50%; transform:translateY(-50%); z-index:20; }
+.chart-nav-button.chart-nav-button-prev{ left:0.375rem; }
+.chart-nav-button.chart-nav-button-next{ right:0.375rem; }
+@media (min-width:640px){ .chart-nav-button{ display:flex !important; } }
+@media (max-width:640px){ .chart-nav-button{ width:var(--chart-mobile-control-size); height:var(--chart-mobile-control-size); } .chart-nav-button.chart-nav-button-prev{ left:0.375rem; } .chart-nav-button.chart-nav-button-next{ right:0.375rem; } }
+.chart-nav-button:hover{ background-color:rgba(0,0,0,0.6); transform:translateY(-50%) scale(1.05); }
+.chart-nav-button:active{ background-color:rgba(0,0,0,0.7); transform:translateY(-50%) scale(0.95); }
+
+/* =====================================================
+   STAT CARD SYSTEM
+   ===================================================== */
+.stat-card{ --stat-card-padding:1rem; --stat-card-radius:var(--radius); --stat-card-border-opacity:0.3; --stat-card-shadow:var(--shadow-sm); --stat-card-hover-shadow:var(--shadow-md); --stat-card-anim-speed:200ms; --stat-card-z-index:10; --stat-value-font-size:1.75rem; --stat-value-font-weight:600; --stat-title-font-size:0.875rem; --stat-title-font-weight:500; --stat-suffix-font-size:1.125rem; --stat-icon-size:1.25rem; --stat-icon-container-size:2rem; --stat-icon-container-padding:0.375rem; --stat-icon-container-radius:9999px; --stat-progress-height:0.25rem; --stat-progress-radius:9999px; padding:var(--stat-card-padding); border-radius:var(--stat-card-radius); box-shadow:var(--stat-card-shadow); border:1px solid hsl(var(--border)/var(--stat-card-border-opacity)); overflow:hidden; position:relative; transition:all var(--stat-card-anim-speed) ease-in-out; }
+.stat-card-compact{ --stat-card-padding:0.75rem; --stat-value-font-size:1.5rem; padding:var(--stat-card-padding); }
+.stat-card:hover{ box-shadow:var(--stat-card-hover-shadow); }
+.stat-card-bg{ position:absolute; inset:0; opacity:0.6; transition:all var(--stat-card-anim-speed) cubic-bezier(0.4,0,0.2,1); background-blend-mode:soft-light; backdrop-filter:blur(8px) saturate(1.1); mix-blend-mode:normal; }
+.stat-card:hover .stat-card-bg{ opacity:0.8; backdrop-filter:blur(12px) saturate(1.2); }
+.stat-card-header{ display:flex; justify-content:space-between; margin-bottom:0.75rem; position:relative; z-index:var(--stat-card-z-index); }
+.stat-card-title{ font-size:var(--stat-title-font-size); font-weight:var(--stat-title-font-weight); color:hsl(var(--muted-foreground)); }
+.stat-card-icon-container{ display:flex; align-items:center; justify-content:center; padding:var(--stat-icon-container-padding); border-radius:var(--stat-icon-container-radius); }
+.stat-card-value{ font-size:var(--stat-value-font-size); font-weight:var(--stat-value-font-weight); margin-bottom:0.5rem; position:relative; z-index:var(--stat-card-z-index); letter-spacing:-0.025em; }
+.stat-card-suffix{ font-size:var(--stat-suffix-font-size); margin-left:0.25rem; opacity:0.8; }
+.stat-card-progress-container{ width:100%; background-color:hsl(var(--muted)/0.4); border-radius:var(--stat-progress-radius); height:var(--stat-progress-height); margin-top:0.5rem; position:relative; z-index:var(--stat-card-z-index); }
+.stat-card-progress{ height:100%; border-radius:var(--stat-progress-radius); }
+.stat-card-supporting-text{ display:flex; align-items:center; position:relative; z-index:var(--stat-card-z-index); margin-top:0.5rem; }
+.stat-card-skeleton{ padding:var(--stat-card-padding); border-radius:var(--stat-card-radius); box-shadow:var(--stat-card-shadow); height:138px; border:1px solid hsl(var(--border)/var(--stat-card-border-opacity)); animation:pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+
+/* =====================================================
+   MODERN CARD EXTRAS
+   ===================================================== */
+.gradient-card{ position:relative; }
+.bg-radial{ background: radial-gradient(circle at top right, var(--gradient-from), var(--gradient-to)); }
+.card-gradient-primary{ --gradient-from: hsl(var(--primary)/0.12); --gradient-to: hsl(var(--primary)/0.02); }
+.card-gradient-success{ --gradient-from: hsl(var(--success)/0.12); --gradient-to: hsl(var(--success)/0.02); }
+.card-gradient-warning{ --gradient-from: hsl(var(--warning)/0.12); --gradient-to: hsl(var(--warning)/0.02); }
+.card-gradient-destructive{ --gradient-from: hsl(var(--destructive)/0.12); --gradient-to: hsl(var(--destructive)/0.02); }
+.card-gradient-muted{ --gradient-from: hsl(var(--muted)/0.15); --gradient-to: hsl(var(--muted)/0.03); }
+.dark .card-gradient-primary{ --gradient-from: hsl(var(--primary)/0.18); --gradient-to: hsl(var(--primary)/0.03); }
+.dark .card-gradient-success{ --gradient-from: hsl(var(--success)/0.18); --gradient-to: hsl(var(--success)/0.03); }
+.dark .card-gradient-warning{ --gradient-from: hsl(var(--warning)/0.18); --gradient-to: hsl(var(--warning)/0.03); }
+.dark .card-gradient-destructive{ --gradient-from: hsl(var(--destructive)/0.18); --gradient-to: hsl(var(--destructive)/0.03); }
+.dark .card-gradient-muted{ --gradient-from: hsl(var(--muted)/0.20); --gradient-to: hsl(var(--muted)/0.04); }
+.card-value{ font-size:var(--card-value-size,1.75rem); font-weight:var(--card-value-weight,600); line-height:1.2; letter-spacing:-0.01em; }
+.card-label{ font-size:var(--card-label-size,0.875rem); font-weight:var(--card-label-weight,500); color:hsl(var(--muted-foreground)); }
+.card-spotlight{ position:relative; overflow:hidden; }
+.card-spotlight::before{ content:''; position:absolute; inset:0; background: radial-gradient(circle at var(--x,50%) var(--y,50%), hsl(var(--primary)/0.12) 0%, transparent 25%); opacity:0; transition:opacity 0.4s ease; z-index:0; pointer-events:none; }
+.card-spotlight:hover::before{ opacity:1; }
+
+/* =====================================================
+   LAYOUT / CONTAINERS
+   ===================================================== */
+.container, form, .grid, .space-y-6, .space-y-8, [class*="grid-cols-"], [class*="gap-"]{ max-width:100%; overflow-x:hidden; }
+.app-content-container{ flex:1; position:relative; overflow-y:auto; -webkit-overflow-scrolling:touch; max-width:1200px; width:100%; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; padding-bottom:0; }
+.app-layout-container{ display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; max-width:100%; padding-top:var(--safe-top); padding-left:var(--safe-left); padding-right:var(--safe-right); background-color:hsl(var(--background)); }
+@media (min-width:769px){ .app-layout-container{ height:auto; min-height:100vh; overflow:visible; } }
+
+/* Chart legend */
+.chart-legend{ padding-top:8px; font-size:12px; width:100%; display:flex; flex-wrap:wrap; justify-content:center; row-gap:4px; }
+
+/* Card title fix */
+h3.card-title{ line-height:1.5 !important; padding:0.125rem 0 !important; height:auto !important; display:flex !important; align-items:center !important; text-rendering:optimizeLegibility; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+/* Muted foreground standardization */
+.text-muted-foreground{ @apply text-foreground/70; }
+
+/* =====================================================
+   SCROLLBARS, GLASS, MISC
+   ===================================================== */
+::-webkit-scrollbar{ width:8px; height:8px; }
+::-webkit-scrollbar-track{ background:hsl(var(--muted)); border-radius:8px; }
+::-webkit-scrollbar-thumb{ background:hsl(var(--muted-foreground)/0.5); border-radius:8px; }
+::-webkit-scrollbar-thumb:hover{ background:hsl(var(--muted-foreground)/0.7); }
+
+.glass{ backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+
+/* =====================================================
+   BALANCE / PERFORMANCE CHART
+   ===================================================== */
+.balance-chart{ --balance-chart-height:220px; --balance-chart-radius:var(--radius); --balance-chart-border-opacity:0.3; --balance-chart-shadow:var(--shadow-sm); --balance-chart-hover-shadow:var(--shadow-md); --balance-chart-title-size:1.25rem; --balance-chart-label-size:0.75rem; --balance-chart-value-size:1rem; --balance-chart-padding:1rem; --balance-chart-margin:0.5rem; --balance-chart-point-size:4px; --balance-chart-line-width:2px; --balance-chart-gradient-opacity-top:0.2; --balance-chart-gradient-opacity-bottom:0; --balance-chart-tooltip-shadow:var(--shadow-md); --balance-chart-tooltip-border-radius:0.5rem; --balance-chart-tooltip-padding:0.75rem; --balance-chart-anim-speed:1000ms; --balance-chart-mobile-breakpoint:640px; --balance-chart-tablet-breakpoint:768px; --balance-chart-desktop-breakpoint:1024px; border-radius:var(--balance-chart-radius); transition: box-shadow 0.2s ease-in-out; }
+.balance-chart-container{ height:var(--balance-chart-height); width:100%; position:relative; min-height:200px; }
+.balance-chart-badge{ display:flex; align-items:center; padding:0 0.75rem; height:1.5rem; border-radius:9999px; font-size:var(--balance-chart-label-size); font-weight:500; }
+.balance-chart-value{ font-weight:600; font-size:var(--balance-chart-value-size); }
+.balance-chart-tooltip{ background-color:hsl(var(--card)); border:1px solid hsl(var(--border)); box-shadow:var(--balance-chart-tooltip-shadow); border-radius:var(--balance-chart-tooltip-border-radius); padding:var(--balance-chart-tooltip-padding); font-size:0.875rem; }
+.balance-chart-tooltip-date{ font-weight:500; margin-bottom:0.25rem; }
+.balance-chart-tooltip-value{ font-weight:700; }
+.balance-chart-empty{ display:flex; flex-direction:column; align-items:center; justify-content:center; height:var(--balance-chart-height); text-align:center; padding:var(--balance-chart-padding); }
+.balance-chart-empty-icon{ color:hsl(var(--muted-foreground)/0.3); width:2rem; height:2rem; margin-bottom:0.5rem; }
+.balance-chart-empty-title{ font-weight:500; color:hsl(var(--muted-foreground)); margin-bottom:0.25rem; }
+.balance-chart-empty-subtitle{ font-size:0.875rem; color:hsl(var(--muted-foreground)/0.7); }
+.balance-card-gradient{ background: linear-gradient(145deg, hsl(213 92% 45%), hsl(222 47% 30%)); }
+.profit-gradient{ background: linear-gradient(145deg, hsl(142 72% 45% / 0.1), hsl(142 72% 45% / 0.05)); }
+.loss-gradient{ background: linear-gradient(145deg, hsl(0 84% 60% / 0.1), hsl(0 84% 60% / 0.05)); }
+.chart-tooltip-text-color-1{ color:hsl(var(--chart-1)); }
+.chart-tooltip-text-color-2{ color:hsl(var(--chart-2)); }
+.chart-tooltip-text-color-3{ color:hsl(var(--chart-3)); }
+.chart-tooltip-text-color-4{ color:hsl(var(--chart-4)); }
+.chart-tooltip-text-color-5{ color:hsl(var(--chart-5)); }
+
+/* Progress keyframes (used by StatCard) */
+@keyframes progress{ 0%{ width:0; } 100%{ width:var(--progress-width,0%); } }
+
+/* =====================================================
+   FORMS / INPUTS / TEXT
+   ===================================================== */
+.custom-input{ transition:all 0.2s ease-in-out; }
+.custom-select{ appearance:none; background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position:right 0.5rem center; background-repeat:no-repeat; background-size:1.5em 1.5em; }
+
+.profit-text{ color:hsl(var(--success)); }
+.loss-text{ color:hsl(var(--destructive)); }
+
+.discipline-indicator{ height:0.5rem; width:0.5rem; border-radius:9999px; margin-right:0.375rem; }
+.discipline-indicator-yes{ background-color:hsl(var(--success)); }
+.discipline-indicator-no{ background-color:hsl(var(--destructive)); }
+
+.interactive-hover, .interactive-element{ transition:all 0.2s ease-in-out; }
+.interactive-hover:hover, .interactive-element:hover{ transform:translateY(-1px); box-shadow:var(--shadow-md); filter:brightness(1.05); }
+.interactive-hover:active, .interactive-element:active{ transform:translateY(0); filter:brightness(0.95); }
+
+/* =====================================================
+   MINOR FIXES / MISC MERGES
+   ===================================================== */
+.milestone-list{ /* already defined above; kept here to ensure specificity if imported later */ }
+/* End of file */
