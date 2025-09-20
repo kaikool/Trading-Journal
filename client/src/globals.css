@@ -1033,17 +1033,6 @@
     overflow-y: auto;          /* quan trọng cho desktop */
   }
   
-  /* 4) Nếu bạn có layout cao toàn màn (đang có):
-  .app-layout-container { height: 100vh; overflow: hidden; }
-  => Với desktop thường gây “cụt” khi nội dung dài hơn 1 màn hình.
-     Nên nới ra thế này: */
-  @media (min-width: 769px) {
-    .app-layout-container {
-      height: auto;            /* cho phép cao theo nội dung */
-      min-height: 100vh;       /* vẫn tràn đủ chiều cao viewport */
-      overflow: visible;       /* để nội dung không bị cắt */
-    }
-  }
   
   /* Fallback for browsers that don't support CSS variables */
   @supports not (--css: variables) {
@@ -1990,14 +1979,14 @@
   .app-layout-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100vh; /* Fallback for older browsers */
     height: 100dvh;
     overflow: hidden;
     max-width: 100%;
     padding-top: var(--safe-top);
     padding-left: var(--safe-left);
     padding-right: var(--safe-right);
-    background-color: hsl(var(--background));
+    background-color: hsl(var(--background)); /* FIX: Ensures notch area has correct background color */
   }
   
   /* App content container - unified styles */
