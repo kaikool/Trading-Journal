@@ -32,12 +32,6 @@ export interface TradingStrategy {
   entryConditions: StrategyCondition[]; // Entry conditions
   exitConditions: StrategyCondition[]; // Exit conditions
 
-  // Old fields for backward compatibility
-  // Will be automatically converted from the new structure
-  rulesText?: string[];
-  entryConditionsText?: string[];
-  exitConditionsText?: string[];
-
   // Other fields remain unchanged
   timeframes: string[];
   riskRewardRatio?: number;
@@ -50,9 +44,7 @@ export interface TradingStrategy {
 // Results of checking strategy conditions when creating a trade
 export interface StrategyConditionCheck {
   conditionId: string; // ID of the strategy condition
-  checked: boolean; // Whether it has been checked
   passed: boolean; // Whether the condition is satisfied
-  notes?: string; // Notes about the condition check
 }
 
 /** Trạng thái xử lý ảnh auto-capture */
@@ -73,76 +65,66 @@ export interface Trade {
   direction: Direction;
   entryPrice: number;
   stopLoss: number;
-  takeProfit: number; // Expected TP price when opening a position
+  takeProfit: number;
   lotSize: number;
 
   // Trade status
-  isOpen?: boolean; // true = position is open, false = position is closed
+  isOpen?: boolean;
 
   // Information when closing a position
   closeDate?: Timestamp;
-  exitPrice?: number; // Actual price when closing the position
+  exitPrice?: number;
   result?: TradeResult;
   pips?: number;
   profitLoss?: number;
-  closingNote?: string; // Notes when closing the position
+  closingNote?: string;
 
   // Analysis information
-  strategy: string; // Strategy name
-  strategyId?: string; // ID of the strategy used
-
-  // Strategy checking - new structure
-  strategyChecks?: {
-    rules?: StrategyConditionCheck[]; // Check rules
-    entryConditions?: StrategyConditionCheck[]; // Check entry conditions
-    exitConditions?: StrategyConditionCheck[]; // Check exit conditions
-
-    // Strategy check summary
-    rulesCompliance: number; // Rules compliance percentage (0-100)
-    entryCompliance: number; // Entry conditions compliance percentage (0-100)
-    exitCompliance?: number; // Exit conditions compliance percentage (0-100, optional for new trades)
-    overallCompliance: number; // Overall compliance percentage (0-100)
-  };
-
+  strategy: string; 
+  usedRules?: string[];
+  usedEntryConditions?: string[];
+  usedExitConditions?: string[];
+  
   techPattern: string;
   emotion: string;
-  discipline: {
-    followedPlan: boolean;
-    enteredEarly: boolean;
-    revenge: boolean;
-    overLeveraged: boolean;
-    movedStopLoss: boolean;
-  };
+  
+  // Discipline Fields
+  followedPlan?: boolean;
+  enteredEarly?: boolean;
+  revenge?: boolean;
+  overLeveraged?: boolean;
+  movedStopLoss?: boolean;
+
   marketCondition: string;
   sessionType: string;
   hasNews: boolean;
 
   // Notes and images
   notes?: string;
+  entryImage?: string;
+  entryImageM15?: string;
+  exitImage?: string;
+  exitImageM15?: string;
 
-  /** Hình phân tích khi vào lệnh */
-  entryImage?: string; // H4 analysis image at entry
-  entryImageM15?: string; // M15 analysis image at entry
-  /** Hình phân tích khi đóng lệnh */
-  exitImage?: string; // H4 analysis image after closing
-  exitImageM15?: string; // M15 analysis image after closing
-
-  /** Metadata ảnh (tùy chọn lưu) */
+  // Image metadata
   entryImageMeta?: ImageMeta;
   entryImageM15Meta?: ImageMeta;
   exitImageMeta?: ImageMeta;
   exitImageM15Meta?: ImageMeta;
 
-  /** Trạng thái capture & lỗi (dùng cho cả entry/exit theo flow hiện tại) */
-  captureStatus?: CaptureStatus; // 'pending' | 'uploaded' | 'empty' | 'error'
-  errorMessage?: string; // Lưu thông điệp lỗi khi capture thất bại
-  captureRequestedAt?: Timestamp; // Tùy chọn: thời điểm trigger capture
-  captureCompletedAt?: Timestamp; // Tùy chọn: thời điểm nhận đủ ảnh
+  // Capture status
+  captureStatus?: CaptureStatus;
+  errorMessage?: string;
+  captureRequestedAt?: Timestamp;
+  captureCompletedAt?: Timestamp;
 
   // Timestamps
   createdAt: Timestamp;
   updatedAt?: Timestamp;
+  riskRewardRatio?: number;
+  strategyChecks?: StrategyConditionCheck[];
 }
+
 
 export interface TradeStats {
   totalTrades: number;

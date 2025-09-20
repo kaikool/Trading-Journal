@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Children } from "react";
 import { Icons } from "@/components/icons/icons";
 import { Trade, TradingStrategy } from "@/types";
 import { auth, getStrategyById, updateTrade } from "@/lib/firebase";
@@ -22,6 +22,7 @@ import 'photoswipe/dist/photoswipe.css';
 import { Gallery, Item } from 'react-photoswipe-gallery';
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 interface TradeViewDetailsProps {
   trade: Trade;
@@ -29,7 +30,19 @@ interface TradeViewDetailsProps {
   onBack: () => void;
 }
 
-// Helper to calculate trade duration, now robustly handling Firebase Timestamps
+// A generic component to render checklist items
+const ChecklistItem = ({ label, value, isBoolean = false }: { label: string, value: string | boolean, isBoolean?: boolean }) => (
+    <div className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
+        <span className="text-muted-foreground">{label}</span>
+        {isBoolean ? (
+             <Badge variant={value ? "success" : "secondary"}>{value ? 'Yes' : 'No'}</Badge>
+        ) : (
+            <span className="font-medium">{String(value) || "N/A"}</span>
+        )}
+    </div>
+);
+
+// Helper to calculate trade duration
 const getTradeDuration = (start: any, end: any): string => {
   if (!end) return 'Open';
   try {
@@ -43,7 +56,7 @@ const getTradeDuration = (start: any, end: any): string => {
   }
 };
 
-// Helper to calculate Risk/Reward ratio dynamically
+// Helper to calculate Risk/Reward ratio
 const calculateRiskRewardRatio = (trade: Trade): number | null => {
     if (trade.riskRewardRatio != null) return trade.riskRewardRatio;
     const entry = parseFloat(trade.entryPrice as string);
@@ -110,48 +123,53 @@ export function TradeViewDetails({
     };
     fetchStrategy();
   }, [trade.strategy]);
+  
+  // --- Checklist Logic ---
 
-  // --- CORRECTLY PARSE ALL TRADE DETAILS --- 
+  const tradingRulesChecklist = useMemo(() => {
+    if (!strategy || !strategy.rules) {
+      return [];
+    }
+    const usedIds = new Set(trade.usedRules || []);
+    return strategy.rules.map(rule => ({
+      label: rule.label, // FIX: Use .label instead of .name
+      value: usedIds.has(rule.id),
+    }));
+  }, [strategy, trade.usedRules]);
 
-  const disciplineIssues = useMemo(() => {
-    const issues = [];
-    const labels: { [key: string]: string } = {
-        enteredEarly: 'Entered Early',
-        revenge: 'Revenge Trading',
-        overLeveraged: 'Over Leveraged',
-        movedStopLoss: 'Moved Stop Loss',
-    };
-    if (trade.followedPlan === false) {
-        issues.push("Did Not Follow Plan");
+  const entryConditionsChecklist = useMemo(() => {
+    if (!strategy || !strategy.entryConditions) {
+      return [];
     }
-    for (const key in labels) {
-        if (trade[key as keyof Trade] === true) {
-            issues.push(labels[key]);
-        }
-    }
-    return issues;
-  }, [trade]);
-
-  const strategyConditionsMet = useMemo(() => {
-    if (!strategy || !strategy.entryConditions || !trade.usedEntryConditions) {
-        return [];
-    }
-    const usedIds = new Set(trade.usedEntryConditions);
-    return strategy.entryConditions
-        .filter(condition => usedIds.has(condition.id))
-        .map(condition => condition.name);
+    const usedIds = new Set(trade.usedEntryConditions || []);
+    return strategy.entryConditions.map(condition => ({
+      label: condition.label, // FIX: Use .label instead of .name
+      value: usedIds.has(condition.id),
+    }));
   }, [strategy, trade.usedEntryConditions]);
 
-  const marketContextTags = useMemo(() => [
-    trade.sessionType && { label: 'Session', value: trade.sessionType, icon: <Icons.general.clock className="h-3 w-3" /> },
-    trade.emotion && { label: 'Emotion', value: trade.emotion, icon: <Icons.analytics.brain className="h-3 w-3" /> },
-    trade.hasNews && { label: 'News Impact', value: 'Yes', icon: <Icons.general.newspaper className="h-3 w-3" /> },
-    trade.marketCondition && { label: 'Market Condition', value: trade.marketCondition, icon: <Icons.analytics.trendingUp className="h-3 w-3" /> },
-    trade.techPattern && { label: 'Tech. Pattern', value: trade.techPattern, icon: <Icons.analytics.lineChart className="h-3 w-3" /> },
-  ].filter(Boolean) as { label: string, value: string, icon: JSX.Element }[], 
-  [trade.sessionType, trade.emotion, trade.hasNews, trade.marketCondition, trade.techPattern]);
+  const disciplineChecklist = useMemo(() => {
+    const checks = [
+      { label: 'Followed Plan', value: trade.followedPlan !== false },
+      { label: 'Entered Early', value: trade.enteredEarly === true },
+      { label: 'Revenge Trading', value: trade.revenge === true },
+      { label: 'Over Leveraged', value: trade.overLeveraged === true },
+      { label: 'Moved Stop Loss', value: trade.movedStopLoss === true },
+    ];
+    return checks;
+  }, [trade]);
 
-  // --- END OF PARSING LOGIC --- 
+  const marketContextList = useMemo(() => {
+    const context = [];
+    if (trade.sessionType) context.push({ label: 'Session', value: trade.sessionType });
+    if (trade.emotion) context.push({ label: 'Emotion', value: trade.emotion });
+    if (trade.marketCondition) context.push({ label: 'Market Condition', value: trade.marketCondition });
+    if (trade.techPattern) context.push({ label: 'Technical Pattern', value: trade.techPattern });
+    context.push({ label: 'News Impact', value: trade.hasNews === true, isBoolean: true });
+    return context.filter(item => item.value !== '' && item.value !== undefined);
+  }, [trade]);
+
+  // --- End of Logic ---
 
   const tradeDuration = getTradeDuration(trade.createdAt, trade.closeDate);
   const calculatedRR = calculateRiskRewardRatio(trade);
@@ -165,22 +183,21 @@ export function TradeViewDetails({
 
   const displayImage = trade.exitImage || trade.entryImage;
 
-  const AnalysisSection = ({ title, icon, data, emptyText, tagClass, textClass, iconClass }: any) => (
-    <div>
-      <h4 className="text-base font-semibold mb-2 flex items-center">{icon} {title}</h4>
-      <div className="flex flex-wrap gap-2">
-        {data.length > 0 ? (
-          data.map((item: any, index: number) => (
-            <div key={index} className={cn("flex items-center text-xs py-1 px-2.5 rounded-full", tagClass)}>
-              <div className={cn("mr-1.5", iconClass)}>{item.icon}</div> {item.value}
-            </div>
-          ))
-        ) : (
-          <p className="text-sm text-muted-foreground">{emptyText}</p>
-        )}
-      </div>
-    </div>
-  );
+  const AnalysisSection = ({ title, icon, children, emptyText }: { title: string, icon: JSX.Element, children: React.ReactNode, emptyText: string }) => {
+    const childrenArray = Children.toArray(children);
+    const hasChildren = childrenArray.length > 0 && childrenArray.some(child => child !== null && child !== false);
+
+    return (
+        <div>
+            <h4 className="text-base font-semibold mb-3 flex items-center">{icon} {title}</h4>
+            {hasChildren ? (
+                <div className="space-y-2">{children}</div>
+            ) : (
+                <p className="text-sm text-muted-foreground px-2">{emptyText}</p>
+            )}
+        </div>
+    );
+  };
 
   return (
     <>
@@ -263,30 +280,57 @@ export function TradeViewDetails({
                 </div>
             </div>
 
-            <div className="space-y-6 mb-6 p-4 border rounded-md">
+            <div className="space-y-8 mb-6 p-4 border rounded-md">
                 <AnalysisSection 
-                    title="Strategy Conditions Met"
+                    title="Trading Rules"
+                    icon={<Icons.trade.listChecks className="h-4 w-4 mr-2 text-primary" />}
+                    emptyText="No trading rules were assigned to this strategy, or none were met."
+                >
+                    {tradingRulesChecklist.length > 0 && tradingRulesChecklist.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
+                            <span className="text-muted-foreground">{item.label}</span>
+                            <Badge variant={item.value ? "success" : "secondary"}>{item.value ? 'Met' : 'Not Met'}</Badge>
+                        </div>
+                    ))}
+                </AnalysisSection>
+
+                <AnalysisSection 
+                    title="Entry Conditions"
                     icon={<Icons.trade.checklist className="h-4 w-4 mr-2 text-primary" />}
-                    data={strategyConditionsMet.map(c => ({ value: c, icon: <Icons.ui.check className="h-3 w-3 text-success" /> }))}
-                    emptyText="No strategy conditions were recorded."
-                    tagClass="bg-primary/10 text-primary-foreground"
-                />
+                    emptyText="No entry conditions were assigned to this strategy, or none were met."
+                >
+                    {entryConditionsChecklist.length > 0 && entryConditionsChecklist.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
+                            <span className="text-muted-foreground">{item.label}</span>
+                            <Badge variant={item.value ? "success" : "secondary"}>{item.value ? 'Met' : 'Not Met'}</Badge>
+                        </div>
+                    ))}
+                </AnalysisSection>
+
                 <AnalysisSection 
-                    title="Psychology & Discipline Issues"
-                    icon={<Icons.general.userCog className="h-4 w-4 mr-2 text-destructive" />}
-                    data={disciplineIssues.map(i => ({ value: i, icon: <Icons.ui.alertTriangle className="h-3 w-3" /> }))}
-                    emptyText="No discipline issues were recorded."
-                    tagClass="bg-destructive/10 text-destructive-foreground"
-                    iconClass="text-destructive"
-                />
+                    title="Psychology & Discipline"
+                    icon={<Icons.general.userCog className="h-4 w-4 mr-2 text-primary" />}
+                    emptyText="No discipline data was recorded for this trade."
+                >
+                   {disciplineChecklist.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between text-sm py-1.5 px-2 rounded-md bg-muted/30">
+                            <span className="text-muted-foreground">{item.label}</span>
+                            <Badge variant={item.label === 'Followed Plan' ? (item.value ? "success" : "destructive") : (item.value ? "destructive" : "success")}>
+                                {item.label === 'Followed Plan' ? (item.value ? 'Yes' : 'No') : (item.value ? 'Yes' : 'No')}
+                            </Badge>
+                        </div>
+                    ))}
+                </AnalysisSection>
+
                 <AnalysisSection 
                     title="Market Context"
-                    icon={<Icons.general.globe className="h-4 w-4 mr-2 text-muted-foreground" />}
-                    data={marketContextTags}
-                    emptyText="No market context tags were added."
-                    tagClass="bg-muted/50 text-muted-foreground"
-                    iconClass="text-muted-foreground"
-                />
+                    icon={<Icons.general.globe className="h-4 w-4 mr-2 text-primary" />}
+                    emptyText="No market context was recorded for this trade."
+                >
+                    {marketContextList.map((item, index) => (
+                        <ChecklistItem key={index} label={item.label} value={item.value} isBoolean={item.isBoolean} />
+                    ))}
+                </AnalysisSection>
             </div>
 
             <div className="space-y-4">

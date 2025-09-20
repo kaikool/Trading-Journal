@@ -82,14 +82,12 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
     return () => {
       isMounted = false;
     };
-  }, [userId, form, initializeStrategyChecks]); // Added form and initializeStrategyChecks to dependencies
+  }, [userId, form, initializeStrategyChecks]);
 
   // Effect to handle changing the strategy via the form
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === 'strategy') {
-        // If strategies are not loaded yet, do nothing.
-        // This prevents a race condition where this watcher runs before the initial data is loaded.
         if (strategies.length === 0) {
           return;
         }
@@ -97,9 +95,8 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
         const newStrategyId = value.strategy;
         const newStrategy = strategies.find(s => s.id === newStrategyId) || null;
         setSelectedStrategy(newStrategy);
-        // When strategy changes, re-initialize checks without any saved state
         initializeStrategyChecks(newStrategy, []);
-        form.setValue('strategyChecks', []); // Clear saved checks in form
+        form.setValue('strategyChecks', []);
       }
     });
     return () => subscription.unsubscribe();
@@ -110,21 +107,34 @@ export function useStrategyManagement({ form, userId }: UseStrategyManagementPro
       const newChecks = prevChecks.map(item => 
         item.conditionId === conditionId ? { ...item, passed: isPassed } : item
       );
-      // Update the react-hook-form state for submission
-      form.setValue('strategyChecks', newChecks.filter(c => c.passed));
+      form.setValue('strategyChecks', newChecks.filter(c => c.passed).map(c => ({ conditionId: c.conditionId, passed: c.passed })));
       return newChecks;
     });
   }, [form]);
   
   // This function is needed for form submission
   const getUsedConditions = useCallback(() => {
-    const currentStrategy = strategies.find(s => s.id === form.getValues().strategy);
-    if (!currentStrategy) return { usedRules: [], usedEntryConditions: [] };
+    const passedChecks = strategyChecks.filter(check => check.passed);
+    const passedConditionIds = new Set(passedChecks.map(check => check.conditionId));
+
+    if (!selectedStrategy) {
+      return { usedRules: [], usedEntryConditions: [], usedExitConditions: [] };
+    }
+
+    const usedRules = (selectedStrategy.rules || [])
+      .filter(rule => passedConditionIds.has(rule.id))
+      .map(rule => rule.id);
+
+    const usedEntryConditions = (selectedStrategy.entryConditions || [])
+      .filter(condition => passedConditionIds.has(condition.id))
+      .map(condition => condition.id);
+      
     return {
-      usedRules: currentStrategy.rules || [],
-      usedEntryConditions: currentStrategy.entryConditions || [],
+      usedRules,
+      usedEntryConditions,
+      usedExitConditions: [] // Exit conditions are not handled in the form yet.
     };
-  }, [form, strategies]);
+  }, [strategyChecks, selectedStrategy]);
   
   return {
     strategies,
