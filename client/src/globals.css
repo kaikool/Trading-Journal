@@ -389,6 +389,39 @@
 /* =====================================================
    CHART DIALOG / IMAGE VIEWER
    ===================================================== */
+
+/* ---- MOBILE NO-ZOOM MODE (explicit toggle) ----
+   Apply one of these on the dialog root/container to DISABLE zoom on mobile:
+   1) .chart-disable-zoom-mobile  (class)
+   2) [data-zoom-mobile='off']    (attribute)
+
+   Notes:
+   - Hides zoom/nav controls
+   - Blocks pinch/drag on image container
+   - Forces transform reset (no scale)
+   - Keep page scroll/pan working
+*/
+@media (max-width:640px){
+  .chart-disable-zoom-mobile .chart-zoom-controls,
+  .chart-disable-zoom-mobile .chart-nav-button,
+  [data-zoom-mobile='off'] .chart-zoom-controls,
+  [data-zoom-mobile='off'] .chart-nav-button{
+    display: none !important;
+  }
+
+  .chart-disable-zoom-mobile .chart-image-container,
+  .chart-disable-zoom-mobile .chart-image,
+  [data-zoom-mobile='off'] .chart-image-container,
+  [data-zoom-mobile='off'] .chart-image{
+    touch-action: none !important;   /* block pinch/pan inside viewer */
+    transform: none !important;      /* force no scale */
+    cursor: default !important;
+  }
+}
+
+/* Optional: global helper (turn off double-tap zoom feel on buttons/links) */
+html.no-pinch, body.no-pinch{ touch-action: pan-x pan-y; }
+
 :root{
   --chart-dialog-radius: 0.75rem; --chart-dialog-shadow: 0 10px 25px -5px rgba(0,0,0,0.15), 0 8px 10px -6px rgba(0,0,0,0.15); --chart-dialog-bg: hsl(var(--card)); --chart-dialog-z-index: 50; --chart-anim-speed: 300ms; --chart-mobile-breakpoint: 640px; --chart-spacing-xs: var(--spacing-2); --chart-spacing-sm: var(--spacing-3); --chart-spacing-md: var(--spacing-4); --chart-spacing-lg: var(--spacing-6); --chart-title-font-size: var(--text-sm); --chart-title-font-weight: 500; --chart-subtitle-font-size: var(--text-xs); --chart-subtitle-color: hsl(var(--muted-foreground)); --chart-control-size: 2.5rem; --chart-control-icon-size: 1.25rem; --chart-mobile-control-size: 2rem; --chart-mobile-control-icon-size: 1rem; --chart-dot-size: 0.625rem; --chart-dot-spacing: 0.625rem; --chart-image-max-scale: 3; --chart-image-transition: transform 0.2s ease-out;
 }
