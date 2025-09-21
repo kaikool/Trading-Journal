@@ -504,7 +504,6 @@ h3.card-title{ line-height:1.5 !important; padding:0.125rem 0 !important; height
 
 /* ===== SAFE BOTTOM: mặc định KHÔNG pad ===== */
 .safe-bottom-pad {
-  padding-bottom: 0 !important; /* mặc định tràn qua luôn */
   transition: padding-bottom 220ms ease;
   will-change: padding-bottom;
 }
