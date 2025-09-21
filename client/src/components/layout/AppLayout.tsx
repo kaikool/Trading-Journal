@@ -78,7 +78,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           // Đơn giản hóa: chỉ thiết lập overflow
           overflowY: 'auto',
           // FIX: bù safe area đáy iOS để không lộ dải đen
-          paddingBottom: 'env(safe-area-inset-bottom)'
+          paddingBottom: 0
         }}
       >
         <div 
