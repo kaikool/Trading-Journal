@@ -282,12 +282,12 @@ export function Sidebar({ className }: { className?: string }) {
           aria-hidden="true"
         />
         
-        {/* Mobile Sidebar Drawer - RE-ADDED safe area padding */}
+        {/* Mobile Sidebar Drawer - REMOVED safe area padding from bottom */}
         <aside 
           className={cn(
             "fixed left-0 z-50 w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
             "top-0 bottom-0 flex flex-col",
-            "safe-area-top safe-area-bottom", // Restore safe area padding
+            "safe-area-top", // Removed safe-area-bottom
             isOpen ? "translate-x-0" : "-translate-x-full",
             isOpen ? "pointer-events-auto" : "pointer-events-none"
           )}
@@ -383,7 +383,7 @@ export function Sidebar({ className }: { className?: string }) {
     );
   }
   
-  // Desktop sidebar version (collapsible sidebar) - RE-ADDED safe area padding
+  // Desktop sidebar version (collapsible sidebar) - REMOVED safe area padding from bottom
   return (
     <>
       {/* Sidebar hint for collapsed desktop sidebar */}
@@ -395,7 +395,7 @@ export function Sidebar({ className }: { className?: string }) {
         className={cn(
           "hidden md:flex md:flex-col h-screen fixed left-0 z-30 bg-background border-r border-border transition-all duration-300 ease-in-out",
           "top-0 bottom-0",
-          "safe-area-top safe-area-bottom", // Restore safe area padding
+          "safe-area-top", // Removed safe-area-bottom
           sidebarCollapsed ? "w-[72px]" : "w-[256px]",
           className
         )}
