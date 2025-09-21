@@ -24,7 +24,7 @@ export function AuthCard({ title, description, footer, children, className }: Au
         </CardDescription>
       </CardHeader>
       
-      <CardContent>
+      <CardContent className="pb-0">
         {children}
       </CardContent>
       
