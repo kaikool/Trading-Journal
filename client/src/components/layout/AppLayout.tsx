@@ -55,8 +55,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   if (!mounted) return null;
   
   return (
-    <div className="relative min-h-screen bg-background">
-      {/* Sidebar Component - handles both mobile (drawer) and desktop (fixed) sidebar */}
+    <div className="relative min-h-screen bg-background"
+         style={{ backgroundColor: "hsl(var(--background))" }}>
       <Sidebar className="sidebar-root" />
       
       {/* Main Content Area */}
