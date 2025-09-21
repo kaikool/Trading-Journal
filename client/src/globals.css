@@ -576,22 +576,39 @@ h3.card-title{ line-height:1.5 !important; padding:0.125rem 0 !important; height
 /* ===== StatusBar shim + collapse-on-scroll ===== */
 
 
-/* ===== Safe-top pad that collapses on scroll ===== */
+/* ========== SAFE TOP: chỉ pad 1 lần, và thu gọn khi cuộn ========== */
 .safe-top-pad {
    padding-top: env(safe-area-inset-top, 0px);
    transition: padding-top 220ms ease;
    will-change: padding-top;
  }
+ /* Khi đã cuộn, bỏ pad-top để content tràn lên notch */
+ .safe-top-collapsed .safe-top-pad { padding-top: 0; }
  
- /* Khi người dùng đã cuộn => bỏ khoảng pad để tràn fullscreen */
- .safe-top-collapsed .safe-top-pad {
-   padding-top: 0;
+ /* Loại bỏ pad-top cũ để không bị “đôi” */
+ .safe-top-pad .app-layout-container { padding-top: 0 !important; }
+ .safe-top-pad .mobile-header { padding-top: 0 !important; }
+ 
+ /* Nền đồng nhất để không lộ viền */
+ html, body, #root { background-color: hsl(var(--background)); }
+ 
+ /* ===== SAFE BOTTOM: mặc định KHÔNG pad ===== */
+.safe-bottom-pad { 
+   padding-bottom: 0 !important;      /* mặc định tràn qua luôn */
+   transition: padding-bottom 220ms ease;
+   will-change: padding-bottom;
  }
  
- /* Đảm bảo màu nền đồng nhất ở đỉnh để không lộ viền */
- html, body, #root {
-   background-color: hsl(var(--background));
+ /* Khi THẬT SỰ cần tôn trọng safe-area (ví dụ có bottom-nav/cta) thì thêm class này vào <html> */
+ .safe-bottom-expanded .safe-bottom-pad {
+   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
  }
+ 
+ /* Nếu layout cũ có pad-bottom, triệt tiêu để khỏi cộng dồn */
+ .safe-bottom-pad .app-layout-container { padding-bottom: 0 !important; }
+ .safe-bottom-pad.has-safe-bottom,
+ .safe-bottom-pad.has-nav-spacing,
+ .safe-bottom-pad.has-nav-spacing-safe { padding-bottom: 0 !important; }
 /* =====================================================
    MINOR FIXES / MISC MERGES
    ===================================================== */

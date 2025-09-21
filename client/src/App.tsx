@@ -134,6 +134,37 @@ function MainContent() {
     }
   }, [location]);
   
+  useEffect(() => {
+    const scroller =
+      document.querySelector<HTMLElement>('.app-content-container') ||
+      (document.scrollingElement as HTMLElement) ||
+      document.documentElement;
+  
+    if (!scroller) return;
+  
+    const THRESHOLD = 8;
+    let last = -1;
+  
+    const onScroll = () => {
+      const y = scroller.scrollTop;
+      if (Math.abs(y - last) < 1) return;
+      last = y;
+  
+      if (y > THRESHOLD) {
+        document.documentElement.classList.add('safe-top-collapsed');
+      } else {
+        document.documentElement.classList.remove('safe-top-collapsed');
+      }
+      // đảm bảo luôn không pad bottom
+      document.documentElement.classList.remove('safe-bottom-collapsed', 'safe-bottom-expanded');
+    };
+  
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => scroller.removeEventListener('scroll', onScroll);
+  }, [location]);
+
+  
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
   useEffect(() => {
     if (!isPageReady) {
@@ -389,7 +420,7 @@ function MainContent() {
     <>
       {/* Unified layout system with new Sidebar - bọc bởi ErrorBoundary */}
       <SafeAppLayout>
-        <div className="safe-top-pad">
+        <div className="safe-top-pad safe-bottom-pad">
         {renderPageContent()}
         </div>
       </SafeAppLayout>
