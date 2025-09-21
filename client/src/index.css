@@ -54,7 +54,7 @@ body.scroll-in-progress * {
 .safe-area-p {
   --dialog-padding: var(--spacing-6, 1.5rem);
   padding-top: max(var(--dialog-padding), var(--safe-top));
-  padding-bottom: max(var(--dialog-padding), var(--safe-bottom));
+  /* padding-bottom: max(var(--dialog-padding), var(--safe-bottom)); */ /* Vô hiệu hóa để giải quyết vấn đề padding */
   padding-left: max(var(--dialog-padding), var(--safe-left));
   padding-right: max(var(--dialog-padding), var(--safe-right));
   
@@ -64,7 +64,7 @@ body.scroll-in-progress * {
   
   /* Mobile keyboard handling */
   @media (max-width: 640px) {
-    padding-bottom: max(var(--dialog-padding), var(--safe-bottom), 16px);
+    /* padding-bottom: max(var(--dialog-padding), var(--safe-bottom), 16px); */ /* Vô hiệu hóa để giải quyết vấn đề padding */
     padding-top: max(var(--dialog-padding), var(--safe-top), 12px);
   }
 }
@@ -81,7 +81,7 @@ body.scroll-in-progress * {
     /* Chức năng thích nghi với bàn phím bổ sung cho PWA */
     @media (display-mode: standalone), (display-mode: fullscreen) {
       max-height: 80dvh; /* Hơi thấp hơn cho PWA vì có thể có UI của browser */
-      bottom: var(--safe-bottom);
+      /* bottom: var(--safe-bottom); */ /* Vô hiệu hóa để giải quyết vấn đề padding */
       
       /* Cải thiện tính phản hồi khi bàn phím hiện lên */
       transition: max-height 0.3s ease, transform 0.3s ease;
