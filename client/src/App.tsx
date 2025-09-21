@@ -161,15 +161,6 @@ function MainContent() {
     onScroll();
     return () => scroller.removeEventListener('scroll', onScroll);
   }, [location]);
-  
-  // Correctly handle bottom safe area based on mobile view
-  useEffect(() => {
-    if (isMobile) {
-      document.documentElement.classList.add('safe-bottom-expanded');
-    } else {
-      document.documentElement.classList.remove('safe-bottom-expanded');
-    }
-  }, [isMobile]);
 
   
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
