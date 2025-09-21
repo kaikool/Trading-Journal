@@ -155,14 +155,21 @@ function MainContent() {
       } else {
         document.documentElement.classList.remove('safe-top-collapsed');
       }
-      // đảm bảo luôn không pad bottom
-      document.documentElement.classList.remove('safe-bottom-collapsed', 'safe-bottom-expanded');
     };
   
     scroller.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => scroller.removeEventListener('scroll', onScroll);
   }, [location]);
+  
+  // Correctly handle bottom safe area based on mobile view
+  useEffect(() => {
+    if (isMobile) {
+      document.documentElement.classList.add('safe-bottom-expanded');
+    } else {
+      document.documentElement.classList.remove('safe-bottom-expanded');
+    }
+  }, [isMobile]);
 
   
   // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian

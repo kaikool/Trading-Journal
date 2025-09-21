@@ -282,11 +282,11 @@ export function Sidebar({ className }: { className?: string }) {
           aria-hidden="true"
         />
         
-        {/* Mobile Sidebar Drawer - luôn tôn trọng safe area top và bottom */}
+        {/* Mobile Sidebar Drawer - REMOVED safe area padding */}
         <aside 
           className={cn(
             "fixed left-0 z-50 w-72 bg-background border-r border-border transform transition-transform duration-300 ease-in-out",
-            "top-0 bottom-0 safe-area-top safe-area-bottom flex flex-col",
+            "top-0 bottom-0 flex flex-col",
             isOpen ? "translate-x-0" : "-translate-x-full",
             // Đảm bảo mobile sidebar được ưu tiên cao hơn và nhận tất cả sự kiện khi mở
             isOpen ? "pointer-events-auto" : "pointer-events-none"
@@ -383,7 +383,7 @@ export function Sidebar({ className }: { className?: string }) {
     );
   }
   
-  // Desktop sidebar version (collapsible sidebar) - luôn tôn trọng safe area
+  // Desktop sidebar version (collapsible sidebar) - REMOVED safe area padding
   return (
     <>
       {/* Sidebar hint for collapsed desktop sidebar */}
@@ -394,7 +394,7 @@ export function Sidebar({ className }: { className?: string }) {
       <aside
         className={cn(
           "hidden md:flex md:flex-col h-screen fixed left-0 z-30 bg-background border-r border-border transition-all duration-300 ease-in-out",
-          "top-0 bottom-0 safe-area-top safe-area-bottom",
+          "top-0 bottom-0",
           sidebarCollapsed ? "w-[72px]" : "w-[256px]",
           className
         )}
