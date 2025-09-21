@@ -139,7 +139,7 @@
 .has-safe-bottom-margin{ margin-bottom:var(--spacing-bottom-safe) !important; }
 .mobile-content-with-navigation{ padding-bottom:var(--spacing-bottom-nav-safe) !important; }
 
-.pwa-container{ width:100%; margin:0 auto; padding-left:max(var(--safe-left), var(--min-side-padding)); padding-right:max(var(--safe-right), var(--min-side-padding)); padding-top:var(--safe-top); padding-bottom:var(--spacing-bottom-safe); }
+.pwa-container{ width:100%; margin:0 auto; padding-left:max(var(--safe-left), var(--min-side-padding)); padding-right:max(var(--safe-right), var(--min-side-padding)); padding-top:var(--safe-top); }
 .pwa-top-inset{ padding-top:max(var(--safe-top), 0.5rem); }
 .safe-area-splash{ position:fixed; inset:0; width:100vw !important; height:100vh !important; max-width:100vw !important; max-height:100vh !important; margin:0 !important; padding:0 !important; overflow:hidden; z-index:9999; }
 .pwa-status-bar-area{padding-top:var(--safe-top);height:calc(var(--status-bar-height) + var(--safe-top));background-color:hsl(var(--background));position:sticky; top:0; z-index:9999;display:flex; align-items:flex-end;}
