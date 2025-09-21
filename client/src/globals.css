@@ -99,15 +99,6 @@
 .placeholder-text { height:1rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
 .placeholder-text-sm { height:0.75rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
 
-.stat-skeleton-tile { background-color:hsl(var(--muted)/0.05); border-radius:0.5rem; padding:1rem; }
-.stat-skeleton-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; }
-.stat-skeleton-label { height:1rem; width:6rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
-
-.balance-skeleton-container { display:flex; flex-direction:column; gap:0.5rem; }
-.balance-skeleton-amount { height:3rem; width:10rem; margin-bottom:0.5rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
-.balance-skeleton-subtitle { height:1.5rem; width:7rem; background-color:hsl(var(--muted)/0.6); border-radius:0.375rem; }
-.balance-skeleton-bar { height:0.5rem; width:100%; border-radius:9999px; background-color:hsl(var(--muted)/0.6); }
-
 /* Milestones */
 .milestone-list { padding:0; max-height:8rem; overflow-y:auto; }
 
@@ -210,6 +201,7 @@
     --mobile-nav-item-padding: 0.75rem;
     --mobile-nav-indicator-height: 0.125rem;
     --mobile-nav-indicator-width: 1.5rem;
+
     --mobile-nav-active-weight: 600;
     --mobile-nav-inactive-weight: 400;
 
@@ -389,18 +381,6 @@
 /* =====================================================
    CHART DIALOG / IMAGE VIEWER
    ===================================================== */
-
-/* ---- MOBILE NO-ZOOM MODE (explicit toggle) ----
-   Apply one of these on the dialog root/container to DISABLE zoom on mobile:
-   1) .chart-disable-zoom-mobile  (class)
-   2) [data-zoom-mobile='off']    (attribute)
-
-   Notes:
-   - Hides zoom/nav controls
-   - Blocks pinch/drag on image container
-   - Forces transform reset (no scale)
-   - Keep page scroll/pan working
-*/
 @media (max-width:640px){
   .chart-disable-zoom-mobile .chart-zoom-controls,
   .chart-disable-zoom-mobile .chart-nav-button,
@@ -413,13 +393,11 @@
   .chart-disable-zoom-mobile .chart-image,
   [data-zoom-mobile='off'] .chart-image-container,
   [data-zoom-mobile='off'] .chart-image{
-    touch-action: none !important;   /* block pinch/pan inside viewer */
-    transform: none !important;      /* force no scale */
+    touch-action: none !important;
+    transform: none !important;
     cursor: default !important;
   }
 }
-
-/* Optional: global helper (turn off double-tap zoom feel on buttons/links) */
 html.no-pinch, body.no-pinch{ touch-action: pan-x pan-y; }
 
 :root{
@@ -573,42 +551,43 @@ h3.card-title{ line-height:1.5 !important; padding:0.125rem 0 !important; height
 .interactive-hover, .interactive-element{ transition:all 0.2s ease-in-out; }
 .interactive-hover:hover, .interactive-element:hover{ transform:translateY(-1px); box-shadow:var(--shadow-md); filter:brightness(1.05); }
 .interactive-hover:active, .interactive-element:active{ transform:translateY(0); filter:brightness(0.95); }
-/* ===== StatusBar shim + collapse-on-scroll ===== */
 
+/* ===== StatusBar shim + collapse-on-scroll ===== */
 
 /* ========== SAFE TOP: chỉ pad 1 lần, và thu gọn khi cuộn ========== */
 .safe-top-pad {
-   padding-top: env(safe-area-inset-top, 0px);
-   transition: padding-top 220ms ease;
-   will-change: padding-top;
- }
- /* Khi đã cuộn, bỏ pad-top để content tràn lên notch */
- .safe-top-collapsed .safe-top-pad { padding-top: 0; }
- 
- /* Loại bỏ pad-top cũ để không bị “đôi” */
- .safe-top-pad .app-layout-container { padding-top: 0 !important; }
- .safe-top-pad .mobile-header { padding-top: 0 !important; }
- 
- /* Nền đồng nhất để không lộ viền */
- html, body, #root { background-color: hsl(var(--background)); }
- 
- /* ===== SAFE BOTTOM: mặc định KHÔNG pad ===== */
-.safe-bottom-pad { 
-   padding-bottom: 0 !important;      /* mặc định tràn qua luôn */
-   transition: padding-bottom 220ms ease;
-   will-change: padding-bottom;
- }
- 
- /* Khi THẬT SỰ cần tôn trọng safe-area (ví dụ có bottom-nav/cta) thì thêm class này vào <html> */
- .safe-bottom-expanded .safe-bottom-pad {
-   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
- }
- 
- /* Nếu layout cũ có pad-bottom, triệt tiêu để khỏi cộng dồn */
- .safe-bottom-pad .app-layout-container { padding-bottom: 0 !important; }
- .safe-bottom-pad.has-safe-bottom,
- .safe-bottom-pad.has-nav-spacing,
- .safe-bottom-pad.has-nav-spacing-safe { padding-bottom: 0 !important; }
+  padding-top: env(safe-area-inset-top, 0px);
+  transition: padding-top 220ms ease;
+  will-change: padding-top;
+}
+/* Khi đã cuộn, bỏ pad-top để content tràn lên notch */
+.safe-top-collapsed .safe-top-pad { padding-top: 0; }
+
+/* ===== SAFE BOTTOM: mặc định KHÔNG pad ===== */
+.safe-bottom-pad {
+  padding-bottom: 0 !important; /* mặc định tràn qua luôn */
+  transition: padding-bottom 220ms ease;
+  will-change: padding-bottom;
+}
+/* Khi THẬT SỰ cần tôn trọng safe-area (ví dụ có bottom-nav/cta) thì thêm class vào <html> */
+.safe-bottom-expanded .safe-bottom-pad {
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+/* Nền đồng nhất để không lộ viền */
+html, body, #root { background-color: hsl(var(--background)); }
+
+/* ************ FIX cấu trúc DOM (AppLayout là PARENT) ************ */
+/* AppLayout không tự pad safe area nữa – để wrapper safe-*-pad kiểm soát */
+.app-layout-container { 
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+/* Nếu header cũ từng pad theo safe-area, triệt tiêu luôn */
+.mobile-header { 
+  padding-top: 0 !important;
+}
+
 /* =====================================================
    MINOR FIXES / MISC MERGES
    ===================================================== */
