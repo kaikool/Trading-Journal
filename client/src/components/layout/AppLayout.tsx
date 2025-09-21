@@ -87,10 +87,11 @@ export function AppLayout({ children }: AppLayoutProps) {
         <div 
           className={cn(
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow page-content",
-            // Luôn tôn trọng safe area, top safe area xử lý theo scroll position
-            respectSafeArea 
-              ? "pt-4 pb-8 safe-area-bottom" 
-              : "pt-0 pb-8 safe-area-bottom"
+            // FIXED: Removed 'safe-area-bottom' to prevent double padding.
+            // The logic is now handled globally by '.safe-bottom-pad' in globals.css
+            // which is the intended behavior as per the comments in the CSS file.
+            "pb-8",
+            respectSafeArea ? "pt-4" : "pt-0"
           )}
         >
           {children}
