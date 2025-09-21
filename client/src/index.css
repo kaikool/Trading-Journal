@@ -1,3 +1,4 @@
+
 @import "./globals.css";
 @import "./components/ui/loading.css";
 @import "./components/ui/animations.css";
@@ -49,22 +50,22 @@ body.scroll-in-progress * {
   animation-duration: 0s !important;
 }
 
-/* Safe area padding class for dialogs */
+/* Safe area padding class for dialogs, now using centralized safe area variables */
 .safe-area-p {
   --dialog-padding: var(--spacing-6, 1.5rem);
-  padding-top: max(var(--dialog-padding), env(safe-area-inset-top, 0px));
-  padding-bottom: max(var(--dialog-padding), env(safe-area-inset-bottom, 0px));
-  padding-left: max(var(--dialog-padding), env(safe-area-inset-left, 0px));
-  padding-right: max(var(--dialog-padding), env(safe-area-inset-right, 0px));
+  padding-top: max(var(--dialog-padding), var(--safe-top));
+  padding-bottom: max(var(--dialog-padding), var(--safe-bottom));
+  padding-left: max(var(--dialog-padding), var(--safe-left));
+  padding-right: max(var(--dialog-padding), var(--safe-right));
   
   /* Đảm bảo nội dung bên trong không bị overflow và handle keyboard hiệu quả */
   overflow-y: auto;
-  max-height: min(90vh, calc(100vh - max(var(--dialog-padding), env(safe-area-inset-top, 0px)) - max(var(--dialog-padding), env(safe-area-inset-bottom, 0px))));
+  max-height: min(90vh, calc(100vh - max(var(--dialog-padding), var(--safe-top)) - max(var(--dialog-padding), var(--safe-bottom))));
   
   /* Mobile keyboard handling */
   @media (max-width: 640px) {
-    padding-bottom: max(var(--dialog-padding), env(safe-area-inset-bottom, 0px), 16px);
-    padding-top: max(var(--dialog-padding), env(safe-area-inset-top, 0px), 12px);
+    padding-bottom: max(var(--dialog-padding), var(--safe-bottom), 16px);
+    padding-top: max(var(--dialog-padding), var(--safe-top), 12px);
   }
 }
 
@@ -80,7 +81,7 @@ body.scroll-in-progress * {
     /* Chức năng thích nghi với bàn phím bổ sung cho PWA */
     @media (display-mode: standalone), (display-mode: fullscreen) {
       max-height: 80dvh; /* Hơi thấp hơn cho PWA vì có thể có UI của browser */
-      bottom: env(safe-area-inset-bottom, 0px);
+      bottom: var(--safe-bottom);
       
       /* Cải thiện tính phản hồi khi bàn phím hiện lên */
       transition: max-height 0.3s ease, transform 0.3s ease;
