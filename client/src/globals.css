@@ -425,7 +425,7 @@ html.no-pinch, body.no-pinch{ touch-action: pan-x pan-y; }
    LAYOUT / CONTAINERS
    ===================================================== */
 .container, form, .grid, .space-y-6, .space-y-8, [class*="grid-cols-"], [class*="gap-"]{ max-width:100%; overflow-x:hidden; }
-.app-content-container{ flex:1; position:relative; overflow-y:auto; -webkit-overflow-scrolling:touch; max-width:1200px; width:100%; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; padding-bottom:0; }
+.app-content-container{ flex:1; position:relative; overflow-y:auto; -webkit-overflow-scrolling:touch; max-width:1200px; width:100%; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; }
 .app-layout-container{ display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; max-width:100%; padding-top:var(--safe-top); padding-left:var(--safe-left); padding-right:var(--safe-right); background-color:hsl(var(--background)); }
 @media (min-width:769px){ .app-layout-container{ height:auto; min-height:100vh; overflow:visible; } }
 
@@ -519,7 +519,6 @@ html, body, #root { background-color: hsl(var(--background)); }
 /* AppLayout không tự pad safe area nữa – để wrapper safe-*-pad kiểm soát */
 .app-layout-container { 
   padding-top: 0 !important;
-  padding-bottom: 0 !important;
 }
 /* Nếu header cũ từng pad theo safe-area, triệt tiêu luôn */
 .mobile-header { 
