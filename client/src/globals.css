@@ -132,7 +132,6 @@
 }
 
 .has-safe-bottom{ padding-bottom:var(--spacing-bottom-safe) !important; }
-.has-nav-spacing-margin{ margin-bottom:var(--spacing-bottom-nav) !important; }
 .has-safe-bottom-margin{ margin-bottom:var(--spacing-bottom-safe) !important; }
 
 
