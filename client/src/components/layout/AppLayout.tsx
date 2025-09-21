@@ -76,16 +76,16 @@ export function AppLayout({ children }: AppLayoutProps) {
         style={{ 
           minHeight: viewportHeight > 0 ? `${viewportHeight}px` : '100vh',
           // Đơn giản hóa: chỉ thiết lập overflow
-          overflowY: 'auto'
+          overflowY: 'auto',
+          // FIX: bù safe area đáy iOS để không lộ dải đen
+          paddingBottom: 'env(safe-area-inset-bottom)'
         }}
       >
-        
         <div 
           className={cn(
             "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow page-content",
-            // FIXED: Removed 'safe-area-bottom' to prevent double padding.
-            // The logic is now handled globally by '.safe-bottom-pad' in globals.css
-            // which is the intended behavior as per the comments in the CSS file.
+            // FIXED trước đây: đã bỏ 'safe-area-bottom' để tránh double padding.
+            // Giờ padding đáy được xử lý trực tiếp ở <main>.
             respectSafeArea ? "pt-4" : "pt-0"
           )}
         >
