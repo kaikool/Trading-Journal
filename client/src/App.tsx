@@ -405,7 +405,7 @@ function MainContent() {
     <>
       {/* Unified layout system with new Sidebar - bọc bởi ErrorBoundary */}
       <SafeAppLayout>
-        <div className="safe-top-pad safe-bottom-pad">
+        <div className="safe-top-pad">
         {renderPageContent()}
         </div>
       </SafeAppLayout>
