@@ -79,10 +79,6 @@ export function AppLayout({ children }: AppLayoutProps) {
           overflowY: 'auto'
         }}
       >
-        {/* Safe area vùng đầu trang */}
-        {respectSafeArea && (
-          <div className="safe-area-top w-full h-0" />
-        )}
         
         <div 
           className={cn(
