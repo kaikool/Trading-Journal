@@ -86,7 +86,6 @@ export function AppLayout({ children }: AppLayoutProps) {
             // FIXED: Removed 'safe-area-bottom' to prevent double padding.
             // The logic is now handled globally by '.safe-bottom-pad' in globals.css
             // which is the intended behavior as per the comments in the CSS file.
-            "pb-8",
             respectSafeArea ? "pt-4" : "pt-0"
           )}
         >
