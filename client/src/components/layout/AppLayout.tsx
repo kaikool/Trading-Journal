@@ -22,13 +22,10 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
-  const [respectSafeArea, setRespectSafeArea] = useState(true);
   const [viewportHeight, setViewportHeight] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-    setRespectSafeArea(true);
-
     if (typeof window !== "undefined") {
       setViewportHeight(window.innerHeight);
       const handleResize = () => setViewportHeight(window.innerHeight);
@@ -42,12 +39,9 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div
       className="relative min-h-screen bg-background"
-      style={{ backgroundColor: "hsl(var(--background))" }} // đảm bảo nền phủ tận safe-area
+      style={{ backgroundColor: "hsl(var(--background))" }}
     >
-      {/* Sidebar */}
       <Sidebar className="sidebar-root" />
-
-      {/* Scroll to top button */}
       <ScrollToTop />
 
       <main
@@ -60,16 +54,13 @@ export function AppLayout({ children }: AppLayoutProps) {
         style={{
           minHeight: viewportHeight > 0 ? `${viewportHeight}px` : "100vh",
           overflowY: "auto",
-          // TRẢ NỘI DUNG VỀ SÁT ĐÁY: không đệm safe-bottom ở layout
           paddingBottom: 0,
-          // giữ nền đồng bộ với wrapper để không thấy dải khác màu
           backgroundColor: "hsl(var(--background))",
         }}
       >
         <div
           className={cn(
-            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow page-content",
-            respectSafeArea ? "pt-4" : "pt-0"
+            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow page-content pt-4"
           )}
         >
           {children}

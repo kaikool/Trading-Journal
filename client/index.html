@@ -3,21 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Viewport: bắt buộc cho full screen (iOS notch + home indicator) -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-      <meta
+
+    <!-- Mô tả app -->
+    <meta
       name="description"
       content="A powerful and intuitive trading journal for tracking and analyzing your trades."
     />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Icons cho iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icon-152.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/icon-167.png" />
+
+    <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
+
+    <!-- Config riêng của app -->
     <script src="/config.js"></script>
+
+    <!-- iOS PWA -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f9fbfc" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0b121a" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" /> 
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Theme color cho Android + fallback -->
+    <meta name="theme-color" content="#0b121a" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#f9fbfc"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#0b121a"
+    />
+
     <title>Trading Journal</title>
   </head>
   <body>
