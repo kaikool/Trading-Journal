@@ -157,7 +157,10 @@ export function TradeDetails({
               name="stopLoss"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stop Loss</FormLabel>
+                  <div className="flex items-center justify-between h-6">
+                    <FormLabel>Stop Loss</FormLabel>
+                    <span className="text-xs text-muted-foreground italic bg-muted px-1 rounded invisible">Auto</span>
+                  </div>
                   <FormControl>
                     <NumberInput
                       placeholder="0.00000"
@@ -178,7 +181,7 @@ export function TradeDetails({
               name="takeProfit"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center justify-between h-6">
                     <FormLabel>Take Profit</FormLabel>
                     <span className="text-xs text-muted-foreground italic bg-muted px-1 rounded">Auto</span>
                   </div>
