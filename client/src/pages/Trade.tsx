@@ -127,8 +127,10 @@ export default function TradePage() {
   }
 
   return (
-    <div className="px-0 sm:px-6 lg:px-8">
-      <div className="mb-4">
+    // NEW: Flexbox layout container
+    <div className="flex flex-col h-full px-0 sm:px-6 lg:px-8">
+      {/* --- 1. HEADER (non-scrollable) --- */}
+      <div className="mb-4 flex-shrink-0">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           New Trade
         </h1>
@@ -138,48 +140,54 @@ export default function TradePage() {
       </div>
 
       <FormProvider {...form}>
-        <form onSubmit={onSubmit} className="space-y-5 overflow-visible">
-          {hasDraft && showDraftNotice && (
-            <FormHeader 
-              isEditMode={false}
-              hasDraft={hasDraft}
-              showDraftNotice={showDraftNotice}
-              isDraftLoading={isDraftLoading}
-              setShowDraftNotice={setShowDraftNotice}
-              loadDraft={loadDraft}
-              clearDraft={clearDraft}
-            />
-          )}
+        {/* The form now acts as the primary layout manager for its children */}
+        <form onSubmit={onSubmit} className="flex flex-col flex-grow min-h-0">
+          
+          {/* --- 2. SCROLLABLE CONTENT --- */}
+          <div className="flex-grow overflow-y-auto pb-4">
+            {hasDraft && showDraftNotice && (
+              <div className="mb-5">
+                <FormHeader 
+                  isEditMode={false}
+                  hasDraft={hasDraft}
+                  showDraftNotice={showDraftNotice}
+                  isDraftLoading={isDraftLoading}
+                  setShowDraftNotice={setShowDraftNotice}
+                  loadDraft={loadDraft}
+                  clearDraft={clearDraft}
+                />
+              </div>
+            )}
 
-          <Card className="relative mb-5 border-border/60">
-            <CardGradient 
-              variant="primary" 
-              intensity="subtle" 
-              direction="bottom-left" 
-            />
-            
-            <CardContent className="p-5 overflow-visible">
-              <TabbedTradeForm
-                isCalculatingLotSize={isCalculatingLotSize}
-                isCalculatingTakeProfit={isCalculatingTakeProfit}
-                accountBalance={accountBalance}
-                riskPercentage={riskPercentage}
-                setRiskPercentage={setRiskPercentage}
-                calculateOptimalLotSize={calculateOptimalLotSize}
-                calculateOptimalTakeProfit={calculateOptimalTakeProfit}
-                riskRewardRatio={riskRewardRatio}
-                setRiskRewardRatio={setRiskRewardRatio}
-                
-                strategies={strategies}
-                isLoadingStrategies={isLoadingStrategies}
-                selectedStrategy={selectedStrategy}
-                strategyChecks={strategyChecks}
-                handleStrategyCheckToggle={handleStrategyCheckToggle}
+            <Card className="relative border-border/60">
+              <CardGradient 
+                variant="primary" 
+                intensity="subtle" 
+                direction="bottom-left" 
               />
-            </CardContent>
-          </Card>
+              <CardContent className="p-5">
+                <TabbedTradeForm
+                  isCalculatingLotSize={isCalculatingLotSize}
+                  isCalculatingTakeProfit={isCalculatingTakeProfit}
+                  accountBalance={accountBalance}
+                  riskPercentage={riskPercentage}
+                  setRiskPercentage={setRiskPercentage}
+                  calculateOptimalLotSize={calculateOptimalLotSize}
+                  calculateOptimalTakeProfit={calculateOptimalTakeProfit}
+                  riskRewardRatio={riskRewardRatio}
+                  setRiskRewardRatio={setRiskRewardRatio}
+                  strategies={strategies}
+                  isLoadingStrategies={isLoadingStrategies}
+                  selectedStrategy={selectedStrategy}
+                  strategyChecks={strategyChecks}
+                  handleStrategyCheckToggle={handleStrategyCheckToggle}
+                />
+              </CardContent>
+            </Card>
+          </div>
 
-          <div className="sticky bottom-4 mt-4">
+          {/* --- 3. FOOTER ACTIONS (non-scrollable) --- */}
+          <div className="flex-shrink-0 pt-2 pb-4">
             <div className="bg-card rounded-lg border shadow-sm px-4 py-3">
               <FormActions 
                 isEditMode={false}
