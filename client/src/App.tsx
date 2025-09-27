@@ -285,7 +285,7 @@ function MainContent() {
       key={currentRoute}
       className={cn(
         "transition-opacity app-main-content",
-        "min-h-[calc(100vh-4rem)]",
+        "min-h-full",
         // Thêm className để hiển thị loading state
         isPageLoading() && "pointer-events-none opacity-80"
       )}
@@ -344,7 +344,7 @@ function MainContent() {
         key={currentRoute}
         className={cn(
           "transition-opacity app-main-content",
-          "min-h-[calc(100vh-4rem)]",
+          "min-h-full",
           isPageLoading() && "pointer-events-none opacity-80"
         )}
         style={{
