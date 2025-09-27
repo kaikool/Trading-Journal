@@ -1,43 +1,39 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-// Layout constants
-// NOTE: SIDEBAR_WIDTH is defined here but is being overridden in sidebar.tsx component
-export const SIDEBAR_WIDTH = "16rem"; // 256px = 16rem
-// NOTE: SIDEBAR_COLLAPSED_WIDTH is not currently used in the codebase
-export const SIDEBAR_COLLAPSED_WIDTH = "4.5rem"; // 72px for collapsed state
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
 
-// Layout context type
-export interface LayoutContextType {
-  sidebarCollapsed: boolean;
-  setSidebarCollapsed: (collapsed: boolean) => void;
+// Giao diện cho các thuộc tính của LayoutContext
+interface LayoutContextProps {
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+  // Thêm các state khác liên quan đến layout nếu cần
 }
 
-// Create context with default values
-export const LayoutContext = createContext<LayoutContextType>({
-  sidebarCollapsed: false,
-  setSidebarCollapsed: () => {}
-});
+// Tạo Context với giá trị mặc định
+const LayoutContext = createContext<LayoutContextProps | undefined>(undefined);
 
-// Custom hook for child components to use
-export function useLayout() {
-  return useContext(LayoutContext);
-}
+// Provider component
+export const LayoutProvider = ({ children }: { children: ReactNode }) => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-// Layout Provider component
-export function LayoutProvider({ children }: { children: ReactNode }) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
-  // Read sidebar state from localStorage when component mounts
-  useEffect(() => {
-    const savedCollapsed = localStorage.getItem("sidebar-collapsed");
-    if (savedCollapsed) {
-      setSidebarCollapsed(savedCollapsed === "true");
-    }
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
   }, []);
 
   return (
-    <LayoutContext.Provider value={{ sidebarCollapsed, setSidebarCollapsed }}>
+    <LayoutContext.Provider value={{ 
+      isSidebarOpen, 
+      toggleSidebar, 
+    }}>
       {children}
     </LayoutContext.Provider>
   );
-}
+};
+
+// Custom hook để sử dụng LayoutContext
+export const useLayout = () => {
+  const context = useContext(LayoutContext);
+  if (context === undefined) {
+    throw new Error('useLayout must be used within a LayoutProvider');
+  }
+  return context;
+};
