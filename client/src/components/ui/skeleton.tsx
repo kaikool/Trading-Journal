@@ -1,3 +1,4 @@
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface SkeletonProps {
@@ -8,7 +9,8 @@ interface SkeletonProps {
   animation?: "pulse" | "wave" | "none";
 }
 
-export function Skeleton({
+// Wrapped with React.memo for performance optimization
+export const Skeleton = React.memo(function Skeleton({
   className,
   variant = "default",
   width,
@@ -44,7 +46,7 @@ export function Skeleton({
       }}
     />
   );
-}
+});
 
 function getVariantClass(variant: SkeletonProps["variant"]) {
   switch (variant) {
@@ -59,8 +61,8 @@ function getVariantClass(variant: SkeletonProps["variant"]) {
   }
 }
 
-// For convenience, export specialized skeletons
-export function CircleSkeleton({ className, size = 40, ...props }: Omit<SkeletonProps, "variant" | "width" | "height"> & { size?: number }) {
+// For convenience, export specialized, memoized skeletons
+export const CircleSkeleton = React.memo(function CircleSkeleton({ className, size = 40, ...props }: Omit<SkeletonProps, "variant" | "width" | "height"> & { size?: number }) {
   return (
     <Skeleton
       variant="circular"
@@ -70,9 +72,9 @@ export function CircleSkeleton({ className, size = 40, ...props }: Omit<Skeleton
       {...props}
     />
   );
-}
+});
 
-export function TextSkeleton({ className, ...props }: Omit<SkeletonProps, "variant">) {
+export const TextSkeleton = React.memo(function TextSkeleton({ className, ...props }: Omit<SkeletonProps, "variant">) {
   return (
     <Skeleton
       variant="text"
@@ -80,9 +82,9 @@ export function TextSkeleton({ className, ...props }: Omit<SkeletonProps, "varia
       {...props}
     />
   );
-}
+});
 
-export function RectSkeleton({ className, ...props }: SkeletonProps) {
+export const RectSkeleton = React.memo(function RectSkeleton({ className, ...props }: SkeletonProps) {
   return (
     <Skeleton
       variant="rounded"
@@ -90,4 +92,4 @@ export function RectSkeleton({ className, ...props }: SkeletonProps) {
       {...props}
     />
   );
-}
+});
