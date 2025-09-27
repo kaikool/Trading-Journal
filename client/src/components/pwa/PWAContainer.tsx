@@ -114,13 +114,14 @@ export function PWAContainer() {
     // 2. Safe area đã được xử lý tự động thông qua CSS variables
     // 3. Giảm sự phụ thuộc vào JavaScript để xác định PWA mode
     
-    // Xử lý safe area là duy nhất cho tất cả môi trường
-    document.documentElement.setAttribute('data-has-safe-area', 'true');
+    // =========================================================================
+    // VÔ HIỆU HÓA LOGIC GÂY LỖI - Ngăn việc set safe area toàn cục
+    // =========================================================================
+    // document.documentElement.setAttribute('data-has-safe-area', 'true');
     
-    return () => {
-      // Cleanup on unmount - giữ lại để tương thích với code hiện tại
-      document.documentElement.removeAttribute('data-has-safe-area');
-    };
+    // return () => {
+      // document.documentElement.removeAttribute('data-has-safe-area');
+    // };
   }, []);
 
   return (
