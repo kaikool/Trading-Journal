@@ -212,15 +212,16 @@ export function Sidebar({ className }: { className?: string }) {
     setMounted(true);
   }, []);
 
-  // Lock scrolling when mobile sidebar is open
+  // Lock scrolling when mobile sidebar is open using a CSS class
   useEffect(() => {
     if (isMobile && isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('body-lock-scroll');
     } else {
-      document.body.style.overflow = '';
+      document.body.classList.remove('body-lock-scroll');
     }
     return () => {
-      document.body.style.overflow = '';
+      // Ensure the class is removed on component unmount for safety
+      document.body.classList.remove('body-lock-scroll');
     };
   }, [isOpen, isMobile]);
 

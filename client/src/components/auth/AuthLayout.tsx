@@ -66,7 +66,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
   ];
   
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col md:flex-row">
       {/* Left side - Branding area with enhanced features showcase */}
       <div className="hidden md:flex md:w-2/5 bg-gradient-to-br from-primary/90 to-primary/70 text-white p-8 flex-col justify-between relative overflow-hidden">
         {/* Abstract decorative elements */}
