@@ -52,7 +52,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <div
           className={cn(
             "page-content safe-area-left safe-area-right",
-            "w-full max-w-7xl mx-auto flex-grow",
+            "w-full max-w-7xl mx-auto",
             "px-4 sm:px-6 pt-4",
             "transition-all duration-500 ease-in-out"
           )}
