@@ -19,7 +19,7 @@ const ToastViewport = React.forwardRef<
       // Mobile: Bottom position, full width with safe area inset
       "bottom-0 left-0 right-0 w-full safe-area-bottom",
       // Tablet+: Top-right position, limited width
-      "md:top-4 md:bottom-auto md:right-4 md:left-auto md:w-auto md:max-w-[420px] md:flex-col-reverse",
+      "md:top-4 md:bottom-auto md:right-4 md:left-auto md:w-auto md:max-w-[420px] md:flex-col-reverse md:pb-4",
       className
     )}
     {...props}
