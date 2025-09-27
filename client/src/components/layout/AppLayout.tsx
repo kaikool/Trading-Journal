@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "@/components/layout/Sidebar"; // chỉnh path nếu khác
 import { useLayout } from "@/contexts/LayoutContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
@@ -10,57 +10,51 @@ interface AppLayoutProps {
 }
 
 /**
- * AppLayout - The main application layout component
- *
- * Provides a responsive layout that:
- * 1. On mobile: Shows full-width content with a bottom navigation bar
- * 2. On desktop: Shows a collapsible sidebar with the main content area
- *
- * This component handles proper spacing, safe areas, and sidebar toggling.
+ * AppLayout:
+ * - Desktop: chừa chỗ cho Sidebar 72px (collapsed) / 256px (expanded)
+ * - Mobile: dùng Drawer; không tạo scroll container phụ để tránh double-scroll
+ * - Dùng 100dvh cho mobile ổn định hơn innerHeight
  */
 export function AppLayout({ children }: AppLayoutProps) {
   const { sidebarCollapsed } = useLayout();
   const isMobile = useIsMobile();
   const [mounted, setMounted] = useState(false);
-  const [viewportHeight, setViewportHeight] = useState(0);
 
-  useEffect(() => {
-    setMounted(true);
-    if (typeof window !== "undefined") {
-      setViewportHeight(window.innerHeight);
-      const handleResize = () => setViewportHeight(window.innerHeight);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
-  }, []);
-
+  useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   return (
     <div
-      className="relative min-h-screen bg-background"
+      className="relative min-h-[100dvh] bg-background"
       style={{ backgroundColor: "hsl(var(--background))" }}
     >
       <Sidebar className="sidebar-root" />
       <ScrollToTop />
 
       <main
+        role="main"
+        id="main-content"
         className={cn(
-          "flex-1 transition-all duration-300 ease-in-out min-h-screen flex flex-col",
+          "flex min-h-[100dvh] flex-col transition-all duration-300 ease-in-out",
+          // Desktop margins khớp sidebar
           !isMobile && "md:ml-[72px]",
           !isMobile && !sidebarCollapsed && "md:ml-[256px]",
+          // Mobile không cần padding top
           isMobile && "pt-0"
         )}
         style={{
-          minHeight: viewportHeight > 0 ? `${viewportHeight}px` : "100vh",
-          overflowY: "auto",
-          paddingBottom: 0,
           backgroundColor: "hsl(var(--background))",
+          // Desktop có thể cho scroll riêng; mobile để body quản lý
+          overflowY: isMobile ? "visible" : "auto",
+          paddingBottom: 0,
         }}
       >
         <div
           className={cn(
-            "transition-all duration-500 ease-in-out max-w-7xl mx-auto w-full px-4 sm:px-6 safe-area-left safe-area-right flex-grow page-content pt-4"
+            "page-content safe-area-left safe-area-right",
+            "w-full max-w-7xl mx-auto flex-grow",
+            "px-4 sm:px-6 pt-4",
+            "transition-all duration-500 ease-in-out"
           )}
         >
           {children}
