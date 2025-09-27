@@ -8,7 +8,6 @@ import NotFound from "@/pages/not-found";
 import ErrorBoundary from "@/components/ui/error-boundary";
 import { AppSkeleton, SkeletonLevel } from "@/components/ui/app-skeleton";
 import { useLoadingStore, LoadingLevel } from "@/hooks/use-loading-store";
-import { LoadingProvider } from "@/components/ui/loading-provider";
 import { SplashScreen } from "@/components/ui/splash-screen";
 import { initViewportHeight, isPWA } from "@/lib/viewport-height";
 
@@ -83,22 +82,16 @@ function MainContent() {
   const currentRoute = location;
   
   // Sử dụng Zustand store để quản lý loading
-  const startLoading = useLoadingStore(state => state.startLoading);
-  const stopLoading = useLoadingStore(state => state.stopLoading);
+  const { startLoading, stopLoading, isPageLoading } = useLoadingStore();
   
   // Add transition state to improve route changes
-  const [isPageReady, setIsPageReady] = useState<boolean>(true);
   const [prevLocation, setPrevLocation] = useState<string>(location);
-  
-  // Theo dõi trạng thái hoàn thành của splash screen
-  const [appReady, setAppReady] = useState(false);
   
   // Tối ưu hóa việc chuyển trang
   useEffect(() => {
     // Khi location thay đổi, đánh dấu trang đang loading và scroll lên đầu trang
     if (prevLocation !== location) {
-      // Đánh dấu trang chưa sẵn sàng và hiển thị chỉ báo loading
-      setIsPageReady(false);
+      startLoading("page-transition", LoadingLevel.PAGE);
       
       // Lưu lại route hiện tại
       setPrevLocation(location);
@@ -121,18 +114,16 @@ function MainContent() {
       }
       
       // Luôn đặt một timeout để đảm bảo chỉ báo loading sẽ biến mất
-      document.documentElement.classList.add('page-transition');
       const readyTimer = setTimeout(() => {
-        setIsPageReady(true);
-        document.documentElement.classList.remove('page-transition');
+        stopLoading("page-transition", LoadingLevel.PAGE);
       }, 300); // Thời gian dài hơn để đảm bảo trang đã được tải
       
       return () => {
         clearTimeout(readyTimer);
-        document.documentElement.classList.remove('page-transition');
+        stopLoading("page-transition", LoadingLevel.PAGE);
       };
     }
-  }, [location]);
+  }, [location, prevLocation, startLoading, stopLoading]);
   
   useEffect(() => {
     const scroller =
@@ -162,24 +153,6 @@ function MainContent() {
     return () => scroller.removeEventListener('scroll', onScroll);
   }, [location]);
 
-  
-  // Đảm bảo luôn đặt lại isPageReady = true sau một khoảng thời gian
-  useEffect(() => {
-    if (!isPageReady) {
-      // Áp dụng lớp này để ngăn nháy sáng trong suốt quá trình chuyển đổi
-      document.documentElement.classList.add('page-transition');
-      
-      const safetyTimer = setTimeout(() => {
-        setIsPageReady(true);
-        document.documentElement.classList.remove('page-transition');
-      }, 1000); // Khung an toàn tối đa 1 giây
-      
-      return () => {
-        clearTimeout(safetyTimer);
-        document.documentElement.classList.remove('page-transition');
-      };
-    }
-  }, [isPageReady]);
   
   // Preload route modules when location changes
   useEffect(() => {
@@ -314,14 +287,14 @@ function MainContent() {
         "transition-opacity app-main-content",
         "min-h-[calc(100vh-4rem)]",
         // Thêm className để hiển thị loading state
-        !isPageReady && "pointer-events-none opacity-80"
+        isPageLoading() && "pointer-events-none opacity-80"
       )}
       style={{
         transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
       }}
     >
       {/* Hiển thị trạng thái loading khi chuyển trang */}
-      {!isPageReady && (
+      {isPageLoading() && (
         <>
           {/* Hiển thị thanh progress ở đầu trang - tinh tế */}
           <div className="fixed top-0 left-0 right-0 h-[2px] bg-transparent z-50">
@@ -372,7 +345,7 @@ function MainContent() {
         className={cn(
           "transition-opacity app-main-content",
           "min-h-[calc(100vh-4rem)]",
-          !isPageReady && "pointer-events-none opacity-80"
+          isPageLoading() && "pointer-events-none opacity-80"
         )}
         style={{
           transition: prefersReducedMotion ? 'none' : 'opacity 0.15s ease-out'
@@ -428,12 +401,10 @@ function App() {
       <ThemeProvider>
         <LayoutProvider>
           <DialogProvider>
-            <LoadingProvider>
               <MainContent />
               <Toaster />
               <PWAContainer />
               <AchievementNotificationContainer />
-            </LoadingProvider>
           </DialogProvider>
         </LayoutProvider>
       </ThemeProvider>

@@ -50,7 +50,7 @@ export const preloadRoute = (route: string): void => {
       moduleLoader().catch(() => {
         // Silently handle preload failures
       });
-    }, 200); // Small timeout to avoid blocking main thread
+    }, 100); // Reduced timeout
   }
 
   // Prefetch dependencies
@@ -62,7 +62,7 @@ export const preloadRoute = (route: string): void => {
           // Silently handle dependency preload failures
         });
       });
-    }, 500); // Longer timeout for dependencies
+    }, 200); // Reduced timeout
   }
 };
 
@@ -88,7 +88,7 @@ export const preloadCommonRoutes = (): void => {
     COMMON_ROUTES.forEach(route => {
       preloadRoute(route);
     });
-  }, 3000); // Chỉ preload sau khi app đã load hoàn toàn
+  }, 1000); // Reduced timeout
 };
 
 /**
@@ -125,7 +125,7 @@ export const preloadCriticalResources = (): void => {
   // Sử dụng queueMicrotask thay vì chạy ngay lập tức
   queueMicrotask(() => {
     // Preload fonts sau khi các tác vụ khác quan trọng hơn hoàn tất
-    setTimeout(preloadFonts, 500);
+    setTimeout(preloadFonts, 200); // Reduced timeout
   });
 
   // Tạo hàm preload CSS với độ ưu tiên thấp
@@ -137,7 +137,7 @@ export const preloadCriticalResources = (): void => {
       link.href = href;
       link.as = 'style';
       document.head.appendChild(link);
-    }, 800); // Delay cao hơn để ưu tiên cho việc hiển thị UI
+    }, 300); // Reduced timeout
   };
 
   // Preload main CSS
@@ -157,12 +157,12 @@ export const preloadCriticalResources = (): void => {
     if ('requestIdleCallback' in window) {
       (window as any).requestIdleCallback(() => {
         preloadCommonRoutes();
-      }, { timeout: 8000 }); // Timeout lớn hơn để đảm bảo không ảnh hưởng hiệu suất
+      }, { timeout: 2000 }); // Reduced timeout
     } else {
       // Fallback với setTimeout dài hơn
       setTimeout(() => {
         preloadCommonRoutes();
-      }, 5000);
+      }, 2000); // Reduced timeout
     }
   };
   
@@ -173,4 +173,3 @@ export const preloadCriticalResources = (): void => {
     window.addEventListener('load', scheduleRoutePreload);
   }
 };
-
