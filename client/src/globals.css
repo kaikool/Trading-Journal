@@ -121,8 +121,8 @@
   .mb-safe{ margin-bottom:var(--spacing-bottom-safe); }
   .ml-safe{ margin-left:var(--safe-left); }
 
-  .h-screen-safe{ height:100vh; height:calc(100vh - var(--safe-top) - var(--safe-bottom)); height:calc(100dvh - var(--safe-top) - var(--safe-bottom)); }
-  .min-h-screen-safe{ min-height:100vh; min-height:calc(100vh - var(--safe-top) - var(--safe-bottom)); min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom)); }
+  .h-screen-safe{ height:100vh; height:calc(100vh - var(--safe-top)); height:calc(100dvh - var(--safe-top) - var(--safe-bottom)); }
+  .min-h-screen-safe{ min-height:100vh; min-height:calc(100vh - var(--safe-top)); min-height:calc(100dvh - var(--safe-top) - var(--safe-bottom)); }
 
   :root{ --is-pwa:0; --is-mobile:0; --is-mobile-or-pwa:0; }
   @media (display-mode:standalone),(display-mode:fullscreen),(display-mode:minimal-ui){ :root{ --is-pwa:1; --is-mobile-or-pwa:1; } }
