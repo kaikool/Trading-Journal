@@ -54,7 +54,6 @@ body.scroll-in-progress * {
 .safe-area-p {
   --dialog-padding: var(--spacing-6, 1.5rem);
   padding-top: max(var(--dialog-padding), var(--safe-top));
-  /* padding-bottom: max(var(--dialog-padding), var(--safe-bottom)); */ /* Vô hiệu hóa để giải quyết vấn đề padding */
   padding-left: max(var(--dialog-padding), var(--safe-left));
   padding-right: max(var(--dialog-padding), var(--safe-right));
   
@@ -64,7 +63,6 @@ body.scroll-in-progress * {
   
   /* Mobile keyboard handling */
   @media (max-width: 640px) {
-    /* padding-bottom: max(var(--dialog-padding), var(--safe-bottom), 16px); */ /* Vô hiệu hóa để giải quyết vấn đề padding */
     padding-top: max(var(--dialog-padding), var(--safe-top), 12px);
   }
 }
