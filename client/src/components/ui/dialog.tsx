@@ -203,7 +203,7 @@ function DialogHeaderFooterLayout({
     <>
       {headerContent && (
         <div className={cn(
-          "sticky top-0 bg-background py-3 border-b -mt-3 sm:-mt-4 mb-4 px-0 sm:px-0",
+          "sticky top-0 bg-background py-3 border-b -mt-3 sm:-mt-4 mb-4",
           headerClassName
         )}>
           {headerContent}
@@ -216,7 +216,7 @@ function DialogHeaderFooterLayout({
       
       {footerContent && (
         <div className={cn(
-          "sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-4 px-0 sm:px-0",
+          "sticky bottom-0 bg-background py-3 border-t -mb-3 sm:-mb-4 mt-4",
           footerClassName
         )}>
           {footerContent}
